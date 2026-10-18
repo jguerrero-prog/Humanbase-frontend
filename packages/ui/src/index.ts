@@ -6,6 +6,7 @@ export { Dialog, type DialogKind, type DialogProps, type DialogSize } from './Di
 export { Drawer, DrawerSection, type DrawerPlacement, type DrawerProps, type DrawerSize } from './Drawer/Drawer';
 export { CodeBlock, CopyButton, InlineCode, type CodeBlockProps, type CodeLine, type CodeToken, type CopyButtonProps, type SyntaxRole } from './CodeBlock/CodeBlock';
 export { CodeTabs, type CodeExample, type CodeTabsProps } from './CodeBlock/CodeTabs';
+export { FileDrop, fileSize, type ChosenFile, type FileDropProps, type FileProblemLine } from './FileDrop/FileDrop';
 export { Field, FieldError, type FieldProps, type FieldSize } from './Field/Field';
 export { GeneList, parseGeneList, type GeneListProps } from './GeneList/GeneList';
 export { GeneTagInput, unknownGenesMessage, type GeneTagInputProps } from './GeneTagInput/GeneTagInput';

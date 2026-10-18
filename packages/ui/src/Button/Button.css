@@ -89,13 +89,15 @@
   box-shadow: var(--shadow-focus-ring);
 }
 
-.button:disabled {
+.button:disabled,
+.button[aria-disabled="true"] {
   color: var(--text-disabled);
   background: var(--color-grey-200);
   cursor: not-allowed;
 }
 
-.button-ghost:disabled {
+.button-ghost:disabled,
+.button-ghost[aria-disabled="true"] {
   background: transparent;
 }
 

@@ -1,0 +1,168 @@
+.file-drop-label-hidden .field-label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.file-drop {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: min(100%, 640px);
+  padding: var(--space-5);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-default);
+  border-radius: var(--radius-sm);
+}
+
+.file-drop[data-file-state="empty"] {
+  justify-items: center;
+  padding: var(--space-8) var(--space-5);
+  text-align: center;
+  border: 1.5px dashed var(--border-default);
+}
+
+.file-drop-icon {
+  flex: none;
+  color: var(--text-secondary);
+}
+
+.file-drop[data-state="drag"] {
+  border: var(--border-width-2) solid var(--border-selected);
+}
+
+.file-drop:has(input:focus-visible),
+.file-drop[data-state="focus"] {
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.file-drop[data-file-state="problems"] {
+  border: 1.5px solid var(--border-error);
+}
+
+.file-drop-prompt {
+  font: var(--type-body);
+  color: var(--text-default);
+}
+
+.file-drop-prompt-active,
+.file-drop-choose {
+  font: var(--type-label);
+  color: var(--text-link);
+}
+
+.file-drop-choose {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.file-drop-hint {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.file-drop-file {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.file-drop-name {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-inline-size: 0;
+}
+
+.file-drop-name strong {
+  overflow: hidden;
+  font: var(--type-label);
+  color: var(--text-default);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-drop-name span {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.file-drop-remove.remove-button {
+  inline-size: 32px;
+  block-size: 32px;
+  border: var(--border-width-1) solid var(--border-default);
+  border-radius: var(--radius-sm);
+}
+
+.file-drop-status {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.file-drop-progress {
+  inline-size: 100%;
+  block-size: 4px;
+  overflow: hidden;
+  appearance: none;
+  background: var(--color-grey-200);
+  border: 0;
+  border-radius: var(--radius-2xs);
+}
+
+.file-drop-progress::-webkit-progress-bar {
+  background: var(--color-grey-200);
+}
+
+.file-drop-progress::-webkit-progress-value {
+  background: var(--text-default);
+}
+
+.file-drop-progress::-moz-progress-bar {
+  background: var(--text-default);
+}
+
+.file-drop-result {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  font: var(--type-label-sm);
+  color: var(--text-default);
+}
+
+.file-drop-result .icon {
+  flex: none;
+  color: var(--status-success-fg);
+}
+
+.file-drop[data-file-state="problems"] .file-drop-result,
+.file-drop[data-file-state="problems"] .file-drop-result .icon {
+  color: var(--status-error-fg);
+}
+
+.file-drop-problems {
+  display: grid;
+  margin: 0;
+  padding: var(--space-1) 0;
+  list-style: none;
+  background: var(--surface-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.file-drop-problems li {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  font: var(--type-body-sm);
+  color: var(--text-default);
+}
+
+.file-drop-line {
+  font: var(--type-code-sm);
+}
+
+.file-drop > .button {
+  justify-self: start;
+}

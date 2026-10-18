@@ -1,0 +1,519 @@
+---
+import { VariantJobForm } from '@humanbase/hb';
+import { Accordion, AccordionItem, Breadcrumbs, Button, FileDrop, Icon, RemoveButton, SegmentedControl, Select, TextInput, TopBar } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import { productJobs, productSections } from '../../data/product-navigation';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const inputTypes = [
+  { value: 'vcf', label: 'Variants (VCF)' },
+  { value: 'bed', label: 'Regions (BED)' },
+  { value: 'fasta', label: 'Sequences (FASTA)' },
+];
+const sources = [
+  { value: 'upload', label: 'Upload a file' },
+  { value: 'paste', label: 'Paste' },
+  { value: 'example', label: 'Use the example' },
+];
+const models = [{ value: 'seqweaver', label: 'Seqweaver (RNA)' }];
+const assemblies = [{ value: 'hg19', label: 'GRCh37/hg19' }];
+const dropHint = 'Up to 20,000 variants; 10,000 or fewer finish fastest.';
+const problems = [
+  { line: 14, rule: 'REF is N. Use A, C, G or T.' },
+  { line: 220, rule: 'No strand column. Seqweaver needs + or - in column 6.' },
+  { line: 1031, rule: 'Position 249,250,622 is past the end of chr1 on GRCh37/hg19.' },
+];
+const examples = [
+  ['example.vcf', 'Variants, 5 columns'],
+  ['example_strand.vcf', 'Variants with strand, for Seqweaver'],
+  ['example.bed', 'Regions'],
+  ['example.fasta', 'Sequences, 1,000 bp for Seqweaver'],
+];
+
+const checks = [
+  ['VCF', 'Tab-separated, at least 5 columns: chromosome, position, ID, REF, ALT. A header, if present, starts with #CHROM POS ID REF ALT. Position is within the chromosome’s length on the chosen assembly. The ID can be empty. REF and ALT are upper-case A, C, G, T, up to 100 characters.'],
+  ['VCF for Seqweaver', 'A sixth column, strand: + or -.'],
+  ['BED', 'Tab-separated, at least 3 columns: chromosome, start, end. Start and end are non-negative and within the chromosome. Each interval is scored at its center; for an even length, the left center (chr1 100 106 is scored at 103).'],
+  ['FASTA', 'Each sequence starts with >. Only A, C, G, T; lower case becomes upper case. Length set by the model: Sei 4,096 bp, Beluga 2,000 bp, Seqweaver 1,000 bp.'],
+  ['Size', 'Up to 20,000 variants, 10,000 or fewer recommended. ExPecto’s docs say 10,000; the limit is on the facts to confirm.'],
+];
+
+const sequenceNotes = [
+  'The length follows the model and changes with it; nobody types 1,000 or 4,096.',
+  'A range must already be the right length; otherwise the field says how many bases to add or remove.',
+  'The header records position and assembly, so the job and its download show exactly what was cut.',
+  'In silico mutagenesis uses the same step to build its list of sequences.',
+  'Needs a sequence service on the HumanBase side. Until it exists, this option is hidden and the form works as it does today.',
+];
+
+const tools = [
+  ['Sei', 'Model Sei (DNA). VCF, BED or FASTA of 4,096 bp.'],
+  ['Beluga', 'Model Beluga (DNA). VCF, BED or FASTA of 2,000 bp.'],
+  ['Seqweaver', 'Model Seqweaver (RNA). VCF with a strand column, BED, or FASTA of 1,000 bp.'],
+  ['In silico mutagenesis', 'FASTA only, Beluga model, several sequences per job. The sequence and one of 2,002 features are chosen after the job, on the result.'],
+  ['ExPecto', 'VCF only, Beluga model. Keeps its three ways in above the form: Gene, Submit variants, SNP rsID.'],
+  ['NetWAS', 'Same file drop, title and email. Fields: data version (GIANT), GWAS file, tissue network, p-value threshold (0.01). The live examples list VEGAS, MAGMA and 2-column formats; the docs say VEGAS, FORGE or PSEQ, so the list is on the facts to confirm.'],
+];
+
+const words = [
+  ['File ready', '1,284 variants on chromosomes 1 to 22 and X, ready to run.'],
+  ['A line breaks a rule', 'Line 14: REF is N. Use A, C, G or T.'],
+  ['Many lines, same rule', '212 lines are past the end of their chromosome on GRCh37/hg19. If this file uses GRCh38/hg38, change the genome assembly.'],
+  ['Too many variants', 'This file has 26,400 variants; HumanBase runs up to 20,000 per job. Split it into two files.'],
+  ['Wrong input type', 'This looks like a BED file. Switch to Regions (BED) to use it.'],
+  ['Button, nothing to run', 'Add a file to run Seqweaver.'],
+  ['Started', 'Seqweaver started on 1,284 variants. Follow it on the job page; it’s saved in this browser.'],
+];
+
+const behavior = [
+  ['Nothing uploads early', 'The file is checked in the browser. Only Run sends it.'],
+  ['Changing a setting re-checks', 'Switching model, input type or assembly checks the file again, because the rules depend on them (strand for Seqweaver, FASTA length, chromosome length).'],
+  ['Paste and example', 'Paste uses the same check as a file. Use the example fills the form with the tool’s example and says so above the file.'],
+  ['The button counts', 'It names the tool and what will run, such as Run Seqweaver on 1,284 variants, and stays off until every line passes.'],
+  ['After Run', 'The job page opens straight away. The job, its title and its link are saved in this browser; email is optional and only sends the link.'],
+  ['Leaving early', 'Leaving with a checked file asks once whether to leave without starting the job.'],
+  ['Model choice', 'Sei, Beluga and Seqweaver share one form; changing the model keeps the file and title and changes the URL, so each tool keeps its own link.'],
+];
+
+const specs = [
+  ['form column', 'Form 848px and About panel 400px at 1440, 64px apart; fields 24px apart; About panel grey 50, 1px border, 12px radius'],
+  ['file drop', '640px minimum; empty and drag over 28px padding, 1.5px dashed border, solid 2px green on drag over, no tinted fill'],
+  ['problem lines', 'Grey 50 panel inside the drop; line numbers Atkinson Hyperlegible Mono 13; rules Lato 14; first 3 shown, the rest downloadable'],
+  ['segmented choices', 'Segmented control, medium; input type and source each get their own label above'],
+  ['run button', 'Primary, medium; label names the tool and the count; helper text beside it, Lato 14 grey'],
+];
+
+const demoExamples = {
+  vcf: '#CHROM\tPOS\tID\tREF\tALT\tSTRAND\nchr1\t1000\t.\tA\tG\t+\nchr2\t2000\t.\tC\tT\t-\nchrX\t3000\t.\tG\tA\t+',
+  bed: 'chr1\t100\t106\nchr2\t500\t520',
+  fasta: `>example placeholder bases, not real sequence\n${'ACGT'.repeat(250)}`,
+};
+
+const usage = `import { VariantJobForm } from '@humanbase/hb';
+import { VariantFileCheck } from '@humanbase/data';
+
+<VariantJobForm model="seqweaver" examples={examples} onRun={startJob} />
+
+new VariantFileCheck('vcf', 'seqweaver').check(text);
+// { count, problems: [{ line: 14, rule: 'REF is N. Use A, C, G or T.' }], summary }`;
+---
+
+<DocsLayout title="Job submission" description="One form for every variant tool: model, input type, a file checked in the browser, and a run button that says what will run.">
+  <Intro
+    lead="Sei, Beluga, Seqweaver, ExPecto and In silico mutagenesis share one form: choose a model, give it variants or sequences, and start a job. HumanBase checks the file before it is sent, so a job never fails an hour later because of line 14."
+    status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+  >
+    <KeyRules
+      rules={[
+        { title: 'One form, every variant tool', text: 'The same fields in the same order. A tool only hides what it doesn’t take, such as BED for ExPecto.' },
+        { title: 'Check before sending', text: 'The file is read in the browser first. Problems are shown by line, with the rule they break, before anything is uploaded.' },
+        { title: 'Say what happens next', text: 'The button says what will run. After it, the job page shows where results go: a link saved in this browser, and email if given.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="The variant form" lead="Seqweaver with a VCF that passed its check. Fields run top to bottom in the order people decide them: what model, what kind of input, which genome, then the file.">
+    <figure class="screen" inert>
+      <TopBar sections={productSections} current="Sequence analysis" jobs={productJobs} scrolled={false} />
+      <div class="screen-body">
+        <Breadcrumbs items={[{ label: 'Sequence analysis', href: '/sequence-analysis/' }, { label: 'Seqweaver' }]} />
+        <div class="screen-title">
+          <h3>Seqweaver</h3>
+          <p>Predict how variants change RNA-binding protein targets and post-transcriptional regulation.</p>
+        </div>
+        <div class="screen-columns">
+          <div class="form-column">
+            <div class="form-row">
+              <Select label="Model" options={models} defaultValue="seqweaver" hint="Sei and Beluga predict DNA effects." />
+              <Select label="Genome assembly" options={assemblies} defaultValue="hg19" hint="Coordinates in the file must match." />
+            </div>
+            <SegmentedControl label="What are you submitting?" segments={inputTypes} defaultValue="vcf" />
+            <SegmentedControl label="Add the file" segments={sources} defaultValue="upload" />
+            <FileDrop label="VCF file" hideLabel prompt="Drop a VCF file here, or" hint={dropHint} file={{ name: 'variants.vcf', size: 63488 }} result="1,284 variants on chromosomes 1 to 22 and X, ready to run" />
+            <Accordion size="compact">
+              <AccordionItem title="VCF rules for Seqweaver">
+                <p>Tab-separated: chromosome, position, ID, REF, ALT, then strand (+ or -). A header line is optional.</p>
+              </AccordionItem>
+            </Accordion>
+            <TextInput label="Job title (optional)" placeholder="Untitled" hint="Shown on the job page and in this browser’s job list." />
+            <TextInput label="Email (optional)" type="email" placeholder="name@institution.edu" hint="We’ll send a link when it finishes. The job is saved in this browser either way." />
+            <div class="run">
+              <Button>Run Seqweaver on 1,284 variants</Button>
+              <p>Starts a job; you can leave this page.</p>
+            </div>
+          </div>
+          <aside class="about">
+            <h4>About Seqweaver</h4>
+            <p>A deep learning framework for predicting RNA-binding protein target site dysregulation and RNA sequence variant effects.</p>
+            <Button variant="ghost" size="small">Read the Seqweaver documentation</Button>
+            <Button variant="ghost" size="small">Explore Seqweaver effects of gnomAD variants</Button>
+            <h5>Example files</h5>
+            <ul class="examples">
+              {
+                examples.map(([name, text]) => (
+                  <li>
+                    <span><strong>{name}</strong>{text}</span>
+                    <Button variant="ghost" size="small" icon="download">Download</Button>
+                  </li>
+                ))
+              }
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </figure>
+  </DocSection>
+
+  <DocSection title="Checking the file" lead="The file is read in the browser as soon as it’s dropped or pasted. The run button stays off until every line passes, and each problem names its line and the rule it breaks.">
+    <div class="check-states" inert>
+      <figure>
+        <figcaption>Before a file</figcaption>
+        <FileDrop label="VCF file, before a file" hideLabel prompt="Drop a VCF file here, or" hint={dropHint} />
+        <Button disabled>Run Seqweaver</Button>
+        <p>Add a file to run Seqweaver.</p>
+      </figure>
+      <figure>
+        <figcaption>With problems</figcaption>
+        <FileDrop
+          label="VCF file, with problems"
+          hideLabel
+          prompt="Drop a VCF file here, or"
+          file={{ name: 'variants.vcf', size: 63488 }}
+          problems={problems}
+          problemSummary="3 lines need fixing before this file can run"
+          onDownloadProblems={() => {}}
+        />
+        <Button disabled>Run Seqweaver on 1,281 variants</Button>
+        <p>Fix or remove the 3 lines to run. The other 1,281 are ready.</p>
+      </figure>
+    </div>
+    <DocTable caption="What the check looks for" columns={['Input', 'What the check looks for (today’s format rules, unchanged)']} widths={['240px']}>
+      {checks.map(([input, rules]) => <tr><th scope="row">{input}</th><td>{rules}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Getting a sequence from the genome" lead="New. FASTA input needs sequences of an exact length, so people leave for NCBI to cut them. Here they enter a position, and HumanBase cuts a sequence of the right length, centered on it.">
+    <div class="sequence">
+      <div class="sequence-form" inert>
+        <SegmentedControl label="What are you submitting?" segments={inputTypes} defaultValue="fasta" />
+        <SegmentedControl label="Add the sequences" segments={[...sources.slice(0, 2), { value: 'genome', label: 'From the genome' }, sources[2]!]} defaultValue="genome" />
+        <div class="position-row">
+          <TextInput label="Chromosome and position" defaultValue="chr2:113,594,867" hint="Or a range of exactly 1,000 bp, such as chr2:113,594,367-113,595,366" />
+          <Select label="Genome assembly" options={assemblies} defaultValue="hg19" hint="Same as the form" />
+        </div>
+        <p class="length"><Icon name="info" size={16} />1,000 bp, the length Seqweaver reads, with the position at its center.</p>
+        <div class="preview">
+          <p><strong>Preview, first 120 of 1,000 bases</strong><span>Placeholder bases, not real sequence</span></p>
+          <pre>&gt;chr2:113594367-113595366 GRCh37/hg19
+ACGTTGCAGGTCCATGACTTGCAATCGGATCCTAGGCTTACGATCGATTGCCAGTACGGTTAACCGTAGCTAGGCATTCGATGCCTAGTCAAGTCGATCCGTAGGCTAACGTTAGCAT…</pre>
+        </div>
+        <Button variant="secondary">Add this sequence</Button>
+        <div class="added">
+          <p class="added-title">2 sequences added</p>
+          <ul>
+            {
+              ['chr2:113594367-113595366', 'chr7:22766266-22767265'].map((range) => (
+                <li>
+                  <code>{range}</code>
+                  <span>1,000 bp</span>
+                  <RemoveButton aria-label={`Remove ${range}`} />
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <Button>Run Seqweaver on 2 sequences</Button>
+      </div>
+      <ul class="points">
+        {sequenceNotes.map((note) => <li>{note}</li>)}
+      </ul>
+    </div>
+  </DocSection>
+
+  <DocSection title="Other tools on this form" lead="Each tool keeps its own rules; the form only shows what that tool takes. Nothing here changes what a tool computes.">
+    <DocTable caption="What changes on the form for each tool" columns={['Tool', 'What changes on the form']} widths={['240px']}>
+      {tools.map(([tool, change]) => <tr><th scope="row">{tool}</th><td>{change}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Words" lead="Direct while someone is filling the form; more explanation when the same problem repeats (Voice and content).">
+    <DocTable caption="What the form says" columns={['Moment', 'What it says']} widths={['300px']}>
+      {words.map(([moment, says]) => <tr><th scope="row">{moment}</th><td>{says}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="What every job form does the same way.">
+    <DocTable caption="Job form behavior" columns={['Rule', 'Detail']} widths={['300px']}>
+      {behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Specs" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Job submission specs" columns={['Part', 'Value']} widths={['404px']}>
+      {specs.map(([part, value]) => <tr><th scope="row"><code>{part}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the form in code">
+    <ul>
+      <li><code>VariantFileCheck</code> in <code>@humanbase/data</code> applies the rules above and returns problems by line, in the page’s words. It never uploads anything.</li>
+      <li><code>VariantJobForm</code> in <code>@humanbase/hb</code> pairs it with <code>FileDrop</code>. Pass <code>onRun</code> to start the job; without it, as below, nothing is sent.</li>
+      <li>The example lines below are made up for this page; they aren’t real variants.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+    <div class="live">
+      <VariantJobForm client:visible model="seqweaver" examples={demoExamples} />
+    </div>
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .screen {
+    margin: 0;
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .screen :global(.top-bar) {
+    position: relative;
+  }
+
+  .screen-body {
+    display: grid;
+    gap: var(--space-6);
+    padding: var(--space-6) 61px 54px;
+  }
+
+  .screen-title {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .screen-title h3 {
+    font: var(--type-h2);
+    letter-spacing: var(--type-h2-tracking);
+  }
+
+  .screen-title p,
+  .run p,
+  .check-states p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .screen-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 813fr) minmax(0, 384fr);
+    gap: 61px;
+    align-items: start;
+  }
+
+  .form-column,
+  .sequence-form {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .form-row,
+  .position-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+
+  .position-row {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+
+  .run {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  .about {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+    padding: var(--space-6);
+    background: var(--surface-subtle);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .about h4 {
+    font: 700 17px/1.4 Lato, sans-serif;
+  }
+
+  .about h5 {
+    font: var(--type-label-sm);
+  }
+
+  .about > p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .examples {
+    display: grid;
+    gap: var(--space-2);
+    inline-size: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .examples li {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .examples span {
+    display: grid;
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .examples strong {
+    font: 700 13px/1.4 Lato, sans-serif;
+    color: var(--text-default);
+  }
+
+  .check-states {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  .check-states figure {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+    margin: 0;
+  }
+
+  .check-states figcaption {
+    font: 700 13px/1.4 Lato, sans-serif;
+    color: var(--text-secondary);
+  }
+
+  .check-states :global(.file-drop-field) {
+    inline-size: 100%;
+  }
+
+  .sequence {
+    display: grid;
+    grid-template-columns: minmax(0, 791fr) minmax(0, 423fr);
+    gap: 46px;
+    align-items: start;
+  }
+
+  .sequence-form {
+    padding: var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .sequence-form > :global(.button) {
+    justify-self: start;
+  }
+
+  .length {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .preview {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: var(--surface-subtle);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .preview p {
+    display: flex;
+    justify-content: space-between;
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .preview strong {
+    font: 700 12px/1.4 Lato, sans-serif;
+  }
+
+  .preview pre {
+    margin: 0;
+    font: var(--type-code-sm);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .added {
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .added-title {
+    padding: var(--space-3) var(--space-4);
+    font: var(--type-label-sm);
+    border-block-end: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .added ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .added li {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+    padding: 10px var(--space-3) 10px var(--space-4);
+  }
+
+  .added li + li {
+    border-block-start: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .added code {
+    flex: 1;
+    font: var(--type-code-sm);
+  }
+
+  .added span {
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .live {
+    padding: var(--space-6);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  @media (width < 64rem) {
+    .screen-columns,
+    .check-states,
+    .sequence,
+    .form-row,
+    .position-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
