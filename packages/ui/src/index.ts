@@ -23,3 +23,26 @@ export { ToastQueue, toastDuration, type ToastContent, type ToastEntry, type Toa
 export { Accordion, AccordionItem, UntilFound, type AccordionItemProps, type AccordionProps, type AccordionSize } from './Accordion/Accordion';
 export { Checkbox, type CheckboxProps } from './Checkbox/Checkbox';
 export { Disclosure, type DisclosureProps } from './Disclosure/Disclosure';
+export {
+  Cell,
+  HeaderCell,
+  ScoreCell,
+  SelectAllCell,
+  SelectCell,
+  SelectionBar,
+  Table,
+  TableMessage,
+  TableSkeleton,
+  TableToolbar,
+  useRowSelection,
+  useTableSort,
+  type CellProps,
+  type CellType,
+  type HeaderCellProps,
+  type SelectCellProps,
+  type SelectionState,
+  type SortDirection,
+  type TableDensity,
+  type TableProps,
+} from './Table/Table';
+export { ValueFormat } from './Table/ValueFormat';
