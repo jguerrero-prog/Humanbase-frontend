@@ -1,0 +1,152 @@
+.gene-match {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.gene-match-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  align-items: baseline;
+}
+
+.gene-match-header > :is(h2, h3, h4) {
+  font: 500 22px/1.3 Cabin, sans-serif;
+  color: var(--text-default);
+}
+
+.gene-match-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  padding: 0;
+  margin: 0;
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+  list-style: none;
+}
+
+.gene-match-counts li {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.gene-match-counts [data-tone="success"] .icon,
+.gene-match-status[data-status="matched"] .icon,
+.gene-match-status[data-status="alias"] .icon {
+  color: var(--status-success-fg);
+}
+
+.gene-match-counts [data-tone="warning"] .icon,
+.gene-match-status[data-status="choose"] {
+  color: var(--status-warning-fg);
+}
+
+.gene-match-counts [data-tone="error"] .icon,
+.gene-match-status[data-status="not-found"] {
+  color: var(--text-error);
+}
+
+.gene-match-download {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  margin-inline-start: auto;
+  font: var(--type-label-sm);
+  color: var(--text-link);
+}
+
+.gene-match-row > .table-cell {
+  block-size: auto;
+  padding-block: var(--space-3);
+  vertical-align: top;
+}
+
+.gene-match-term {
+  font: var(--type-body-sm);
+  color: var(--text-default);
+}
+
+.gene-match-summary {
+  display: grid;
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.gene-match-summary > strong {
+  font: var(--type-label-sm);
+  color: var(--text-default);
+}
+
+.gene-match-alias {
+  color: var(--text-default);
+}
+
+.gene-match-status {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  font: var(--type-label-sm);
+  color: var(--text-default);
+}
+
+.gene-match-actions {
+  text-align: end;
+  white-space: nowrap;
+}
+
+.gene-match-actions > * {
+  vertical-align: middle;
+}
+
+.gene-match-actions .remove-button {
+  inline-size: 32px;
+  block-size: 32px;
+  margin-inline-start: var(--space-1);
+  border: var(--border-width-1) solid var(--border-default);
+  border-radius: var(--radius-sm);
+}
+
+.gene-match-edit {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.gene-match-edit > .search-field-group {
+  flex: 0 1 615px;
+}
+
+.gene-match-fold > .table-cell {
+  block-size: auto;
+  padding-block: var(--space-3);
+}
+
+.gene-match-fold[data-folded] > .table-cell {
+  background: var(--surface-subtle);
+}
+
+.gene-match-fold-inner,
+.gene-match-fold-text {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.gene-match-fold-text {
+  flex: 1;
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+.gene-match-fold-text strong {
+  font: var(--type-label-sm);
+  color: var(--text-default);
+}
+
+.gene-match-reason {
+  font: var(--type-body-sm);
+  color: var(--text-on-brand);
+}

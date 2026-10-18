@@ -39,6 +39,7 @@ const pages = [
   'http://localhost:4322/guidelines/voice-and-content/',
   'http://localhost:4322/guidelines/empty-states/',
   'http://localhost:4322/guidelines/loading-and-job-status/',
+  'http://localhost:4322/ui-library/gene-search-and-matching/',
 ];
 
 for (const url of pages) {

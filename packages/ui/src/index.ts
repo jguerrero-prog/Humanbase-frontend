@@ -9,6 +9,9 @@ export { CodeTabs, type CodeExample, type CodeTabsProps } from './CodeBlock/Code
 export { FileDrop, fileSize, type ChosenFile, type FileDropProps, type FileProblemLine } from './FileDrop/FileDrop';
 export { Field, FieldError, type FieldProps, type FieldSize } from './Field/Field';
 export { GeneList, parseGeneList, type GeneListProps } from './GeneList/GeneList';
+export { GeneMatchList, statusLabels, type GeneCandidate, type GeneMatch, type MatchStatus } from './GeneMatch/GeneMatchList';
+export { GeneMatchSummary, type GeneMatchSummaryProps } from './GeneMatch/GeneMatchSummary';
+export { GeneMatchTable, type GeneMatchEdit, type GeneMatchTableProps } from './GeneMatch/GeneMatchTable';
 export { GeneTagInput, unknownGenesMessage, type GeneTagInputProps } from './GeneTagInput/GeneTagInput';
 export { Icon, iconNames, type IconName, type IconSize } from './Icon/Icon';
 export { ListNavigator, type NavigableOption } from './List/ListNavigator';
