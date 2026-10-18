@@ -8,6 +8,13 @@ import KeyList from '../../components/docs/KeyList.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import SizeCard from '../../components/docs/SizeCard.astro';
+import expecto from '../../assets/original-icons/expecto_fa-magic.svg?url';
+import gwas from '../../assets/original-icons/gwas-netwas_fa-list-ol.svg?url';
+import inSilico from '../../assets/original-icons/in-silico-mutagenesis_fa-th.svg?url';
+import modules from '../../assets/original-icons/modules_fa-certificate.svg?url';
+import networks from '../../assets/original-icons/networks_fa-connectdevelop.svg?url';
+import deepsea from '../../assets/original-icons/sei-and-beluga_deepsea_logo.svg?url';
+import seqweaver from '../../assets/original-icons/seqweaver_seqweaver-icon.svg?url';
 import featherReference from '../../data/feather-reference.json';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
@@ -33,6 +40,18 @@ const colorExamples = [
   { icon: 'arrow-right', label: 'Explore the network', title: 'On emerald', caption: 'White on the brand color', tone: 'brand' },
   { icon: 'alert-circle', label: 'Gene not found', title: 'Status', caption: 'Status 600, always with a word', tone: 'error' },
 ] as const;
+
+const originalIcons: { title: string; text: string; file: string; src?: string }[] = [
+  { title: 'Networks', src: networks, file: 'networks_fa-connectdevelop.svg', text: 'Font Awesome 4.7 “connectdevelop”, grey #444. A brand icon (Connect Develop’s logo).' },
+  { title: 'Modules', src: modules, file: 'modules_fa-certificate.svg', text: 'Font Awesome 4.7 “certificate”, grey #444' },
+  { title: 'Sei and Beluga', src: deepsea, file: 'sei-and-beluga_deepsea_logo.svg', text: 'HumanBase SVG of the DeepSEA whale; Sei and Beluga share it. The file also holds a small “DeepSEA” wordmark.' },
+  { title: 'Seqweaver', src: seqweaver, file: 'seqweaver_seqweaver-icon.svg', text: 'HumanBase SVG, blue #24A4D3; the file credits Stephen Plaster' },
+  { title: 'In silico mutagenesis', src: inSilico, file: 'in-silico-mutagenesis_fa-th.svg', text: 'Font Awesome 4.7 “th”, blue #24A4D3' },
+  { title: 'ExPecto', src: expecto, file: 'expecto_fa-magic.svg', text: 'Font Awesome 4.7 “magic”, blue #24A4D3' },
+  { title: 'ExPecto SC', file: 'expectosc_dendritic_cell.svg', text: 'HumanBase SVG of a dendritic cell, made with BioRender. Not shown here: BioRender’s terms don’t allow republishing its icons.' },
+  { title: 'GWAS (NetWAS)', src: gwas, file: 'gwas-netwas_fa-list-ol.svg', text: 'Font Awesome 4.7 “list-ol”, grey #444' },
+  { title: 'ASD Browser', file: 'No file', text: 'No icon in the live dropdown or menu' },
+];
 
 const usage = `import { Button, Icon } from '@humanbase/ui';
 
@@ -104,7 +123,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
     lead="Drawn for HumanBase on the same grid as the interface icons, with a lighter 1.5px stroke because they carry more detail. Network icons leave a small gap where links meet nodes, the same way the hero illustration does. Shown at 2x."
     spacing="loose"
   >
-    <ul class="science-grid">
+    <ul class="icon-cards">
       {
         scienceIcons.map((icon) => (
           <li>
@@ -242,6 +261,26 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
     />
   </DocSection>
 
+  <DocSection
+    title="Original icons"
+    lead="The icons beside each analysis in the live site’s Select an analysis dropdown and Analyses menu, extracted October 17, 2026, for reference. The redesign uses the HumanBase icons above. Five are Font Awesome 4.7 glyphs from the site’s icon font, in the colors the dropdown gives them; three are HumanBase’s own SVG files. Shown at 48px."
+    spacing="loose"
+  >
+    <ul class="icon-cards">
+      {
+        originalIcons.map((icon) => (
+          <li>
+            {icon.src ? <img src={icon.src} alt={`${icon.title} icon on the live site`} /> : <span class="icon-placeholder" />}
+            <h3>{icon.title}</h3>
+            <p>{icon.text}</p>
+            <code>{icon.file}</code>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="doc-note">Font Awesome 4.7 icons by Dave Gandy, SIL Open Font License 1.1. Seqweaver icon by Stephen Plaster from the Noun Project, CC BY 3.0. The DeepSEA logo belongs to HumanBase. Sources and licenses are listed in <code>apps/docs/src/assets/original-icons/ATTRIBUTION.md</code>.</p>
+  </DocSection>
+
   <NoteCard title="Using icons in Figma">
     <ul>
       <li>All 49 icons are components named “Icon / name” in the “Components: Icons” section, below the button components.</li>
@@ -308,7 +347,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
     stroke-linejoin: round;
   }
 
-  .science-grid {
+  .icon-cards {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: var(--space-6);
@@ -317,7 +356,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
     list-style: none;
   }
 
-  .science-grid li {
+  .icon-cards li {
     display: grid;
     gap: 14px;
     padding: 28px var(--space-6) var(--space-6);
@@ -325,21 +364,36 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
     border-radius: var(--radius-md);
   }
 
-  .science-grid :global(.science-icon) {
+  .icon-cards :global(.science-icon) {
     inline-size: var(--space-12);
     block-size: var(--space-12);
   }
 
-  .science-grid h3 {
+  .icon-cards h3 {
     font: var(--type-label);
   }
 
-  .science-grid p {
+  .icon-cards p {
     font: var(--type-body-sm);
     color: var(--text-muted);
   }
 
-  .science-grid code {
+  .icon-cards img {
+    inline-size: var(--space-12);
+    block-size: var(--space-12);
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .icon-placeholder {
+    inline-size: var(--space-12);
+    block-size: var(--space-12);
+    border: var(--border-width-1) solid var(--border-default);
+    border-radius: var(--radius-sm);
+  }
+
+  .icon-cards code {
+    overflow-wrap: anywhere;
     font: var(--type-code-sm);
     color: var(--text-secondary);
   }
@@ -491,7 +545,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
   }
 
   @media (width < 64rem) {
-    .science-grid {
+    .icon-cards {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 

@@ -5,7 +5,6 @@ export type IconSize = 16 | 20 | 24;
 
 interface IconDrawing {
   kind: 'interface' | 'science';
-  rounded?: boolean;
   paths: string[];
 }
 
@@ -26,7 +25,6 @@ interface IconProps {
 export function Icon({ name, size = 24, label, className }: IconProps) {
   const drawing = icons[name] as IconDrawing;
   const strokeWidth = (strokeInPixels[drawing.kind][size] * 24) / size;
-  const ends = drawing.rounded === false ? undefined : 'round';
 
   return (
     <svg
@@ -37,8 +35,8 @@ export function Icon({ name, size = 24, label, className }: IconProps) {
       fill="none"
       stroke="currentColor"
       strokeWidth={strokeWidth}
-      strokeLinecap={ends}
-      strokeLinejoin={ends}
+      strokeLinecap="round"
+      strokeLinejoin="round"
       role={label ? 'img' : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
