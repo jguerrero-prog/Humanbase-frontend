@@ -1,0 +1,23 @@
+.icon-button {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 36px;
+  block-size: 36px;
+  padding: 0;
+  color: var(--text-default);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--motion-duration-fast) var(--motion-easing-linear);
+}
+
+.icon-button:hover {
+  background: var(--surface-sunken);
+}
+
+.icon-button:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+  background: transparent;
+}

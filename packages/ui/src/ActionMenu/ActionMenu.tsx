@@ -7,6 +7,7 @@ import './ActionMenu.css';
 
 export interface ActionMenuItem {
   label: string;
+  description?: string;
   icon?: IconName;
   destructive?: boolean;
   disabled?: boolean;
@@ -19,10 +20,11 @@ export interface ActionMenuProps {
   items: readonly ActionMenuItem[];
   open?: boolean;
   defaultHighlight?: number;
+  size?: 'medium' | 'small';
   className?: string;
 }
 
-export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1, className }: ActionMenuProps) {
+export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1, size = 'medium', className }: ActionMenuProps) {
   const id = useId();
   const wrapper = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
@@ -90,7 +92,7 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
   };
 
   return (
-    <div ref={wrapper} className={['action-menu', className].filter(Boolean).join(' ')}>
+    <div ref={wrapper} className={['action-menu', size === 'small' && 'action-menu-small', className].filter(Boolean).join(' ')}>
       <button
         ref={button}
         type="button"
@@ -102,7 +104,7 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
         onClick={() => (open ? close() : openAt(navigator.first()))}
         onKeyDown={handleButtonKeys}
       >
-        <Icon name="more-horizontal" size={20} />
+        <Icon name="more-horizontal" size={size === 'small' ? 16 : 20} />
       </button>
       {open && (
         <MenuPanel className="action-menu-panel">
@@ -117,6 +119,7 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
                   role="menuitem"
                   tabIndex={-1}
                   label={item.label}
+                  description={item.description}
                   icon={item.icon}
                   disabled={item.disabled}
                   destructive={item.destructive}

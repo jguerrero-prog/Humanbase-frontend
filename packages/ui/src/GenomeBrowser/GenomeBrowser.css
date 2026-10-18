@@ -1,0 +1,116 @@
+.genome-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  border-block-end: var(--border-width-1) solid var(--border-subtle);
+}
+
+.genome-location {
+  display: grid;
+  gap: var(--space-1);
+  inline-size: 400px;
+}
+
+.genome-location-help {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.genome-location-help strong {
+  font-weight: 700;
+}
+
+.genome-location-error {
+  font-weight: 700;
+  color: var(--text-error);
+}
+
+.genome-zoom,
+.genome-actions {
+  display: flex;
+  gap: var(--space-1);
+  align-items: center;
+  min-block-size: 44px;
+}
+
+.genome-actions {
+  gap: var(--space-2);
+}
+
+.genome-next {
+  margin-inline-start: auto;
+}
+
+.track-header {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  justify-content: space-between;
+  inline-size: 220px;
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
+  background: var(--surface-subtle);
+}
+
+.track-header-text {
+  display: grid;
+  gap: var(--space-0-5);
+  min-inline-size: 0;
+}
+
+.track-header-name {
+  font: 700 13px/1.4 Lato, sans-serif;
+  color: var(--text-default);
+}
+
+.track-header-meta {
+  font: 400 12px/1.4 Lato, sans-serif;
+  color: var(--text-secondary);
+}
+
+.tracks-panel,
+.genome-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.tracks-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tracks-list li {
+  display: grid;
+  gap: var(--space-0-5);
+}
+
+.tracks-source {
+  padding-inline-start: 36px;
+  font: 400 12px/1.4 Lato, sans-serif;
+  color: var(--text-secondary);
+}
+
+.tracks-url {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.tracks-url > :first-child {
+  inline-size: 100%;
+}
+
+.tracks-note {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.genome-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
