@@ -10,3 +10,5 @@ export { SearchField, SuggestionsEmpty, SuggestionsLoading, type SearchFieldProp
 export { Select, type SelectOption, type SelectProps } from './Select/Select';
 export { Spinner } from './Spinner/Spinner';
 export { TextInput, type TextInputProps } from './TextInput/TextInput';
+export { RangeSlider, Slider, type RangeSliderProps, type SliderProps } from './Slider/Slider';
+export { SliderScale } from './Slider/SliderScale';

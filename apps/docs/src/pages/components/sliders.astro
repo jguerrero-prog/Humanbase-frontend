@@ -1,0 +1,486 @@
+---
+import { RangeSlider, Slider } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const confidence = { label: 'Minimum confidence', min: 0, max: 1, step: 0.01, defaultValue: 0.84 };
+const score = { label: 'Score', min: 0, max: 1, step: 0.01, defaultValue: [0.5, 1] as const };
+
+const findings = [
+  ['Arrow keys work, in steps of 0.01', 'Keeps that, and adds Shift+Arrow for steps of 0.1, Home and End.'],
+  ['No slider role and no label, so screen readers don’t announce what it is or what it sets', 'role="slider" on the thumb, named by the visible label: “Minimum confidence”.'],
+  ['Screen readers get the raw value 0.8434262366342233', 'aria-valuetext rounded like the label: “0.84”.'],
+  ['Only the browser’s default 1px focus outline', 'The system focus ring around the thumb.'],
+  ['The handle is 18px', 'A 20px thumb with a 44px touch area.'],
+  ['No way to type an exact value', 'A number field beside the label, kept in sync with the thumb.'],
+  ['25 Tab presses to reach the first slider', 'Filters sit right after the graph’s toolbar, and the skip link from the Navigation page shortens the path.'],
+];
+
+const anatomy = [
+  ['Label', 'Lato Bold 15. Says what is being set, with units if it has any.'],
+  ['Number field', '64px wide, 36px tall. Accepts typing; clamps to the range on blur.'],
+  ['Track', '4px, grey 300, 2px corners.'],
+  ['Fill', 'Emerald 600 from the start of the range to the thumb, so the chosen part is clear.'],
+  ['Thumb', '20px white circle with a 2px emerald ring; the touch area is 44px.'],
+  ['Ends', 'Min and max in Lato 13 grey 600.'],
+];
+
+const states = [
+  { title: 'Default', text: 'Light shadow under the thumb', props: {} },
+  { title: 'Hover', text: 'Emerald halo at 16%', props: { 'data-state': 'hover' as const } },
+  { title: 'Focus', text: 'System focus ring', props: { 'data-state': 'focus' as const } },
+  { title: 'Dragging', text: 'Halo at 24%, 3px ring', props: { 'data-state': 'dragging' as const } },
+  { title: 'Disabled', text: 'Grey track, fill and thumb; the field is read-only', props: { disabled: true } },
+];
+
+const uses = [
+  ['Slider', 'A continuous value with a known range, where people explore by watching the result change.'],
+  ['Range slider', 'A minimum and a maximum of the same value.'],
+  ['Number field with − and +', 'Small whole numbers, such as minimum module size (today’s stepper on the module page is right).'],
+  ['Select or segmented control', 'A handful of set choices, such as 10, 25 or 50 genes.'],
+];
+
+const behavior = [
+  ['Click on the track', 'Moves the thumb there. In a range slider, the nearer thumb moves.'],
+  ['Arrow keys', 'One step: 0.01 for confidence, 5 for genes. Up and Right increase.'],
+  ['Shift + Arrow, Page Up and Down', 'Ten steps at a time.'],
+  ['Home and End', 'Jump to the minimum or maximum.'],
+  ['Typing in the field', 'Applies on Enter or blur. Values outside the range snap to the nearest end and the field says so: “Set to 1, the maximum”.'],
+  ['Screen readers', 'Each thumb has role="slider", aria-valuemin, aria-valuemax and aria-valuetext with the rounded value; range thumbs are named “Score, low” and “Score, high”.'],
+  ['Motion', 'The thumb follows the pointer directly. Keyboard steps move it at once; nothing animates.'],
+];
+
+const specs = [
+  ['slider.track', '4px, grey 300 #D1D1D1, radius 2px; disabled grey 200'],
+  ['slider.fill', 'emerald 600 #11713C; disabled grey 400'],
+  ['slider.thumb', '20px, white, 2px emerald ring (3px while dragging), light shadow'],
+  ['slider.thumb.hover / dragging', 'emerald halo, 6px, at 16% / 24%'],
+  ['slider.thumb.focus', 'system focus ring'],
+  ['slider.touch-area', '44 × 44px around each thumb'],
+  ['slider.field', '64 × 36px, Lato 14, 1px grey 500, radius.sm 8px'],
+  ['slider.label / ends', 'Lato Bold 15 ink / Lato 13 grey 600'],
+  ['slider.width', 'fills its container; at least 240px'],
+];
+
+const usage = `import { RangeSlider, Slider } from '@humanbase/ui';
+
+<Slider label="Minimum confidence" min={0} max={1} step={0.01} defaultValue={0.84} onCommit={requery} />
+<Slider label="Genes shown" min={5} max={50} step={5} defaultValue={15} onCommit={requery} />
+<RangeSlider label="Score" min={0} max={1} step={0.01} defaultValue={[0.5, 1]} />`;
+---
+
+<DocsLayout title="Sliders" description="Single and range sliders with a number field: anatomy, states, behavior and accessibility.">
+  <Intro
+    lead="Sliders set a number within a range by dragging, such as the minimum confidence for edges or how many genes a network shows. In HumanBase they always come with a number field, because researchers often need an exact cutoff, not roughly two thirds of the way along."
+    status="Updated October 16, 2026 · Component: Slider (Single, Range)"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Drag or type', text: 'Every slider has a number field. Dragging and typing set the same value; each updates the other.' },
+        { title: 'Show the effect', text: 'Say what changed next to the result: “Showing 15 of 50 genes”, “108 edges at 0.84 or more”.' },
+        { title: 'Works without a mouse', text: 'A labeled slider role, arrow keys in sensible steps, and a visible focus ring on the thumb.' },
+      ]}
+    />
+  </Intro>
+
+  <section class="today" aria-labelledby="today-heading">
+    <h2 id="today-heading">The two sliders on the network view today (tested with Playwright, October 16, 2026)</h2>
+    <DocTable caption="Findings on today’s sliders" columns={['Finding', 'What the component does instead']} widths={['384px']}>
+      {findings.map(([finding, instead]) => <tr><td class="finding">{finding}</td><td>{instead}</td></tr>)}
+    </DocTable>
+  </section>
+
+  <DocSection title="Anatomy and states" lead="Label and number field above, the track below, the range’s ends under it. The thumb is the only thing that changes with state.">
+    <figure class="anatomy">
+      <div class="anatomy-specimen"><Slider {...confidence} /></div>
+      <ol class="anatomy-legend">
+        {anatomy.map(([title, text], index) => <li><span>{index + 1}</span><div><strong>{title}</strong><p>{text}</p></div></li>)}
+      </ol>
+      <figcaption class="visually-hidden">The parts of a slider, numbered.</figcaption>
+    </figure>
+    <ul class="states">
+      {
+        states.map((state) => (
+          <li>
+            <Slider {...confidence} {...state.props} />
+            <strong>{state.title}</strong>
+            <span>{state.text}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="doc-note">In Figma the Slider is drawn at 360px wide, so its thumb sits in the right place. In code it fills its container, at least 240px.</p>
+  </DocSection>
+
+  <DocSection title="Slider, range or number field" lead="Sliders suit continuous values where the rough position matters. Small whole numbers are easier to type.">
+    <div class="card-grid" style="--columns: 2">
+      <article class="type-card">
+        <h3>Single slider</h3>
+        <div class="type-specimen"><Slider {...confidence} /></div>
+        <p>One cutoff: minimum confidence for edges, from 0 to 1.</p>
+      </article>
+      <article class="type-card">
+        <h3>Range slider</h3>
+        <div class="type-specimen"><RangeSlider {...score} label="Score range" /></div>
+        <p>A band: scores from 0.50 to 1.00. Two thumbs that can’t cross; each has its own field.</p>
+      </article>
+    </div>
+    <DocTable caption="When to use a slider, a range slider or a field" columns={['Use', 'When']} widths={['284px']}>
+      {uses.map(([use, when]) => <tr><th scope="row">{use}</th><td>{when}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="In the network filters" lead="The two sliders under today’s network, redrawn with the component.">
+    <div class="pattern">
+      <section class="filters" aria-labelledby="filters-heading">
+        <h3 id="filters-heading">Network filters</h3>
+        <Slider {...confidence} />
+        <Slider label="Genes shown" min={5} max={50} step={5} defaultValue={15} />
+        <div class="result" role="status">
+          <strong>Showing 15 of 50 genes, 108 edges at 0.84 or more</strong>
+          <span>Updated when you release the thumb.</span>
+        </div>
+      </section>
+      <ul class="points">
+        <li>Labels say what is set, in plain words: “Minimum confidence”, not “Minimum interaction confidence: 0.84” with the value glued on.</li>
+        <li>“Genes shown” uses steps of 5, so the arrow keys move 5 at a time and the field rounds typed values to the nearest 5.</li>
+        <li>The graph updates when the thumb is released or the field loses focus, not on every pixel of a drag, because each change re-queries the network.</li>
+        <li>While it updates, the old graph stays in place, dimmed, and the result line says “Updating…”.</li>
+      </ul>
+    </div>
+  </DocSection>
+
+  <DocSection title="Behavior and accessibility" lead="Precise with a keyboard, forgiving with a mouse.">
+    <DocTable caption="How sliders behave" columns={['Input', 'Behavior']} widths={['324px']}>
+      {behavior.map(([input, does]) => <tr><th scope="row">{input}</th><td>{does}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <ul class="pairs">
+      <li class="pair pair-do">
+        <div class="pair-stage"><Slider {...confidence} /></div>
+        <h3>Do. Pair it with a number field</h3>
+        <p>People can set 0.84 exactly.</p>
+      </li>
+      <li class="pair pair-dont">
+        <figure class="pair-stage" aria-hidden="true">
+          <p class="mock-label">Minimum interaction confidence: 0.84</p>
+          <div class="mock-track"><span style="inline-size: 84%"></span></div>
+          <p class="mock-ends"><span>0</span><span>1</span></p>
+        </figure>
+        <h3>Don’t. Hide the value in the label</h3>
+        <p>“Minimum interaction confidence: 0.84” can’t be edited and changes width as you drag.</p>
+      </li>
+      <li class="pair pair-do">
+        <figure class="pair-stage" aria-hidden="true">
+          <p class="mock-label">Minimum module size</p>
+          <p class="mock-stepper"><span>−</span><span>8</span><span>+</span></p>
+        </figure>
+        <h3>Do. Use a field for small whole numbers</h3>
+        <p>Minimum module size from 2 to 20 is quicker to type.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage"><Slider label="Genes" min={10} max={50} step={5} defaultValue={25} /></div>
+        <h3>Don’t. Use a slider for a few set choices</h3>
+        <p>A slider for 10, 25 or 50 genes suggests every value in between is possible.</p>
+      </li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Slider tokens and values" columns={['Token', 'Value']} widths={['404px']}>
+      {specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the component in code">
+    <ul>
+      <li><code>Slider</code> and <code>RangeSlider</code> are built on native <code>&lt;input type="range"&gt;</code>, so the browser provides the slider role, arrow keys, Home and End. Shift+Arrow and Page Up and Down add ten steps.</li>
+      <li><code>onChange</code> runs while dragging; <code>onCommit</code> runs when the thumb is released, a key is let go, or the field applies a typed value. Use <code>onCommit</code> for anything that re-queries the network.</li>
+      <li>The number of decimals follows <code>step</code>: a step of 0.01 shows 0.84, a step of 5 shows 15.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .today {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6) 28px;
+    background: var(--status-info-bg);
+    border: var(--border-width-1) solid var(--status-info-border);
+    border-radius: var(--radius-md);
+  }
+
+  .today h2 {
+    font: var(--type-label);
+  }
+
+  .today .finding {
+    color: var(--text-default);
+  }
+
+  .anatomy {
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: var(--space-12);
+    margin: 0;
+    padding: var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .anatomy-legend {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .anatomy-legend li {
+    display: flex;
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  .anatomy-legend li > span {
+    flex: none;
+    padding: var(--space-0-5) 7px;
+    font: 700 12px/16px Lato, sans-serif;
+    color: var(--text-on-brand);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+  }
+
+  .anatomy-legend strong {
+    font: var(--docs-small-strong);
+  }
+
+  .anatomy-legend p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .states {
+    display: grid;
+    grid-template-columns: repeat(3, 360px);
+    gap: var(--space-10);
+    margin: 0;
+    padding: 28px;
+    list-style: none;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .states li {
+    display: grid;
+    gap: 10px;
+  }
+
+  .states strong {
+    font: var(--type-label-sm);
+  }
+
+  .states span {
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .doc-note {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .type-card {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: 28px;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .type-card h3 {
+    font: var(--docs-card-title);
+  }
+
+  .type-card p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .type-specimen,
+  .anatomy-specimen,
+  .pair-stage > :global(.slider) {
+    inline-size: 360px;
+  }
+
+  .pattern {
+    display: grid;
+    grid-template-columns: 440px minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .filters {
+    display: grid;
+    gap: var(--space-6);
+    padding: 28px var(--space-6);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .filters h3 {
+    font: var(--docs-card-title);
+  }
+
+  .result {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-3) 14px;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .result strong {
+    font: var(--type-label-sm);
+  }
+
+  .result span {
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .points {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .points li {
+    padding-inline-start: 13px;
+    font: var(--type-body);
+    color: var(--text-secondary);
+    border-inline-start: 3px solid var(--action-primary);
+  }
+
+  .pairs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pair {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+  }
+
+  .pair-stage {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: var(--space-6) var(--space-5);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .pair::after {
+    content: "";
+    order: 1;
+    block-size: var(--space-1);
+    background: currentcolor;
+  }
+
+  .pair h3,
+  .pair > p {
+    order: 2;
+  }
+
+  .pair-do {
+    color: var(--status-success-fg);
+  }
+
+  .pair-dont {
+    color: var(--status-error-fg);
+  }
+
+  .pair h3 {
+    font: var(--type-label);
+  }
+
+  .pair > p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .mock-label {
+    font: var(--docs-small-strong);
+    color: var(--text-default);
+  }
+
+  .mock-track {
+    inline-size: 340px;
+    block-size: 4px;
+    margin: 14px 10px;
+    background: var(--color-grey-300);
+    border-radius: 2px;
+  }
+
+  .mock-track span {
+    display: block;
+    block-size: 100%;
+    background: var(--action-primary);
+    border-radius: 2px;
+  }
+
+  .mock-ends {
+    display: flex;
+    justify-content: space-between;
+    inline-size: 360px;
+    padding: 0 var(--space-2);
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .mock-stepper {
+    display: flex;
+    inline-size: fit-content;
+    font: 700 15px/36px Lato, sans-serif;
+    color: var(--text-default);
+  }
+
+  .mock-stepper span {
+    inline-size: 36px;
+    text-align: center;
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-strong);
+  }
+
+  .mock-stepper span:nth-child(2) {
+    inline-size: 56px;
+    border-inline: 0;
+  }
+
+  @media (width < 64rem) {
+    .anatomy,
+    .states,
+    .pattern,
+    .pairs {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

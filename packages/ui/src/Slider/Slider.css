@@ -1,0 +1,158 @@
+.slider {
+  --thumb-ring: var(--border-selected);
+  --thumb-ring-width: 2px;
+  --thumb-shadow: var(--shadow-elevation-1);
+
+  display: grid;
+  gap: var(--space-1);
+  min-inline-size: 240px;
+}
+
+.slider-header {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.slider-label {
+  flex: 1;
+  font: var(--type-label);
+  font-size: 15px;
+  color: var(--text-default);
+}
+
+.slider-field {
+  inline-size: 64px;
+  block-size: 36px;
+  padding: 0;
+  font: var(--type-body-sm);
+  text-align: center;
+  color: var(--text-default);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-strong);
+  border-radius: var(--radius-sm);
+}
+
+.slider-field:focus-visible {
+  border-color: var(--border-selected);
+  outline: var(--border-width-1) solid var(--border-selected);
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+.slider-to {
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+.slider-track {
+  --track: var(--color-grey-300);
+  --fill: var(--action-primary);
+
+  position: relative;
+  block-size: 32px;
+  margin-inline: 10px;
+  background: linear-gradient(to right, var(--track) var(--low), var(--fill) var(--low), var(--fill) var(--high), var(--track) var(--high)) 0 50% / 100% 4px no-repeat;
+  border-radius: 2px;
+}
+
+.slider-track input {
+  position: absolute;
+  inset: -6px -10px;
+  inline-size: calc(100% + 20px);
+  block-size: 44px;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+
+.slider-range .slider-track input {
+  pointer-events: none;
+}
+
+.slider-track input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.slider-track input::-webkit-slider-thumb {
+  inline-size: 20px;
+  block-size: 20px;
+  background: var(--surface-page);
+  border: var(--thumb-ring-width) solid var(--thumb-ring);
+  border-radius: 50%;
+  box-shadow: var(--thumb-shadow);
+  appearance: none;
+  pointer-events: auto;
+}
+
+.slider-track input::-moz-range-thumb {
+  box-sizing: border-box;
+  inline-size: 20px;
+  block-size: 20px;
+  background: var(--surface-page);
+  border: var(--thumb-ring-width) solid var(--thumb-ring);
+  border-radius: 50%;
+  box-shadow: var(--thumb-shadow);
+  pointer-events: auto;
+}
+
+.slider-track input:hover,
+.slider-track input[data-thumb="hover"] {
+  --thumb-shadow: var(--shadow-elevation-1), 0 0 0 6px color-mix(in srgb, var(--action-primary) 16%, transparent);
+}
+
+.slider-track input:focus-visible,
+.slider-track input[data-thumb="focus"] {
+  --thumb-shadow: var(--shadow-focus-ring);
+}
+
+.slider-track input:active,
+.slider-track input[data-thumb="dragging"] {
+  --thumb-ring-width: 3px;
+  --thumb-shadow: var(--shadow-focus-ring), 0 0 0 6px color-mix(in srgb, var(--action-primary) 24%, transparent);
+}
+
+.slider-ends {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 var(--space-2);
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.slider-note {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.slider-note:empty {
+  display: none;
+}
+
+.slider[data-disabled] {
+  --thumb-ring: var(--color-grey-400);
+  --thumb-shadow: none;
+}
+
+.slider[data-disabled] .slider-label,
+.slider[data-disabled] .slider-to,
+.slider[data-disabled] .slider-ends {
+  color: var(--text-disabled);
+}
+
+.slider[data-disabled] .slider-field {
+  color: var(--text-disabled);
+  background: var(--surface-subtle);
+  border-color: var(--border-subtle);
+}
+
+.slider[data-disabled] .slider-track {
+  --track: var(--color-grey-200);
+  --fill: var(--color-grey-400);
+}
+
+.slider[data-disabled] .slider-track input {
+  cursor: not-allowed;
+}
