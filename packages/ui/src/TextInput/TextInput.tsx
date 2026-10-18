@@ -2,16 +2,16 @@ import type { InputHTMLAttributes } from 'react';
 import { Field, type FieldSize } from '../Field/Field';
 import './TextInput.css';
 
-export interface TextInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id'> {
+export interface TextInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label: string;
   hint?: string;
   error?: string;
   size?: FieldSize;
 }
 
-export function TextInput({ label, hint, error, size = 'medium', disabled, className, type = 'text', ...rest }: TextInputProps) {
+export function TextInput({ label, id, hint, error, size = 'medium', disabled, className, type = 'text', ...rest }: TextInputProps) {
   return (
-    <Field label={label} hint={hint} error={error} size={size} disabled={disabled}>
+    <Field label={label} id={id} hint={hint} error={error} size={size} disabled={disabled}>
       {(control) => (
         <input
           {...rest}
