@@ -38,6 +38,7 @@ const pages = [
   'http://localhost:4322/guidelines/errors-and-validation/',
   'http://localhost:4322/guidelines/voice-and-content/',
   'http://localhost:4322/guidelines/empty-states/',
+  'http://localhost:4322/guidelines/loading-and-job-status/',
 ];
 
 for (const url of pages) {

@@ -2,6 +2,7 @@ import { useId, useState, type ComponentProps, type CSSProperties, type ReactNod
 import { Checkbox } from '../Checkbox/Checkbox';
 import { EmptyState } from '../EmptyState/EmptyState';
 import { Icon, type IconName } from '../Icon/Icon';
+import { Skeleton } from '../Skeleton/Skeleton';
 import { ValueFormat } from './ValueFormat';
 import './Table.css';
 
@@ -158,7 +159,7 @@ export function TableSkeleton({ columns, rows = 4 }: { columns: number; rows?: n
     <tr key={row} className="table-skeleton-row" aria-hidden="true">
       {Array.from({ length: columns }, (_, column) => (
         <td key={column} className={classes('table-cell', column === columns - 1 && 'table-cell-number')}>
-          <span className="table-skeleton" style={{ inlineSize: column === columns - 1 ? '120px' : skeletonWidths[row % skeletonWidths.length] }} />
+          <Skeleton width={column === columns - 1 ? '120px' : (skeletonWidths[row % skeletonWidths.length] ?? '64px')} />
         </td>
       ))}
     </tr>

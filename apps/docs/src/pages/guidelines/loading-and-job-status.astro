@@ -1,0 +1,443 @@
+---
+import { Breadcrumbs, Button, ContextLabel, HeaderCell, JobSteps, Skeleton, Spinner, StatusBadge, Table, TableSkeleton, Tabs, TopBar, type JobStep } from '@humanbase/ui';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import Pair from '../../components/docs/Pair.astro';
+import PairList from '../../components/docs/PairList.astro';
+import { jobs, sections } from '../../data/humanbase-sections';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const today = [
+  [
+    'Opening the IL1B gene page',
+    'At 1.5 seconds the previous page is still on screen with no sign anything is happening; the network then appears and drifts for 11+ seconds.',
+    'The gene header and tabs appear at once, the graph area shows a still skeleton, and the settled graph fades in.',
+  ],
+  [
+    'A submitted job',
+    'The status page says “running”, checking every 10 seconds, but never asks for the queue position the API already returns.',
+    '“Queued, 3rd in line” or “Running for 4 minutes”, with steps and what happens next.',
+  ],
+  ['NetWAS results', 'Arrive only by email as a text file.', 'A results page linked from job history and the toast, with email as an extra.'],
+];
+
+const timeline = [
+  ['0 to 100ms', 'Instant', 'The control responds: pressed, dimmed or opened.'],
+  ['100 to 300ms', 'Nothing extra', 'Most answers arrive here; showing a spinner would only flash.'],
+  ['300ms on', 'Indicator', 'Skeleton or spinner appears, and stays at least 500ms.'],
+  ['10s on', 'Words', 'Say what’s happening: “Still building the network…”.'],
+];
+
+const indicators = [
+  ['A button’s action', 'The button’s Loading state; it keeps its width', 'Submit job, Download'],
+  ['A new page or tab', 'Known parts at once, still skeletons for the rest', 'Gene page: name and tabs, then graph and table'],
+  ['A table or section refreshing', 'Old content dims to 60%, with “Updating…” in its header', 'Changing tissue or a slider'],
+  ['Suggestions', 'A one-line “Searching genes…” row in the panel', 'Gene search'],
+  ['A long job', 'The job status page, the Jobs count and toasts', 'NetWAS, Sei, ExPecto'],
+  ['Never', 'Full-page spinners or overlays that hide everything', 'Anywhere'],
+];
+
+const pageNotes = [
+  'The title, breadcrumbs and tabs come from the link, so they never wait for the data.',
+  'The graph area keeps its final size, so nothing below it jumps when it arrives.',
+  'The spinner is 16px and grey, inside the area that is loading; “Building the network…” says what it’s waiting for.',
+  'After 10 seconds the words become specific, and the table can arrive before the graph.',
+];
+
+const submitted: JobStep = { label: 'Submitted', detail: 'Oct 16, 10:42 AM', state: 'done' };
+const jobsShown = [
+  {
+    name: 'Queued',
+    badge: { status: 'queued', text: 'Queued' },
+    steps: [submitted, { label: 'Queued', detail: 'Waiting to start, checked 8 seconds ago', state: 'current' }, { label: 'Running', state: 'upcoming' }, { label: 'Results ready', state: 'upcoming' }],
+    nextTitle: 'You can leave this page',
+    next: 'Jobs in the top bar shows its progress from any page. If you gave an email address, the results link is sent there too.',
+  },
+  {
+    name: 'Running',
+    badge: { status: 'running', text: 'Running for 4 minutes' },
+    steps: [
+      submitted,
+      { label: 'Queued', detail: 'Started after 2 minutes', state: 'done' },
+      { label: 'Running', detail: '4 minutes so far. NetWAS jobs usually take 10 to 30 minutes.', state: 'current' },
+      { label: 'Results ready', state: 'upcoming' },
+    ],
+    nextTitle: 'You can leave this page',
+    next: 'When it finishes, a toast appears on whatever HumanBase page you’re on.',
+  },
+  {
+    name: 'Failed',
+    badge: { status: 'failed', text: 'Failed: no p-value column' },
+    steps: [submitted, { label: 'Queued', detail: 'Started after 2 minutes', state: 'done' }, { label: 'Running', detail: 'Stopped after 40 seconds', state: 'stopped' }],
+    nextTitle: 'What to do',
+    next: 'The file needs a column named p or pvalue. Fix the file and submit again; your settings are kept.',
+  },
+] as const satisfies readonly { name: string; badge: { status: 'queued' | 'running' | 'failed'; text: string }; steps: readonly JobStep[]; nextTitle: string; next: string }[];
+
+const jobNotes = [
+  'Steps are text first: a check for done, a 2px ink ring for the current step, a thin grey ring for steps to come. No progress bar, since the cluster gives no percentage.',
+  '“NetWAS jobs usually take 10 to 30 minutes” is a placeholder range; confirm real numbers from past jobs with Julien before launch.',
+  'When a job finishes while the page is open, the page becomes the results page and says so at the top; the browser tab title changes too.',
+  'Cancelling isn’t offered: the job service doesn’t support it yet. When it does, Cancel job asks to confirm with the Destructive dialog from Modals and drawers.',
+];
+
+const updates = [
+  ['Checking', 'Every 10 seconds, as today, and ask the API for queue_position. Slow to every 30 seconds after 10 minutes.'],
+  ['What updates', 'Only the status text and steps; the page doesn’t jump or reload. “Checked 8 seconds ago” shows it’s alive.'],
+  ['Announcements', 'Status changes use a polite live region: “Now running”. Finished and Failed are also shown as toasts.'],
+  ['Browser tab', 'The title starts with the status, such as “Queued, 3rd · BMI GWAS · HumanBase”, so people can watch from another tab.'],
+  ['Reduced motion', 'Nothing in the steps animates. Spinners elsewhere follow the Motion page.'],
+  ['Loading regions', 'aria-busy="true" on the area that is loading, with its words read once, not repeated.'],
+];
+
+const writing = [
+  ['Say what it’s waiting for', 'Building the network…', 'Loading…'],
+  ['Give the place in line', 'Queued, 3rd in line', 'Your job is being processed'],
+  ['Say how long so far', 'Running for 4 minutes', 'Please wait'],
+  ['Let people leave', 'You can leave this page', 'Do not close this window!'],
+];
+
+---
+
+<DocsLayout title="Loading and job status" description="How HumanBase handles short waits while pages load and long waits while jobs run.">
+  <Intro
+    lead="HumanBase waits in two very different ways: a second or two while a network or table loads, and minutes to hours while a NetWAS or Sei job runs on the cluster. Short waits should feel calm and show what’s coming; long ones should say where the job is and let people leave."
+    status="Updated October 16, 2026 · Usage guideline · Timing from the Motion page; status words from Badges and tags"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Answer within 100ms', text: 'Every click shows a response at once, even if the result takes longer: a pressed button, a dimmed table.' },
+        { title: 'Show what you know', text: 'Put the gene name, tabs and table headers on screen right away; only the parts still loading wait.' },
+        { title: 'Progress, not just motion', text: 'Long jobs say their place in line and how long they’ve run. A spinner alone never stands in for a status.' },
+      ]}
+    />
+  </Intro>
+
+  <section class="today" aria-labelledby="today-heading">
+    <h2 id="today-heading">What HumanBase does today (audit and Playwright captures)</h2>
+    <DocTable caption="What HumanBase does today" columns={['Moment', 'Today', 'With this guideline']} widths={['300px', '500px']}>
+      {
+        today.map(([moment, now, next]) => (
+          <tr>
+            <th scope="row">{moment}</th>
+            <td>{now}</td>
+            <td>{next}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </section>
+
+  <DocSection title="Timing" lead="From the Motion page. Fast answers appear with no indicator at all; slow ones never flicker.">
+    <ol class="timeline">
+      {
+        timeline.map(([range, name, text]) => (
+          <li>
+            <span class="timeline-range">{range}</span>
+            <h3>{name}</h3>
+            <p>{text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </DocSection>
+
+  <DocSection title="Which indicator" lead="Match the indicator to what is loading.">
+    <DocTable caption="Which indicator" columns={['What’s loading', 'Indicator', 'Example']} widths={['300px', '500px']}>
+      {
+        indicators.map(([what, indicator, example]) => (
+          <tr>
+            <th scope="row">{what}</th>
+            <td>{indicator}</td>
+            <td>{example}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection
+    title="A page loading"
+    lead="The IL1B page at 400ms. Everything known from the link is real; only the graph and table wait. Skeletons are still grey blocks, never a shimmer."
+  >
+    <div class="screen">
+      <TopBar sections={sections} current="Network analysis" jobs={jobs} scrolled={false} />
+      <div class="screen-header">
+        <Breadcrumbs items={[{ label: 'Networks', href: '#a-page-loading' }, { label: 'IL1B in blood vessel' }]} />
+        <p class="screen-title">IL1B in blood vessel</p>
+        <Tabs
+          label="IL1B sections"
+          value="network"
+          tabs={[
+            { value: 'network', label: 'Network' },
+            { value: 'genes', label: 'Genes' },
+            { value: 'terms', label: 'Enriched terms' },
+            { value: 'evidence', label: 'Evidence' },
+          ]}
+        />
+      </div>
+      <div class="screen-body">
+        <div class="graph-loading" aria-busy="true">
+          <p><Spinner size={16} /> Building the network…</p>
+        </div>
+        <Table caption="Related genes, loading" busy>
+          <thead>
+            <tr>
+              <HeaderCell>Gene</HeaderCell>
+              <HeaderCell align="end">Score</HeaderCell>
+            </tr>
+          </thead>
+          <tbody>
+            <TableSkeleton columns={2} rows={5} />
+          </tbody>
+        </Table>
+      </div>
+    </div>
+    <ul class="points">{pageNotes.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="The job status page" lead="Where the job is, what happens next, and permission to leave. It updates in place; nothing needs a reload.">
+    <div class="job-pages">
+      {
+        jobsShown.map((job) => (
+          <article class="job-page" aria-label={`${job.name} job`}>
+            <Breadcrumbs items={[{ label: 'Jobs', href: '#the-job-status-page' }, { label: 'BMI GWAS, adipose tissue' }]} />
+            <p class="job-title">BMI GWAS, adipose tissue</p>
+            <StatusBadge status={job.badge.status}>{job.badge.text}</StatusBadge>
+            <JobSteps label="Job progress" steps={job.steps} />
+            <div class="job-next">
+              <p class="job-next-title">{job.nextTitle}</p>
+              <p>{job.next}</p>
+            </div>
+            <div class="job-details">
+              <ContextLabel name="Tool" value="NetWAS" />
+              <ContextLabel name="Tissue network" value="adipose tissue, GIANT" />
+              <ContextLabel name="File" value="bmi_gwas_2012.txt" />
+            </div>
+            <div class="job-actions">
+              {job.name === 'Failed' ? (
+                <>
+                  <Button variant="secondary" size="small" tabIndex={-1}>Edit and resubmit</Button>
+                  <Button variant="ghost" size="small" tabIndex={-1}>See file format</Button>
+                </>
+              ) : (
+                <Button variant="ghost" size="small" tabIndex={-1}>Copy link</Button>
+              )}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+    <ul class="points">{jobNotes.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Updates and accessibility" lead="Keep checking quietly; speak up only when something changes.">
+    <DocTable caption="Updates and accessibility" columns={['Rule', 'Detail']} widths={['300px']}>
+      {
+        updates.map(([rule, detail]) => (
+          <tr>
+            <th scope="row">{rule}</th>
+            <td>{detail}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Writing while people wait" lead="Say what’s happening and what they can do, in the job’s own terms.">
+    <DocTable caption="Writing while people wait" columns={['Guideline', 'Write', 'Not']} widths={['360px', '420px']}>
+      {
+        writing.map(([guideline, write, not]) => (
+          <tr>
+            <th scope="row">{guideline}</th>
+            <td class="write-yes">{write}</td>
+            <td class="write-no">{not}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <PairList>
+      <Pair kind="do" title="Do. Status in words" text="The place in line answers “is it working?”." mock>
+        <StatusBadge status="queued">Queued, 3rd in line</StatusBadge>
+      </Pair>
+      <Pair kind="dont" title="Don’t. A spinner on its own" text="After a minute, a spinning circle says nothing about progress." mock>
+        <div class="stack"><Spinner size={20} /><span>Running…</span></div>
+      </Pair>
+      <Pair kind="do" title="Do. Still skeletons in place" text="Blocks where content will be; nothing moves." mock>
+        <div class="stack"><Skeleton width="180px" /><Skeleton width="140px" /><Skeleton width="160px" /></div>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Shimmer or full-page overlays" text="A sweeping shine or a dark overlay with a spinner hides the page and adds motion." mock>
+        <span class="shimmer" />
+      </Pair>
+    </PairList>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .today {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6) 28px;
+    background: var(--status-info-bg);
+    border: var(--border-width-1) solid var(--status-info-border);
+    border-radius: var(--radius-md);
+  }
+
+  .today h2 {
+    font: var(--type-label);
+  }
+
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    list-style: none;
+    border-radius: var(--radius-md);
+  }
+
+  .timeline li {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: var(--space-5);
+  }
+
+  .timeline li:nth-child(1) {
+    background: var(--surface-page);
+  }
+
+  .timeline li:nth-child(2) {
+    background: var(--surface-subtle);
+  }
+
+  .timeline li:nth-child(3) {
+    background: var(--surface-sunken);
+  }
+
+  .timeline li:nth-child(4) {
+    background: var(--color-grey-200);
+  }
+
+  .timeline-range {
+    font: var(--type-code-sm);
+    color: var(--text-muted);
+  }
+
+  .timeline h3 {
+    font: var(--type-label);
+  }
+
+  .timeline p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .screen {
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .screen-header {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6) var(--space-10) 0;
+  }
+
+  .screen-title {
+    font: var(--type-h2);
+    letter-spacing: var(--type-h2-tracking);
+  }
+
+  .screen-body {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    padding: var(--space-6) var(--space-10) var(--space-8);
+  }
+
+  .graph-loading {
+    min-block-size: 300px;
+    padding: var(--space-5);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .graph-loading p,
+  .stack {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .stack {
+    flex-direction: column;
+  }
+
+  .job-pages {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .job-page {
+    display: grid;
+    gap: var(--space-5);
+    justify-items: start;
+    padding: 28px;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .job-title {
+    font: 500 26px/1.2 Cabin, sans-serif;
+  }
+
+  .job-next {
+    display: grid;
+    gap: var(--space-1);
+    justify-self: stretch;
+    padding: 14px var(--space-4);
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .job-next-title {
+    font: var(--type-label-sm);
+    color: var(--text-default);
+  }
+
+  .job-details,
+  .job-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .shimmer {
+    inline-size: 200px;
+    block-size: 60px;
+    background: linear-gradient(90deg, var(--surface-sunken), var(--surface-page), var(--surface-sunken));
+    border-radius: var(--radius-sm);
+  }
+
+  @media (width < 64rem) {
+    .timeline,
+    .screen-body,
+    .job-pages {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

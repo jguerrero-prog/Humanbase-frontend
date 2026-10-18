@@ -51,7 +51,7 @@ export const navigation: NavSection[] = [
       { label: 'Data visualization', href: '/guidelines/data-visualization/' },
       { label: 'Errors and validation', href: '/guidelines/errors-and-validation/' },
       { label: 'Empty states', href: '/guidelines/empty-states/' },
-      { label: 'Loading and job status' },
+      { label: 'Loading and job status', href: '/guidelines/loading-and-job-status/' },
     ],
   },
   {
