@@ -1,0 +1,176 @@
+---
+import { flattenTokens } from '@humanbase/tokens/catalog';
+import effects from '@humanbase/tokens/src/effects.tokens.json';
+import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import { Button, TextInput } from '@humanbase/ui';
+import DocSection from '../../components/docs/DocSection.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { displayValue, shadowSummary } from '../../tokenDisplay';
+
+const radiusUses: Record<string, string> = {
+  none: 'Tables, full-bleed bars',
+  '2xs': 'Bars, focus inside cells',
+  xs: 'Badges, checkboxes, tags',
+  sm: 'Buttons, fields, menus',
+  md: 'Cards, panels, tooltips',
+  lg: 'Modals, drawers',
+  xl: 'Hero media',
+  full: 'Pills, avatars, toggles',
+};
+
+const borders = [
+  { width: '1', color: 'border/default', use: 'Cards, fields, tables, dividers' },
+  { width: '2', color: 'border/selected', use: 'Selected card or row, error field' },
+];
+
+const elevationUses = ['Hovered card, sticky table header', 'Menus, dropdowns, tooltips', 'Drawers, popovers with forms', 'Modals'];
+
+const radii = flattenTokens(primitives.radius, ['radius']).map((entry) => ({ entry, step: entry.path.at(-1) ?? '' }));
+const widths = flattenTokens(primitives['border-width'], ['border-width']);
+const levels = flattenTokens(effects.elevation, ['elevation']).filter(({ path }) => path.at(-1) !== '0');
+---
+
+<DocsLayout title="Radius and elevation tokens" description="Radius variables, border widths, elevation levels and the focus ring.">
+  <Intro
+    lead="Eight radius variables, two border widths and five effect styles: four elevation levels and the focus ring. They replace the one-off corners and shadows that were in the components."
+    status="Updated October 16, 2026 · Tokens · Every sample on this page uses its variable or style"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Radius follows size', text: 'Small controls use 4px or 8px, cards 12px, large panels 16px. Pills and avatars use full.' },
+        { title: 'Raise only what floats', text: 'Cards sit flat with a border. Shadows are for menus, tooltips, drawers and modals.' },
+        { title: 'Focus is a ring, not a shadow', text: 'focus/ring is a 2px white gap and a 2px near-black ring (focus/ring, grey 900), so it shows on any background.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Radius" lead="Each square’s corners are bound to its variable.">
+    <ul class="token-samples radius-samples">
+      {
+        radii.map(({ entry, step }) => (
+          <li>
+            <span class="radius-sample" style={`border-radius: var(${entry.cssVar})`} />
+            <code>{entry.path.join('/')}</code>
+            <span class="sample-value">{displayValue(entry)}</span>
+            <span>{radiusUses[step] ?? entry.token.$description}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Border widths" lead="Two widths. 1px for every border; 2px only for a selected item or an error field, so state never depends on color alone.">
+    <ul class="token-samples border-samples">
+      {
+        widths.map((entry, index) => {
+          const border = borders[index];
+          return (
+            border && (
+              <li>
+                <span class="border-sample" style={`border: var(${entry.cssVar}) solid var(--${border.color.replace('/', '-')})`} />
+                <code>
+                  {entry.path.join('/')} · {displayValue(entry)} · {border.color}
+                </code>
+                <span>{border.use}</span>
+              </li>
+            )
+          );
+        })
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Elevation" lead="Four levels. Each card uses its effect style. Every shadow is two layers of near-black at low opacity.">
+    <ul class="elevation-stage">
+      {
+        levels.map((entry, index) => (
+          <li class="elevation-sample" style={`box-shadow: var(--shadow-${entry.path.join('-')})`}>
+            <code>{entry.path.join('/')}</code>
+            <span class="sample-value">{shadowSummary(entry)}</span>
+            <span>{elevationUses[index]}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Focus ring" lead="focus/ring is an effect style: a 2px white spread, then a 4px spread in focus/ring (grey 900), which leaves a 2px dark ring. It shows only for keyboard focus.">
+    <div class="focus-stage">
+      <Button data-state="focus" tabIndex={-1}>Submit job</Button>
+      <TextInput label="Gene" placeholder="Find a gene" data-state="focus" tabIndex={-1} />
+    </div>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .token-samples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .token-samples li {
+    display: grid;
+    gap: var(--space-2);
+    font: var(--type-caption);
+    color: var(--text-default);
+  }
+
+  .radius-samples li {
+    inline-size: 150px;
+  }
+
+  .radius-sample {
+    block-size: 108px;
+    background: var(--color-emerald-50);
+    border: var(--border-width-1) solid var(--color-emerald-300);
+  }
+
+  .sample-value {
+    color: var(--text-secondary);
+  }
+
+  .border-sample {
+    display: block;
+    inline-size: 307px;
+    block-size: 77px;
+    background: var(--surface-page);
+    border-radius: var(--radius-md);
+  }
+
+  .elevation-stage {
+    display: flex;
+    gap: var(--space-10);
+    margin: 0;
+    padding: var(--space-10);
+    list-style: none;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .elevation-sample {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    inline-size: 259px;
+    padding: var(--space-6);
+    font: var(--type-caption);
+    background: var(--surface-page);
+    border-radius: var(--radius-md);
+  }
+
+  .focus-stage {
+    display: flex;
+    gap: var(--space-10);
+    align-items: end;
+    inline-size: fit-content;
+    padding: var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+</style>

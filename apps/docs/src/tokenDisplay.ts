@@ -21,6 +21,11 @@ const channels = (hex: string) => [1, 3, 5].map((start) => parseInt(hex.slice(st
 /** A color written the way the Figma tables write it: hex, or "rgba(26,26,26,.06)" when it has an alpha. */
 export const displayColor = ({ hex, alpha }: ColorValue) => (alpha === undefined ? hex : `rgba(${channels(hex)},${alpha.toFixed(2).replace(/^0/, '')})`);
 
+/** A shadow in Figma's short form, such as "y 1, blur 2, 6% + y 2, blur 6, 6%". */
+export function shadowSummary({ token: { $value } }: TokenEntry): string {
+  return ($value as ShadowLayer[]).map((l) => `y ${l.offsetY.value}, blur ${l.blur.value}, ${Math.round((l.color.alpha ?? 1) * 100)}%`).join(' + ');
+}
+
 /** A raw token value written the way designers read it, such as "0 1px 2px rgba(26,26,26,.06)". */
 export function displayValue({ token: { $type, $value } }: TokenEntry): string {
   if ($type === 'color') return displayColor($value as ColorValue);

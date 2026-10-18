@@ -7,6 +7,7 @@ const pages = [
   'http://localhost:4322/tokens/color/',
   'http://localhost:4322/tokens/typography/',
   'http://localhost:4322/tokens/spacing/',
+  'http://localhost:4322/tokens/radius-and-elevation/',
   'http://localhost:4322/components/buttons/',
   'http://localhost:4322/foundations/typography/',
   'http://localhost:4322/foundations/color-palette/',
