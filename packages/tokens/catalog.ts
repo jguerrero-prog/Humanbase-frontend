@@ -10,7 +10,7 @@ export interface TokenEntry {
   token: Token;
 }
 
-interface TokenGroup {
+export interface TokenGroup {
   [key: string]: TokenGroup | Token | string;
 }
 

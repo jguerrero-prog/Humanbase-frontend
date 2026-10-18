@@ -132,6 +132,19 @@
         "hex": "#11713C",
         "alpha": 0.1608
       }
+    },
+    "ghost-selected": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0667,
+          0.4431,
+          0.2353
+        ],
+        "hex": "#11713C",
+        "alpha": 0.2392
+      }
     }
   },
   "overlay": {
@@ -159,6 +172,19 @@
         ],
         "hex": "#FFFFFF",
         "alpha": 0.2
+      }
+    },
+    "on-brand-selected": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          1,
+          1,
+          1
+        ],
+        "hex": "#FFFFFF",
+        "alpha": 0.3216
       }
     }
   },

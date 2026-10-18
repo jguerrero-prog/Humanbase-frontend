@@ -140,8 +140,10 @@
   --action-destructive-pressed: var(--color-error-900);
   --action-ghost-hover: #11713C14;
   --action-ghost-pressed: #11713C29;
+  --action-ghost-selected: #11713C3D;
   --overlay-on-brand-hover: #FFFFFF1F;
   --overlay-on-brand-open: #FFFFFF33;
+  --overlay-on-brand-selected: #FFFFFF52;
   --focus-ring: var(--color-grey-900);
   --data-highlight: var(--color-mint-300);
   --status-error-bg: var(--color-error-50);
