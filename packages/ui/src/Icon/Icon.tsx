@@ -1,7 +1,7 @@
 import icons from './icons.json';
 
 export type IconName = keyof typeof icons;
-export type IconSize = 16 | 20 | 24;
+export type IconSize = 12 | 14 | 16 | 20 | 24;
 
 interface IconDrawing {
   kind: 'interface' | 'science';
@@ -9,8 +9,8 @@ interface IconDrawing {
 }
 
 const strokeInPixels: Record<IconDrawing['kind'], Record<IconSize, number>> = {
-  interface: { 16: 1.5, 20: 1.75, 24: 2 },
-  science: { 16: 1.25, 20: 1.25, 24: 1.5 },
+  interface: { 12: 1.25, 14: 1.5, 16: 1.5, 20: 1.75, 24: 2 },
+  science: { 12: 1, 14: 1.25, 16: 1.25, 20: 1.25, 24: 1.5 },
 };
 
 export const iconNames = Object.keys(icons) as IconName[];

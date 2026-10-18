@@ -1,0 +1,65 @@
+.tag {
+  display: inline-flex;
+  flex: none;
+  gap: var(--space-0-5);
+  align-items: center;
+  block-size: 32px;
+  padding: 0 var(--space-1) 0 var(--space-3);
+  font: var(--type-label-sm);
+  line-height: 20px;
+  color: var(--text-default);
+  white-space: nowrap;
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-default);
+  border-radius: var(--radius-sm);
+}
+
+.tag:hover,
+.tag[data-state="hover"] {
+  border-color: var(--border-strong);
+}
+
+.tag:has(:focus-visible),
+.tag[data-selected],
+.tag[data-state="focus"] {
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.tag[data-invalid] {
+  gap: var(--space-1);
+  padding-inline-start: var(--space-2);
+  color: var(--status-error-fg);
+  border: 1.5px solid var(--border-error);
+}
+
+.tag[data-disabled] {
+  padding-inline-end: var(--space-3);
+  color: var(--text-disabled);
+  background: var(--surface-subtle);
+  border-color: var(--border-subtle);
+}
+
+.remove-button {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  inline-size: 24px;
+  block-size: 24px;
+  padding: 0;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+}
+
+.remove-button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.remove-button:hover,
+.tag[data-state="hover"] .remove-button {
+  color: var(--text-default);
+  background: var(--surface-sunken);
+}

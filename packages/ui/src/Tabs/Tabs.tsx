@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from 'react';
+import { Badge } from '../Badge/Badge';
 import { useControlled } from '../hooks/useControlled';
 import { ListNavigator } from '../List/ListNavigator';
 import './Tabs.css';
@@ -108,7 +109,9 @@ export function Tabs({ label, tabs, value, defaultValue, onChange, children, cla
                 {tab.count !== undefined && (
                   <>
                     {' '}
-                    <span className="tab-count">{tab.count}</span>
+                    <Badge tone="count" size="small" className="tab-count">
+                      {tab.count}
+                    </Badge>
                   </>
                 )}
               </button>

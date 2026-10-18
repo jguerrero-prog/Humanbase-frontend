@@ -89,14 +89,6 @@
   background: none;
 }
 
-.tab-count {
-  padding: 0 6px;
-  font: 700 12px/18px Lato, sans-serif;
-  color: var(--text-secondary);
-  background: var(--surface-sunken);
-  border-radius: var(--radius-xs);
-}
-
 .tab[aria-selected="true"] .tab-count {
   color: var(--color-emerald-700);
   background: var(--color-emerald-50);
