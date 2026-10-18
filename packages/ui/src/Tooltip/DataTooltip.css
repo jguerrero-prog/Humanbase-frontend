@@ -1,0 +1,56 @@
+.data-tooltip {
+  display: grid;
+  gap: var(--space-2);
+  inline-size: 240px;
+  padding: var(--space-3);
+  color: var(--text-on-brand);
+  background: var(--surface-inverse);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-elevation-2);
+}
+
+.data-tooltip-placed {
+  position: absolute;
+  z-index: var(--z-tooltip);
+  inset-block-start: var(--data-tooltip-y);
+  inset-inline-start: var(--data-tooltip-x);
+  pointer-events: none;
+}
+
+.data-tooltip-title {
+  font: var(--type-label-sm);
+}
+
+.data-tooltip-subtitle {
+  margin-block-start: calc(var(--space-1) * -1);
+  font: var(--type-caption);
+  color: var(--color-grey-300);
+}
+
+.data-tooltip-rows {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+}
+
+.data-tooltip-rows div {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+
+.data-tooltip-rows dt {
+  font: var(--type-caption);
+  color: var(--color-grey-300);
+}
+
+.data-tooltip-rows dd {
+  margin: 0;
+  font: var(--type-label-sm);
+  text-align: end;
+}
+
+.data-tooltip-hint {
+  font: var(--type-caption);
+  color: var(--color-grey-400);
+}
