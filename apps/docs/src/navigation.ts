@@ -64,7 +64,7 @@ export const navigation: NavSection[] = [
       { label: 'Tabs and segmented controls', href: '/components/tabs-and-segmented-controls/' },
       { label: 'Accordions' },
       { label: 'Tables' },
-      { label: 'Alerts and toasts' },
+      { label: 'Alerts and toasts', href: '/components/alerts-and-toasts/' },
       { label: 'Modals and drawers' },
       { label: 'Tooltips' },
       { label: 'Navigation and breadcrumbs' },

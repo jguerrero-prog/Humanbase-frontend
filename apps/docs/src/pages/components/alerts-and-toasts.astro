@@ -1,0 +1,538 @@
+---
+import { Alert, Banner, Select, Toast, type AlertProps, type ToastProps } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const act = (label: string) => ({ label, onSelect: () => {} });
+
+const which = [
+  ['Field error', 'A problem with one field in a form.', 'Until fixed', 'Gene list: “Enter at least 20 genes.” See Text inputs.'],
+  ['Inline alert', 'Something about one section or form that people should read or fix.', 'Until fixed or dismissed', 'Upload has no p-value column. Viewing an older data version.'],
+  ['Toast', 'A short confirmation of something people just did, or a background task finishing.', '6s or more, or until dismissed', '“NetWAS job submitted.” “Link copied.”'],
+  ['Banner', 'The state of the whole product, shown on every page.', 'Until dismissed or resolved', 'Scheduled maintenance. Job submission paused.'],
+  ['Dialog', 'A decision people must make before continuing.', 'Until answered', '“Delete this job?” See Modals and drawers.'],
+];
+
+const mage = { title: 'MAGE is now the default network version', body: '289 networks from 7,463 datasets. Earlier results still use GIANT v1.' };
+const fileError = { title: 'This file has no p-value column', body: 'NetWAS needs a column named p or pvalue. Check the file and upload it again.' };
+const olderData = { title: 'You are viewing GIANT v1 results', body: 'These networks are from 2015. MAGE has newer data for this query.' };
+
+const alertTypes: { label: string; props: AlertProps; body: string }[] = [
+  { label: 'Info', props: { tone: 'info', title: mage.title, action: act('What changed') }, body: mage.body },
+  { label: 'Success', props: { tone: 'success', title: 'Genes added to your query', action: act('View query') }, body: 'IL1R1 and ICAM1 were added. The network will update when you search.' },
+  { label: 'Warning', props: { tone: 'warning', title: olderData.title, action: act('Switch to MAGE') }, body: olderData.body },
+  { label: 'Error', props: { tone: 'error', title: fileError.title, action: act('See file format') }, body: fileError.body },
+];
+
+const alertOptions: { label: string; props: AlertProps; body?: string }[] = [
+  { label: 'Body only', props: {}, body: 'Results include 25,825 genes. Scores below 0.1 are hidden.' },
+  { label: 'Title only', props: { title: mage.title } },
+  { label: 'With action', props: { title: mage.title, action: act('What changed') }, body: mage.body },
+  { label: 'Dismissible', props: { title: mage.title, dismissible: true }, body: mage.body },
+];
+
+const toastTypes: { label: string; text: string; props: ToastProps }[] = [
+  { label: 'Success', text: 'Confirms an action, with a link to the result', props: { tone: 'success', message: 'NetWAS job submitted', action: act('View job') } },
+  { label: 'Info', text: 'A neutral update with nothing to do', props: { tone: 'info', message: 'Link copied' } },
+  { label: 'Warning', text: 'Done, with something to watch out for', props: { tone: 'warning', message: 'Results use GIANT v1', action: act('Switch') } },
+  { label: 'Error', text: 'A background task failed. Stays until dismissed.', props: { tone: 'error', message: 'Couldn’t download results', action: act('Try again') } },
+  { label: 'Loading', text: 'A task in progress; becomes success or error', props: { tone: 'loading', message: 'Preparing download…' } },
+];
+
+const placement = [
+  'Bottom left, 24px from the edges, above the sidebar. This keeps them clear of the graph controls and zoom buttons on the right.',
+  'Newest at the bottom. At most 3 at once; older ones leave when a fourth arrives.',
+  'On phones they span the width with 16px margins, above the bottom of the screen.',
+  'Toasts never cover a dialog’s buttons; while a dialog is open, they wait.',
+];
+
+const toastTiming = [
+  ['Success or info, no action', '6 seconds, plus 1 second for every 20 words. Pauses while hovered or focused.'],
+  ['With an action, like View job or Undo', 'Until dismissed, or until people leave the page. People may need longer than 6 seconds to reach it.'],
+  ['Error', 'Until dismissed. It also appears in job history, so it can be found later.'],
+  ['Loading', 'Until the task ends, then turns into a success or error toast in place.'],
+  ['Motion', 'Arrives with a fade and 8px rise over 200ms; leaves with a 150ms fade. Fade only with reduced motion.'],
+];
+
+const lifecycle: { step: string; text: string; props: ToastProps }[] = [
+  { step: '1. Submit', text: 'Replaces itself when the upload finishes', props: { tone: 'loading', message: 'Submitting NetWAS job…' } },
+  { step: '2. Submitted', text: 'Stays until dismissed because it has an action', props: { tone: 'success', message: 'NetWAS job submitted', action: act('View job') } },
+  { step: '3. Ready, on another page', text: 'Arrives wherever people are in HumanBase', props: { tone: 'success', message: 'BMI GWAS results are ready', action: act('Open') } },
+  { step: 'Or: failed', text: 'Stays until dismissed; also listed in job history', props: { tone: 'error', message: 'NetWAS job failed', action: act('See why') } },
+];
+
+const accessibility = [
+  ['Live regions', 'Toasts and success alerts use role="status", read when people pause. Errors use role="alert", read at once.'],
+  ['Focus stays put', 'Toasts never take focus. A field error or blocking alert receives focus only after a submit that failed.'],
+  ['Reachable actions', 'Every toast action is also available elsewhere, such as View job in job history, so nobody has to race a timer.'],
+  ['Timing', 'Toasts pause while hovered or focused, and actions keep them open, meeting WCAG 2.2.1 Timing Adjustable.'],
+  ['Dismiss button', 'An icon button labeled “Dismiss”, 32px, reachable by keyboard. Escape dismisses the newest toast when focus is inside it.'],
+];
+
+const contrast = [
+  { tone: 'info', title: 'Info', lines: ['Icon #175CD3: 5.57:1', 'Body #4A4A4A: 8.25:1', 'Icon on white toast: 5.99:1'] },
+  { tone: 'success', title: 'Success', lines: ['Icon #067647: 5.40:1', 'Body #4A4A4A: 8.40:1', 'Icon on white toast: 5.69:1'] },
+  { tone: 'warning', title: 'Warning', lines: ['Icon #B54708: 5.20:1', 'Body #4A4A4A: 8.49:1', 'Icon on white toast: 5.43:1'] },
+  { tone: 'error', title: 'Error', lines: ['Icon #B42318: 6.05:1', 'Body #4A4A4A: 8.15:1', 'Icon on white toast: 6.57:1'] },
+];
+
+const writing = [
+  ['Name the problem', 'This file has no p-value column', 'Invalid input'],
+  ['Say how to fix it', 'NetWAS needs a column named p or pvalue.', 'Please try again.'],
+  ['Confirm in past tense', 'NetWAS job submitted', 'Your job has been successfully submitted!'],
+  ['Keep the person’s data safe', 'Results you already have are safe.', 'An error occurred.'],
+  ['No blame, no jokes', 'Couldn’t download results', 'Oops! Something went wrong'],
+  ['Use the real name', 'BMI GWAS results are ready', 'Job 48213 complete'],
+];
+
+const specs = [
+  ['alert.padding / gap / radius', '16px (12px right) / 12px / radius.md 12px'],
+  ['alert.border', '1px status border, such as #FECDCA for error'],
+  ['alert.title / body', 'Lato Bold 15/20 ink / Lato 15/22 grey 600'],
+  ['alert.action', 'Lato Bold 15 ink, underlined'],
+  ['toast.width', '400px desktop; full width minus 16px margins on phones'],
+  ['toast.surface', 'white, 1px border.subtle, elevation 3, radius.md 12px'],
+  ['toast.height', '52px minimum; message wraps to two lines at most'],
+  ['toast.position', 'bottom left, 24px from the edges; max 3; z.toast 500'],
+  ['toast.action', 'Lato Bold 15 emerald 600, underlined'],
+  ['banner.height', '52px minimum, full width, under the top bar'],
+  ['banner.border', '1px status border on the bottom edge only'],
+  ['status.info', '#EFF8FF fill, #B2DDFF border, #175CD3 icon'],
+  ['status.success', '#ECFDF3 fill, #ABEFC6 border, #067647 icon'],
+  ['status.warning', '#FFFAEB fill, #FEDF89 border, #B54708 icon'],
+  ['status.error', '#FEF3F2 fill, #FECDCA border, #B42318 icon'],
+  ['icon', '20px, 1.75px stroke: info, check-circle, alert-triangle, alert-circle'],
+];
+
+const usage = `import { Alert, Banner, ToastQueue, ToastRegion } from '@humanbase/ui';
+
+const toasts = new ToastQueue();
+<ToastRegion queue={toasts} />
+
+const id = toasts.show({ tone: 'loading', message: 'Submitting NetWAS job…' });
+toasts.update(id, { tone: 'success', message: 'NetWAS job submitted', action: { label: 'View job', href: jobUrl } });
+
+<Alert tone="error" title="This file has no p-value column" action={{ label: 'See file format', href: '#format' }}>
+  NetWAS needs a column named p or pvalue.
+</Alert>
+<Banner tone="warning">Scheduled maintenance Saturday, October 24, 9 to 11 AM ET.</Banner>`;
+---
+
+<DocsLayout title="Alerts and toasts" description="Inline alerts, toasts and banners: which to use, timing, placement, accessibility and writing.">
+  <Intro
+    lead="Messages tell people what happened and what to do next. HumanBase has four kinds, from a quiet toast that confirms a job was submitted to a banner that pauses job submission for everyone. Choosing the right one depends on how urgent the message is and how long it needs to stay."
+    status="Updated October 16, 2026 · Components: Alert, Toast, Banner · Timing from the Motion page"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Say what happened', text: 'Lead with the result in plain words, then what to do. “This file has no p-value column”, not “Error 422”.' },
+        { title: 'Errors stay put', text: 'Anything people must fix stays on screen next to the problem. Toasts that disappear only confirm things that went well.' },
+        { title: 'Icon, word and color', text: 'Each type has its own icon and a title that names it. Color helps, but never carries the meaning alone.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Which message to use" lead="From most local to most global.">
+    <DocTable caption="Which message to use" columns={['Message', 'Use for', 'Stays', 'HumanBase example']} widths={['224px', '444px', '244px']}>
+      {which.map(([message, use, stays, example]) => <tr><th scope="row">{message}</th><td>{use}</td><td>{stays}</td><td>{example}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Inline alerts" lead="Sit inside the page, at the top of the section they are about. A tinted fill, a full 1px border, an icon and a bold title.">
+    <ul class="stage stage-two">
+      {alertTypes.map(({ label, props, body }) => <li><h3>{label}</h3><Alert {...props}>{body}</Alert></li>)}
+    </ul>
+    <ul class="stage stage-two">
+      {alertOptions.map(({ label, props, body }) => <li><h3>{label}</h3><Alert {...props}>{body}</Alert></li>)}
+    </ul>
+    <p class="doc-note">Errors and warnings that block a task are never dismissible; they go away when the problem is fixed. Info and success alerts can be dismissed.</p>
+  </DocSection>
+
+  <DocSection title="Toasts" lead="White, elevation 3, 400px wide. They confirm without interrupting, so they never take focus.">
+    <ul class="stage stage-three">
+      {toastTypes.map(({ label, text, props }) => <li><h3>{label}</h3><Toast {...props} /><p>{text}</p></li>)}
+    </ul>
+    <div class="placement">
+      <figure class="screen">
+        <div class="screen-mock" inert>
+          <span class="screen-bar"></span>
+          <span class="screen-side"></span>
+          <span class="screen-graph"></span>
+          <span class="screen-controls"></span>
+          <ol class="screen-toasts">
+            <li><Toast tone="success" message="NetWAS job submitted" action={act('View job')} /></li>
+            <li><Toast tone="info" message="Link copied" /></li>
+          </ol>
+        </div>
+        <figcaption class="visually-hidden">Two toasts stacked at the bottom left of a results page, clear of the graph controls on the right.</figcaption>
+      </figure>
+      <ul class="points">{placement.map((point) => <li>{point}</li>)}</ul>
+    </div>
+    <DocTable caption="How long toasts stay" columns={['Toast', 'Stays on screen']} widths={['304px']}>
+      {toastTiming.map(([toast, stays]) => <tr><th scope="row">{toast}</th><td>{stays}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Banners" lead="Full width, directly under the top bar, on every page. Only one at a time, for news that affects everyone.">
+    <div class="stage stage-stack">
+      <Banner tone="info" action={act('Learn more')}>HumanBase works best on a larger screen. Some views are limited on phones.</Banner>
+      <Banner tone="warning" action={act('Details')}>Scheduled maintenance Saturday, October 24, 9 to 11 AM ET. Running jobs will continue.</Banner>
+      <Banner tone="error" action={act('Status page')}>Job submission is paused while we fix a server problem. Results you already have are safe.</Banner>
+    </div>
+    <p class="doc-note">The Info banner replaces the phone overlay found in the audit, which blocked the whole site and couldn’t be dismissed. Error banners can’t be dismissed until the problem is fixed.</p>
+  </DocSection>
+
+  <DocSection title="HumanBase patterns" lead="Messages in context, including the moments the audit found people left without feedback." spacing="loose">
+    <div class="patterns">
+      <article class="pattern-card">
+        <p class="pattern-label">NetWAS job form: upload problem</p>
+        <h3>Submit a NetWAS job</h3>
+        <Alert tone="error" title={fileError.title} action={act('See file format')}>{fileError.body}</Alert>
+        <p class="file"><span>bmi_gwas_2012.txt</span><span>2.4 MB</span></p>
+        <Select label="Tissue network" hint="Pick the tissue closest to your study." defaultValue="blood-vessel" options={[{ value: 'blood-vessel', label: 'Blood vessel' }]} />
+        <p class="pattern-note">The alert sits above the file it is about. Submit stays enabled; pressing it moves focus to the alert.</p>
+      </article>
+      <article class="pattern-card">
+        <p class="pattern-label">Results: older data version</p>
+        <h3>IL1B in blood vessel</h3>
+        <Alert tone="warning" title={olderData.title} action={act('Switch to MAGE')} dismissible>{olderData.body}</Alert>
+        <div class="graph" role="img" aria-label="Network graph placeholder"></div>
+        <p class="pattern-note">A warning, not an error: the results are valid, just older. It can be dismissed, and the choice is remembered for this query.</p>
+      </article>
+    </div>
+    <section class="lifecycle" aria-labelledby="lifecycle-heading">
+      <h3 id="lifecycle-heading">A job from submit to results</h3>
+      <p class="lifecycle-lead">Today the status page only says “running”. Toasts and the job page together keep people informed, even when they browse elsewhere while the job runs.</p>
+      <ol class="stage stage-four">
+        {lifecycle.map(({ step, text, props }) => <li><h4>{step}</h4><Toast {...props} /><p>{text}</p></li>)}
+      </ol>
+    </section>
+  </DocSection>
+
+  <DocSection title="Accessibility" lead="Screen readers hear every message without losing their place.">
+    <DocTable caption="Accessibility rules for messages" columns={['Rule', 'Detail']} widths={['324px']}>
+      {accessibility.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+    <ul class="contrast">
+      {
+        contrast.map(({ tone, title, lines }) => (
+          <li class={`contrast-${tone}`}>
+            <h3>{title}</h3>
+            {lines.map((line) => <code>{line}</code>)}
+          </li>
+        ))
+      }
+    </ul>
+    <p class="doc-note">All text passes 4.5:1 and every icon passes 3:1 on its background. The pale borders are decorative; the fill and icon identify the message.</p>
+  </DocSection>
+
+  <DocSection title="Writing messages" lead="Say what happened, then what to do. Keep toasts to one line.">
+    <DocTable caption="Writing messages" columns={['Guideline', 'Write', 'Not']} widths={['344px', '404px']}>
+      {writing.map(([guideline, write, not]) => <tr><th scope="row">{guideline}</th><td class="write-yes">{write}</td><td class="write-no">{not}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <ul class="pairs">
+      <li class="pair pair-do">
+        <div class="pair-stage"><Alert tone="error" title={fileError.title}>NetWAS needs a column named p or pvalue.</Alert></div>
+        <h3>Do. Keep errors next to the problem</h3>
+        <p>An inline alert stays until the file is fixed.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage"><Toast tone="error" message="Invalid file format" /></div>
+        <h3>Don’t. Put a fixable error in a toast</h3>
+        <p>It disappears before people can read and act on it.</p>
+      </li>
+      <li class="pair pair-do">
+        <div class="pair-stage"><Alert tone="warning" title={olderData.title} /></div>
+        <h3>Do. Mark the type with icon and title</h3>
+        <p>The icon and words carry the meaning; the fill supports it.</p>
+      </li>
+      <li class="pair pair-dont">
+        <figure class="pair-stage" aria-hidden="true">
+          <p class="mock-edge">You are viewing GIANT v1 results</p>
+        </figure>
+        <h3>Don’t. Rely on a colored edge</h3>
+        <p>A colored stripe alone doesn’t say what kind of message it is.</p>
+      </li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Alert, toast and banner tokens and values" columns={['Token', 'Value']} widths={['404px']}>
+      {specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the components in code">
+    <ul>
+      <li><code>Alert</code>, <code>Toast</code> and <code>Banner</code> share one message frame, so the icon, colors and Dismiss button are the same everywhere.</li>
+      <li>Render one <code>ToastRegion</code> per page and send toasts through its <code>ToastQueue</code>. The queue keeps the newest three and announces each new message in a live region; errors are announced at once.</li>
+      <li><code>update</code> turns a loading toast into its result in place. Toasts without an action time out after 6 seconds plus 1 for every 20 words, and pause while hovered or focused.</li>
+      <li>Actions take an <code>href</code> for links or <code>onSelect</code> for buttons. Alerts are not dismissible unless you pass <code>dismissible</code>; error banners never are.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .stage {
+    display: grid;
+    gap: var(--space-6);
+    margin: 0;
+    padding: var(--space-10);
+    list-style: none;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .stage-two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stage-three {
+    grid-template-columns: repeat(3, 400px);
+  }
+
+  .stage-four {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: var(--space-8);
+  }
+
+  .stage-stack {
+    gap: var(--space-4);
+  }
+
+  .stage li {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+
+  .stage h3 {
+    font: 700 13px/18px Lato, sans-serif;
+    color: var(--text-muted);
+  }
+
+  .stage h4 {
+    font: var(--type-label-sm);
+  }
+
+  .stage li > p,
+  .pattern-note {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .doc-note {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .placement {
+    display: grid;
+    grid-template-columns: 720px minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .screen {
+    margin: 0;
+  }
+
+  .screen-mock {
+    position: relative;
+    block-size: 420px;
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .screen-mock span {
+    position: absolute;
+    display: block;
+  }
+
+  .screen-bar {
+    inset: 0 0 auto;
+    block-size: 48px;
+    background: var(--action-primary);
+  }
+
+  .screen-side {
+    inset: 48px auto 0 0;
+    inline-size: 160px;
+    background: var(--surface-subtle);
+  }
+
+  .screen-graph {
+    inset-block-start: 72px;
+    inset-inline-start: 190px;
+    inline-size: 500px;
+    block-size: 250px;
+    background: var(--surface-sunken);
+    border-radius: var(--radius-sm);
+  }
+
+  .screen-controls {
+    inset-block-start: 84px;
+    inset-inline-start: 642px;
+    inline-size: 36px;
+    block-size: 108px;
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .screen-toasts {
+    position: absolute;
+    inset-block-end: 20px;
+    inset-inline-start: var(--space-6);
+    display: grid;
+    gap: var(--space-2);
+    inline-size: 360px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .patterns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .pattern-card {
+    display: grid;
+    gap: var(--space-4);
+    padding: 28px;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .pattern-label {
+    font: 700 13px/18px Lato, sans-serif;
+    color: var(--text-muted);
+  }
+
+  .pattern-card h3,
+  .lifecycle h3 {
+    font: 600 22px/1.3 Cabin, sans-serif;
+  }
+
+  .file {
+    display: flex;
+    justify-content: space-between;
+    padding: 52px var(--space-4);
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .file span:first-child {
+    font: var(--type-code);
+    font-size: 14px;
+    color: var(--text-default);
+  }
+
+  .graph {
+    block-size: 150px;
+    background: var(--surface-sunken);
+    border-radius: var(--radius-sm);
+  }
+
+  .lifecycle {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .lifecycle-lead {
+    max-inline-size: 920px;
+    font: var(--type-body);
+    color: var(--text-secondary);
+  }
+
+  .contrast {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contrast li {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    border: var(--border-width-1) solid;
+    border-radius: var(--radius-md);
+  }
+
+  .contrast h3 {
+    margin-block-end: var(--space-1);
+    font: var(--docs-small-strong);
+  }
+
+  .contrast code {
+    font: var(--type-code);
+    font-size: 14px;
+    line-height: 26px;
+  }
+
+  .contrast-info {
+    background: var(--status-info-bg);
+    border-color: var(--status-info-border);
+  }
+
+  .contrast-success {
+    background: var(--status-success-bg);
+    border-color: var(--status-success-border);
+  }
+
+  .contrast-warning {
+    background: var(--status-warning-bg);
+    border-color: var(--status-warning-border);
+  }
+
+  .contrast-error {
+    background: var(--status-error-bg);
+    border-color: var(--status-error-border);
+  }
+
+  .pair-stage {
+    display: grid;
+    margin: 0;
+    padding: var(--space-6) var(--space-4);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .mock-edge {
+    padding: var(--space-3) var(--space-4);
+    font: var(--type-body-sm);
+    color: var(--text-default);
+    background: var(--surface-page);
+    border-inline-start: 4px solid var(--status-warning-fg);
+    border-radius: var(--radius-sm);
+  }
+
+  @media (width < 64rem) {
+    .stage-two,
+    .stage-three,
+    .stage-four,
+    .placement,
+    .patterns,
+    .contrast {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
