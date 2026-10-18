@@ -12,7 +12,7 @@ const app = (name: string, port: number) => ({
 export default defineConfig({
   testDir: 'e2e',
   reporter: process.env.CI ? 'github' : 'list',
-  use: { trace: 'retain-on-failure' },
+  use: { trace: 'retain-on-failure', reducedMotion: 'reduce' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [app('web', 4173), app('docs', 4322)],
 });

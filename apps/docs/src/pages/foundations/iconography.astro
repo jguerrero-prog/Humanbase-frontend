@@ -9,6 +9,7 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import SizeCard from '../../components/docs/SizeCard.astro';
 import expecto from '../../assets/original-icons/expecto_fa-magic.svg?url';
+import expectoSc from '../../assets/original-icons/expecto-sc_dendritic_cell.png?url';
 import gwas from '../../assets/original-icons/gwas-netwas_fa-list-ol.svg?url';
 import inSilico from '../../assets/original-icons/in-silico-mutagenesis_fa-th.svg?url';
 import modules from '../../assets/original-icons/modules_fa-certificate.svg?url';
@@ -48,7 +49,7 @@ const originalIcons: { title: string; text: string; file: string; src?: string }
   { title: 'Seqweaver', src: seqweaver, file: 'seqweaver_seqweaver-icon.svg', text: 'HumanBase SVG, blue #24A4D3; the file credits Stephen Plaster' },
   { title: 'In silico mutagenesis', src: inSilico, file: 'in-silico-mutagenesis_fa-th.svg', text: 'Font Awesome 4.7 “th”, blue #24A4D3' },
   { title: 'ExPecto', src: expecto, file: 'expecto_fa-magic.svg', text: 'Font Awesome 4.7 “magic”, blue #24A4D3' },
-  { title: 'ExPecto SC', file: 'expectosc_dendritic_cell.svg', text: 'HumanBase SVG of a dendritic cell, made with BioRender. Not shown here: BioRender’s terms don’t allow republishing its icons.' },
+  { title: 'ExPecto SC', src: expectoSc, file: 'expecto-sc_dendritic_cell.png', text: 'HumanBase SVG of a dendritic cell, created with BioRender.com. Shown here as a 2x image: the file is 335 KB, 1,189 paths' },
   { title: 'GWAS (NetWAS)', src: gwas, file: 'gwas-netwas_fa-list-ol.svg', text: 'Font Awesome 4.7 “list-ol”, grey #444' },
   { title: 'ASD Browser', file: 'No file', text: 'No icon in the live dropdown or menu' },
 ];
@@ -278,7 +279,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
         ))
       }
     </ul>
-    <p class="doc-note">Font Awesome 4.7 icons by Dave Gandy, SIL Open Font License 1.1. Seqweaver icon by Stephen Plaster from the Noun Project, CC BY 3.0. The DeepSEA logo belongs to HumanBase. Sources and licenses are listed in <code>apps/docs/src/assets/original-icons/ATTRIBUTION.md</code>.</p>
+    <p class="doc-note">Font Awesome 4.7 icons by Dave Gandy, SIL Open Font License 1.1. Seqweaver icon by Stephen Plaster from the Noun Project, CC BY 3.0. The DeepSEA logo belongs to HumanBase. The ExPecto SC dendritic cell was created with BioRender.com. Sources and licenses are listed in <code>apps/docs/src/assets/original-icons/ATTRIBUTION.md</code>.</p>
   </DocSection>
 
   <NoteCard title="Using icons in Figma">

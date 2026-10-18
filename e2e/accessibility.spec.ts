@@ -9,6 +9,7 @@ const pages = [
   'http://localhost:4322/components/buttons/',
   'http://localhost:4322/foundations/iconography/',
   'http://localhost:4322/components/text-inputs-and-search/',
+  'http://localhost:4322/components/dropdowns-and-selects/',
 ];
 
 for (const url of pages) {
