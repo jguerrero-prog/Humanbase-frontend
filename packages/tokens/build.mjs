@@ -18,6 +18,7 @@ function toDeclarations({ cssVar, token: { $type, $value } }) {
   if ($type === 'color') return [[cssVar, toHex($value)]];
   if ($type === 'dimension') return [[cssVar, toLength($value)]];
   if ($type === 'shadow') return [[cssVar, toShadow($value)]];
+  if ($type === 'fontFamily') return [[cssVar, toFontFamily($value)]];
   if ($type === 'typography') {
     const font = `${$value.fontWeight} ${toLength($value.fontSize)}/${$value.lineHeight} ${toFontFamily($value.fontFamily)}`;
     return [[cssVar, font], [`${cssVar}-tracking`, toLength($value.letterSpacing)]];

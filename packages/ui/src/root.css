@@ -1,9 +1,13 @@
 @import url("@fontsource/lato/400.css");
+@import url("@fontsource/lato/400-italic.css");
 @import url("@fontsource/lato/700.css");
 @import url("@fontsource/cabin/400.css");
 @import url("@fontsource/cabin/500.css");
 @import url("@fontsource/cabin/600.css");
+@import url("@fontsource/cabin/600-italic.css");
+@import url("@fontsource/cabin/700.css");
 @import url("@fontsource/atkinson-hyperlegible-mono/400.css");
+@import url("@fontsource/atkinson-hyperlegible-mono/700.css");
 @import url("@humanbase/tokens/tokens.css");
 
 *,
