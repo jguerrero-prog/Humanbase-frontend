@@ -618,11 +618,13 @@ const usage = `import { Button, Dialog, Drawer, DrawerSection } from '@humanbase
   }
 
   .pair-stage {
-    display: grid;
-    gap: var(--space-3);
     padding: var(--space-6) var(--space-4);
     background: var(--surface-sunken);
-    border-radius: var(--radius-md);
+  }
+
+  .pair-stage :global(.dialog-body p) {
+    font: inherit;
+    color: inherit;
   }
 
   @media (width < 64rem) {
