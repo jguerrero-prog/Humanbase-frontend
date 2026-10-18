@@ -1,4 +1,4 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["catalog.ts"]
+  "include": ["catalog.ts", "color.ts", "color.test.ts"]
 }

@@ -1,0 +1,760 @@
+---
+import { Button, TextInput } from '@humanbase/ui';
+import { ColorCatalog, contrastRating } from '@humanbase/tokens/color';
+import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import semantic from '@humanbase/tokens/src/semantic.tokens.json';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import DoDont from '../../components/docs/DoDont.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const colors = new ColorCatalog(primitives, semantic);
+const ink = 'color.grey.900';
+const white = 'color.white';
+const cssVar = (path: string) => `var(${colors.entry(path).cssVar})`;
+const ratio = (value: number, decimals = 1) => value.toFixed(decimals);
+const onWhite = (path: string) => colors.contrast(white, path) >= 4.5;
+
+const brands = [
+  { name: 'Emerald', role: 'Primary', path: 'color.emerald.600', use: 'Brand header, primary buttons, links, selected states' },
+  { name: 'Simons Yellow', role: 'Secondary', path: 'color.yellow.500', use: 'Highlights, the query gene, key data points, buttons on dark backgrounds' },
+  { name: 'Mint', role: 'Accent', path: 'color.mint.300', use: 'Supporting data such as medium-confidence links, accents on emerald' },
+  { name: 'Ink', role: 'Text', path: ink, use: 'Headings and body text, focus rings' },
+];
+
+const steps = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
+const scales = [
+  { title: 'Emerald', role: 'Primary', name: 'emerald', brand: '600' },
+  { title: 'Simons Yellow', role: 'Secondary', name: 'yellow', brand: '500' },
+  { title: 'Mint', role: 'Accent', name: 'mint', brand: '300' },
+  { title: 'Grey', role: 'Neutral', name: 'grey', brand: '' },
+];
+
+const tintGroups = [
+  {
+    title: 'On light surfaces',
+    surface: 'light',
+    tints: [
+      { label: 'Hover', path: 'action.ghost-hover' },
+      { label: 'Pressed', path: 'action.ghost-pressed' },
+      { label: 'Selected', path: 'action.ghost-selected' },
+    ],
+  },
+  {
+    title: 'On emerald',
+    surface: 'brand',
+    tints: [
+      { label: 'Hover', path: 'overlay.on-brand-hover' },
+      { label: 'Pressed', path: 'overlay.on-brand-open' },
+      { label: 'Selected', path: 'overlay.on-brand-selected' },
+    ],
+  },
+];
+const percent = (path: string) => `${Math.round((colors.value(path).alpha ?? 1) * 100)}%`;
+
+const statuses = [
+  { title: 'Error', name: 'error', heading: 'IL1Z isn’t a known human gene.', body: 'Check the spelling, or search by Entrez ID, for example 3553.' },
+  { title: 'Warning', name: 'warning', heading: 'Warning: Large submission.', body: 'This job has 12,500 variants. Jobs above 10,000 take longer and may be slower to load.' },
+  { title: 'Success', name: 'success', heading: 'Success: Job complete.', body: '4 variants were scored. Your results are ready to view.' },
+  { title: 'Info', name: 'info', heading: 'Info: Network version.', body: 'MAGE is the current network. GIANT results are still available from the version menu.' },
+];
+const statusSteps = (name: string) => ['bg', 'border', 'fg'].map((role) => colors.target(`status.${name}.${role}`) ?? '');
+
+const stateColumns = ['Default', 'Hover', 'Pressed', 'Focus', 'Disabled'];
+const buttonStates = [
+  { title: 'Primary button', variant: 'primary', label: 'Search', notes: ['emerald.600', 'emerald.700', 'emerald.800', 'emerald.600 + ring', 'grey.200 / grey.400'] },
+  { title: 'Secondary button', variant: 'secondary', label: 'Explore', notes: ['yellow.500', 'yellow.600', 'yellow.700', 'yellow.500 + ring', 'grey.200 / grey.400'] },
+  { title: 'Ghost button', variant: 'ghost', label: 'Add network', notes: ['transparent', 'action.ghost-hover', 'action.ghost-pressed', 'transparent + ring', 'grey.400 text'] },
+] as const;
+const forcedStates = [undefined, 'hover', 'pressed', 'focus'] as const;
+const linkNotes = ['emerald.600', 'emerald.700', 'emerald.800', 'emerald.600 + ring', 'grey.400, no underline'];
+
+const pairings = [
+  { title: 'Ink on white', fg: ink, bg: white },
+  { title: 'Grey 500 on white', fg: 'color.grey.500', bg: white },
+  { title: 'Emerald 600 on white', fg: 'color.emerald.600', bg: white },
+  { title: 'White on emerald 600', fg: white, bg: 'color.emerald.600' },
+  { title: 'Mint 300 on emerald 600', fg: 'color.mint.300', bg: 'color.emerald.600' },
+  { title: 'Ink on yellow 500', fg: ink, bg: 'color.yellow.500' },
+  { title: 'Ink on mint 300', fg: ink, bg: 'color.mint.300' },
+  { title: 'Yellow 500 on emerald 600', fg: 'color.yellow.500', bg: 'color.emerald.600' },
+  { title: 'Grey 400 on white', fg: 'color.grey.400', bg: white },
+  { title: 'Yellow 500 on white', fg: 'color.yellow.500', bg: white },
+  { title: 'White on yellow 500', fg: white, bg: 'color.yellow.500' },
+].map((pair) => {
+  const value = colors.contrast(pair.fg, pair.bg);
+  return { ...pair, value, rating: contrastRating(value) };
+});
+const ratingClass = { Pass: 'rating-pass', 'Large text only': 'rating-large', 'Decorative only': 'rating-decorative' };
+
+const roles = [
+  ['action.primary', 'Primary buttons, links'],
+  ['action.primary-hover', 'Hover on primary actions'],
+  ['action.secondary', 'Secondary buttons, highlights'],
+  ['text.default', 'Headings and body text'],
+  ['text.muted', 'Captions, metadata'],
+  ['text.on-brand', 'Text on emerald'],
+  ['surface.page', 'Page background'],
+  ['surface.subtle', 'Side menu, panels'],
+  ['border.subtle', 'Dividers, card borders'],
+  ['focus.ring', 'Keyboard focus ring'],
+  ['data.highlight', 'Query gene, top results'],
+  ['status.error.fg', 'Error text, icons and borders'],
+];
+---
+
+<DocsLayout title="Color palette" description="The HumanBase palette: brand colors, scales, status colors, interaction states and measured contrast.">
+  <Intro
+    lead="The HumanBase palette starts from two colors: the emerald of the brand header and Simons Yellow, the Simons Foundation’s yellow, for the one highlight that matters most. Each color has a token name, a full scale from 50 to 900 and a measured contrast ratio, so teams can choose accessible pairs without guessing."
+    status="Updated October 16, 2026 · Contrast ratios follow WCAG 2.2 and are calculated from the hex values shown"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Emerald leads', text: 'Primary actions, links and selected states use emerald. It carries the brand on every page.' },
+        { title: 'Simons Yellow highlights', text: 'Simons Yellow marks what matters most, such as the query gene or a strong result. Never use it for text on white.' },
+        { title: 'Color is never the only cue', text: 'Pair every color meaning with a label, icon or pattern so it works for everyone, including people with color blindness.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Brand colors" lead="Four colors define the HumanBase look. Use them at the steps shown here; the scales below provide lighter and darker versions for states and backgrounds." spacing="loose">
+    <ul class="brand-cards">
+      {
+        brands.map((brand) => (
+          <li>
+            <div class:list={['brand-swatch', { 'on-dark': onWhite(brand.path) }]} style={`background: ${cssVar(brand.path)}`}>
+              <h3>{brand.name}</h3>
+              <p>{brand.role}</p>
+            </div>
+            <div class="brand-details">
+              <code class="brand-hex">{colors.hex(brand.path)}</code>
+              <code class="token-name">{brand.path}</code>
+              <p>{brand.use}</p>
+              <p class="brand-contrast">
+                On white {ratio(colors.contrast(brand.path, white))}:1 · On ink {ratio(colors.contrast(brand.path, ink))}:1
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection
+    title="Color scales"
+    lead="Each scale runs from 50 (lightest) to 900 (darkest). The brand step is outlined. Under each swatch: its hex value and its contrast with white text and with ink text. AA needs 4.5:1 for body text and 3:1 for large text and interface parts."
+    spacing="loose"
+  >
+    {
+      scales.map((scale) => (
+        <section class="scale" aria-labelledby={`scale-${scale.name}`}>
+          <h3 id={`scale-${scale.name}`}>
+            {scale.title} · {scale.role}
+          </h3>
+          <ol>
+            {steps.map((step) => {
+              const path = `color.${scale.name}.${step}`;
+              return (
+                <li>
+                  <span class:list={['scale-swatch', { 'on-dark': onWhite(path), 'is-brand': step === scale.brand }]} style={`background: ${cssVar(path)}`} aria-hidden="true" data-sample="Aa" />
+                  <span class="scale-step">
+                    {step}
+                    {step === scale.brand && <span class="scale-brand">brand</span>}
+                  </span>
+                  <code>{colors.hex(path)}</code>
+                  <span class="scale-ratios">
+                    White {ratio(colors.contrast(white, path))}
+                    <br />
+                    Ink {ratio(colors.contrast(ink, path))}
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ))
+    }
+  </DocSection>
+
+  <DocSection
+    title="Ghost and overlays"
+    lead="Ghost colors are transparent tints, not solid colors. They sit on top of whatever is behind them, so a hover or selection looks right on any surface. Use emerald tints on light surfaces and white tints on emerald."
+    spacing="loose"
+  >
+    <div class="tint-groups">
+      {
+        tintGroups.map((group) => (
+          <section class:list={['tint-group', `tint-group-${group.surface}`]} aria-label={group.title}>
+            <h3>{group.title}</h3>
+            <ul>
+              {group.tints.map((tint) => (
+                <li>
+                  <span class="tint-swatch" style={`background: ${cssVar(tint.path)}`} />
+                  <strong>
+                    {tint.label} {percent(tint.path)}
+                  </strong>
+                  <code>{tint.path}</code>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </DocSection>
+
+  <DocSection
+    title="Status colors and messages"
+    lead="Status colors are reserved for system feedback. Each has three steps: a light background (50), a border (200) and a strong foreground for text and icons (700). Every message also starts with a word that names the status, so the meaning never depends on color alone."
+    spacing="loose"
+  >
+    <ul class="statuses">
+      {
+        statuses.map((status) => {
+          const fg = `status.${status.name}.fg`;
+          return (
+            <li>
+              <h3>{status.title}</h3>
+              <ol class="status-steps">
+                {statusSteps(status.name).map((path) => (
+                  <li>
+                    <span class="status-swatch" style={`background: ${cssVar(path)}`} />
+                    <strong>{path.split('.').at(-1)}</strong>
+                    <code>{colors.hex(path)}</code>
+                  </li>
+                ))}
+              </ol>
+              <p class="status-ratio">
+                Text on 50: {ratio(colors.contrast(fg, `status.${status.name}.bg`))}:1 · on white: {ratio(colors.contrast(fg, white))}:1
+              </p>
+              <div class="status-message" style={`--status-bg: ${cssVar(`status.${status.name}.bg`)}; --status-border: ${cssVar(`status.${status.name}.border`)}; --status-fg: ${cssVar(fg)}`}>
+                <p class="status-heading">{status.heading}</p>
+                <p>{status.body}</p>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <div class="field-errors">
+      <TextInput label="Gene list" defaultValue="IL1B  CCL2  IL6" error="Add at least 20 genes, up to 3,500. You’ve entered 3." />
+      <div>
+        <h3>How field errors work</h3>
+        <ul class="bullets">
+          <li>The border turns error 700 and thickens to 2px, so the change is visible without color.</li>
+          <li>The message sits directly under the field, leads with the fix and gives the reason. Screen readers hear “Error” first.</li>
+          <li>Messages appear after the user leaves the field or submits, not while they are typing.</li>
+          <li>The field is linked to its message for screen readers (aria-describedby) and marked aria-invalid.</li>
+        </ul>
+      </div>
+    </div>
+  </DocSection>
+
+  <DocSection
+    title="Interaction states"
+    lead="How each color changes as people interact. Hover darkens by one step, pressed by two. Focus adds an ink ring with a 2px white gap, which stays visible on white, emerald and yellow. Disabled uses greyscale and no hover."
+    spacing="loose"
+  >
+    <DocTable caption="Interaction states for buttons and links" columns={['', ...stateColumns]} widths={['216px']}>
+      {
+        buttonStates.map((row) => (
+          <tr class="doc-table-roomy">
+            <th scope="row" class="state-title">{row.title}</th>
+            {forcedStates.map((state, index) => (
+              <td>
+                <div class="state-cell">
+                  <Button variant={row.variant} data-state={state} tabIndex={-1}>
+                    {row.label}
+                  </Button>
+                  <code>{row.notes[index]}</code>
+                </div>
+              </td>
+            ))}
+            <td>
+              <div class="state-cell">
+                <Button variant={row.variant} disabled>
+                  {row.label}
+                </Button>
+                <code>{row.notes[4]}</code>
+              </div>
+            </td>
+          </tr>
+        ))
+      }
+      <tr class="doc-table-roomy">
+        <th scope="row" class="state-title">Text link</th>
+        {
+          [...forcedStates, 'disabled'].map((state, index) => (
+            <td>
+              <div class="state-cell">
+                <span class="link-sample" data-state={state} aria-disabled={state === 'disabled' || undefined}>
+                  View results
+                </span>
+                <code>{linkNotes[index]}</code>
+              </div>
+            </td>
+          ))
+        }
+      </tr>
+    </DocTable>
+  </DocSection>
+
+  <DocSection
+    title="Accessible pairings"
+    lead="Measured contrast for the combinations used most. Pass means 4.5:1 or more and is safe for any text. Large text only means 3:1 to 4.5:1: fine for text 24px and up, icons and borders. Below 3:1 is decorative only."
+    spacing="loose"
+  >
+    <ul class="pairings">
+      {
+        pairings.map((pair) => (
+          <li>
+            <span class="pairing-sample" style={`color: ${cssVar(pair.fg)}; background: ${cssVar(pair.bg)}`} data-sample="Trace gene function" aria-hidden="true" />
+            <strong>{pair.title}</strong>
+            <span class={ratingClass[pair.rating]}>
+              {ratio(pair.value, 2)}:1 · {pair.rating}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Do and don’t" spacing="loose">
+    <DoDont
+      dos={[
+        'Use emerald 600 for primary actions and links, white text on emerald for buttons.',
+        'Use yellow for the single most important highlight on a screen, such as the query gene.',
+        'Use grey 900 for headings and body text, grey 500 for secondary text.',
+        'Show status with a word or icon as well as a color.',
+        'Use ghost tints for hover and selection so they work on any background.',
+      ]}
+      donts={[
+        'Don’t set Simons Yellow text on white. It measures 1.4:1 and is unreadable.',
+        'Don’t use red and green together as the only way to compare values; pair them with labels or patterns.',
+        'Don’t use status colors for decoration or branding.',
+        'Don’t invent new shades. Pick the nearest step from a scale.',
+        'Don’t use grey 400 for text people need to read. Keep it for disabled states and borders.',
+      ]}
+    />
+  </DocSection>
+
+  <DocSection
+    title="Semantic tokens"
+    lead="Components use semantic tokens, which point to a step in a scale. To change a color across the product, change what the token points to, not the components."
+    spacing="loose"
+  >
+    <DocTable caption="Semantic color tokens" columns={['Token', 'Points to', 'Value', 'Used for']} widths={['380px', '260px', '200px']}>
+      {
+        roles.map(([path = '', use]) => (
+          <tr>
+            <th scope="row">
+              <span class="role-token">
+                <span class="role-swatch" style={`background: ${cssVar(path)}`} />
+                <code>{path}</code>
+              </span>
+            </th>
+            <td>
+              <code>{colors.target(path)?.replace(/^color\./, '') ?? 'raw value'}</code>
+            </td>
+            <td>
+              <code>{colors.hex(path)}</code>
+            </td>
+            <td>{use}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .brand-cards,
+  .pairings,
+  .statuses {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .brand-cards > li {
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .brand-swatch {
+    display: grid;
+    align-content: end;
+    gap: var(--space-1);
+    block-size: 200px;
+    padding: var(--space-6);
+    color: var(--text-default);
+  }
+
+  .brand-swatch h3 {
+    font: 600 28px/1.2 Cabin, sans-serif;
+  }
+
+  .brand-swatch p {
+    font: var(--type-body);
+  }
+
+  .on-dark {
+    color: var(--text-on-brand);
+  }
+
+  .brand-details {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-6) var(--space-6);
+  }
+
+  .brand-hex {
+    font: var(--type-code);
+    font-size: 18px;
+  }
+
+  .token-name,
+  .tint-groups code {
+    font: var(--type-code-sm);
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .brand-details p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .brand-details .brand-contrast {
+    font: var(--type-label-sm);
+    color: var(--text-default);
+  }
+
+  /* Samples use generated text so contrast checkers skip the failing pairs they demonstrate. */
+  [data-sample]::before {
+    content: attr(data-sample);
+  }
+
+  .scale + .scale {
+    margin-block-start: var(--space-10);
+  }
+
+  .scale h3 {
+    font: var(--type-h4);
+  }
+
+  .scale ol {
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 10px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .scale li {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .scale-swatch {
+    display: block;
+    block-size: 88px;
+    padding: var(--space-3);
+    font: var(--type-label);
+    font-size: 18px;
+    color: var(--text-default);
+    border-radius: var(--radius-sm);
+  }
+
+  .scale-swatch.on-dark {
+    color: var(--text-on-brand);
+  }
+
+  .scale-swatch.is-brand {
+    box-shadow: inset 0 calc(-1 * var(--border-width-2)) 0 var(--focus-ring), 0 0 0 var(--border-width-1) var(--focus-ring);
+  }
+
+  .scale-step {
+    margin-block-start: var(--space-2);
+    font: var(--type-label-sm);
+  }
+
+  .scale-brand {
+    margin-inline-start: var(--space-2);
+  }
+
+  .scale li code {
+    font: var(--type-code-sm);
+    color: var(--text-secondary);
+  }
+
+  .scale-ratios {
+    font: var(--type-caption);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .tint-groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+
+  .tint-group {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .tint-group h3 {
+    font: var(--docs-card-title);
+  }
+
+  .tint-group ul {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tint-group li {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .tint-swatch {
+    display: block;
+    block-size: 72px;
+    border-radius: var(--radius-sm);
+  }
+
+  .tint-group-brand {
+    color: var(--text-on-brand);
+    background: var(--action-primary);
+  }
+
+  .tint-group-brand .tint-swatch {
+    outline: var(--border-width-1) solid var(--overlay-on-brand-open);
+  }
+
+  .tint-group-light .tint-swatch {
+    outline: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .tint-group-brand code {
+    color: var(--color-mint-100);
+  }
+
+  .statuses > li {
+    display: grid;
+    align-content: start;
+    gap: var(--space-4);
+  }
+
+  .statuses h3 {
+    font: var(--type-h4);
+  }
+
+  .status-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .status-steps li {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .status-swatch {
+    display: block;
+    block-size: 48px;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .status-steps strong {
+    font: var(--type-label-sm);
+    font-size: 13px;
+  }
+
+  .status-steps code {
+    font: var(--type-code-sm);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .status-ratio {
+    font: var(--type-caption);
+    color: var(--text-muted);
+  }
+
+  .status-message {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    font: var(--type-body-sm);
+    background: var(--status-bg);
+    border: var(--border-width-1) solid var(--status-border);
+    border-radius: var(--radius-sm);
+  }
+
+  .status-heading {
+    font: var(--docs-small-strong);
+    color: var(--status-fg);
+  }
+
+  .field-errors {
+    display: grid;
+    grid-template-columns: 520px minmax(0, 1fr);
+    gap: var(--space-12);
+    margin-block-start: var(--space-10);
+  }
+
+  .field-errors h3 {
+    margin-block-end: var(--space-3);
+    font: var(--docs-card-title);
+  }
+
+  .bullets {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding-inline-start: var(--space-5);
+    font: var(--type-body);
+    color: var(--text-secondary);
+  }
+
+  .state-title {
+    font: 600 18px/1.3 Cabin, sans-serif;
+  }
+
+  .state-cell {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-2);
+  }
+
+  .state-cell code {
+    font: var(--type-code-sm);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .link-sample {
+    padding: var(--space-3) 0;
+    font: var(--type-label);
+    color: var(--text-link);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    border-radius: var(--radius-xs);
+  }
+
+  .link-sample[data-state="hover"] {
+    color: var(--action-primary-hover);
+  }
+
+  .link-sample[data-state="pressed"] {
+    color: var(--action-primary-pressed);
+  }
+
+  .link-sample[data-state="focus"] {
+    box-shadow: var(--shadow-focus-ring);
+  }
+
+  .link-sample[data-state="disabled"] {
+    color: var(--text-disabled);
+    text-decoration: none;
+  }
+
+  .pairings {
+    gap: var(--space-4);
+  }
+
+  .pairings li {
+    display: grid;
+    gap: var(--space-2);
+    padding-block-end: var(--space-2);
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .pairings li > :not(.pairing-sample) {
+    padding-inline: var(--space-4);
+  }
+
+  .pairing-sample {
+    display: grid;
+    align-items: center;
+    block-size: 70px;
+    padding-inline: var(--space-4);
+    font: 700 20px/1.3 Lato, sans-serif;
+  }
+
+  .pairings strong {
+    font: var(--docs-small-strong);
+  }
+
+  .pairings li > span:last-child {
+    font: var(--type-body-sm);
+  }
+
+  .rating-pass {
+    color: var(--status-success-fg);
+  }
+
+  .rating-large {
+    color: var(--status-warning-fg);
+  }
+
+  .rating-decorative {
+    color: var(--status-error-fg);
+  }
+
+  .role-token {
+    display: inline-flex;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .role-swatch {
+    display: inline-block;
+    inline-size: 20px;
+    block-size: 20px;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+  }
+
+  .doc-table code {
+    font: var(--type-code);
+  }
+
+  @media (width < 64rem) {
+    .brand-cards,
+    .pairings,
+    .statuses,
+    .tint-groups,
+    .field-errors {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .scale ol {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+</style>
