@@ -1,0 +1,89 @@
+.segmented {
+  display: inline-flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.segmented-label {
+  font: var(--type-label-sm);
+  color: var(--text-default);
+}
+
+.segmented-track {
+  display: inline-flex;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+}
+
+.segment {
+  position: relative;
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  block-size: 36px;
+  padding: 0 var(--space-4);
+  font: var(--type-body);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  border: var(--border-width-1) solid transparent;
+  border-radius: var(--radius-sm);
+}
+
+.segment input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  cursor: inherit;
+  opacity: 0;
+}
+
+/* A hidden bold copy reserves the selected width, so segments never shift. */
+.segment-label {
+  display: inline-grid;
+}
+
+.segment-label::after {
+  block-size: 0;
+  overflow: hidden;
+  font-weight: 700;
+  visibility: hidden;
+  content: attr(data-label);
+}
+
+.segmented-small .segmented-track {
+  border-radius: var(--radius-sm);
+}
+
+.segmented-small .segment {
+  block-size: 28px;
+  padding: 0 var(--space-3);
+  font: var(--type-body-sm);
+  border-radius: var(--radius-xs);
+}
+
+.segment:hover,
+.segment[data-state="hover"] {
+  color: var(--text-default);
+  background: var(--color-grey-200);
+}
+
+.segment:has(input:checked) {
+  font-weight: 700;
+  color: var(--text-default);
+  background: var(--surface-page);
+  border-color: var(--border-default);
+}
+
+.segment:has(input:focus-visible),
+.segment[data-state="focus"] {
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.segment:has(input:disabled) {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+  background: none;
+}

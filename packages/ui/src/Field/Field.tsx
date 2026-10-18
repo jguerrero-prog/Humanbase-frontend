@@ -20,6 +20,17 @@ export interface FieldProps {
   children: (control: ControlProps) => ReactNode;
 }
 
+export function FieldError({ id, children }: { id: string | undefined; children: ReactNode }) {
+  return (
+    <p id={id} className="field-error">
+      <Icon name="alert-circle" size={16} />
+      <span>
+        <span className="visually-hidden">Error:</span> {children}
+      </span>
+    </p>
+  );
+}
+
 export function Field({ label, hint, error, size = 'medium', disabled = false, count, children }: FieldProps) {
   const id = useId();
   const messageId = error || hint ? `${id}-message` : undefined;
@@ -35,12 +46,7 @@ export function Field({ label, hint, error, size = 'medium', disabled = false, c
       {(messageId || countId) && (
         <div className="field-messages">
           {error ? (
-            <p id={messageId} className="field-error">
-              <Icon name="alert-circle" size={16} />
-              <span>
-                <span className="visually-hidden">Error:</span> {error}
-              </span>
-            </p>
+            <FieldError id={messageId}>{error}</FieldError>
           ) : (
             hint && (
               <p id={messageId} className="field-hint">

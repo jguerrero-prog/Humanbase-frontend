@@ -1,4 +1,5 @@
 import { useId, useMemo, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
+import { useControlled } from '../hooks/useControlled';
 import { SliderScale } from './SliderScale';
 import './Slider.css';
 
@@ -66,11 +67,6 @@ function NumberField({ label, value, scale, disabled, onApply }: NumberFieldProp
       onKeyDown={(event) => event.key === 'Enter' && apply()}
     />
   );
-}
-
-function useControlled<T>(value: T | undefined, initial: T) {
-  const [own, setOwn] = useState(initial);
-  return [value ?? own, setOwn] as const;
 }
 
 export function Slider({ label, min, max, step = 1, value, defaultValue, onChange, onCommit, disabled, className, 'data-state': dataState }: SliderProps) {

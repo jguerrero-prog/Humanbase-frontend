@@ -162,7 +162,7 @@ const usage = `import { RangeSlider, Slider } from '@humanbase/ui';
   </DocSection>
 
   <DocSection title="Do and don’t">
-    <ul class="pairs">
+    <ul class="pairs" style="--columns: 2">
       <li class="pair pair-do">
         <div class="pair-stage"><Slider {...confidence} /></div>
         <h3>Do. Pair it with a number field</h3>
@@ -359,36 +359,6 @@ const usage = `import { RangeSlider, Slider } from '@humanbase/ui';
     color: var(--text-secondary);
   }
 
-  .points {
-    display: grid;
-    gap: var(--space-3);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .points li {
-    padding-inline-start: 13px;
-    font: var(--type-body);
-    color: var(--text-secondary);
-    border-inline-start: 3px solid var(--action-primary);
-  }
-
-  .pairs {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .pair {
-    display: grid;
-    align-content: start;
-    gap: var(--space-3);
-  }
-
   .pair-stage {
     display: grid;
     gap: var(--space-2);
@@ -396,35 +366,6 @@ const usage = `import { RangeSlider, Slider } from '@humanbase/ui';
     padding: var(--space-6) var(--space-5);
     background: var(--surface-subtle);
     border-radius: var(--radius-md);
-  }
-
-  .pair::after {
-    content: "";
-    order: 1;
-    block-size: var(--space-1);
-    background: currentcolor;
-  }
-
-  .pair h3,
-  .pair > p {
-    order: 2;
-  }
-
-  .pair-do {
-    color: var(--status-success-fg);
-  }
-
-  .pair-dont {
-    color: var(--status-error-fg);
-  }
-
-  .pair h3 {
-    font: var(--type-label);
-  }
-
-  .pair > p {
-    font: var(--docs-small);
-    color: var(--text-secondary);
   }
 
   .mock-label {
@@ -478,8 +419,7 @@ const usage = `import { RangeSlider, Slider } from '@humanbase/ui';
   @media (width < 64rem) {
     .anatomy,
     .states,
-    .pattern,
-    .pairs {
+    .pattern {
       grid-template-columns: minmax(0, 1fr);
     }
   }

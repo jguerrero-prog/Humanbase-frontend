@@ -1,0 +1,112 @@
+.tabs {
+  position: relative;
+}
+
+/* The padding keeps the focus ring visible inside the scrolling row. */
+.tabs-scroller {
+  margin: calc(var(--space-1) * -1);
+  padding: var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs[data-more]::before {
+  position: absolute;
+  inset: 0 0 auto auto;
+  z-index: 1;
+  inline-size: 48px;
+  block-size: 48px;
+  pointer-events: none;
+  content: "";
+  background: linear-gradient(to right, transparent, var(--surface-page));
+}
+
+.tabs-list {
+  display: flex;
+  gap: var(--space-1);
+  inline-size: max-content;
+  min-inline-size: 100%;
+  border-block-end: var(--border-width-1) solid var(--border-subtle);
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  gap: var(--space-2);
+  align-items: center;
+  block-size: 48px;
+  padding: 0 var(--space-4);
+  font: 700 16px/24px Lato, sans-serif;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+}
+
+.tab::after {
+  position: absolute;
+  inset: auto 0 0;
+  block-size: 3px;
+  content: "";
+  border-radius: var(--radius-2xs) var(--radius-2xs) 0 0;
+}
+
+.tab:hover,
+.tab[data-state="hover"] {
+  color: var(--text-default);
+}
+
+.tab:hover::after,
+.tab[data-state="hover"]::after {
+  block-size: 2px;
+  background: var(--color-grey-300);
+}
+
+.tab[aria-selected="true"] {
+  color: var(--text-default);
+}
+
+.tab[aria-selected="true"]::after {
+  block-size: 3px;
+  background: var(--action-primary);
+}
+
+.tab:focus-visible,
+.tab[data-state="focus"] {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.tab:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.tab:disabled::after {
+  background: none;
+}
+
+.tab-count {
+  padding: 0 6px;
+  font: 700 12px/18px Lato, sans-serif;
+  color: var(--text-secondary);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-xs);
+}
+
+.tab[aria-selected="true"] .tab-count {
+  color: var(--color-emerald-700);
+  background: var(--color-emerald-50);
+}
+
+.tab:disabled .tab-count {
+  color: var(--text-disabled);
+}
+
+.tabs-panel:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring);
+}
