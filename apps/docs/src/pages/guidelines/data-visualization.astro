@@ -1,0 +1,512 @@
+---
+import { ColorCatalog, contrastRatio, lightness } from '@humanbase/tokens/color';
+import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import { KeyLegend, ScaleLegend } from '@humanbase/ui';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import BarChart from '../../components/viz/BarChart.astro';
+import EffectTrack from '../../components/viz/EffectTrack.astro';
+import HeatmapDiagram from '../../components/viz/HeatmapDiagram.astro';
+import NetworkDiagram from '../../components/viz/NetworkDiagram.astro';
+import ScaleRamp from '../../components/viz/ScaleRamp.astro';
+import { edgeBands, enrichedTerms, modules, promoterTrack, tissueScores, variantEffects } from '../../data/viz-examples';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const white = '#FFFFFF';
+const colors = new ColorCatalog(primitives);
+const ratio = (hex: string) => `${contrastRatio(hex, white).toFixed(2)}:1`;
+const step = (key: string) => {
+  const hex = colors.hex(`viz.${key}`);
+  return { color: `var(--viz-${key.replace('.', '-')})`, label: hex, note: `L ${Math.round(lightness(hex))}`, dark: contrastRatio(hex, white) > 4.5 };
+};
+const sequential = ['seq.1', 'seq.2', 'seq.3', 'seq.4', 'seq.5', 'seq.6', 'seq.7'].map(step);
+const diverging = ['div.n3', 'div.n2', 'div.n1', 'div.0', 'div.p1', 'div.p2', 'div.p3'].map(step);
+const categorical = [
+  ['cat.1', 'Blue'],
+  ['cat.2', 'Orange'],
+  ['cat.3', 'Indigo'],
+  ['cat.4', 'Reddish purple'],
+  ['cat.5', 'Sky blue'],
+  ['cat.6', 'Vermilion'],
+  ['cat.other', 'Other'],
+].map(([key = '', name], index, all) => {
+  const hex = colors.hex(`viz.${key}`);
+  return { name: index < all.length - 1 ? `${index + 1}. ${name}` : name, cssVar: `--viz-${key.replace('.', '-')}`, hex, ratio: ratio(hex) };
+});
+
+const moduleItems = modules.map(({ id, label }) => ({ label, color: `--viz-cat-${id}` }));
+const edgeItems = [...edgeBands].reverse();
+
+const scoreSteps = ['0 to 0.14', '0.14 to 0.29', '0.29 to 0.43', '0.43 to 0.57', '0.57 to 0.71', '0.71 to 0.86', '0.86 to 1'];
+const effectSteps = ['Strong decrease', 'Decrease', 'Slight decrease', 'No change', 'Slight increase', 'Increase', 'Strong increase'];
+
+const aroundRenderer: [string, string, { text: string; href: string }?][] = [
+  ['Toolbar above the graph', 'Icon buttons with tooltips and accessible names (Tooltips page): download, layout, lock, zoom, fit.'],
+  ['Legend', 'The Legend components beside the graph, with numbers at both ends and a title, such as “Connection confidence”.'],
+  ['Filters and sliders', 'Minimum confidence and number of genes, in a filter group or drawer (Accordions page). A Slider component is still to be designed.', { text: 'Slider component', href: '/components/sliders/' }],
+  ['Hover and focus', 'The Data tooltip for nodes and edges, with the score and datasets.'],
+  ['Clicking a gene or edge', 'Opens the drawer beside the graph (Modals and drawers page), not a new page or tab level.'],
+  ['Module list', 'The table beside the module graph uses the Table and Badge components, with the module name in words next to its color.'],
+  ['View as table', 'Every graph can switch to the gene table with the same data.'],
+];
+
+const requests = [
+  ['Swap the edge color scale to the sequential blue ramp', 'Today’s green to red scale is the pairing this page measures as failing for red-green color blindness, and green reads as “selected” in this system.'],
+  ['Let the layout settle before showing it, and stop moving after', 'The layout drifts for 11+ seconds. Running the simulation’s ticks before the first draw, then fitting to the panel, removes the motion the Motion page warns about.'],
+  ['Respect reduced motion', 'With prefers-reduced-motion or the Display setting, show the settled layout with no animation.'],
+  ['Fit the graph to its panel after layout', 'Part of the IL1B network sits outside the visible area.'],
+  ['Use the categorical scale for modules, or keep M labels on every cluster', 'Several of today’s module colors are close; the audit found people identify modules mainly by color.'],
+];
+
+const accessibility = [
+  ['Summary first', 'Each chart starts with one sentence that says what it shows: “IL1B’s 50 most related genes in blood vessel; the strongest is IL1R1 at 0.97.”'],
+  ['View as table', 'Every chart can switch to a table with the same data, using the Tables page components.'],
+  ['Keyboard', 'Nodes, cells and bars can be reached with Tab and the arrow keys; focus shows the data tooltip and the 2px ink outline.'],
+  ['Not color alone', 'Strength is darkness and width; direction is color and position; groups are color and the legend, with the module name in the tooltip.'],
+  ['Contrast', 'Lines and small marks on white are 3:1 or more (sequential step 5 and up). Filled category marks have a grey 600 outline.'],
+  ['Checked', 'Every scale on this page was tested with simulated protanopia, deuteranopia and tritanopia. Re-test any new scale the same way.'],
+];
+
+const specs = [
+  ['viz.seq.1 to .7', sequential.map((s) => s.label).join(' ')],
+  ['viz.div.-3 to +3', diverging.map((s) => s.label).join(' ')],
+  ['viz.cat.1 to .6, other', `${categorical.slice(0, -1).map((c) => c.hex).join(' ')}; other ${categorical.at(-1)?.hex}`],
+  ['viz.edge (diagrams, new graphs)', '≥ 0.9: seq.7, 2.5px; 0.75 to 0.9: seq.6, 1.75px; 0.5 to 0.75: seq.5, 1px; below 0.5 hidden by default'],
+  ['viz.node (diagrams, new graphs)', '12px, white with 1.5px grey 600 outline; query gene 20px ink; fixed size'],
+  ['viz.selection (diagrams, new graphs)', '2px ink ring, 5px out from the node; others at 35% opacity'],
+  ['viz.label (diagrams, new graphs)', 'Lato Bold 12 ink with a 3px white halo; query gene 14'],
+  ['viz.heatmap.cell', '34px with a 1px white gap; missing: white, grey 300 outline and diagonal'],
+  ['viz.axis', 'Lato 12 grey 600 labels; Lato Bold 12 ink titles with units; 1px grey 200 gridlines'],
+  ['viz.bar', 'grey 600 when color encodes nothing; 20px tall, 2px end radius'],
+  ['viz.legend', 'Legend / Sequential, Diverging, Categorical and Edge strength components; beside the chart'],
+];
+
+// The don'ts show colors the system rules out, so they are written here rather than taken from tokens.
+const rainbow = ['#301934', '#4A62D8', '#2EA8F5', '#1BE0B8', '#7CFC5A', '#C9F02D', '#F9C03A', '#F7731C', '#D02C04', '#7A0402'].map((color) => ({ color }));
+const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F46D43', '#D73027'].map((color) => ({ color }));
+---
+
+<DocsLayout title="Data visualization" description="Color scales, network diagrams, heatmaps and charts that stay readable for every kind of color vision.">
+  <Intro
+    lead="HumanBase is mostly charts: functional networks, expression heatmaps, enrichment bars and variant effects along a sequence. These rules keep them honest and readable for everyone, including the roughly 1 in 12 men and 1 in 200 women with a color vision deficiency."
+    status="Updated October 16, 2026 · Usage guideline · Colors checked with simulated protanopia, deuteranopia and tritanopia (Machado 2009)"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Green is not data', text: 'Emerald belongs to the interface: brand and selection. Charts never use it, so a green mark never looks “selected”.' },
+        { title: 'One scale per kind of data', text: 'Amounts get one blue ramp, directions get blue to orange, groups get six named colors. Never a rainbow.' },
+        { title: 'Color is never alone', text: 'Every encoding is also in a label, a position, a line width or a table view, and every chart has a legend.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Color scales" lead="Three scales cover HumanBase. Pick by what the number means, not by what looks nice.">
+    <article class="scale-card">
+      <header><h3>Sequential: amounts</h3><code>viz.seq.1 to viz.seq.7</code></header>
+      <p>For values from low to high: network scores from 0 to 1, expression levels, edge confidence. Darker means more.</p>
+      <ScaleRamp steps={sequential} />
+      <p class="ends"><span>0 (low)</span><span>1 (high)</span></p>
+      <ul class="points">
+        <li>Lightness drops in even steps of about 10 to 14, so each step looks like “more”, in color and in grey scale.</li>
+        <li>Steps 1 to 4 are below 3:1 against white. In heatmaps, cells touch each other and the legend carries the meaning; on white, lines and small marks use step 5 or darker (4.1:1 and up).</li>
+      </ul>
+    </article>
+    <article class="scale-card">
+      <header><h3>Diverging: direction</h3><code>viz.div.-3 to viz.div.+3</code></header>
+      <p>For values with a meaningful middle: z-scores, and whether a variant raises or lowers expression or chromatin activity. Blue below the middle, orange above.</p>
+      <ScaleRamp steps={diverging} />
+      <p class="ends"><span>Decrease</span><span>No change</span><span>Increase</span></p>
+      <ul class="points">
+        <li>Never red to green. Under simulated protanopia, a red and green pair loses about 83% of its difference; this blue and orange pair keeps it (difference 90 to 105 in all three simulations).</li>
+        <li>Both sides darken at the same rate, so a −2 and a +2 look equally strong. The middle is grey 50, not white, so it still reads as a value.</li>
+      </ul>
+    </article>
+    <article class="scale-card">
+      <header><h3>Categorical: groups</h3><code>viz.cat.1 to viz.cat.7</code></header>
+      <p>For groups with no order: network modules, evidence types, tissue systems. Five colors from the Okabe–Ito set and indigo from Paul Tol’s, chosen so none is green, plus grey for “other”. More than six groups means labels, not more colors.</p>
+      <ul class="swatches">
+        {
+          categorical.map(({ name, cssVar, hex, ratio: onWhite }) => (
+            <li>
+              <span class="swatch" style={`background: var(${cssVar})`} />
+              <strong>{name}</strong>
+              <code>{hex} {onWhite}</code>
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="points">
+        <li>The closest pair stays clearly apart in every simulation (smallest difference 17 to 21, against 26 for typical vision). Indigo replaced Okabe–Ito’s bluish green, which sat close to emerald and tested worse.</li>
+        <li>Orange, sky blue and the grey are under 3:1 on white, so filled marks always get a 1px grey 600 outline. The outline meets the 3:1 rule for graphics; the fill tells groups apart.</li>
+        <li>Use them in this order, so the first groups get the most distinct colors.</li>
+      </ul>
+    </article>
+  </DocSection>
+
+  <DocSection
+    title="Network graphs (2D) requires D3.JS for 3D visualization"
+    lead="The tissue network and functional module discovery views keep their current renderer. The design system doesn’t redraw them; it covers everything around them, and asks for a few configuration changes."
+  >
+    <section class="renderer-note" aria-labelledby="renderer-today">
+      <h3 id="renderer-today">What the live site does today (captured with Playwright, October 16, 2026)</h3>
+      <p>Both views are drawn by d3 in SVG. The IL1B tissue network has 30 nodes and 108 curved, bundled edges that layer over each other and give the graph its depth. The autism module result has 203 nodes in clusters labeled M1 to M6.</p>
+      <p>Edges are colored on a green to orange to red confidence scale, with white nodes and bold labels.</p>
+      <p>The tissue network’s layout keeps moving for more than 11 seconds after the page loads, and drifts partly outside its panel. The same happens on humanbase.io and hb.flatironinstitute.org.</p>
+    </section>
+    <p class="caption">These diagrams show the encoding rules (strength as darkness and width, groups as outlined colors, selection as an ink ring). They are not a proposed new look for the renderer.</p>
+    <div class="two-up">
+      <figure class="diagram">
+        <figcaption>
+          <h3>Diagram: by connection strength (default)</h3>
+          <p class="visually-hidden">IL1B and 13 related genes in blood vessel, with edges darker and wider as the connection gets stronger; the strongest is IL1R1 at 0.97.</p>
+        </figcaption>
+        <NetworkDiagram mode="strength" />
+        <KeyLegend title="Connection" mark="line" items={edgeItems} />
+        <p class="caption">Query gene in ink, other genes white with a grey 600 outline. Edges below 0.5 are hidden by the default filter.</p>
+      </figure>
+      <figure class="diagram">
+        <figcaption>
+          <h3>Diagram: by module</h3>
+          <p class="visually-hidden">The same 14 genes colored by module: inflammation, cytokine signaling, cell adhesion and other.</p>
+        </figcaption>
+        <NetworkDiagram mode="module" />
+        <KeyLegend title="Module" items={moduleItems} />
+        <p class="caption">Nodes filled with the categorical scale, always with an outline. Edges keep the same strength encoding.</p>
+      </figure>
+    </div>
+    <div class="selection-row">
+      <figure class="diagram">
+        <figcaption>
+          <h3>Diagram: IL1R1 selected</h3>
+          <p class="visually-hidden">IL1R1 selected with an ink ring; genes not connected to it fade to 35%.</p>
+        </figcaption>
+        <NetworkDiagram mode="selected" />
+      </figure>
+      <div class="selection-notes">
+        <h3>Selection and labels</h3>
+        <ul class="points">
+          <li>Selection is a 2px ink ring around the node, never a green fill. Unrelated nodes and edges fade to 35%; nothing moves.</li>
+          <li>The selected gene’s details open in the drawer beside the graph, as on the Modals and drawers page.</li>
+          <li>Labels are Lato Bold 12 ink with a 3px white halo, so they stay readable over edges. The query gene is 14px.</li>
+          <li>Show labels for the query gene and the top 15 neighbors; others show on hover, focus or zoom.</li>
+          <li>Node size stays fixed. Size encodes nothing, which keeps dense graphs calm and comparable.</li>
+        </ul>
+      </div>
+    </div>
+    <h3 class="subhead">What the design system covers around the renderer</h3>
+    <DocTable caption="What the design system covers around the renderer" columns={['Part', 'Uses']} widths={['300px']}>
+      {
+        aroundRenderer.map(([part, uses, link]) => {
+          const [before, after] = link ? uses.split(link.text) : [uses];
+          return (
+            <tr>
+              <th scope="row">{part}</th>
+              <td>{before}{link && <a href={link.href}>{link.text}</a>}{after}</td>
+            </tr>
+          );
+        })
+      }
+    </DocTable>
+    <h3 class="subhead">Configuration requests for Julien</h3>
+    <p class="subhead-lead">Small changes inside the existing renderer, not a rebuild. Each is a question until Julien confirms it is possible.</p>
+    <DocTable caption="Configuration requests for Julien" columns={['Request', 'Why']} widths={['440px']}>
+      {requests.map(([request, why]) => <tr><th scope="row">{request}</th><td>{why}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Heatmaps" lead="Rows and columns of colored cells. The legend sits directly beside the heatmap, never in a separate panel, and every cell’s value is in its data tooltip.">
+    <div class="two-up">
+      <HeatmapDiagram
+        title="Sequential: score with IL1B by tissue"
+        summary="Scores with IL1B for 8 genes across 8 tissues; blood vessel is highest for every gene, and CCL2 in brain is not available."
+        scale="sequential"
+        columns={tissueScores.columns}
+        rows={tissueScores.rows}
+        rowLabel="gene"
+        legend={{ title: 'Score with IL1B', ticks: ['0', '0.5', '1'] }}
+        steps={scoreSteps}
+      />
+      <HeatmapDiagram
+        title="Diverging: predicted effect on IL1B expression"
+        summary="Predicted effect of 5 variants on IL1B expression in 6 tissues; rs33944208 and rs16944 increase it most, rs1143634 lowers it."
+        scale="diverging"
+        columns={variantEffects.columns}
+        rows={variantEffects.rows}
+        rowLabel="variant"
+        legend={{ title: 'Effect on expression', ticks: ['Decrease', '0', 'Increase'] }}
+        steps={effectSteps}
+      />
+    </div>
+    <ul class="points">
+      <li>Cells are separated by a 1px white gap, so neighboring cells of similar color still read as separate values.</li>
+      <li>Missing values are white with a grey outline and a diagonal line, labeled “Not available” in the tooltip. Never a color from the scale, and never zero.</li>
+      <li>Values are binned into the seven steps for display; the tooltip and the table view show the exact number.</li>
+      <li>Clustering dendrograms are 1px grey 500 lines; they never use color.</li>
+      <li>Variant IDs use the mono font; gene symbols are Lato Bold. Long column labels rotate 50°, never 90°.</li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Charts" lead="Bars, lines and tracks. If color doesn’t encode anything, the marks are grey 600.">
+    <div class="two-up">
+      <BarChart
+        title="Enriched GO terms"
+        summary="Six enriched GO terms for IL1B’s network; inflammatory response is strongest at 11.9, and all are above the q = 0.05 line."
+        bars={enrichedTerms}
+        max={13}
+        ticks={[0, 4, 8, 12]}
+        axisTitle="−log10(q)"
+        threshold={{ value: 1.3, label: 'q = 0.05' }}
+      >
+        <p class="caption">One series, so the bars are grey 600, sorted by value. The axis title includes the unit; the dashed line marks significance.</p>
+      </BarChart>
+      <EffectTrack
+        title="Variant effects near the IL1B promoter"
+        summary="Predicted effects on IL1B expression from 1 kb upstream to 1 kb downstream of the TSS; the largest effects sit just around the TSS, in both directions. Example values."
+        effects={promoterTrack}
+      >
+        <ScaleLegend title="Effect on expression" scale="diverging" ticks={['Decrease', '0', 'Increase']} />
+        <p class="caption">Direction uses step 5 of each side: blue 4.1:1 and orange 3.8:1 on white, both above the 3:1 needed for graphics. Position also carries direction, so color is a second cue.</p>
+      </EffectTrack>
+    </div>
+    <ul class="points">
+      <li>Axis labels and ticks: Lato 12 grey 600. Axis titles: Lato Bold 12 ink, always with units, such as −log10(q) or “Position relative to TSS”.</li>
+      <li>Gridlines: 1px grey 200, only on the value axis. New charts have no borders, backgrounds or 3D effects; the existing network views keep their own style.</li>
+      <li>Values at the end of bars use tabular figures and the formatting rules from the Tables page.</li>
+      <li>Every chart has a “View as table” option with the same data, for screen readers and for copying.</li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Accessibility" lead="Charts are images to a screen reader unless we give them words.">
+    <DocTable caption="Chart accessibility rules" columns={['Rule', 'Detail']} widths={['324px']}>
+      {accessibility.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <ul class="pairs" style="--columns: 2">
+      <li class="pair pair-do">
+        <div class="pair-stage"><ScaleRamp steps={sequential} size="small" /></div>
+        <h3>Do. One hue for amounts</h3>
+        <p>Darker means more, in color and in grey scale.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage"><ScaleRamp steps={rainbow} size="small" /></div>
+        <h3>Don’t. A rainbow scale</h3>
+        <p>Yellow looks brightest though it isn’t the highest value, and the bands create edges that aren’t in the data.</p>
+      </li>
+      <li class="pair pair-do">
+        <div class="pair-stage"><ScaleRamp steps={diverging} size="small" /></div>
+        <h3>Do. Blue to orange for direction</h3>
+        <p>The two sides stay apart for every kind of color vision.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage"><ScaleRamp steps={redGreen} size="small" /></div>
+        <h3>Don’t. Red to green for direction</h3>
+        <p>Under protanopia the two ends lose about 83% of their difference.</p>
+      </li>
+      <li class="pair pair-do">
+        <div class="pair-stage">
+          <svg class="mini-node" viewBox="0 0 120 40" aria-hidden="true">
+            <circle class="ring" cx="20" cy="20" r="11" /><circle class="plain" cx="20" cy="20" r="6" /><text x="40" y="24">IL1R1</text>
+          </svg>
+        </div>
+        <h3>Do. Ink ring for selection</h3>
+        <p>Selection looks the same in every chart, and never like data.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage">
+          <svg class="mini-node" viewBox="0 0 120 40" aria-hidden="true">
+            <circle class="green" cx="20" cy="20" r="7" /><text x="40" y="24">IL1R1</text>
+          </svg>
+        </div>
+        <h3>Don’t. Green fill for selection</h3>
+        <p>A green node reads as a data value, or as “good”.</p>
+      </li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Data visualization tokens and values" columns={['Token', 'Value']} widths={['404px']}>
+      {specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .scale-card {
+    display: grid;
+    gap: 14px;
+    padding: 28px;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .scale-card header {
+    display: flex;
+    gap: var(--space-4);
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .scale-card h3 {
+    font: var(--type-h4);
+  }
+
+  .scale-card header code {
+    font: var(--type-code-sm);
+    color: var(--text-muted);
+  }
+
+  .scale-card > p {
+    font: var(--type-body);
+    color: var(--text-secondary);
+  }
+
+  .scale-card .points li {
+    font: var(--docs-small);
+  }
+
+  .ends {
+    display: flex;
+    justify-content: space-between;
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .swatches li {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .swatch {
+    block-size: 64px;
+    margin-block-end: var(--space-1);
+    border: var(--border-width-1) solid var(--text-secondary);
+    border-radius: var(--radius-sm);
+  }
+
+  .swatches strong {
+    font: 700 13px/1.4 Lato, sans-serif;
+  }
+
+  .swatches code {
+    font: 400 12px/1.4 "Atkinson Hyperlegible Mono", monospace;
+    color: var(--text-secondary);
+  }
+
+  .renderer-note {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-6);
+    background: var(--status-info-bg);
+    border: var(--border-width-1) solid var(--status-info-border);
+    border-radius: var(--radius-md);
+  }
+
+  .renderer-note h3 {
+    font: var(--type-label);
+  }
+
+  .renderer-note p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .caption {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .two-up {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .diagram {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .diagram h3,
+  .selection-notes h3 {
+    font: var(--docs-card-title);
+  }
+
+  .selection-row {
+    display: grid;
+    grid-template-columns: 620px minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .selection-notes {
+    display: grid;
+    gap: var(--space-3);
+    padding-block-start: 38px;
+  }
+
+  .subhead {
+    font: var(--type-h4);
+  }
+
+  .subhead-lead {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .pair-stage {
+    display: grid;
+    align-content: center;
+    min-block-size: 64px;
+    padding: var(--space-5);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .mini-node {
+    inline-size: 120px;
+  }
+
+  .mini-node .ring {
+    fill: none;
+    stroke: var(--text-default);
+    stroke-width: 2px;
+  }
+
+  .mini-node .plain {
+    fill: var(--surface-page);
+    stroke: var(--text-secondary);
+    stroke-width: 1.5px;
+  }
+
+  .mini-node .green {
+    fill: var(--action-primary);
+  }
+
+  .mini-node text {
+    font: 700 12px Lato, sans-serif;
+    fill: var(--text-default);
+  }
+
+  @media (width < 64rem) {
+    .two-up,
+    .selection-row,
+    .swatches {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

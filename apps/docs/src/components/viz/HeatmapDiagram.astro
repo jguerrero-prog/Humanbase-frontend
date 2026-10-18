@@ -1,0 +1,112 @@
+---
+import { ScaleLegend, type LegendScale } from '@humanbase/ui';
+
+interface Props {
+  title: string;
+  summary: string;
+  scale: LegendScale;
+  columns: string[];
+  rows: [string, (number | null)[]][];
+  rowLabel: 'gene' | 'variant';
+  legend: { title: string; ticks: [string, string, string] };
+  /** Words for each step, from the lowest step up. */
+  steps: string[];
+}
+
+const { title, summary, scale, columns, rows, rowLabel, legend, steps } = Astro.props;
+const cell = 34;
+const left = 96;
+const top = 92;
+const lowest = scale === 'sequential' ? 1 : -3;
+const color = (step: number) => (scale === 'sequential' ? `--viz-seq-${step}` : `--viz-div-${step === 0 ? '0' : step < 0 ? `n${-step}` : `p${step}`}`);
+const words = (step: number | null) => (step === null ? 'Not available' : (steps[step - lowest] ?? ''));
+const width = left + columns.length * cell + 8;
+const height = top + rows.length * cell + 4;
+---
+
+<figure class="viz-card heatmap">
+  <figcaption>
+    <h3>{title}</h3>
+    <p class="visually-hidden">{summary}</p>
+  </figcaption>
+  <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} aria-hidden="true">
+    {
+      columns.map((column, c) => (
+        <text class="column" transform={`translate(${left + c * cell + cell / 2 + 4} ${top - 6}) rotate(-50)`}>
+          {column}
+        </text>
+      ))
+    }
+    {
+      rows.map(([label, values], r) => (
+        <g>
+          <text class:list={['row', rowLabel]} x={left - 10} y={top + r * cell + cell / 2 + 4}>
+            {label}
+          </text>
+          {values.map((step, c) => {
+            const x = left + c * cell;
+            const y = top + r * cell;
+            return step === null ? (
+              <g class="missing">
+                <rect x={x + 1} y={y + 1} width={cell - 2} height={cell - 2} />
+                <line x1={x + 4} y1={y + cell - 4} x2={x + cell - 4} y2={y + 4} />
+              </g>
+            ) : (
+              <rect x={x} y={y} width={cell - 1} height={cell - 1} style={`fill: var(${color(step)})`} />
+            );
+          })}
+        </g>
+      ))
+    }
+  </svg>
+  <ScaleLegend title={legend.title} scale={scale} ticks={legend.ticks} />
+  <details class="table-view">
+    <summary>View as table</summary>
+    <div class="doc-table" role="region" aria-label={title} tabindex="0">
+      <table>
+        <caption class="visually-hidden">{summary}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{rowLabel === 'gene' ? 'Gene' : 'Variant'}</th>
+            {columns.map((column) => <th scope="col">{column}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map(([label, values]) => (
+              <tr>
+                <th scope="row">{label}</th>
+                {values.map((step) => <td>{words(step)}</td>)}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+</figure>
+
+<style>
+  text {
+    font: 400 12px Lato, sans-serif;
+    fill: var(--text-default);
+  }
+
+  .row {
+    text-anchor: end;
+    font-weight: 700;
+  }
+
+  .row.variant {
+    font: 400 12px "Atkinson Hyperlegible Mono", monospace;
+  }
+
+  .missing rect {
+    fill: var(--surface-page);
+    stroke: var(--border-default);
+  }
+
+  .missing line {
+    stroke: var(--border-default);
+  }
+</style>

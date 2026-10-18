@@ -64,3 +64,4 @@ export { placeNearPoint, type Placement } from './Tooltip/placement';
 export { Toggletip, type ToggletipProps } from './Tooltip/Toggletip';
 export { Tooltip, type TooltipProps } from './Tooltip/Tooltip';
 export { TooltipController, tooltips } from './Tooltip/TooltipController';
+export { KeyLegend, ScaleLegend, type KeyLegendProps, type LegendItem, type LegendScale, type ScaleLegendProps } from './Legend/Legend';

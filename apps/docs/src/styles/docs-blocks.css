@@ -486,6 +486,31 @@
   white-space: pre-wrap;
 }
 
+.viz-card {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-6);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.viz-card h3 {
+  font: var(--docs-card-title);
+}
+
+.table-view summary {
+  inline-size: fit-content;
+  font: var(--type-label-sm);
+  color: var(--text-link);
+  cursor: pointer;
+}
+
+.table-view .doc-table {
+  margin-block-start: var(--space-3);
+}
+
 @media (width < 64rem) {
   .pairs,
   .key-rules,

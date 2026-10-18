@@ -50,7 +50,7 @@ export const navigation: NavSection[] = [
     items: [
       { label: 'Voice and content' },
       { label: 'Scientific notation and units' },
-      { label: 'Data visualization' },
+      { label: 'Data visualization', href: '/guidelines/data-visualization/' },
       { label: 'Errors and validation' },
       { label: 'Empty states' },
       { label: 'Loading and job status' },

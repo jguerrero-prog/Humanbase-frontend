@@ -944,6 +944,29 @@
           "hex": "#A3A3A3"
         }
       }
+    },
+    "edge": {
+      "weak": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        }
+      },
+      "medium": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.75,
+          "unit": "px"
+        }
+      },
+      "strong": {
+        "$type": "dimension",
+        "$value": {
+          "value": 2.5,
+          "unit": "px"
+        }
+      }
     }
   },
   "space": {

@@ -79,6 +79,9 @@
   --viz-cat-5: #56B4E9;
   --viz-cat-6: #D55E00;
   --viz-cat-other: #A3A3A3;
+  --viz-edge-weak: 1px;
+  --viz-edge-medium: 1.75px;
+  --viz-edge-strong: 2.5px;
   --space-0: 0;
   --space-1: 4px;
   --space-2: 8px;

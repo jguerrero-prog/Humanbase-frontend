@@ -19,6 +19,12 @@ export function contrastRatio(foreground: string, background: string): number {
   return (light + 0.05) / (dark + 0.05);
 }
 
+/** CIELAB lightness, 0 to 100. */
+export function lightness(hex: string): number {
+  const y = luminance(hex);
+  return y > 216 / 24389 ? 116 * Math.cbrt(y) - 16 : (24389 / 27) * y;
+}
+
 export function contrastRating(ratio: number): ContrastRating {
   if (ratio >= 4.5) return 'Pass';
   return ratio >= 3 ? 'Large text only' : 'Decorative only';
