@@ -32,7 +32,7 @@ export const navigation: NavSection[] = [
       { label: 'Corner radius', href: '/foundations/corner-radius/' },
       { label: 'Elevation and borders', href: '/foundations/elevation-and-borders/' },
       { label: 'Motion', href: '/foundations/motion/' },
-      { label: 'Accessibility' },
+      { label: 'Accessibility', href: '/foundations/accessibility/' },
     ],
   },
   {
