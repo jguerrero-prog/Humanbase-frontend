@@ -1,0 +1,136 @@
+---
+import { toCssVar } from '@humanbase/tokens/catalog';
+import { ColorCatalog } from '@humanbase/tokens/color';
+import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import semantic from '@humanbase/tokens/src/semantic.tokens.json';
+import { Button, Checkbox, RadioGroup, Select, Tag, TextInput } from '@humanbase/ui';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const colors = new ColorCatalog(primitives, semantic);
+
+const stateTokens = [
+  { state: 'Hover', path: 'action.primary-hover', use: 'Primary button hover' },
+  { state: 'Hover', path: 'action.secondary-hover', use: 'Secondary and ghost hover' },
+  { state: 'Pressed', path: 'action.primary-pressed', use: 'Primary button pressed' },
+  { state: 'Pressed', path: 'action.secondary-pressed', use: 'Secondary and ghost pressed' },
+  { state: 'Focus', path: 'focus.ring', use: 'Color of the focus/ring effect' },
+  { state: 'Selected', path: 'border.selected', use: '2px border on a selected card, row or tab' },
+  { state: 'Disabled', path: 'text.disabled', use: 'Text and icons in disabled controls' },
+  { state: 'Error', path: 'border.error', use: 'Field border with an error' },
+  { state: 'Error', path: 'text.error', use: 'Error message under a field' },
+  { state: 'Error', path: 'status.error.bg', use: 'Error banner and badge background' },
+  { state: 'Destructive', path: 'action.destructive', use: 'Delete or remove actions' },
+  { state: 'Destructive', path: 'action.destructive-hover', use: 'Destructive hover' },
+].map((row) => ({ ...row, name: row.path.replaceAll('.', '/'), cssVar: toCssVar(row.path.split('.')), target: colors.target(row.path)?.replaceAll('.', '/') }));
+
+const states = ['Default', 'Hover', 'Focus', 'Disabled', 'Error'] as const;
+const tissues = [{ value: 'blood-vessel', label: 'Blood vessel' }];
+const field = { label: 'Tissue', placeholder: 'Choose a tissue' };
+const remove = () => undefined;
+---
+
+<DocsLayout title="State tokens" description="The tokens that carry hover, pressed, focus, selected, disabled and error, and the same states across components.">
+  <Intro
+    lead="Hover, pressed, focus, selected, disabled and error use the same tokens in every component, so a state looks the same wherever it appears."
+    status="Updated October 16, 2026 · Tokens · Every sample on this page is a live component"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Never color alone', text: 'Error adds an icon and a message; selected adds a 2px border or a check. Color is the third signal, not the only one.' },
+        { title: 'Focus is always visible', text: 'Controls show focus/ring; fields show a 2px border/selected border. Focus is never removed for looks.' },
+        { title: 'Disabled explains itself', text: 'Disabled text uses text/disabled. If a control is disabled for a reason, say why next to it.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="State tokens" lead="The semantic variables that carry a state. Swatches use the variable.">
+    <DocTable caption="State tokens" columns={['State', 'Swatch', 'Token', 'Points at', 'Use']} widths={['12%', '8%', '26%', '22%', '32%']}>
+      {
+        stateTokens.map(({ state, name, cssVar, target, use }) => (
+          <tr>
+            <th scope="row">{state}</th>
+            <td><span class="state-swatch" style={`background: var(${cssVar})`} /></td>
+            <td><code>{name}</code></td>
+            <td><code>{target ? `→ ${target}` : colors.hex(name.replaceAll('/', '.'))}</code></td>
+            <td>{use}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="States across components" lead="The same states, side by side. Each cell is the real component in that state.">
+    <DocTable caption="States across components" columns={['Component', ...states]} widths={['12%', '17.6%', '17.6%', '17.6%', '17.6%', '17.6%']}>
+      <tr>
+        <th scope="row">Button</th>
+        <td><Button variant="secondary" tabIndex={-1}>Search</Button></td>
+        <td><Button variant="secondary" data-state="hover" tabIndex={-1}>Search</Button></td>
+        <td><Button variant="secondary" data-state="focus" tabIndex={-1}>Search</Button></td>
+        <td><Button variant="secondary" disabled>Search</Button></td>
+        <td class="state-note">No error state</td>
+      </tr>
+      <tr>
+        <th scope="row">Text input</th>
+        <td><TextInput label="Gene" defaultValue="IL1B" tabIndex={-1} /></td>
+        <td><TextInput label="Gene" defaultValue="IL1B" data-state="hover" tabIndex={-1} /></td>
+        <td><TextInput label="Gene" defaultValue="IL1B" data-state="focus" tabIndex={-1} /></td>
+        <td><TextInput label="Gene" defaultValue="IL1B" disabled /></td>
+        <td><TextInput label="Gene" defaultValue="IL1Z" error="Not a known human gene." tabIndex={-1} /></td>
+      </tr>
+      <tr>
+        <th scope="row">Select</th>
+        <td><Select {...field} options={tissues} /></td>
+        <td><Select {...field} options={tissues} data-state="hover" /></td>
+        <td><Select {...field} options={tissues} data-state="focus" /></td>
+        <td><Select {...field} options={tissues} disabled /></td>
+        <td><Select {...field} options={tissues} error="Choose a tissue." /></td>
+      </tr>
+      <tr>
+        <th scope="row">Checkbox</th>
+        <td><Checkbox label="Co-expression" tabIndex={-1} /></td>
+        <td><Checkbox label="Co-expression" data-state="hover" tabIndex={-1} /></td>
+        <td><Checkbox label="Co-expression" data-state="focus" tabIndex={-1} /></td>
+        <td><Checkbox label="Co-expression" disabled /></td>
+        <td><Checkbox label="Co-expression" error="Select this option to continue." tabIndex={-1} /></td>
+      </tr>
+      <tr>
+        <th scope="row">Radio</th>
+        <td><RadioGroup legend="Network, default" hideLegend options={[{ value: 'global', label: 'Global' }]} /></td>
+        <td><RadioGroup legend="Network, hover" hideLegend options={[{ value: 'global', label: 'Global', 'data-state': 'hover' }]} /></td>
+        <td><RadioGroup legend="Network, focus" hideLegend options={[{ value: 'global', label: 'Global', 'data-state': 'focus' }]} /></td>
+        <td><RadioGroup legend="Network, disabled" hideLegend disabled options={[{ value: 'global', label: 'Global' }]} /></td>
+        <td>
+          <RadioGroup legend="Network, error" hideLegend options={[{ value: 'global', label: 'Global', 'data-state': 'error' }]} />
+          <p class="state-note">The message sits on the group, not each option.</p>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Tag</th>
+        <td><Tag label="IL1B" onRemove={remove} /></td>
+        <td><Tag label="IL1B" onRemove={remove} data-state="hover" /></td>
+        <td><Tag label="IL1B" onRemove={remove} data-state="focus" /></td>
+        <td><Tag label="IL1B" disabled /></td>
+        <td><Tag label="IL1Z" invalid onRemove={remove} /></td>
+      </tr>
+    </DocTable>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .state-swatch {
+    display: block;
+    inline-size: var(--space-8);
+    block-size: var(--space-6);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+  }
+
+  .state-note {
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+</style>
