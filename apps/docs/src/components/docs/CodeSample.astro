@@ -14,4 +14,4 @@ const { label, code, lang, copy = true } = Astro.props;
 const lines = await highlighter.lines(code, lang);
 ---
 
-<CodeBlock client:visible label={label} code={code} lines={lines} copy={copy} />
+<CodeBlock client:load label={label} code={code} lines={lines} copy={copy} />

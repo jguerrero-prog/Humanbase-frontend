@@ -148,7 +148,7 @@ const usage = `import { CodeBlock, CodeTabs, InlineCode } from '@humanbase/ui';
     </section>
     <section class="pattern" aria-labelledby="languages">
       <h3 id="languages">The same request in several languages</h3>
-      <CodeTabs client:visible label="Request language" examples={languages} defaultLanguage="Python" />
+      <CodeTabs client:load label="Request language" examples={languages} defaultLanguage="Python" />
       <p class="caption">The language choice is remembered in this browser and applies to every block on the page.</p>
     </section>
     <section class="pattern" aria-labelledby="file-format">
