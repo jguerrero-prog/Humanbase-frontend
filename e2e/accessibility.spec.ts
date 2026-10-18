@@ -33,6 +33,7 @@ const pages = [
   'http://localhost:4322/ui-library/what-exists-today/',
   'http://localhost:4322/components/badges-and-tags/',
   'http://localhost:4322/components/code-block/',
+  'http://localhost:4322/guidelines/scientific-notation-and-units/',
 ];
 
 for (const url of pages) {

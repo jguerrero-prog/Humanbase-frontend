@@ -53,7 +53,7 @@ export {
   type TableDensity,
   type TableProps,
 } from './Table/Table';
-export { ValueFormat } from './Table/ValueFormat';
+export { ValueFormat, type FormattedValue } from './Table/ValueFormat';
 export { PageLink, Pagination, ShowMore, pageSizeMemory, rowsPerPage, type PageLinkProps, type PaginationProps, type ShowMoreProps } from './Pagination/Pagination';
 export { PageWindow, type PageSlot } from './Pagination/PageWindow';
 export { Breadcrumbs, SkipLink, type BreadcrumbsProps, type Crumb } from './Navigation/Breadcrumbs';
