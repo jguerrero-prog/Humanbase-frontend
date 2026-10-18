@@ -1,4 +1,5 @@
-import type { ButtonHTMLAttributes, MouseEvent, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, MouseEvent } from 'react';
+import { Icon, type IconName } from '../Icon/Icon';
 import './Button.css';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive';
@@ -7,7 +8,7 @@ export type ButtonSize = 'medium' | 'small';
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  icon?: ReactNode;
+  icon?: IconName;
   loading?: boolean;
 }
 
@@ -25,7 +26,7 @@ export function Button({ variant = 'primary', size = 'medium', icon, loading = f
       aria-busy={loading || undefined}
       onClick={blockWhileLoading}
     >
-      {loading ? <Spinner /> : icon && <span className="button-icon" aria-hidden="true">{icon}</span>}
+      {loading ? <Spinner /> : icon && <Icon name={icon} size={size === 'small' ? 16 : 20} />}
       {children}
     </button>
   );

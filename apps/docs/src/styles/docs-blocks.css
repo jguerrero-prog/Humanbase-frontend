@@ -219,7 +219,7 @@
 
 .key-list div {
   display: grid;
-  grid-template-columns: 160px minmax(0, 1fr);
+  grid-template-columns: var(--key-term-width, 160px) minmax(0, 1fr);
   gap: var(--space-4);
   padding: 14px 0;
   border-block-start: var(--border-width-1) solid var(--border-subtle);

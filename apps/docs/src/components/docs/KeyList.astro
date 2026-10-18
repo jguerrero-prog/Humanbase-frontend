@@ -1,12 +1,13 @@
 ---
 interface Props {
   items: [term: string, description: string][];
+  termWidth?: string;
 }
 
-const { items } = Astro.props;
+const { items, termWidth } = Astro.props;
 ---
 
-<dl class="key-list">
+<dl class="key-list" style={termWidth ? `--key-term-width: ${termWidth}` : undefined}>
   {
     items.map(([term, description]) => (
       <div>

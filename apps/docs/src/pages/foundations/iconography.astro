@@ -1,0 +1,502 @@
+---
+import { Button, Icon, iconNames, type IconName } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DoDont from '../../components/docs/DoDont.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyList from '../../components/docs/KeyList.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import SizeCard from '../../components/docs/SizeCard.astro';
+import featherReference from '../../data/feather-reference.json';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const scienceIcons: { name: IconName; title: string; use: string }[] = [
+  { name: 'gene-network', title: 'Gene network', use: 'Networks, related genes' },
+  { name: 'query-gene', title: 'Query gene', use: 'The gene someone searched for' },
+  { name: 'module', title: 'Module', use: 'Functional modules' },
+  { name: 'dna', title: 'DNA', use: 'Sequences, Sei and Beluga' },
+  { name: 'variant', title: 'Variant', use: 'Variant effects, mutations' },
+  { name: 'genome-track', title: 'Genome track', use: 'Genome browser' },
+  { name: 'heatmap', title: 'Heatmap', use: 'Feature heatmaps, expression' },
+  { name: 'cell', title: 'Cell', use: 'Cell types, ExPectoSC' },
+  { name: 'analysis', title: 'Analysis', use: 'Run an analysis, jobs' },
+  { name: 'dataset', title: 'Dataset', use: 'Data sources, downloads' },
+];
+
+const scienceNames = new Set(scienceIcons.map((icon) => icon.name));
+const interfaceIcons = iconNames.filter((name) => !scienceNames.has(name));
+
+const colorExamples = [
+  { icon: 'search', label: 'Search genes', title: 'On white', caption: 'Ink, the same as body text', tone: 'ink' },
+  { icon: 'download', label: 'Download results', title: 'Links and actions', caption: 'Emerald, matching the link', tone: 'link' },
+  { icon: 'arrow-right', label: 'Explore the network', title: 'On emerald', caption: 'White on the brand color', tone: 'brand' },
+  { icon: 'alert-circle', label: 'Gene not found', title: 'Status', caption: 'Status 600, always with a word', tone: 'error' },
+] as const;
+
+const usage = `import { Button, Icon } from '@humanbase/ui';
+
+<Button icon="download">Download results</Button>
+<Icon name="gene-network" size={20} />
+<Icon name="alert-circle" label="Error" />`;
+---
+
+<DocsLayout title="Iconography" description="HumanBase interface and science icons: drawing style, sizes, color and accessibility.">
+  <Intro
+    lead="HumanBase icons are simple line drawings that help people find and recognize actions faster. They start from Feather, a widely used open-source set, and add two things of their own: softened corners that make the set feel friendlier, and science icons drawn for HumanBase’s tools, such as gene networks, variants and genome tracks."
+    status="Updated October 17, 2026 · 49 icons: 10 science, 39 interface · Interface icons based on Feather Icons by Cole Bemis, MIT license"
+  >
+    <KeyRules
+      rules={[
+        { title: 'One drawing style', text: 'Interface icons are a 2px outline and science icons a lighter 1.5px outline, all on a 24px grid with rounded ends and softened corners. No filled or two-tone icons.' },
+        { title: 'Icons support words', text: 'An icon sits next to a label wherever there is room. Icon-only buttons are for familiar actions in tight spaces.' },
+        { title: 'Size follows text', text: 'Icons scale with the text they sit beside, so a 16px label gets a 20px icon and a 14px label gets 16px.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection
+    title="The HumanBase touch"
+    lead="Every sharp corner in the set is rounded by 2px, and rectangles by at least 3px. It is a small change, but it echoes the rounded buttons and the Cabin typeface and makes the set feel approachable. Shown at 3x."
+    spacing="loose"
+  >
+    <div class="comparison" role="region" aria-label="Feather icons compared with HumanBase icons" tabindex="0">
+      <table>
+        <caption class="visually-hidden">Feather icons as published, compared with the HumanBase versions</caption>
+        <thead class="visually-hidden">
+          <tr>
+            <th scope="col">Set</th>
+            {featherReference.map((reference) => <th scope="col">{reference.icon}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Feather, as published</th>
+            {
+              featherReference.map((reference) => (
+                <td>
+                  <svg class="comparison-icon" viewBox="0 0 72 72" aria-hidden="true">
+                    {reference.paths.map((d) => (
+                      <path d={d} />
+                    ))}
+                  </svg>
+                </td>
+              ))
+            }
+          </tr>
+          <tr>
+            <th scope="row" class="comparison-humanbase">HumanBase</th>
+            {
+              featherReference.map((reference) => (
+                <td>
+                  <Icon name={reference.icon as IconName} className="comparison-icon" />
+                </td>
+              ))
+            }
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </DocSection>
+
+  <DocSection
+    title="Science icons"
+    lead="Drawn for HumanBase on the same grid as the interface icons, with a lighter 1.5px stroke because they carry more detail. Network icons leave a small gap where links meet nodes, the same way the hero illustration does. Shown at 2x."
+    spacing="loose"
+  >
+    <ul class="science-grid">
+      {
+        scienceIcons.map((icon) => (
+          <li>
+            <Icon name={icon.name} className="science-icon" />
+            <h3>{icon.title}</h3>
+            <p>{icon.use}</p>
+            <code>{icon.name}</code>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Interface icons" lead="Familiar actions and signals, based on Feather. Shown at their real size, 24px." spacing="loose">
+    <ul class="interface-grid">
+      {
+        interfaceIcons.map((name) => (
+          <li>
+            <Icon name={name} />
+            <code>{name}</code>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Sizes" lead="Three sizes. Strokes thin slightly as icons get smaller so they keep the same visual weight as the text beside them." spacing="loose">
+    <div class="card-grid" style="--columns: 3">
+      <SizeCard title="16px · 1.5px stroke" text="Small buttons, table rows, inline with 14px text">
+        <span class="size-sample size-sample-16"><Icon name="download" size={16} />Download results</span>
+      </SizeCard>
+      <SizeCard title="20px · 1.75px stroke" text="Medium buttons, inputs, menus, inline with 16px text">
+        <span class="size-sample size-sample-20"><Icon name="download" size={20} />Download results</span>
+      </SizeCard>
+      <SizeCard title="24px · 2px stroke" text="Standalone icons, toolbars, empty states">
+        <span class="size-sample size-sample-24"><Icon name="download" size={24} />Download results</span>
+      </SizeCard>
+    </div>
+  </DocSection>
+
+  <DocSection title="Construction" lead="How every icon is built, so new icons match the set. Shown at 8x on the 24px grid." spacing="loose">
+    <div class="construction">
+      <figure class="construction-grid">
+        <svg viewBox="0 0 192 192" aria-hidden="true">
+          <defs>
+            <pattern id="icon-grid" width="8" height="8" patternUnits="userSpaceOnUse">
+              <path d="M8 0V8M0 8H8" class="construction-gridline" />
+            </pattern>
+          </defs>
+          <rect width="192" height="192" class="construction-margin" />
+          <rect x="16" y="16" width="160" height="160" class="construction-live" />
+          <rect width="192" height="192" fill="url(#icon-grid)" />
+          <circle cx="96" cy="96" r="80" class="construction-keyline" />
+          <rect x="24" y="24" width="144" height="144" rx="24" class="construction-keyline" />
+        </svg>
+        <Icon name="gene-network" className="construction-icon" />
+        <figcaption class="visually-hidden">The gene network icon on the 24px grid at 8x, with the 2px margin, the 20px live area and the circle and square keylines.</figcaption>
+      </figure>
+      <KeyList
+        termWidth="120px"
+        items={[
+          ['Grid', '24 × 24px, with a 2px safe margin. Drawing stays inside the 20px live area.'],
+          ['Keylines', 'Round icons fill a 20px circle, square icons an 18px rounded square, so different shapes look the same size.'],
+          ['Stroke', 'Interface icons 2px, science icons 1.5px. Centered, with round caps and round joins. No fills.'],
+          ['Corners', 'Every corner rounded by 2px, rectangles by at least 3px.'],
+          ['Networks', 'Links stop about 1px short of each node, never touching it.'],
+          ['Detail', 'Leave at least 2px between parallel lines so the icon stays clear at 16px.'],
+        ]}
+      />
+    </div>
+  </DocSection>
+
+  <DocSection title="Color" lead="Icons take the color of the text beside them. On their own they need at least 3:1 contrast with the background, the WCAG minimum for interface graphics." spacing="loose">
+    <ul class="card-grid color-examples">
+      {
+        colorExamples.map((example) => (
+          <li>
+            <span class:list={['color-sample', `color-sample-${example.tone}`]}>
+              <Icon name={example.icon} size={20} />
+              {example.label}
+            </span>
+            <h3>{example.title}</h3>
+            <p>{example.caption}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Icons in buttons" lead="Both button components have an optional icon before the label. Turn on “Show icon” and pick an icon in the Icon property; the color follows the button style automatically." spacing="loose">
+    <div class="button-examples">
+      <div>
+        <Button icon="analysis" tabIndex={-1}>Run analysis</Button>
+        <Button variant="ghost" icon="plus" tabIndex={-1}>Add network</Button>
+        <Button variant="ghost" icon="download" tabIndex={-1}>Download results</Button>
+        <Button variant="destructive" icon="trash" tabIndex={-1}>Delete job</Button>
+        <Button icon="search" data-state="focus" tabIndex={-1}>Search</Button>
+      </div>
+      <div>
+        <Button size="small" icon="search" tabIndex={-1}>Search</Button>
+        <Button size="small" variant="ghost" icon="filter" tabIndex={-1}>Filter</Button>
+        <Button size="small" variant="ghost" icon="copy" tabIndex={-1}>Copy ID</Button>
+        <Button size="small" variant="ghost" icon="genome-track" tabIndex={-1}>Open in genome browser</Button>
+      </div>
+    </div>
+    <p class="doc-note">Use an icon only when it makes the action faster to recognize. One icon per button, always before the label. Loading replaces the icon with the spinner.</p>
+  </DocSection>
+
+  <DocSection title="Accessibility">
+    <KeyRules
+      size="medium"
+      rules={[
+        { title: 'Decorative icons', text: 'An icon next to a label is decoration. Hide it from screen readers with aria-hidden="true".' },
+        { title: 'Icon-only buttons', text: 'Give every icon-only button an accessible name (aria-label) and a tooltip with the same words.' },
+        { title: 'Target size', text: 'Icon-only buttons are at least 24 × 24px, and 44 × 44px where touch is likely, even if the icon is 16px.' },
+        { title: 'Never color alone', text: 'Status icons always come with words, so meaning never depends on color or shape alone. Error messages are announced with “Error” first.' },
+      ]}
+    />
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <DoDont
+      dos={[
+        'Pair icons with labels wherever there is room.',
+        'Use the same icon for the same action everywhere, such as download for every export.',
+        'Draw new icons on the 24px grid with the construction rules above.',
+        'Match the icon size to the text size.',
+      ]}
+      donts={[
+        'Don’t mix in icons from other sets; their strokes and corners won’t match.',
+        'Don’t add fills, dots, gradients or second colors to icons.',
+        'Don’t scale an icon to an in-between size such as 18px or 22px.',
+        'Don’t use a science icon as decoration. Each one stands for a specific tool or concept.',
+      ]}
+    />
+  </DocSection>
+
+  <NoteCard title="Using icons in Figma">
+    <ul>
+      <li>All 49 icons are components named “Icon / name” in the “Components: Icons” section, below the button components.</li>
+      <li>Each icon is a single shape, so its color and stroke survive when you swap one icon for another.</li>
+      <li>Resize icons to 16, 20 or 24px. Interface icons use a 1.5, 1.75 or 2px stroke at those sizes; science icons use 1.25, 1.25 or 1.5px.</li>
+      <li>Tokens for code: icon.size.sm = 16px, icon.size.md = 20px, icon.size.lg = 24px.</li>
+    </ul>
+  </NoteCard>
+
+  <NoteCard title="Using icons in code">
+    <ul>
+      <li><code>&lt;Icon name size label&gt;</code> draws an icon by name at 16, 20 or 24px (default 24) with the stroke weights above, in <code>currentColor</code>.</li>
+      <li>Without <code>label</code> the icon is decorative and hidden from screen readers. With <code>label</code> it becomes an image with that name.</li>
+      <li>Buttons take an icon name, <code>icon="download"</code>, and size it to the button: 20px for Medium, 16px for Small.</li>
+      <li>The interface icons are based on Feather Icons by Cole Bemis; its MIT license ships beside the icon set in <code>packages/ui/src/Icon</code>.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .comparison {
+    overflow-x: auto;
+    padding: 0 var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .comparison table {
+    border-collapse: collapse;
+  }
+
+  .comparison th[scope="row"] {
+    min-inline-size: 200px;
+    padding-inline-end: var(--space-10);
+    font: var(--type-label);
+    text-align: start;
+    color: var(--text-muted);
+  }
+
+  .comparison th.comparison-humanbase {
+    color: var(--text-link);
+  }
+
+  .comparison td {
+    padding: 28px var(--space-10) 28px 0;
+  }
+
+  .comparison tr + tr > * {
+    border-block-start: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .comparison :global(.comparison-icon) {
+    display: block;
+    inline-size: 72px;
+    block-size: 72px;
+  }
+
+  svg.comparison-icon:not(.icon) {
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .science-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .science-grid li {
+    display: grid;
+    gap: 14px;
+    padding: 28px var(--space-6) var(--space-6);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .science-grid :global(.science-icon) {
+    inline-size: var(--space-12);
+    block-size: var(--space-12);
+  }
+
+  .science-grid h3 {
+    font: var(--type-label);
+  }
+
+  .science-grid p {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .science-grid code {
+    font: var(--type-code-sm);
+    color: var(--text-secondary);
+  }
+
+  .interface-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(172px, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .interface-grid li {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+    padding: var(--space-6) 0 var(--space-5);
+  }
+
+  .interface-grid code {
+    font: 400 12px/1.4 "Atkinson Hyperlegible Mono", monospace;
+    color: var(--text-secondary);
+  }
+
+  .size-sample {
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .size-sample-16 {
+    font: var(--type-body-sm);
+  }
+
+  .size-sample-24 {
+    gap: var(--space-2);
+    font: var(--type-body-lg);
+  }
+
+  .construction {
+    display: grid;
+    grid-template-columns: 192px minmax(0, 1fr);
+    gap: var(--space-16);
+    align-items: center;
+  }
+
+  .construction-grid {
+    position: relative;
+    inline-size: 192px;
+    block-size: 192px;
+    margin: 0;
+    border: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .construction-grid > svg,
+  .construction-grid :global(.construction-icon) {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .construction-grid :global(.construction-icon) {
+  stroke-width: 0.5;
+}
+
+.construction-margin {
+    fill: var(--color-yellow-500);
+    fill-opacity: 0.18;
+  }
+
+  .construction-live {
+    fill: var(--surface-page);
+  }
+
+  .construction-gridline {
+    fill: none;
+    stroke: var(--surface-sunken);
+  }
+
+  .construction-keyline {
+    fill: none;
+    stroke: var(--color-mint-500);
+  }
+
+  .color-examples {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .color-examples li {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .color-sample {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    padding: var(--space-6) var(--space-5);
+    font: var(--type-label);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .color-sample-link {
+    color: var(--text-link);
+  }
+
+  .color-sample-brand {
+    color: var(--text-on-brand);
+    background: var(--action-primary);
+  }
+
+  .color-sample-error {
+    color: var(--status-error-fg);
+  }
+
+  .color-examples h3 {
+    font: var(--docs-small-strong);
+  }
+
+  .color-examples p {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .button-examples {
+    display: grid;
+    gap: var(--space-6);
+    padding: var(--space-8);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .button-examples div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  .doc-note {
+    font: var(--docs-small);
+    color: var(--text-muted);
+  }
+
+  @media (width < 64rem) {
+    .science-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .construction {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
