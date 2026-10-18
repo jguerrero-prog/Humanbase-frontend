@@ -4,7 +4,7 @@
   stroke: currentcolor;
   stroke-width: 2.2;
   vector-effect: non-scaling-stroke;
-  animation: spinner-turn 0.8s linear infinite;
+  animation: spinner-turn 1s var(--motion-easing-linear) infinite;
 }
 
 .spinner path {

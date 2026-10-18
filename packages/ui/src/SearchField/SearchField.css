@@ -97,7 +97,7 @@
   inset-inline-start: -1px;
   inline-size: calc(100% + 2px);
   color: var(--text-default);
-  animation: search-suggestions-open 120ms ease-out;
+  animation: menu-open var(--motion-duration-base) var(--motion-easing-enter);
 }
 
 .search-suggestion {
@@ -174,11 +174,4 @@
 .search-suggestions-empty .search-suggestions-empty-title {
   font: 700 15px/1.4 Lato, sans-serif;
   color: var(--text-default);
-}
-
-@keyframes search-suggestions-open {
-  from {
-    opacity: 0;
-    translate: 0 calc(var(--space-1) * -1);
-  }
 }

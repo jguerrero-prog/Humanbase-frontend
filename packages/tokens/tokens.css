@@ -203,4 +203,22 @@
   --z-modal: 400;
   --z-toast: 500;
   --z-tooltip: 600;
+  --motion-duration-instant: 0ms;
+  --motion-duration-fast: 100ms;
+  --motion-duration-base: 150ms;
+  --motion-duration-moderate: 200ms;
+  --motion-duration-slow: 280ms;
+  --motion-easing-enter: cubic-bezier(0.2, 0, 0, 1);
+  --motion-easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  --motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+  --motion-distance-none: 0;
+  --motion-distance-xs: 4px;
+  --motion-distance-sm: 8px;
+  --motion-distance-md: 16px;
+  --motion-scale-dialog: 0.98;
+  --motion-delay-response: 100ms;
+  --motion-delay-loading: 300ms;
+  --motion-delay-tooltip: 400ms;
+  --motion-hold-loading: 500ms;
+  --motion-hold-toast: 6000ms;
 }

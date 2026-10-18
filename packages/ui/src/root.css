@@ -91,12 +91,31 @@ svg {
   white-space: nowrap;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+@keyframes menu-open {
+  from {
+    opacity: 0;
+    translate: 0 calc(var(--motion-distance-xs) * -1);
   }
+}
+
+/* Reduced motion keeps fades but removes movement and caps durations at 150ms.
+   It follows the device unless Display settings set data-motion on the root. */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="full"]) {
+    --motion-distance-xs: 0;
+    --motion-distance-sm: 0;
+    --motion-distance-md: 0;
+    --motion-scale-dialog: 1;
+    --motion-duration-moderate: var(--motion-duration-base);
+    --motion-duration-slow: var(--motion-duration-base);
+  }
+}
+
+:root[data-motion="reduce"] {
+  --motion-distance-xs: 0;
+  --motion-distance-sm: 0;
+  --motion-distance-md: 0;
+  --motion-scale-dialog: 1;
+  --motion-duration-moderate: var(--motion-duration-base);
+  --motion-duration-slow: var(--motion-duration-base);
 }

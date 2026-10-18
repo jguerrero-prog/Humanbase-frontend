@@ -31,7 +31,7 @@ export const navigation: NavSection[] = [
       { label: 'Spacing and layout grid', href: '/foundations/spacing-and-layout-grid/' },
       { label: 'Corner radius', href: '/foundations/corner-radius/' },
       { label: 'Elevation and borders', href: '/foundations/elevation-and-borders/' },
-      { label: 'Motion' },
+      { label: 'Motion', href: '/foundations/motion/' },
       { label: 'Accessibility' },
     ],
   },
