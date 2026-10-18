@@ -15,7 +15,7 @@ interface Props {
 const { steps, size = 'large' } = Astro.props;
 ---
 
-<ol class:list={['ramp', `ramp-${size}`]} aria-hidden={size === 'small' ? 'true' : undefined}>
+<ol class:list={['ramp', `ramp-${size}`]} aria-hidden={size === 'small' ? 'true' : undefined} data-illustration>
   {
     steps.map(({ color, label, note, dark }) => (
       <li class:list={{ dark }} style={`background: ${color}`}>
