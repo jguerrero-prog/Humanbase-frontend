@@ -53,7 +53,10 @@ export function Drawer({ title, subtitle, open = false, onClose = () => {}, size
           />
         )}
         <LayerHeader titleId={titleId} title={title} subtitle={subtitle} onClose={onClose} className="drawer-header" />
-        <div className="drawer-body">{children}</div>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the body scrolls, so it takes focus for arrow-key scrolling */}
+        <div className="drawer-body" role="region" aria-labelledby={titleId} tabIndex={0}>
+          {children}
+        </div>
         {footer && <div className="drawer-footer">{footer}</div>}
       </div>
     </dialog>
