@@ -1,5 +1,5 @@
 ---
-import { Cell, DataTooltip, HeaderCell, Icon, Table, Toggletip, Tooltip } from '@humanbase/ui';
+import { Button, Cell, DataTooltip, HeaderCell, Icon, Table, Toggletip, Tooltip } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -272,7 +272,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
         <span class="mock-button"><Icon name="download" size={16} />Download</span>
       </Pair>
       <Pair kind="do" title="Do. Explain disabled controls on the page" text="Disabled buttons can’t take focus, so a tooltip on them is unreachable by keyboard." mock>
-        <span class="mock-button mock-button-disabled">Delete job</span>
+        <Button variant="secondary" size="small" disabled className="pair-button">Delete job</Button>
         <span class="mock-note">Running jobs can’t be deleted.</span>
       </Pair>
       <Pair kind="dont" title="Don’t. Hide instructions in a tooltip" text="“Enter 20 to 3,500 genes” is needed to succeed, so it belongs under the field." mock>
@@ -525,9 +525,8 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
     border-radius: var(--radius-md);
   }
 
-  .mock-button-disabled {
-    color: var(--text-disabled);
-    border-color: var(--border-subtle);
+  .pair-stage :global(.pair-button) {
+    justify-self: start;
   }
 
   .mock-note {
