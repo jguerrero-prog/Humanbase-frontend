@@ -20,6 +20,7 @@ const pages = [
   'http://localhost:4322/components/accordions/',
   'http://localhost:4322/components/tables/',
   'http://localhost:4322/components/modals-and-drawers/',
+  'http://localhost:4322/components/pagination/',
 ];
 
 for (const url of pages) {

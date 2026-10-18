@@ -70,7 +70,7 @@ export const navigation: NavSection[] = [
       { label: 'Modals and drawers', href: '/components/modals-and-drawers/' },
       { label: 'Tooltips' },
       { label: 'Navigation and breadcrumbs' },
-      { label: 'Pagination' },
+      { label: 'Pagination', href: '/components/pagination/' },
       { label: 'Badges and tags' },
       { label: 'Code block' },
     ],

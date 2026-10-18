@@ -48,3 +48,5 @@ export {
   type TableProps,
 } from './Table/Table';
 export { ValueFormat } from './Table/ValueFormat';
+export { PageLink, Pagination, ShowMore, pageSizeMemory, rowsPerPage, type PageLinkProps, type PaginationProps, type ShowMoreProps } from './Pagination/Pagination';
+export { PageWindow, type PageSlot } from './Pagination/PageWindow';
