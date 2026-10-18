@@ -198,15 +198,15 @@ const usage = `import { Pagination, ShowMore } from '@humanbase/ui';
         <p class="stage-text">50 genes on one page</p>
       </Pair>
       <Pair kind="dont" title="Don’t. Paginate short tables" text="Splitting 50 genes into 5 pages of 10 hides most of them." mock>
-        <span class="slots">{[1, 2, 3, 4, 5].map((page) => <PageLink page={page} label={`Page ${page}`} className="page-button" current={page === 1}>{page}</PageLink>)}</span>
+        <span class="slots" inert>{[1, 2, 3, 4, 5].map((page) => <PageLink page={page} label={`Page ${page}`} className="page-button" current={page === 1}>{page}</PageLink>)}</span>
       </Pair>
       <Pair kind="do" title="Do. Keep the bar the same width" text="Seven slots, with ellipses, at every position." mock>
-        <span class="slots">
+        <span class="slots" inert>
           {new PageWindow(7463, 25, 49).slots().map((slot) => (slot === 'gap' ? <span class="gap">…</span> : <PageLink page={slot} label={`Page ${slot}`} className="page-button" current={slot === 49}>{slot}</PageLink>))}
         </span>
       </Pair>
       <Pair kind="dont" title="Don’t. List every page" text="Dozens of numbers wrap, shift and are hard to hit." mock>
-        <span class="slots slots-wrap">{Array.from({ length: 18 }, (_, index) => index + 1).map((page) => <PageLink page={page} label={`Page ${page}`} className="page-button" current={page === 3}>{page}</PageLink>)}</span>
+        <span class="slots slots-wrap" inert>{Array.from({ length: 18 }, (_, index) => index + 1).map((page) => <PageLink page={page} label={`Page ${page}`} className="page-button" current={page === 3}>{page}</PageLink>)}</span>
       </Pair>
     </PairList>
   </DocSection>
