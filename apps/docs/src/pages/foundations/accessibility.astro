@@ -1,0 +1,274 @@
+---
+import { ColorCatalog } from '@humanbase/tokens/color';
+import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import semantic from '@humanbase/tokens/src/semantic.tokens.json';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { navigation } from '../../navigation';
+
+const colors = new ColorCatalog(primitives, semantic);
+const cssVar = (path: string) => `var(--${path.replaceAll('.', '-')})`;
+const needs = { text: { label: '4.5:1 text', min: 4.5 }, edge: { label: '3:1 control edge', min: 3 }, focus: { label: '3:1 focus', min: 3 }, none: { label: 'None', min: 0 }, exempt: { label: 'Exempt', min: 0 } };
+type Need = keyof typeof needs;
+
+const pairs: [string, string, Need, string][] = [
+  ['text.default', 'surface.page', 'text', 'Body text, headings'],
+  ['text.secondary', 'surface.page', 'text', 'Descriptions, secondary text'],
+  ['text.muted', 'surface.page', 'text', 'Captions, helper text'],
+  ['text.muted', 'surface.sunken', 'text', 'Lowest text pair in the system; keep muted text off darker greys'],
+  ['text.link', 'surface.page', 'text', 'Links, always underlined'],
+  ['text.error', 'surface.page', 'text', 'Field error messages'],
+  ['status.warning.fg', 'status.warning.bg', 'text', 'Lowest status pair; error 6.05, success 5.40, info 5.57'],
+  ['text.on-brand', 'action.primary', 'text', 'Primary button label'],
+  ['text.default', 'action.secondary', 'text', 'Secondary button label'],
+  ['text.on-brand', 'action.destructive', 'text', 'Destructive button label'],
+  ['border.strong', 'surface.page', 'edge', 'Field, select, checkbox and radio edges'],
+  ['border.selected', 'surface.page', 'edge', 'Selected card, row or tab'],
+  ['focus.ring', 'surface.page', 'focus', 'The 2px focus ring'],
+  ['border.default', 'surface.page', 'none', 'Cards and dividers only. Never the only edge of a control.'],
+  ['text.disabled', 'surface.page', 'exempt', 'Disabled controls. Say why it is disabled, in readable text, next to it.'],
+];
+const contrastRows = pairs.map(([foreground, background, need, where]) => {
+  const ratio = colors.contrast(foreground, background);
+  const result = need === 'exempt' ? 'Exempt' : need === 'none' ? 'Decorative' : ratio >= needs[need].min ? 'Pass' : 'Fail';
+  return { foreground, background, ratio: `${ratio.toFixed(2)}:1`, need: needs[need].label, result, where, isText: need === 'text' || need === 'exempt' };
+});
+
+const lowContrastUse = 'Below 3:1 on white: use as a filled area with a label or a 1px grey 600 outline, never as a thin line or small dot alone';
+const dataColors = ['1', '2', '3', '4', '5', '6', 'other'].map((step) => {
+  const path = `viz.cat.${step}`;
+  const ratio = colors.contrast(path, 'color.white');
+  return { path, ratio: `${ratio.toFixed(2)}:1`, use: ratio >= 3 ? 'Fills, lines and points' : lowContrastUse };
+});
+
+const pages = new Map(navigation.flatMap((section) => section.items).map((item) => [item.label, item.href]));
+const source = (label: string, page = label) => ({ label, href: pages.get(page) });
+const keyboard = [
+  ['Controls', 'Tab and Shift+Tab move between controls. Buttons, tags, tabs and table headers show focus/ring (2px). Fields show a 2px border/selected border.', source('Tokens: States', 'States: hover, focus, disabled, error')],
+  ['Menus and selects', 'Arrow keys move through options, Enter chooses, Escape closes and returns focus to the trigger.', source('Dropdowns and selects')],
+  ['Modals and drawers', 'Escape, a close button and a cancel option, every time. Dialogs keep focus inside until they close; a drawer without a backdrop lets focus move between it and the graph. Focus returns to whatever opened it.', source('Modals and drawers')],
+  ['Form errors', 'After submit, the error summary appears at the top and takes focus, so it is read first.', source('Errors and validation')],
+  ['Genome browser', 'Arrow keys move, + and - zoom, Space toggles between two zoom levels, Ctrl and arrows jump between variants. Icon buttons give the shortcut in their tooltip.', source('Genome browser')],
+  ['Network and module graphs', 'The renderer stays as it is. View as table gives the same genes and connections as tables, keeping filters, selection and the starred set.', source('Network graph')],
+  ['Heatmaps', 'View as table lists every cell’s value with its row and column, and the summary sentence names the strongest values.', source('Heatmaps and score legends')],
+] as const;
+
+const alternatives = [
+  ['A summary sentence', 'Above each graph and read first by screen readers. It is also the table’s caption.', '“IL1B’s 15 most related genes in blood vessel; the strongest is IL1R1 at 1.00.”'],
+  ['View as table', 'Swaps the chart for tables of the same data, sorted and downloadable. The toolbar, legend and filters stay.', 'Network graph, module view, heatmaps, genome browser'],
+  ['Exact values', 'Legends print their edge values. A value past the last step takes the end color, and the tooltip and table say it is past the end of the legend.', 'Heatmaps and score legends'],
+];
+
+const announcements = [
+  ['Field error', 'The message sits under the field and is read with it. Screen readers hear “Error” first.', 'aria-invalid="true", aria-describedby'],
+  ['Error without submit', 'Such as an unknown gene in search; announced without moving focus.', 'polite live region'],
+  ['Job status', 'Queued, running and completed are announced as they change: “Now running”. Finished and Failed are also toasts.', 'polite live region'],
+  ['Loading area', 'The loading words are read once, not repeated.', 'aria-busy="true"'],
+];
+
+const targets = [
+  ['Button, medium', '46px tall', 'Pass', ''],
+  ['Button, small; Segment; Page button', '36px tall', 'Pass', 'Page buttons are 36px square. Small segments are 28px, still above the minimum.'],
+  ['Tag', '32px tall', 'Pass', 'Its Remove button is exactly 24px square, the minimum. Keep the gap between tags so targets never overlap.'],
+  ['Disclosure', '32px tall', 'Pass', ''],
+  ['Checkbox and radio', '24px control', 'Pass', 'Rows are at least 24px tall and the label is clickable, so the whole row is the target.'],
+];
+
+const checklist = [
+  'Every text pair uses semantic tokens and passes 4.5:1, or 3:1 at 24px and up.',
+  'Each control has a visible label; placeholders are examples, not labels.',
+  'Every state has a second signal besides color.',
+  'Tab through the screen: the order matches reading order and focus is always visible.',
+  'Every chart has a summary sentence and View as table.',
+  'Targets are at least 24px and do not overlap.',
+  'Errors say how to fix it and are tied to their field.',
+  'Status changes are announced once, politely.',
+  'Nothing moves with reduced motion on.',
+  'Text still fits at 200% zoom and at 320px wide.',
+];
+---
+
+<DocsLayout title="Accessibility" description="The WCAG 2.2 AA rules the system follows, with the measured numbers behind them.">
+  <Intro
+    lead="HumanBase meets WCAG 2.2 AA. Researchers read dense tables and charts for long stretches, often on a laptop, some with low vision, color vision deficiency or a keyboard only. This page gathers the rules that the other pages already follow, with the numbers behind them."
+    status="Updated October 16, 2026 · Foundations · Ratios measured from the tokens when this page is built"
+  >
+    <KeyRules
+      rules={[
+        { title: 'AA is the floor', text: 'Text 4.5:1, large text and control edges 3:1, targets at least 24px. Measured, not eyeballed.' },
+        { title: 'Never color alone', text: 'State, category and score always have a second signal: a word, an icon, a number, a border or a position.' },
+        { title: 'Every chart has a table', text: 'Graphs, heatmaps and the genome browser offer View as table and a one-sentence summary.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Contrast" lead="Every text and control pair in the semantic tokens, measured with the WCAG formula. Each sample is drawn with its tokens.">
+    <DocTable caption="Contrast of semantic token pairs" columns={['Sample', 'Foreground on background', 'Ratio', 'Needs', 'Result', 'Where']} widths={['115px', '365px', '86px', '144px', '106px']}>
+      {
+        contrastRows.map((row) => (
+          <tr>
+            <td>
+              <span
+                class:list={['sample', { edge: !row.isText }]}
+                style={row.isText ? `color: ${cssVar(row.foreground)}; background: ${cssVar(row.background)}` : `border-color: ${cssVar(row.foreground)}`}
+                aria-hidden="true"
+                data-illustration
+              >
+                {row.isText && 'Aa 3553'}
+              </span>
+            </td>
+            <th scope="row"><code>{row.foreground.replaceAll('.', '/')} on {row.background.replaceAll('.', '/')}</code></th>
+            <td class="ratio">{row.ratio}</td>
+            <td>{row.need}</td>
+            <td class="ratio">{row.result}</td>
+            <td>{row.where}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection
+    title="Color in charts"
+    lead="The categorical colors come from the Okabe and Ito palette, plus one indigo, so they stay distinct with the common forms of color vision deficiency. The diverging scale runs blue to orange, never red to green."
+  >
+    <DocTable caption="Categorical chart colors on white" columns={['Color', 'Token', 'On white', 'Use']} widths={['115px', '240px', '120px']}>
+      {
+        dataColors.map(({ path, ratio, use }) => (
+          <tr>
+            <td><span class="sample swatch" style={`background: ${cssVar(path)}`} aria-hidden="true" data-illustration /></td>
+            <th scope="row"><code>{path.replaceAll('.', '/')}</code></th>
+            <td class="ratio">{ratio}</td>
+            <td>{use}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+    <ul class="checks checks-3">
+      <li><h3>Scales</h3><p>The three lightest sequential steps are close to white (1.11 to 1.91:1). Legends print their edge values, and the tooltip and View as table give the exact number, so a light cell never carries meaning alone.</p></li>
+      <li><h3>Second signal</h3><p>Raises and lowers sit in separate, labeled groups, such as “Raises binding”, and legends read Lower ← → Higher. Blue and orange are the third cue, not the only one.</p></li>
+      <li><h3>Highlight</h3><p>data/highlight is 1.56:1 on white, so it is never the only sign: hovered and focused genes also get a dashed ink ring and the data tooltip.</p></li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Keyboard and focus" lead="Everything a mouse can do, a keyboard can do. Tab order follows reading order, and focus is always visible.">
+    <DocTable caption="Keyboard behavior by area" columns={['Where', 'Keys and behavior', 'Source']} widths={['240px']}>
+      {
+        keyboard.map(([where, keys, { label, href }]) => (
+          <tr>
+            <th scope="row">{where}</th>
+            <td>{keys}</td>
+            <td>{href ? <a href={href}>{label}</a> : label}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Text alternatives" lead="Charts are summaries of numbers, so the numbers are always one step away.">
+    <ul class="checks checks-3">
+      {
+        alternatives.map(([title, text, example]) => (
+          <li>
+            <h3>{title}</h3>
+            <p>{text}</p>
+            <code>{example}</code>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Screen reader announcements" lead="Changes that happen without a page load are announced once, politely, in the same plain words the page shows.">
+    <DocTable caption="What is announced and how" columns={['Moment', 'What happens', 'Markup']} widths={['240px']}>
+      {announcements.map(([moment, what, markup]) => <tr><th scope="row">{moment}</th><td>{what}</td><td><code>{markup}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Target size" lead="WCAG 2.2 asks for at least 24px by 24px. Measured from the component sets:">
+    <DocTable caption="Target sizes" columns={['Component', 'Size', 'Result', 'Note']} widths={['320px', '140px', '100px']}>
+      {targets.map(([component, size, result, note]) => <tr><th scope="row">{component}</th><td>{size}</td><td>{result}</td><td>{note}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection
+    title="Reduced motion"
+    lead="HumanBase follows the device setting and also offers its own in Display settings, linked from the footer and saved in this browser, since there are no accounts. Reduced motion keeps fades, removes movement and caps everything at 150ms. The Motion page lists every animated element with its reduced version."
+  />
+
+  <DocSection title="Before a screen is handed off" lead="Check each one in the design, then again in the build.">
+    <ol class="checklist">
+      {checklist.map((item) => <li>{item}</li>)}
+    </ol>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .sample {
+    display: inline-block;
+    inline-size: 57px;
+    padding: var(--space-2) 0;
+    font: var(--type-label-sm);
+    text-align: center;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .sample.edge {
+    block-size: 35px;
+    background: var(--surface-page);
+    border-width: var(--border-width-2);
+  }
+
+  .sample.swatch {
+    block-size: var(--space-6);
+    border-color: var(--text-secondary);
+  }
+
+  .ratio {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-default);
+  }
+
+  .checks-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .checks code {
+    font: var(--type-code-sm);
+    color: var(--text-default);
+  }
+
+  .checklist {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: check;
+  }
+
+  .checklist li {
+    display: flex;
+    gap: var(--space-4);
+    font: var(--type-body);
+    color: var(--text-secondary);
+    counter-increment: check;
+  }
+
+  .checklist li::before {
+    font: var(--type-label);
+    color: var(--text-link);
+    content: counter(check, decimal-leading-zero);
+  }
+
+  @media (width < 64rem) {
+    .checks-3 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
