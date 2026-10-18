@@ -1,0 +1,77 @@
+---
+import { flattenTokens } from '@humanbase/tokens/catalog';
+import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const uses: Record<string, string> = {
+  '0-5': 'Inside badges and tags',
+  '1': 'Icon to label, tight stacks',
+  '2': 'Gap between related controls',
+  '3': 'Field label to field, card padding in compact views',
+  '4': 'Card and panel padding, table cell sides',
+  '5': 'Panel padding in dense screens',
+  '6': 'Between groups, page sections inside a card',
+  '8': 'Between cards and sections',
+  '10': 'Between major regions',
+  '12': 'Above page headings',
+  '16': 'Page margins on desktop',
+  '24': 'Hero and footer spacing',
+  '32': 'Large hero spacing',
+};
+
+const steps = flattenTokens(primitives.space, ['space'])
+  .filter(({ path }) => path.at(-1) !== '0')
+  .map(({ path, cssVar, token }) => {
+    const { value } = token.$value as { value: number };
+    const step = path.at(-1) ?? '';
+    return { px: value, name: path.join('/'), cssVar, value: `${value}px · ${value / 16}rem`, use: uses[step] ?? token.$description ?? '' };
+  })
+  .toSorted((a, b) => a.px - b.px);
+---
+
+<DocsLayout title="Spacing tokens" description="The spacing variables every gap and padding in the components is bound to.">
+  <Intro
+    lead="14 spacing variables, from 0px to 128px, hold the scale from the Spacing and layout grid page. Every gap and padding in the components is bound to one of them."
+    status="Updated October 16, 2026 · Tokens · Every bar on this page is bound to its variable"
+  >
+    <KeyRules
+      rules={[
+        { title: 'On the scale or not at all', text: 'Gaps and paddings use a space variable. Values between steps, such as 6px or 10px, were snapped up to the next step.' },
+        { title: '8px for layout', text: 'Layout uses 8px steps; 2px and 4px only inside components, such as an icon beside a label.' },
+        { title: 'Closer means together', text: 'Space inside a group is always smaller than space between groups.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="The scale" lead="Each bar’s width is bound to its variable, so it always shows the current value. rem is at 16px.">
+    <DocTable caption="Spacing variables" columns={['Variable', 'Value', 'Size', 'Use']} widths={['16%', '16%', '14%', '54%']}>
+      {
+        steps.map(({ name, cssVar, value, use }) => (
+          <tr>
+            <th scope="row"><code>{name}</code></th>
+            <td>{value}</td>
+            <td><span class="space-bar" style={`inline-size: var(${cssVar})`} /></td>
+            <td>{use}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="What was snapped" lead="When the variables were bound on October 16, 2026, off-scale values in components moved up to the next step, then every component set was checked in screenshots.">
+    <p>Spacing: 1px → 2px, 5px → 4px, 6px → 8px, 10px → 12px, 14px → 16px, 28px → 32px, 56px → 64px. Corner radius: 6px → 8px.</p>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .space-bar {
+    display: block;
+    block-size: var(--space-4);
+    background: var(--color-emerald-300);
+    border-radius: var(--radius-2xs);
+  }
+</style>
