@@ -1,5 +1,5 @@
 ---
-import { ActionMenu, Button, Cell, HeaderCell, Icon, ScoreCell, SearchField, SelectAllCell, SelectCell, SelectionBar, Table, TableMessage, TableSkeleton, TableToolbar, ValueFormat } from '@humanbase/ui';
+import { ActionMenu, Button, Cell, HeaderCell, ScoreCell, SearchField, SelectAllCell, SelectCell, SelectionBar, StatusBadge, Table, TableMessage, TableSkeleton, TableToolbar, ValueFormat } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -59,10 +59,10 @@ const rowStates = [
 ];
 
 const jobs = [
-  { job: 'BMI GWAS, adipose tissue', tool: 'NetWAS', status: 'Queued, 3rd in line', icon: 'clock', tone: 'queued', date: '2026-10-16' },
-  { job: 'rs33944208 expression effect', tool: 'ExPecto', status: 'Finished', icon: 'check-circle', tone: 'finished', date: '2026-10-15' },
-  { job: 'IL1B promoter variants', tool: 'Sei', status: 'Finished', icon: 'check-circle', tone: 'finished', date: '2026-10-15' },
-  { job: 'Height GWAS, all tissues', tool: 'NetWAS', status: 'Failed: no p-value column', icon: 'alert-circle', tone: 'failed', date: '2026-10-12' },
+  { job: 'BMI GWAS, adipose tissue', tool: 'NetWAS', status: 'queued', detail: 'Queued, 3rd in line', date: '2026-10-16' },
+  { job: 'rs33944208 expression effect', tool: 'ExPecto', status: 'finished', detail: 'Finished', date: '2026-10-15' },
+  { job: 'IL1B promoter variants', tool: 'Sei', status: 'finished', detail: 'Finished', date: '2026-10-15' },
+  { job: 'Height GWAS, all tissues', tool: 'NetWAS', status: 'failed', detail: 'Failed: no p-value column', date: '2026-10-12' },
 ] as const;
 
 const jobActions = [{ label: 'Open results' }, { label: 'Download' }, { label: 'Delete', destructive: true, dividerBefore: true }];
@@ -339,8 +339,8 @@ const { directionOf, toggle } = useTableSort({ column: 'score', direction: 'desc
               <tr>
                 <Cell rowHeader>{job.job}</Cell>
                 <Cell>{job.tool}</Cell>
-                <Cell className={`job-status job-status-${job.tone}`}>
-                  <span><Icon name={job.icon} size={16} />{job.status}</span>
+                <Cell>
+                  <StatusBadge status={job.status}>{job.detail}</StatusBadge>
                 </Cell>
                 <Cell>{format.date(job.date)}</Cell>
                 <Cell className="job-actions"><ActionMenu label={`Actions for ${job.job}`} items={jobActions} /></Cell>
@@ -680,21 +680,6 @@ const { directionOf, toggle } = useTableSort({ column: 'score', direction: 'desc
 
   .pattern h3 {
     font: var(--type-h4);
-  }
-
-  .job-status span {
-    display: inline-flex;
-    gap: var(--space-2);
-    align-items: center;
-    font-weight: 700;
-  }
-
-  .job-status-finished {
-    color: var(--status-success-fg);
-  }
-
-  .job-status-failed {
-    color: var(--status-error-fg);
   }
 
   .job-actions {

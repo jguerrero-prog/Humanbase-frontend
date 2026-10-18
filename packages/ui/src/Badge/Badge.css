@@ -1,0 +1,59 @@
+.badge {
+  display: inline-flex;
+  flex: none;
+  gap: var(--space-1);
+  align-items: center;
+  white-space: nowrap;
+  border-radius: var(--radius-xs);
+}
+
+.badge-small {
+  block-size: 20px;
+  padding: 0 6px;
+  font: 700 12px/16px Lato, sans-serif;
+}
+
+.badge-medium {
+  block-size: 24px;
+  padding: 0 var(--space-2);
+  font: 700 13px/18px Lato, sans-serif;
+}
+
+.badge-neutral,
+.badge-count {
+  color: var(--text-secondary);
+  background: var(--surface-sunken);
+}
+
+.badge-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.badge-on-emerald {
+  color: var(--text-link);
+  background: var(--surface-page);
+}
+
+.badge-status {
+  padding: 0;
+}
+
+.badge-queued {
+  color: var(--text-secondary);
+}
+
+.badge-running {
+  color: var(--status-info-fg);
+}
+
+.badge-finished {
+  color: var(--status-success-fg);
+}
+
+.badge-failed {
+  color: var(--status-error-fg);
+}
+
+.badge .icon {
+  flex: none;
+}

@@ -1,0 +1,60 @@
+.gene-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  min-block-size: 48px;
+  padding: 6px var(--space-2);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-strong);
+  border-radius: var(--radius-md);
+}
+
+.gene-tags:hover {
+  border-color: var(--color-grey-700);
+}
+
+.gene-tags:focus-within,
+.gene-tags[data-state="focus"] {
+  border-color: var(--border-selected);
+  outline: var(--border-width-1) solid var(--border-selected);
+  outline-offset: -2px;
+}
+
+.gene-tags:has([aria-invalid="true"]) {
+  border-color: var(--border-error);
+  outline: var(--border-width-1) solid var(--border-error);
+  outline-offset: -2px;
+}
+
+.gene-tags[data-disabled] {
+  background: var(--surface-subtle);
+  border-color: var(--border-subtle);
+  outline: none;
+}
+
+.gene-tags-list {
+  display: contents;
+  list-style: none;
+}
+
+.gene-tags-input {
+  flex: 1;
+  min-inline-size: 120px;
+  block-size: 32px;
+  padding: 0 var(--space-1);
+  font: 400 15px/1.4 Lato, sans-serif;
+  color: var(--text-default);
+  background: transparent;
+  border: 0;
+}
+
+.gene-tags-input::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+.gene-tags-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}

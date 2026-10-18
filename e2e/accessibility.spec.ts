@@ -26,6 +26,7 @@ const pages = [
   'http://localhost:4322/components/navigation-and-breadcrumbs/',
   'http://localhost:4322/components/tooltips/',
   'http://localhost:4322/ui-library/what-exists-today/',
+  'http://localhost:4322/components/badges-and-tags/',
 ];
 
 for (const url of pages) {

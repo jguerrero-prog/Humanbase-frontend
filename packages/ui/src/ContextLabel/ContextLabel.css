@@ -1,0 +1,43 @@
+.context-label {
+  display: inline-flex;
+  flex: none;
+  block-size: 28px;
+  overflow: hidden;
+  white-space: nowrap;
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-default);
+  border-radius: var(--radius-xs);
+}
+
+.context-label-name,
+.context-label-value {
+  display: inline-flex;
+  gap: var(--space-0-5);
+  align-items: center;
+  padding: 0 var(--space-2);
+}
+
+.context-label-name {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+  background: var(--surface-sunken);
+  border-inline-end: var(--border-width-1) solid var(--border-default);
+}
+
+.context-label-value {
+  font: 700 13px/18px Lato, sans-serif;
+  color: var(--text-default);
+}
+
+.context-label[data-removable] .context-label-value {
+  padding-inline-end: var(--space-0-5);
+}
+
+.context-label .remove-button {
+  border-radius: var(--radius-2xs);
+}
+
+.context-label:has(:focus-visible) {
+  overflow: visible;
+  box-shadow: var(--shadow-focus-ring);
+}
