@@ -1,0 +1,338 @@
+---
+import { Cell, HeaderCell, PageLink, PageWindow, Pagination, ShowMore, Table, TableToolbar } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import Pair from '../../components/docs/Pair.astro';
+import PairList from '../../components/docs/PairList.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const approaches = [
+  ['All rows', 'Up to 100 rows. The header stays visible while scrolling.', '50 related genes, 48 enriched terms, a job’s results.'],
+  ['Pages', 'More than 100 rows that people search, sort or jump through.', '7,463 datasets in Data sources; 289 networks.'],
+  ['Show more', 'A list read from newest to oldest, where people rarely go far back.', 'Job history; recent queries in search.'],
+  ['Never: infinite scroll', 'Any length', 'It hides the footer, loses people’s place on Back and is hard to use with a keyboard or screen reader.'],
+];
+
+const datasets = [
+  ['GSE48350', 'Brain aging across four regions', 'Brain', '253'],
+  ['GSE48556', 'Blood transcriptome in Sjögren’s syndrome', 'Blood', '139'],
+  ['GSE48558', 'Normal and malignant hematopoietic cells', 'Bone marrow', '170'],
+  ['GSE48780', 'Vascular smooth muscle response to stretch', 'Blood vessel', '24'],
+];
+
+const positions = [
+  { title: 'Near the start', page: 2 },
+  { title: 'In the middle', page: 49 },
+  { title: 'Near the end', page: 298 },
+  { title: 'Seven pages or fewer', page: 3, total: 125 },
+].map(({ title, page, total = 7463 }) => ({ title, window: new PageWindow(total, 25, page) }));
+
+const states = [
+  { title: 'Default', text: 'Grey 600 number, no border', props: {} },
+  { title: 'Hover', text: 'Grey 100 fill', props: { 'data-state': 'hover' as const } },
+  { title: 'Current', text: 'White, 1px grey 500 border, bold ink. aria-current="page"', props: { current: true } },
+  { title: 'Focus', text: 'Focus ring', props: { current: true, 'data-state': 'focus' as const } },
+];
+
+const behavior = [
+  ['Changing page', 'The table updates in place. The page scrolls so the table’s title is at the top, and focus moves to the title.'],
+  ['Announcement', 'A polite live region says “Page 49 of 299, datasets 1,201 to 1,225”.'],
+  ['URL', 'The page, rows per page, sort and filters are in the URL, so a link opens the same view and Back returns to the previous page.'],
+  ['Sorting or filtering', 'Returns to page 1, since the old page number no longer means the same rows.'],
+  ['Download', 'Exports every row that matches the filters, not just the current page, and says so: “Download 7,463 datasets”.'],
+  ['Keyboard', 'A nav landmark labeled “Pagination”. Tab reaches Previous, each page and Next; Enter activates.'],
+  ['Loading', 'If a page takes over 300ms, rows dim to 60% and the bar is disabled. No skeleton for page changes; the old rows stay until new ones arrive.'],
+];
+
+const writing = [
+  ['Use “to” and the noun', '1,201 to 1,225 of 7,463 datasets', 'Showing 1201-1225 of 7463 results'],
+  ['Separate thousands', '7,463', '7463'],
+  ['Name the step', 'Show 25 more', 'Load more'],
+  ['Say the page position on phones', 'Page 49 of 299', '49/299'],
+];
+
+const specs = [
+  ['pagination.height', '52px bar; 36px controls'],
+  ['pagination.gap', '16px below the table; 24px between range, rows per page and pages; 4px between page buttons'],
+  ['page.button', 'min 36 × 36px, radius.sm 8px, Lato 15; current Lato Bold ink, white, 1px grey 500 border'],
+  ['page.button.hover', 'grey 100 #EFEFEF'],
+  ['page.step', 'Previous and Next, Lato Bold 15 ink with an 18px chevron; disabled grey 400'],
+  ['pagination.range', 'Lato 14/20 grey 600'],
+  ['pagination.slots', '7 at most: first, last, current, two neighbors, two ellipses'],
+  ['rows-per-page', '25 (default), 50, 100'],
+  ['show-more', 'Small Ghost button with chevron, count in Lato 14 grey 600 below'],
+  ['threshold', 'All rows up to 100; pages above 100'],
+];
+
+const usage = `import { Pagination, ShowMore } from '@humanbase/ui';
+
+<Pagination total={7463} noun="datasets" page={page} pageSize={size}
+  href={(page) => \`?page=\${page}&rows=\${size}\`} storageKey="hb.rows"
+  onPageChange={showPage} onPageSizeChange={setSize} />
+
+<ShowMore shown={jobs.length} total={112} noun="jobs" onShowMore={focusRow} />`;
+---
+
+<DocsLayout title="Pagination" description="Pages, compact pages and show more: when to paginate, page numbers, behavior and writing.">
+  <Intro
+    lead="Pagination splits a long table into pages people can move through, while always saying where they are. HumanBase tables range from 48 enriched terms to 7,463 datasets, so the first decision is whether to paginate at all."
+    status="Updated October 16, 2026 · Components: Page button, Page step, Pagination"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Show everything when it fits', text: 'Up to 100 rows, show them all. Researchers scan, sort and use the browser’s find; pages get in the way.' },
+        { title: 'Always say where you are', text: '“1,201 to 1,225 of 7,463 datasets”. The range and the total, in words, above and below long tables.' },
+        { title: 'Pages never lose context', text: 'Sorting, filters and the page are kept in the URL. Downloads include every row, not just the page on screen.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="All rows, pages or show more" lead="Decide by how many rows there are and how people move through them.">
+    <DocTable caption="When to paginate" columns={['Approach', 'Use when', 'HumanBase example']} widths={['244px', '464px']}>
+      {approaches.map(([approach, when, example]) => <tr><th scope="row">{approach}</th><td>{when}</td><td>{example}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Pages under a table" lead="Data sources, page 49. The bar sits 16px below the table and spans its width.">
+    <div class="table-block">
+      <TableToolbar title="Data sources" description="7,463 datasets used to build MAGE networks" />
+      <Table caption="Data sources" columnWidths={['180px', 'auto', '220px', '140px']}>
+        <thead>
+          <tr>
+            <HeaderCell sort="ascending">Dataset</HeaderCell>
+            <HeaderCell>Title</HeaderCell>
+            <HeaderCell>Tissue</HeaderCell>
+            <HeaderCell align="end">Samples</HeaderCell>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            datasets.map(([id, title, tissue, samples]) => (
+              <tr>
+                <Cell type="id" rowHeader>{id}</Cell>
+                <Cell>{title}</Cell>
+                <Cell>{tissue}</Cell>
+                <Cell type="number">{samples}</Cell>
+              </tr>
+            ))
+          }
+        </tbody>
+      </Table>
+      <Pagination total={7463} noun="datasets" defaultPage={49} label="Data sources pages" />
+    </div>
+    <ul class="points">
+      <li>Range on the left, in words: “1,201 to 1,225 of 7,463 datasets”. The noun is the same as the table’s title.</li>
+      <li>Rows per page: 25, 50 or 100. The choice is kept in this browser.</li>
+      <li>Pages on the right: first, last, the current page and its neighbors. Never more than seven slots.</li>
+      <li>For tables over 25 rows, the range also appears above the table, next to the title.</li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Page numbers" lead="Seven slots at most, so the bar never changes width as people move. The first and last pages are always shown.">
+    <div class="positions" inert>
+      {
+        positions.map(({ title, window }) => (
+          <div class="position">
+            <strong>{title}</strong>
+            <span class="slots">
+              {window.slots().map((slot) =>
+                slot === 'gap' ? <span class="gap">…</span> : <PageLink page={slot} label={`Page ${slot}`} className="page-button" current={slot === window.page}>{slot}</PageLink>,
+              )}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+    <ul class="states" inert>
+      {
+        states.map(({ title, text, props }) => (
+          <li>
+            <PageLink page={49} label="Page 49" className="page-button" {...props}>49</PageLink>
+            <strong>{title}</strong>
+            <span>{text}</span>
+          </li>
+        ))
+      }
+      <li>
+        <span class="slots"><PageLink page={0} label="Previous page" className="page-step page-step-previous" disabled>Previous</PageLink></span>
+        <strong>First page</strong>
+        <span>Previous is disabled, not hidden, so nothing shifts</span>
+      </li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Phones and lists" lead="Below 768px the bar becomes compact. Lists read newest first use Show more.">
+    <div class="forms">
+      <figure class="form form-compact">
+        <figcaption>Compact, 375px</figcaption>
+        <Pagination total={7463} noun="datasets" defaultPage={49} layout="compact" label="Compact pages example" />
+        <p>Previous, “Page 49 of 299”, Next. Rows per page moves into the table’s View menu.</p>
+      </figure>
+      <figure class="form">
+        <figcaption>Show more, job history</figcaption>
+        <ShowMore shown={25} total={112} noun="jobs" onShowMore={() => {}} />
+        <p>Adds the next 25 below and moves focus to the first new row. The count updates: “Showing 50 of 112 jobs”. Back returns to the same scroll position.</p>
+      </figure>
+    </div>
+  </DocSection>
+
+  <DocSection title="Behavior and accessibility" lead="Moving between pages should feel like turning a page, not loading a new site.">
+    <DocTable caption="What happens when people move between pages" columns={['Moment', 'What happens']} widths={['324px']}>
+      {behavior.map(([moment, what]) => <tr><th scope="row">{moment}</th><td>{what}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Writing the range" lead="Plain words and the real noun.">
+    <DocTable caption="Writing the range" columns={['Guideline', 'Write', 'Not']} widths={['344px', '404px']}>
+      {writing.map(([guideline, write, not]) => <tr><th scope="row">{guideline}</th><td class="write-yes">{write}</td><td class="write-no">{not}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <PairList>
+      <Pair kind="do" title="Do. Show all 50 genes" text="Scanning and the browser’s find work across the whole list.">
+        <p class="stage-text">50 genes on one page</p>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Paginate short tables" text="Splitting 50 genes into 5 pages of 10 hides most of them." mock>
+        <span class="slots" inert>{[1, 2, 3, 4, 5].map((page) => <PageLink page={page} label={`Page ${page}`} className="page-button" current={page === 1}>{page}</PageLink>)}</span>
+      </Pair>
+      <Pair kind="do" title="Do. Keep the bar the same width" text="Seven slots, with ellipses, at every position." mock>
+        <span class="slots" inert>
+          {new PageWindow(7463, 25, 49).slots().map((slot) => (slot === 'gap' ? <span class="gap">…</span> : <PageLink page={slot} label={`Page ${slot}`} className="page-button" current={slot === 49}>{slot}</PageLink>))}
+        </span>
+      </Pair>
+      <Pair kind="dont" title="Don’t. List every page" text="Dozens of numbers wrap, shift and are hard to hit." mock>
+        <span class="slots slots-wrap" inert>{Array.from({ length: 18 }, (_, index) => index + 1).map((page) => <PageLink page={page} label={`Page ${page}`} className="page-button" current={page === 3}>{page}</PageLink>)}</span>
+      </Pair>
+    </PairList>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Pagination tokens and values" columns={['Token', 'Value']} widths={['404px']}>
+      {specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the component in code">
+    <ul>
+      <li><code>PageWindow</code> works out the seven slots and the range text, so the bar and any range shown above the table always agree.</li>
+      <li>Pass <code>href</code> and the page numbers become links, so the page, rows per page and sort can live in the URL. Without it they are buttons that call <code>onPageChange</code>.</li>
+      <li>With <code>storageKey</code>, rows per page is remembered in this browser. The bar turns compact below 768px on its own; <code>layout="compact"</code> forces it.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .table-block {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .positions {
+    display: grid;
+    gap: var(--space-4);
+    padding: 28px var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .position {
+    display: grid;
+    grid-template-columns: 200px auto;
+    gap: var(--space-6);
+    align-items: center;
+    justify-content: start;
+  }
+
+  .position strong,
+  .states strong {
+    font: var(--type-label-sm);
+  }
+
+  .slots {
+    display: flex;
+    gap: var(--space-1);
+    align-items: center;
+  }
+
+  .slots-wrap {
+    flex-wrap: wrap;
+  }
+
+  .gap {
+    inline-size: 28px;
+    font: var(--type-body);
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .states {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-8);
+    margin: 0;
+    padding: 28px var(--space-8);
+    list-style: none;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .states li {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    justify-items: start;
+  }
+
+  .states span:not(.slots) {
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .forms {
+    display: grid;
+    grid-template-columns: 375px minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .form {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 28px var(--space-6);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .form-compact {
+    padding-inline: var(--space-4);
+  }
+
+  .form figcaption {
+    font: 700 13px/1.4 Lato, sans-serif;
+    color: var(--text-muted);
+  }
+
+  .form p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .stage-text {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  @media (width < 64rem) {
+    .states,
+    .forms {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
