@@ -36,6 +36,7 @@ const pages = [
   'http://localhost:4322/guidelines/scientific-notation-and-units/',
   'http://localhost:4322/guidelines/errors-and-validation/',
   'http://localhost:4322/guidelines/voice-and-content/',
+  'http://localhost:4322/guidelines/empty-states/',
 ];
 
 for (const url of pages) {

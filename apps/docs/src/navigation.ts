@@ -50,7 +50,7 @@ export const navigation: NavSection[] = [
       { label: 'Scientific notation and units', href: '/guidelines/scientific-notation-and-units/' },
       { label: 'Data visualization', href: '/guidelines/data-visualization/' },
       { label: 'Errors and validation', href: '/guidelines/errors-and-validation/' },
-      { label: 'Empty states' },
+      { label: 'Empty states', href: '/guidelines/empty-states/' },
       { label: 'Loading and job status' },
     ],
   },
