@@ -34,7 +34,7 @@
 
 .tag[data-disabled] {
   padding-inline-end: var(--space-3);
-  color: var(--text-disabled);
+  color: var(--text-muted);
   background: var(--surface-subtle);
   border-color: var(--border-subtle);
 }
