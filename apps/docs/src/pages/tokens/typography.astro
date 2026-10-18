@@ -1,47 +1,102 @@
 ---
-import { typeScale } from '../../data/typeScale';
+import DocSection from '../../components/docs/DocSection.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import { typeScale, type TypeStyle } from '../../data/typeScale';
 import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const samples: Record<string, string> = {
+  display: 'HumanBase',
+  h1: 'Tissue-specific networks',
+  h2: 'IL1B in blood vessel',
+  h3: 'Molecular effects',
+  h4: 'How your genes matched',
+  lead: 'Data-driven predictions of gene function in human tissues.',
+  'body-lg': 'NetWAS reranks the genes of a GWAS with a tissue network.',
+  body: 'The score is the average weight of a gene’s connections to the query genes.',
+  'body-sm': 'Showing 15 of 50 genes, 108 connections at 0.84 or more.',
+  caption: 'Values illustrative except the hovered cell.',
+  label: 'Minimum confidence',
+  'label-sm': 'Disease impact',
+  eyebrow: 'CONNECTION TO IL1B',
+  code: 'GET /api/genes/3553/',
+  'code-sm': 'chr1:109,817,590 G>T',
+};
+
+const notes: Record<string, string> = {
+  'label-sm': 'New: table headers, badges, small buttons',
+  'code-sm': 'New: positions and IDs in tables',
+};
+
+const spec = (type: TypeStyle) => {
+  const tracking = type.tracking === 0 ? '' : `, letter spacing ${type.trackingPercent}`;
+  return `${type.family} ${type.weightName.split(' ')[1] ?? ''} · ${type.size}px · line height ${Math.round(type.lineHeight * 100)}%${tracking}`;
+};
 ---
 
-<DocsLayout title="Type tokens" description="Text styles: Cabin for headings, Lato for text, Atkinson Hyperlegible Mono for code.">
-  <p>Headings use Cabin, running text uses Lato, and code uses Atkinson Hyperlegible Mono. Use a style with <code>font: var(--type-…)</code> and its <code>-tracking</code> partner for letter spacing.</p>
+<DocsLayout title="Type tokens" description="The fifteen text styles that carry the type scale into Figma and code.">
+  <Intro
+    lead="Fifteen text styles carry the type scale from the Typography page into Figma. Each bundles family, weight, size, line height and letter spacing, and code uses the same names. Components use only these styles."
+    status="Updated October 16, 2026 · Tokens · Every sample on this page uses its text style"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Pick a style, not a size', text: 'Choose type/body-sm, never “Lato 14”. A size outside the scale is a bug to fix.' },
+        { title: 'Nothing below 13px', text: 'Captions and legend labels use type/caption at 13px; tables use 14px.' },
+        { title: 'Mono is for data', text: 'Positions, IDs and code use Atkinson Hyperlegible Mono; everything else is Cabin or Lato.' },
+      ]}
+    />
+  </Intro>
 
-  <div class="table-scroll" role="region" aria-labelledby="styles-caption" tabindex="0">
-  <table class="type-table">
-    <caption id="styles-caption" class="visually-hidden">Text styles</caption>
-    <thead>
-      <tr><th scope="col">Style</th><th scope="col">Sample</th><th scope="col">Font, weight, size and line height</th></tr>
-    </thead>
-    <tbody>
+  <DocSection title="Text styles" lead="Each sample uses its style. Two were added when components were snapped to the scale: label-sm for table headers, badges and small buttons, and code-sm for positions and IDs in tables.">
+    <dl class="type-styles">
       {
         typeScale.map((type) => (
-          <tr>
-            <th scope="row"><code>{type.cssVar}</code></th>
-            <td style={type.style}>Gene networks across tissues</td>
-            <td>{type.family}, {type.weight}, {type.size}px / {type.lineHeight}</td>
-          </tr>
+          <div class="type-style">
+            <dt>
+              <code>{type.token.replace('.', '/')}</code>
+              <span>{spec(type)}</span>
+              {notes[type.key] && <span class="type-note">{notes[type.key]}</span>}
+            </dt>
+            <dd style={type.style}>{samples[type.key] ?? type.name}</dd>
+          </div>
         ))
       }
-    </tbody>
-  </table>
-  </div>
+    </dl>
+  </DocSection>
 </DocsLayout>
 
 <style>
-  .type-table {
-    width: 100%;
-    border-collapse: collapse;
+  .type-styles {
+    margin: 0;
   }
 
-  .type-table th,
-  .type-table td {
-    padding: var(--space-4) var(--space-3);
-    text-align: start;
-    vertical-align: middle;
+  .type-style {
+    display: grid;
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: center;
+    padding-block: var(--space-4);
     border-block-end: var(--border-width-1) solid var(--border-subtle);
   }
 
-  .type-table th {
-    font-weight: 400;
+  .type-style dt {
+    display: grid;
+    gap: var(--space-1);
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .type-style code {
+    color: var(--text-default);
+  }
+
+  .type-note {
+    color: var(--text-default);
+  }
+
+  .type-style dd {
+    margin: 0;
+    color: var(--text-default);
   }
 </style>
