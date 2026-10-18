@@ -1,6 +1,20 @@
 export { ActionMenu, type ActionMenuItem, type ActionMenuProps } from './ActionMenu/ActionMenu';
 export { Badge, StatusBadge, type BadgeProps, type BadgeSize, type BadgeTone, type JobStatus, type StatusBadgeProps } from './Badge/Badge';
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from './Button/Button';
+export { IconButton, type IconButtonProps } from './IconButton/IconButton';
+export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
+export {
+  BrowserSettingsDialog,
+  ExportDialog,
+  TrackSettingsDialog,
+  TracksDrawer,
+  type BrowserSettings,
+  type ExportSettings,
+  type SuggestedTrack,
+  type TrackSettings,
+  type TrackStyle,
+} from './GenomeBrowser/GenomeBrowserPanels';
+export { genomeBrowserKeyHelp, genomeBrowserShortcuts, genomeCommand, type GenomeCommand } from './GenomeBrowser/genomeBrowserKeys';
 export { ContextLabel, type ContextLabelProps } from './ContextLabel/ContextLabel';
 export { Dialog, type DialogKind, type DialogProps, type DialogSize } from './Dialog/Dialog';
 export { Drawer, DrawerSection, type DrawerPlacement, type DrawerProps, type DrawerSize } from './Drawer/Drawer';

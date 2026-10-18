@@ -6,4 +6,5 @@ export { Gene, type DataVersion, type GeneRecord } from './genes/Gene';
 export { GeneService } from './genes/GeneService';
 export { HumanBaseProvider, useHumanBase } from './react/HumanBaseProvider';
 export { useGene } from './react/useGene';
+export { GenomeLocation, assemblyNames, type Assembly } from './genome/GenomeLocation';
 export { VariantFileCheck, type FileCheckResult, type FileProblem, type InputKind, type VariantModel } from './jobs/VariantFileCheck';
