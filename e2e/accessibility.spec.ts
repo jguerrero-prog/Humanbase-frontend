@@ -14,6 +14,7 @@ const pages = [
   'http://localhost:4322/components/tabs-and-segmented-controls/',
   'http://localhost:4322/foundations/corner-radius/',
   'http://localhost:4322/components/alerts-and-toasts/',
+  'http://localhost:4322/foundations/spacing-and-layout-grid/',
 ];
 
 for (const url of pages) {

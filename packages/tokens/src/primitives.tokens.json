@@ -952,90 +952,185 @@
       "$value": {
         "value": 4,
         "unit": "px"
-      }
+      },
+      "$description": "Icon to its label, tight inline gaps"
     },
     "2": {
       "$type": "dimension",
       "$value": {
         "value": 8,
         "unit": "px"
-      }
+      },
+      "$description": "Label to input, eyebrow to heading, items in a tag group"
     },
     "3": {
       "$type": "dimension",
       "$value": {
         "value": 12,
         "unit": "px"
-      }
+      },
+      "$description": "Button padding top and bottom, list rows, table cell padding"
     },
     "4": {
       "$type": "dimension",
       "$value": {
         "value": 16,
         "unit": "px"
-      }
+      },
+      "$description": "Default gap inside components, input padding, heading to text"
     },
     "5": {
       "$type": "dimension",
       "$value": {
         "value": 20,
         "unit": "px"
-      }
+      },
+      "$description": "Compact card padding"
     },
     "6": {
       "$type": "dimension",
       "$value": {
         "value": 24,
         "unit": "px"
-      }
+      },
+      "$description": "Card padding, grid gutters, button padding left and right"
     },
     "8": {
       "$type": "dimension",
       "$value": {
         "value": 32,
         "unit": "px"
-      }
+      },
+      "$description": "Between related groups, large card padding"
     },
     "10": {
       "$type": "dimension",
       "$value": {
         "value": 40,
         "unit": "px"
-      }
+      },
+      "$description": "Between a heading and a group of cards"
     },
     "12": {
       "$type": "dimension",
       "$value": {
         "value": 48,
         "unit": "px"
-      }
+      },
+      "$description": "Between subsections"
     },
     "16": {
       "$type": "dimension",
       "$value": {
         "value": 64,
         "unit": "px"
-      }
+      },
+      "$description": "Page margins on desktop"
     },
     "24": {
       "$type": "dimension",
       "$value": {
         "value": 96,
         "unit": "px"
-      }
+      },
+      "$description": "Between page sections"
     },
     "32": {
       "$type": "dimension",
       "$value": {
         "value": 128,
         "unit": "px"
-      }
+      },
+      "$description": "Space around the hero and page footers"
     },
     "0-5": {
       "$type": "dimension",
       "$value": {
         "value": 2,
         "unit": "px"
+      },
+      "$description": "Focus ring gap, hairline offsets"
+    }
+  },
+  "layout": {
+    "margin": {
+      "mobile": {
+        "$type": "dimension",
+        "$value": "{space.4}",
+        "$description": "Page edge, under 768px"
+      },
+      "tablet": {
+        "$type": "dimension",
+        "$value": "{space.8}",
+        "$description": "Page edge, 768 to 1,279px"
+      },
+      "desktop": {
+        "$type": "dimension",
+        "$value": "{space.16}",
+        "$description": "Page edge, 1,280px and up"
+      }
+    },
+    "gutter": {
+      "$type": "dimension",
+      "$value": "{space.6}",
+      "$description": "Between columns (32px on wide screens)"
+    },
+    "content": {
+      "max": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1600,
+          "unit": "px"
+        },
+        "$description": "Widest the content area grows"
+      }
+    },
+    "text": {
+      "max": {
+        "$type": "dimension",
+        "$value": {
+          "value": 720,
+          "unit": "px"
+        },
+        "$description": "Widest a block of body text grows"
+      }
+    },
+    "topbar": {
+      "height": {
+        "$type": "dimension",
+        "$value": {
+          "value": 64,
+          "unit": "px"
+        },
+        "$description": "Fixed top bar"
+      }
+    },
+    "target": {
+      "min": {
+        "$type": "dimension",
+        "$value": {
+          "value": 24,
+          "unit": "px"
+        },
+        "$description": "Smallest click or touch target"
+      }
+    },
+    "row": {
+      "comfortable": {
+        "$type": "dimension",
+        "$value": {
+          "value": 48,
+          "unit": "px"
+        },
+        "$description": "Default table and menu row"
+      },
+      "compact": {
+        "$type": "dimension",
+        "$value": {
+          "value": 36,
+          "unit": "px"
+        },
+        "$description": "Compact table row"
       }
     }
   },
