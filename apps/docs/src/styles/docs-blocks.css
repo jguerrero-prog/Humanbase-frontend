@@ -320,15 +320,6 @@
   font: var(--type-h4);
 }
 
-.page-footer {
-  padding-block-start: 28px;
-  border-block-start: var(--border-width-1) solid var(--border-subtle);
-}
-
-.page-footer p {
-  color: var(--text-muted);
-}
-
 @media (width < 64rem) {
   .key-rules,
   .card-grid,
