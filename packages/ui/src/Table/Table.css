@@ -199,14 +199,6 @@
   background: linear-gradient(to right, color-mix(in srgb, var(--surface-inverse) 12%, transparent), transparent);
 }
 
-.table-skeleton {
-  display: inline-block;
-  block-size: 12px;
-  vertical-align: middle;
-  background: var(--surface-sunken);
-  border-radius: var(--radius-xs);
-}
-
 .table-toolbar {
   display: flex;
   gap: var(--space-3);

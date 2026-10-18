@@ -1,0 +1,62 @@
+.job-steps {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.job-step {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 2px 10px;
+}
+
+.job-step-marker {
+  display: grid;
+  grid-row: span 2;
+  place-items: center;
+  block-size: 20px;
+}
+
+.job-step-done .job-step-marker {
+  color: var(--status-success-fg);
+}
+
+.job-step-stopped .job-step-marker {
+  color: var(--status-error-fg);
+}
+
+.job-step-ring {
+  inline-size: 16px;
+  block-size: 16px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+}
+
+.job-step-ring-current {
+  inline-size: 18px;
+  block-size: 18px;
+  border: var(--border-width-2) solid var(--text-default);
+}
+
+.job-step-label {
+  font: var(--type-body-sm);
+  font-size: 15px;
+  color: var(--text-default);
+}
+
+.job-step-current .job-step-label,
+.job-step-stopped .job-step-label {
+  font-weight: 700;
+}
+
+.job-step-upcoming .job-step-label {
+  color: var(--text-muted);
+}
+
+.job-step-detail {
+  grid-column: 2;
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
