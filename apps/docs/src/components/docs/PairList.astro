@@ -1,0 +1,11 @@
+---
+interface Props {
+  columns?: 2 | 4;
+}
+
+const { columns = 4 } = Astro.props;
+---
+
+<ul class="pairs" style={`--pair-columns: ${columns}`}>
+  <slot />
+</ul>

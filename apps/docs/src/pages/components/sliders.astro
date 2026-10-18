@@ -6,6 +6,8 @@ import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import Pair from '../../components/docs/Pair.astro';
+import PairList from '../../components/docs/PairList.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const confidence = { label: 'Minimum confidence', min: 0, max: 1, step: 0.01, defaultValue: 0.84 };
@@ -162,35 +164,23 @@ const usage = `import { RangeSlider, Slider } from '@humanbase/ui';
   </DocSection>
 
   <DocSection title="Do and don’t">
-    <ul class="pairs" style="--columns: 2">
-      <li class="pair pair-do">
-        <div class="pair-stage"><Slider {...confidence} /></div>
-        <h3>Do. Pair it with a number field</h3>
-        <p>People can set 0.84 exactly.</p>
-      </li>
-      <li class="pair pair-dont">
-        <figure class="pair-stage" aria-hidden="true">
-          <p class="mock-label">Minimum interaction confidence: 0.84</p>
-          <div class="mock-track"><span style="inline-size: 84%"></span></div>
-          <p class="mock-ends"><span>0</span><span>1</span></p>
-        </figure>
-        <h3>Don’t. Hide the value in the label</h3>
-        <p>“Minimum interaction confidence: 0.84” can’t be edited and changes width as you drag.</p>
-      </li>
-      <li class="pair pair-do">
-        <figure class="pair-stage" aria-hidden="true">
-          <p class="mock-label">Minimum module size</p>
-          <p class="mock-stepper"><span>−</span><span>8</span><span>+</span></p>
-        </figure>
-        <h3>Do. Use a field for small whole numbers</h3>
-        <p>Minimum module size from 2 to 20 is quicker to type.</p>
-      </li>
-      <li class="pair pair-dont">
-        <div class="pair-stage"><Slider label="Genes" min={10} max={50} step={5} defaultValue={25} /></div>
-        <h3>Don’t. Use a slider for a few set choices</h3>
-        <p>A slider for 10, 25 or 50 genes suggests every value in between is possible.</p>
-      </li>
-    </ul>
+    <PairList columns={2}>
+      <Pair kind="do" title="Do. Pair it with a number field" text="People can set 0.84 exactly.">
+        <div class="type-specimen"><Slider {...confidence} /></div>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Hide the value in the label" text="“Minimum interaction confidence: 0.84” can’t be edited and changes width as you drag." mock>
+        <p class="mock-label">Minimum interaction confidence: 0.84</p>
+        <div class="mock-track"><span style="inline-size: 84%"></span></div>
+        <p class="mock-ends"><span>0</span><span>1</span></p>
+      </Pair>
+      <Pair kind="do" title="Do. Use a field for small whole numbers" text="Minimum module size from 2 to 20 is quicker to type." mock>
+        <p class="mock-label">Minimum module size</p>
+        <p class="mock-stepper"><span>−</span><span>8</span><span>+</span></p>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Use a slider for a few set choices" text="A slider for 10, 25 or 50 genes suggests every value in between is possible.">
+        <div class="type-specimen"><Slider label="Genes" min={10} max={50} step={5} defaultValue={25} /></div>
+      </Pair>
+    </PairList>
   </DocSection>
 
   <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
@@ -318,8 +308,7 @@ const usage = `import { RangeSlider, Slider } from '@humanbase/ui';
   }
 
   .type-specimen,
-  .anatomy-specimen,
-  .pair-stage > :global(.slider) {
+  .anatomy-specimen {
     inline-size: 360px;
   }
 
@@ -357,15 +346,6 @@ const usage = `import { RangeSlider, Slider } from '@humanbase/ui';
   .result span {
     font: var(--type-caption);
     color: var(--text-secondary);
-  }
-
-  .pair-stage {
-    display: grid;
-    gap: var(--space-2);
-    margin: 0;
-    padding: var(--space-6) var(--space-5);
-    background: var(--surface-subtle);
-    border-radius: var(--radius-md);
   }
 
   .mock-label {

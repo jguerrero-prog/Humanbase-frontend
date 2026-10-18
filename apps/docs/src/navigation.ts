@@ -62,7 +62,7 @@ export const navigation: NavSection[] = [
       { label: 'Dropdowns and selects', href: '/components/dropdowns-and-selects/' },
       { label: 'Sliders', href: '/components/sliders/' },
       { label: 'Tabs and segmented controls', href: '/components/tabs-and-segmented-controls/' },
-      { label: 'Accordions' },
+      { label: 'Accordions', href: '/components/accordions/' },
       { label: 'Tables' },
       { label: 'Alerts and toasts', href: '/components/alerts-and-toasts/' },
       { label: 'Modals and drawers' },

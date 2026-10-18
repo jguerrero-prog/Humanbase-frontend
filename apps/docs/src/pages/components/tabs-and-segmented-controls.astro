@@ -6,6 +6,8 @@ import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import Pair from '../../components/docs/Pair.astro';
+import PairList from '../../components/docs/PairList.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const geneTabs: TabItem[] = [
@@ -302,34 +304,24 @@ const usage = `import { RadioGroup, SegmentedControl, Tabs } from '@humanbase/ui
   </DocSection>
 
   <DocSection title="Do and don’t">
-    <ul class="pairs">
-      <li class="pair pair-do">
-        <div class="pair-stage">
+    <div class="tab-pairs">
+      <PairList>
+        <Pair kind="do" title="Do. Use one row of tabs" text="Use a segmented control for the second choice.">
           <Tabs label="Do example sections" tabs={geneTabs.slice(0, 2).map(({ count: _count, ...tab }) => tab)} defaultValue="interactions" />
           <SegmentedControl label="Do example view" hideLabel size="small" segments={views.slice(0, 2)} />
-        </div>
-        <h3>Do. Use one row of tabs</h3>
-        <p>Use a segmented control for the second choice.</p>
-      </li>
-      <li class="pair pair-dont">
-        <div class="pair-stage">
+        </Pair>
+        <Pair kind="dont" title="Don’t. Stack tabs inside tabs" text="Two rows of tabs hide where people are. This is how gene pages reach five levels today.">
           <Tabs label="Don’t example sections" tabs={geneTabs.slice(0, 2).map(({ count: _count, ...tab }) => tab)} defaultValue="interactions" />
           <Tabs label="Don’t example views" tabs={views.slice(0, 2)} defaultValue="network" />
-        </div>
-        <h3>Don’t. Stack tabs inside tabs</h3>
-        <p>Two rows of tabs hide where people are. This is how gene pages reach five levels today.</p>
-      </li>
-      <li class="pair pair-do">
-        <div class="pair-stage"><SegmentedControl label="Do example results view" hideLabel size="small" segments={views} /></div>
-        <h3>Do. Switch views with segments</h3>
-        <p>Network and Table show the same results, so they belong in a segmented control.</p>
-      </li>
-      <li class="pair pair-dont">
-        <div class="pair-stage"><SegmentedControl label="Don’t example results view" hideLabel size="small" segments={[...views.slice(0, 2), { value: 'download', label: 'Download' }]} /></div>
-        <h3>Don’t. Use segments for actions</h3>
-        <p>“Download” runs a command; it isn’t a view. Use a button instead.</p>
-      </li>
-    </ul>
+        </Pair>
+        <Pair kind="do" title="Do. Switch views with segments" text="Network and Table show the same results, so they belong in a segmented control.">
+          <SegmentedControl label="Do example results view" hideLabel size="small" segments={views} />
+        </Pair>
+        <Pair kind="dont" title="Don’t. Use segments for actions" text="“Download” runs a command; it isn’t a view. Use a button instead.">
+          <SegmentedControl label="Don’t example results view" hideLabel size="small" segments={[...views.slice(0, 2), { value: 'download', label: 'Download' }]} />
+        </Pair>
+      </PairList>
+    </div>
   </DocSection>
 
   <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
@@ -628,16 +620,13 @@ const usage = `import { RadioGroup, SegmentedControl, Tabs } from '@humanbase/ui
     border-radius: var(--radius-md);
   }
 
-  .pair-stage {
-    display: grid;
+  .tab-pairs :global(.pair-stage) {
     justify-items: start;
     gap: var(--space-3);
-    padding: 28px var(--space-5);
-    background: var(--surface-subtle);
-    border-radius: var(--radius-md);
+    padding-block: 28px;
   }
 
-  .pair-stage > :global(.tabs) {
+  .tab-pairs :global(.pair-stage > .tabs) {
     justify-self: stretch;
   }
 

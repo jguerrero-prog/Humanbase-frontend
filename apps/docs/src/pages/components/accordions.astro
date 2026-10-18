@@ -1,0 +1,410 @@
+---
+import { Accordion, AccordionItem, Button, Checkbox, Disclosure, Select } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import Pair from '../../components/docs/Pair.astro';
+import PairList from '../../components/docs/PairList.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const uses = [
+  ['Accordion', 'Optional or reference sections people may open more than one of.', 'Advanced job options; filter groups in the network drawer; How to cite.'],
+  ['Disclosure', 'One long block that starts shortened.', 'A response shape over 40 lines: “Show full response”.'],
+  ['Tabs', 'Parallel views where one is shown at a time.', 'Network, Genes, Enriched terms on a result.'],
+  ['Keep it open', 'Content most people need, or a required field.', 'The gene list and Submit button in a job form.'],
+];
+
+const states = [
+  { title: 'Collapsed', text: 'Chevron down', props: {} },
+  { title: 'Collapsed hover', text: 'Grey 50 behind the header', props: { 'data-state': 'hover' as const } },
+  { title: 'Collapsed focus', text: 'Focus ring around the header', props: { 'data-state': 'focus' as const } },
+  { title: 'Expanded', text: 'Chevron up; content 4px below', props: { defaultOpen: true } },
+  { title: 'Disabled', text: 'Grey 400; for options that don’t apply to the chosen tool', props: { disabled: true } },
+];
+
+const behavior = [
+  ['Opening', 'Click or tap anywhere on the header, or Enter or Space when it has focus.'],
+  ['Several open', 'Each item opens on its own. Opening one never closes another, so people can compare.'],
+  ['Starting state', 'Closed, unless it holds an error, an active filter people just set, or the page was opened with a link to it.'],
+  ['Remembered', 'Open filter groups stay open for the session; job options reset to closed for each new job.'],
+  ['Find on page', 'Closed content is still found by the browser’s find and opens when matched (hidden="until-found").'],
+  ['Errors inside', 'If a field inside has an error after submit, the item opens and focus moves to the field.'],
+  ['Motion', 'Height grows and content fades over 200ms; closes over 150ms. Opens at once with reduced motion. The chevron flips; it doesn’t spin.'],
+];
+
+const accessibility = [
+  ['Structure', 'Each header is a button inside a heading at the right level, so screen reader users can jump between sections.'],
+  ['State', 'aria-expanded on the button; the content has an id referenced by aria-controls.'],
+  ['Summary', 'Inside the button, so it is read with the title: “Evidence, 2 selected, collapsed”.'],
+  ['Targets', 'The whole 52px or 40px row is clickable, not just the chevron.'],
+  ['Disabled', 'Uses aria-disabled and stays focusable, with a reason nearby, so people learn why.'],
+];
+
+const specs = [
+  ['accordion.header.height', '52px default, 40px compact; grows if the title wraps'],
+  ['accordion.header.padding', '0 12px 0 16px default; 0 8px 0 12px compact'],
+  ['accordion.title', 'Lato Bold 16/24 (14/20 compact) ink'],
+  ['accordion.summary', 'Lato 14 (13 compact) grey 600, right-aligned before the chevron'],
+  ['accordion.chevron', '20px (16px compact), ink; flips when open'],
+  ['accordion.divider', '1px border.subtle below each item; one above the first'],
+  ['accordion.hover', 'grey 50 behind the header'],
+  ['accordion.content', '4px below the header, same side padding, 20px bottom padding'],
+  ['disclosure', 'Lato Bold 15 emerald 600 with an 18px chevron; 32px tall'],
+  ['motion', 'motion.duration.moderate 200ms open, base 150ms close, enter and exit curves'],
+];
+
+const versions = [{ value: 'mage', label: 'MAGE (current)' }, { value: 'giant', label: 'GIANT v1' }];
+
+const responseShape = `{
+  "url": string (uri),
+  "identifier": string,
+  "title": string,
+  "description": string,
+  …`;
+
+const markup = `<h3>
+  <button aria-expanded="false" aria-controls="advanced">
+    Advanced options <span>MAGE, q below 0.05</span>
+  </button>
+</h3>
+<div id="advanced" hidden="until-found">…</div>`;
+
+const usage = `import { Accordion, AccordionItem, Disclosure } from '@humanbase/ui';
+
+<Accordion size="compact">
+  <AccordionItem title="Evidence" summary="2 selected" headingLevel={3}>
+    <Checkbox label="Co-expression" defaultChecked />
+  </AccordionItem>
+</Accordion>
+
+<Disclosure label="Show full response" expandedLabel="Show less" controls="response" />`;
+---
+
+<DocsLayout title="Accordions" description="Accordion items and disclosures: when to use them, anatomy, states, behavior and accessibility.">
+  <Intro
+    lead="Accordions let people open the parts of a page they need and leave the rest closed. HumanBase uses them for options most people never change, for groups of filters, and for long reference text. They hide detail, never steps or anything required."
+    status="Updated October 16, 2026 · Components: Accordion item, Disclosure"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Say what’s inside', text: 'A short summary on the right, like “2 selected” or “Defaults”, so people know whether to open it.' },
+        { title: 'Never hide what’s required', text: 'Required fields and the next step stay on the page. Only optional detail goes in an accordion.' },
+        { title: 'Lines, not cards', text: 'Rows divided by 1px lines, a bold title and a chevron. No boxes, shadows or spinning plus signs.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Accordion, tabs or page" lead="Accordions stack sections people may want open together; tabs show one at a time.">
+    <DocTable caption="When to use an accordion, a disclosure or tabs" columns={['Use', 'When', 'HumanBase example']} widths={['264px', '464px']}>
+      {uses.map(([use, when, example]) => <tr><th scope="row">{use}</th><td>{when}</td><td>{example}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Anatomy and states" lead="The whole header row is one button. The title is bold ink, the summary grey 600, the chevron flips when open.">
+    <div class="sizes">
+      <figure class="size">
+        <figcaption class="eyebrow">Default</figcaption>
+        <Accordion>
+          <AccordionItem title="Advanced options" summary="Defaults">Options</AccordionItem>
+          <AccordionItem title="How to cite HumanBase">Citation</AccordionItem>
+        </Accordion>
+        <p>52px header, Lato Bold 16. Pages and forms.</p>
+      </figure>
+      <figure class="size">
+        <figcaption class="eyebrow">Compact</figcaption>
+        <Accordion size="compact">
+          <AccordionItem title="Advanced options" summary="Defaults">Options</AccordionItem>
+          <AccordionItem title="How to cite HumanBase">Citation</AccordionItem>
+        </Accordion>
+        <p>40px header, Lato Bold 14. Drawers and side panels.</p>
+      </figure>
+    </div>
+    <ul class="states">
+      {
+        states.map((state) => (
+          <li>
+            <Accordion size="compact">
+              <AccordionItem title="Evidence" summary="2 selected" headingLevel={4} {...state.props}>
+                Co-expression and protein interaction are on.
+              </AccordionItem>
+            </Accordion>
+            <strong>{state.title}</strong>
+            <span>{state.text}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="HumanBase patterns" lead="Three places they fit." spacing="loose">
+    <div class="pattern-row">
+      <section class="pattern-card job" aria-labelledby="job-heading">
+        <p class="eyebrow">NetWAS job form: optional settings</p>
+        <h3 id="job-heading">Submit a NetWAS job</h3>
+        <p class="file">bmi_gwas_2012.txt</p>
+        <Accordion>
+          <AccordionItem title="Advanced options" summary="MAGE, q below 0.05" headingLevel={4} defaultOpen>
+            <Select label="Data version" options={versions} defaultValue="mage" />
+            <Checkbox label="Show only genes with q below 0.05" defaultChecked />
+          </AccordionItem>
+        </Accordion>
+        <Button>Submit job</Button>
+        <p class="caption">The file and Submit stay outside. The summary means people can submit without opening the accordion.</p>
+      </section>
+      <section class="pattern-card filters" aria-labelledby="filters-heading">
+        <p class="eyebrow">Network drawer: filter groups</p>
+        <div class="filters-title">
+          <h3 id="filters-heading">Filters</h3>
+          <button type="button" class="link-button">Clear filters</button>
+        </div>
+        <Accordion size="compact">
+          <AccordionItem title="Evidence" summary="2 selected" headingLevel={4} defaultOpen>
+            <Checkbox label="Co-expression" defaultChecked />
+            <Checkbox label="Protein interaction" defaultChecked />
+            <Checkbox label="Shared regulation" />
+            <Checkbox label="Shared transcription factor binding" />
+          </AccordionItem>
+          <AccordionItem title="Score" summary="0.5 or more" headingLevel={4}>Scores from 0.5 to 1.</AccordionItem>
+          <AccordionItem title="Gene function" summary="Any" headingLevel={4}>Any function.</AccordionItem>
+        </Accordion>
+        <p class="caption">Several groups can be open at once. The summary updates as filters change.</p>
+      </section>
+    </div>
+    <section class="disclosure-pattern" aria-labelledby="disclosure-heading">
+      <h3 id="disclosure-heading">Disclosure: a long response, shortened</h3>
+      <figure class="code-panel" id="response-shape">
+        <figcaption>Response shape</figcaption>
+        <Code code={responseShape} lang="text" theme="css-variables" />
+      </figure>
+      <Disclosure label="Show full response" expandedLabel="Show less" controls="response-shape" />
+      <p class="caption">Shows the first 12 lines. The button names what it reveals and becomes “Show less”. Copy always copies the full response.</p>
+    </section>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="Open and close without surprises.">
+    <DocTable caption="How accordions behave" columns={['Rule', 'Detail']} widths={['324px']}>
+      {behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Accessibility" lead="A heading that contains a button.">
+    <figure class="code-panel">
+      <figcaption>Markup</figcaption>
+      <Code code={markup} lang="html" theme="css-variables" />
+    </figure>
+    <DocTable caption="Accessibility rules for accordions" columns={['Rule', 'Detail']} widths={['324px']}>
+      {accessibility.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <PairList>
+      <Pair kind="do" title="Do. Summarize what’s inside" text="People can skip it with confidence.">
+        <Accordion size="compact"><AccordionItem title="Advanced options" summary="Defaults" headingLevel={4}>Options</AccordionItem></Accordion>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Hide required fields" text="A closed “Upload file” section means some people never find it.">
+        <Accordion size="compact"><AccordionItem title="Upload file (required)" headingLevel={4}>Upload</AccordionItem></Accordion>
+      </Pair>
+      <Pair kind="do" title="Do. Rows with lines" text="Quiet and scannable, like the rest of the page.">
+        <Accordion size="compact">
+          <AccordionItem title="Evidence" summary="2 selected" headingLevel={4}>Evidence</AccordionItem>
+          <AccordionItem title="Score" summary="0.5 or more" headingLevel={4}>Score</AccordionItem>
+        </Accordion>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Cards with shadows and plus signs" text="Each item becomes a floating box competing for attention." mock>
+        <p class="mock-card"><span>Evidence</span><span>+</span></p>
+        <p class="mock-card"><span>Score</span><span>+</span></p>
+      </Pair>
+    </PairList>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Accordion tokens and values" columns={['Token', 'Value']} widths={['404px']}>
+      {specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the components in code">
+    <ul>
+      <li><code>Accordion</code> sets the size and draws the lines; each <code>AccordionItem</code> is a heading holding a button. Set <code>headingLevel</code> to fit the page’s outline.</li>
+      <li>Closed content uses <code>hidden="until-found"</code>, so the browser’s find still reaches it and opens the item.</li>
+      <li><code>Disclosure</code> is the button only: point <code>controls</code> at the block it shortens, and show the full block when <code>onOpenChange</code> says it is open.</li>
+      <li><code>Checkbox</code> is a native checkbox with a label, an optional <code>indeterminate</code> state and an error message.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .eyebrow {
+    font: var(--type-eyebrow);
+    color: var(--text-muted);
+  }
+
+  .caption {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .sizes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8);
+  }
+
+  .size {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: var(--space-6);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .size > p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .states {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-6);
+    align-items: start;
+    margin: 0;
+    padding: 28px var(--space-8);
+    list-style: none;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .states li {
+    display: grid;
+    gap: 10px;
+  }
+
+  .states strong {
+    font: var(--type-label-sm);
+  }
+
+  .states span {
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .pattern-row {
+    display: grid;
+    grid-template-columns: minmax(0, 939fr) minmax(0, 420fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .pattern-card {
+    display: grid;
+    gap: var(--space-4);
+    padding: 28px;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .pattern-card.filters {
+    gap: var(--space-3);
+    padding: 28px var(--space-6);
+  }
+
+  .job h3 {
+    font: var(--type-h4);
+  }
+
+  .job :global(.button) {
+    justify-self: start;
+  }
+
+  .file {
+    padding: var(--space-3) var(--space-4);
+    font: var(--type-code-sm);
+    font-size: 14px;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .filters-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .filters-title h3 {
+    font: 600 20px/1.3 Cabin, sans-serif;
+  }
+
+  .link-button {
+    padding: 0;
+    font: var(--type-label-sm);
+    color: var(--text-link);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .disclosure-pattern {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+  }
+
+  .disclosure-pattern h3 {
+    font: 600 20px/1.3 Cabin, sans-serif;
+  }
+
+  .code-panel {
+    display: grid;
+    gap: var(--space-3);
+    justify-self: stretch;
+    margin: 0;
+    padding: var(--space-6);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .code-panel figcaption {
+    font: var(--type-label-sm);
+    color: var(--text-secondary);
+  }
+
+  .code-panel :global(.astro-code) {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .mock-card {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-3) 14px;
+    font: var(--type-label-sm);
+    color: var(--text-default);
+    background: var(--surface-page);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-elevation-2);
+  }
+
+  .mock-card span:last-child {
+    font-size: 20px;
+    line-height: 20px;
+    color: var(--color-info-700);
+  }
+
+  @media (width < 64rem) {
+    .sizes,
+    .states,
+    .pattern-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
