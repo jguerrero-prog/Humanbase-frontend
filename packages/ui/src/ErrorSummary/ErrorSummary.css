@@ -1,0 +1,15 @@
+.error-summary:focus-visible {
+  border-radius: var(--radius-md);
+}
+
+.error-summary ul {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.error-summary a {
+  color: inherit;
+}

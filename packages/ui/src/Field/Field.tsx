@@ -12,6 +12,7 @@ export interface ControlProps {
 
 export interface FieldProps {
   label: string;
+  id?: string | undefined;
   hint?: string | undefined;
   error?: string | undefined;
   size?: FieldSize;
@@ -31,8 +32,9 @@ export function FieldError({ id, children }: { id: string | undefined; children:
   );
 }
 
-export function Field({ label, hint, error, size = 'medium', disabled = false, count, children }: FieldProps) {
-  const id = useId();
+export function Field({ label, id: givenId, hint, error, size = 'medium', disabled = false, count, children }: FieldProps) {
+  const generatedId = useId();
+  const id = givenId ?? generatedId;
   const messageId = error || hint ? `${id}-message` : undefined;
   const countId = count ? `${id}-count` : undefined;
   const describedBy = [messageId, countId].filter(Boolean).join(' ') || undefined;
