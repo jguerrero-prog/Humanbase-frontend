@@ -1,14 +1,17 @@
 export { ActionMenu, type ActionMenuItem, type ActionMenuProps } from './ActionMenu/ActionMenu';
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from './Button/Button';
-export { Field, type FieldProps, type FieldSize } from './Field/Field';
+export { Field, FieldError, type FieldProps, type FieldSize } from './Field/Field';
 export { GeneList, parseGeneList, type GeneListProps } from './GeneList/GeneList';
 export { Icon, iconNames, type IconName, type IconSize } from './Icon/Icon';
 export { ListNavigator, type NavigableOption } from './List/ListNavigator';
 export { Logo } from './Logo/Logo';
 export { MenuDivider, MenuGroupLabel, MenuItem, MenuPanel, type MenuItemProps } from './Menu/Menu';
+export { RadioGroup, type RadioGroupProps, type RadioOption } from './RadioGroup/RadioGroup';
+export { SegmentedControl, type Segment, type SegmentedControlProps } from './SegmentedControl/SegmentedControl';
 export { SearchField, SuggestionsEmpty, SuggestionsLoading, type SearchFieldProps, type SearchFieldSize, type SearchSuggestion } from './SearchField/SearchField';
 export { Select, type SelectOption, type SelectProps } from './Select/Select';
 export { Spinner } from './Spinner/Spinner';
+export { Tabs, type TabItem, type TabsProps } from './Tabs/Tabs';
 export { TextInput, type TextInputProps } from './TextInput/TextInput';
 export { RangeSlider, Slider, type RangeSliderProps, type SliderProps } from './Slider/Slider';
 export { SliderScale } from './Slider/SliderScale';

@@ -1,0 +1,114 @@
+.radio-group {
+  display: grid;
+  gap: var(--space-3);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.radio-group-legend {
+  margin-block-end: var(--space-3);
+  padding: 0;
+  font: 700 15px/1.4 Lato, sans-serif;
+  color: var(--text-default);
+}
+
+.radio-group-hint {
+  margin-block-start: calc(var(--space-2) * -1);
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+.radio-group-options {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.radio-group-row .radio-group-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+}
+
+.radio {
+  --ring: var(--border-strong);
+  --ring-width: 1.5px;
+  --dot: transparent;
+  --face: var(--surface-page);
+
+  display: flex;
+  gap: var(--space-3);
+  align-items: start;
+  cursor: pointer;
+}
+
+.radio:hover,
+.radio[data-state="hover"] {
+  --ring: var(--text-default);
+  --ring-width: var(--border-width-2);
+}
+
+.radio:has(input:checked) {
+  --ring: var(--border-selected);
+  --ring-width: var(--border-width-2);
+  --dot: var(--action-primary);
+}
+
+.radio:has(input:disabled) {
+  --ring: var(--border-default);
+  --ring-width: 1.5px;
+  --face: var(--surface-subtle);
+
+  cursor: not-allowed;
+}
+
+.radio-group[data-invalid] .radio,
+.radio[data-state="error"] {
+  --ring: var(--border-error);
+  --ring-width: var(--border-width-2);
+}
+
+.radio:has(input:disabled:checked) {
+  --ring-width: var(--border-width-2);
+  --dot: var(--color-grey-400);
+}
+
+.radio input {
+  flex: none;
+  inline-size: 20px;
+  block-size: 20px;
+  margin: 2px;
+  cursor: inherit;
+  background: radial-gradient(circle, var(--dot) 5px, var(--face) 5.5px);
+  border: var(--ring-width) solid var(--ring);
+  border-radius: var(--radius-full);
+  appearance: none;
+}
+
+.radio input:focus-visible,
+.radio[data-state="focus"] input {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.radio-text {
+  display: grid;
+  gap: var(--space-0-5);
+}
+
+.radio-label {
+  font: var(--type-body);
+  color: var(--text-default);
+}
+
+.radio-description {
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+.radio-group:disabled .radio-group-legend,
+.radio:has(input:disabled) .radio-label,
+.radio:has(input:disabled) .radio-description {
+  color: var(--text-disabled);
+}

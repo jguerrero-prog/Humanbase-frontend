@@ -11,6 +11,7 @@ const pages = [
   'http://localhost:4322/components/text-inputs-and-search/',
   'http://localhost:4322/components/dropdowns-and-selects/',
   'http://localhost:4322/components/sliders/',
+  'http://localhost:4322/components/tabs-and-segmented-controls/',
 ];
 
 for (const url of pages) {
