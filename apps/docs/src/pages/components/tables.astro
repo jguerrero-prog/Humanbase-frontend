@@ -1,0 +1,770 @@
+---
+import { ActionMenu, Button, Cell, HeaderCell, Icon, ScoreCell, SearchField, SelectAllCell, SelectCell, SelectionBar, Table, TableMessage, TableSkeleton, TableToolbar, ValueFormat } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const format = new ValueFormat();
+
+const terms = [
+  { term: 'inflammatory response', id: 'GO:0006954', genes: 18, q: 1.2e-12 },
+  { term: 'cytokine-mediated signaling', id: 'GO:0019221', genes: 14, q: 3.4e-9 },
+  { term: 'response to lipopolysaccharide', id: 'GO:0032496', genes: 11, q: 8.1e-8 },
+  { term: 'positive regulation of NF-kappaB', id: 'GO:0051092', genes: 9, q: 2.6e-6 },
+];
+
+const genes = [
+  { symbol: 'IL1R1', name: 'interleukin 1 receptor type 1', score: 0.97, entrez: '3554' },
+  { symbol: 'PTGS2', name: 'prostaglandin-endoperoxide synthase 2', score: 0.96, entrez: '5743' },
+  { symbol: 'TNFAIP6', name: 'TNF alpha induced protein 6', score: 0.96, entrez: '7130' },
+  { symbol: 'ICAM1', name: 'intercellular adhesion molecule 1', score: 0.94, entrez: '3383' },
+  { symbol: 'CXCL8', name: 'C-X-C motif chemokine ligand 8', score: 0.93, entrez: '3576' },
+];
+
+const anatomy = [
+  ['Title and count', 'Says what is listed and how many, with the filter applied.'],
+  ['Toolbar', 'Filter and Download, aligned right.'],
+  ['Header row', 'Grey 50, 1px grey 300 line, Lato Bold 14. Sticky when the table scrolls.'],
+  ['Sorted column', 'Arrow shows the direction. q-value sorts smallest first.'],
+  ['Rows', '48px, 1px grey 200 line between rows. No stripes.'],
+  ['Footer', 'Range shown and pagination.'],
+];
+
+const headerStates = [
+  { title: 'Not sorted', label: 'Gene', align: 'start', sort: 'none' },
+  { title: 'Hover, sortable', label: 'Gene', align: 'start', sort: 'none', state: 'hover' },
+  { title: 'Ascending', label: 'Gene', align: 'start', sort: 'ascending' },
+  { title: 'Descending, number', label: 'Score', align: 'end', sort: 'descending' },
+  { title: 'Focus', label: 'Score', align: 'end', sort: 'descending', state: 'focus' },
+] as const;
+
+const cellTypes = [
+  ['Gene', 'Gene symbols. Link to the gene page.', 'Lato Bold, ink. Links to the gene page, underlined on hover and focus. Green is kept for selection.'],
+  ['Text', 'Names and descriptions.', 'Lato 15, grey 600. One line, cut off with an ellipsis and shown in full on hover.'],
+  ['Number', 'Counts, p-values, sizes.', 'Lato 15, right-aligned, tabular figures, thousands separated by commas.'],
+  ['ID', 'GO, Entrez and dataset IDs.', 'Atkinson Hyperlegible Mono 14, so 0 and O never look alike.'],
+  ['Score', 'Network scores from 0 to 1.', 'Number with an 80px grey bar. The number carries the value; the bar helps scanning. Green is kept for selection.'],
+  ['Checkbox', 'Row selection for bulk actions.', '56px column, 20px checkbox.'],
+];
+
+const rowStates = [
+  ['Default', 'White, 1px grey 200 line'],
+  ['Hover', 'Grey 50 fill'],
+  ['Selected', 'Checked box'],
+  ['Default', ''],
+];
+
+const jobs = [
+  { job: 'BMI GWAS, adipose tissue', tool: 'NetWAS', status: 'Queued, 3rd in line', icon: 'clock', tone: 'queued', date: '2026-10-16' },
+  { job: 'rs33944208 expression effect', tool: 'ExPecto', status: 'Finished', icon: 'check-circle', tone: 'finished', date: '2026-10-15' },
+  { job: 'IL1B promoter variants', tool: 'Sei', status: 'Finished', icon: 'check-circle', tone: 'finished', date: '2026-10-15' },
+  { job: 'Height GWAS, all tissues', tool: 'NetWAS', status: 'Failed: no p-value column', icon: 'alert-circle', tone: 'failed', date: '2026-10-12' },
+] as const;
+
+const jobActions = [{ label: 'Open results' }, { label: 'Download' }, { label: 'Delete', destructive: true, dividerBefore: true }];
+
+const keyboard = [
+  ['Tab', 'Moves through the interactive parts in order: sortable headers, checkboxes, gene links, action buttons.'],
+  ['Enter or Space on a header', 'Sorts by that column; pressing again reverses the order. The header has aria-sort set to ascending or descending.'],
+  ['Space on a checkbox', 'Selects the row. The select-all box in the header selects every row on the page.'],
+  ['Announcements', 'Sorting, filtering and selection are announced, such as “Sorted by score, highest first” or “2 genes selected”.'],
+  ['Caption', 'Every table has a caption, visible or hidden, such as “Genes functionally related to IL1B”.'],
+  ['Status', 'Job status pairs an icon with a word. Running, Finished and Failed are text, not color.'],
+];
+
+const formatting = [
+  ['Network scores', format.score(0.94), '.94 or 0.9400', 'Two decimals, a leading zero.'],
+  ['p-values and q-values', format.scientific(1.2e-12), '1.2e-12', 'Scientific notation people read in papers. The API value is in the download.'],
+  ['Counts', format.count(25825), '25825', 'Thousands separated by commas.'],
+  ['Dates', format.date('2026-10-16'), '10/16/26', 'Unambiguous for international researchers.'],
+  ['Missing values', format.missing, '0 or blank', 'A zero means something different from no data.'],
+  ['Gene symbols', 'IL1B', 'il1b or Il1b', 'Official HGNC symbols, upper case for human genes.'],
+];
+
+const specs = [
+  ['table.container', 'white, 1px border.subtle #E8E8E8, radius.md 12px'],
+  ['table.header.height', '44px in both densities'],
+  ['table.header', 'grey 50 #F7F7F7, 1px grey 300 #D1D1D1 bottom line, Lato Bold 14/20 ink'],
+  ['table.header.hover', 'grey 100 #EFEFEF, sort arrow in grey 500'],
+  ['table.sort.icon', '16px chevron, 1.5px stroke, 4px from the label'],
+  ['table.row.height', '48px comfortable, 36px compact'],
+  ['table.cell.padding', '0 16px'],
+  ['table.cell.text', 'Lato 15/20 (14/20 compact); grey 600 for text, ink for numbers'],
+  ['table.row.line', '1px border.subtle #E8E8E8'],
+  ['table.row.hover', 'grey 50 #F7F7F7'],
+  ['table.row.selected', 'Checked checkbox only. The selection bar above the table shows the count.'],
+  ['table.score.bar', '80 × 6px, radius 2px, grey 100 #EFEFEF track, grey 600 #4A4A4A fill'],
+  ['table.checkbox.column', '56px'],
+  ['table.pinned.edge', '8px shadow, ink at 12% to 0%'],
+  ['checkbox.box', '20px in a 24px box, radius.xs 4px, 1.5px grey 500 #6B6B6B; checked emerald 600 with a white 2.5px check'],
+];
+
+const usage = `import { Cell, HeaderCell, ScoreCell, Table, useTableSort } from '@humanbase/ui';
+
+const { directionOf, toggle } = useTableSort({ column: 'score', direction: 'descending' });
+
+<Table caption="Genes functionally related to IL1B" columnWidths={['140px', 'auto', '200px']}>
+  <thead>
+    <tr>
+      <HeaderCell sort={directionOf('gene')} onSort={() => toggle('gene')}>Gene</HeaderCell>
+      <HeaderCell>Name</HeaderCell>
+      <HeaderCell align="end" sort={directionOf('score')} onSort={() => toggle('score', 'descending')}>Score</HeaderCell>
+    </tr>
+  </thead>
+  <tbody>
+    {genes.map((gene) => (
+      <tr key={gene.symbol}>
+        <Cell type="gene" rowHeader><a href={gene.href}>{gene.symbol}</a></Cell>
+        <Cell>{gene.name}</Cell>
+        <ScoreCell value={gene.score} />
+      </tr>
+    ))}
+  </tbody>
+</Table>`;
+---
+
+<DocsLayout title="Tables" description="Results tables: anatomy, header and cell types, row states, density, patterns, states and accessibility.">
+  <Intro
+    lead="Most HumanBase results end up in a table: related genes, enriched GO terms, datasets and job history. Tables are built for scanning and comparing, so they stay quiet: thin row lines, no stripes, numbers lined up on the right, and the column people sort by always marked."
+    status="Updated October 16, 2026 · Components: Table header cell, Table cell, Checkbox"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Numbers line up', text: 'Right-align numbers and their headers, with the same decimal places in a column, so 0.94 sits above 0.87.' },
+        { title: 'Sorting is visible', text: 'The sorted column shows an arrow for its direction. Results open sorted by the most useful column, such as score.' },
+        { title: 'Every table can leave', text: 'Each results table has a Download button for tab-separated text, matching what the API returns.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Anatomy" lead="An enrichment table from a network result, with its parts listed top to bottom.">
+    <figure class="anatomy">
+      <div class="table-block">
+        <TableToolbar title="Enriched GO terms" description="48 terms, q-value below 0.05">
+          <SearchField label="Filter terms" placeholder="Filter terms" size="medium" className="filter" />
+          <Button variant="ghost" size="small" icon="download">Download</Button>
+        </TableToolbar>
+        <Table caption="Enriched GO terms" columnWidths={['651px', '150px', '100px', '140px']}>
+          <thead>
+            <tr>
+              <HeaderCell sort="none">Term</HeaderCell>
+              <HeaderCell>GO ID</HeaderCell>
+              <HeaderCell align="end" sort="none">Genes</HeaderCell>
+              <HeaderCell align="end" sort="ascending">q-value</HeaderCell>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              terms.map((row) => (
+                <tr>
+                  <Cell rowHeader>{row.term}</Cell>
+                  <Cell type="id">{row.id}</Cell>
+                  <Cell type="number">{row.genes}</Cell>
+                  <Cell type="number">{format.scientific(row.q)}</Cell>
+                </tr>
+              ))
+            }
+          </tbody>
+        </Table>
+        <p class="table-footer"><span>Showing 1 to 4 of 48 terms</span><span>Pagination, see Pagination page</span></p>
+      </div>
+      <ol class="anatomy-legend">
+        {anatomy.map(([title, text], index) => <li><span>{index + 1}</span><div><strong>{title}</strong><p>{text}</p></div></li>)}
+      </ol>
+      <figcaption class="visually-hidden">The parts of a results table, numbered top to bottom.</figcaption>
+    </figure>
+  </DocSection>
+
+  <DocSection title="Header cells" lead="Text columns align left, number columns align right, and the header follows its column. Sortable headers show an arrow on hover.">
+    <ul class="header-states">
+      {
+        headerStates.map((state) => (
+          <li>
+            <table class="specimen-table">
+              <thead>
+                <tr>
+                  <HeaderCell align={state.align} sort={state.sort} data-state={'state' in state ? state.state : undefined}>
+                    {state.label}
+                  </HeaderCell>
+                </tr>
+              </thead>
+            </table>
+            <strong>{state.title}</strong>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Cell types" lead="Five content types cover HumanBase results. Each has its own alignment and font so columns are easy to tell apart.">
+    <ul class="cell-types">
+      {
+        cellTypes.map(([title, use, detail]) => (
+          <li>
+            <table class="specimen-table cell-sample">
+              <tbody>
+                <tr>
+                  {title === 'Gene' && <Cell type="gene"><a href="#cell-types">IL1R1</a></Cell>}
+                  {title === 'Text' && <Cell>interleukin 1 receptor type 1</Cell>}
+                  {title === 'Number' && <Cell type="number">{format.count(25825)}</Cell>}
+                  {title === 'ID' && <Cell type="id">GO:0006954</Cell>}
+                  {title === 'Score' && <ScoreCell value={0.94} />}
+                  {title === 'Checkbox' && <SelectCell label="Select IL1R1" />}
+                </tr>
+              </tbody>
+            </table>
+            <strong>{title}</strong>
+            <span>{use}</span>
+            <span>{detail}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Row states" lead="Rows stay white. Hover adds a grey 50 fill. A selected row is marked by its checked box alone, and the bar above the table says how many rows are selected.">
+    <div class="row-states">
+      <Table caption="Row states" columnWidths={['56px', '140px', 'auto', '200px']}>
+        <thead>
+          <tr>
+            <SelectAllCell label="Select all genes" state="some" />
+            <HeaderCell>Gene</HeaderCell>
+            <HeaderCell>Name</HeaderCell>
+            <HeaderCell align="end" sort="descending">Score</HeaderCell>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            genes.slice(0, 4).map((gene, index) => (
+              <tr data-state={index === 1 ? 'hover' : undefined}>
+                <SelectCell label={`Select ${gene.symbol}`} checked={index === 2} />
+                <Cell type="gene" rowHeader><a href="#row-states">{gene.symbol}</a></Cell>
+                <Cell>{gene.name}</Cell>
+                <ScoreCell value={gene.score} />
+              </tr>
+            ))
+          }
+        </tbody>
+      </Table>
+      <dl class="row-legend">
+        {rowStates.map(([title, text]) => <div><dt>{title}</dt>{text && <dd>{text}</dd>}</div>)}
+      </dl>
+    </div>
+    <p class="doc-note">Focus: a row or cell with keyboard focus shows the standard focus ring inside the table edge. Gene names are links; the rest of the row only reacts when the table is selectable.</p>
+  </DocSection>
+
+  <DocSection title="Density" lead="Comfortable is the default. Compact fits more rows in side panels; people can switch with a View setting. The header stays 44px in both.">
+    <div class="card-grid" style="--columns: 2">
+      {
+        (['comfortable', 'compact'] as const).map((density) => (
+          <div class="density">
+            <h3>{density === 'comfortable' ? 'Comfortable: 48px rows, 15px text' : 'Compact: 36px rows, 14px text'}</h3>
+            <Table caption={`${density} density`} density={density} columnWidths={['120px', 'auto']}>
+              <thead>
+                <tr>
+                  <HeaderCell>Gene</HeaderCell>
+                  <HeaderCell align="end" sort="descending">Score</HeaderCell>
+                </tr>
+              </thead>
+              <tbody>
+                {genes.map((gene) => (
+                  <tr>
+                    <Cell type="gene" rowHeader><a href="#density">{gene.symbol}</a></Cell>
+                    <ScoreCell value={gene.score} />
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        ))
+      }
+    </div>
+  </DocSection>
+
+  <DocSection title="HumanBase patterns" lead="Two tables from the product, redrawn with these components." spacing="loose">
+    <section class="pattern" aria-labelledby="related-heading">
+      <h3 id="related-heading">Functionally related genes, with selection</h3>
+      <p class="pattern-lead">People pick genes to add to their query or download them. While rows are selected, a bar replaces the toolbar so the actions sit right above the rows they affect.</p>
+      <SelectionBar label="2 genes selected">
+        <Button variant="ghost" size="small" icon="plus">Add to query</Button>
+        <Button variant="ghost" size="small" icon="download">Download</Button>
+        <Button variant="ghost" size="small" icon="x">Clear</Button>
+      </SelectionBar>
+      <Table caption="Genes functionally related to IL1B" columnWidths={['56px', '140px', 'auto', '200px', '140px']}>
+        <thead>
+          <tr>
+            <SelectAllCell label="Select all genes" state="some" />
+            <HeaderCell>Gene</HeaderCell>
+            <HeaderCell>Name</HeaderCell>
+            <HeaderCell align="end" sort="descending">Score</HeaderCell>
+            <HeaderCell>Entrez ID</HeaderCell>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            genes.map((gene, index) => (
+              <tr>
+                <SelectCell label={`Select ${gene.symbol}`} checked={index < 2} />
+                <Cell type="gene" rowHeader><a href="#humanbase-patterns">{gene.symbol}</a></Cell>
+                <Cell>{gene.name}</Cell>
+                <ScoreCell value={gene.score} />
+                <Cell type="id">{gene.entrez}</Cell>
+              </tr>
+            ))
+          }
+        </tbody>
+      </Table>
+      <p class="table-footer"><span>Showing 1 to 5 of 50 genes</span></p>
+    </section>
+    <section class="pattern" aria-labelledby="jobs-heading">
+      <h3 id="jobs-heading">Job history</h3>
+      <p class="pattern-lead">Status uses an icon and a word, never color alone. Queued jobs show their place in line, which the API already returns.</p>
+      <Table caption="Job history" columnWidths={['auto', '160px', '300px', '170px', '64px']}>
+        <thead>
+          <tr>
+            <HeaderCell>Job</HeaderCell>
+            <HeaderCell>Tool</HeaderCell>
+            <HeaderCell>Status</HeaderCell>
+            <HeaderCell sort="descending">Submitted</HeaderCell>
+            <HeaderCell><span class="visually-hidden">Actions</span></HeaderCell>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            jobs.map((job) => (
+              <tr>
+                <Cell rowHeader>{job.job}</Cell>
+                <Cell>{job.tool}</Cell>
+                <Cell className={`job-status job-status-${job.tone}`}>
+                  <span><Icon name={job.icon} size={16} />{job.status}</span>
+                </Cell>
+                <Cell>{format.date(job.date)}</Cell>
+                <Cell className="job-actions"><ActionMenu label={`Actions for ${job.job}`} items={jobActions} /></Cell>
+              </tr>
+            ))
+          }
+        </tbody>
+      </Table>
+    </section>
+  </DocSection>
+
+  <DocSection title="Empty, loading and error" lead="The header stays in place in every state, so people keep their bearings.">
+    <div class="card-grid" style="--columns: 3">
+      <div class="body-state">
+        <h3>Empty, after filtering</h3>
+        <Table caption="Related genes, no matches" columnWidths={['50%', '50%']}>
+          <thead><tr><HeaderCell>Gene</HeaderCell><HeaderCell align="end" sort="descending">Score</HeaderCell></tr></thead>
+          <tbody>
+            <TableMessage columns={2} title="No genes match “IL1Z”" text="Check the spelling or clear the filter.">
+              <Button slot="action" variant="secondary" size="small">Clear filter</Button>
+            </TableMessage>
+          </tbody>
+        </Table>
+      </div>
+      <div class="body-state">
+        <h3>Loading, after 300ms</h3>
+        <Table caption="Related genes, loading" columnWidths={['50%', '50%']} busy status="Loading related genes">
+          <thead><tr><HeaderCell>Gene</HeaderCell><HeaderCell align="end" sort="descending">Score</HeaderCell></tr></thead>
+          <tbody><TableSkeleton columns={2} /></tbody>
+        </Table>
+      </div>
+      <div class="body-state">
+        <h3>Error</h3>
+        <Table caption="Related genes, failed to load" columnWidths={['50%', '50%']}>
+          <thead><tr><HeaderCell>Gene</HeaderCell><HeaderCell align="end" sort="descending">Score</HeaderCell></tr></thead>
+          <tbody>
+            <TableMessage columns={2} icon="alert-circle" title="Couldn’t load related genes" text="The server took too long to answer. Your query is saved.">
+              <Button slot="action" variant="secondary" size="small" icon="refresh">Try again</Button>
+            </TableMessage>
+          </tbody>
+        </Table>
+      </div>
+    </div>
+  </DocSection>
+
+  <DocSection title="Narrow screens" lead="On phones and narrow panels the table scrolls sideways. The first column stays pinned so people always know which gene a row is about.">
+    <div class="narrow">
+      <div class="phone">
+        <Table caption="Related genes on a phone" pinFirstColumn columnWidths={['110px', '260px', '200px']} minWidth="570px">
+          <thead>
+            <tr>
+              <HeaderCell>Gene</HeaderCell>
+              <HeaderCell>Name</HeaderCell>
+              <HeaderCell align="end">Score</HeaderCell>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              genes.map((gene) => (
+                <tr>
+                  <Cell type="gene" rowHeader><a href="#narrow-screens">{gene.symbol}</a></Cell>
+                  <Cell>{gene.name}</Cell>
+                  <ScoreCell value={gene.score} />
+                </tr>
+              ))
+            }
+          </tbody>
+        </Table>
+      </div>
+      <ul class="points">
+        <li>Pin the first column; a soft 8px shadow shows where the rest scrolls under it.</li>
+        <li>Keep the header sticky at the top while the page scrolls.</li>
+        <li>Don’t hide columns on small screens without saying so; offer a Columns menu instead.</li>
+      </ul>
+    </div>
+  </DocSection>
+
+  <DocSection title="Keyboard and accessibility" lead="Use a real HTML table with a caption and column headers, so screen readers can announce the row and column of every value.">
+    <DocTable caption="Keyboard and accessibility for tables" columns={['Key or rule', 'Behavior']} widths={['284px']}>
+      {keyboard.map(([key, behavior]) => <tr><th scope="row">{key}</th><td>{behavior}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Formatting values" lead="Consistent numbers make columns easy to compare. Units go in the header, not in every cell.">
+    <DocTable caption="How to format values in tables" columns={['Value', 'Write', 'Not', 'Why']} widths={['284px', '324px', '324px']}>
+      {
+        formatting.map(([value, write, not, why]) => (
+          <tr>
+            <th scope="row">{value}</th>
+            <td><code class="write">{write}</code></td>
+            <td><code class="not">{not}</code></td>
+            <td>{why}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <ul class="pairs" style="--pair-columns: 4">
+      <li class="pair pair-do">
+        <div class="pair-stage">
+          <Table caption="Scores, right-aligned">
+            <thead><tr><HeaderCell align="end" sort="descending">Score</HeaderCell></tr></thead>
+            <tbody>{[0.97, 0.94, 0.88].map((score) => <tr><Cell type="number">{format.score(score)}</Cell></tr>)}</tbody>
+          </Table>
+        </div>
+        <h3>Do. Right-align numbers</h3>
+        <p>Digits line up by place, so bigger values stand out.</p>
+      </li>
+      <li class="pair pair-dont">
+        <figure class="pair-stage mock" aria-hidden="true">
+          <p class="mock-header">Score</p>
+          {['0.97', '0.9', '0.881'].map((score) => <p class="mock-centered">{score}</p>)}
+        </figure>
+        <h3>Don’t. Center numbers</h3>
+        <p>Centered numbers zigzag and are hard to compare.</p>
+      </li>
+      <li class="pair pair-do">
+        <div class="pair-stage">
+          <Table caption="Genes with lines between rows">
+            <tbody>{['IL1R1', 'PTGS2', 'ICAM1'].map((symbol) => <tr><Cell type="gene" rowHeader>{symbol}</Cell></tr>)}</tbody>
+          </Table>
+        </div>
+        <h3>Do. Use lines between rows</h3>
+        <p>A 1px grey 200 line is enough to follow a row across.</p>
+      </li>
+      <li class="pair pair-dont">
+        <figure class="pair-stage mock" aria-hidden="true">
+          {['IL1R1', 'PTGS2', 'ICAM1'].map((symbol) => <p class="mock-striped">{symbol}</p>)}
+        </figure>
+        <h3>Don’t. Add stripes and boxes</h3>
+        <p>Stripes plus borders on every cell compete with the data.</p>
+      </li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Table tokens and values" columns={['Token', 'Value']} widths={['404px']}>
+      {specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the component in code">
+    <ul>
+      <li><code>Table</code> renders a real <code>&lt;table&gt;</code> with a caption, inside a scroll region that takes focus so keyboard users can scroll it. Pass <code>showCaption</code> to show the caption; most tables use the toolbar title instead.</li>
+      <li><code>HeaderCell</code> becomes a sort button when it has a <code>sort</code> prop, and sets <code>aria-sort</code> only on the sorted column. <code>useTableSort</code> keeps the column and direction.</li>
+      <li><code>useRowSelection</code> tracks selected rows for <code>SelectCell</code>, <code>SelectAllCell</code> and <code>SelectionBar</code>. Pass a sentence to <code>status</code>, such as “Sorted by score, highest first”, and it is announced politely.</li>
+      <li><code>ValueFormat</code> formats scores, counts, p-values and dates the same way everywhere, and writes “Not available” for missing values.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .anatomy {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: var(--space-10);
+    margin: 0;
+  }
+
+  .table-block,
+  .pattern {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+
+  .table-block :global(.filter) {
+    inline-size: 240px;
+  }
+
+  .table-footer {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: space-between;
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .table-footer span + span {
+    color: var(--text-muted);
+  }
+
+  .anatomy-legend {
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .anatomy-legend li {
+    display: flex;
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  .anatomy-legend li > span {
+    flex: none;
+    padding: var(--space-0-5) 7px;
+    font: 700 12px/16px Lato, sans-serif;
+    color: var(--text-on-brand);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+  }
+
+  .anatomy-legend strong {
+    font: var(--docs-small-strong);
+  }
+
+  .anatomy-legend p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .specimen-table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .header-states {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: var(--space-8);
+    list-style: none;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .header-states li,
+  .cell-types li {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+  }
+
+  .header-states strong {
+    font: var(--type-label-sm);
+  }
+
+  .cell-types {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cell-types li {
+    grid-template-columns: 260px 110px 300px minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: center;
+    padding-block: var(--space-3);
+    border-block-end: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .cell-sample {
+    overflow: hidden;
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .cell-sample :global(.table-cell) {
+    border-block-end: 0;
+  }
+
+  .cell-sample :global(.table-select) {
+    inline-size: 56px;
+  }
+
+  .cell-types strong {
+    font: var(--type-label);
+  }
+
+  .cell-types span {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .row-states {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: var(--space-10);
+  }
+
+  .row-legend {
+    display: grid;
+    grid-auto-rows: 48px;
+    align-content: start;
+    margin: 0;
+    padding-block-start: 44px;
+  }
+
+  .row-legend div {
+    display: grid;
+    align-content: center;
+    gap: var(--space-0-5);
+  }
+
+  .row-legend dt {
+    font: var(--type-label-sm);
+  }
+
+  .row-legend dd {
+    margin: 0;
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .doc-note,
+  .pattern-lead {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .pattern-lead {
+    max-inline-size: 920px;
+    font: var(--type-body);
+  }
+
+  .density,
+  .body-state {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+  }
+
+  .density h3,
+  .body-state h3 {
+    font: var(--type-label-sm);
+  }
+
+  .pattern h3 {
+    font: var(--type-h4);
+  }
+
+  .job-status span {
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: center;
+    font-weight: 700;
+  }
+
+  .job-status-finished {
+    color: var(--status-success-fg);
+  }
+
+  .job-status-failed {
+    color: var(--status-error-fg);
+  }
+
+  .job-actions {
+    padding-inline-end: var(--space-3);
+  }
+
+  .narrow {
+    display: grid;
+    grid-template-columns: 375px minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .phone {
+    padding: var(--space-4);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .write {
+    color: var(--status-success-fg);
+  }
+
+  .not {
+    color: var(--status-error-fg);
+  }
+
+  .pair-stage :global(.table-scroll) {
+    border-radius: var(--radius-sm);
+  }
+
+  .mock {
+    display: grid;
+  }
+
+  .mock p {
+    block-size: 48px;
+    padding: 0 var(--space-4);
+    font: 400 15px/48px Lato, sans-serif;
+    color: var(--text-default);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-default);
+  }
+
+  .mock .mock-header {
+    block-size: 44px;
+    font: 700 14px/44px Lato, sans-serif;
+    text-align: center;
+    background: var(--surface-subtle);
+  }
+
+  .mock .mock-centered {
+    text-align: center;
+  }
+
+  .mock .mock-striped {
+    font-weight: 700;
+  }
+
+  .mock .mock-striped:nth-child(even) {
+    background: var(--surface-sunken);
+  }
+
+  @media (width < 64rem) {
+    .anatomy,
+    .row-states,
+    .narrow,
+    .header-states,
+    .cell-types li {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
