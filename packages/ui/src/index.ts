@@ -99,6 +99,9 @@ export { JobsMenu, type JobsMenuJob, type JobsMenuProps } from './Jobs/JobsMenu'
 export { EditGenesDialog, type EditGenesDialogProps } from './Results/EditGenesDialog';
 export { GeneIdsMenu, type GeneIdLink, type GeneIdsMenuProps } from './Results/GeneIdsMenu';
 export { GraphToolbar, type GraphAction, type GraphToolbarProps } from './Results/GraphToolbar';
+export { JobDetails, type JobDetail } from './Results/JobDetails';
+export { NetwasGeneTable, NetwasScore, type NetwasGeneRow, type NetwasGeneTableProps } from './Results/NetwasGeneTable';
+export { NetwasGuide, type NetwasGuideProps } from './Results/NetwasGuide';
 export { RankedAnnotationTable, type AnnotationEvidence, type Publication, type RankedAnnotation, type RankedAnnotationTableProps } from './Results/RankedAnnotationTable';
 export { EvidenceTable, GeneDetail, NetworkWeightTable, ScoreMeter, WeightHistogram, type EvidenceRow, type GeneDetailProps, type NetworkWeight } from './Results/ResultDetail';
 export { ResultHeader, STACKED_QUERY, type ResultHeaderProps } from './Results/ResultHeader';
