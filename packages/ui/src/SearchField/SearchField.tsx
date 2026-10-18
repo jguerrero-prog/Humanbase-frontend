@@ -1,4 +1,5 @@
 import { useId, useMemo, useRef, useState, type ChangeEvent, type InputHTMLAttributes, type KeyboardEvent } from 'react';
+import { Badge } from '../Badge/Badge';
 import { Icon } from '../Icon/Icon';
 import { ListNavigator } from '../List/ListNavigator';
 import { useDismiss } from '../List/useDismiss';
@@ -13,6 +14,8 @@ export interface SearchSuggestion {
   label: string;
   description?: string;
   meta?: string;
+  badges?: readonly string[];
+  details?: string;
 }
 
 export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id' | 'type' | 'value' | 'defaultValue'> {
@@ -28,11 +31,14 @@ export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElem
   noMatchesText?: string;
   open?: boolean;
   defaultHighlight?: number;
+  heading?: string;
+  note?: string;
+  inlineSuggestions?: boolean;
 }
 
 export function SearchField({
   label, size = 'large', loading = false, value, defaultValue = '', disabled, className, onChange, onClear, onKeyDown,
-  suggestions, suggestionsLoading = false, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, defaultHighlight = -1, ...rest
+  suggestions, suggestionsLoading = false, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, defaultHighlight = -1, heading, note, inlineSuggestions = false, ...rest
 }: SearchFieldProps) {
   const id = useId();
   const listboxId = `${id}-suggestions`;
@@ -94,45 +100,47 @@ export function SearchField({
   const announcement = !open || suggestionsLoading ? '' : count === 0 ? `No genes match “${text}”` : `${count} ${count === 1 ? 'suggestion' : 'suggestions'}`;
 
   return (
-    <div ref={wrapper} className={['search-field', `search-field-${size}`, className].filter(Boolean).join(' ')} data-disabled={disabled || undefined}>
-      <label className="visually-hidden" htmlFor={id}>
-        {label}
-      </label>
-      <Icon name="search" size={iconSize} />
-      <input
-        {...rest}
-        ref={input}
-        id={id}
-        type="search"
-        value={text}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        disabled={disabled}
-        aria-busy={loading || undefined}
-        className="search-field-input"
-        {...(offersSuggestions && {
-          role: 'combobox',
-          'aria-autocomplete': 'list' as const,
-          'aria-expanded': open,
-          'aria-controls': open ? listboxId : undefined,
-          'aria-activedescendant': open && highlight >= 0 ? optionId(highlight) : undefined,
-        })}
-      />
-      {loading ? (
-        <Spinner size={20} />
-      ) : (
-        text &&
-        !disabled && (
-          <button type="button" className="search-field-clear" onClick={clear} aria-label="Clear search">
-            <Icon name="x" size={iconSize} />
-          </button>
-        )
-      )}
-      {offersSuggestions && (
-        <p className="visually-hidden" aria-live="polite">
-          {announcement}
-        </p>
-      )}
+    <div ref={wrapper} className={['search-field-group', inlineSuggestions && 'search-field-inline', className].filter(Boolean).join(' ')}>
+      <div className={`search-field search-field-${size}`} data-disabled={disabled || undefined}>
+        <label className="visually-hidden" htmlFor={id}>
+          {label}
+        </label>
+        <Icon name="search" size={iconSize} />
+        <input
+          {...rest}
+          ref={input}
+          id={id}
+          type="search"
+          value={text}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          disabled={disabled}
+          aria-busy={loading || undefined}
+          className="search-field-input"
+          {...(offersSuggestions && {
+            role: 'combobox',
+            'aria-autocomplete': 'list' as const,
+            'aria-expanded': open,
+            'aria-controls': open ? listboxId : undefined,
+            'aria-activedescendant': open && highlight >= 0 ? optionId(highlight) : undefined,
+          })}
+        />
+        {loading ? (
+          <Spinner size={20} />
+        ) : (
+          text &&
+          !disabled && (
+            <button type="button" className="search-field-clear" onClick={clear} aria-label="Clear search">
+              <Icon name="x" size={iconSize} />
+            </button>
+          )
+        )}
+        {offersSuggestions && (
+          <p className="visually-hidden" aria-live="polite">
+            {announcement}
+          </p>
+        )}
+      </div>
       {open && (
         <MenuPanel className="search-suggestions">
           {suggestionsLoading ? (
@@ -141,7 +149,8 @@ export function SearchField({
             <SuggestionsEmpty query={text} text={noMatchesText} />
           ) : (
             <>
-              <div id={listboxId} role="listbox" aria-label={label} className="menu-list">
+              {heading && <p className="search-suggestions-heading">{heading}</p>}
+              <div id={listboxId} role="listbox" aria-label={heading ?? label} className="menu-list">
                 {suggestions?.map((suggestion, index) => (
                   // Options are chosen with the keyboard through the combobox input (aria-activedescendant).
                   // eslint-disable-next-line jsx-a11y/click-events-have-key-events
@@ -151,22 +160,40 @@ export function SearchField({
                     role="option"
                     tabIndex={-1}
                     aria-selected={index === highlight}
-                    className={['search-suggestion', index === highlight && 'search-suggestion-highlighted'].filter(Boolean).join(' ')}
+                    className={['search-suggestion', suggestion.details !== undefined && 'search-suggestion-stacked', index === highlight && 'search-suggestion-highlighted'].filter(Boolean).join(' ')}
                     onPointerDown={(event) => event.preventDefault()}
                     onPointerEnter={() => setHighlight(index)}
                     onClick={() => choose(suggestion)}
                   >
-                    <MatchedLabel label={suggestion.label} query={text} />
-                    {suggestion.description && <span className="search-suggestion-description">{suggestion.description}</span>}
-                    {suggestion.meta && <span className="search-suggestion-meta">{suggestion.meta}</span>}
+                    {suggestion.details === undefined ? (
+                      <SuggestionLine suggestion={suggestion} query={text} />
+                    ) : (
+                      <>
+                        <span className="search-suggestion-title">
+                          <SuggestionLine suggestion={suggestion} query={text} />
+                        </span>
+                        {suggestion.badges && (
+                          <span className="search-suggestion-badges">
+                            {suggestion.badges.map((badge) => (
+                              <Badge key={badge} size="small">{badge}</Badge>
+                            ))}
+                          </span>
+                        )}
+                        <span className="search-suggestion-details">{suggestion.details}</span>
+                      </>
+                    )}
                   </div>
                 ))}
               </div>
-              <p className="search-suggestions-keys" aria-hidden="true">
-                <span><kbd>↑ ↓</kbd> move</span>
-                <span><kbd>Enter</kbd> open gene</span>
-                <span><kbd>Esc</kbd> close</span>
-              </p>
+              {note ? (
+                <p className="search-suggestions-note">{note}</p>
+              ) : (
+                <p className="search-suggestions-keys" aria-hidden="true">
+                  <span><kbd>↑ ↓</kbd> move</span>
+                  <span><kbd>Enter</kbd> open gene</span>
+                  <span><kbd>Esc</kbd> close</span>
+                </p>
+              )}
             </>
           )}
         </MenuPanel>
@@ -190,6 +217,16 @@ export function SuggestionsEmpty({ query, text }: { query: string; text: string 
       <p className="search-suggestions-empty-title">No genes match “{query}”</p>
       <p>{text}</p>
     </div>
+  );
+}
+
+function SuggestionLine({ suggestion, query }: { suggestion: SearchSuggestion; query: string }) {
+  return (
+    <>
+      <MatchedLabel label={suggestion.label} query={query} />
+      {suggestion.description && <span className="search-suggestion-description">{suggestion.description}</span>}
+      {suggestion.meta && <span className="search-suggestion-meta">{suggestion.meta}</span>}
+    </>
   );
 }
 

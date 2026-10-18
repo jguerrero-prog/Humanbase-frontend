@@ -1,0 +1,350 @@
+---
+import { Breadcrumbs, Button, GeneList, GeneMatchList, GeneMatchSummary, GeneMatchTable, SearchField, Select, Toast, TopBar, type GeneCandidate, type GeneMatch, type SearchSuggestion } from '@humanbase/ui';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import { productJobs, productSections } from '../../data/product-navigation';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const accepts = [
+  ['Symbol', 'IL1B matches IL1B, Entrez 3553.'],
+  ['Alias or older name', 'IL-1 matches IL1B and p53 matches TP53. The table shows what was typed beside the standard symbol, so the change is visible.'],
+  ['Entrez ID', '3553 matches IL1B.'],
+  ['Gene name', 'Typing interleukin 1 beta suggests IL1B.'],
+  ['Disease', 'Typing autism suggests genes annotated to it, each tagged with where the link comes from, such as SFARI Autism (Level 2) or autism spectrum disorder.'],
+  ['A pasted list', 'Terms separated by spaces or new lines. Each is matched on its own and listed in the matching table.'],
+  ['Example gene sets', 'Autism-associated gene set, renal disease panel and synapse gene set fill the box with their genes; the autism set has about 300.'],
+];
+
+const symbolSuggestions: SearchSuggestion[] = [
+  { id: '3553', label: 'IL1B', description: 'interleukin 1 beta', details: 'Entrez 3553. Also known as IL1F2, IL1beta, IL-1, IL1-BETA' },
+  { id: '834', label: 'CASP1', description: 'caspase 1', details: 'Entrez 834. Matched on its alias IL1BC' },
+];
+
+const diseaseSuggestions: SearchSuggestion[] = [
+  { id: '57680', label: 'CHD8', description: 'chromodomain helicase DNA binding protein 8', badges: ['SFARI Autism (Level 1)', 'autism spectrum disorder'], details: 'Entrez 57680. Also known as AUTS18, HELSNF1' },
+  { id: '22941', label: 'SHANK2', description: 'SH3 and multiple ankyrin repeat domains 2', badges: ['SFARI Autism (Level 2)', 'autism spectrum disorder'], details: 'Entrez 22941. Also known as CTTNBP1, SPANK-3' },
+  { id: '139411', label: 'PTCHD1', description: 'patched domain containing 1', badges: ['SFARI Autism (Level 2)', 'autism spectrum disorder'], details: 'Entrez 139411. Also known as AUTSX4' },
+];
+
+const suggestionNotes = [
+  'The list is a listbox: arrow keys move the active row, Enter picks it, Escape closes the list and keeps what was typed.',
+  'Symbols are bold and names regular; there is no colored highlight, so suggestions read like the rest of the table text.',
+  'A disease search lists genes, not the disease itself. The badges come from the annotation source and keep its wording.',
+  'With nothing typed, the box shows example searches under it instead of an empty list (Empty states).',
+];
+
+const il1b: GeneCandidate = { entrez: '3553', symbol: 'IL1B', name: 'interleukin 1 beta', aliases: ['IL1F2', 'IL1beta', 'IL-1', 'IL1-BETA'] };
+const tp53: GeneCandidate = { entrez: '7157', symbol: 'TP53', name: 'tumor protein p53', aliases: ['TRP53', 'LFS1', 'BCC7', 'P53', 'BMFS5'] };
+const tnf: GeneCandidate = { entrez: '7124', symbol: 'TNF', name: 'tumor necrosis factor', aliases: ['TNF-alpha', 'DIF', 'TNFSF2', 'TNLG1F', 'TNFA'] };
+const auts2: GeneMatch = {
+  id: 'AUTS2',
+  typed: ['AUTS2'],
+  status: 'choose',
+  candidates: [
+    { entrez: '26053', symbol: 'AUTS2', name: 'activator of transcription and developmental regulator AUTS2', aliases: ['MRD26', 'FBRSL2'] },
+    { entrez: '100124700', symbol: 'AUTS8', name: 'Autism, susceptibility to, 8' },
+  ],
+};
+const matched = (gene: GeneCandidate, typed = gene.symbol): GeneMatch => ({ id: typed, typed: [typed], status: 'matched', candidates: [gene] });
+
+const query = new GeneMatchList([
+  matched(il1b),
+  { id: 'p53', typed: ['p53'], status: 'alias', candidates: [tp53], matchedAlias: 'P53' },
+  auts2,
+  { id: 'FOOBAR1', typed: ['FOOBAR1'], status: 'not-found', candidates: [] },
+  matched(tnf),
+]);
+
+const foxp1: GeneCandidate = { entrez: '27086', symbol: 'FOXP1', name: 'forkhead box P1', aliases: ['QRF1', 'MFH', '12CC4', 'hFKH1B', 'HSPC215'] };
+const notFound = new GeneMatchList([{ id: 'FOXPI', typed: ['FOXPI'], status: 'not-found', candidates: [] }]);
+const edited = new GeneMatchList([{ ...matched(foxp1, 'FOXPI'), edited: true }]);
+const editSuggestions: SearchSuggestion[] = [
+  { id: '27086', label: 'FOXP1', description: 'forkhead box P1', details: 'Entrez 27086. Also known as QRF1, 12CC4, hFKH1B, HSPC215, MFH' },
+  { id: '93986', label: 'FOXP2', description: 'forkhead box P2', details: 'Entrez 93986. Also known as SPCH1, TNRC10, CAGH44' },
+];
+
+const sfari: GeneCandidate[] = [
+  { entrez: '23394', symbol: 'ADNP', name: 'activity dependent neuroprotector homeobox' },
+  { entrez: '57492', symbol: 'ARID1B', name: 'AT-rich interaction domain 1B' },
+  { entrez: '1859', symbol: 'DYRK1A', name: 'dual specificity tyrosine phosphorylation regulated kinase 1A', aliases: ['MRD7', 'MNBH', 'MNB', 'DYRK', 'DYRK1', 'HP86'] },
+  { entrez: '55870', symbol: 'ASH1L', name: 'ASH1 like histone lysine methyltransferase', aliases: ['MRD52', 'ASH1', 'ASH1L1', 'KMT2H'] },
+  { entrez: '80816', symbol: 'ASXL3', name: 'ASXL transcriptional regulator 3', aliases: ['KIAA1713', 'BRPS'] },
+  { entrez: '57680', symbol: 'CHD8', name: 'chromodomain helicase DNA binding protein 8', aliases: ['AUTS18', 'HELSNF1'] },
+  { entrez: '8452', symbol: 'CUL3', name: 'cullin 3' },
+];
+const toCheck = (symbol: string, candidates: GeneCandidate[]): GeneMatch => ({ id: symbol, typed: [symbol], status: 'choose', candidates });
+const longList = new GeneMatchList([
+  auts2,
+  toCheck('MFRP', [
+    { entrez: '83552', symbol: 'MFRP', name: 'membrane frizzled-related protein', aliases: ['CTRP5', 'RD6', 'NNO2', 'MCOP5'] },
+    { entrez: '11490', symbol: 'C1QTNF5', name: 'C1q and TNF related 5' },
+  ]),
+  toCheck('P2RX5', [{ entrez: '5026', symbol: 'P2RX5', name: 'purinergic receptor P2X 5' }]),
+  toCheck('FABP5', [{ entrez: '2171', symbol: 'FABP5', name: 'fatty acid binding protein 5' }]),
+  ...sfari.map((gene) => matched(gene)),
+]);
+const resolvedOnly = new GeneMatchList(sfari.slice(2, 7).map((gene) => matched(gene)));
+
+const removalNotes = [
+  'With the checkbox column on, every row can be selected. The header checkbox selects the rows shown, not the whole list.',
+  'Once a row is checked, the selection bar replaces the table summary. It names the count and the genes, with Remove from list and Clear selection.',
+  'Remove from list updates the gene list, the counts and the main button at once, such as “Find modules in 297 genes”, and shows a toast with Undo, bottom left.',
+  'The × on a row still removes one gene with one click, so nobody has to select to remove a single gene.',
+  'Remove from list is disabled when it would leave fewer than 20 genes, the minimum for Modules. The selection bar says why: “Modules needs at least 20 genes.” Decided October 17, 2026.',
+];
+
+const words = [
+  ['Matched an alias', 'p53 is an alias of TP53. TP53 will be used.'],
+  ['Check the match', 'AUTS2 matches 2 genes. The standard symbol is picked; change it if you meant the other.'],
+  ['Not found', 'FOOBAR1 wasn’t found and will be left out. Edit it to include it.'],
+  ['Not found again, or several', 'HumanBase didn’t recognize 3 terms. It knows human gene symbols, aliases, Entrez IDs and gene names; check the spelling or try the Entrez ID.'],
+  ['Nothing matched', 'None of these terms matched a human gene, so there’s nothing to run yet. Try a symbol such as IL1B, or an example gene set.'],
+  ['Checking', 'Checking 301 genes…'],
+];
+
+const behavior = [
+  ['When matching runs', 'A single term is suggested as it’s typed. A list is checked when Enter is pressed, the box loses focus, or an example set is picked; the panel shows the loading pattern while it checks.'],
+  ['Order', 'Terms to check and not found come first, then the rest in the order they were typed.'],
+  ['Alias and ambiguous terms', 'The standard symbol is picked by default, as today. The row stays marked so it can be changed, but it doesn’t block running.'],
+  ['Aliases', 'Shown only on rows matched through an alias and rows to check, with the alias that matched in bold. Plain matches show symbol and description only, so long lists stay short.'],
+  ['Not found', 'Left out of the run; the button counts only genes that will run, such as Show network for 4 genes.'],
+  ['Duplicates', 'A gene typed twice, or as both a symbol and an alias, is listed once, with both terms in You typed.'],
+  ['Editing', 'Rematches that row only. Removing a row also removes the term from the box.'],
+  ['Download gene list', 'A TSV with what was typed, symbol, Entrez ID and status for every row, including terms left out.'],
+  ['Where it’s used', 'The top bar search, the Networks and Modules forms, and Edit genes on a result. Typing several genes in the top bar opens the Networks form with the list filled in.'],
+];
+
+const specs = [
+  ['suggestion list', 'Same width as the box, white, 1px border.subtle, 8px radius, elevation 2; rows 12px by 16px padding; symbol Lato Bold 16, name Lato 16, meta Lato 13'],
+  ['active suggestion', 'surface.sunken background, no border or bar; it moves with arrow keys and pointer'],
+  ['matching table', 'Table component, comfortable rows; columns 200 / fill / 140 / 200 / 140 at 1440'],
+  ['status', 'Icon plus a word: success 700 Matched, warning 700 Check the match, error 700 Not found, the same hues as Alerts'],
+  ['summary', 'Cabin Medium 22 title; counts in Lato Regular 14 with 16px icons, 20px apart'],
+  ['run button', 'Primary, full width of the settings column; label carries the gene count'],
+];
+
+const crumbs = [{ label: 'Network analysis', href: '#the-matching-table' }, { label: 'Networks' }];
+const tissues = ['Blood vessel', 'Liver', 'Brain'].map((tissue) => ({ value: tissue, label: tissue }));
+const versions = ['GIANT', 'MAGE (current)'].map((version) => ({ value: version, label: version }));
+---
+
+<DocsLayout title="Gene search and matching" description="One search box for every gene reference, suggestions that explain themselves, and a matching table that shows and fixes each term before anything runs.">
+  <Intro
+    lead="Every HumanBase analysis starts with genes. People type a symbol, an alias, an ID, a disease, or paste a list of hundreds; HumanBase matches each term to a gene before anything runs, and shows the match so nobody analyzes the wrong gene by accident."
+    status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Show what was understood', text: 'Every term is shown next to the gene it matched, including aliases such as p53 to TP53, before the analysis runs.' },
+        { title: 'Fix it where it is', text: 'Unrecognized and ambiguous terms are resolved in the matching table. Nobody retypes a list to fix one gene.' },
+        { title: 'One box, any input', text: 'Symbols, aliases, Entrez IDs, gene names and diseases all work, typed one at a time or pasted as a list.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="What the box accepts" lead="One search box takes every kind of gene reference. The same rules apply in the top bar, on the Networks and Modules forms, and in Edit genes.">
+    <DocTable caption="What the gene search box accepts" columns={['Input', 'Example and result']} widths={['300px']}>
+      {accepts.map(([input, example]) => <tr><th scope="row">{input}</th><td>{example}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Suggestions as you type" lead="As people type, the box suggests matching genes. Each suggestion says why it appeared, so an unexpected gene, like CASP1 for IL1B, explains itself.">
+    <div class="examples">
+      <div class="example">
+        <h3>A symbol</h3>
+        <SearchField label="Search genes, example with a symbol" value="IL1B" suggestions={symbolSuggestions} open inlineSuggestions defaultHighlight={0} note="Enter opens IL1B. To search several genes, keep typing and separate them with spaces." />
+      </div>
+      <div class="example">
+        <h3>A disease</h3>
+        <SearchField
+          label="Search genes, example with a disease"
+          value="autism"
+          suggestions={diseaseSuggestions}
+          open
+          inlineSuggestions
+          defaultHighlight={0}
+          heading="Genes linked to autism"
+          note="Showing 3 of the genes linked to autism. To analyze many at once, try the autism-associated gene set."
+        />
+      </div>
+    </div>
+    <ul class="points">{suggestionNotes.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="The matching table" lead="When the genes are checked, every term gets a row. Problems sort to the top, each with its fix in the row, and the button says how many genes will run.">
+    <figure class="screen">
+      <TopBar sections={productSections} current="Network analysis" jobs={productJobs} scrolled={false} />
+      <div class="screen-body">
+        <Breadcrumbs items={crumbs} />
+        <div class="screen-title">
+          <p class="screen-heading">Find genes in a tissue network</p>
+          <p>Enter one gene to see its network, or several to see how they connect in a tissue.</p>
+        </div>
+        <div class="query-form">
+          <GeneList label="Genes" hint="Separate genes with spaces or new lines." defaultValue={'IL1B\np53\nAUTS2\nFOOBAR1\nTNF'} />
+          <div class="query-settings">
+            <Select label="Tissue" options={tissues} defaultValue="Blood vessel" />
+            <Select label="Data version" options={versions} defaultValue="GIANT" />
+            <Button>{`Show network for ${GeneMatchList.pluralGenes(query.runnable)}`}</Button>
+          </div>
+        </div>
+        <GeneMatchSummary list={query} />
+        <GeneMatchTable list={query} onEdit={() => {}} onRemove={() => {}} />
+        <p class="screen-note">FOOBAR1 is left out unless it’s edited to a gene HumanBase knows. Nothing runs until the button is pressed.</p>
+      </div>
+      <figcaption class="visually-hidden">The Networks query form with five terms and the table showing how each one matched.</figcaption>
+    </figure>
+  </DocSection>
+
+  <DocSection title="Fixing a term" lead="Edit turns the term into a field with the same suggestions as the search box. Picking a gene rematches that row only; the rest of the list stays as it was.">
+    <ol class="steps">
+      <li>
+        <h3>1. Not found</h3>
+        <GeneMatchTable caption="Step 1: a term that was not found" list={notFound} onEdit={() => {}} onRemove={() => {}} />
+      </li>
+      <li>
+        <h3>2. Editing: the term becomes a field, with suggestions under it</h3>
+        <GeneMatchTable caption="Step 2: editing the term" list={notFound} editing={{ id: 'FOXPI', query: 'FOXP', suggestions: editSuggestions }} />
+      </li>
+      <li>
+        <h3>3. Matched: the row keeps what was first typed, so the change is on record</h3>
+        <GeneMatchTable caption="Step 3: the edited term, matched" list={edited} onRemove={() => {}} />
+      </li>
+    </ol>
+  </DocSection>
+
+  <DocSection title="Long lists" lead="A pasted gene set can hold hundreds of terms. The summary comes first, terms to check are listed before anything else, and the matched genes fold into one row that opens on request.">
+    <div class="long-list">
+      <GeneMatchSummary list={longList} title={`How your ${longList.matches.length} genes matched`} />
+      <GeneMatchTable caption="Matching for a pasted gene set" list={longList} visibleProblems={2} foldMatched onRemove={() => {}} />
+    </div>
+    <section class="removal" aria-labelledby="removal-heading">
+      <h3 id="removal-heading">Removing several genes</h3>
+      <p class="removal-lead">In a long list, people can check rows and remove them together, or remove one with its ×. Uses the row selection and selection bar from Tables, and the toast with Undo from Alerts and toasts.</p>
+      <GeneMatchTable caption="Selecting genes to remove" list={resolvedOnly} selectable defaultSelected={['ASH1L', 'ASXL3', 'CUL3']} foldMatched matchedExpanded onRemove={() => {}} />
+      <div class="toast-specimen">
+        <Toast tone="success" message="Removed ASH1L, ASXL3 and CUL3" action={{ label: 'Undo', onSelect: () => {} }} />
+      </div>
+      <ul class="points">{removalNotes.map((note) => <li>{note}</li>)}</ul>
+    </section>
+  </DocSection>
+
+  <DocSection title="Words" lead="Direct mid-task, instructive when it happens again or nothing matched (Voice and content). Messages name the term and say what happens next.">
+    <DocTable caption="What the matching messages say" columns={['Moment', 'What it says']} widths={['300px']}>
+      {words.map(([moment, text]) => <tr><th scope="row">{moment}</th><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="What every gene input does the same way.">
+    <DocTable caption="Gene input behavior" columns={['Rule', 'Detail']} widths={['300px']}>
+      {behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Specs" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Gene search specs" columns={['Part', 'Value']} widths={['300px']}>
+      {specs.map(([part, value]) => <tr><th scope="row"><code>{part}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .examples {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 615px));
+    gap: 46px;
+    align-items: start;
+  }
+
+  .example h3,
+  .steps h3 {
+    margin-block-end: var(--space-2);
+    font: var(--type-label-sm);
+    color: var(--text-secondary);
+  }
+
+  .points {
+    margin-block-start: var(--space-6);
+  }
+
+  .screen {
+    margin: 0;
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .screen :global(.top-bar) {
+    position: relative;
+  }
+
+  .screen-body {
+    display: grid;
+    gap: var(--space-6);
+    padding: var(--space-6) 61px var(--space-12);
+  }
+
+  .screen-title {
+    display: grid;
+    gap: var(--space-2);
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .screen-heading {
+    font: var(--type-h2);
+    color: var(--text-default);
+  }
+
+  .query-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 307px;
+    gap: var(--space-6);
+  }
+
+  .query-settings {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+
+  .screen-note {
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .steps {
+    display: grid;
+    gap: var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .long-list {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .removal {
+    display: grid;
+    gap: var(--space-4);
+    margin-block-start: var(--space-8);
+  }
+
+  .removal h3 {
+    font: var(--type-h3);
+  }
+
+  .removal-lead {
+    max-inline-size: 920px;
+    font: var(--type-body-lg);
+    color: var(--text-secondary);
+  }
+
+  .toast-specimen {
+    max-inline-size: 400px;
+  }
+</style>
