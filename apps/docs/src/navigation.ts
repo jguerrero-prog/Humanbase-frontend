@@ -80,7 +80,7 @@ export const navigation: NavSection[] = [
   {
     heading: 'UI library',
     items: [
-      { label: 'What exists today' },
+      { label: 'What exists today', href: '/ui-library/what-exists-today/' },
       { label: 'Results layout' },
       { label: 'Gene search and matching' },
       { label: 'Job submission' },
@@ -98,3 +98,7 @@ export const navigation: NavSection[] = [
     items: [{ label: 'Figma library' }, { label: 'Changelog' }, { label: 'Contribution guide' }, { label: 'Contact the team' }],
   },
 ];
+
+export function hrefFor(label: string): string | undefined {
+  return navigation.flatMap((section) => section.items).find((item) => item.label === label)?.href;
+}
