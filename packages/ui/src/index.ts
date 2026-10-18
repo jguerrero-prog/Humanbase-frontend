@@ -73,3 +73,5 @@ export { FileField, type FileFieldProps } from './FileField/FileField';
 export { EmptyState, type EmptyStateProps } from './EmptyState/EmptyState';
 export { JobSteps, type JobStep, type JobStepState } from './JobSteps/JobSteps';
 export { Skeleton, type SkeletonProps } from './Skeleton/Skeleton';
+export { JobRow, type JobLink, type JobRowProps } from './Jobs/JobRow';
+export { JobsMenu, type JobsMenuJob, type JobsMenuProps } from './Jobs/JobsMenu';

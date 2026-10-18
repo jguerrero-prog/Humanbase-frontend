@@ -1,0 +1,403 @@
+---
+import { Breadcrumbs, Button, Cell, ContextLabel, Dialog, HeaderCell, JobRow, JobSteps, JobsMenu, SearchField, StatusBadge, Table, Tabs, TextInput, Toast } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import { Fragment } from 'react';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import ProductScreen from '../../components/docs/ProductScreen.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const today = [
+  ['Statuses', 'queued, then running, then completed. The page asked for the status about every 2 seconds; the example finished in about 26 seconds. Failure wording wasn’t seen.'],
+  ['Where jobs are kept', 'In this browser’s storage, one entry per job, separately for each tool. Clearing site data loses the list, not the job.'],
+  ['Finding a job', 'A “Recent Seqweaver jobs” select on each tool’s form, with Clear all jobs. There is no list across tools and no Jobs page.'],
+  ['Job details', 'Model, submission type, genome, job ID (a link), created time; View Results and Download Results.'],
+  ['Result files', 'Disease impact score and mean -log e-value tracks (.bw); z-score, e-value and probability diffs tables (.tsv.gz, each with a tabix index); the uploaded query; an archive of everything.'],
+  ['Results page', '/deepsea/jobs/<job id>/, breadcrumb Home / Seqweaver / Job. In the capture it showed “Some data on this page could not be loaded”; to report to the team.'],
+  ['Not available', 'Queue position, cancelling a job, and how long jobs are kept.'],
+];
+
+const jobs = [
+  { title: 'IL1B region variants', detail: 'Seqweaver, 1,284 variants on GRCh37/hg19', status: 'running', statusDetail: 'For 4 minutes', started: 'Oct 16, 8:16 PM', action: { label: 'Open', href: '/jobs/il1b/' } },
+  { title: 'BMI GWAS, adipose tissue', detail: 'NetWAS, bmi_gwas_2012.txt, adipose tissue', status: 'queued', statusDetail: 'Waiting to start', started: 'Oct 16, 8:14 PM', action: { label: 'Open', href: '/jobs/bmi/' } },
+  { title: 'Untitled Seqweaver job', detail: 'Seqweaver, the example VCF on GRCh37/hg19', status: 'finished', statusDetail: 'In 26 seconds', started: 'Oct 16, 8:02 PM', action: { label: 'View results', href: '/jobs/example/' } },
+  { title: 'ASD noncoding candidates', detail: 'Sei, 9,800 variants on GRCh38/hg38', status: 'finished', statusDetail: 'In 12 minutes', started: 'Oct 15, 4:40 PM', action: { label: 'View results', href: '/jobs/asd/' } },
+  { title: 'FOXP1 promoter scan', detail: 'In silico mutagenesis, 2 sequences', status: 'finished', statusDetail: 'In 3 minutes', started: 'Oct 14, 11:05 AM', action: { label: 'View results', href: '/jobs/foxp1/' } },
+  { title: 'Height GWAS', detail: 'NetWAS, height_gwas.txt, global', status: 'failed', statusDetail: 'No p-value column', started: 'Oct 12, 9:30 AM', action: { label: 'See why', href: '/jobs/height/' } },
+] as const;
+
+const filters = [
+  { value: 'all', label: 'All', count: 6 },
+  { value: 'active', label: 'Running and queued', count: 2 },
+  { value: 'finished', label: 'Finished', count: 3 },
+  { value: 'failed', label: 'Failed', count: 1 },
+];
+
+const files = [
+  ['Disease impact score', 'One score per variant, as a genome track', 'bigWig (.bw)'],
+  ['Mean -log e-value', 'One score per variant, as a genome track', 'bigWig (.bw)'],
+  ['z-score', 'Every feature for every variant', 'TSV, gzipped, with tabix index'],
+  ['e-value', 'Every feature for every variant', 'TSV, gzipped, with tabix index'],
+  ['Probability diffs', 'Every feature for every variant', 'TSV, gzipped, with tabix index'],
+  ['Your query', 'The file as it was submitted', 'VCF'],
+];
+
+const finishedSteps = [
+  { label: 'Submitted', detail: 'Oct 16, 8:16 PM', state: 'done' },
+  { label: 'Queued', detail: 'Started right away', state: 'done' },
+  { label: 'Ran', detail: 'For 26 seconds', state: 'done' },
+  { label: 'Results ready', detail: 'Kept for as long as HumanBase keeps results', state: 'done' },
+] as const;
+
+const menuJobs = [
+  { title: 'IL1B region variants', detail: 'Seqweaver, for 4 minutes', status: 'running', href: '/jobs/il1b/' },
+  { title: 'BMI GWAS, adipose tissue', detail: 'NetWAS, waiting to start', status: 'queued', href: '/jobs/bmi/' },
+  { title: 'Untitled Seqweaver job', detail: 'Seqweaver, finished Oct 16, 8:02 PM', status: 'finished', href: '/jobs/example/' },
+] as const;
+
+const words = [
+  ['Queued', 'Queued. Waiting to start.'],
+  ['Running', 'Running for 4 minutes. You can leave this page.'],
+  ['Finished, toast', 'Seqweaver finished: IL1B region variants. View results'],
+  ['Failed, toast', 'NetWAS stopped: Height GWAS. See why'],
+  ['Untitled job', 'Untitled Seqweaver job, with the date beside it, never the job ID as the title.'],
+  ['Empty list', 'No jobs in this browser yet. Jobs you start here appear in this list; a job from somewhere else can be added by its link.'],
+  ['Link not found', 'No job matches that link. Check that it was copied whole, or ask whoever sent it for the job page link.'],
+];
+
+const behavior = [
+  ['Checking status', 'While a job page is open it checks as often as today, about every 2 seconds, and updates in place. Other pages check less often for the Jobs count; the interval is for the team to set.'],
+  ['One list', 'The list reads the jobs each tool already saves in this browser, so jobs started before the redesign appear too.'],
+  ['Jobs count', 'The top bar shows how many are running or queued. With none, it shows Jobs without a count.'],
+  ['Finishing', 'One toast, on any HumanBase page, polite to screen readers. On the job page itself, the page turns into the finished state instead.'],
+  ['Links', 'Copy link gives the job page link. Opening it shows the job; Add a job by link puts it in this browser’s list.'],
+  ['Removing', 'Remove from this list and Clear finished only change this browser. They ask once before clearing more than one job.'],
+  ['Not offered', 'Queue position and cancelling a job, until the job service reports and supports them.'],
+];
+
+const specs = [
+  ['jobs table', 'Full width; columns fill / 280 / 200 / 200 at 1440; rows use the Job row component'],
+  ['status', 'Badge (Queued, Running, Finished, Failed) plus a Lato 13 grey detail line'],
+  ['jobs menu', '420px, white, 1px border, 8px radius, overlay shadow; up to 5 jobs, newest first; footer link to the Jobs page'],
+  ['finished job', 'Main 8 columns with actions and files; side panel 400px grey 50 with steps and details'],
+  ['job ID', 'Atkinson Hyperlegible Mono 13, selectable; Copy link beside it'],
+];
+
+const usage = `import { JobHistory } from '@humanbase/data';
+import { JobRow, JobsMenu } from '@humanbase/ui';
+
+const history = new JobHistory();
+history.add({ id, tool: 'Seqweaver', status: 'queued', startedAt, link });
+history.activeCount(); // running and queued, for the Jobs count
+JobHistory.idFromLink(pasted); // the job ID inside a pasted link, or undefined`;
+---
+
+<DocsLayout title="Job status and queue" description="Jobs live in the browser that started them and in their links: one list for every tool, a Jobs menu, and one toast when a job finishes.">
+  <Intro
+    lead="HumanBase has no accounts, so a job lives in the browser that started it, and in its link. This page puts the pieces together: the job page from Loading and job status, the list of jobs in this browser, the Jobs menu in the top bar, and the moment a job finishes."
+    status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+  >
+    <KeyRules
+      rules={[
+        { title: 'One list, every tool', text: 'Jobs from Sei, Seqweaver, NetWAS and the rest sit in one list, not a separate menu on each tool’s form.' },
+        { title: 'The link is the job', text: 'Every job page has a link to copy. Opening it anywhere shows the job; adding it puts the job back in that browser’s list.' },
+        { title: 'Say it once, where people are', text: 'When a job finishes, one toast on whatever page is open, and the Jobs count in the top bar updates.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="What happens today" lead="From one Seqweaver example job submitted with Playwright on October 16, 2026, and the API responses it made.">
+    <DocTable caption="Jobs today" columns={['Part', 'Today']} widths={['300px']}>
+      {today.map(([part, text]) => <tr><th scope="row">{part}</th><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="The Jobs page" lead="Every job started in this browser, from every tool, newest first. Jobs in the top bar opens it. A job from somewhere else comes back by pasting its link.">
+    <ProductScreen label="The Jobs page at 1440px">
+      <div class="title-row">
+        <div class="screen-title">
+          <h3>Jobs</h3>
+          <p>Jobs started in this browser. To open one somewhere else, copy its link.</p>
+        </div>
+        <Button variant="secondary">Add a job by link</Button>
+      </div>
+      <div class="filters">
+        <Tabs label="Show jobs" tabs={filters} defaultValue="all" />
+        <SearchField label="Filter by title or tool" placeholder="Filter by title or tool" size="medium" />
+      </div>
+      <Table caption="Jobs in this browser" columnWidths={['auto', '280px', '200px', '200px']}>
+        <thead>
+          <tr>
+            <HeaderCell>Job</HeaderCell>
+            <HeaderCell>Status</HeaderCell>
+            <HeaderCell sort="descending">Started</HeaderCell>
+            <HeaderCell><span class="visually-hidden">Action</span></HeaderCell>
+          </tr>
+        </thead>
+        <tbody>
+          {jobs.map((job) => <JobRow {...job} />)}
+        </tbody>
+      </Table>
+      <div class="list-footer">
+        <p>Kept in this browser. Removing a job from the list doesn’t delete it; its link keeps working for as long as HumanBase keeps results.</p>
+        <Button variant="ghost" size="small">Clear finished from this list</Button>
+      </div>
+    </ProductScreen>
+  </DocSection>
+
+  <DocSection title="A finished job" lead="The job page once results are ready: one step to the results, every file named in plain words, and the link to share. Queued, running and failed are on Loading and job status.">
+    <ProductScreen label="A finished job at 1440px">
+      <Breadcrumbs items={[{ label: 'Jobs', href: '/jobs/' }, { label: 'IL1B region variants' }]} />
+      <div class="job-columns">
+        <div class="job-main">
+          <h3 class="job-title">IL1B region variants</h3>
+          <p class="status-line"><StatusBadge status="finished" /> Results ready after 26 seconds, Oct 16, 8:16 PM</p>
+          <div class="actions">
+            <Button>View results</Button>
+            <Button variant="secondary" icon="download">Download everything (.zip)</Button>
+          </div>
+          <h4>Result files</h4>
+          <Table caption="Result files" columnWidths={['auto', '220px', '160px']}>
+            <thead>
+              <tr>
+                <HeaderCell>File</HeaderCell>
+                <HeaderCell>Format</HeaderCell>
+                <HeaderCell><span class="visually-hidden">Download</span></HeaderCell>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                files.map(([name, about, kind]) => (
+                  <tr>
+                    <Cell rowHeader>
+                      <span class="file-name">{name}</span>
+                      <span class="file-about">{about}</span>
+                    </Cell>
+                    <Cell>{kind}</Cell>
+                    <Cell>
+                      <Button variant="ghost" size="small" icon="download">Download</Button>
+                    </Cell>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </Table>
+        </div>
+        <aside class="job-side">
+          <h4>How it went</h4>
+          <JobSteps label="How the job went" steps={finishedSteps} />
+          <h4>Details</h4>
+          <div class="context">
+            <ContextLabel name="Tool" value="Seqweaver" />
+            <ContextLabel name="Genome" value="GRCh37/hg19" />
+            <ContextLabel name="Input" value="1,284 variants, VCF" />
+          </div>
+          <p class="job-id"><span>Job ID</span><code>76aea8fe-8ec7-4698-a193-a186c7665edb</code></p>
+          <div class="side-actions">
+            <Button variant="ghost" size="small" icon="copy">Copy link</Button>
+            <Button variant="ghost" size="small">Rename</Button>
+          </div>
+        </aside>
+      </div>
+    </ProductScreen>
+  </DocSection>
+
+  <DocSection title="The Jobs menu and the moment a job finishes" lead="Jobs in the top bar counts what’s running and opens a short list. When a job finishes, one toast appears on whatever page is open; it doesn’t move focus.">
+    <div class="moments">
+      <figure>
+        <figcaption>Jobs menu, opened from the top bar</figcaption>
+        <div class="menu-stage">
+          <JobsMenu jobs={menuJobs} total={6} allHref="/jobs/" open />
+        </div>
+      </figure>
+      <figure>
+        <figcaption>When a job finishes, on any page</figcaption>
+        <Toast tone="success" message="Seqweaver finished: IL1B region variants" action={{ label: 'View results', href: '/jobs/il1b/' }} />
+        <Toast tone="error" message="NetWAS stopped: Height GWAS" action={{ label: 'See why', href: '/jobs/height/' }} />
+      </figure>
+      <figure>
+        <figcaption>Add a job by link</figcaption>
+        <Dialog inline kind="form" title="Add a job by link">
+          <TextInput label="Job link or ID" defaultValue="humanbase.io/deepsea/jobs/76aea8fe…" hint="Paste the link from the job page or an email. The job is added to this browser’s list." />
+          <Fragment slot="actions">
+            <Button variant="ghost">Cancel</Button>
+            <Button>Add job</Button>
+          </Fragment>
+        </Dialog>
+      </figure>
+    </div>
+  </DocSection>
+
+  <DocSection title="Words" lead="Status in words first, and the job’s own name, so a list of six jobs reads at a glance (Voice and content, Loading and job status).">
+    <DocTable caption="What jobs say" columns={['Moment', 'What it says']} widths={['300px']}>
+      {words.map(([moment, says]) => <tr><th scope="row">{moment}</th><td>{says}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="What every job does the same way, whatever the tool.">
+    <DocTable caption="Job behavior" columns={['Rule', 'Detail']} widths={['300px']}>
+      {behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Specs" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Job status specs" columns={['Part', 'Value']} widths={['404px']}>
+      {specs.map(([part, value]) => <tr><th scope="row"><code>{part}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using jobs in code">
+    <ul>
+      <li><code>JobHistory</code> in <code>@humanbase/data</code> keeps the list in this browser under one key. It never calls the API; checking status stays with the job service.</li>
+      <li><code>JobRow</code> fills a <code>Table</code>; <code>JobsMenu</code> is the top bar’s list, up to five jobs with a link to the Jobs page.</li>
+    </ul>
+    <Code code={usage} lang="ts" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .title-row {
+    display: flex;
+    gap: var(--space-4);
+    align-items: end;
+    justify-content: space-between;
+  }
+
+  .screen-title {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .screen-title h3,
+  .job-title {
+    font: var(--type-h2);
+    letter-spacing: var(--type-h2-tracking);
+  }
+
+  .screen-title p,
+  .list-footer p,
+  .status-line {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .filters {
+    display: flex;
+    gap: var(--space-4);
+    align-items: end;
+    justify-content: space-between;
+  }
+
+  .filters > :global(:first-child) {
+    flex: 1;
+  }
+
+  .filters > :global(.search-field) {
+    inline-size: 320px;
+  }
+
+  .list-footer {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .job-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 813fr) minmax(0, 384fr);
+    gap: 61px;
+    align-items: start;
+  }
+
+  .job-main,
+  .job-side {
+    display: grid;
+    gap: var(--space-5);
+    align-content: start;
+  }
+
+  .status-line,
+  .actions,
+  .context,
+  .side-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .job-main h4,
+  .job-side h4 {
+    font: 700 17px/1.4 Lato, sans-serif;
+  }
+
+  .job-side {
+    padding: var(--space-6);
+    background: var(--surface-subtle);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .job-side h4 {
+    font: var(--type-label);
+  }
+
+  .file-name {
+    display: block;
+    font: var(--type-label-sm);
+  }
+
+  .file-about,
+  .job-id span {
+    display: block;
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .job-id code {
+    font: var(--type-code-sm);
+    user-select: all;
+  }
+
+  .moments {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .moments figure {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+  }
+
+  .moments figcaption {
+    font: 700 13px/1.4 Lato, sans-serif;
+    color: var(--text-secondary);
+  }
+
+  .menu-stage {
+    display: flex;
+    justify-content: flex-end;
+    margin-block-end: 290px;
+    padding: var(--space-3);
+    background: var(--action-primary);
+    border-radius: var(--radius-md);
+  }
+
+  .menu-stage :global(.jobs-menu-panel) {
+    animation: none;
+  }
+
+  @media (width < 1200px) {
+    .job-columns,
+    .moments {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
