@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useControlled } from '../hooks/useControlled';
 import { Icon } from '../Icon/Icon';
 import './Disclosure.css';
 
@@ -12,8 +12,7 @@ export interface DisclosureProps {
 }
 
 export function Disclosure({ label, expandedLabel, controls, open, defaultOpen = false, onOpenChange }: DisclosureProps) {
-  const [ownOpen, setOwnOpen] = useState(defaultOpen);
-  const isOpen = open ?? ownOpen;
+  const [isOpen, setOwnOpen] = useControlled(open, defaultOpen);
   const toggle = () => {
     setOwnOpen(!isOpen);
     onOpenChange?.(!isOpen);

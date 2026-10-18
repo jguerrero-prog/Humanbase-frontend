@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useId, useRef, type ReactNode } from 'react';
+import { useControlled } from '../hooks/useControlled';
 import { Icon } from '../Icon/Icon';
 import './Accordion.css';
 
@@ -35,8 +36,7 @@ export interface AccordionItemProps {
 export function AccordionItem({ title, summary, headingLevel = 3, open, defaultOpen = false, onOpenChange, disabled = false, 'data-state': dataState, children }: AccordionItemProps) {
   const id = useId();
   const size = useContext(SizeContext);
-  const [ownOpen, setOwnOpen] = useState(defaultOpen);
-  const isOpen = open ?? ownOpen;
+  const [isOpen, setOwnOpen] = useControlled(open, defaultOpen);
   const setOpen = (next: boolean) => {
     setOwnOpen(next);
     onOpenChange?.(next);
