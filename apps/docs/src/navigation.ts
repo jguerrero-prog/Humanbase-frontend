@@ -60,7 +60,7 @@ export const navigation: NavSection[] = [
       { label: 'Buttons', href: '/components/buttons/' },
       { label: 'Text inputs and search', href: '/components/text-inputs-and-search/' },
       { label: 'Dropdowns and selects', href: '/components/dropdowns-and-selects/' },
-      { label: 'Sliders' },
+      { label: 'Sliders', href: '/components/sliders/' },
       { label: 'Tabs and segmented controls' },
       { label: 'Accordions' },
       { label: 'Tables' },
