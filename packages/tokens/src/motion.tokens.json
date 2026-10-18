@@ -1,0 +1,35 @@
+{
+  "$description": "Motion durations, curves, distances and timing from the Motion page of the HumanBase Figma file (qc47Wo9Vj5lYjo9U7zdvWa).",
+  "motion": {
+    "duration": {
+      "instant": { "$type": "duration", "$value": { "value": 0, "unit": "ms" }, "$description": "Focus rings, closing menus, sorting, switching tab panels" },
+      "fast": { "$type": "duration", "$value": { "value": 100, "unit": "ms" }, "$description": "Hover and press colors, checkbox and radio marks, tooltip fade" },
+      "base": { "$type": "duration", "$value": { "value": 150, "unit": "ms" }, "$description": "Menus, selects and suggestions opening; segment and tab indicator; toast leaving" },
+      "moderate": { "$type": "duration", "$value": { "value": 200, "unit": "ms" }, "$description": "Toasts arriving, dialogs and their backdrop, expanding rows, graph highlight" },
+      "slow": { "$type": "duration", "$value": { "value": 280, "unit": "ms" }, "$description": "Drawers, the only element that moves a large area" }
+    },
+    "easing": {
+      "enter": { "$type": "cubicBezier", "$value": [0.2, 0, 0, 1], "$description": "Menus, toasts, dialogs and drawers arriving. Fast start, gentle stop." },
+      "exit": { "$type": "cubicBezier", "$value": [0.4, 0, 1, 1], "$description": "Toasts, dialogs and drawers leaving. Gentle start, quick finish." },
+      "linear": { "$type": "cubicBezier", "$value": [0, 0, 1, 1], "$description": "Opacity crossfades, the spinner and progress bars. No acceleration." }
+    },
+    "distance": {
+      "none": { "$type": "dimension", "$value": { "value": 0, "unit": "px" }, "$description": "Tooltips, focus rings, page content, table rows" },
+      "xs": { "$type": "dimension", "$value": { "value": 4, "unit": "px" }, "$description": "Menus, selects and suggestions, down from their field" },
+      "sm": { "$type": "dimension", "$value": { "value": 8, "unit": "px" }, "$description": "Toasts, up from the bottom edge" },
+      "md": { "$type": "dimension", "$value": { "value": 16, "unit": "px" }, "$description": "Drawers, in from their edge while fading. Not the full width of the drawer." }
+    },
+    "scale": {
+      "dialog": { "$type": "number", "$value": 0.98, "$description": "Dialogs grow from 98% to 100% while fading in. The page behind never scales." }
+    },
+    "delay": {
+      "response": { "$type": "duration", "$value": { "value": 100, "unit": "ms" }, "$description": "Every press, click or key gets visible feedback this fast, even if the result takes longer." },
+      "loading": { "$type": "duration", "$value": { "value": 300, "unit": "ms" }, "$description": "Show a spinner or skeleton only if waiting takes longer than this. Fast answers then appear without any flash." },
+      "tooltip": { "$type": "duration", "$value": { "value": 400, "unit": "ms" }, "$description": "Hover delay before a tooltip appears. Keyboard focus shows it at once." }
+    },
+    "hold": {
+      "loading": { "$type": "duration", "$value": { "value": 500, "unit": "ms" }, "$description": "Once shown, a loading indicator stays at least this long, so it doesn’t blink." },
+      "toast": { "$type": "duration", "$value": { "value": 6000, "unit": "ms" }, "$description": "Plus 1s for every 20 words. Toasts with an action stay until dismissed, and pause while hovered or focused." }
+    }
+  }
+}
