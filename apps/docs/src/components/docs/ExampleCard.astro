@@ -1,0 +1,15 @@
+---
+interface Props {
+  title: string;
+  caption: string;
+  align?: 'start' | 'end';
+}
+
+const { title, caption, align = 'start' } = Astro.props;
+---
+
+<figure class="example-card">
+  <h3>{title}</h3>
+  <div class:list={['example-card-stage', `example-card-stage-${align}`]}><slot /></div>
+  <figcaption>{caption}</figcaption>
+</figure>

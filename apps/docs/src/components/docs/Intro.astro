@@ -1,0 +1,14 @@
+---
+interface Props {
+  lead: string;
+  status: string;
+}
+
+const { lead, status } = Astro.props;
+---
+
+<section class="intro" aria-label="Introduction">
+  <p class="intro-lead">{lead}</p>
+  <p class="intro-status">{status}</p>
+  <slot />
+</section>

@@ -1,0 +1,308 @@
+---
+import { Button, type ButtonVariant } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import DoDont from '../../components/docs/DoDont.astro';
+import ExampleCard from '../../components/docs/ExampleCard.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyList from '../../components/docs/KeyList.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import SizeCard from '../../components/docs/SizeCard.astro';
+import SpecimenCard from '../../components/docs/SpecimenCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const styles: { variant: ButtonVariant; title: string; label: string; text: string; example: string }[] = [
+  { variant: 'primary', title: 'Primary', label: 'Run analysis', text: 'The main action on a screen or in a panel. Only one per view.', example: 'In HumanBase: Run analysis, Search, Submit job' },
+  { variant: 'secondary', title: 'Secondary', label: 'Explore', text: 'A highlighted action on emerald or dark backgrounds, where Primary would disappear.', example: 'In HumanBase: Explore on the homepage hero, Try an example' },
+  { variant: 'ghost', title: 'Ghost', label: 'Add network', text: 'Lower-priority actions next to a Primary, and actions inside toolbars and panels.', example: 'In HumanBase: Add network, Clear, Download' },
+  { variant: 'destructive', title: 'Destructive', label: 'Delete job', text: 'Actions that delete, cancel or lose work. Always confirm first.', example: 'In HumanBase: Delete job, Clear job history, Cancel run' },
+];
+
+const previewStates = ['default', 'hover', 'pressed', 'focus'] as const;
+
+const labels: { variant: ButtonVariant; use: string; insteadOf: string; why: string }[] = [
+  { variant: 'primary', use: 'Run NetWAS', insteadOf: 'Submit', why: 'Names the analysis people are starting.' },
+  { variant: 'ghost', use: 'Download results', insteadOf: 'Click here', why: 'Says what people get, and works out of context for screen readers.' },
+  { variant: 'destructive', use: 'Delete job', insteadOf: 'OK', why: 'A confirmation button repeats the action, so nobody deletes by accident.' },
+  { variant: 'ghost', use: 'Add network', insteadOf: '+ Network', why: 'Starts with a verb; the plus sign can be an icon once icons exist.' },
+  { variant: 'primary', use: 'Search genes', insteadOf: 'SEARCH', why: 'Sentence case is easier to read than all caps.' },
+];
+
+const specs = [
+  ['Height', '44px', '36px'],
+  ['Padding (top and bottom, sides)', '12px, 24px', '8px, 16px'],
+  ['Label', 'Lato Bold 16px / 20px', 'Lato Bold 14px / 20px'],
+  ['Corner radius', '12px (radius.md)', '8px (radius.sm)'],
+  ['Gap to spinner or icon', '8px', '6px'],
+  ['Spinner', '16px', '14px'],
+  ['Focus ring', '2px white gap, 3px grey 900 ring', 'Same'],
+  ['Primary colors', 'emerald 600, hover 700, pressed 800', 'Same'],
+  ['Secondary colors', 'yellow 500, hover 600, pressed 700', 'Same'],
+  ['Ghost colors', 'emerald 600 text, ghost tints 8% and 16%', 'Same'],
+  ['Destructive colors', 'error 600 #B42318, hover #912018, pressed #7A271A', 'Same'],
+  ['Disabled', 'grey 200 background, grey 400 text', 'Same'],
+];
+
+const usage = `import { Button } from '@humanbase/ui';
+
+<Button onClick={runAnalysis}>Run analysis</Button>
+<Button variant="ghost" size="small">Download</Button>
+<Button loading>Running</Button>`;
+---
+
+<DocsLayout title="Buttons" description="Button styles, sizes, states and usage in HumanBase.">
+  <Intro
+    lead="Buttons start actions: running an analysis, adding a network, downloading results. HumanBase has four button styles in two sizes, and every button shows a clear state when people hover, press, focus it with the keyboard, or wait for it to finish."
+    status="Updated October 16, 2026 · Components: Button / Medium and Button / Small, in the “Components: Button” section to the right of this page"
+  >
+    <KeyRules
+      rules={[
+        { title: 'One primary per view', text: 'Each screen or panel has at most one Primary button: the action most people came to take.' },
+        { title: 'Labels are verbs', text: 'Say what will happen: “Run analysis”, “Download results”. Never “OK” or “Submit” on their own.' },
+        { title: 'States are always visible', text: 'Hover, pressed, focus, disabled and loading each look different, so people always know what the button is doing.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Styles" lead="Four styles, from most to least emphasis. Choose by how important the action is, not by which color fits the layout." spacing="loose">
+    <div class="card-grid">
+      {
+        styles.map((style) => (
+          <SpecimenCard title={style.title} text={style.text} example={style.example} stage={style.variant === 'secondary' ? 'brand' : 'subtle'}>
+            <Button variant={style.variant}>{style.label}</Button>
+          </SpecimenCard>
+        ))
+      }
+    </div>
+  </DocSection>
+
+  <DocSection title="Sizes" lead="Medium is the default. Small is for dense places: table rows, toolbars and panels, where it lines up with 36px compact rows." spacing="loose">
+    <div class="card-grid" style="--columns: 2">
+      <SizeCard title="Medium · 44px tall" spec="Padding 12px and 24px · Lato Bold 16px · 12px corners · 8px gap" text="Forms, pages, dialogs. Meets the 44px recommended target.">
+        <Button>Search</Button>
+        <Button variant="ghost">Clear</Button>
+      </SizeCard>
+      <SizeCard title="Small · 36px tall" spec="Padding 8px and 16px · Lato Bold 14px · 8px corners · 6px gap" text="Table rows, toolbars, side panels. Still well above the 24px minimum target.">
+        <Button size="small">Search</Button>
+        <Button size="small" variant="ghost">Clear</Button>
+      </SizeCard>
+    </div>
+  </DocSection>
+
+  <DocSection title="States" lead="Every style has six states. Hover darkens one step and pressed two, focus adds an ink ring with a white gap, disabled turns grey, and loading adds a spinner while keeping the label.">
+    <DocTable caption="Button states for every style" columns={['Style', 'Default', 'Hover', 'Pressed', 'Focus', 'Disabled', 'Loading']} widths={['196px']}>
+      {
+        styles.map((style) => (
+          <tr class="doc-table-spacious">
+            <th scope="row">{style.title}</th>
+            {previewStates.map((state) => (
+              <td>
+                <Button variant={style.variant} data-state={state} tabIndex={-1}>
+                  Search
+                </Button>
+              </td>
+            ))}
+            <td>
+              <Button variant={style.variant} disabled>
+                Search
+              </Button>
+            </td>
+            <td>
+              <Button variant={style.variant} loading tabIndex={-1}>
+                Running
+              </Button>
+            </td>
+          </tr>
+        ))
+      }
+    </DocTable>
+    <p class="doc-note">Loading keeps the button the same width and blocks repeat clicks. Disabled buttons can’t be focused, so always explain nearby why an action isn’t available.</p>
+  </DocSection>
+
+  <DocSection title="Anatomy" lead="A Medium Primary button with its measurements. Every value comes from the spacing and radius scales." spacing="loose">
+    <div class="anatomy">
+      <figure class="anatomy-diagram">
+        <div class="anatomy-button"><Button loading tabIndex={-1}>Run analysis</Button></div>
+        <svg class="anatomy-marks" viewBox="0 0 472 228" aria-hidden="true">
+          <path d="M72 180h48M72 175v11M119 175v11M152 180h16M152 175v11M167 175v11M344 180h48M344 175v11M391 175v11M412 72v88M407 72h11M407 159h11M52 72v24M47 72h11M47 95h11" />
+          <text x="96" y="201">24</text>
+          <text x="160" y="201">8</text>
+          <text x="368" y="201">24</text>
+          <text x="436" y="121">44</text>
+          <text x="28" y="89">12</text>
+        </svg>
+        <figcaption class="visually-hidden">A Medium Primary button in its loading state, shown at twice its size with its measurements.</figcaption>
+      </figure>
+      <KeyList
+        items={[
+          ['Container', '44px tall, 12px corners, emerald 600'],
+          ['Padding', '12px top and bottom, 24px left and right'],
+          ['Spinner or icon', '16px, only when loading or when an icon is added'],
+          ['Gap', '8px between the spinner or icon and the label'],
+          ['Label', 'Lato Bold 16px, 20px line height, white on emerald (6.1:1)'],
+          ['Shown at 2x', 'The diagram is scaled up to make the bands readable'],
+        ]}
+      />
+    </div>
+  </DocSection>
+
+  <DocSection title="Writing labels" lead="Labels start with a verb, use sentence case and stay short, usually two or three words. The label should still make sense if someone reads only the button.">
+    <DocTable caption="Button labels to use and avoid" columns={['Use', 'Instead of', 'Why']} widths={['284px', '284px']}>
+      {
+        labels.map((label) => (
+          <tr class="doc-table-roomy">
+            <td>
+              <Button variant={label.variant} size="small" tabIndex={-1}>
+                {label.use}
+              </Button>
+            </td>
+            <td>
+              <span class="instead-of">{label.insteadOf}</span>
+            </td>
+            <td>{label.why}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Placement and groups" lead="Group related buttons with 12px between them. Put the Primary button first in forms and last in dialogs, so it sits where the eye ends up.">
+    <div class="card-grid" style="--columns: 3">
+      <ExampleCard title="Form" caption="Primary on the left, aligned with the fields above it.">
+        <Button tabIndex={-1}>Run analysis</Button>
+        <Button variant="ghost" tabIndex={-1}>Clear form</Button>
+      </ExampleCard>
+      <ExampleCard title="Dialog" caption="Primary on the right, after the way out." align="end">
+        <Button variant="ghost" tabIndex={-1}>Keep job</Button>
+        <Button variant="destructive" tabIndex={-1}>Delete job</Button>
+      </ExampleCard>
+      <ExampleCard title="Table row" caption="Small Ghost buttons, so the row stays calm.">
+        <span class="example-row-text">Job 3f2a · Completed</span>
+        <Button variant="ghost" size="small" tabIndex={-1}>View</Button>
+        <Button variant="ghost" size="small" tabIndex={-1}>Download</Button>
+      </ExampleCard>
+    </div>
+  </DocSection>
+
+  <DocSection title="Accessibility">
+    <KeyRules
+      size="medium"
+      rules={[
+        { title: 'Real buttons', text: 'Use a <button> for actions and a link for navigation. Both must work with Enter, and buttons with Space.' },
+        { title: 'Visible focus', text: 'The focus ring appears for keyboard users on every style and never gets removed in CSS.' },
+        { title: 'Contrast', text: 'Label contrast: white on emerald 6.1:1, ink on Simons Yellow 12.3:1, white on error 6.6:1. All pass AA.' },
+        { title: 'Loading and disabled', text: 'Loading sets aria-busy and keeps focus on the button. Disabled buttons explain nearby why they are unavailable.' },
+      ]}
+    />
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <DoDont
+      dos={[
+        'Use one Primary button per view.',
+        'Keep labels short and starting with a verb.',
+        'Show a loading state for anything that takes more than a second, such as submitting a job.',
+        'Ask for confirmation before any Destructive action.',
+      ]}
+      donts={[
+        'Don’t put two Primary buttons side by side.',
+        'Don’t use Secondary yellow buttons on white; they are for emerald and dark backgrounds.',
+        'Don’t use buttons for navigation between pages; use links.',
+        'Don’t change a button’s width when its state changes.',
+      ]}
+    />
+  </DocSection>
+
+  <DocSection title="Specs" lead="Values for developers. Colors refer to the Color palette page.">
+    <DocTable caption="Button measurements and colors" columns={['Property', 'Medium', 'Small']} widths={['284px', '324px']}>
+      {
+        specs.map(([property, medium, small]) => (
+          <tr>
+            <th scope="row">{property}</th>
+            <td>{medium}</td>
+            <td>{small}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the component in Figma">
+    <ul>
+      <li>Insert Button / Medium or Button / Small from the “Components: Button” section to the right of this page.</li>
+      <li>Choose Style (Primary, Secondary, Ghost, Destructive) and State (Default, Hover, Pressed, Focus, Disabled, Loading) in the properties panel, and type the label in the Label field.</li>
+      <li>Values are hard-coded for now. They will be connected to color and spacing variables once the first pages confirm them.</li>
+      <li>Turn on “Show icon” and choose an icon in the Icon property to add an icon before the label. The icon color follows the button style; see the Iconography page.</li>
+    </ul>
+  </NoteCard>
+
+  <NoteCard title="Using the component in code">
+    <ul>
+      <li><code>variant</code> is the style: <code>primary</code> (default), <code>secondary</code>, <code>ghost</code> or <code>destructive</code>. <code>size</code> is <code>medium</code> (default) or <code>small</code>.</li>
+      <li><code>loading</code> shows the spinner, sets <code>aria-busy</code> and ignores clicks while keeping focus. <code>disabled</code> is the native attribute.</li>
+      <li><code>icon</code> takes an icon element shown before the label. Every other attribute goes to the native <code>&lt;button&gt;</code>, which defaults to <code>type="button"</code>.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+
+</DocsLayout>
+
+<style>
+  .doc-note {
+    font: var(--docs-small);
+    color: var(--text-muted);
+  }
+
+  .anatomy {
+    display: grid;
+    grid-template-columns: 472px minmax(0, 1fr);
+    gap: var(--space-16);
+    align-items: center;
+  }
+
+  .anatomy-diagram {
+    position: relative;
+    inline-size: 472px;
+    block-size: 228px;
+    margin: 0;
+  }
+
+  .anatomy-button {
+    position: absolute;
+    inset-block-start: 72px;
+    inset-inline-start: 72px;
+    transform: scale(2);
+    transform-origin: top left;
+  }
+
+  .anatomy-marks {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+  }
+
+  .anatomy-marks path {
+    fill: none;
+    stroke: var(--status-error-fg);
+  }
+
+  .anatomy-marks text {
+    font: var(--type-label-sm);
+    text-anchor: middle;
+    fill: var(--status-error-fg);
+  }
+
+  .example-row-text {
+    flex: 1;
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  @media (width < 64rem) {
+    .anatomy {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

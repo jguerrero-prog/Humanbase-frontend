@@ -6,6 +6,7 @@ const pages = [
   'http://localhost:4322/',
   'http://localhost:4322/tokens/color/',
   'http://localhost:4322/tokens/typography/',
+  'http://localhost:4322/components/buttons/',
 ];
 
 for (const url of pages) {

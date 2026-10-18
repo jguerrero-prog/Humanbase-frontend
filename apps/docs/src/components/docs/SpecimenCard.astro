@@ -1,0 +1,19 @@
+---
+interface Props {
+  title: string;
+  text: string;
+  example?: string;
+  stage?: 'subtle' | 'brand';
+}
+
+const { title, text, example, stage = 'subtle' } = Astro.props;
+---
+
+<article class="specimen-card">
+  <div class:list={['specimen-stage', `specimen-stage-${stage}`]}><slot /></div>
+  <div class="specimen-details">
+    <h3>{title}</h3>
+    <p>{text}</p>
+    {example && <p class="specimen-example">{example}</p>}
+  </div>
+</article>
