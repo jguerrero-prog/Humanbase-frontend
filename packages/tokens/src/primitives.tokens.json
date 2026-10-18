@@ -1045,56 +1045,64 @@
       "$value": {
         "value": 0,
         "unit": "px"
-      }
+      },
+      "$description": "Tables inside cards, full-width bands, the header"
     },
     "2xs": {
       "$type": "dimension",
       "$value": {
         "value": 2,
         "unit": "px"
-      }
+      },
+      "$description": "Data marks: bars and small indicators"
     },
     "xs": {
       "$type": "dimension",
       "$value": {
         "value": 4,
         "unit": "px"
-      }
+      },
+      "$description": "Tags, badges, checkboxes, small chips"
     },
     "sm": {
       "$type": "dimension",
       "$value": {
         "value": 8,
         "unit": "px"
-      }
+      },
+      "$description": "Tooltips, menus, dropdown panels, tiles, alerts"
     },
     "md": {
       "$type": "dimension",
       "$value": {
         "value": 12,
         "unit": "px"
-      }
+      },
+      "$description": "Buttons, inputs, cards. The default"
     },
     "lg": {
       "$type": "dimension",
       "$value": {
         "value": 16,
         "unit": "px"
-      }
+      },
+      "$description": "Dialogs, drawers, large panels"
     },
     "xl": {
       "$type": "dimension",
       "$value": {
         "value": 24,
         "unit": "px"
-      }
+      },
+      "$description": "Feature panels and large promotional blocks"
     },
     "full": {
       "$type": "dimension",
       "$value": {
         "value": 9999,
         "unit": "px"
-      }
+      },
+      "$description": "Pills, toggles, avatars, network nodes"
     }
   },
   "border-width": {
