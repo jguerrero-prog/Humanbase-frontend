@@ -108,7 +108,7 @@
 .hero h1 {
   position: relative;
   z-index: 1;
-  max-width: 14ch;
+  max-width: min(100%, 940px);
   margin-block-start: 200px;
   font: var(--type-display);
   letter-spacing: var(--type-display-tracking);
