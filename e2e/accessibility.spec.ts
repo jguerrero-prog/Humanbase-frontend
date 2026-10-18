@@ -42,6 +42,7 @@ const pages = [
   'http://localhost:4322/guidelines/loading-and-job-status/',
   'http://localhost:4322/ui-library/gene-search-and-matching/',
   'http://localhost:4322/ui-library/genome-browser/',
+  'http://localhost:4322/ui-library/results-layout/',
 ];
 
 for (const url of pages) {
