@@ -14,7 +14,7 @@
   background: var(--overlay-backdrop);
   opacity: 0;
   transition-property: opacity, display, overlay;
-  transition-duration: 150ms;
+  transition-duration: var(--motion-duration-base);
   transition-behavior: allow-discrete;
 }
 

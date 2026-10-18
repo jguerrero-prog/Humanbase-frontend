@@ -5,22 +5,22 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-elevation-4);
   opacity: 0;
-  scale: 0.98;
-  transition-duration: 150ms;
-  transition-timing-function: ease-in;
+  scale: var(--motion-scale-dialog);
+  transition-duration: var(--motion-duration-base);
+  transition-timing-function: var(--motion-easing-exit);
 }
 
 .dialog[open] {
   opacity: 1;
   scale: 1;
-  transition-duration: 200ms;
-  transition-timing-function: ease-out;
+  transition-duration: var(--motion-duration-moderate);
+  transition-timing-function: var(--motion-easing-enter);
 }
 
 @starting-style {
   .dialog[open] {
     opacity: 0;
-    scale: 0.98;
+    scale: var(--motion-scale-dialog);
   }
 }
 
