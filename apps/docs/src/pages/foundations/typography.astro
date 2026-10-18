@@ -1,0 +1,55 @@
+---
+import { flattenTokens } from '@humanbase/tokens/catalog';
+import typography from '@humanbase/tokens/src/typography.tokens.json';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+interface TypeValue {
+  fontFamily: string[];
+  fontSize: { value: number };
+  fontWeight: number;
+  lineHeight: number;
+}
+
+const styles = flattenTokens(typography).map(({ cssVar, token }) => ({ cssVar, value: token.$value as TypeValue }));
+---
+
+<DocsLayout title="Typography" description="Text styles: Cabin for headings, Lato for text, Atkinson Hyperlegible Mono for code.">
+  <p>Headings use Cabin, running text uses Lato, and code uses Atkinson Hyperlegible Mono. Use a style with <code>font: var(--type-…)</code> and its <code>-tracking</code> partner for letter spacing.</p>
+
+  <table class="type-table">
+    <caption class="visually-hidden">Text styles</caption>
+    <thead>
+      <tr><th scope="col">Style</th><th scope="col">Sample</th><th scope="col">Font, weight, size and line height</th></tr>
+    </thead>
+    <tbody>
+      {
+        styles.map(({ cssVar, value }) => (
+          <tr>
+            <th scope="row"><code>{cssVar}</code></th>
+            <td style={`font: var(${cssVar}); letter-spacing: var(${cssVar}-tracking)`}>Gene networks across tissues</td>
+            <td>{value.fontFamily[0]}, {value.fontWeight}, {value.fontSize.value}px / {value.lineHeight}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</DocsLayout>
+
+<style>
+  .type-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .type-table th,
+  .type-table td {
+    padding: var(--space-4) var(--space-3);
+    text-align: start;
+    vertical-align: middle;
+    border-block-end: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .type-table th {
+    font-weight: 400;
+  }
+</style>

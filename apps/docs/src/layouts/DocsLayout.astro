@@ -1,0 +1,58 @@
+---
+import '@humanbase/ui/root.css';
+import '../styles/docs.css';
+import Search from '../components/Search.astro';
+import { navigation } from '../navigation';
+
+interface PageInfo {
+  title: string;
+  description?: string;
+}
+
+type Props = PageInfo | { frontmatter: PageInfo };
+
+const page = 'frontmatter' in Astro.props ? Astro.props.frontmatter : Astro.props;
+const { title, description = 'The HumanBase design system.' } = page;
+const current = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title} · HumanBase design system</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <header class="site-header">
+      <a class="site-name" href="/">HumanBase design system</a>
+      <Search />
+    </header>
+    <div class="docs-shell">
+      <nav class="docs-nav" aria-label="Design system">
+        {
+          navigation.map((section) => (
+            <section aria-labelledby={`nav-${section.title}`}>
+              <h2 id={`nav-${section.title}`}>{section.title}</h2>
+              <ul>
+                {section.items.map((item) => (
+                  <li>
+                    <a href={item.href} aria-current={item.href === current ? 'page' : undefined}>
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        }
+      </nav>
+      <main id="content" data-pagefind-body>
+        <h1>{title}</h1>
+        <slot />
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,98 @@
+---
+import { aliasPath, flattenTokens, toCssVar } from '@humanbase/tokens/catalog';
+import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import semantic from '@humanbase/tokens/src/semantic.tokens.json';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const colorHex = (value: unknown) => (value as { hex: string }).hex;
+const roles = flattenTokens(semantic);
+const scales = Object.entries(Object.groupBy(flattenTokens(primitives).filter((e) => e.token.$type === 'color'), (e) => e.path.slice(0, -1).join(' ')));
+---
+
+<DocsLayout title="Color" description="Semantic color roles and the primitive scales behind them.">
+  <p>Components use semantic roles. Each role points at one primitive, so changing a primitive in Figma updates every role that uses it.</p>
+
+  <table class="token-table">
+    <caption>Semantic roles</caption>
+    <thead>
+      <tr><th scope="col">Sample</th><th scope="col">Role</th><th scope="col">Points at</th></tr>
+    </thead>
+    <tbody>
+      {
+        roles.map(({ cssVar, token }) => (
+          <tr>
+            <td><span class="swatch" style={`background: var(${cssVar})`} /></td>
+            <td><code>{cssVar}</code></td>
+            <td><code>{typeof token.$value === 'string' ? toCssVar(aliasPath(token.$value)) : colorHex(token.$value)}</code></td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <h2>Primitive scales</h2>
+  {
+    scales.map(([scale, entries = []]) => (
+      <section class="scale" aria-labelledby={`scale-${scale}`}>
+        <h3 id={`scale-${scale}`}>{scale}</h3>
+        <ol>
+          {entries.map(({ path, cssVar, token }) => (
+            <li>
+              <span class="swatch" style={`background: var(${cssVar})`} />
+              <span>{path.at(-1)}</span>
+              <code>{colorHex(token.$value)}</code>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))
+  }
+</DocsLayout>
+
+<style>
+  .token-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .token-table caption {
+    font: var(--type-h3);
+    text-align: start;
+    padding-block-end: var(--space-4);
+  }
+
+  .token-table th,
+  .token-table td {
+    padding: var(--space-2) var(--space-3);
+    text-align: start;
+    border-block-end: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .swatch {
+    display: inline-block;
+    width: var(--space-8);
+    height: var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+  }
+
+  .scale ol {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    gap: var(--space-4);
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .scale li {
+    display: grid;
+    gap: var(--space-1);
+    font: var(--type-body-sm);
+  }
+
+  .scale .swatch {
+    width: 100%;
+    height: var(--space-12);
+  }
+</style>

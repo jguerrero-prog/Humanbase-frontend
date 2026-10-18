@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": [".astro/types.d.ts", "src", "astro.config.ts", "../../dev-proxy.ts"],
+  "exclude": ["dist"]
+}

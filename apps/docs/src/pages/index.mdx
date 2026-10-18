@@ -1,0 +1,29 @@
+---
+layout: ../layouts/DocsLayout.astro
+title: Overview
+description: How the HumanBase design system is organized and how to use it.
+---
+
+The HumanBase design system is the shared foundation of the HumanBase front end. Every page in this site is built from the same tokens and components the product uses, so what you read here is what ships.
+
+## How it is organized
+
+- **Tokens** hold every color, size, type style and shadow. They come from the HumanBase Figma file in the W3C Design Tokens format.
+- **Pure components** take props and render markup. They never fetch data.
+- **Connected components** pair a pure component with a data hook, so they load their own HumanBase data.
+
+## Using it in an app
+
+Import the root stylesheet once, then use tokens in your CSS.
+
+```css
+@import url("@humanbase/ui/root.css");
+
+.panel {
+  padding: var(--space-6);
+  background: var(--surface-subtle);
+  border-radius: var(--radius-md);
+}
+```
+
+Components never use primitive colors such as `--color-emerald-600` directly. They use the semantic role, such as `--action-primary`, so a change in Figma reaches every component through one token.

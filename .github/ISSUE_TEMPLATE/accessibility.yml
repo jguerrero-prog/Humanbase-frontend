@@ -1,0 +1,22 @@
+name: Accessibility
+description: A barrier for keyboard, screen reader, zoom, color or motion users.
+labels: [accessibility]
+body:
+  - type: textarea
+    id: barrier
+    attributes:
+      label: The barrier
+      description: What can't be done, and with which assistive technology or setting.
+    validations:
+      required: true
+  - type: input
+    id: wcag
+    attributes:
+      label: WCAG criterion, if known
+      placeholder: 2.4.7 Focus Visible
+  - type: textarea
+    id: steps
+    attributes:
+      label: Where and how
+    validations:
+      required: true

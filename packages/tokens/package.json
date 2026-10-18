@@ -1,0 +1,15 @@
+{
+  "name": "@humanbase/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./catalog": "./catalog.ts",
+    "./src/*": "./src/*"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc -p ."
+  }
+}
