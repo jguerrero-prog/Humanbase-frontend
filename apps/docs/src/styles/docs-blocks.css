@@ -55,6 +55,11 @@
   color: var(--text-secondary);
 }
 
+.key-rules code {
+  font: 400 14px/1.4 "Atkinson Hyperlegible Mono", monospace;
+  color: var(--text-default);
+}
+
 .key-rules-medium {
   padding: 0;
 }
@@ -234,6 +239,30 @@
   font: var(--docs-small);
   line-height: 1.4;
   color: var(--text-secondary);
+}
+
+.state-card {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-6);
+  background: var(--surface-subtle);
+  border-radius: var(--radius-md);
+}
+
+.state-card figcaption {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.state-card strong {
+  font: var(--docs-small-strong);
+}
+
+.state-card figcaption span {
+  font: var(--type-body-sm);
+  color: var(--text-muted);
 }
 
 .example-card {

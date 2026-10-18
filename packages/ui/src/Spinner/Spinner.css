@@ -1,0 +1,18 @@
+.spinner {
+  flex: none;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2.2;
+  vector-effect: non-scaling-stroke;
+  animation: spinner-turn 0.8s linear infinite;
+}
+
+.spinner path {
+  vector-effect: non-scaling-stroke;
+}
+
+@keyframes spinner-turn {
+  to {
+    rotate: 1turn;
+  }
+}

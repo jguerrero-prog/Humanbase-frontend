@@ -1,0 +1,16 @@
+---
+interface Props {
+  title: string;
+  text: string;
+}
+
+const { title, text } = Astro.props;
+---
+
+<figure class="state-card">
+  <div class="state-card-specimen"><slot /></div>
+  <figcaption>
+    <strong>{title}</strong>
+    <span>{text}</span>
+  </figcaption>
+</figure>

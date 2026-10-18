@@ -102,23 +102,3 @@
 .button[aria-busy="true"] {
   cursor: progress;
 }
-
-.button-spinner {
-  inline-size: var(--space-4);
-  block-size: var(--space-4);
-  fill: none;
-  stroke: currentcolor;
-  stroke-width: 2.24;
-  animation: button-spin 0.8s linear infinite;
-}
-
-.button-small .button-spinner {
-  inline-size: 14px;
-  block-size: 14px;
-}
-
-@keyframes button-spin {
-  to {
-    rotate: 1turn;
-  }
-}
