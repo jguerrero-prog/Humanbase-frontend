@@ -1,0 +1,63 @@
+.legend {
+  display: grid;
+  gap: var(--space-2);
+  inline-size: fit-content;
+}
+
+.legend-title {
+  font: var(--type-label-sm);
+  color: var(--text-default);
+}
+
+.legend-ramp {
+  inline-size: 200px;
+  block-size: var(--space-2);
+  border-radius: var(--radius-2xs);
+}
+
+.legend-ramp-sequential {
+  background: linear-gradient(to right, var(--viz-seq-1), var(--viz-seq-2), var(--viz-seq-3), var(--viz-seq-4), var(--viz-seq-5), var(--viz-seq-6), var(--viz-seq-7));
+}
+
+.legend-ramp-diverging {
+  background: linear-gradient(to right, var(--viz-div-n3), var(--viz-div-n2), var(--viz-div-n1), var(--viz-div-0), var(--viz-div-p1), var(--viz-div-p2), var(--viz-div-p3));
+}
+
+.legend-ticks {
+  display: flex;
+  justify-content: space-between;
+  inline-size: 200px;
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend-items li {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  font: var(--type-caption);
+  color: var(--text-default);
+}
+
+.legend-swatch {
+  inline-size: var(--space-3);
+  block-size: var(--space-3);
+  background: var(--legend-color);
+  border: var(--border-width-1) solid var(--text-secondary);
+  border-radius: var(--radius-2xs);
+}
+
+.legend-line {
+  inline-size: var(--space-6);
+  block-size: var(--legend-width, var(--viz-edge-weak));
+  background: var(--legend-color);
+}

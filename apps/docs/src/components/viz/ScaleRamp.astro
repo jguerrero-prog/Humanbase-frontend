@@ -1,0 +1,65 @@
+---
+export interface RampStep {
+  /** Any CSS color, usually `var(--viz-seq-1)`. */
+  color: string;
+  label?: string;
+  note?: string;
+  dark?: boolean;
+}
+
+interface Props {
+  steps: RampStep[];
+  size?: 'large' | 'small';
+}
+
+const { steps, size = 'large' } = Astro.props;
+---
+
+<ol class:list={['ramp', `ramp-${size}`]} aria-hidden={size === 'small' ? 'true' : undefined}>
+  {
+    steps.map(({ color, label, note, dark }) => (
+      <li class:list={{ dark }} style={`background: ${color}`}>
+        {size === 'large' && label && <code>{label}</code>}
+        {size === 'large' && note && <span>{note}</span>}
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .ramp {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    list-style: none;
+    border-radius: var(--radius-sm);
+  }
+
+  .ramp li {
+    display: grid;
+    flex: 1;
+    align-content: end;
+    gap: var(--space-1);
+    padding: var(--space-3);
+    font: 400 12px/1.4 "Atkinson Hyperlegible Mono", monospace;
+    color: var(--text-default);
+  }
+
+  .ramp li.dark {
+    color: var(--text-on-brand);
+  }
+
+  .ramp-large li {
+    block-size: 102px;
+  }
+
+  .ramp-small li {
+    block-size: 36px;
+    padding: 0;
+  }
+
+  .ramp code {
+    font: inherit;
+  }
+</style>

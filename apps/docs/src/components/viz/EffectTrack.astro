@@ -1,0 +1,91 @@
+---
+interface Props {
+  title: string;
+  summary: string;
+  effects: number[];
+}
+
+const { title, summary, effects } = Astro.props;
+const left = 24;
+const plot = 600;
+const middle = 110;
+const reach = 90;
+const step = plot / effects.length;
+const position = (index: number) => Math.round(((index + 0.5) / effects.length) * 2000 - 1000);
+---
+
+<figure class="viz-card effect-track">
+  <figcaption>
+    <h3>{title}</h3>
+    <p class="visually-hidden">{summary}</p>
+  </figcaption>
+  <svg viewBox="0 0 640 260" aria-hidden="true">
+    <text x={left} y="16">Increase</text>
+    <text x={left} y="206">Decrease</text>
+    {
+      effects.map((effect, index) => (
+        <rect
+          x={left + index * step + 2}
+          y={effect > 0 ? middle - effect * reach : middle}
+          width={step - 4}
+          height={Math.abs(effect) * reach}
+          class={effect > 0 ? 'raises' : 'lowers'}
+        />
+      ))
+    }
+    <line class="baseline" x1={left} x2={left + plot} y1={middle} y2={middle} />
+    <line class="axis" x1={left} x2={left + plot} y1="222" y2="222" />
+    <text class="tick" x={left} y="240">−1 kb</text>
+    <text class="tick" x={left + plot / 2} y="240">TSS</text>
+    <text class="tick" x={left + plot} y="240">+1 kb</text>
+  </svg>
+  <slot />
+  <details class="table-view">
+    <summary>View as table</summary>
+    <div class="doc-table" role="region" aria-label={title} tabindex="0">
+      <table>
+        <caption class="visually-hidden">{summary}</caption>
+        <thead>
+          <tr><th scope="col">Position relative to TSS</th><th scope="col">Effect on expression</th></tr>
+        </thead>
+        <tbody>
+          {
+            effects.map((effect, index) => (
+              <tr>
+                <th scope="row">{position(index)} bp</th>
+                <td>{effect > 0 ? 'Increase' : 'Decrease'}, {Math.abs(effect).toFixed(2)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+</figure>
+
+<style>
+  text {
+    font: 400 12px Lato, sans-serif;
+    fill: var(--text-secondary);
+  }
+
+  .tick {
+    text-anchor: middle;
+  }
+
+  .raises {
+    fill: var(--viz-div-p2);
+  }
+
+  .lowers {
+    fill: var(--viz-div-n2);
+  }
+
+  .baseline {
+    stroke: var(--text-default);
+  }
+
+  .axis {
+    stroke: var(--border-subtle);
+  }
+</style>
