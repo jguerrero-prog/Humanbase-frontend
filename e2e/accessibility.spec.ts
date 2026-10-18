@@ -23,6 +23,7 @@ const pages = [
   'http://localhost:4322/components/modals-and-drawers/',
   'http://localhost:4322/components/pagination/',
   'http://localhost:4322/foundations/motion/',
+  'http://localhost:4322/components/navigation-and-breadcrumbs/',
 ];
 
 for (const url of pages) {
