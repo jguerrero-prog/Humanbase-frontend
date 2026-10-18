@@ -35,6 +35,12 @@ describe('Button', () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
+  it('sizes its icon to the button and hides it from screen readers', () => {
+    const { container } = render(<Button size="small" icon="download">Download</Button>);
+    expect(container.querySelector('svg')).toHaveAttribute('width', '16');
+    expect(screen.getByRole('button', { name: 'Download' })).toBeInTheDocument();
+  });
+
   it('applies the style and size from Figma', () => {
     render(<Button variant="destructive" size="small">Delete job</Button>);
     expect(screen.getByRole('button')).toHaveClass('button-destructive', 'button-small');

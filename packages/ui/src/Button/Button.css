@@ -103,17 +103,6 @@
   cursor: progress;
 }
 
-.button-icon {
-  display: inline-flex;
-  inline-size: 20px;
-  block-size: 20px;
-}
-
-.button-small .button-icon {
-  inline-size: var(--space-4);
-  block-size: var(--space-4);
-}
-
 .button-spinner {
   inline-size: var(--space-4);
   block-size: var(--space-4);

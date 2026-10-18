@@ -1,7 +1,7 @@
 ---
 interface Props {
   title: string;
-  spec: string;
+  spec?: string;
   text: string;
 }
 
@@ -11,6 +11,6 @@ const { title, spec, text } = Astro.props;
 <article class="size-card">
   <div class="size-card-examples"><slot /></div>
   <h3>{title}</h3>
-  <p class="size-card-spec">{spec}</p>
+  {spec && <p class="size-card-spec">{spec}</p>}
   <p>{text}</p>
 </article>

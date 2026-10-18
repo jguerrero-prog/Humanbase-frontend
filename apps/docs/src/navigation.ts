@@ -25,7 +25,7 @@ export const navigation: NavSection[] = [
     items: [
       { label: 'Typography' },
       { label: 'Color palette' },
-      { label: 'Iconography' },
+      { label: 'Iconography', href: '/foundations/iconography/' },
       { label: 'Spacing and layout grid' },
       { label: 'Corner radius' },
       { label: 'Elevation and borders' },
