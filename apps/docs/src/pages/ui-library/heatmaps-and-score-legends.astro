@@ -1,0 +1,387 @@
+---
+import { Badge, Heatmap, HeatmapCell, LegendStepped, ScoreScale } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import { expressionGeneLegend, irgmPositions, irgmRows, irgmSummary, scoreLegends, tissueConfidenceLegend } from '../../data/score-legends';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const today = [
+  ['Variant results: z-score', 'Blue, white, red; −2 to 2. In the example every top-20 cell is above 2 (28 at the top).'],
+  ['Variant results: e-value', 'White to blue; 0 to 0.05. Smaller means stronger, and the darkest blue is the smallest.'],
+  ['Variant results: probability diffs', 'Not captured. p(alt) − p(ref), so values can only fall between −1 and 1.'],
+  ['ASD Browser: DNA and RNA features', 'Blue, white, red; −3 to 3; z-scores.'],
+  ['ExPecto: expression effect', 'Blue, white, red; −1 to 1; predicted log fold change. The bulk download uses 0.3 as its threshold.'],
+  ['ExPecto SC: expression effect', 'Blue, white, red; −100 to 100; z-scores. The docs say about 3 to 5 or more is reliable, so most cells look pale.'],
+  ['In silico mutagenesis', 'Not captured. Log2 fold change of odds, original minus mutated: a positive value means the mutation lowers the feature, if the formula is read literally.'],
+  ['Tissue expression', 'White to red; confidence 0 to 1.'],
+];
+
+const parts = [
+  ['Title', 'Says what the cells are and in what unit: “Predicted effect on IRGM expression, log fold change”.'],
+  ['Legend', 'Top right, beside the cells; stepped, with the score’s own words at the ends.'],
+  ['Column labels', 'Positions in the mono font with commas; the axis title names the chromosome and assembly. A ruler replaces rotated labels on position axes.'],
+  ['Row labels', 'Right-aligned beside the cells; long labels end with an ellipsis and show in full on hover.'],
+  ['Gaps', '1px white between cells, so neighbors of the same step still read as separate values.'],
+  ['Not available', 'White with a grey outline and a diagonal line, never a color from the legend and never zero.'],
+  ['Hover and focus', '2px ink outline and the tooltip with every value for that cell.'],
+  ['Past the legend', 'Takes the end step; the tooltip and View as table give the exact value and say it’s past the end.'],
+];
+
+const rules = [
+  ['Steps and edges', 'Diverging scores use seven steps with a neutral middle; sequential use five; e-values use four. Edges are labeled where steps meet.'],
+  ['Same score, same legend', 'A score has one legend everywhere it appears: every z-score breaks at 2, 3 and 5, on Variant effect results, the ASD Browser and ExPecto SC. One exception, decided October 17, 2026: ExPecto’s gene pages use −1 to 1 (edges 0.1, 0.3, 1), as the live gene page does, while its job results use −0.1 to 0.1.'],
+  ['Past the ends', 'Values past the last edge take the end step; the tooltip and table say “past the end of the legend”. The legend never stretches to fit an outlier.'],
+  ['One column', 'With a single column, the value is printed beside each cell (Variant effect results).'],
+  ['Sorting', 'Rows sort by the center or selected column, strongest first, as today; Lowest first reverses it.'],
+  ['Labels', 'Right-aligned row labels with an ellipsis and full text on hover. Positions use the mono font.'],
+  ['Position axes', 'A horizontal ruler with the shared prefix in the axis title (“150,226,000 +”) and short offsets as ticks; a line links each column to its position; only the hovered or selected column gets its full label. Rotated labels (50°) only for a few columns whose labels differ, such as tissue names. Decided October 16, 2026.'],
+  ['Compact', 'Rows shrink to 8px and labels hide; the tooltip still works on every cell.'],
+  ['Color vision', 'The scales are the Data visualization ones, checked for protanopia, deuteranopia and tritanopia; steps also differ in lightness, so they read in grey scale.'],
+  ['Text alternative', 'View as table lists every cell’s value with its row and column, and the summary sentence names the strongest values.'],
+];
+
+const words = [
+  ['Diverging ends', 'Lowers and Raises for features; Decreases and Increases expression for ExPecto.'],
+  ['ISM ends', 'Mutation raises and Mutation lowers, following the formula, until the sign is confirmed.'],
+  ['e-value ends', 'Weaker and Stronger evidence; above 0.05 reads “not significant at 0.05”.'],
+  ['Past the end', '−1.42, past the end of the legend (−1).'],
+  ['Not available', 'Not available for this tissue system.'],
+];
+
+const titles = [
+  ['Tissue and process networks', 'Edge weight: the probability of a functional relationship, 0 to 1. Edge detail: dataset contribution (GIANT) or dataset-level evidence (MAGE).'],
+  ['Tissue expression', 'Confidence, as the live legend says today. The docs don’t name it.'],
+  ['Modules', 'No score legend. Modules are clustered from the same network edge weights.'],
+  ['NetWAS', 'NetWAS score, shown as a table column, not a legend.'],
+  ['Sei', 'Sequence class score. The heatmap switches to Probability diffs.'],
+  ['Beluga', 'Disease impact score and Mean -log e-value for the plot. Heatmap: Probability diffs, e-value, z-score. The Features tab ranks by z-score.'],
+  ['Seqweaver', 'Same as Beluga: Disease impact score and Mean -log e-value; heatmap in Probability diffs, e-value, z-score.'],
+  ['ExPecto', 'ExPecto expression effect. Feature heatmap: DeepSEA probability diffs, DeepSEA e-value, DeepSEA z-score.'],
+  ['ExPecto SC', 'Expression effect, z-scored per cell type.'],
+  ['In silico mutagenesis', 'Log2 fold change of odds.'],
+  ['ASD Browser', 'DNA disease impact score and RNA disease impact score. Feature heatmap in z-scores.'],
+  ['Same word, two scores', 'z-score means a different calculation in Beluga and Seqweaver than in ExPecto SC. Keep the DeepSEA prefix where the docs use it.'],
+];
+
+const behavior = [
+  ['Legend placement', 'Top right of the heatmap, on the same line as its controls; it never scrolls away from the cells.'],
+  ['Score switch', 'Changing the score swaps the legend at the same moment as the cells.'],
+  ['Hover', 'Hovering a step in the legend outlines the cells in that step; hovering a cell highlights its step.'],
+  ['Values', 'Shown exactly as computed, with the number of decimals from Scientific notation and units; binning is only for color.'],
+  ['Downloads', 'Download gives the computed values, never the steps.'],
+];
+
+const specs = [
+  ['legend.stepped', 'Legend / Stepped component; steps 34 by 12px, 1px apart; title Lato Bold 12; edge labels Lato 10 grey 600 on 4px ticks'],
+  ['viz.div steps', '#0B3D7A #3F7FC8 #9CBFE6 #F2F2F2 #EDB98F #C8681F #6E2E00'],
+  ['viz.seq steps', '#C9DCF2 #9CBFE6 #3F7FC8 #1F5FAE #0B3D7A'],
+  ['viz.sig steps', '#F2F2F2 #9CBFE6 #3F7FC8 #0B3D7A, for e-values'],
+  ['viz.heatmap.cell', '34 by 26px, 1px white gap; missing: white, grey outline, diagonal'],
+  ['heatmap.focus', '2px ink outline, 2px outside the cell'],
+  ['heatmap.positionAxis', 'Ruler 1px grey 600; tick labels Atkinson Hyperlegible Mono 11 grey 600; variant ticks 6px; connectors 0.75px grey, 1.5px ink for the hovered or selected column; full label on an ink pill'],
+];
+
+const columns = irgmPositions.map((position) => ({ label: String(position), position }));
+const rulerTitle = 'Position on chr5, GRCh37/hg19';
+const axis = { title: rulerTitle, offset: 150226000, ticks: [100, 150, 200, 250, 300, 350] };
+const tissueColumns = ['IL1B', 'TNF', 'IL6', 'CXCL8', 'PTGS2'].map((label) => ({ label }));
+const tissueRows = [
+  { label: 'Blood vessel', values: [0.93, 0.88, 0.71, 0.64, 0.55] },
+  { label: 'Liver', values: [0.62, 0.74, 0.86, 0.48, 0.81] },
+  { label: 'Lung', values: [0.91, 0.69, 0.77, 0.83, 0.52] },
+];
+const confidence = new ScoreScale(tissueConfidenceLegend);
+const cellSteps = [1, 2, 3, 4, 5];
+
+const usage = `import { Heatmap, LegendStepped } from '@humanbase/ui';
+
+const zScore = { title: 'Variant features, z-score', kind: 'diverging', edges: [-5, -3, -2, 2, 3, 5], words: ['Lowers', 'Raises'] };
+
+<LegendStepped spec={zScore} />
+<Heatmap
+  title="Predicted effect on IRGM expression, log fold change"
+  summary="The strongest is a decrease of 1.42 at 150,226,299."
+  scale={expressionLegend}
+  columns={positions.map((position) => ({ label: String(position), position }))}
+  rows={tissueSystems}
+  rowHeader="Tissue system"
+  columnHeader="Position"
+  axis={{ title: 'Position on chr5, GRCh37/hg19', offset: 150226000, ticks: [100, 150, 200, 250, 300, 350] }}
+/>`;
+---
+
+<DocsLayout title="Heatmaps and score legends" description="Stepped legends for every HumanBase score, and the rules every heatmap follows: labels, gaps, missing values, hover and a table view.">
+  <Intro
+    lead="Seven HumanBase scores are shown as colored cells: variant effects, expression effects, significance and confidence. This page sets one way to read all of them: stepped legends whose edges come from what each score means, the exact number always one hover away, and the same rules for labels, gaps and missing values."
+    status="Updated October 17, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Steps, not a smooth ramp', text: 'Every legend has a few labeled steps, so a cell can be read against the legend without guessing a shade.' },
+        { title: 'Edges come from the score', text: 'Where steps break follows what the score means, such as z of 2, 3 and 5, or ExPecto’s live range of ±0.1 log fold change. Values never change.' },
+        { title: 'The number is always there', text: 'Tooltips, single-column values and View as table give the exact value; a value past the last step says so.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Legends today" lead="Captured with Playwright on October 16, 2026, and from the docs. Each heatmap draws its own smooth legend; ranges differ and values past the ends look the same as the ends.">
+    <DocTable caption="Heatmap legends today" columns={['Heatmap and score', 'Legend today']} widths={['340px']}>
+      {today.map(([score, legend]) => <tr><th scope="row">{score}</th><td>{legend}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Score by score" lead="One stepped legend per score, all from the Legend / Stepped component. Where the docs give a threshold, the edges use it; the rest are proposals marked to confirm with the team. Every value is shown as computed.">
+    <ul class="legend-cards">
+      {
+        scoreLegends.map(({ status, spec, note }) => (
+          <li>
+            <Badge size="small">{status}</Badge>
+            <LegendStepped spec={spec} />
+            <p>{note}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Anatomy of a heatmap" lead="ExPecto’s IRGM view as the specimen: tissue systems by position. Positions and tissue systems are from the live page; cell values are illustrative. Hover or tab to a cell to see its tooltip.">
+    <div class="anatomy">
+      <div class="specimen">
+        <Heatmap
+          client:load
+          title="Predicted effect on IRGM expression, log fold change"
+          summary={irgmSummary}
+          scale={expressionGeneLegend}
+          columns={columns}
+          rows={irgmRows}
+          rowHeader="Tissue system"
+          columnHeader="Position"
+          axis={axis}
+        />
+      </div>
+      <ol class="parts">
+        {parts.map(([title, text]) => <li><h3>{title}</h3><p>{text}</p></li>)}
+      </ol>
+    </div>
+    <div class="column-labels">
+      <figure data-illustration>
+        <figcaption>Before: diagonal labels on every column</figcaption>
+        <div inert>
+          <Heatmap title="Predicted effect on IRGM expression, log fold change" summary={irgmSummary} scale={expressionGeneLegend} columns={irgmPositions.map((position) => ({ label: String(position) }))} rows={irgmRows} rowHeader="Tissue system" columnHeader="Position" />
+        </div>
+        <p class="caption">Twelve nine-digit labels that differ in the last two or three digits, read at 50°.</p>
+      </figure>
+      <p class="caption">Decided: a ruler, with full labels only on hover and selection, as in the specimen above. Tick labels are offsets from 150,226,000, so they stay short and horizontal. Each column links to its tick; close positions (295 to 301) pack side by side. Hovering or selecting a column shows its full position; the tooltip and View as table carry every coordinate. The connector lines are a placeholder; their final drawing and motion are for development to refine.</p>
+    </div>
+  </DocSection>
+
+  <DocSection title="Rules for every heatmap" lead="The specimen’s parts, written as rules, plus what happens at the edges of the data.">
+    <DocTable caption="Heatmap rules" columns={['Rule', 'Detail']} widths={['300px']}>
+      {rules.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="In a table with several genes" lead="With two or more query genes, tissue expression becomes a heatmap: one column per gene, one Heatmap cell per tissue, and Average confidence kept as a score bar because it sets the order. With one gene the table keeps its score bars.">
+    <ul class="cell-steps">
+      {
+        cellSteps.map((step) => (
+          <li>
+            <HeatmapCell color={confidence.color(step)} />
+            <span>Step {step}: {confidence.range(step)}</span>
+          </li>
+        ))
+      }
+      <li>
+        <HeatmapCell color={confidence.color(5)} data-state="hover" />
+        <span>Hover or focus</span>
+      </li>
+    </ul>
+    <Heatmap
+      client:load
+      title="Tissue expression for five genes"
+      summary="Confidence that each gene is expressed in each tissue; IL1B in blood vessel is the highest at 0.93. Values are illustrative."
+      scale={tissueConfidenceLegend}
+      columns={tissueColumns}
+      rows={tissueRows}
+      rowHeader="Tissue"
+      columnHeader="Gene"
+    />
+    <ul class="points">
+      <li>Cells carry no numbers. The exact value is in the data tooltip (Type=Cell) and View as table; a value past the last step says so.</li>
+      <li>Legend / Stepped (Sequential) sits beside the table, at the right of the filter row.</li>
+      <li>Gene columns share one width so they compare by eye. The tooltip opens beside the cell over free space, never over other values.</li>
+      <li>Values come from the API as computed. The heatmap only bins them into steps; it never rescales them per gene.</li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Words" lead="Legends use the score’s own words at the ends, not a generic low and high.">
+    <DocTable caption="Heatmap words" columns={['Moment', 'What it says']} widths={['300px']}>
+      {words.map(([moment, says]) => <tr><th scope="row">{moment}</th><td>{says}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Legend titles by analysis" lead="Checked against humanbase.readthedocs.io on October 17, 2026. The title uses the docs’ name for each score, so it changes by analysis. The stepped legend itself stays the same; only the title and the edges change.">
+    <DocTable caption="Legend titles by analysis" columns={['Analysis', 'Legend title, in the docs’ words']} widths={['300px']}>
+      {titles.map(([analysis, title]) => <tr><th scope="row">{analysis}</th><td>{title}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="What every heatmap and legend does the same way.">
+    <DocTable caption="Heatmap behavior" columns={['Rule', 'Detail']} widths={['300px']}>
+      {behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Specs" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Heatmap specs" columns={['Token', 'Value']} widths={['404px']}>
+      {specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the components in code">
+    <p>Legend specs are plain data, so the same object drives the legend, the cell colors and the words read out for each value. <code>ScoreScale</code> does the binning and says when a value is past the end of the legend.</p>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .legend-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .legend-cards li {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    justify-items: start;
+    padding: var(--space-5);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .legend-cards p,
+  .caption {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .anatomy {
+    display: grid;
+    grid-template-columns: minmax(0, 831px) minmax(0, 456px);
+    gap: 46px;
+    align-items: start;
+  }
+
+  .specimen {
+    padding: var(--space-6);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .parts {
+    display: grid;
+    gap: 13px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: part;
+  }
+
+  .parts li {
+    display: grid;
+    grid-template-columns: 21px minmax(0, 1fr);
+    column-gap: var(--space-3);
+    counter-increment: part;
+  }
+
+  .parts li::before {
+    grid-row: span 2;
+    block-size: 20px;
+    padding-block: 2px;
+    font: var(--docs-small-strong);
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--text-on-brand);
+    text-align: center;
+    content: counter(part);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+  }
+
+  .parts h3 {
+    font: var(--docs-small-strong);
+  }
+
+  .parts p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .column-labels {
+    display: grid;
+    gap: var(--space-4);
+    margin-block-start: var(--space-8);
+  }
+
+  .column-labels figure {
+    display: grid;
+    gap: var(--space-2);
+    max-inline-size: 831px;
+    margin: 0;
+    padding: var(--space-6);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .column-labels figcaption {
+    font: var(--docs-small-strong);
+    color: var(--text-secondary);
+  }
+
+  .cell-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    margin: 0 0 var(--space-6);
+    padding: var(--space-6);
+    list-style: none;
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-default);
+    border-radius: var(--radius-md);
+  }
+
+  .cell-steps li {
+    display: grid;
+    gap: var(--space-2);
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .cell-steps :global(.heatmap-cell) {
+    inline-size: 92px;
+    block-size: 31px;
+  }
+
+  .points {
+    margin-block-start: var(--space-6);
+  }
+
+  @media (width < 64rem) {
+    .legend-cards,
+    .anatomy {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

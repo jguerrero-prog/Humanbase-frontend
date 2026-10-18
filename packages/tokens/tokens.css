@@ -72,6 +72,10 @@
   --viz-div-p1: #EDB98F;
   --viz-div-p2: #C8681F;
   --viz-div-p3: #6E2E00;
+  --viz-sig-1: var(--viz-div-0);
+  --viz-sig-2: var(--viz-seq-3);
+  --viz-sig-3: var(--viz-seq-5);
+  --viz-sig-4: var(--viz-seq-7);
   --viz-cat-1: #0072B2;
   --viz-cat-2: #E69F00;
   --viz-cat-3: #332288;

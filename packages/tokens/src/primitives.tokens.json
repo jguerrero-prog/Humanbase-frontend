@@ -859,6 +859,28 @@
         }
       }
     },
+    "sig": {
+      "1": {
+        "$type": "color",
+        "$description": "e-value above 0.05, not significant",
+        "$value": "{viz.div.0}"
+      },
+      "2": {
+        "$type": "color",
+        "$description": "e-value from 0.01 to 0.05",
+        "$value": "{viz.seq.3}"
+      },
+      "3": {
+        "$type": "color",
+        "$description": "e-value from 0.001 to 0.01",
+        "$value": "{viz.seq.5}"
+      },
+      "4": {
+        "$type": "color",
+        "$description": "e-value below 0.001",
+        "$value": "{viz.seq.7}"
+      }
+    },
     "cat": {
       "1": {
         "$type": "color",
