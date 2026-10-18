@@ -46,7 +46,7 @@ export const navigation: NavSection[] = [
   {
     heading: 'Usage guidelines',
     items: [
-      { label: 'Voice and content' },
+      { label: 'Voice and content', href: '/guidelines/voice-and-content/' },
       { label: 'Scientific notation and units', href: '/guidelines/scientific-notation-and-units/' },
       { label: 'Data visualization', href: '/guidelines/data-visualization/' },
       { label: 'Errors and validation', href: '/guidelines/errors-and-validation/' },
