@@ -186,6 +186,20 @@
         "hex": "#FFFFFF",
         "alpha": 0.3216
       }
+    },
+    "backdrop": {
+      "$type": "color",
+      "$description": "Behind modal dialogs and phone sheets: ink at 40%.",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.102,
+          0.102,
+          0.102
+        ],
+        "hex": "#1A1A1A",
+        "alpha": 0.4
+      }
     }
   },
   "focus": {

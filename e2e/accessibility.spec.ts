@@ -19,6 +19,7 @@ const pages = [
   'http://localhost:4322/foundations/spacing-and-layout-grid/',
   'http://localhost:4322/components/accordions/',
   'http://localhost:4322/components/tables/',
+  'http://localhost:4322/components/modals-and-drawers/',
 ];
 
 for (const url of pages) {

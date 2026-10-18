@@ -6,6 +6,7 @@ const sources = [
   ['semantic.tokens.json', []],
   ['typography.tokens.json', []],
   ['effects.tokens.json', ['shadow']],
+  ['layers.tokens.json', []],
 ];
 
 const toHex = (color) => color.hex + (color.alpha === undefined ? '' : Math.round(color.alpha * 255).toString(16).padStart(2, '0').toUpperCase());
@@ -17,6 +18,7 @@ function toDeclarations({ cssVar, token: { $type, $value } }) {
   if (typeof $value === 'string') return [[cssVar, `var(${toCssVar(aliasPath($value))})`]];
   if ($type === 'color') return [[cssVar, toHex($value)]];
   if ($type === 'dimension') return [[cssVar, toLength($value)]];
+  if ($type === 'number') return [[cssVar, String($value)]];
   if ($type === 'shadow') return [[cssVar, toShadow($value)]];
   if ($type === 'fontFamily') return [[cssVar, toFontFamily($value)]];
   if ($type === 'typography') {

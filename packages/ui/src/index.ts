@@ -1,5 +1,7 @@
 export { ActionMenu, type ActionMenuItem, type ActionMenuProps } from './ActionMenu/ActionMenu';
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from './Button/Button';
+export { Dialog, type DialogKind, type DialogProps, type DialogSize } from './Dialog/Dialog';
+export { Drawer, DrawerSection, type DrawerPlacement, type DrawerProps, type DrawerSize } from './Drawer/Drawer';
 export { Field, FieldError, type FieldProps, type FieldSize } from './Field/Field';
 export { GeneList, parseGeneList, type GeneListProps } from './GeneList/GeneList';
 export { Icon, iconNames, type IconName, type IconSize } from './Icon/Icon';

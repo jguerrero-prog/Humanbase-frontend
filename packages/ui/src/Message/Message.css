@@ -157,7 +157,7 @@
 
 .toast-region {
   position: fixed;
-  z-index: 500;
+  z-index: var(--z-toast);
   inset-block-end: var(--space-6);
   inset-inline-start: var(--space-6);
   pointer-events: none;

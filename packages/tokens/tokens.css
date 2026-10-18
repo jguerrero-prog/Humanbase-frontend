@@ -144,6 +144,7 @@
   --overlay-on-brand-hover: #FFFFFF1F;
   --overlay-on-brand-open: #FFFFFF33;
   --overlay-on-brand-selected: #FFFFFF52;
+  --overlay-backdrop: #1A1A1A66;
   --focus-ring: var(--color-grey-900);
   --data-highlight: var(--color-mint-300);
   --status-error-bg: var(--color-error-50);
@@ -194,4 +195,9 @@
   --shadow-elevation-3: 0 2px 6px 0 #1A1A1A14, 0 8px 24px 0 #1A1A1A1F;
   --shadow-elevation-4: 0 4px 12px 0 #1A1A1A14, 0 16px 48px 0 #1A1A1A2E;
   --shadow-focus-ring: 0 0 0 2px #FFFFFF, 0 0 0 4px #1A1A1A;
+  --z-dropdown: 200;
+  --z-drawer: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
 }
