@@ -115,6 +115,7 @@ const checklist = [
                 class:list={['sample', { edge: !row.isText }]}
                 style={row.isText ? `color: ${cssVar(row.foreground)}; background: ${cssVar(row.background)}` : `border-color: ${cssVar(row.foreground)}`}
                 aria-hidden="true"
+                data-illustration
               >
                 {row.isText && 'Aa 3553'}
               </span>
@@ -138,7 +139,7 @@ const checklist = [
       {
         dataColors.map(({ path, ratio, use }) => (
           <tr>
-            <td><span class="sample swatch" style={`background: ${cssVar(path)}`} aria-hidden="true" /></td>
+            <td><span class="sample swatch" style={`background: ${cssVar(path)}`} aria-hidden="true" data-illustration /></td>
             <th scope="row"><code>{path.replaceAll('.', '/')}</code></th>
             <td class="ratio">{ratio}</td>
             <td>{use}</td>
