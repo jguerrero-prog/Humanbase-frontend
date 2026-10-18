@@ -57,7 +57,7 @@ export const navigation: NavSection[] = [
   {
     heading: 'Components',
     items: [
-      { label: 'Buttons' },
+      { label: 'Buttons', href: '/components/buttons/' },
       { label: 'Text inputs and search' },
       { label: 'Dropdowns and selects' },
       { label: 'Sliders' },
