@@ -70,7 +70,7 @@ export const navigation: NavSection[] = [
       { label: 'Navigation and breadcrumbs', href: '/components/navigation-and-breadcrumbs/' },
       { label: 'Pagination', href: '/components/pagination/' },
       { label: 'Badges and tags', href: '/components/badges-and-tags/' },
-      { label: 'Code block' },
+      { label: 'Code block', href: '/components/code-block/' },
     ],
   },
   {

@@ -163,6 +163,15 @@
   --status-info-border: var(--color-info-200);
   --status-info-fg: var(--color-info-700);
   --status-info-track: #175CD340;
+  --syntax-text: var(--color-grey-900);
+  --syntax-key: var(--color-grey-900);
+  --syntax-command: var(--color-info-700);
+  --syntax-string: var(--color-emerald-700);
+  --syntax-type: var(--color-warning-700);
+  --syntax-param: var(--color-warning-700);
+  --syntax-flag: var(--color-grey-600);
+  --syntax-comment: var(--color-grey-600);
+  --syntax-selection: var(--color-emerald-50);
   --type-display: 400 70px/1 Cabin, sans-serif;
   --type-display-tracking: -0.02em;
   --type-h1: 500 48px/1.1 Cabin, sans-serif;

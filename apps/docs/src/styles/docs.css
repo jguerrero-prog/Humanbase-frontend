@@ -1,15 +1,15 @@
 :root {
-  --astro-code-foreground: var(--text-default);
+  --astro-code-foreground: var(--syntax-text);
   --astro-code-background: var(--surface-subtle);
-  --astro-code-token-keyword: var(--color-info-700);
-  --astro-code-token-function: var(--color-info-700);
-  --astro-code-token-string: var(--color-emerald-700);
-  --astro-code-token-string-expression: var(--color-emerald-700);
-  --astro-code-token-constant: var(--color-warning-700);
-  --astro-code-token-parameter: var(--color-warning-700);
-  --astro-code-token-punctuation: var(--color-grey-600);
-  --astro-code-token-comment: var(--color-grey-600);
-  --astro-code-token-link: var(--text-link);
+  --astro-code-token-keyword: var(--syntax-command);
+  --astro-code-token-function: var(--syntax-command);
+  --astro-code-token-string: var(--syntax-string);
+  --astro-code-token-string-expression: var(--syntax-string);
+  --astro-code-token-constant: var(--syntax-type);
+  --astro-code-token-parameter: var(--syntax-type);
+  --astro-code-token-punctuation: var(--syntax-text);
+  --astro-code-token-comment: var(--syntax-comment);
+  --astro-code-token-link: var(--syntax-string);
   --side-panel-width: 348px;
   --page-gutter: 72px;
   --content-width: 1383px;
