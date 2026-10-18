@@ -1,0 +1,85 @@
+.layer {
+  max-inline-size: none;
+  max-block-size: none;
+  margin: 0;
+  padding: 0;
+  color: var(--text-default);
+  background: var(--surface-page);
+  border: 0;
+  transition-property: opacity, scale, translate, display, overlay;
+  transition-behavior: allow-discrete;
+}
+
+.layer::backdrop {
+  background: var(--overlay-backdrop);
+  opacity: 0;
+  transition-property: opacity, display, overlay;
+  transition-duration: 150ms;
+  transition-behavior: allow-discrete;
+}
+
+.layer[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .layer[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.layer.layer-inline {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  transition: none;
+}
+
+:root:has(.layer:modal) {
+  overflow: hidden;
+}
+
+.layer-header {
+  display: flex;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.layer-titles {
+  display: grid;
+  flex: 1;
+  gap: var(--space-0-5);
+}
+
+.layer-title {
+  font: var(--type-h4);
+}
+
+.layer-title:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.layer-subtitle {
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+.layer-close {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.layer-close:hover {
+  color: var(--text-default);
+  background: var(--surface-sunken);
+}

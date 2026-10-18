@@ -1,0 +1,27 @@
+---
+import { Button, Drawer, DrawerSection } from '@humanbase/ui';
+
+interface Props {
+  sheet?: boolean;
+}
+
+const { sheet = false } = Astro.props;
+const functions = ['inflammatory response', 'cytokine-mediated signaling', 'response to lipopolysaccharide'];
+---
+
+<Drawer inline sheet={sheet} title="IL1R1" subtitle="interleukin 1 receptor type 1   Entrez 3554" className="gene-drawer">
+  <DrawerSection label="Connection to IL1B">
+    <p class="detail-score"><strong>0.97</strong><span class="detail-bar" style="--score: 97%"></span></p>
+    <p class="detail-text">Strong functional relationship in blood vessel, supported by 212 datasets.</p>
+  </DrawerSection>
+  <DrawerSection label="Top shared functions">
+    <ul class="detail-rows">{functions.map((name) => <li>{name}</li>)}</ul>
+  </DrawerSection>
+  <DrawerSection label="Evidence">
+    <p class="detail-evidence">Co-expression 0.81   Protein interaction 0.74   Shared regulation 0.52</p>
+  </DrawerSection>
+  <Fragment slot="footer">
+    <Button>Add to query</Button>
+    <Button variant="ghost">Open gene page</Button>
+  </Fragment>
+</Drawer>
