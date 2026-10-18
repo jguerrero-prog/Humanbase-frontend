@@ -1,6 +1,6 @@
 # Original icons: sources and licenses
 
-These are the icons the live HumanBase site shows beside each analysis, extracted October 17, 2026. They appear on the Iconography page for reference only; the redesign uses the HumanBase icon set.
+These are the icons the live HumanBase site shows beside each analysis, extracted October 17, 2026. The Networks, Modules and NetWAS glyphs are recolored from the live site's grey #444 to navy #167095, as in the Figma redesign.
 
 | File | Source | License |
 | --- | --- | --- |
