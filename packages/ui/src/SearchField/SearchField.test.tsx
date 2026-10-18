@@ -32,3 +32,42 @@ describe('SearchField', () => {
     expect(screen.getByRole('searchbox')).toHaveAttribute('aria-busy', 'true');
   });
 });
+
+describe('SearchField suggestions', () => {
+  const genes = [
+    { id: '3552', label: 'IL1A', description: 'interleukin 1 alpha', meta: '3552' },
+    { id: '3553', label: 'IL1B', description: 'interleukin 1 beta', meta: '3553' },
+  ];
+
+  it('becomes a combobox that opens as people type and announces the count', async () => {
+    render(<SearchField label="Search genes" suggestions={genes} />);
+    const box = screen.getByRole('combobox', { name: 'Search genes' });
+    await userEvent.type(box, 'IL1');
+    expect(box).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getAllByRole('option')).toHaveLength(2);
+    expect(screen.getByText('2 suggestions')).toBeInTheDocument();
+  });
+
+  it('opens the highlighted gene with Enter', async () => {
+    const onSuggestionSelect = vi.fn();
+    render(<SearchField label="Search genes" suggestions={genes} onSuggestionSelect={onSuggestionSelect} />);
+    await userEvent.type(screen.getByRole('combobox'), 'IL1{ArrowDown}{ArrowDown}{Enter}');
+    expect(onSuggestionSelect).toHaveBeenCalledWith(genes[1]);
+  });
+
+  it('closes on the first Escape and clears on the second', async () => {
+    render(<SearchField label="Search genes" suggestions={genes} />);
+    const box = screen.getByRole('combobox');
+    await userEvent.type(box, 'IL1{Escape}');
+    expect(box).toHaveAttribute('aria-expanded', 'false');
+    expect(box).toHaveValue('IL1');
+    await userEvent.keyboard('{Escape}');
+    expect(box).toHaveValue('');
+  });
+
+  it('says when nothing matches', async () => {
+    render(<SearchField label="Search genes" suggestions={[]} />);
+    await userEvent.type(screen.getByRole('combobox'), 'IL1Z');
+    expect(screen.getAllByText('No genes match “IL1Z”')).toHaveLength(2);
+  });
+});

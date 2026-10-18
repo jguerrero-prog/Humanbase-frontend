@@ -1,0 +1,776 @@
+---
+import { ActionMenu, MenuItem, MenuPanel, SearchField, Select, SuggestionsEmpty, SuggestionsLoading, type SelectOption } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const tissues: SelectOption[] = ['Adipose tissue', 'Blood vessel', 'Brain', 'Heart', 'Liver'].map((label) => ({ value: label, label }));
+const tissueField = { label: 'Tissue network', placeholder: 'Choose a tissue', hint: 'Pick the tissue closest to your study.', options: tissues };
+const states = [
+  { title: 'Default', props: {} },
+  { title: 'Hover', props: { 'data-state': 'hover' as const } },
+  { title: 'Focus', props: { 'data-state': 'focus' as const } },
+  { title: 'Open', props: { 'data-state': 'open' as const, defaultValue: 'Blood vessel' } },
+  { title: 'Filled', props: { defaultValue: 'Blood vessel' } },
+  { title: 'Error', props: { defaultValue: 'Blood vessel', error: 'Choose a tissue to see its network.' } },
+  { title: 'Disabled', props: { disabled: true } },
+];
+
+const itemStates = [
+  { title: 'Default', text: 'White, ink label', props: {} },
+  { title: 'Hover', text: 'Hover or arrow-key highlight, grey 100 fill', props: { highlighted: true } },
+  { title: 'Selected', text: 'Bold label, emerald check', props: { selected: true } },
+  { title: 'Disabled', text: 'Grey 400 text, skipped by arrow keys', props: { disabled: true } },
+  { title: 'Destructive', text: 'Error 700 text and icon, last in the menu', props: { destructive: true, icon: 'trash' as const, label: 'Delete job' } },
+];
+const itemOptions = [
+  { title: 'Label only', props: { label: 'Blood vessel' } },
+  { title: 'With description', props: { label: 'Blood vessel', description: 'Tissue network, 25,825 genes' } },
+  { title: 'With icon', props: { label: 'Download results', icon: 'download' as const } },
+  { title: 'Icon and description', props: { label: 'Download results', icon: 'download' as const, description: 'Tab-separated text, 2.4 MB' } },
+];
+
+const tissueSearch: SelectOption[] = [
+  { value: 'vessel', label: 'Blood vessel', description: '25,825 genes', group: 'Recent' },
+  { value: 'endothelial', label: 'Blood vessel endothelial cell', description: '24,912 genes', group: 'All tissues, 3 matches' },
+  { value: 'lymphatic', label: 'Lymphatic vessel', description: '23,140 genes', group: 'All tissues, 3 matches' },
+];
+const versions: SelectOption[] = [
+  { value: 'mage', label: 'MAGE (current)', description: '289 networks from 7,463 datasets. June 2026.' },
+  { value: 'giant', label: 'GIANT v1', description: '144 networks. Use it to reproduce earlier results.' },
+];
+const genes = [
+  { id: '3552', label: 'IL1A', description: 'interleukin 1 alpha', meta: '3552' },
+  { id: '3553', label: 'IL1B', description: 'interleukin 1 beta', meta: '3553' },
+  { id: '3554', label: 'IL1R1', description: 'interleukin 1 receptor type 1', meta: '3554' },
+  { id: '3557', label: 'IL1RN', description: 'interleukin 1 receptor antagonist', meta: '3557' },
+];
+const jobActions = [
+  { label: 'Download results', icon: 'download' as const },
+  { label: 'Copy link', icon: 'copy' as const },
+  { label: 'Rerun job', icon: 'refresh' as const },
+  { label: 'Delete job', icon: 'trash' as const, destructive: true, dividerBefore: true },
+];
+
+const analyses: SelectOption[] = [
+  { value: 'networks', label: 'Networks', description: 'Tissue-specific gene networks, MAGE and GIANT', icon: 'gene-network', group: 'Network analysis' },
+  { value: 'modules', label: 'Modules', description: 'Functional modules in large gene lists', icon: 'module', group: 'Network analysis' },
+  { value: 'netwas', label: 'NetWAS', description: 'Reprioritize GWAS results with networks', icon: 'analysis', group: 'Network analysis' },
+  { value: 'sei', label: 'Sei', description: 'Regulatory and chromatin effects', icon: 'dna', group: 'Variant effects' },
+  { value: 'beluga', label: 'Beluga', description: 'Chromatin effects (2019 model)', icon: 'dna', group: 'Variant effects' },
+  { value: 'seqweaver', label: 'Seqweaver', description: 'Post-transcriptional effects', icon: 'variant', group: 'Variant effects' },
+  { value: 'expecto', label: 'ExPecto', description: 'Tissue-specific expression effects', icon: 'heatmap', group: 'Variant effects' },
+  { value: 'expecto-sc', label: 'ExPecto SC', description: 'Cell-type-specific expression effects', icon: 'cell', group: 'Variant effects' },
+  { value: 'ism', label: 'In silico mutagenesis', description: 'Regulatory features of a sequence', icon: 'variant', group: 'Sequences' },
+  { value: 'asd', label: 'ASD Browser', description: 'Predicted effects of ASD proband mutations', icon: 'genome-track', group: 'Browsers' },
+];
+
+const anatomyNotes = [
+  { n: 1, text: 'Label', side: 'start', top: 56 },
+  { n: 2, text: 'Field, 1px grey 500 border, 2px emerald when open', side: 'start', top: 94 },
+  { n: 4, text: 'Panel, elevation 2, 12px radius, 6px padding', side: 'start', top: 144 },
+  { n: 3, text: 'Chevron flips up when open', side: 'end', top: 94 },
+  { n: 5, text: 'Selected option: bold label and check', side: 'end', top: 188 },
+  { n: 6, text: 'Highlighted option: grey 100 fill', side: 'end', top: 230 },
+];
+
+const tables = {
+  controls: [
+    ['Select', 'Choose one value from 5 to 15 options in a form.', 'Data version: MAGE or GIANT. Organism.'],
+    ['Searchable select', 'Choose one value from a long list people know by name.', 'Tissue network (144 tissues and cell types).'],
+    ['Search suggestions', 'People type and want matches as they go. The text they type is the main action.', 'Gene search: IL1 suggests IL1A, IL1B, IL1R1.'],
+    ['Action menu', 'A list of commands for one item, not a value to keep.', 'Job row: Download results, Copy link, Rerun, Delete job.'],
+    ['Segmented control or radios', '2 to 4 options that people should compare at a glance.', 'Results view: Network, Table. See Tabs and segmented controls.'],
+  ],
+  grouped: [
+    ['When to use', 'A select with groups whose one-column list would pass about 600px. Below that, keep the single column from Anatomy.'],
+    ['Columns are groups', 'One column per group, in the order of the single-column list. A short group can share a column with the next one, under a divider (Sequences, then Browsers). Never split a group across columns.'],
+    ['Width and place', 'Opens 4px below the field with left edges aligned, as wide as the row it belongs to: 880px on the homepage, three columns of 280px. In the top bar, the Sequence analysis menu uses two columns of 280px (584px) under its nav item. These are the only exceptions to the panel matching its field’s width.'],
+    ['Height', 'Set by the tallest column. Columns stay top-aligned; short columns leave empty space rather than borrowing options.'],
+    ['Keyboard', 'Still one listbox in the combobox pattern. Down and Up read through a column and continue into the next, in reading order; Left and Right move to the nearest option in the neighboring column; Home and End go to the first and last option; typing jumps to a match. Each group is announced with its label.'],
+    ['Footer', 'A footer, such as Not sure which tool? Compare them, spans all columns.'],
+    ['Narrow screens', 'Below 720px it becomes the single-column grouped list, in a bottom sheet on phones.'],
+  ],
+  behavior: [
+    ['Opening', 'Click or tap the field, or press Enter, Space or Down Arrow when it has focus. Search suggestions open after the first typed character.'],
+    ['Position', '4px below the field, left edges aligned. Action menus align to the right edge of their button.'],
+    ['Not enough room', 'If the panel would run off the bottom of the window, it opens above the field instead.'],
+    ['Width', 'At least the width of the field, up to 480px. Long names wrap; they are never cut off.'],
+    ['Height', 'Up to 320px, about 7 options, then the list scrolls inside the panel. The page behind does not scroll.'],
+    ['Closing', 'Choosing an option, pressing Escape, clicking outside or moving focus away. Focus returns to the field.'],
+    ['Layer', 'z.dropdown (200). Panels sit above the sticky top bar but below drawers and dialogs.'],
+    ['Motion', 'Fade and move 4px down over 120ms when opening; close at once. Covered on the Motion page.'],
+  ],
+  keys: [
+    ['Down / Up Arrow', 'Move the highlight. Opens the panel if it is closed.', 'Move between commands.'],
+    ['Enter', 'Choose the highlighted option and close.', 'Run the highlighted command.'],
+    ['Space', 'Opens a select. Types a space in a search field.', 'Run the highlighted command.'],
+    ['Escape', 'Close without changing the value. A second Escape clears a search field.', 'Close and return focus to the button.'],
+    ['Home / End', 'Jump to the first or last option.', 'Jump to the first or last command.'],
+    ['Typing', 'Filters a searchable select, or jumps to the first option starting with that letter.', 'Jumps to the first command starting with that letter.'],
+    ['Tab', 'Choose nothing, close, and move to the next control.', 'Close and move to the next control.'],
+  ],
+  writing: [
+    ['Label says what is chosen', 'Tissue network', 'Select'],
+    ['Placeholder says what to do', 'Choose a tissue', 'Please select an option...'],
+    ['Use sentence case', 'Blood vessel endothelial cell', 'Blood Vessel Endothelial Cell'],
+    ['Put the deciding word first', 'MAGE (current)', 'Current version (MAGE)'],
+    ['Commands start with a verb', 'Download results', 'Results download'],
+    ['Order options in a way people expect', 'Alphabetical tissues; versions newest first', 'Order of the database'],
+  ],
+  specs: [
+    ['select.height.md / .sm', '44px / 36px'],
+    ['select.padding.md / .sm', '0 12px 0 16px / 0 8px 0 12px'],
+    ['select.radius.md / .sm', 'radius.md 12px / radius.sm 8px'],
+    ['select.border / hover / open / error', 'border.strong #6B6B6B / #333333 / 2px border.selected / 2px border.error'],
+    ['menu.surface', 'surface.overlay: white, border.subtle, elevation.2'],
+    ['menu.radius / padding', 'radius.md 12px / 6px'],
+    ['menu.offset', '4px from the field'],
+    ['menu.width', 'min field width, max 480px'],
+    ['menu.max-height', '320px, then scrolls'],
+    ['menu.item.height / padding / radius', 'min 40px / 10px 12px / radius.sm 8px'],
+    ['menu.item.hover', 'grey 100 #EFEFEF'],
+    ['menu.item.selected', 'Lato Bold label, 20px check in emerald 600 #11713C'],
+    ['menu.item.destructive', 'error 700 #B42318'],
+    ['menu.group-label', 'Lato Bold 12px, uppercase, 6% tracking, grey 500'],
+    ['z.dropdown', '200'],
+  ],
+};
+
+const usage = `import { ActionMenu, SearchField, Select } from '@humanbase/ui';
+
+<Select label="Data version" options={versions} defaultValue="mage" size="small" />
+<Select label="Tissue network" options={tissues} searchable filterLabel="Filter tissues" />
+<SearchField label="Search genes" suggestions={matches} onSuggestionSelect={openGene} />
+<ActionMenu label="Actions for BMI GWAS, adipose tissue" items={jobActions} />`;
+---
+
+<DocsLayout title="Dropdowns and selects" description="Select, searchable select, search suggestions and action menus: states, patterns, behavior and keyboard support.">
+  <Intro
+    lead="Dropdowns let people pick from a list without filling the screen. HumanBase uses them to choose a tissue network, switch the data version, find a gene as you type and act on a job. Every list opens in the same white panel, at elevation 2, directly under the control that opened it."
+    status="Updated October 17, 2026 · Components: Select, Menu, Menu item"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Show the choice', text: 'The field always shows the current value, such as “MAGE (current)”, so people never have to open it to know what they are looking at.' },
+        { title: 'Search long lists', text: 'Any list over 15 options, such as the 144 tissue networks, gets a filter box at the top of the panel.' },
+        { title: 'Work without a mouse', text: 'Arrow keys move, Enter chooses, Escape closes and returns focus to the field.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Which control to use" lead="Pick by what people are doing and how many options there are.">
+    <DocTable caption="Which dropdown control to use" columns={['Control', 'Use when', 'HumanBase example']} widths={['264px', '504px']}>
+      {tables.controls.map(([control, when, example]) => <tr class="doc-table-roomy"><th scope="row">{control}</th><td>{when}</td><td>{example}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Anatomy" lead="An open select. The panel matches the field width and sits 4px below it.">
+    <figure class="anatomy-stage">
+      <div class="anatomy-specimen">
+        <Select label={tissueField.label} options={tissues} defaultValue="Blood vessel" open defaultHighlight={2} />
+      </div>
+      <ol class="anatomy-notes">
+        {anatomyNotes.map((note) => <li class={`anatomy-note anatomy-note-${note.side}`} style={`top: ${note.top}px`}><span>{note.n}</span>{note.text}</li>)}
+      </ol>
+      <figcaption class="visually-hidden">An open select with its parts numbered: label, field, chevron, panel, selected option and highlighted option.</figcaption>
+    </figure>
+  </DocSection>
+
+  <DocSection title="Select states" lead="Two sizes that line up with text inputs: Medium is 44px for forms, Small is 36px for toolbars and dense panels. Borders match the text input exactly.">
+    {
+      (['medium', 'small'] as const).map((size) => (
+        <>
+          <div class="state-grid">
+            {states.map((state) => (
+              <figure>
+                <figcaption>{state.title}</figcaption>
+                <Select {...tissueField} {...state.props} size={size} />
+              </figure>
+            ))}
+          </div>
+          <p class="spec-line">{size === 'medium' ? 'Medium: 44px field, 16px side padding, 12px radius, 16px text, 20px chevron' : 'Small: 36px field, 12px side padding, 8px radius, 14px text, 16px chevron'}</p>
+        </>
+      ))
+    }
+  </DocSection>
+
+  <DocSection title="Menu item states" lead="Options stay white. Hover and keyboard highlight share one grey 100 fill; a selected option is marked with a bold label and a check, never with color alone.">
+    <div class="item-grid item-grid-5">
+      {
+        itemStates.map((state) => (
+          <figure>
+            <MenuPanel><MenuItem label="Blood vessel" {...state.props} /></MenuPanel>
+            <figcaption><strong>{state.title}</strong><span>{state.text}</span></figcaption>
+          </figure>
+        ))
+      }
+    </div>
+    <div class="item-grid item-grid-4">
+      {
+        itemOptions.map((option) => (
+          <figure>
+            <MenuPanel><MenuItem {...option.props} /></MenuPanel>
+            <figcaption><strong>{option.title}</strong></figcaption>
+          </figure>
+        ))
+      }
+    </div>
+    <p class="doc-note">Rows are at least 40px tall with 12px side padding. A description wraps to a second line instead of being cut off.</p>
+  </DocSection>
+
+  <DocSection title="Humanbase patterns" lead="The four places dropdowns appear in HumanBase today, redrawn with these components.">
+    <div class="patterns">
+      <section class="pattern" aria-labelledby="pattern-tissue">
+        <div class="pattern-notes">
+          <h3 id="pattern-tissue">Tissue network</h3>
+          <p>A searchable select. The list is long, so a filter box sits at the top and recent choices come first.</p>
+          <ul>
+            <li>Filter matches anywhere in the name, so “vessel” finds Blood vessel.</li>
+            <li>Max height 320px, then the list scrolls inside the panel.</li>
+            <li>Shows the network size under each name to help people choose.</li>
+          </ul>
+        </div>
+        <div class="pattern-stage pattern-stage-tissue">
+          <Select label="Tissue network" options={tissueSearch} defaultValue="vessel" searchable filterLabel="Filter tissues" defaultQuery="vessel" open defaultHighlight={1} />
+          <p class="pattern-aside">Typed text filters the list. The value only changes when an option is chosen.</p>
+        </div>
+      </section>
+
+      <section class="pattern" aria-labelledby="pattern-version">
+        <div class="pattern-notes">
+          <h3 id="pattern-version">Data version</h3>
+          <p>A short select with descriptions. People need to know what each version contains before switching, because results change.</p>
+          <ul>
+            <li>The current version is labeled in the name, not with color.</li>
+            <li>Switching asks for confirmation if a job is open.</li>
+            <li>A link at the bottom explains what changed.</li>
+          </ul>
+        </div>
+        <div class="pattern-stage pattern-stage-version">
+          <Select label="Data version" options={versions} defaultValue="mage" size="small" open defaultHighlight={1}>
+            <a slot="footer" href="#pattern-version">What changed between versions</a>
+          </Select>
+        </div>
+      </section>
+
+      <section class="pattern" aria-labelledby="pattern-suggestions">
+        <div class="pattern-notes">
+          <h3 id="pattern-suggestions">Gene search suggestions</h3>
+          <p>Suggestions appear after one character and update as people type. Enter on the field searches the text; Enter on a highlighted row opens that gene.</p>
+          <ul>
+            <li>Matching letters are bold, so people see why each gene appears.</li>
+            <li>The Entrez ID helps tell similar symbols apart.</li>
+            <li>If nothing matches, say so and suggest what to try.</li>
+          </ul>
+        </div>
+        <div class="pattern-stage pattern-stage-suggestions">
+          <div class="suggestions-main">
+            <SearchField label="Search genes" size="medium" defaultValue="IL1" suggestions={genes} open defaultHighlight={1} />
+          </div>
+          <div class="suggestions-states">
+            <figure>
+              <figcaption>No matches</figcaption>
+              <MenuPanel><SuggestionsEmpty query="IL1Z" text="Check the symbol, or search by Entrez ID or gene name." /></MenuPanel>
+            </figure>
+            <figure>
+              <figcaption>Loading, after 300ms</figcaption>
+              <MenuPanel><SuggestionsLoading /></MenuPanel>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="pattern" aria-labelledby="pattern-actions">
+        <div class="pattern-notes">
+          <h3 id="pattern-actions">Job actions</h3>
+          <p>An action menu on each job row. It opens from a 36px icon button with a visible label for screen readers: “Actions for BMI GWAS, adipose tissue”.</p>
+          <ul>
+            <li>Commands start with a verb.</li>
+            <li>Delete is last, in error red, after a divider, and asks to confirm.</li>
+            <li>The menu aligns to the right edge of the button.</li>
+          </ul>
+        </div>
+        <div class="pattern-stage pattern-stage-actions">
+          <div class="job-row">
+            <div>
+              <p class="job-row-title">BMI GWAS, adipose tissue</p>
+              <p class="job-row-meta">NetWAS Finished October 15, 2026</p>
+            </div>
+            <ActionMenu label="Actions for BMI GWAS, adipose tissue" items={jobActions} open defaultHighlight={1} />
+          </div>
+        </div>
+      </section>
+    </div>
+  </DocSection>
+
+  <DocSection
+    title="Grouped select, multi-column"
+    lead="For a grouped select whose single-column list would run past the fold. Each group becomes a column, so every option shows at once. Today it is Select an analysis on the homepage: 10 analyses in 4 groups, which ran 941px as one column and now ends at 874px on a 1440 by 900 window. The Sequence analysis menu in the top bar uses it too: 7 tools in 3 groups, which ran 684px as one column and now ends at 582px."
+  >
+    <div class="grouped-specimen">
+      <Select
+        label="Analysis"
+        placeholder="Select an analysis"
+        options={analyses}
+        columns={[['Network analysis'], ['Variant effects'], ['Sequences', 'Browsers']]}
+        open
+      >
+        <p slot="footer">Not sure which tool? <a href="#grouped-select-multi-column">Compare them</a></p>
+      </Select>
+    </div>
+    <DocTable caption="Rules for the multi-column grouped select" columns={['Rule', 'Detail']} widths={['304px']}>
+      {tables.grouped.map(([rule, detail]) => <tr class="doc-table-roomy"><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="How panels open, where they sit and how they close.">
+    <DocTable caption="How dropdown panels behave" columns={['Rule', 'Detail']} widths={['304px']}>
+      {tables.behavior.map(([rule, detail]) => <tr class="doc-table-roomy"><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Keyboard and accessibility" lead="Selects follow the ARIA combobox pattern and action menus follow the menu button pattern, so screen readers announce them correctly.">
+    <DocTable caption="Keyboard support" columns={['Key', 'Select and suggestions', 'Action menu']} widths={['264px', '560px']}>
+      {tables.keys.map(([key, select, menu]) => <tr><th scope="row"><kbd>{key}</kbd></th><td>{select}</td><td>{menu}</td></tr>)}
+    </DocTable>
+    <ul class="checks">
+      <li><h3>A visible label</h3><p>Every select has a label above it. Placeholder text is a hint, not a label.</p></li>
+      <li><h3>Announce changes</h3><p>“3 matches” and “No genes match” are read out with a polite live region as people type.</p></li>
+      <li><h3>Not color alone</h3><p>Selected options use a check and bold text. Highlight uses a fill and moves focus.</p></li>
+      <li><h3>Big enough to tap</h3><p>Options are at least 40px tall; fields are 44px or 36px.</p></li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Writing options" lead="Short, specific and in the words researchers use.">
+    <DocTable caption="How to write options" columns={['Guideline', 'Write', 'Not']} widths={['400px', '480px']}>
+      {tables.writing.map(([guideline, write, not]) => <tr class="doc-table-roomy"><th scope="row">{guideline}</th><td class="write-yes">{write}</td><td class="write-no">{not}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <ul class="pairs">
+      <li class="pair pair-do">
+        <div class="pair-stage"><MenuPanel>{['Adipose tissue', 'Blood vessel', 'Brain', 'Heart'].map((label) => <MenuItem label={label} selected={label === 'Blood vessel'} />)}</MenuPanel></div>
+        <h3>Do. Mark selection with a check</h3>
+        <p>The selected option is bold with a check, and the panel stays white.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage"><MenuPanel>{['Adipose tissue', 'Blood vessel', 'Brain', 'Heart'].map((label) => <MenuItem label={label} className={label === 'Blood vessel' ? 'bad-fill' : undefined} />)}</MenuPanel></div>
+        <h3>Don’t. Fill the selected option green</h3>
+        <p>A colored fill reads like a hover or an error and fails for people who can’t tell the colors apart.</p>
+      </li>
+      <li class="pair pair-do">
+        <div class="pair-stage"><MenuPanel>{['MAGE (current)', 'GIANT v1'].map((label) => <MenuItem label={label} />)}</MenuPanel></div>
+        <h3>Do. Use a select for one value</h3>
+        <p>Keep commands in an action menu and values in a select.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage"><MenuPanel>{['MAGE (current)', 'GIANT v1', 'Download results'].map((label) => <MenuItem label={label} />)}</MenuPanel></div>
+        <h3>Don’t. Mix commands into a value list</h3>
+        <p>“Download results” in a version list changes the page when people expect to pick a value.</p>
+      </li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now, using the foundation tokens. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Dropdown tokens and values" columns={['Token', 'Value']} widths={['424px']}>
+      {tables.specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the components in code">
+    <ul>
+      <li><code>Select</code> is a select-only combobox: a button with <code>role="combobox"</code> that opens a listbox. It supports <code>size</code>, <code>hint</code>, <code>error</code>, option <code>description</code>, <code>icon</code> and <code>group</code>, a <code>footer</code>, <code>searchable</code> lists and <code>columns</code> of groups. Give it <code>name</code> to submit with a form.</li>
+      <li><code>SearchField</code> becomes an editable combobox when it gets <code>suggestions</code>; <code>onSuggestionSelect</code> runs on click or Enter, and <code>suggestionsLoading</code> shows the searching state.</li>
+      <li><code>ActionMenu</code> follows the menu button pattern. Each item has a <code>label</code>, optional <code>icon</code>, <code>destructive</code> and <code>dividerBefore</code>, and an <code>onSelect</code> command.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .anatomy-stage {
+    position: relative;
+    block-size: 408px;
+    margin: 0;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .anatomy-specimen {
+    position: absolute;
+    inset-block-start: 56px;
+    inset-inline-start: 360px;
+    inline-size: 320px;
+  }
+
+  .anatomy-notes {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .anatomy-note {
+    position: absolute;
+    display: flex;
+    gap: var(--space-3);
+    align-items: start;
+    max-inline-size: 290px;
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .anatomy-note span {
+    flex: none;
+    padding: var(--space-0-5) 7px;
+    font: 700 12px/16px Lato, sans-serif;
+    color: var(--text-on-brand);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+  }
+
+  .anatomy-note-start {
+    inset-inline-start: var(--space-10);
+    flex-direction: row-reverse;
+    inline-size: 290px;
+    text-align: end;
+  }
+
+  .anatomy-note-end {
+    inset-inline-start: 716px;
+  }
+
+  .anatomy-note-start::after,
+  .anatomy-note-end::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 9px;
+    inline-size: 28px;
+    block-size: 1px;
+    background: var(--surface-inverse);
+  }
+
+  .anatomy-note-start::after {
+    inset-inline-start: 290px;
+  }
+
+  .anatomy-note-end::before {
+    inset-inline-start: -34px;
+  }
+
+  .state-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-8);
+    padding: var(--space-8);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .state-grid figure {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .state-grid figcaption {
+    font: 700 13px/1.2 Lato, sans-serif;
+    color: var(--text-muted);
+  }
+
+  .spec-line {
+    font: var(--type-code-sm);
+    color: var(--text-secondary);
+  }
+
+  .item-grid {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-8);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .item-grid-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .item-grid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .item-grid figure {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .item-grid figcaption {
+    display: grid;
+    gap: 10px;
+  }
+
+  .item-grid strong {
+    font: var(--docs-small-strong);
+  }
+
+  .item-grid figcaption span {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .doc-note {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .patterns {
+    display: grid;
+    gap: var(--space-16);
+  }
+
+  .pattern {
+    display: grid;
+    grid-template-columns: 380px minmax(0, 1fr);
+    gap: var(--space-12);
+  }
+
+  .pattern-notes {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+  }
+
+  .pattern-notes h3 {
+    font: 600 26px/1.3 Cabin, sans-serif;
+  }
+
+  .pattern-notes > p {
+    font: var(--docs-rule);
+    color: var(--text-secondary);
+  }
+
+  .pattern-notes ul {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pattern-notes li {
+    padding-inline-start: 13px;
+    font: var(--docs-small);
+    color: var(--text-secondary);
+    border-inline-start: 3px solid var(--action-primary);
+  }
+
+  .pattern-stage {
+    position: relative;
+    padding: var(--space-10) var(--space-12);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .pattern-stage-tissue {
+    display: flex;
+    gap: var(--space-8);
+    align-items: start;
+    min-block-size: 404px;
+  }
+
+  .pattern-stage-tissue > :global(.field) {
+    inline-size: 400px;
+  }
+
+  .pattern-aside {
+    margin-block-start: 82px;
+    max-inline-size: 280px;
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .pattern-stage-version {
+    min-block-size: 297px;
+  }
+
+  .pattern-stage-version > :global(.field) {
+    inline-size: 360px;
+  }
+
+  .pattern-stage-suggestions {
+    display: flex;
+    gap: var(--space-16);
+    align-items: start;
+    min-block-size: 360px;
+  }
+
+  .suggestions-main {
+    inline-size: 480px;
+  }
+
+  .suggestions-states {
+    display: grid;
+    gap: var(--space-6);
+    inline-size: 300px;
+  }
+
+  .suggestions-states figure {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+  }
+
+  .suggestions-states figcaption {
+    font: 700 13px/1.2 Lato, sans-serif;
+    color: var(--text-muted);
+  }
+
+  .pattern-stage-actions {
+    min-block-size: 341px;
+  }
+
+  .job-row {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+    justify-content: space-between;
+    inline-size: 560px;
+    padding: var(--space-4) var(--space-3) var(--space-4) var(--space-5);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .job-row-title {
+    font: 600 17px/1.3 Cabin, sans-serif;
+  }
+
+  .job-row-meta {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .grouped-specimen {
+    inline-size: 845px;
+    min-block-size: 540px;
+  }
+
+  .checks {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .checks li {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    background: var(--surface-subtle);
+  }
+
+  .checks h3 {
+    font: 600 18px/1.3 Cabin, sans-serif;
+  }
+
+  .checks p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  kbd {
+    font: var(--type-code-sm);
+    font-size: 14px;
+  }
+
+  .write-yes {
+    color: var(--status-success-fg);
+  }
+
+  .write-no {
+    color: var(--status-error-fg);
+  }
+
+  .pairs {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pair {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+  }
+
+  .pair-stage {
+    block-size: 230px;
+    padding: 10px var(--space-4) 0;
+    overflow: hidden;
+    background: var(--surface-subtle);
+  }
+
+  .pair-stage > :global(.menu-panel) {
+    inline-size: 240px;
+    min-inline-size: 0;
+  }
+
+  .pair::before {
+    content: "";
+    order: 1;
+    block-size: var(--space-1);
+    background: currentcolor;
+  }
+
+  .pair h3,
+  .pair p {
+    order: 2;
+  }
+
+  .pair-do {
+    color: var(--status-success-fg);
+  }
+
+  .pair-dont {
+    color: var(--status-error-fg);
+  }
+
+  .pair h3 {
+    font: var(--type-label);
+  }
+
+  .pair p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .pair-dont :global(.bad-fill) {
+    color: var(--text-default);
+    background: var(--color-emerald-50);
+  }
+
+  @media (width < 64rem) {
+    .state-grid,
+    .item-grid-5,
+    .item-grid-4,
+    .checks,
+    .pairs,
+    .pattern {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
