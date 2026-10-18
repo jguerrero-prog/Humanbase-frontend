@@ -9,11 +9,12 @@ const roles = flattenTokens(semantic);
 const scales = Object.entries(Object.groupBy(flattenTokens(primitives).filter((e) => e.token.$type === 'color'), (e) => e.path.slice(0, -1).join(' ')));
 ---
 
-<DocsLayout title="Color" description="Semantic color roles and the primitive scales behind them.">
+<DocsLayout title="Color tokens" description="Semantic color roles and the primitive scales behind them.">
   <p>Components use semantic roles. Each role points at one primitive, so changing a primitive in Figma updates every role that uses it.</p>
 
+  <div class="table-scroll" role="region" aria-labelledby="roles-caption" tabindex="0">
   <table class="token-table">
-    <caption>Semantic roles</caption>
+    <caption id="roles-caption">Semantic roles</caption>
     <thead>
       <tr><th scope="col">Sample</th><th scope="col">Role</th><th scope="col">Points at</th></tr>
     </thead>
@@ -29,6 +30,7 @@ const scales = Object.entries(Object.groupBy(flattenTokens(primitives).filter((e
       }
     </tbody>
   </table>
+  </div>
 
   <h2>Primitive scales</h2>
   {

@@ -13,11 +13,12 @@ interface TypeValue {
 const styles = flattenTokens(typography).map(({ cssVar, token }) => ({ cssVar, value: token.$value as TypeValue }));
 ---
 
-<DocsLayout title="Typography" description="Text styles: Cabin for headings, Lato for text, Atkinson Hyperlegible Mono for code.">
+<DocsLayout title="Type tokens" description="Text styles: Cabin for headings, Lato for text, Atkinson Hyperlegible Mono for code.">
   <p>Headings use Cabin, running text uses Lato, and code uses Atkinson Hyperlegible Mono. Use a style with <code>font: var(--type-…)</code> and its <code>-tracking</code> partner for letter spacing.</p>
 
+  <div class="table-scroll" role="region" aria-labelledby="styles-caption" tabindex="0">
   <table class="type-table">
-    <caption class="visually-hidden">Text styles</caption>
+    <caption id="styles-caption" class="visually-hidden">Text styles</caption>
     <thead>
       <tr><th scope="col">Style</th><th scope="col">Sample</th><th scope="col">Font, weight, size and line height</th></tr>
     </thead>
@@ -33,6 +34,7 @@ const styles = flattenTokens(typography).map(({ cssVar, token }) => ({ cssVar, v
       }
     </tbody>
   </table>
+  </div>
 </DocsLayout>
 
 <style>

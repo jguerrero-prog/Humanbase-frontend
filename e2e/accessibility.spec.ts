@@ -3,9 +3,9 @@ import { expect, test } from '@playwright/test';
 
 const pages = [
   'http://localhost:4173/',
-  'http://localhost:4321/',
-  'http://localhost:4321/foundations/color/',
-  'http://localhost:4321/foundations/typography/',
+  'http://localhost:4322/',
+  'http://localhost:4322/tokens/color/',
+  'http://localhost:4322/tokens/typography/',
 ];
 
 for (const url of pages) {
