@@ -225,7 +225,7 @@ const usage = `.menu {
           <ol class="frames">
             {strip.steps.map(([time, state, opacity, offset]) => (
               <li>
-                <div class="frame-stage" aria-hidden="true">
+                <div class="frame-stage" aria-hidden="true" data-illustration>
                   <span class="frame-field" />
                   <MenuPanel className="frame-menu" style={{ opacity, translate: `0 ${-offset}px` }}>
                     {tissues.map((tissue) => (
