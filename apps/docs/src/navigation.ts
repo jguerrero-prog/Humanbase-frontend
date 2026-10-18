@@ -39,7 +39,7 @@ export const navigation: NavSection[] = [
       { label: 'Color', href: '/tokens/color/' },
       { label: 'Typography', href: '/tokens/typography/' },
       { label: 'Spacing', href: '/tokens/spacing/' },
-      { label: 'Radius and elevation' },
+      { label: 'Radius and elevation', href: '/tokens/radius-and-elevation/' },
       { label: 'States: hover, focus, disabled, error' },
     ],
   },
