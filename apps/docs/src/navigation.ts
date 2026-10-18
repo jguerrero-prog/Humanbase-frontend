@@ -47,7 +47,7 @@ export const navigation: NavSection[] = [
     heading: 'Usage guidelines',
     items: [
       { label: 'Voice and content' },
-      { label: 'Scientific notation and units' },
+      { label: 'Scientific notation and units', href: '/guidelines/scientific-notation-and-units/' },
       { label: 'Data visualization', href: '/guidelines/data-visualization/' },
       { label: 'Errors and validation' },
       { label: 'Empty states' },

@@ -2,6 +2,12 @@ const superscripts: Record<string, string> = { '-': '⁻', '0': '⁰', '1': '¹'
 
 type Maybe<T> = T | null | undefined;
 
+export interface FormattedValue {
+  text: string;
+  spoken: string;
+  raw: string;
+}
+
 export class ValueFormat {
   readonly missing = 'Not available';
   private readonly counts: Intl.NumberFormat;
@@ -18,6 +24,28 @@ export class ValueFormat {
 
   count(value: Maybe<number>): string {
     return value == null ? this.missing : this.counts.format(value);
+  }
+
+  percent(value: number): string {
+    return `${this.counts.format(value)}%`;
+  }
+
+  signed(value: number, decimals: number): string {
+    const digits = Math.abs(value).toFixed(decimals);
+    if (Number(digits) === 0) return digits;
+    return `${value < 0 ? '−' : '+'}${digits}`;
+  }
+
+  // Plain decimals from 0.001 up, scientific notation below, never rounded to zero.
+  pValue(value: number): FormattedValue {
+    if (value < 1e-300) return { text: `< ${this.scientific(1e-300, 0)}`, spoken: 'less than 1 times 10 to the minus 300', raw: '<1e-300' };
+    if (value >= 0.001) {
+      const text = Number(value.toPrecision(2)).toString();
+      return { text, spoken: text, raw: text };
+    }
+    const [mantissa = '', exponent = '0'] = value.toExponential(1).split('e');
+    const power = Number(exponent);
+    return { text: this.scientific(value), spoken: `${mantissa} times 10 to the minus ${Math.abs(power)}`, raw: `${mantissa}e${power}` };
   }
 
   scientific(value: Maybe<number>, decimals = 1): string {
