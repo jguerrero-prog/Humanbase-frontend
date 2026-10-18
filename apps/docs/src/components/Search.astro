@@ -1,0 +1,14 @@
+<search class="docs-search">
+  <form role="search">
+    <label for="docs-search-input" class="visually-hidden">Search the design system</label>
+    <input id="docs-search-input" type="search" name="q" placeholder="Search the design system" autocomplete="off" />
+  </form>
+  <output for="docs-search-input" aria-live="polite"></output>
+</search>
+
+<script>
+  import { DocsSearch } from './DocsSearch';
+
+  const root = document.querySelector<HTMLElement>('.docs-search');
+  if (root) new DocsSearch(root).start();
+</script>
