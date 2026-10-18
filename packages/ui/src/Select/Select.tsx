@@ -11,6 +11,7 @@ export interface SelectOption {
   label: string;
   description?: string;
   icon?: IconName;
+  image?: string;
   disabled?: boolean;
   group?: string;
 }
@@ -72,6 +73,7 @@ export function Select({
   const open = openProp ?? ownOpen;
   const selected = options.find((option) => option.value === current);
   const looksOpen = open || dataState === 'open';
+  const reserveIcon = options.some((option) => option.icon || option.image);
 
   const visible = useMemo(() => {
     const filtered = query ? options.filter((option) => option.label.toLowerCase().includes(query.toLowerCase())) : options;
@@ -226,6 +228,8 @@ export function Select({
                                 label={option.label}
                                 description={option.description}
                                 icon={option.icon}
+                                image={option.image}
+                                reserveIcon={reserveIcon}
                                 disabled={option.disabled}
                                 selected={option.value === current}
                                 highlighted={position === highlight}

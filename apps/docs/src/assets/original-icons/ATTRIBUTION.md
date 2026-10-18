@@ -11,5 +11,4 @@ These are the icons the live HumanBase site shows beside each analysis, extracte
 | `gwas-netwas_fa-list-ol.svg` | Font Awesome 4.7 “list-ol” by Dave Gandy | SIL OFL 1.1 |
 | `seqweaver_seqweaver-icon.svg` | Created by Stephen Plaster, from the Noun Project, as served by HumanBase | Creative Commons Attribution 3.0 (CC BY 3.0), credited here |
 | `sei-and-beluga_deepsea_logo.svg` | The DeepSEA logo, HumanBase | Owned by HumanBase; no license is stated in the file. To be confirmed by the HumanBase team. |
-
-Not included: the ExPecto SC dendritic cell (`expectosc_dendritic_cell.svg`). The file says it was created with BioRender, whose terms keep copyright in BioRender content and do not allow republishing its icons on their own.
+| `expecto-sc_dendritic_cell.png` | The ExPecto SC dendritic cell, HumanBase, created with BioRender.com; a 96px export of the 335 KB SVG | BioRender keeps copyright in its content and requires the “Created with BioRender.com” credit. Included at the project owner’s request; the HumanBase team should confirm their BioRender license covers publishing it in this repository. |

@@ -33,6 +33,13 @@
   background: var(--surface-sunken);
 }
 
+.menu-item-image {
+  flex: none;
+  inline-size: 20px;
+  block-size: 20px;
+  object-fit: contain;
+}
+
 .menu-item-check {
   margin-inline-start: auto;
   color: var(--action-primary);

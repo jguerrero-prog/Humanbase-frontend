@@ -14,17 +14,25 @@ export interface MenuItemProps extends Omit<ComponentProps<'div'>, 'children'> {
   label: ReactNode;
   description?: ReactNode;
   icon?: IconName | undefined;
+  image?: string | undefined;
+  reserveIcon?: boolean | undefined;
   selected?: boolean | undefined;
   highlighted?: boolean | undefined;
   disabled?: boolean | undefined;
   destructive?: boolean | undefined;
 }
 
-export function MenuItem({ label, description, icon, selected, highlighted, disabled, destructive, className, ...rest }: MenuItemProps) {
+export function MenuItem({ label, description, icon, image, reserveIcon, selected, highlighted, disabled, destructive, className, ...rest }: MenuItemProps) {
   const classes = ['menu-item', highlighted && 'menu-item-highlighted', selected && 'menu-item-selected', destructive && 'menu-item-destructive', className];
   return (
     <div {...rest} className={classes.filter(Boolean).join(' ')} aria-disabled={disabled || undefined}>
-      {icon && <Icon name={icon} size={20} />}
+      {icon ? (
+        <Icon name={icon} size={20} />
+      ) : image ? (
+        <img className="menu-item-image" src={image} alt="" width={20} height={20} />
+      ) : (
+        reserveIcon && <span className="menu-item-image" aria-hidden="true" />
+      )}
       <span className="menu-item-text">
         <span className="menu-item-label">{label}</span>
         {description && <span className="menu-item-description">{description}</span>}
