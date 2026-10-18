@@ -1,0 +1,417 @@
+---
+import { GeneList, Icon, SearchField, TextInput } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import DoDont from '../../components/docs/DoDont.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import SizeCard from '../../components/docs/SizeCard.astro';
+import StateCard from '../../components/docs/StateCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const jobTitle = {
+  label: 'Job title',
+  placeholder: 'For example, BMI 2012 run',
+  hint: 'Shown in your job list and in the results email.',
+  tabIndex: -1,
+};
+const filled = 'BMI GWAS, adipose tissue';
+const tooLong = 'Use 60 characters or fewer, so the title fits in your job list.';
+
+const geneList = {
+  label: 'Gene list',
+  placeholder: 'Paste gene symbols or Entrez IDs, one per line or separated by commas',
+  hint: 'Enter 20 to 3,500 genes.',
+  tabIndex: -1,
+};
+const sevenGenes = ['IL1B', 'CCL2', 'IL6', 'PTGS2', 'ICAM1', 'CXCL1', 'TNFAIP3'].join('\n');
+const fiveGenes = ['IL1B', 'CCL2', 'IL6', 'PTGS2', 'ICAM1'].join('\n');
+
+const search = { label: 'Search genes', placeholder: 'Search a gene, for example IL1B', tabIndex: -1 };
+const searchStates = [
+  { title: 'Default', text: 'Placeholder gives an example of what to type.', props: {} },
+  { title: 'Focus', text: '2px emerald border. Suggestions open after two characters.', props: { 'data-state': 'focus' } },
+  { title: 'Filled', text: 'A clear button appears. Escape also clears the field.', props: { defaultValue: 'IL1B' } },
+  { title: 'Loading', text: 'A spinner replaces the clear button while matches load.', props: { defaultValue: 'IL1B', loading: true } },
+  { title: 'Disabled', text: 'Only while the page is loading data it depends on.', props: { disabled: true } },
+];
+const examples = ['IL1B', 'BRCA1', 'PTEN', 'Autism gene set'];
+const analyses = ['Networks', 'Modules', 'Sei', 'Beluga', 'Seqweaver', 'ExPecto', 'ExPecto SC', 'In silico mutagenesis', 'NetWAS', 'ASD Browser'];
+
+const errors = [
+  ['Gene not recognized', 'No gene matches “NOTAGENE123”. Check the spelling, or search by Entrez ID, for example 3553.', 'Search field, gene list'],
+  ['Too few genes', 'Add at least 20 genes so modules can be found. You’ve entered 5.', 'Gene list (Modules)'],
+  ['Too many genes', 'Use 3,500 genes or fewer; you’ve entered 4,120. Split the list to run the rest.', 'Gene list (Modules)'],
+  ['Too many variants', 'Split this file into parts of 20,000 variants or fewer. It has 24,310.', 'Variant upload (Sei, Beluga, Seqweaver, ExPecto)'],
+  ['Wrong file format', 'Use a VCF file: each line needs 5 tab-separated columns.', 'Variant upload'],
+  ['Sequence too short', 'Beluga needs sequences of 2,000 bases. This one has 812.', 'In silico mutagenesis'],
+  ['Invalid email', 'Enter an email address like name@example.org, or leave this empty.', 'Email for results'],
+];
+
+const specs = [
+  ['Height', '44px Medium, 36px Small', '56px Large, 44px Medium', '160px field, scrolls inside'],
+  ['Padding', '12 and 16px; 8 and 12px Small', '16 and 20px; 12 and 16px Medium', '12 and 16px'],
+  ['Text', 'Lato 16px; 14px Small', 'Lato 18px; 16px Medium', 'Lato 16px / 24px'],
+  ['Corners', '12px; 8px Small', '12px', '12px'],
+  ['Border', '1px grey 500', '1px grey 500', '1px grey 500'],
+  ['Hover border', 'grey 700', 'grey 700', 'grey 700'],
+  ['Focus', '2px emerald 600', '2px emerald 600', '2px emerald 600'],
+  ['Error', '2px error 600, icon, bold message', 'Message in the suggestions panel', '2px error 600, red count'],
+  ['Label', 'Lato Bold 15px, 8px above the field', 'Visually hidden', 'Lato Bold 15px'],
+  ['Icon', 'Optional, 20px', 'Search 24px / 20px, clear button', 'None'],
+];
+
+const usage = `import { GeneList, SearchField, TextInput } from '@humanbase/ui';
+
+<TextInput label="Job title" hint="Shown in your job list and in the results email." />
+<SearchField label="Search genes" placeholder="Search a gene, for example IL1B" />
+<GeneList label="Gene list" hint="Enter 20 to 3,500 genes." error={tooFewGenes} />`;
+---
+
+<DocsLayout title="Text inputs and search" description="Text input, search field and gene list: states, sizes, validation and accessibility.">
+  <Intro
+    lead="Inputs are where research starts in HumanBase: a gene search, a pasted gene list, a GWAS file and its settings. Three components cover these cases. Each one keeps its label visible, explains what it expects before people type, and says exactly how to fix a problem."
+    status="Updated October 16, 2026 · Components: Text input, Search field and Gene list, in the “Components: Inputs” section below this page"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Labels stay visible', text: 'Every field has a label above it. Placeholder text disappears when people type, so it is never the only label.' },
+        { title: 'Say what is expected', text: 'State limits and formats up front: “Enter 20 to 3,500 genes.” People should not learn the rules by making mistakes.' },
+        { title: 'Errors explain the fix', text: 'An error says what to do and why: “Add at least 20 genes so modules can be found. You’ve entered 5.”' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Text input" lead="For short answers: job titles, email addresses, thresholds. Six states, shown here at Medium size." spacing="loose">
+    <div class="card-grid" style="--columns: 3">
+      <StateCard title="Default" text="Grey 500 border, placeholder in grey 500."><TextInput {...jobTitle} /></StateCard>
+      <StateCard title="Hover" text="Border darkens to grey 700."><TextInput {...jobTitle} data-state="hover" /></StateCard>
+      <StateCard title="Focus" text="2px emerald border and a text cursor."><TextInput {...jobTitle} data-state="focus" /></StateCard>
+      <StateCard title="Filled" text="Value in ink. Helper text stays visible."><TextInput {...jobTitle} defaultValue={filled} /></StateCard>
+      <StateCard title="Error" text="2px error border, an icon and a message that leads with the fix. Screen readers hear “Error” first."><TextInput {...jobTitle} defaultValue={filled} error={tooLong} /></StateCard>
+      <StateCard title="Disabled" text="Grey 50 fill, grey 400 text. Explain nearby why it is disabled."><TextInput {...jobTitle} disabled /></StateCard>
+    </div>
+    <div class="card-grid" style="--columns: 2">
+      <SizeCard title="Medium · 44px" text="Padding 12px and 16px, Lato 16px, 12px corners. The default for forms.">
+        <TextInput label="p-value threshold" hint="Genes below this value are used for training." defaultValue="0.01" tabIndex={-1} />
+      </SizeCard>
+      <SizeCard title="Small · 36px" text="Padding 8px and 12px, Lato 14px, 8px corners. For filters, toolbars and table rows.">
+        <TextInput label="p-value threshold" hint="Genes below this value are used for training." defaultValue="0.01" size="small" tabIndex={-1} />
+      </SizeCard>
+    </div>
+  </DocSection>
+
+  <DocSection
+    title="Search field"
+    lead="The main way into HumanBase. Large on the homepage, Medium in the top bar. It suggests matching genes as people type and accepts a gene symbol, an Entrez ID or a term."
+    spacing="loose"
+  >
+    <ul class="search-states">
+      {
+        searchStates.map((state) => (
+          <li>
+            <SearchField {...search} {...state.props} />
+            <p>
+              <strong>{state.title}</strong>
+              <span>{state.text}</span>
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <section class="search-panel search-panel-brand" aria-labelledby="search-on-green">
+      <h3 id="search-on-green">On the green header</h3>
+      <div class="search-row">
+        <div class="analysis-select">
+          <Icon name="analysis" />
+          <label class="visually-hidden" for="analysis-select">Analysis</label>
+          <select id="analysis-select" tabindex="-1">
+            <option>Select an analysis</option>
+            {analyses.map((name) => <option>{name}</option>)}
+          </select>
+          <Icon name="chevron-down" size={20} />
+        </div>
+        <SearchField {...search} />
+      </div>
+      <p class="search-examples">
+        <span>Try</span>
+        {examples.map((example) => <button type="button" tabindex="-1">{example}</button>)}
+      </p>
+      <p class="search-panel-note">Select an analysis chooses which tool the search runs in, using the same tool names as the menus. Example searches choose it for you and run straight away instead of filling the field, fixing a problem found in the audit. Pressing Enter opens the best match.</p>
+    </section>
+
+    <section class="search-panel search-panel-light" aria-labelledby="search-on-light">
+      <h3 id="search-on-light">On a light background</h3>
+      <div class="search-row search-row-single">
+        <SearchField {...search} />
+      </div>
+      <p class="search-examples">
+        <span>Try</span>
+        {examples.map((example) => <button type="button" tabindex="-1">{example}</button>)}
+      </p>
+      <p class="search-panel-note">For white or light grey pages, such as results pages, the docs and the 404 page. The search field is unchanged; example chips switch to emerald text on an 8% emerald tint, and “Try” uses grey 500. Chip text measures 5.1:1 and “Try” 5.0:1, both passing AA.</p>
+    </section>
+  </DocSection>
+
+  <DocSection title="Gene list" lead="For pasting many genes at once, in Modules and multi-gene network searches. It counts genes as people paste and states the limit before they submit." spacing="loose">
+    <div class="card-grid" style="--columns: 2">
+      <StateCard title="Default" text="Placeholder explains the accepted formats."><GeneList {...geneList} /></StateCard>
+      <StateCard title="Filled" text="A live count sits on the right of the helper text."><GeneList {...geneList} defaultValue={sevenGenes} /></StateCard>
+      <StateCard title="Error" text="The count turns red and the message gives the number entered."><GeneList {...geneList} defaultValue={fiveGenes} error="Add at least 20 genes so modules can be found. You’ve entered 5." /></StateCard>
+      <StateCard title="Focus" text="2px emerald border while typing or pasting."><GeneList {...geneList} data-state="focus" /></StateCard>
+    </div>
+    <p class="doc-note">After submitting, ambiguous genes are resolved in the gene matching step (UI library: Gene search and matching), which lists only the genes that need a choice.</p>
+  </DocSection>
+
+  <DocSection title="Validation and error messages" lead="Check a field when people leave it or submit; gene lists are the exception and are matched as people type. Every message leads with the fix, then the reason. Screen readers hear “Error” before it. These are the errors HumanBase needs today.">
+    <DocTable caption="Error messages HumanBase needs" columns={['Situation', 'Message', 'Where']} widths={['284px', '584px']}>
+      {
+        errors.map(([situation, message, where]) => (
+          <tr class="doc-table-roomy">
+            <th scope="row">{situation}</th>
+            <td class="error-message">{message}</td>
+            <td>{where}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Writing labels and help text">
+    <KeyRules
+      size="medium"
+      rules={[
+        { title: 'Labels', text: 'Short nouns in sentence case. Mark the optional fields, not the required ones.', example: 'Gene list · Email for results (optional)' },
+        { title: 'Helper text', text: 'Formats, limits and what happens next, in one sentence.', example: 'Enter 20 to 3,500 genes.' },
+        { title: 'Placeholders', text: 'An example of a valid answer, starting with “For example”. Never instructions.', example: 'For example, BMI 2012 run' },
+        { title: 'Units', text: 'Put units in the label so values stay clean.', example: 'p-value threshold · Window size (bp)' },
+      ]}
+    />
+  </DocSection>
+
+  <DocSection title="Accessibility">
+    <KeyRules
+      size="medium"
+      rules={[
+        { title: 'Real labels', text: 'Every field has a <label> linked to it. The search field’s label can be visually hidden, but it must exist.' },
+        { title: 'Linked help', text: 'Helper and error text are linked with aria-describedby, and fields with errors get aria-invalid="true".' },
+        { title: 'Visible outline', text: 'Field borders use grey 500 (5.3:1) to meet the 3:1 rule for interface parts. Grey 400 would fail at 2.5:1.' },
+        { title: 'Suggestions', text: 'Search suggestions use the combobox pattern: arrow keys move through results, Enter selects, Escape closes.' },
+      ]}
+    />
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <DoDont
+      dos={[
+        'Keep labels above fields, always visible.',
+        'State limits before people submit, such as the gene count range.',
+        'Keep what people typed when an error appears, so they can fix it rather than start again.',
+        'Size fields to the expected answer: short for a threshold, wide for a title.',
+      ]}
+      donts={[
+        'Don’t use placeholder text as the label.',
+        'Don’t show errors while people are still typing.',
+        'Don’t clear a gene list or file after a failed submit.',
+        'Don’t disable the submit button to signal errors; let people submit and explain what to fix.',
+      ]}
+    />
+  </DocSection>
+
+  <DocSection title="Specs" lead="Values for developers. Colors refer to the Color palette page.">
+    <DocTable caption="Input measurements and colors" columns={['Property', 'Text input', 'Search field', 'Gene list']} widths={['284px', '330px', '330px']}>
+      {
+        specs.map(([property, ...values]) => (
+          <tr class="doc-table-roomy">
+            <th scope="row">{property}</th>
+            {values.map((value) => <td>{value}</td>)}
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the components in Figma">
+    <ul>
+      <li>Text input: choose Size and State, then edit Label, Placeholder, Value, Helper and Error message in the properties panel. Turn off Show helper when no help is needed.</li>
+      <li>Search field: choose Size and State, and edit Placeholder or Value.</li>
+      <li>Gene list: choose State and edit Label, Placeholder, Helper and Error message. Edit the count text directly.</li>
+      <li>Values are hard-coded for now and will be connected to variables once the first pages confirm them. The suggestions dropdown will be designed with Dropdowns and menus.</li>
+    </ul>
+  </NoteCard>
+
+  <NoteCard title="Using the components in code">
+    <ul>
+      <li>Each component renders a native <code>&lt;label&gt;</code> and <code>&lt;input&gt;</code>, <code>&lt;input type="search"&gt;</code> or <code>&lt;textarea&gt;</code>. Every other attribute passes through to that element.</li>
+      <li><code>hint</code> and <code>error</code> are linked with <code>aria-describedby</code>; an <code>error</code> replaces the hint, sets <code>aria-invalid</code> and is announced with “Error” first.</li>
+      <li><code>SearchField</code> keeps its label visually hidden, clears with its button or Escape, and shows the spinner while <code>loading</code>. <code>GeneList</code> counts genes split by lines, commas, semicolons or spaces.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .card-grid :global(.size-card-examples > .field) {
+    flex: 1;
+  }
+
+  .search-states {
+    margin: 0;
+    padding: 0 var(--space-8);
+    list-style: none;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .search-states li {
+    display: grid;
+    grid-template-columns: 560px minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: center;
+    padding: var(--space-5) 0;
+  }
+
+  .search-states li + li {
+    border-block-start: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .search-states p {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .search-states strong {
+    font: var(--docs-small-strong);
+  }
+
+  .search-states span {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .search-panel {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-12);
+    border-radius: var(--radius-md);
+  }
+
+  .search-panel h3 {
+    font: var(--type-h4);
+  }
+
+  .search-panel-brand {
+    color: var(--text-on-brand);
+    background: var(--action-primary);
+  }
+
+  .search-panel-light {
+    background: var(--surface-subtle);
+    border: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .search-row {
+    display: grid;
+    grid-template-columns: 264px 720px;
+    gap: var(--space-3);
+  }
+
+  .search-row-single {
+    grid-template-columns: 720px;
+  }
+
+  .analysis-select {
+    position: relative;
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+  }
+
+  .analysis-select > :global(.icon:first-child) {
+    position: absolute;
+    inset-inline-start: var(--space-5);
+    pointer-events: none;
+  }
+
+  .analysis-select > :global(.icon:last-child) {
+    position: absolute;
+    inset-inline-end: var(--space-5);
+    pointer-events: none;
+  }
+
+  .analysis-select select {
+    inline-size: 100%;
+    block-size: 56px;
+    padding: 0 var(--space-12) 0 56px;
+    font: 400 18px/1.55 Lato, sans-serif;
+    color: var(--text-muted);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-strong);
+    border-radius: var(--radius-md);
+    appearance: none;
+  }
+
+  .search-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .search-examples span {
+    font: var(--docs-small);
+    line-height: 1.4;
+  }
+
+  .search-examples button {
+    padding: 6px var(--space-3);
+    font: var(--type-label-sm);
+    border: 0;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .search-panel-brand .search-examples span,
+  .search-panel-brand .search-panel-note {
+    color: var(--color-mint-100);
+  }
+
+  .search-panel-brand .search-examples button {
+    color: var(--text-on-brand);
+    background: var(--overlay-on-brand-hover);
+  }
+
+  .search-panel-light .search-examples span {
+    color: var(--text-muted);
+  }
+
+  .search-panel-light .search-examples button {
+    color: var(--text-link);
+    background: var(--action-ghost-hover);
+  }
+
+  .search-panel-note {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .error-message {
+    color: var(--status-error-fg);
+  }
+
+  .doc-note {
+    font: var(--docs-small);
+    color: var(--text-muted);
+  }
+
+  @media (width < 64rem) {
+    .search-states li,
+    .search-row,
+    .search-row-single {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

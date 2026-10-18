@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes, MouseEvent } from 'react';
 import { Icon, type IconName } from '../Icon/Icon';
+import { Spinner } from '../Spinner/Spinner';
 import './Button.css';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive';
@@ -26,16 +27,8 @@ export function Button({ variant = 'primary', size = 'medium', icon, loading = f
       aria-busy={loading || undefined}
       onClick={blockWhileLoading}
     >
-      {loading ? <Spinner /> : icon && <Icon name={icon} size={size === 'small' ? 16 : 20} />}
+      {loading ? <Spinner size={size === 'small' ? 14 : 16} /> : icon && <Icon name={icon} size={size === 'small' ? 16 : 20} />}
       {children}
     </button>
-  );
-}
-
-function Spinner() {
-  return (
-    <svg className="button-spinner" viewBox="0 0 16 16" aria-hidden="true">
-      <path d="M8 1.12a6.88 6.88 0 1 1-6.88 6.88" />
-    </svg>
   );
 }

@@ -58,7 +58,7 @@ export const navigation: NavSection[] = [
     heading: 'Components',
     items: [
       { label: 'Buttons', href: '/components/buttons/' },
-      { label: 'Text inputs and search' },
+      { label: 'Text inputs and search', href: '/components/text-inputs-and-search/' },
       { label: 'Dropdowns and selects' },
       { label: 'Sliders' },
       { label: 'Tabs and segmented controls' },
