@@ -1,0 +1,30 @@
+---
+import { navigation } from '../navigation';
+import Search from './Search.astro';
+
+const current = Astro.url.pathname;
+---
+
+<nav class="side-menu" aria-label="Design system">
+  {
+    navigation.map((section) => (
+      <section>
+        <h2 class:list={{ 'side-menu-title': section.isTitle }}>{section.heading}</h2>
+        {section.isTitle && <Search />}
+        <ul>
+          {section.items.map((item) => (
+            <li>
+              {item.href ? (
+                <a href={item.href} aria-current={item.href === current ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              ) : (
+                <span>{item.label}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</nav>

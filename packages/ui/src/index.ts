@@ -1,1 +1,1 @@
-export {};
+export { Logo } from './Logo/Logo';
