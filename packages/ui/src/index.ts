@@ -69,3 +69,4 @@ export { TooltipController, tooltips } from './Tooltip/TooltipController';
 export { KeyLegend, ScaleLegend, type KeyLegendProps, type LegendItem, type LegendScale, type ScaleLegendProps } from './Legend/Legend';
 export { ErrorSummary, type ErrorSummaryItem, type ErrorSummaryProps } from './ErrorSummary/ErrorSummary';
 export { FileField, type FileFieldProps } from './FileField/FileField';
+export { EmptyState, type EmptyStateProps } from './EmptyState/EmptyState';

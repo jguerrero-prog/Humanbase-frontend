@@ -1,5 +1,6 @@
 import { useId, useState, type ComponentProps, type CSSProperties, type ReactNode } from 'react';
 import { Checkbox } from '../Checkbox/Checkbox';
+import { EmptyState } from '../EmptyState/EmptyState';
 import { Icon, type IconName } from '../Icon/Icon';
 import { ValueFormat } from './ValueFormat';
 import './Table.css';
@@ -144,14 +145,7 @@ export function TableMessage({ columns, title, text, icon, action }: TableMessag
   return (
     <tr className="table-message-row">
       <td colSpan={columns} className="table-cell">
-        <div className="table-message">
-          <p className="table-message-title">
-            {icon && <Icon name={icon} size={20} />}
-            {title}
-          </p>
-          {text && <p>{text}</p>}
-          {action}
-        </div>
+        <EmptyState className="table-message" title={title} text={text} icon={icon} actions={action} />
       </td>
     </tr>
   );
