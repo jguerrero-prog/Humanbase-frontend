@@ -284,5 +284,44 @@
         }
       }
     }
+  },
+  "syntax": {
+    "$description": "Code block syntax colors: five palette colors, with weight and style telling apart roles that share one.",
+    "text": {
+      "$type": "color",
+      "$value": "{color.grey.900}"
+    },
+    "key": {
+      "$type": "color",
+      "$value": "{color.grey.900}"
+    },
+    "command": {
+      "$type": "color",
+      "$value": "{color.info.700}"
+    },
+    "string": {
+      "$type": "color",
+      "$value": "{color.emerald.700}"
+    },
+    "type": {
+      "$type": "color",
+      "$value": "{color.warning.700}"
+    },
+    "param": {
+      "$type": "color",
+      "$value": "{color.warning.700}"
+    },
+    "flag": {
+      "$type": "color",
+      "$value": "{color.grey.600}"
+    },
+    "comment": {
+      "$type": "color",
+      "$value": "{color.grey.600}"
+    },
+    "selection": {
+      "$type": "color",
+      "$value": "{color.emerald.50}"
+    }
   }
 }

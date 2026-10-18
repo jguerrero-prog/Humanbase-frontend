@@ -1,0 +1,390 @@
+---
+import { CodeTabs, CopyButton, InlineCode, type CodeExample } from '@humanbase/ui';
+import CodeSample from '../../components/docs/CodeSample.astro';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { highlighter } from '../../syntax';
+
+const samples = {
+  networkRequest: 'curl -X GET "https://humanbase.io/api/integrations/networks/{slug}/?entrez=3553"',
+  jobRequest: 'curl -X POST "https://humanbase.io/api/netwas/jobs/" -F "file=@bmi_gwas_2012.txt"',
+  jobResponse: `{
+  "job_id": string (uuid),
+  "status": "queued" or "running" or "finished",
+  "queue_position": integer or null
+}`,
+  fileFormat: 'gene\tp\nIL1B\t0.00012\nTNF\t0.0031\nIL6\t0.044',
+};
+
+const languageSources: { language: string; lang: 'bash' | 'python' | 'r'; code: string }[] = [
+  { language: 'curl', lang: 'bash', code: 'curl -X GET "https://humanbase.io/api/integrations/networks/blood-vessel/?entrez=3553"' },
+  {
+    language: 'Python',
+    lang: 'python',
+    code: `import requests
+
+url = "https://humanbase.io/api/integrations/networks/blood-vessel/"
+response = requests.get(url, params={"entrez": 3553})
+genes = response.json()`,
+  },
+  {
+    language: 'R',
+    lang: 'r',
+    code: `library(httr)
+
+url <- "https://humanbase.io/api/integrations/networks/blood-vessel/"
+response <- GET(url, query = list(entrez = 3553))
+genes <- content(response)`,
+  },
+];
+const languages: CodeExample[] = await Promise.all(
+  languageSources.map(async ({ language, lang, code }) => ({ language, code, lines: await highlighter.lines(code, lang) })),
+);
+
+const legend = [
+  { title: 'Label', text: 'Lato Bold 14, grey 600. Says what the code is: request, response shape, file format.' },
+  { title: 'Copy', text: 'Top right, 12px in. Copies the code only. Changes to “Copied” for 2 seconds.' },
+  { title: 'Code', text: 'Atkinson Hyperlegible Mono 15/24, so 0 and O, 1 and l never look alike.' },
+  { title: 'Surface', text: 'Grey 50, 1px grey 200 border, 8px corners, 20px by 24px padding.' },
+];
+
+const syntaxRoles = [
+  { role: 'Text and punctuation', sample: [{ text: '{ } : , [ ]', className: '' }], color: 'Ink #1A1A1A', contrast: '16.25:1' },
+  { role: 'JSON keys', sample: [{ text: '"slug"', className: 'syntax-key' }], color: 'Ink, bold', contrast: '16.25:1' },
+  { role: 'Commands and methods', sample: [{ text: 'curl GET POST', className: 'syntax-command' }], color: 'Info 700 #175CD3, bold', contrast: '5.59:1' },
+  { role: 'Strings and URLs', sample: [{ text: '"https://humanbase.io/api/"', className: 'syntax-string' }], color: 'Emerald 700 #0D5D31', contrast: '7.46:1' },
+  { role: 'Types and values', sample: [{ text: 'string integer null v1', className: 'syntax-type' }], color: 'Warning 700 #B54708', contrast: '5.07:1' },
+  { role: 'Path parameters', sample: [{ text: '{job_id}', className: 'syntax-param' }], color: 'Warning 700, bold', contrast: '5.07:1' },
+  {
+    role: 'Flags and comments',
+    sample: [
+      { text: '-X ', className: 'syntax-flag' },
+      { text: '// Returns genes', className: 'syntax-comment' },
+    ],
+    color: 'Grey 600 #4A4A4A; comments italic',
+    contrast: '8.27:1',
+  },
+];
+
+const tables = {
+  behavior: [
+    ['Long lines', 'Scroll sideways inside the block, with a visible scrollbar. Code never wraps, so what people copy matches what they see.'],
+    ['Long blocks', 'Up to 480px tall, then the block scrolls. Response shapes over 40 lines start collapsed with “Show full response”.'],
+    ['Keyboard', 'A block that scrolls can take focus (tabindex 0, labeled by its label) so arrow keys scroll it. Copy is a real button.'],
+    ['Screen readers', 'The block is a pre element with its label as the accessible name. Syntax colors are not announced.'],
+    ['Selection', 'Text can be selected by hand; the selection color is emerald 50 so every syntax color stays readable.'],
+  ],
+  specs: [
+    ['code.surface', 'grey 50 #F7F7F7, 1px border.subtle #E8E8E8, radius.sm 8px'],
+    ['code.padding', '20px 24px; label to code 8px'],
+    ['code.font', 'Atkinson Hyperlegible Mono 15/24'],
+    ['code.label', 'Lato Bold 14 grey 600'],
+    ['code.copy', 'Lato Bold 13 grey 600 with a 16px copy icon; 12px from the top and right; “Copied” in success 700 for 2s'],
+    ['code.max-height', '480px, then scrolls'],
+    ['syntax.text / key', 'ink; keys bold'],
+    ['syntax.command', 'info 700 #175CD3, bold'],
+    ['syntax.string', 'emerald 700 #0D5D31'],
+    ['syntax.type / param', 'warning 700 #B54708; params bold'],
+    ['syntax.flag / comment', 'grey 600 #4A4A4A; comments italic'],
+    ['code.inline', 'Atkinson Hyperlegible Mono 14 on grey 100, radius.xs 4px, 1px 4px padding'],
+  ],
+};
+
+const usage = `import { CodeBlock, CodeTabs, InlineCode } from '@humanbase/ui';
+
+<CodeBlock label="Request" code={request} lines={highlightedLines} />
+<CodeTabs label="Request language" examples={[{ language: 'curl', code: curl }, { language: 'Python', code: python }]} />
+<p>Send the genes to <InlineCode>/api/modules/</InlineCode>.</p>`;
+---
+
+<DocsLayout title="Code block" description="Code blocks and inline code: anatomy, the five syntax colors, patterns, copying and accessibility.">
+  <Intro
+    lead="Code blocks show requests, responses and file formats exactly as people will type or receive them. They are for researchers who script against the HumanBase API, so everything in them can be copied and run as is."
+    status="Updated October 16, 2026 · Component: Code Block (on the API Documentation page, used 93 times), Inline code"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Copy exactly what runs', text: 'The Copy button copies the code only: no label, no prompt symbols, no line numbers.' },
+        { title: 'Five colors, one meaning each', text: 'Syntax colors come from the system palette. Red is never used, because red means something went wrong.' },
+        { title: 'Light, like the page', text: 'Grey 50 with a 1px border. No dark blocks, which glare against white pages and break the reading rhythm.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Anatomy" lead="A request for the network around IL1B. Every API example on the documentation page uses this component.">
+    <div class="anatomy">
+      <CodeSample label="Request: the network around IL1B" code={samples.networkRequest} lang="bash" />
+      <ol class="legend">
+        {legend.map((item) => <li><h3>{item.title}</h3><p>{item.text}</p></li>)}
+      </ol>
+    </div>
+  </DocSection>
+
+  <DocSection title="Syntax colors" lead="Five colors from the palette. Weight and style separate roles that share a color, so the code still reads in grey scale.">
+    <DocTable caption="Syntax color roles" columns={['Role', 'Sample', 'Color', 'On grey 50']} widths={['284px', '284px', '284px']}>
+      {
+        syntaxRoles.map((row) => (
+          <tr>
+            <th scope="row">{row.role}</th>
+            <td><code class="syntax-sample">{row.sample.map((part) => (part.className ? <span class={part.className}>{part.text}</span> : part.text))}</code></td>
+            <td>{row.color}</td>
+            <td><code>{row.contrast}</code></td>
+          </tr>
+        ))
+      }
+    </DocTable>
+    <p class="footnote">Previously the blocks used ten colors, including red for flags and purple, teal and magenta outside the palette. All 93 instances were remapped to these five.</p>
+  </DocSection>
+
+  <DocSection title="Patterns" lead="How code appears in the docs and in the product.">
+    <section class="pattern" aria-labelledby="request-response">
+      <h3 id="request-response">A request, then the shape of its response</h3>
+      <CodeSample label="Request" code={samples.jobRequest} lang="bash" />
+      <CodeSample label="Response shape" code={samples.jobResponse} lang="json" />
+    </section>
+    <section class="pattern" aria-labelledby="languages">
+      <h3 id="languages">The same request in several languages</h3>
+      <CodeTabs client:visible label="Request language" examples={languages} defaultLanguage="Python" />
+      <p class="caption">The language choice is remembered in this browser and applies to every block on the page.</p>
+    </section>
+    <section class="pattern" aria-labelledby="file-format">
+      <h3 id="file-format">In the product: an expected file format</h3>
+      <p class="pattern-lead">Shown under the NetWAS upload field and linked from its error alert, so people can check their file before they submit.</p>
+      <CodeSample label="NetWAS input: tab-separated, one gene per row" code={samples.fileFormat} lang="text" />
+    </section>
+  </DocSection>
+
+  <DocSection title="Inline code" lead="For code inside a sentence: endpoints, parameters, field names and file names. Not for gene symbols, which are words in their own right.">
+    <div class="inline-example">
+      <p>Send the genes to <InlineCode>/api/modules/</InlineCode> as <InlineCode>{'{"entrez": [3553, 7124]}'}</InlineCode> and read <InlineCode>queue_position</InlineCode> to show progress.</p>
+      <p>Upload <InlineCode>bmi_gwas_2012.txt</InlineCode> with columns <InlineCode>gene</InlineCode> and <InlineCode>p</InlineCode>.</p>
+    </div>
+    <p class="caption">Atkinson Hyperlegible Mono 14 on grey 100, 4px corners, 4px side padding. It sits on the text baseline and never wraps mid-token.</p>
+  </DocSection>
+
+  <DocSection title="Behavior and accessibility" lead="Copying should be quick and certain.">
+    <div class="copy-states">
+      <CopyButton text={samples.networkRequest} label="Copy state example" />
+      <CopyButton text={samples.networkRequest} label="Hover state example" data-state="hover" />
+      <CopyButton text={samples.networkRequest} label="Copied state example" data-state="copied" />
+      <p>Copied lasts 2 seconds and is announced: “Request copied”. No toast; the change happens where people are looking.</p>
+    </div>
+    <DocTable caption="Code block behavior" columns={['Rule', 'Detail']} widths={['324px']}>
+      {tables.behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <ul class="pairs">
+      <li class="pair pair-do">
+        <div class="pair-stage" aria-hidden="true">
+          <code class="mini"><span class="syntax-command">curl</span> <span class="syntax-flag">-X</span> <span class="syntax-command">GET</span> <span class="syntax-string">"…/networks/"</span></code>
+        </div>
+        <h3>Do. Use the palette</h3>
+        <p>Flags in grey; nothing looks like an error.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage" aria-hidden="true">
+          <code class="mini"><span class="wrong-command">curl</span> <span class="wrong-flag">-X</span> <span class="wrong-command">GET</span> <span class="wrong-string">"…/networks/"</span></code>
+        </div>
+        <h3>Don’t. Color flags red</h3>
+        <p>Red -X and -H read as mistakes in the command.</p>
+      </li>
+      <li class="pair pair-do">
+        <div class="pair-stage" aria-hidden="true">
+          <code class="mini">"slug": <span class="syntax-type">string</span></code>
+        </div>
+        <h3>Do. Keep blocks light</h3>
+        <p>Grey 50 sits calmly on the white page.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage" aria-hidden="true">
+          <code class="mini mini-dark">"slug": <span class="wrong-type">string</span></code>
+        </div>
+        <h3>Don’t. Drop in a dark block</h3>
+        <p>A dark slab glares on a light page and pulls focus from the text around it.</p>
+      </li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Code block tokens and values" columns={['Token', 'Value']} widths={['404px']}>
+      {tables.specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the component in code">
+    <ul>
+      <li><code>CodeBlock</code> is a figure named by its label, with the code in a <code>pre</code>. When the code is longer or wider than the block, the <code>pre</code> becomes a labelled region in the Tab order so arrow keys can scroll it.</li>
+      <li>Highlighting happens at build time: the docs turn Shiki’s output into the five syntax roles and pass them as <code>lines</code>. Without <code>lines</code>, the code shows in ink.</li>
+      <li><code>CodeTabs</code> remembers the chosen language in this browser and switches every set of tabs on the page together.</li>
+    </ul>
+    <CodeSample label="Usage" code={usage} lang="tsx" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .anatomy {
+    display: grid;
+    grid-template-columns: minmax(0, 1003px) 340px;
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .legend {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: part;
+  }
+
+  .legend li {
+    display: grid;
+    grid-template-columns: 21px minmax(0, 1fr);
+    column-gap: var(--space-3);
+    counter-increment: part;
+  }
+
+  .legend li::before {
+    grid-row: span 2;
+    block-size: 20px;
+    font: var(--docs-small-strong);
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--text-on-brand);
+    text-align: center;
+    content: counter(part);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+    padding-block: 2px;
+  }
+
+  .legend h3 {
+    font: var(--docs-small-strong);
+    font-size: 15px;
+  }
+
+  .legend p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .syntax-sample {
+    display: inline-block;
+    padding: var(--space-1) 10px;
+    font-size: 15px;
+    line-height: 20px;
+    background: var(--surface-subtle);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+  }
+
+  .footnote,
+  .caption {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .footnote {
+    color: var(--text-muted);
+  }
+
+  .pattern {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .pattern + .pattern {
+    margin-block-start: var(--space-10);
+  }
+
+  .pattern h3 {
+    font: 600 20px/1.3 Cabin, sans-serif;
+  }
+
+  .pattern-lead {
+    font: var(--docs-small);
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+
+  .inline-example {
+    display: grid;
+    gap: var(--space-4);
+    padding: 28px var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .copy-states {
+    display: flex;
+    gap: var(--space-8);
+    align-items: center;
+    margin-block-end: var(--space-6);
+    padding: var(--space-6) var(--space-8);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .copy-states p {
+    font: var(--docs-small);
+    font-size: 15px;
+    color: var(--text-secondary);
+  }
+
+  .pair-stage {
+    padding: var(--space-5) var(--space-4);
+    background: var(--surface-sunken);
+    border-radius: var(--radius-md);
+  }
+
+  .mini {
+    display: block;
+    padding: 14px;
+    font: var(--type-code-sm);
+    font-size: 14px;
+    line-height: 18px;
+    color: var(--syntax-text);
+    background: var(--surface-subtle);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .mini-dark {
+    color: var(--color-grey-200);
+    background: var(--surface-inverse);
+    border-color: var(--surface-inverse);
+  }
+
+  .wrong-command {
+    color: var(--color-info-700);
+  }
+
+  .wrong-flag {
+    color: var(--color-error-700);
+  }
+
+  .wrong-string {
+    color: var(--color-emerald-600);
+  }
+
+  .wrong-type {
+    color: var(--color-yellow-300);
+  }
+
+  @media (width < 64rem) {
+    .anatomy {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .copy-states {
+      flex-wrap: wrap;
+    }
+  }
+</style>
