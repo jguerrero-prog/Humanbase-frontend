@@ -90,6 +90,16 @@
   --space-24: 96px;
   --space-32: 128px;
   --space-0-5: 2px;
+  --layout-margin-mobile: var(--space-4);
+  --layout-margin-tablet: var(--space-8);
+  --layout-margin-desktop: var(--space-16);
+  --layout-gutter: var(--space-6);
+  --layout-content-max: 1600px;
+  --layout-text-max: 720px;
+  --layout-topbar-height: 64px;
+  --layout-target-min: 24px;
+  --layout-row-comfortable: 48px;
+  --layout-row-compact: 36px;
   --radius-none: 0;
   --radius-2xs: 2px;
   --radius-xs: 4px;
