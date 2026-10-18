@@ -7,3 +7,4 @@ export { GeneService } from './genes/GeneService';
 export { HumanBaseProvider, useHumanBase } from './react/HumanBaseProvider';
 export { useGene } from './react/useGene';
 export { VariantFileCheck, type FileCheckResult, type FileProblem, type InputKind, type VariantModel } from './jobs/VariantFileCheck';
+export { JobHistory, type JobEntry, type JobState } from './jobs/JobHistory';

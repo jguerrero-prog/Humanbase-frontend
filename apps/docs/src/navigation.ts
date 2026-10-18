@@ -80,7 +80,7 @@ export const navigation: NavSection[] = [
       { label: 'Results layout' },
       { label: 'Gene search and matching', href: '/ui-library/gene-search-and-matching/' },
       { label: 'Job submission', href: '/ui-library/job-submission/' },
-      { label: 'Job status and queue' },
+      { label: 'Job status and queue', href: '/ui-library/job-status-and-queue/' },
       { label: 'Network graph' },
       { label: 'Variant effect results' },
       { label: 'Genome browser' },
