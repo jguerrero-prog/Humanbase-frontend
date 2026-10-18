@@ -6,6 +6,8 @@ import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import Pair from '../../components/docs/Pair.astro';
+import PairList from '../../components/docs/PairList.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const act = (label: string) => ({ label, onSelect: () => {} });
@@ -238,30 +240,22 @@ toasts.update(id, { tone: 'success', message: 'NetWAS job submitted', action: { 
   </DocSection>
 
   <DocSection title="Do and don’t">
-    <ul class="pairs">
-      <li class="pair pair-do">
-        <div class="pair-stage"><Alert tone="error" title={fileError.title}>NetWAS needs a column named p or pvalue.</Alert></div>
-        <h3>Do. Keep errors next to the problem</h3>
-        <p>An inline alert stays until the file is fixed.</p>
-      </li>
-      <li class="pair pair-dont">
-        <div class="pair-stage"><Toast tone="error" message="Invalid file format" /></div>
-        <h3>Don’t. Put a fixable error in a toast</h3>
-        <p>It disappears before people can read and act on it.</p>
-      </li>
-      <li class="pair pair-do">
-        <div class="pair-stage"><Alert tone="warning" title={olderData.title} /></div>
-        <h3>Do. Mark the type with icon and title</h3>
-        <p>The icon and words carry the meaning; the fill supports it.</p>
-      </li>
-      <li class="pair pair-dont">
-        <figure class="pair-stage" aria-hidden="true">
+    <div class="message-pairs">
+      <PairList>
+        <Pair kind="do" title="Do. Keep errors next to the problem" text="An inline alert stays until the file is fixed.">
+          <Alert tone="error" title={fileError.title}>NetWAS needs a column named p or pvalue.</Alert>
+        </Pair>
+        <Pair kind="dont" title="Don’t. Put a fixable error in a toast" text="It disappears before people can read and act on it.">
+          <Toast tone="error" message="Invalid file format" />
+        </Pair>
+        <Pair kind="do" title="Do. Mark the type with icon and title" text="The icon and words carry the meaning; the fill supports it.">
+          <Alert tone="warning" title={olderData.title} />
+        </Pair>
+        <Pair kind="dont" title="Don’t. Rely on a colored edge" text="A colored stripe alone doesn’t say what kind of message it is." mock>
           <p class="mock-edge">You are viewing GIANT v1 results</p>
-        </figure>
-        <h3>Don’t. Rely on a colored edge</h3>
-        <p>A colored stripe alone doesn’t say what kind of message it is.</p>
-      </li>
-    </ul>
+        </Pair>
+      </PairList>
+    </div>
   </DocSection>
 
   <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
@@ -508,12 +502,8 @@ toasts.update(id, { tone: 'success', message: 'NetWAS job submitted', action: { 
     border-color: var(--status-error-border);
   }
 
-  .pair-stage {
-    display: grid;
-    margin: 0;
-    padding: var(--space-6) var(--space-4);
-    background: var(--surface-subtle);
-    border-radius: var(--radius-md);
+  .message-pairs :global(.pair-stage) {
+    padding-inline: var(--space-4);
   }
 
   .mock-edge {

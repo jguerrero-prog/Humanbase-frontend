@@ -1,0 +1,18 @@
+.disclosure {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  block-size: 32px;
+  padding: 0 var(--space-2) 0 var(--space-1);
+  font: 700 15px/1.4 Lato, sans-serif;
+  color: var(--text-link);
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.disclosure:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}

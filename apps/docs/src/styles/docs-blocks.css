@@ -405,7 +405,7 @@
 
 .pairs {
   display: grid;
-  grid-template-columns: repeat(var(--columns, 4), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--pair-columns, 4), minmax(0, 1fr));
   gap: var(--space-6);
   margin: 0;
   padding: 0;
@@ -418,16 +418,25 @@
   gap: var(--space-3);
 }
 
-.pair::after {
-  order: 1;
-  block-size: var(--space-1);
-  content: "";
-  background: currentcolor;
+.pair-stage {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-6) var(--space-5);
+  background: var(--surface-subtle);
+  border-radius: var(--radius-md);
 }
 
-.pair h3,
-.pair > p {
-  order: 2;
+.pair h3 {
+  padding-block-start: var(--space-3);
+  font: var(--type-label);
+  border-block-start: var(--space-1) solid currentcolor;
+}
+
+.pair p {
+  font: var(--docs-small);
+  color: var(--text-secondary);
 }
 
 .pair-do {
@@ -438,20 +447,11 @@
   color: var(--status-error-fg);
 }
 
-.pair h3 {
-  font: var(--type-label);
-}
-
-.pair > p {
-  font: var(--docs-small);
-  color: var(--text-secondary);
-}
-
 @media (width < 64rem) {
+  .pairs,
   .key-rules,
   .card-grid,
   .checks,
-  .pairs,
   .do-dont {
     grid-template-columns: minmax(0, 1fr);
   }

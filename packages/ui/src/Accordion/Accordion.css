@@ -1,0 +1,104 @@
+.accordion {
+  --accordion-pad-start: var(--space-4);
+  --accordion-pad-end: var(--space-3);
+  --accordion-pad-block: 14px;
+  --accordion-title: 700 16px/24px "Lato", sans-serif;
+  --accordion-summary: var(--type-body-sm);
+  --accordion-body: var(--type-body);
+  --accordion-pad-bottom: var(--space-5);
+
+  border-block-start: var(--border-width-1) solid var(--border-subtle);
+}
+
+.accordion-compact {
+  --accordion-pad-start: var(--space-3);
+  --accordion-pad-end: var(--space-2);
+  --accordion-pad-block: 10px;
+  --accordion-title: 700 14px/20px "Lato", sans-serif;
+  --accordion-summary: var(--type-caption);
+  --accordion-body: var(--type-body-sm);
+  --accordion-pad-bottom: var(--space-4);
+}
+
+.accordion-item {
+  border-block-end: var(--border-width-1) solid var(--border-subtle);
+}
+
+.accordion-heading {
+  font: inherit;
+  letter-spacing: normal;
+}
+
+.accordion-header {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  inline-size: 100%;
+  padding: var(--accordion-pad-block) var(--accordion-pad-end) var(--accordion-pad-block) var(--accordion-pad-start);
+  color: var(--text-default);
+  text-align: start;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.accordion-header:hover,
+.accordion-header[data-state="hover"] {
+  background: var(--surface-subtle);
+  border-radius: 0;
+}
+
+.accordion-header[data-state="focus"] {
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.accordion-header .icon {
+  flex: none;
+}
+
+.accordion-title {
+  flex: 1;
+  font: var(--accordion-title);
+}
+
+.accordion-summary {
+  font: var(--accordion-summary);
+  color: var(--text-secondary);
+}
+
+.accordion-header[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.accordion-header[aria-disabled="true"],
+.accordion-header[aria-disabled="true"] .accordion-summary {
+  color: var(--text-disabled);
+  background: none;
+}
+
+.accordion-content {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--accordion-pad-start) var(--accordion-pad-bottom);
+  font: var(--accordion-body);
+  color: var(--text-secondary);
+}
+
+.until-found {
+  overflow: clip;
+  transition:
+    block-size 200ms ease-out,
+    opacity 200ms ease-out,
+    content-visibility 200ms ease-out allow-discrete;
+  interpolate-size: allow-keywords;
+}
+
+.until-found[hidden] {
+  display: block;
+  content-visibility: hidden;
+  block-size: 0;
+  opacity: 0;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in;
+}

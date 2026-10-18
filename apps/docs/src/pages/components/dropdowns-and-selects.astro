@@ -14,6 +14,8 @@ import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import Pair from '../../components/docs/Pair.astro';
+import PairList from '../../components/docs/PairList.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const tissues: SelectOption[] = ['Adipose tissue', 'Blood vessel', 'Brain', 'Heart', 'Liver'].map((label) => ({ value: label, label }));
@@ -362,28 +364,22 @@ const usage = `import { ActionMenu, SearchField, Select } from '@humanbase/ui';
   </DocSection>
 
   <DocSection title="Do and don’t">
-    <ul class="pairs">
-      <li class="pair pair-do">
-        <div class="pair-stage"><MenuPanel>{['Adipose tissue', 'Blood vessel', 'Brain', 'Heart'].map((label) => <MenuItem label={label} selected={label === 'Blood vessel'} />)}</MenuPanel></div>
-        <h3>Do. Mark selection with a check</h3>
-        <p>The selected option is bold with a check, and the panel stays white.</p>
-      </li>
-      <li class="pair pair-dont">
-        <div class="pair-stage"><MenuPanel>{['Adipose tissue', 'Blood vessel', 'Brain', 'Heart'].map((label) => <MenuItem label={label} className={label === 'Blood vessel' ? 'bad-fill' : undefined} />)}</MenuPanel></div>
-        <h3>Don’t. Fill the selected option green</h3>
-        <p>A colored fill reads like a hover or an error and fails for people who can’t tell the colors apart.</p>
-      </li>
-      <li class="pair pair-do">
-        <div class="pair-stage"><MenuPanel>{['MAGE (current)', 'GIANT v1'].map((label) => <MenuItem label={label} />)}</MenuPanel></div>
-        <h3>Do. Use a select for one value</h3>
-        <p>Keep commands in an action menu and values in a select.</p>
-      </li>
-      <li class="pair pair-dont">
-        <div class="pair-stage"><MenuPanel>{['MAGE (current)', 'GIANT v1', 'Download results'].map((label) => <MenuItem label={label} />)}</MenuPanel></div>
-        <h3>Don’t. Mix commands into a value list</h3>
-        <p>“Download results” in a version list changes the page when people expect to pick a value.</p>
-      </li>
-    </ul>
+    <div class="menu-pairs">
+      <PairList>
+        <Pair kind="do" title="Do. Mark selection with a check" text="The selected option is bold with a check, and the panel stays white.">
+          <MenuPanel>{['Adipose tissue', 'Blood vessel', 'Brain', 'Heart'].map((label) => <MenuItem label={label} selected={label === 'Blood vessel'} />)}</MenuPanel>
+        </Pair>
+        <Pair kind="dont" title="Don’t. Fill the selected option green" text="A colored fill reads like a hover or an error and fails for people who can’t tell the colors apart.">
+          <MenuPanel>{['Adipose tissue', 'Blood vessel', 'Brain', 'Heart'].map((label) => <MenuItem label={label} className={label === 'Blood vessel' ? 'bad-fill' : undefined} />)}</MenuPanel>
+        </Pair>
+        <Pair kind="do" title="Do. Use a select for one value" text="Keep commands in an action menu and values in a select.">
+          <MenuPanel>{['MAGE (current)', 'GIANT v1'].map((label) => <MenuItem label={label} />)}</MenuPanel>
+        </Pair>
+        <Pair kind="dont" title="Don’t. Mix commands into a value list" text="“Download results” in a version list changes the page when people expect to pick a value.">
+          <MenuPanel>{['MAGE (current)', 'GIANT v1', 'Download results'].map((label) => <MenuItem label={label} />)}</MenuPanel>
+        </Pair>
+      </PairList>
+    </div>
   </DocSection>
 
   <DocSection title="Specs and tokens" lead="Hard-coded for now, using the foundation tokens. They will become Figma variables once the first product pages are designed.">
@@ -672,19 +668,20 @@ const usage = `import { ActionMenu, SearchField, Select } from '@humanbase/ui';
     min-block-size: 540px;
   }
 
-  .pair-stage {
+  .menu-pairs :global(.pair-stage) {
+    display: block;
     block-size: 230px;
     padding: 10px var(--space-4) 0;
     overflow: hidden;
-    background: var(--surface-subtle);
+    border-radius: 0;
   }
 
-  .pair-stage > :global(.menu-panel) {
+  .menu-pairs :global(.menu-panel) {
     inline-size: 240px;
     min-inline-size: 0;
   }
 
-  .pair-dont :global(.bad-fill) {
+  .menu-pairs :global(.bad-fill) {
     color: var(--text-default);
     background: var(--color-emerald-50);
   }
