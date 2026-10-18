@@ -68,7 +68,7 @@ export const navigation: NavSection[] = [
       { label: 'Tables', href: '/components/tables/' },
       { label: 'Alerts and toasts', href: '/components/alerts-and-toasts/' },
       { label: 'Modals and drawers', href: '/components/modals-and-drawers/' },
-      { label: 'Tooltips' },
+      { label: 'Tooltips', href: '/components/tooltips/' },
       { label: 'Navigation and breadcrumbs' },
       { label: 'Pagination', href: '/components/pagination/' },
       { label: 'Navigation and breadcrumbs', href: '/components/navigation-and-breadcrumbs/' },

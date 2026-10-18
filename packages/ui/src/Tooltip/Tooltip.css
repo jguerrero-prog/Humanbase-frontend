@@ -1,0 +1,132 @@
+.tooltip-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.tooltip {
+  --tooltip-gap: calc(100% + var(--space-2));
+  --tooltip-arrow: 6px;
+
+  position: absolute;
+  z-index: var(--z-tooltip);
+  inline-size: max-content;
+  max-inline-size: 280px;
+  padding: var(--space-2) var(--space-3);
+  font: var(--type-body-sm);
+  color: var(--text-on-brand);
+  background: var(--surface-inverse);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-elevation-2);
+  animation: tooltip-fade 100ms linear;
+}
+
+.tooltip[hidden] {
+  display: none;
+}
+
+/* ::after draws the arrow; ::before bridges the gap so the pointer can move onto the tooltip. */
+.tooltip::before,
+.tooltip::after {
+  position: absolute;
+  content: "";
+}
+
+.tooltip::after {
+  border: var(--tooltip-arrow) solid transparent;
+}
+
+.tooltip-top,
+.tooltip-bottom {
+  inset-inline-start: 50%;
+  translate: -50% 0;
+}
+
+.tooltip-top {
+  inset-block-end: var(--tooltip-gap);
+}
+
+.tooltip-bottom {
+  inset-block-start: var(--tooltip-gap);
+}
+
+.tooltip-left,
+.tooltip-right {
+  inset-block-start: 50%;
+  translate: 0 -50%;
+}
+
+.tooltip-left {
+  inset-inline-end: var(--tooltip-gap);
+}
+
+.tooltip-right {
+  inset-inline-start: var(--tooltip-gap);
+}
+
+.tooltip-top::before,
+.tooltip-bottom::before {
+  inset-inline: 0;
+  block-size: var(--space-2);
+}
+
+.tooltip-left::before,
+.tooltip-right::before {
+  inset-block: 0;
+  inline-size: var(--space-2);
+}
+
+.tooltip-top::before,
+.tooltip-top::after {
+  inset-block-start: 100%;
+}
+
+.tooltip-bottom::before,
+.tooltip-bottom::after {
+  inset-block-end: 100%;
+}
+
+.tooltip-left::before,
+.tooltip-left::after {
+  inset-inline-start: 100%;
+}
+
+.tooltip-right::before,
+.tooltip-right::after {
+  inset-inline-end: 100%;
+}
+
+.tooltip-top::after,
+.tooltip-bottom::after {
+  inset-inline-start: calc(50% - var(--tooltip-arrow));
+}
+
+.tooltip-left::after,
+.tooltip-right::after {
+  inset-block-start: calc(50% - var(--tooltip-arrow));
+}
+
+.tooltip-top::after {
+  border-block-start-color: var(--surface-inverse);
+  border-block-end-width: 0;
+}
+
+.tooltip-bottom::after {
+  border-block-end-color: var(--surface-inverse);
+  border-block-start-width: 0;
+}
+
+.tooltip-left::after {
+  border-inline-start-color: var(--surface-inverse);
+  border-inline-end-width: 0;
+}
+
+.tooltip-right::after {
+  border-inline-end-color: var(--surface-inverse);
+  border-inline-start-width: 0;
+}
+
+@keyframes tooltip-fade {
+  from {
+    opacity: 0;
+  }
+}
