@@ -1,5 +1,8 @@
 /* Generated from src/*.tokens.json by build.mjs. Edit the token files, then run pnpm tokens. */
 :root {
+  --font-family-heading: Cabin, sans-serif;
+  --font-family-body: Lato, sans-serif;
+  --font-family-mono: "Atkinson Hyperlegible Mono", monospace;
   --color-emerald-50: #E7F1EB;
   --color-emerald-100: #C6E0CF;
   --color-emerald-200: #9CCAAE;

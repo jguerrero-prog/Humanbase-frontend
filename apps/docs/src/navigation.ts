@@ -23,7 +23,7 @@ export const navigation: NavSection[] = [
   {
     heading: 'Foundations',
     items: [
-      { label: 'Typography' },
+      { label: 'Typography', href: '/foundations/typography/' },
       { label: 'Color palette' },
       { label: 'Iconography', href: '/foundations/iconography/' },
       { label: 'Spacing and layout grid' },

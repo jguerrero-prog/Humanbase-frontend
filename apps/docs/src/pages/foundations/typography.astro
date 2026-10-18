@@ -1,0 +1,613 @@
+---
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import { typeScale } from '../../data/typeScale';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const samples: Record<string, string> = {
+  display: 'Trace gene function',
+  h1: 'Tissue-specific networks',
+  h2: 'Functionally related genes',
+  h3: 'Biological process',
+  h4: 'Evidence for this link',
+  lead: 'Predictions built from 7,463 public datasets.',
+  'body-lg': 'Each link shows how likely two genes share a function in this tissue.',
+  body: 'Each link shows how likely two genes share a function in this tissue.',
+  'body-sm': 'Updated with MAGE networks, June 2026.',
+  caption: 'Source: GEO, BioGRID, IntAct',
+  label: 'Search',
+  'label-sm': 'Show 20 more',
+  eyebrow: 'Network analysis',
+  code: 'curl "https://humanbase.io/api/genes/3553/"',
+  'code-sm': 'ENSG00000125538 IL1B',
+};
+
+const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789';
+
+const typefaces = [
+  {
+    name: 'Cabin',
+    role: 'Headings and brand',
+    family: 'var(--font-family-heading)',
+    aaWeight: 500,
+    characters: `${characters} α β γ × ⁻ ≤ ≥ % ( ) [ ]`,
+    text: 'A humanist sans with rounded, open letters that stay friendly at large sizes. It gives HumanBase its voice.',
+    weights: [
+      { weight: 400, label: 'Regular 400', use: 'Hero title' },
+      { weight: 500, label: 'Medium 500', use: 'Page and section titles' },
+      { weight: 600, label: 'SemiBold 600', use: 'Card titles, small headings' },
+      { weight: 700, label: 'Bold 700', use: 'Rare emphasis in headings' },
+    ],
+  },
+  {
+    name: 'Lato',
+    role: 'Body, labels and data',
+    family: 'var(--font-family-body)',
+    aaWeight: 400,
+    characters: `${characters} α β γ × ⁻ ≤ ≥ % ( ) [ ]`,
+    text: 'A sans built for screens, with clear numbers and generous spacing. It stays readable in long help text and in dense tables.',
+    weights: [
+      { weight: 400, label: 'Regular 400', use: 'Body text, table cells' },
+      { weight: 400, italic: true, label: 'Italic 400', use: 'Gene symbols, species names' },
+      { weight: 700, label: 'Bold 700', use: 'Labels, buttons, emphasis' },
+    ],
+  },
+];
+
+const monoWeights = [
+  { sample: 'ENSG00000125538', weight: 400, label: 'Regular 400', use: 'IDs in tables and code' },
+  { sample: 'ATGGCAGAAGTACCTGAG', weight: 400, label: 'Regular 400', use: 'DNA and protein sequences' },
+  { sample: 'GET /api/genes/3553/', weight: 700, label: 'Bold 700', use: 'Emphasis inside code' },
+];
+
+const lookAlikes = [
+  ['0 O o', 'zero, O'],
+  ['1 l I', 'one, l, I'],
+  ['5 S', 'five, S'],
+  ['2 Z', 'two, Z'],
+];
+
+const textColors = [
+  { title: 'Primary text', color: 'var(--text-default)', token: '#1A1A1A · color.text.default', use: '17.4:1 on white · Headings, body text' },
+  { title: 'Secondary text', color: 'var(--text-secondary)', token: '#4A4A4A · color.text.secondary', use: '8.9:1 on white · Descriptions, long help text' },
+  { title: 'Muted text', color: 'var(--text-muted)', token: '#6B6B6B · color.text.muted', use: '5.3:1 on white · Captions, metadata, timestamps' },
+  { title: 'Link', color: 'var(--text-link)', token: '#11713C · color.action.primary', use: '6.1:1 on white · Text links, always underlined', link: true },
+];
+
+const relatedGenes = [
+  ['IL1R1', 'interleukin 1 receptor type 1', '1.00'],
+  ['PLAUR', 'plasminogen activator, urokinase receptor', '0.97'],
+  ['PTGS2', 'prostaglandin-endoperoxide synthase 2', '0.96'],
+];
+
+const specs = (type: (typeof typeScale)[number]) =>
+  `Line height ${Math.round(type.lineHeight * 100)}% (${type.lineHeightPx}px)${type.tracking ? ` · Letter spacing ${type.trackingPercent}` : ''}`;
+---
+
+<DocsLayout title="Typography" description="Cabin, Lato and Atkinson Hyperlegible Mono: typefaces, the type scale, text colors and scientific conventions.">
+  <Intro
+    lead="HumanBase uses three typefaces. Cabin, a humanist sans with soft, open shapes, sets headings and the brand voice. Lato, built for long reading on screens, sets body text, labels and data. Atkinson Hyperlegible Mono sets code, IDs and sequences, where every character must be unmistakable. One shared scale ties them together so every page, from the homepage to a dense results table, has the same rhythm."
+    status="Updated October 16, 2026 · All three typefaces are free under the SIL Open Font License and available in Figma and on Google Fonts"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Cabin speaks, Lato explains', text: 'Cabin for titles and headings. Lato for everything people read, scan or compare.' },
+        { title: 'Use the scale, not sizes', text: 'Pick a named style from the scale. Never set a one-off size or weight.' },
+        { title: 'Readable first', text: 'Body text is 16px or larger, lines stay under about 75 characters, and line height is at least 1.5.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Typefaces" lead="Three families, each with a clear job. The weights listed are the only ones in use." spacing="loose">
+    <div class="typefaces">
+      {
+        typefaces.map((face) => (
+          <article class="typeface" style={`--face: ${face.family}; --aa-weight: ${face.aaWeight}`}>
+            <header class="typeface-top">
+              <span class="typeface-aa" aria-hidden="true">Aa</span>
+              <div>
+                <h3>{face.name}</h3>
+                <p>{face.role}</p>
+              </div>
+            </header>
+            <p class="typeface-characters">{face.characters}</p>
+            <p class="typeface-text">{face.text}</p>
+            <ul class="typeface-weights">
+              {face.weights.map((row) => (
+                <li>
+                  <span class="typeface-sample" style={`font-weight: ${row.weight}${'italic' in row ? '; font-style: italic' : ''}`}>Gene networks</span>
+                  <strong>{row.label}</strong>
+                  <span>{row.use}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+      <article class="typeface typeface-mono" style="--face: var(--font-family-mono)">
+        <div class="typeface-specimen">
+          <header class="typeface-top">
+            <span class="typeface-aa" aria-hidden="true">Aa</span>
+            <div>
+              <h3>Atkinson Hyperlegible Mono</h3>
+              <p>Code, IDs and sequences</p>
+            </div>
+          </header>
+          <p class="typeface-characters">{characters} {'{ } [ ] ( ) < > = + - * / _ |'}</p>
+          <p class="typeface-text">A monospace from the Braille Institute, designed so that easily confused characters look different. It keeps code aligned and makes IDs and DNA sequences safe to read and copy.</p>
+        </div>
+        <div class="typeface-details">
+          <h4>Look-alike characters stay distinct</h4>
+          <ul class="look-alikes">
+            {lookAlikes.map(([glyphs, label]) => <li><span class="look-alike-glyphs">{glyphs}</span><span>{label}</span></li>)}
+          </ul>
+          <ul class="typeface-weights">
+            {monoWeights.map((row) => <li><span class="typeface-sample" style={`font-weight: ${row.weight}`}>{row.sample}</span><strong>{row.label}</strong><span>{row.use}</span></li>)}
+          </ul>
+        </div>
+      </article>
+    </div>
+  </DocSection>
+
+  <DocSection title="Type scale" lead="Fifteen styles cover every case. Sizes step down in a steady rhythm so hierarchy is clear at a glance. Line height is shown as a percentage of the font size.">
+    <div class="scale-table">
+      <DocTable caption="Type scale" columns={['Style', 'Sample', 'Specs']} widths={['224px', '859px']}>
+        {
+          typeScale.map((type) => (
+            <tr class="doc-table-spacious">
+              <th scope="row"><span class="scale-name">{type.name}</span><span class="scale-token">{type.token}</span></th>
+              <td class:list={['scale-sample', { 'scale-eyebrow': type.key === 'eyebrow' }]} style={type.style}>{samples[type.key]}</td>
+              <td class="scale-specs">
+                <strong>{type.family} {type.weightName.split(' ')[1]} · {type.size}px</strong>
+                <span>{specs(type)}</span>
+                <span class="scale-use">{type.use}</span>
+              </td>
+            </tr>
+          ))
+        }
+      </DocTable>
+    </div>
+  </DocSection>
+
+  <DocSection title="Text colors" lead="Three greys set the reading order. All pass WCAG AA on white. Links use emerald and are always underlined.">
+    <ul class="color-cards">
+      {
+        textColors.map((card) => (
+          <li>
+            <p class:list={['color-sample', { 'color-sample-link': card.link }]} style={`color: ${card.color}`}>The quick brown fox jumps over the lazy dog.</p>
+            <h3>{card.title}</h3>
+            <p class="color-token">{card.token}</p>
+            <p class="color-use">{card.use}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Scientific text and data" lead="HumanBase is read by scientists, so text follows scientific conventions. These rules keep gene names, numbers and units consistent across every tool and the help docs.">
+    <ul class="science-cards">
+      <li>
+        <h3>Gene symbols</h3>
+        <p class="science-sample"><i>IL1B</i> <span class="science-aside">gene, italic</span></p>
+        <p>Human gene symbols are uppercase and italic, following HGNC. The protein they make is written upright: IL-1β.</p>
+      </li>
+      <li>
+        <h3>Species names</h3>
+        <p class="science-sample"><i>Homo sapiens</i> · <i>Mus musculus</i></p>
+        <p>Latin species names are italic. Common names (human, mouse) are not.</p>
+      </li>
+      <li>
+        <h3>Identifiers</h3>
+        <p class="science-sample science-mono">Entrez 3553 · GO:0006954</p>
+        <p>IDs keep their exact format and prefix. Never abbreviate or reformat them. Set them in Atkinson Hyperlegible Mono in tables and code; in running text, Lato is fine.</p>
+      </li>
+      <li>
+        <h3>Scientific notation</h3>
+        <p class="science-sample">p = 1.2 × 10⁻⁵</p>
+        <p>Use × and a superscript exponent, not 1.2e-5. Use a true minus sign (−), not a hyphen.</p>
+      </li>
+      <li>
+        <h3>Numbers in tables</h3>
+        <p class="science-sample science-tabular">0.94 1.00 0.87</p>
+        <p>Use tabular figures so digits line up, and right-align numeric columns. Keep the same number of decimals within a column.</p>
+      </li>
+      <li>
+        <h3>Units and large numbers</h3>
+        <p class="science-sample">2,000 bp · 7,463 datasets</p>
+        <p>Put a space between a number and its unit. Use commas in numbers of 1,000 or more.</p>
+      </li>
+    </ul>
+  </DocSection>
+
+  <section class="readability" aria-labelledby="readability-heading">
+    <h2 id="readability-heading">Readability and accessibility</h2>
+    <KeyRules
+      size="medium"
+      rules={[
+        { title: 'Line length', text: 'Keep body text between 45 and 75 characters per line, about 720px at 16px. Long help text should never run the full page width.' },
+        { title: 'Minimum sizes', text: '16px for body text and inputs, 14px for dense tables, 13px only for captions. Nothing smaller.' },
+        { title: 'Spacing', text: 'Line height 1.5 or more for body text. Paragraph spacing at least 1.5 times the font size. Text must survive 200% zoom without overlapping.' },
+        { title: 'Emphasis', text: 'Use Bold for emphasis, not color alone. Avoid all caps except eyebrows and short labels. Don’t underline anything that isn’t a link.' },
+      ]}
+    />
+  </section>
+
+  <DocSection title="The scale in use" lead="A gene result card built only from styles on this page.">
+    <figure class="gene-card-figure">
+      <div class="gene-card" aria-hidden="true">
+        <p class="gene-card-eyebrow">Network analysis</p>
+        <p class="gene-card-title"><i>IL1B</i> interleukin 1 beta</p>
+        <p class="gene-card-text">Top functional partners of IL1B in the global network, ranked by how likely each pair shares a biological process.</p>
+        <table class="gene-card-table">
+          <thead><tr><th>Gene</th><th>Name</th><th>Score</th></tr></thead>
+          <tbody>{relatedGenes.map(([gene, name, score]) => <tr><td><i>{gene}</i></td><td>{name}</td><td>{score}</td></tr>)}</tbody>
+        </table>
+        <p class="gene-card-source">Source: GIANT global network. Scores range from 0 to 1.</p>
+        <p class="gene-card-link">View all 15 related genes</p>
+      </div>
+      <figcaption class="visually-hidden">An IL1B result card using the eyebrow, Heading 3, body, body small, caption and label styles.</figcaption>
+    </figure>
+  </DocSection>
+
+  <DocSection title="Type tokens" lead="How the styles are named in code. Each token bundles family, weight, size, line height and letter spacing.">
+    <div class="token-table">
+      <DocTable caption="Type tokens" columns={['Token', 'Family', 'Weight', 'Size / line height', 'Letter spacing']} widths={['284px', '224px', '144px', '244px']}>
+        {
+          typeScale.map((type) => (
+            <tr>
+              <td>{type.token}</td>
+              <td>{type.family}</td>
+              <td>{type.weightName}</td>
+              <td>{type.size}px / {type.lineHeightPx}px</td>
+              <td>{type.trackingPercent}</td>
+            </tr>
+          ))
+        }
+      </DocTable>
+    </div>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .typefaces {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-6);
+    align-items: start;
+  }
+
+  .typeface {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .typeface-mono {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-12);
+  }
+
+  .typeface-specimen,
+  .typeface-details {
+    display: grid;
+    align-content: start;
+    gap: var(--space-5);
+  }
+
+  .typeface-details {
+    gap: 0;
+  }
+
+  .typeface-top {
+    display: flex;
+    gap: var(--space-6);
+    align-items: end;
+  }
+
+  .typeface-aa {
+    font: var(--aa-weight, 400) 120px/1 var(--face);
+    color: var(--text-default);
+  }
+
+  .typeface-top h3 {
+    font: 600 32px/1.2 var(--font-family-heading);
+  }
+
+  .typeface-top p {
+    font: 400 16px/1.4 var(--font-family-body);
+    color: var(--text-muted);
+  }
+
+  .typeface-characters {
+    font: 400 18px/1.5 var(--face);
+    white-space: pre-line;
+  }
+
+  .typeface-text {
+    font: var(--type-body);
+    color: var(--text-secondary);
+  }
+
+  .typeface-weights,
+  .look-alikes {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .typeface-weights li {
+    display: grid;
+    grid-template-columns: 260px 130px 1fr;
+    gap: var(--space-4);
+    align-items: center;
+    padding-block: var(--space-3);
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+    border-block-start: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .typeface-mono .typeface-weights li {
+    grid-template-columns: 300px 110px 1fr;
+  }
+
+  .typeface-weights strong {
+    font: var(--type-label-sm);
+    color: var(--text-default);
+  }
+
+  .typeface-sample {
+    font: 400 24px/1.3 var(--face);
+    color: var(--text-default);
+  }
+
+  .typeface-mono .typeface-sample {
+    font-size: 18px;
+  }
+
+  .typeface-details h4 {
+    font: 600 20px/1.3 var(--font-family-heading);
+  }
+
+  .look-alikes {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+    padding-block: var(--space-3) var(--space-5);
+  }
+
+  .look-alikes li {
+    display: grid;
+    gap: var(--space-1);
+    font: var(--type-caption);
+    color: var(--text-muted);
+  }
+
+  .look-alike-glyphs {
+    font: 400 32px/1.2 var(--font-family-mono);
+    color: var(--text-default);
+  }
+
+  .scale-name,
+  .scale-token {
+    display: block;
+  }
+
+  .scale-name {
+    margin-block-end: var(--space-1);
+    font: var(--type-label);
+    color: var(--text-default);
+  }
+
+  .scale-token,
+  .scale-use {
+    font: var(--type-caption);
+    color: var(--text-muted);
+  }
+
+  .scale-table :global(td.scale-sample) {
+    color: var(--text-default);
+    overflow-wrap: anywhere;
+  }
+
+  .scale-table :global(td.scale-eyebrow) {
+    text-transform: uppercase;
+  }
+
+  .scale-table :global(td.scale-specs) {
+    font: var(--type-caption);
+    vertical-align: middle;
+  }
+
+  .scale-specs {
+    color: var(--text-secondary);
+  }
+
+  .scale-specs strong,
+  .scale-specs span {
+    display: block;
+  }
+
+  .scale-specs strong {
+    margin-block-end: var(--space-1);
+    font: var(--type-label-sm);
+    color: var(--text-default);
+  }
+
+  .scale-specs span + span {
+    margin-block-start: var(--space-1);
+  }
+
+  .color-cards,
+  .science-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+    align-items: start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .color-cards li,
+  .science-cards li {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-6);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .color-sample {
+    font: 400 18px/1.5 var(--font-family-body);
+  }
+
+  .color-sample-link {
+    text-decoration: underline;
+  }
+
+  .color-cards h3 {
+    font: 700 15px/1.4 var(--font-family-body);
+  }
+
+  .color-token {
+    font: var(--type-caption);
+    color: var(--text-muted);
+  }
+
+  .color-use {
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .science-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .science-cards li {
+    gap: var(--space-3);
+  }
+
+  .science-cards h3 {
+    font: 600 20px/1.3 var(--font-family-heading);
+  }
+
+  .science-cards p {
+    font: 400 15px/1.55 var(--font-family-body);
+    color: var(--text-secondary);
+  }
+
+  .science-cards .science-sample {
+    font: 400 24px/1.4 var(--font-family-body);
+    color: var(--text-default);
+  }
+
+  .science-cards .science-mono {
+    font: 400 20px/1.4 var(--font-family-mono);
+  }
+
+  .science-tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .science-aside {
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  .readability {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .readability h2 {
+    font: var(--type-h2);
+    letter-spacing: var(--type-h2-tracking);
+  }
+
+  .readability :global(.key-rules-medium p) {
+    font: var(--type-body);
+  }
+
+  .gene-card-figure {
+    margin: 0;
+  }
+
+  .gene-card {
+    display: grid;
+    gap: var(--space-4);
+    max-inline-size: 760px;
+    padding: var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .gene-card-eyebrow {
+    font: var(--type-eyebrow);
+    letter-spacing: var(--type-eyebrow-tracking);
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .gene-card-title {
+    font: var(--type-h3);
+    letter-spacing: var(--type-h3-tracking);
+  }
+
+  .gene-card-text {
+    font: var(--type-body);
+    color: var(--text-secondary);
+  }
+
+  .gene-card-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .gene-card-table th,
+  .gene-card-table td {
+    padding: 10px var(--space-4) 10px 0;
+    font: var(--type-body-sm);
+    text-align: start;
+    color: var(--text-secondary);
+    border-block-end: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .gene-card-table th {
+    font: var(--type-eyebrow);
+    letter-spacing: var(--type-eyebrow-tracking);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .gene-card-table td:first-child,
+  .gene-card-table td:last-child {
+    color: var(--text-default);
+  }
+
+  .gene-card-table th:first-child {
+    inline-size: 106px;
+  }
+
+  .gene-card-table th:last-child {
+    inline-size: 60px;
+  }
+
+  .gene-card-source {
+    font: var(--type-caption);
+    color: var(--text-muted);
+  }
+
+  .gene-card-link {
+    font: var(--type-label);
+    color: var(--text-link);
+  }
+
+  .token-table :global(td) {
+    color: var(--text-default);
+  }
+</style>
