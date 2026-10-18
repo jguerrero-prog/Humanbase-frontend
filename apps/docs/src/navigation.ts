@@ -71,6 +71,8 @@ export const navigation: NavSection[] = [
       { label: 'Tooltips' },
       { label: 'Navigation and breadcrumbs' },
       { label: 'Pagination', href: '/components/pagination/' },
+      { label: 'Navigation and breadcrumbs', href: '/components/navigation-and-breadcrumbs/' },
+      { label: 'Pagination' },
       { label: 'Badges and tags' },
       { label: 'Code block' },
     ],

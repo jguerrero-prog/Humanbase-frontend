@@ -1,0 +1,1060 @@
+---
+import { Alert, Breadcrumbs, Button, Dialog, Footer, Icon, NavMenu, NavPanelContent, RadioGroup, SegmentedControl, Select, SkipLink, Tabs, TopBar, type NavSection } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NetworkSketch from '../../components/docs/NetworkSketch.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import Pair from '../../components/docs/Pair.astro';
+import PairList from '../../components/docs/PairList.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const sections: NavSection[] = [
+  {
+    label: 'Network analysis',
+    columns: [
+      [
+        {
+          links: [
+            { label: 'Networks', href: '/networks/', description: 'Tissue-specific gene networks, MAGE and GIANT' },
+            { label: 'Modules', href: '/modules/', description: 'Functional modules in large gene lists' },
+            { label: 'NetWAS', href: '/netwas/', description: 'Reprioritize GWAS results with networks' },
+          ],
+        },
+      ],
+    ],
+  },
+  {
+    label: 'Sequence analysis',
+    columns: [
+      [
+        {
+          label: 'Variant effects',
+          links: [
+            { label: 'Sei', href: '/sei/', description: 'Regulatory and chromatin effects' },
+            { label: 'Beluga', href: '/beluga/', description: 'Chromatin effects (2019 model)' },
+            { label: 'Seqweaver', href: '/seqweaver/', description: 'Post-transcriptional effects' },
+            { label: 'ExPecto', href: '/expecto/', description: 'Tissue-specific expression effects' },
+            { label: 'ExPecto SC', href: '/expecto-sc/', description: 'Cell-type-specific expression effects' },
+          ],
+        },
+      ],
+      [
+        { label: 'Sequences', links: [{ label: 'In silico mutagenesis', href: '/ism/', description: 'Regulatory features of a sequence' }] },
+        { label: 'Browsers', links: [{ label: 'ASD Browser', href: '/asd/', description: 'Predicted effects of ASD proband mutations' }] },
+      ],
+    ],
+    footer: { lead: 'Not sure which tool?', link: { label: 'Compare them', href: '/sequence-tools/' } },
+  },
+  {
+    label: 'Data',
+    columns: [
+      [
+        {
+          links: [
+            { label: 'Data sources', href: '/data-sources/', description: 'Datasets behind each network' },
+            { label: 'Downloads', href: '/downloads/', description: 'Networks and models to download' },
+            { label: 'HumanBase API', href: '/api/docs/', description: 'Query HumanBase from code' },
+          ],
+        },
+      ],
+    ],
+  },
+  { label: 'Docs', href: '/docs/' },
+  { label: 'About', href: '/about/' },
+];
+const menuSections = sections.filter((section) => section.columns);
+const jobs = { href: '/jobs/', running: 1 };
+
+const levels = [
+  ['Level 1', 'Section', 'Top bar menu', 'Network analysis, Sequence analysis, Data'],
+  ['Level 2', 'Tool', 'Search or submit', 'Networks, Modules, NetWAS, Sei'],
+  ['Level 3', 'Result', 'Breadcrumbs and tabs', 'IL1B in blood vessel; a job’s results'],
+  ['On the result', 'Settings and details', 'Selects and a drawer', 'Tissue, data version; a clicked gene or edge'],
+];
+const todayPath = ['Home', 'Networks', 'IL1B', 'Blood vessel', 'IL1R1 edge'];
+const proposedPath = [
+  ['Networks', 'page'],
+  ['IL1B in blood vessel', 'page'],
+  ['Tissue: select', 'setting'],
+  ['Version: select', 'setting'],
+  ['IL1R1: drawer', 'setting'],
+];
+
+const todayMenu = [
+  ['Analyses (10 tools in one list)', 'Networks, Modules, Sei, Beluga, Seqweaver, In silico mutagenesis, ExPecto, ExPecto SC, GWAS (NetWAS), ASD Browser'],
+  ['Resources', 'Data sources, Downloads, HumanBase API'],
+  ['Documentation', ''],
+  ['About', ''],
+  ['Mailing list', ''],
+  ['Also: “Select an analysis” on the homepage, and a floating Contact us button', 'Two more ways into the same tools.'],
+];
+const proposedMenu = [
+  ['Network analysis', 'Networks, Modules, NetWAS'],
+  ['Sequence analysis', 'Variant effects: Sei, Beluga, Seqweaver, ExPecto, ExPecto SC. Sequences: In silico mutagenesis. Browsers: ASD Browser. Plus a link to compare the tools.'],
+  ['Data', 'Data sources, Downloads, HumanBase API'],
+  ['Docs', ''],
+  ['About', 'Including the mailing list and contact details'],
+  ['Right side: search, and Jobs with a running count', 'The homepage search uses these same tools, with the same names.'],
+];
+
+const topBarParts = [
+  ['Logo', 'Links home. The only way to reach the homepage, so breadcrumbs never start with Home.'],
+  ['Current section', 'Bold white with a 3px Simons Yellow bar (4.3:1 on emerald). aria-current="true".'],
+  ['Open menu', 'White at 14% behind the item; the chevron flips. Opens on click, not hover.'],
+  ['Search', 'Genes, GO terms and diseases. The same search as the homepage, so there is one way in.'],
+  ['Jobs', 'Shows how many jobs are running. HumanBase has no accounts, so the list holds jobs submitted from this browser; jobs submitted with an email address also get their link by email.'],
+];
+const topBarTags = [32, 213, 378, 906, 1190];
+
+const itemStates = [
+  { title: 'Default', text: 'No fill', props: {} },
+  { title: 'Hover', text: 'White at 12%', props: { 'data-state': 'hover' as const } },
+  { title: 'Current', text: '3px yellow bar', props: { current: true } },
+  { title: 'Open', text: 'White at 14%, chevron up', props: { 'data-state': 'open' as const } },
+  { title: 'Focus', text: '2px white ring with a 2px emerald gap', props: { 'data-state': 'focus' as const } },
+];
+const stateSection: NavSection = { label: 'Network analysis', columns: [[{ links: [] }]] };
+
+const menuRules = [
+  ['Open on click', 'Click, Enter, Space or Down Arrow opens the menu. Hover menus open by accident and close when the pointer slips, which is hard for people with tremor.'],
+  ['One open at a time', 'Opening another section closes the first. With one open, moving the pointer to a neighbor doesn’t switch it.'],
+  ['Close', 'Escape, clicking outside, or choosing a tool. Escape returns focus to the section button.'],
+  ['Links, not commands', 'Each tool is a real link, so it can open in a new tab and be shared.'],
+  ['No icons', 'Seven similar tools would need seven arbitrary icons. Names and a short description scan faster.'],
+  ['Motion', 'Fades in 4px down over 150ms; closes at once. Fade only with reduced motion.'],
+];
+
+const networksCrumbs = [{ label: 'Networks', href: '/networks/' }, { label: 'IL1B in blood vessel' }];
+const crumbVariants = [
+  { title: '2 levels', text: 'A result inside a tool', items: networksCrumbs, compact: false },
+  { title: '3 levels', text: 'One item inside a result, such as a single module', items: [{ label: 'Modules', href: '/modules/' }, { label: 'Autism gene set', href: '/modules/autism/' }, { label: 'Module 3' }], compact: false },
+  { title: 'Phones', text: 'Below 768px: only the parent, as a back link', items: networksCrumbs, compact: true },
+];
+const crumbRules = [
+  'Start at the tool, not Home. The logo already goes home.',
+  'Every step except the last is a link. The last is the current page, in bold ink, with aria-current="page".',
+  'Settings like tissue and data version never appear as steps; they are part of the page’s name, such as “IL1B in blood vessel”.',
+  'Use the same names as the menu and page titles. A breadcrumb never invents a label.',
+  'Links are grey 600 (8.9:1) and underline on hover and focus; separators are 16px chevrons in grey 400, hidden from screen readers.',
+];
+
+const tissues = ['Blood vessel', 'Liver', 'Brain'].map((tissue) => ({ value: tissue, label: tissue }));
+const versions = ['MAGE (current)', 'GIANT v1'].map((version) => ({ value: version, label: version }));
+const resultTabs = [
+  { value: 'network', label: 'Network' },
+  { value: 'genes', label: 'Genes', count: 50 },
+  { value: 'terms', label: 'Enriched terms', count: 48 },
+  { value: 'evidence', label: 'Evidence' },
+];
+const headerNotes = [
+  'The title names the result in words, including the tissue, so it reads correctly in the browser tab, history and bookmarks.',
+  'Changing tissue or version updates the result and the URL in place; it doesn’t add a breadcrumb step or a Back entry.',
+  'Tabs follow the Tabs page: one row, each with its own URL.',
+  'The top bar marks Network analysis as the current section.',
+];
+
+const screenSizes = [
+  ['1280px and up', 'Full bar: sections, search field and Jobs.'],
+  ['960 to 1279px', 'Search becomes an icon button that opens the search field over the bar. Sections stay visible.'],
+  ['Below 960px', 'Logo, search button and menu button. The menu opens full screen, with sections as expandable groups.'],
+];
+const phoneNotes = [
+  'The menu covers the page below the bar and locks page scrolling. The menu button becomes Close and keeps its place, so it can be tapped again.',
+  'The current section starts expanded and is labeled “Current”, in words.',
+  'Rows are 52px, larger than the 44px minimum, because people tap them on the move.',
+  'Phones show one back link instead of breadcrumbs.',
+  'No overlay blocks the site on phones, unlike today; tools that need a wide screen say so in a banner.',
+];
+
+const footer = {
+  description: 'HumanBase is developed at the Flatiron Institute’s Center for Computational Biology to study gene function, regulation and disease.',
+  groups: [
+    { heading: 'Network analysis', links: [{ label: 'Networks', href: '/networks/' }, { label: 'Modules', href: '/modules/' }, { label: 'NetWAS', href: '/netwas/' }] },
+    { heading: 'Sequence analysis', links: [{ label: 'Sei', href: '/sei/' }, { label: 'ExPecto', href: '/expecto/' }, { label: 'All sequence tools', href: '/sequence-tools/' }] },
+    { heading: 'Data', links: [{ label: 'Data sources', href: '/data-sources/' }, { label: 'Downloads', href: '/downloads/' }, { label: 'HumanBase API', href: '/api/docs/' }] },
+    { heading: 'About', links: [{ label: 'About HumanBase', href: '/about/' }, { label: 'Docs', href: '/docs/' }, { label: 'Contact us', href: '/contact/' }, { label: 'How to cite', href: '/cite/' }] },
+  ],
+  legal: '© 2026 Simons Foundation. Flatiron Institute.',
+  dataVersion: 'Data: MAGE, June 2026',
+};
+const motionOptions = [
+  { value: 'device', label: 'Match my device', description: 'Currently: full motion' },
+  { value: 'reduce', label: 'Reduce motion', description: 'Fades only, no movement' },
+  { value: 'full', label: 'Full motion', description: 'Even if my device asks to reduce it' },
+];
+const densities = [
+  { value: 'comfortable', label: 'Comfortable' },
+  { value: 'compact', label: 'Compact' },
+];
+const footerNotes = [
+  'Link groups use the same names as the top bar sections, in the same order.',
+  'The data version in the bottom row says which networks results come from, on every page.',
+  'On phones the groups collapse into compact accordions.',
+  'The footer is a contentinfo landmark with a nav labeled “Footer”. Group names are headings.',
+  'Copy to confirm with Julien and Natalie: the description line and the legal line.',
+];
+
+const keyboard = [
+  ['Tab order', 'Skip link, logo, the five sections, search, Jobs, then the page. Nine stops at most before the content. The footer comes last.'],
+  ['Enter, Space or Down Arrow on a section', 'Opens its menu and focuses the first tool.'],
+  ['Up and Down Arrow in a menu', 'Move between tools. Home and End jump to the first and last.'],
+  ['Escape', 'Closes the menu and returns focus to its section.'],
+  ['Landmarks', 'header, nav labeled “Main”, nav labeled “Breadcrumb”, main. Screen reader users can jump straight to each.'],
+  ['Current location', 'aria-current="true" on the current section, aria-current="page" on the last breadcrumb.'],
+  ['Page titles', '“IL1B in blood vessel · Networks · HumanBase”, so the most specific part is read first.'],
+];
+
+const writing = [
+  ['Group by task', 'Network analysis, Sequence analysis', 'Analyses'],
+  ['Keep published tool names', 'Sei, ExPecto, NetWAS', 'Variant predictor, GWAS tool'],
+  ['Explain names in one line', 'Sei: Regulatory and chromatin effects', 'Sei (2021)'],
+  ['Short, plain sections', 'Docs, Data', 'Documentation and Resources'],
+  ['Name results in words', 'IL1B in blood vessel', 'Query 48213'],
+];
+
+const questions = [
+  ['Is the ASD Browser still maintained, and where does it belong?', 'It’s a browser of results, not a tool. It could move to Data, or under a disease area.'],
+  ['Do Beluga and Sei both need menu entries?', 'If Sei replaces Beluga, Beluga could move to a “Previous models” note on the Sei page.'],
+  ['Should changing tissue add a Back entry?', 'This page assumes not, so Back leaves the result. Planned: see “Research to run” at the bottom of this page.'],
+  ['What does search cover?', 'Genes, GO terms and diseases are assumed. If it also finds tools and docs, it can replace the homepage selector entirely.'],
+  ['Are SEEK and the non-human collections staying?', 'They are in the API but not linked. If they stay, they need a place in this menu.'],
+];
+
+const specs = [
+  ['topbar.height', '64px desktop and tablet, 56px phone'],
+  ['topbar.surface', 'emerald 600 #11713C; elevation 3 once the page scrolls; z.sticky 100'],
+  ['topbar.padding', '0 24px 0 32px desktop; 0 16px 0 24px tablet; 0 8px 0 16px phone'],
+  ['nav.item', '40px tall, 12px side padding, radius.sm 8px, Lato Bold 15 white'],
+  ['nav.item.hover / open', 'white at 12% / 14%'],
+  ['nav.item.current', '3px yellow 500 #FFD53D bar, 12px in from each side'],
+  ['nav.focus', '2px emerald gap, then 2px white ring'],
+  ['nav.menu', '380px wide, white, border.subtle, elevation 2, radius.md 12px, 4px below the bar; z.dropdown 200'],
+  ['jobs.count', 'white pill, Lato Bold 12 emerald, radius.xs 4px'],
+  ['breadcrumb', 'Lato 14/20 grey 600 links, Lato Bold 14 ink current; 16px chevron in grey 400; 4px gap; 24px below the bar'],
+  ['phone.menu.row', '52px; sections Lato Bold 16; tools Lato 16 with a 13px description'],
+  ['breakpoints', 'full bar 1280px and up; tablet bar 960 to 1279px; phone bar below 960px'],
+  ['footer', 'grey 50 #F7F7F7, 1px border.subtle above; 56px 64px padding desktop, 32px 16px phone'],
+  ['footer.links', 'Lato Bold 14 ink headings, Lato 14 grey 600 links, 12px apart; 160px columns'],
+];
+
+const research = [
+  ['Question', ['When people change the tissue on a result, should the browser’s Back button step back through the tissues they viewed, or leave the result?']],
+  ['Why it matters', ['Researchers compare tissues often. If Back doesn’t match what they expect, they lose their place, or need many presses to leave a result, which is close to today’s five-level problem.']],
+  ['Participants', ['5 to 8 researchers from the survey’s interview opt-ins, in the last 15 minutes of each interview.']],
+  [
+    'Prototype',
+    [
+      'A small coded HTML prototype, not Figma: Figma can’t reproduce the real browser Back button. Two versions:',
+      'Version A: Replace (current design). Changing tissue updates the URL but replaces the history entry. Back leaves the result.',
+      'Version B: Add an entry per change. Each tissue change is added to history. Back steps through the tissues viewed.',
+      'Everyone tries both. Half see A first, half see B first.',
+    ],
+  ],
+  [
+    'Tasks',
+    [
+      '1. “Find the genes most related to IL1B in blood vessel.”',
+      '2. “Check whether IL1R1 is also strongly connected in liver, then in brain.”',
+      '3. “You’d like to look at liver again.” Watch whether they reach for Back or the Tissue select.',
+      '4. “Now start over with a search for TNF.” Count the Back presses and note any frustration.',
+      '5. Afterward: “When you pressed Back, what did you expect to happen?”',
+      'Task wording doesn’t mention Back or history, so it doesn’t lead people.',
+    ],
+  ],
+  ['Note for each person', ['Control used in task 3: Back or the Tissue select', 'Back presses needed to leave in task 4', 'Signs of surprise, such as “wait, where did it go?”', 'Which version felt right, in their words']],
+  [
+    'Decision rule',
+    [
+      'Most press Back to return to an earlier tissue and are surprised when it leaves: use version B.',
+      'Most use the Tissue select to switch and Back to leave: keep version A.',
+      'Split: add an entry per tissue, but the first Back past the starting tissue returns to Networks.',
+    ],
+  ],
+  ['Current leaning', ['October 16, 2026: researchers will likely compare tissues, and not being able to go back to one would block them. Leaning toward version B or the middle option. Confirm once the result page is assembled from these components, then with the sessions.']],
+  ['Owner', ['UX design (prototype and script), with Julien Funk for the history behavior. Moderator to be confirmed.']],
+  ['Result', ['To fill in after the sessions.']],
+  ['Decision', ['To fill in after the sessions, with the date and who decided.']],
+];
+
+const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar } from '@humanbase/ui';
+
+<SkipLink target="#main" />
+<TopBar sections={sections} current="Network analysis" jobs={{ href: '/jobs/', running: 1 }} />
+<main id="main">
+  <Breadcrumbs items={[{ label: 'Networks', href: '/networks/' }, { label: 'IL1B in blood vessel' }]} />
+</main>
+<Footer {...footer} onDisplaySettings={openSettings} />`;
+---
+
+<DocsLayout title="Navigation and breadcrumbs" description="The navigation model, top bar, section menus, breadcrumbs, footer and skip link.">
+  <Intro
+    lead="Navigation is how researchers find a tool, keep their place in a result and get back to it later. The audit found ten tools in one flat menu, three different ways into each tool, and gene pages nested five levels deep. This page sets the structure that fixes those problems, and the components that carry it."
+    status="Updated October 16, 2026 · Components: Logo, Top bar, Nav item, Nav menu, Breadcrumbs, Skip link"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Always know where you are', text: 'The current section is marked in the top bar, the path in breadcrumbs, and the page has one clear title.' },
+        { title: 'One way in', text: 'Each tool has one home in the menu. Links elsewhere use the same name and go to the same place.' },
+        { title: 'Three levels at most', text: 'Section, tool, result. Tissue and data version are settings on the result; details open in a drawer.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="The navigation model" lead="Every HumanBase page sits on one of three levels. Anything deeper is a setting or a drawer, so the URL, the breadcrumbs and the Back button always agree.">
+    <ol class="levels">
+      {
+        levels.map(([level, name, where, examples], index) => (
+          <li class:list={[index === 3 && 'level-setting']}>
+            <span class="level-label">{level}</span>
+            <strong>{name}</strong>
+            <span class="level-where">{where}</span>
+            <span>{examples}</span>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="paths">
+      <section class="path-card" aria-labelledby="path-today">
+        <h3 id="path-today" class="path-bad">Today: 5 pages deep</h3>
+        <ol class="path">{todayPath.map((step) => <li>{step}</li>)}</ol>
+        <p>Each choice reloads the page and adds a level. The data version is fixed in the URL, and Back undoes one click at a time.</p>
+      </section>
+      <section class="path-card" aria-labelledby="path-proposed">
+        <h3 id="path-proposed" class="path-good">Proposed: 2 pages deep, plus settings</h3>
+        <ol class="path">{proposedPath.map(([step, kind]) => <li class={`path-${kind}`}>{step}</li>)}</ol>
+        <p>Tissue and version are selects on the result and update the URL. Clicking IL1R1 opens the drawer. Back returns to Networks.</p>
+      </section>
+    </div>
+    <ul class="path-key">
+      <li><span class="path-page" aria-hidden="true"></span>A page, shown in breadcrumbs</li>
+      <li><span class="path-setting" aria-hidden="true"></span>A setting or drawer on the page, kept in the URL</li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Top-level menu: a proposal" lead="The docs already group tools into network and sequence analysis. This menu follows them. It is a proposal to test with researchers in a tree test before it ships.">
+    <Alert tone="warning">
+      To validate: a tree test with 15 to 20 researchers (from the survey opt-ins), with tasks such as “Find the tool that predicts how a variant changes chromatin”. Review with Julien and Natalie first.
+    </Alert>
+    <div class="paths">
+      {
+        [
+          ['Today', 'path-bad', todayMenu],
+          ['Proposed', 'path-good', proposedMenu],
+        ].map(([title, tone, rows]) => (
+          <section class="path-card" aria-label={`${title} menu`}>
+            <h3 class={tone as string}>{title}</h3>
+            <dl class="menu-outline">
+              {(rows as string[][]).map(([name, items]) => (
+                <div>
+                  <dt>{name}</dt>
+                  {items && <dd>{items}</dd>}
+                </div>
+              ))}
+            </dl>
+          </section>
+        ))
+      }
+    </div>
+  </DocSection>
+
+  <DocSection title="Top bar" lead="64px, emerald, on every page. It stays at the top when the page scrolls, with elevation 3 once content passes under it.">
+    <figure class="stage topbar-stage">
+      <TopBar sections={sections} jobs={jobs} openSection="Sequence analysis" scrolled={false} />
+      {topBarTags.map((x, index) => <span class="tag" style={`--x: ${x}px`} aria-hidden="true">{index + 1}</span>)}
+      <div class="topbar-legend">
+        <ol class="legend">
+          {topBarParts.map(([title, text], index) => <li><span class="tag-number">{index + 1}</span><div><strong>{title}</strong><p>{text}</p></div></li>)}
+        </ol>
+        <aside class="no-accounts" aria-label="No sign-in">
+          <h3>No sign-in</h3>
+          <p>HumanBase has no user profiles. Jobs and display settings, such as motion and table density, are kept in this browser. Display settings are linked from the footer.</p>
+        </aside>
+      </div>
+      <figcaption class="visually-hidden">The top bar with the Sequence analysis menu open, its parts numbered.</figcaption>
+    </figure>
+  </DocSection>
+
+  <DocSection title="Nav item states" lead="White Lato Bold 15 on emerald (6.1:1) in every state. States change the background or add a bar, never the text color.">
+    <ul class="item-states">
+      {
+        itemStates.map((state) => (
+          <li>
+            <NavMenu section={stateSection} {...state.props} />
+            <strong>{state.title}</strong>
+            <span>{state.text}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="doc-note">Focus on emerald uses a white ring instead of the usual ink one, because ink on emerald is only 2.9:1. White on emerald is 6.1:1.</p>
+  </DocSection>
+
+  <DocSection title="Section menus" lead="Each section opens a panel listing its tools by name, with one line about what each does. Names stay exactly as in the docs and papers.">
+    <div class="panels">
+      {
+        menuSections.map((section) => (
+          <section aria-label={`${section.label} menu`}>
+            <h3>{section.label}</h3>
+            <div class="nav-menu-panel static-panel">
+              <NavPanelContent section={section} />
+            </div>
+          </section>
+        ))
+      }
+    </div>
+    <DocTable caption="How section menus behave" columns={['Rule', 'Detail']} widths={['284px']}>
+      {menuRules.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Breadcrumbs" lead="Show the path to the current page, never more than three steps. They sit 24px below the top bar, above the page title.">
+    <ul class="crumb-variants">
+      {
+        crumbVariants.map((variant) => (
+          <li>
+            <span class="variant-label">{variant.title}</span>
+            <Breadcrumbs items={variant.items} compact={variant.compact} />
+            <p>{variant.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <ul class="points">{crumbRules.map((rule) => <li>{rule}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Result page header" lead="Where the pieces come together. Breadcrumbs say where the page is, the title says what it shows, settings change it in place, and tabs switch views.">
+    <figure class="screen">
+      <TopBar sections={sections} current="Network analysis" jobs={jobs} scrolled={false} />
+      <div class="result-header">
+        <Breadcrumbs items={networksCrumbs} />
+        <div class="result-title-row">
+          <div>
+            <p class="result-title">IL1B in blood vessel</p>
+            <p class="result-subtitle">50 most related genes, from MAGE networks</p>
+          </div>
+          <Select label="Tissue" size="small" options={tissues} defaultValue="Blood vessel" />
+          <Select label="Data version" size="small" options={versions} defaultValue="MAGE (current)" />
+        </div>
+        <Tabs label="IL1B in blood vessel views" tabs={resultTabs} defaultValue="network" />
+      </div>
+      <div class="result-body"><NetworkSketch /></div>
+      <figcaption class="visually-hidden">A result page header built from the top bar, breadcrumbs, title, selects and tabs.</figcaption>
+    </figure>
+    <ul class="points">{headerNotes.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Screen sizes" lead="Breakpoints come from measuring the bar: the full bar needs 1,224px, the tablet bar 952px.">
+    <DocTable caption="Top bar at each width" columns={['Width', 'Top bar']} widths={['224px']}>
+      {screenSizes.map(([width, bar]) => <tr><th scope="row">{width}</th><td>{bar}</td></tr>)}
+    </DocTable>
+    <figure class="tablet">
+      <figcaption class="variant-label">960 to 1279px</figcaption>
+      <TopBar sections={sections} current="Network analysis" jobs={jobs} scrolled={false} />
+    </figure>
+    <div class="phones">
+      <figure class="phone">
+        <TopBar sections={sections} current="Network analysis" jobs={jobs} scrolled={false} />
+        <div class="phone-page">
+          <Breadcrumbs items={networksCrumbs} compact />
+          <p class="phone-title">IL1B in blood vessel</p>
+          <div class="phone-graph" aria-hidden="true"></div>
+        </div>
+        <figcaption class="visually-hidden">A result page on a phone.</figcaption>
+      </figure>
+      <figure class="phone">
+        <TopBar sections={sections} current="Network analysis" jobs={jobs} menuOpen scrolled={false} />
+        <figcaption class="visually-hidden">The phone menu, open.</figcaption>
+      </figure>
+      <ul class="points">{phoneNotes.map((note) => <li>{note}</li>)}</ul>
+    </div>
+  </DocSection>
+
+  <DocSection title="Footer" lead="The backup map, and the home for what left the top bar: the mailing list, contact, how to cite and Display settings. Grey 50 with a 1px line above, on every page.">
+    <div class="footer-desktop"><Footer {...footer} /></div>
+    <div class="footer-row">
+      <div class="phone footer-phone"><Footer {...footer} /></div>
+      <section class="settings-stage" aria-label="Display settings, opened from the footer">
+        <p class="variant-label">Display settings, opened from the footer</p>
+        <Dialog inline kind="form" size="medium" title="Display settings">
+          <div class="settings-body">
+            <RadioGroup legend="Motion" options={motionOptions} defaultValue="device" />
+            <SegmentedControl label="Table rows" segments={densities} defaultValue="comfortable" />
+            <p class="settings-note">Saved in this browser. HumanBase has no accounts.</p>
+          </div>
+          <Fragment slot="actions">
+            <Button variant="ghost">Cancel</Button>
+            <Button>Save</Button>
+          </Fragment>
+        </Dialog>
+      </section>
+    </div>
+    <ul class="points">{footerNotes.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Accessibility and keyboard" lead="The audit found the menu took 12 Tab presses to reach. A skip link and a short tab order fix that.">
+    <div class="skip-stage">
+      <SkipLink target="#main" data-state="focus" />
+      <p>The first Tab on every page shows “Skip to main content” over the top-left of the bar. It is hidden until focused, then jumps to the page title.</p>
+    </div>
+    <DocTable caption="Keyboard and landmarks" columns={['Key or rule', 'Behavior']} widths={['324px']}>
+      {keyboard.map(([key, behavior]) => <tr><th scope="row">{key}</th><td>{behavior}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Writing labels" lead="Sections describe what people want to do; tools keep their published names.">
+    <DocTable caption="Writing navigation labels" columns={['Guideline', 'Write', 'Not']} widths={['344px', '404px']}>
+      {writing.map(([guideline, write, not]) => <tr><th scope="row">{guideline}</th><td class="write-yes">{write}</td><td class="write-no">{not}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <PairList>
+      <Pair kind="do" title="Do. Keep settings on the page" text="Two steps; tissue is a select on the result.">
+        <Breadcrumbs items={networksCrumbs} />
+        <p class="mock-chip" aria-hidden="true">Tissue: Blood vessel <Icon name="chevron-down" size={16} /></p>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Turn settings into steps" text="Every tissue change adds a level and a Back entry." mock>
+        <p class="mock-crumbs">Home › Networks › IL1B › Blood vessel › <strong>IL1R1</strong></p>
+      </Pair>
+      <Pair kind="do" title="Do. One menu entry per tool" text="The homepage search and the menu lead to the same pages." mock>
+        <p class="mock-strong">Sequence analysis › Sei</p>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Duplicate ways in" text="A homepage selector, a menu and section links that each name tools differently." mock>
+        <p class="mock-plain">Select an analysis ▾ Analyses ▾ “Try Sei”</p>
+      </Pair>
+    </PairList>
+  </DocSection>
+
+  <DocSection title="Open questions for Julien and Natalie" lead="Decisions this page assumes. Each needs an answer before the menu ships.">
+    <DocTable caption="Open questions" columns={['Question', 'Why it matters']} widths={['544px']}>
+      {questions.map(([question, why]) => <tr><th scope="row">{question}</th><td>{why}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Navigation tokens and values" columns={['Token', 'Value']} widths={['404px']}>
+      {specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Research to run: the Back button after changing tissue" lead="Settles the open question “Should changing tissue add a Back entry?” before the result page is built. A tree test can’t answer it, because it only tests menu labels; this needs people using a working prototype.">
+    <p class="research-meta"><span>Planned</span> Research record · Added October 16, 2026 · Runs with the interviews</p>
+    <DocTable caption="Research record" columns={['Part', 'Detail']} widths={['260px']}>
+      {research.map(([part, lines]) => <tr><th scope="row">{part}</th><td>{(lines as string[]).map((line) => <p>{line}</p>)}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the components in code">
+    <ul>
+      <li><code>TopBar</code> takes the sections as data. Sections with <code>columns</code> open a menu; sections with an <code>href</code> are plain links. It switches between the desktop, tablet and phone bars with container queries, so it fits whatever space it is given.</li>
+      <li>Put <code>SkipLink</code> first in the body and give <code>main</code> the id it targets. Use <code>Breadcrumbs compact</code> below 768px.</li>
+      <li>Display settings are the page’s job: open a <code>Dialog</code> from <code>Footer</code>’s <code>onDisplaySettings</code> and save the choices in this browser.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .levels {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-10);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .levels li {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    padding: var(--space-5);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .levels li:not(:last-child)::after {
+    position: absolute;
+    inset: 50% calc(var(--space-8) * -1) auto auto;
+    content: "›";
+    font: var(--type-body-lg);
+    color: var(--text-muted);
+    translate: 0 -50%;
+  }
+
+  .levels .level-setting {
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-default);
+  }
+
+  .level-label {
+    font: 700 12px/1.4 Lato, sans-serif;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .levels strong {
+    font: var(--docs-card-title);
+  }
+
+  .levels span {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .levels .level-where {
+    font: var(--type-label-sm);
+  }
+
+  .paths {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+
+  .path-card {
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: var(--space-6);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .path-card h3 {
+    font: var(--docs-small-strong);
+  }
+
+  .path-card > p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .path-bad {
+    color: var(--status-error-fg);
+  }
+
+  .path-good {
+    color: var(--status-success-fg);
+  }
+
+  .path {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .path li,
+  .path-key span {
+    padding: 6px 10px;
+    font: var(--type-label-sm);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-default);
+    border-radius: var(--radius-sm);
+  }
+
+  .path .path-setting {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+    border-color: var(--border-strong);
+  }
+
+  .path-key {
+    display: flex;
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+    list-style: none;
+  }
+
+  .path-key li {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .path-key span {
+    inline-size: 28px;
+    block-size: 18px;
+    padding: 0;
+    border-radius: var(--radius-xs);
+  }
+
+  .path-key .path-setting {
+    border-color: var(--border-strong);
+  }
+
+  .menu-outline {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+  }
+
+  .menu-outline dt {
+    font: var(--type-label);
+  }
+
+  .menu-outline dd {
+    margin: var(--space-1) 0 0;
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .stage,
+  .screen,
+  .tablet {
+    position: relative;
+    margin: 0;
+  }
+
+  .stage :global(.top-bar),
+  .screen :global(.top-bar),
+  .tablet :global(.top-bar),
+  .phone :global(.top-bar) {
+    position: relative;
+  }
+
+  .topbar-stage {
+    display: grid;
+    min-block-size: 755px;
+    padding-block-start: 56px;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .topbar-stage .tag {
+    position: absolute;
+    inset: 20px auto auto var(--x);
+  }
+
+  .tag,
+  .tag-number {
+    padding: var(--space-0-5) 7px;
+    font: 700 12px/16px Lato, sans-serif;
+    color: var(--text-on-brand);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+  }
+
+  .topbar-legend {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    justify-self: end;
+    inline-size: 373px;
+    margin: 12px var(--space-6) var(--space-6) 0;
+  }
+
+  .legend {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .legend li {
+    display: flex;
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  .legend strong {
+    font: var(--docs-small-strong);
+  }
+
+  .legend p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .no-accounts {
+    display: grid;
+    gap: var(--space-1);
+    padding: 14px var(--space-4);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .no-accounts h3 {
+    font: var(--docs-small-strong);
+  }
+
+  .no-accounts p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .item-states {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: var(--space-8);
+    color: var(--text-on-brand);
+    list-style: none;
+    background: var(--action-primary);
+    border-radius: var(--radius-md);
+  }
+
+  .item-states li {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+  }
+
+  .item-states strong {
+    font: var(--type-label-sm);
+  }
+
+  .item-states span {
+    font: var(--type-caption);
+  }
+
+  .doc-note {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .panels {
+    display: grid;
+    grid-template-columns: 424px 584px 424px;
+    gap: var(--space-6);
+    align-items: start;
+    padding: var(--space-8);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .panels section {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .panels h3 {
+    font: var(--type-label-sm);
+  }
+
+  .panels .static-panel {
+    position: static;
+    min-inline-size: 0;
+    inline-size: auto;
+    animation: none;
+  }
+
+  .crumb-variants {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: var(--space-8);
+    list-style: none;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .crumb-variants li {
+    display: grid;
+    gap: 10px;
+  }
+
+  .variant-label {
+    font: var(--type-label-sm);
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .crumb-variants p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .screen {
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .result-header {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6) var(--space-10) 0;
+  }
+
+  .result-title-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px 200px;
+    gap: var(--space-6);
+    align-items: end;
+  }
+
+  .result-title {
+    font: var(--type-h2);
+  }
+
+  .result-subtitle {
+    font: var(--type-body);
+    color: var(--text-secondary);
+  }
+
+  .result-body {
+    block-size: 216px;
+    padding: var(--space-6) var(--space-10) var(--space-8);
+  }
+
+  .tablet {
+    display: grid;
+    gap: 10px;
+    inline-size: 1024px;
+  }
+
+  .phones,
+  .footer-row {
+    display: grid;
+    grid-template-columns: 375px 375px minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .phone {
+    position: relative;
+    overflow: hidden;
+    block-size: 720px;
+    margin: 0;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+  }
+
+  .phone-page {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4);
+  }
+
+  .phone-title {
+    font: 500 28px/1.2 Cabin, sans-serif;
+  }
+
+  .phone-graph {
+    block-size: 300px;
+    margin-block-start: var(--space-6);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .footer-desktop {
+    overflow: hidden;
+    border-radius: var(--radius-md);
+  }
+
+  .footer-row {
+    grid-template-columns: 375px minmax(0, 1fr);
+  }
+
+  .footer-phone {
+    block-size: auto;
+    border-radius: var(--radius-md);
+  }
+
+  .settings-stage {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-8);
+    background: var(--surface-sunken);
+    border-radius: var(--radius-md);
+  }
+
+  .settings-body {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .settings-note {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .skip-stage {
+    display: flex;
+    gap: var(--space-8);
+    align-items: center;
+    padding: 28px;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .skip-stage p {
+    font: var(--type-body);
+    color: var(--text-secondary);
+  }
+
+  .mock-chip {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    inline-size: fit-content;
+    padding: 6px var(--space-2) 6px 10px;
+    font: var(--type-caption);
+    color: var(--text-default);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-strong);
+    border-radius: var(--radius-sm);
+  }
+
+  .mock-crumbs,
+  .mock-plain {
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .mock-crumbs strong,
+  .mock-strong {
+    font: var(--type-label-sm);
+    color: var(--text-default);
+  }
+
+  .research-meta {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .research-meta span {
+    margin-inline-end: var(--space-2);
+    padding: var(--space-0-5) var(--space-2);
+    font: var(--type-label-sm);
+    font-size: 13px;
+    color: var(--status-info-fg);
+    background: var(--status-info-bg);
+    border: var(--border-width-1) solid var(--status-info-border);
+    border-radius: var(--radius-xs);
+  }
+
+  .doc-section :global(td p + p) {
+    margin-block-start: var(--space-2);
+  }
+
+  @media (width < 64rem) {
+    .levels,
+    .paths,
+    .item-states,
+    .panels,
+    .crumb-variants,
+    .phones,
+    .footer-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .tablet {
+      inline-size: auto;
+    }
+  }
+</style>
