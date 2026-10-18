@@ -91,7 +91,7 @@ const usage = `import { GeneList, SearchField, TextInput } from '@humanbase/ui';
       <StateCard title="Focus" text="2px emerald border and a text cursor."><TextInput {...jobTitle} data-state="focus" /></StateCard>
       <StateCard title="Filled" text="Value in ink. Helper text stays visible."><TextInput {...jobTitle} defaultValue={filled} /></StateCard>
       <StateCard title="Error" text="2px error border, an icon and a message that leads with the fix. Screen readers hear “Error” first."><TextInput {...jobTitle} defaultValue={filled} error={tooLong} /></StateCard>
-      <StateCard title="Disabled" text="Grey 50 fill, grey 400 text. Explain nearby why it is disabled."><TextInput {...jobTitle} disabled /></StateCard>
+      <StateCard title="Disabled" text="Grey 50 fill, grey 400 label and value. The helper stays grey 600 so it can explain why the field is disabled."><TextInput {...jobTitle} disabled /></StateCard>
     </div>
     <div class="card-grid" style="--columns: 2">
       <SizeCard title="Medium · 44px" text="Padding 12px and 16px, Lato 16px, 12px corners. The default for forms.">
