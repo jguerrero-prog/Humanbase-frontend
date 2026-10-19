@@ -11,6 +11,7 @@ import {
   useDebounced,
   type GeneMatch,
   type SearchSuggestion,
+  useLinkHref,
 } from '@humanbase/ui';
 import { useMemo, useState, type ClipboardEvent, type KeyboardEvent, type ReactNode } from 'react';
 import { analysisColumns, analysisOptions } from '../content/product';
@@ -31,6 +32,7 @@ const genesWord = (count: number) => (count === 1 ? '1 gene' : `${count} genes`)
 const listText = (items: readonly string[]) => (items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
 
 export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afterExamples }: HomeSearchProps) {
+  const linkHref = useLinkHref();
   const api = useHumanbase();
   const [analysis, setAnalysis] = useState<string>();
   const [text, setText] = useState('');
@@ -127,7 +129,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
           className="home-search-analysis"
           footer={
             <p>
-              Not sure which tool? <a href="/sequence-tools/">Compare them</a>
+              Not sure which tool? <a href={linkHref('/sequence-tools/')}>Compare them</a>
             </p>
           }
           onChange={(value) => (value === 'networks' ? setAnalysis(value) : onChooseAnalysis(value))}

@@ -1,0 +1,17 @@
+---
+import Intro from '../components/docs/Intro.astro';
+import DocsLayout from '../layouts/DocsLayout.astro';
+import { withBase } from '../withBase';
+
+// GitHub Pages serves this page for every missing path, so deep links into the front end are passed back to it.
+const appPath = withBase('/app/');
+---
+
+<DocsLayout title="Page not found" description="This page doesn’t exist in the Humanbase design system.">
+  <script is:inline define:vars={{ appPath }}>
+    if (location.pathname.startsWith(appPath)) {
+      location.replace(`${appPath}?p=${encodeURIComponent(location.pathname.slice(appPath.length) + location.search)}${location.hash}`);
+    }
+  </script>
+  <Intro lead="This page doesn’t exist, or it has moved. Use the menu or search to find what you need." status="Not found" />
+</DocsLayout>

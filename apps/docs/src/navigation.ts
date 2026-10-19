@@ -1,3 +1,5 @@
+import { withBase } from './withBase';
+
 export interface NavItem {
   label: string;
   href?: string;
@@ -9,7 +11,7 @@ export interface NavSection {
   items: NavItem[];
 }
 
-export const navigation: NavSection[] = [
+const sections: NavSection[] = [
   {
     heading: 'Get Started',
     isTitle: true,
@@ -94,6 +96,11 @@ export const navigation: NavSection[] = [
     items: [{ label: 'Figma library', href: '/resources/figma-library/' }, { label: 'Changelog', href: '/resources/changelog/' }, { label: 'Contribution guide', href: '/resources/contribution-guide/' }, { label: 'Contact the team', href: '/resources/contact-the-team/' }],
   },
 ];
+
+export const navigation: NavSection[] = sections.map((section) => ({
+  ...section,
+  items: section.items.map((item) => (item.href ? { ...item, href: withBase(item.href) } : item)),
+}));
 
 export function hrefFor(label: string): string | undefined {
   return navigation.flatMap((section) => section.items).find((item) => item.label === label)?.href;

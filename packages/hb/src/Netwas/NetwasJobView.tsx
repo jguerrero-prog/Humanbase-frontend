@@ -1,5 +1,5 @@
 import { ApiError, NetworkQuery, useGeneListMatches, useIntegrations, useNetwasJob, useNetwasResult, type NetwasJob } from '@humanbase/data';
-import { Alert, Button, ContextLabel, EmptyState, JobDetails, NetwasGuide, ResultHeader, ResultLayout, saveFile, Skeleton, StatusBadge, type JobStep } from '@humanbase/ui';
+import { Alert, Button, ContextLabel, EmptyState, JobDetails, NetwasGuide, ResultHeader, ResultLayout, saveFile, Skeleton, StatusBadge, type JobStep, useLinkHref } from '@humanbase/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { elapsed, jobDateTime as dateTime, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
 import { NetwasGenes } from '../NetwasGenes/NetwasGenes';
@@ -53,6 +53,7 @@ function ResultGenes({ text, job }: { text: string; job: NetwasJob }) {
 }
 
 export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {
+  const linkHref = useLinkHref();
   const job = useNetwasJob(id);
   const data = job.data;
   const result = useNetwasResult(data?.status === 'finished' ? data : undefined);
@@ -76,7 +77,7 @@ export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {
         title="This NetWAS job isn’t available"
         text="No job has this link. Check that it was copied whole, or run NetWAS again."
         actions={
-          <a className="button button-secondary" href="/netwas/">
+          <a className="button button-secondary" href={linkHref('/netwas/')}>
             Run NetWAS
           </a>
         }
@@ -192,7 +193,7 @@ export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {
               <Button variant="secondary" onClick={() => onEditAndResubmit({ version: data.version, tissue: data.tissue, pValue: data.pValue, mhc: data.mhc, title: data.title, email: data.email })}>
                 Edit and resubmit
               </Button>
-              <a className="button button-ghost button-medium" href="/netwas/#gwas-file-rules">
+              <a className="button button-ghost button-medium" href={linkHref('/netwas/#gwas-file-rules')}>
                 See file format
               </a>
               {data.logFile && (

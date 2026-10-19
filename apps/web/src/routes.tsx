@@ -12,6 +12,9 @@ import { ExpectoScPage } from './pages/expecto/ExpectoScPage';
 import { GeneExpressionPage } from './pages/expecto/GeneExpressionPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
+/** Where the app is served from without the trailing slash: empty locally, /Humanbase-frontend/app on GitHub Pages. */
+export const appBase = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 export const router = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -34,4 +37,4 @@ export const router = createBrowserRouter([
       { path: '*', element: <NotFoundPage /> },
     ],
   },
-]);
+], { basename: appBase || '/' });

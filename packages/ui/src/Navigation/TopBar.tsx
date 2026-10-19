@@ -7,6 +7,7 @@ import { Logo } from '../Logo/Logo';
 import { NavMenu } from './NavMenu';
 import type { NavSection } from './types';
 import './Navigation.css';
+import { useLinkHref } from '../hooks/useLinkHref';
 
 export interface TopBarProps {
   sections: readonly NavSection[];
@@ -35,6 +36,7 @@ function useScrolled(forced: boolean | undefined) {
 }
 
 export function TopBar({ sections, current, jobs, homeHref = '/', searchAction = '/search', openSection, menuOpen, scrolled, className }: TopBarProps) {
+  const linkHref = useLinkHref();
   const nav = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(openSection);
   const [phoneMenu, setPhoneMenu] = useState(menuOpen ?? false);
@@ -48,7 +50,7 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
   return (
     <header className={['top-bar', className].filter(Boolean).join(' ')} data-scrolled={isScrolled || undefined}>
       <div className="top-bar-inner" data-search={searchOpen || undefined}>
-        <a className="top-bar-home" href={homeHref}>
+        <a className="top-bar-home" href={linkHref(homeHref)}>
           <Logo surface="green" />
         </a>
         <nav ref={nav} className="top-bar-sections" aria-label="Main">
@@ -84,7 +86,7 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
                     {section.columns.flat().flatMap((group) =>
                       group.links.map((link) => (
                         <li key={link.href}>
-                          <a href={link.href}>
+                          <a href={linkHref(link.href)}>
                             <span className="nav-menu-link-label">{link.label}</span>
                             {link.description && <span className="nav-menu-link-description">{link.description}</span>}
                           </a>
@@ -94,14 +96,14 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
                   </ul>
                 </AccordionItem>
               ) : (
-                <a key={section.label} className="phone-menu-row" href={section.href}>
+                <a key={section.label} className="phone-menu-row" href={linkHref(section.href)}>
                   {section.label}
                 </a>
               ),
             )}
           </Accordion>
           {jobs && (
-            <a className="top-bar-jobs" href={jobs.allHref}>
+            <a className="top-bar-jobs" href={linkHref(jobs.allHref)}>
               Jobs{' '}
               {running > 0 && <span className="top-bar-jobs-count">{running} running</span>}
             </a>

@@ -3,6 +3,7 @@ import { useControlled } from '../hooks/useControlled';
 import { Icon } from '../Icon/Icon';
 import { ListNavigator } from '../List/ListNavigator';
 import type { NavGroup, NavItemState, NavSection } from './types';
+import { useLinkHref } from '../hooks/useLinkHref';
 
 export interface NavMenuProps {
   section: NavSection;
@@ -13,6 +14,7 @@ export interface NavMenuProps {
 }
 
 export function NavMenu({ section, current = false, open, onOpenChange, 'data-state': dataState }: NavMenuProps) {
+  const linkHref = useLinkHref();
   const id = useId();
   const button = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
@@ -31,7 +33,7 @@ export function NavMenu({ section, current = false, open, onOpenChange, 'data-st
   const ariaCurrent = current ? 'true' : undefined;
   if (!section.columns) {
     return (
-      <a className="nav-item" href={section.href} aria-current={ariaCurrent} data-state={dataState}>
+      <a className="nav-item" href={linkHref(section.href)} aria-current={ariaCurrent} data-state={dataState}>
         {section.label}
       </a>
     );
@@ -95,6 +97,7 @@ interface NavPanelContentProps {
 }
 
 export function NavPanelContent({ section, onLinkKeyDown }: NavPanelContentProps) {
+  const linkHref = useLinkHref();
   return (
     <>
       <div className="nav-menu-columns">
@@ -112,7 +115,7 @@ export function NavPanelContent({ section, onLinkKeyDown }: NavPanelContentProps
       {section.footer && (
         <p className="nav-menu-footer">
           {section.footer.lead}{' '}
-          <a href={section.footer.link.href} onKeyDown={onLinkKeyDown}>{section.footer.link.label}</a>
+          <a href={linkHref(section.footer.link.href)} onKeyDown={onLinkKeyDown}>{section.footer.link.label}</a>
         </p>
       )}
     </>
@@ -120,6 +123,7 @@ export function NavPanelContent({ section, onLinkKeyDown }: NavPanelContentProps
 }
 
 function NavLinkGroup({ group, onLinkKeyDown }: { group: NavGroup; onLinkKeyDown: NavPanelContentProps['onLinkKeyDown'] }) {
+  const linkHref = useLinkHref();
   const id = useId();
   return (
     <div className="nav-menu-group">
@@ -131,7 +135,7 @@ function NavLinkGroup({ group, onLinkKeyDown }: { group: NavGroup; onLinkKeyDown
       <ul aria-labelledby={group.label ? id : undefined}>
         {group.links.map((link) => (
           <li key={link.href}>
-            <a className="nav-menu-link" href={link.href} onKeyDown={onLinkKeyDown}>
+            <a className="nav-menu-link" href={linkHref(link.href)} onKeyDown={onLinkKeyDown}>
               <span className="nav-menu-link-label">{link.label}</span>
               {link.description && <span className="nav-menu-link-description">{link.description}</span>}
             </a>

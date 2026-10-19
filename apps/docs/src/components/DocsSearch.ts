@@ -1,8 +1,11 @@
+import { withBase } from '../withBase';
+
 interface PagefindResult {
   data(): Promise<{ url: string; meta: { title?: string }; excerpt: string }>;
 }
 
 interface Pagefind {
+  options(options: { baseUrl: string }): Promise<void>;
   debouncedSearch(query: string): Promise<{ results: PagefindResult[] } | null>;
 }
 
@@ -59,8 +62,10 @@ export class DocsSearch {
   private async load(): Promise<Pagefind | null> {
     if (this.pagefind) return this.pagefind;
     try {
-      const path = '/pagefind/pagefind.js';
-      this.pagefind = (await import(/* @vite-ignore */ path)) as Pagefind;
+      const path = withBase('/pagefind/pagefind.js');
+      const pagefind = (await import(/* @vite-ignore */ path)) as Pagefind;
+      await pagefind.options({ baseUrl: withBase('/') });
+      this.pagefind = pagefind;
     } catch {
       return null;
     }

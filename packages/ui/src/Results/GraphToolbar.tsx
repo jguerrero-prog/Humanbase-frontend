@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import { IconButton } from '../IconButton/IconButton';
 import type { IconName } from '../Icon/Icon';
 import './Results.css';
+import { useLinkHref } from '../hooks/useLinkHref';
 
 export interface GraphAction {
   label: string;
@@ -20,6 +21,7 @@ export interface GraphToolbarProps {
 }
 
 export function GraphToolbar({ label, groups, tableHref, onViewTable, tableLabel = 'View as table' }: GraphToolbarProps) {
+  const linkHref = useLinkHref();
   return (
     <div className="graph-toolbar" role="toolbar" aria-label={label}>
       {groups.map((group, index) => (
@@ -31,7 +33,7 @@ export function GraphToolbar({ label, groups, tableHref, onViewTable, tableLabel
         </Fragment>
       ))}
       {tableHref ? (
-        <a className="graph-toolbar-table" href={tableHref}>
+        <a className="graph-toolbar-table" href={linkHref(tableHref)}>
           {tableLabel}
         </a>
       ) : (

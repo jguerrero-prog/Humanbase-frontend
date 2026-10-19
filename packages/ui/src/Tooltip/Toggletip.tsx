@@ -3,6 +3,7 @@ import { Icon } from '../Icon/Icon';
 import { useDismiss } from '../List/useDismiss';
 import { anchorSupported, placeUnder } from './placement';
 import './Toggletip.css';
+import { useLinkHref } from '../hooks/useLinkHref';
 
 export interface ToggletipProps {
   term: string;
@@ -15,6 +16,7 @@ export interface ToggletipProps {
 }
 
 export function Toggletip({ term, title = term, body, link, size = 'default', open: openProp, className }: ToggletipProps) {
+  const linkHref = useLinkHref();
   const id = useId();
   const wrapper = useRef<HTMLSpanElement>(null);
   const button = useRef<HTMLButtonElement>(null);
@@ -54,7 +56,7 @@ export function Toggletip({ term, title = term, body, link, size = 'default', op
             <strong className="toggletip-title">{title}</strong>
             <span className="toggletip-body">{body}</span>
             {link && (
-              <a className="toggletip-link" href={link.href}>
+              <a className="toggletip-link" href={linkHref(link.href)}>
                 {link.label}
               </a>
             )}

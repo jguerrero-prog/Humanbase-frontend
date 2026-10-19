@@ -14,6 +14,10 @@ The redesigned front end for [Humanbase](https://hb.flatironinstitute.org) and t
 | `packages/hb` | Connected components: a pure component plus a data hook | |
 | `packages/graph` | The network and module graph renderer (empty until its license is confirmed) | |
 
+## Live preview
+
+Every merge to `master` publishes both apps to GitHub Pages: the design system at https://jguerrero-prog.github.io/Humanbase-frontend/ and the front end, with the API off, at https://jguerrero-prog.github.io/Humanbase-frontend/app/. A fork gets its own Pages address once Pages is turned on with GitHub Actions as the source.
+
 ## Getting started
 
 You need Node 24. pnpm comes with Node through Corepack.

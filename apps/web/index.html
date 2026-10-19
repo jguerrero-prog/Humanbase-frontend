@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Predictions of gene function, regulation and interactions in human." />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      // GitHub Pages sends deep links here as ?p=<path>; put the real path back before the router reads it.
+      (function (l) {
+        var p = new URLSearchParams(l.search).get('p');
+        if (p !== null) history.replaceState(null, '', l.pathname + p + l.hash);
+      })(window.location);
+    </script>
     <title>Humanbase</title>
   </head>
   <body>
