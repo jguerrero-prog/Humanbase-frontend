@@ -46,6 +46,17 @@
   animation: toggletip-fade 100ms linear;
 }
 
+.toggletip-panel[popover] {
+  position: fixed;
+  inset: auto;
+  inset-block-start: anchor(bottom);
+  inset-inline-end: anchor(right);
+  margin: var(--space-2) 0;
+  overflow: visible;
+  color: inherit;
+  position-try-fallbacks: flip-inline, flip-block;
+}
+
 .toggletip-title {
   font: var(--type-label);
   color: var(--text-default);

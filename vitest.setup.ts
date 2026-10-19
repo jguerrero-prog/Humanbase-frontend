@@ -14,3 +14,10 @@ Object.assign(HTMLDialogElement.prototype, {
     delete this.dataset.modal;
   },
 });
+
+// jsdom hides [popover] elements but has no showPopover; this one shows the element inline.
+Object.assign(HTMLElement.prototype, {
+  showPopover(this: HTMLElement) {
+    this.style.display = 'block';
+  },
+});
