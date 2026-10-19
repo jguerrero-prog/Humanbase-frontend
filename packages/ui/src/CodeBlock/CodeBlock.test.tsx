@@ -12,6 +12,27 @@ describe('CodeBlock', () => {
     expect(screen.getByText(request).closest('pre')).not.toBeNull();
   });
 
+  it('starts a response over 40 lines collapsed to 12, and copy still copies all of it', async () => {
+    const user = userEvent.setup();
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue();
+    const response = Array.from({ length: 50 }, (_, line) => `"field${line}": string`).join('\n');
+    render(<CodeBlock label="Response shape" code={response} />);
+
+    const code = screen.getByRole('figure', { name: 'Response shape' }).querySelector('pre');
+    expect(code?.textContent?.split('\n')).toHaveLength(12);
+    await user.click(screen.getByRole('button', { name: 'Show full response' }));
+    expect(code?.textContent?.split('\n')).toHaveLength(50);
+    expect(screen.getByRole('button', { name: 'Show less' })).toHaveAttribute('aria-expanded', 'true');
+
+    await user.click(screen.getByRole('button', { name: 'Copy Response shape' }));
+    expect(writeText).toHaveBeenCalledWith(response);
+  });
+
+  it('leaves short blocks open, with no disclosure', () => {
+    render(<CodeBlock label="Request" code={request} />);
+    expect(screen.queryByRole('button', { name: 'Show full response' })).toBeNull();
+  });
+
   it('renders highlighted lines with a class per syntax role', () => {
     render(
       <CodeBlock

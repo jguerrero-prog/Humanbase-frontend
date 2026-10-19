@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { Disclosure } from '../Disclosure/Disclosure';
 import { useOverflow } from '../hooks/useOverflow';
 import { Icon } from '../Icon/Icon';
 import './CodeBlock.css';
@@ -72,13 +73,37 @@ export interface CodeBlockProps {
   lines?: readonly CodeLine[];
   copy?: boolean;
   className?: string;
+  /** Blocks longer than this many lines start collapsed. */
+  collapseAfter?: number;
+  /** How many lines a collapsed block shows. */
+  previewLines?: number;
+  expandLabel?: string;
+  collapseLabel?: string;
+  defaultExpanded?: boolean;
 }
 
-export function CodeBlock({ label, code, lines, copy = true, className }: CodeBlockProps) {
+export function CodeBlock({
+  label,
+  code,
+  lines,
+  copy = true,
+  className,
+  collapseAfter = 40,
+  previewLines = 12,
+  expandLabel = 'Show full response',
+  collapseLabel = 'Show less',
+  defaultExpanded = false,
+}: CodeBlockProps) {
   const labelId = useId();
+  const codeId = useId();
   const pre = useRef<HTMLPreElement>(null);
+  const [expanded, setExpanded] = useState(defaultExpanded);
+  const collapsible = code.split('\n').length > collapseAfter;
+  const shortened = collapsible && !expanded;
   const scrolls = useOverflow(pre);
-  const content: ReactNode = lines ? <Highlighted lines={lines} /> : code;
+  const content: ReactNode = lines
+    ? <Highlighted lines={shortened ? lines.slice(0, previewLines) : lines} />
+    : shortened ? code.split('\n').slice(0, previewLines).join('\n') : code;
   // A block that scrolls becomes a labelled, focusable region so arrow keys can scroll it.
   const scrollRegion = scrolls ? { role: 'region', 'aria-labelledby': labelId, tabIndex: 0 } : {};
 
@@ -88,9 +113,10 @@ export function CodeBlock({ label, code, lines, copy = true, className }: CodeBl
         {label}
       </figcaption>
       {copy && <CopyButton text={code} label={label} />}
-      <pre ref={pre} className="code-block-code" {...scrollRegion}>
+      <pre ref={pre} id={codeId} className="code-block-code" {...scrollRegion}>
         <code>{content}</code>
       </pre>
+      {collapsible && <Disclosure label={expandLabel} expandedLabel={collapseLabel} controls={codeId} open={expanded} onOpenChange={setExpanded} />}
     </figure>
   );
 }

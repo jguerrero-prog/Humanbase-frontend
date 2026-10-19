@@ -8,10 +8,11 @@ interface Props {
   code: string;
   lang: BundledLanguage | 'text';
   copy?: boolean;
+  collapseAfter?: number;
 }
 
-const { label, code, lang, copy = true } = Astro.props;
+const { label, code, lang, copy = true, collapseAfter } = Astro.props;
 const lines = await highlighter.lines(code, lang);
 ---
 
-<CodeBlock client:load label={label} code={code} lines={lines} copy={copy} />
+<CodeBlock client:load label={label} code={code} lines={lines} copy={copy} {...(collapseAfter ? { collapseAfter } : {})} />
