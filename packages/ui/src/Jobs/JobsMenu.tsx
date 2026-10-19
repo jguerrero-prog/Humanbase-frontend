@@ -22,6 +22,10 @@ export interface JobsMenuProps {
   shown?: number;
 }
 
+export type JobsMenuSummary = Pick<JobsMenuProps, 'jobs' | 'total' | 'allHref'>;
+
+export const activeJobCount = (jobs: readonly JobsMenuJob[]) => jobs.filter((job) => job.status === 'queued' || job.status === 'running').length;
+
 export function JobsMenu({ jobs, total, allHref, open, onOpenChange, shown = 5 }: JobsMenuProps) {
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
@@ -36,7 +40,7 @@ export function JobsMenu({ jobs, total, allHref, open, onOpenChange, shown = 5 }
   );
   const close = useCallback(() => setOpen(false), [setOpen]);
   useDismiss(root, isOpen && open === undefined, close);
-  const active = jobs.filter((job) => job.status === 'queued' || job.status === 'running').length;
+  const active = activeJobCount(jobs);
 
   const closeOnEscape = (event: KeyboardEvent) => {
     if (event.key !== 'Escape') return;

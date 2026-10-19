@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Accordion, AccordionItem } from '../Accordion/Accordion';
 import { Icon } from '../Icon/Icon';
+import { activeJobCount, JobsMenu, type JobsMenuSummary } from '../Jobs/JobsMenu';
 import { useDismiss } from '../List/useDismiss';
 import { Logo } from '../Logo/Logo';
 import { NavMenu } from './NavMenu';
@@ -10,7 +11,7 @@ import './Navigation.css';
 export interface TopBarProps {
   sections: readonly NavSection[];
   current?: string;
-  jobs?: { href: string; running: number };
+  jobs?: JobsMenuSummary;
   homeHref?: string;
   searchAction?: string;
   openSection?: string;
@@ -42,12 +43,7 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
   const closeMenus = useCallback(() => setOpen(undefined), []);
   useDismiss(nav, open !== undefined && openSection === undefined, closeMenus);
 
-  const jobsLink = jobs && (
-    <a className="top-bar-jobs" href={jobs.href}>
-      Jobs{' '}
-      {jobs.running > 0 && <span className="top-bar-jobs-count">{jobs.running} running</span>}
-    </a>
-  );
+  const running = jobs ? activeJobCount(jobs.jobs) : 0;
 
   return (
     <header className={['top-bar', className].filter(Boolean).join(' ')} data-scrolled={isScrolled || undefined}>
@@ -73,7 +69,7 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
         <button type="button" className="top-bar-icon-button top-bar-search-button" aria-label="Search" aria-expanded={searchOpen} onClick={() => setSearchOpen(!searchOpen)}>
           <Icon name={searchOpen ? 'x' : 'search'} size={20} />
         </button>
-        {jobsLink}
+        {jobs && <JobsMenu {...jobs} />}
         <button type="button" className="top-bar-icon-button top-bar-menu-button" aria-label={phoneMenu ? 'Close' : 'Menu'} aria-expanded={phoneMenu} onClick={() => setPhoneMenu(!phoneMenu)}>
           <Icon name={phoneMenu ? 'x' : 'menu'} size={20} />
         </button>
@@ -104,7 +100,12 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
               ),
             )}
           </Accordion>
-          {jobsLink}
+          {jobs && (
+            <a className="top-bar-jobs" href={jobs.allHref}>
+              Jobs{' '}
+              {running > 0 && <span className="top-bar-jobs-count">{running} running</span>}
+            </a>
+          )}
         </nav>
       )}
     </header>

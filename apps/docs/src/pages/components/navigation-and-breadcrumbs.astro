@@ -229,7 +229,7 @@ const research = [
 const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection } from '@humanbase/ui';
 
 <SkipLink target="#main" />
-<TopBar sections={sections} current="Network analysis" jobs={{ href: '/jobs/', running: 1 }} />
+<TopBar sections={sections} current="Network analysis" jobs={jobs} />
 <main id="main">
   <Breadcrumbs items={[{ label: 'Networks', href: '/networks/' }, { label: 'IL1B in blood vessel' }]} />
 </main>
