@@ -1,0 +1,102 @@
+---
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { hrefFor } from '../../navigation';
+
+const figmaFile = 'https://www.figma.com/design/qc47Wo9Vj5lYjo9U7zdvWa/?node-id=68-188';
+
+const frames = [
+  { frame: 'Button', page: 'Buttons', code: ['Button'] },
+  { frame: 'Icons', page: 'Iconography', code: ['Icon'] },
+  { frame: 'Original icons', page: 'Iconography', code: ['Icon'] },
+  { frame: 'Inputs', page: 'Text inputs and search', code: ['TextInput', 'SearchField', 'GeneList'] },
+  { frame: 'Dropdowns', page: 'Dropdowns and selects', code: ['Select', 'ActionMenu'] },
+  { frame: 'Sliders', page: 'Sliders', code: ['Slider', 'RangeSlider'] },
+  { frame: 'Tabs', page: 'Tabs and segmented controls', code: ['Tabs', 'SegmentedControl', 'RadioGroup'] },
+  { frame: 'Accordions', page: 'Accordions', code: ['Accordion', 'Disclosure'] },
+  { frame: 'Tables', page: 'Tables', code: ['Table', 'Checkbox'] },
+  { frame: 'Alerts', page: 'Alerts and toasts', code: ['Alert', 'Toast', 'Banner'] },
+  { frame: 'Modals', page: 'Modals and drawers', code: ['Dialog', 'Drawer'] },
+  { frame: 'Tooltips', page: 'Tooltips', code: ['Tooltip', 'DataTooltip', 'Toggletip'] },
+  { frame: 'Navigation', page: 'Navigation and breadcrumbs', code: ['TopBar', 'Breadcrumbs', 'Footer'] },
+  { frame: 'Pagination', page: 'Pagination', code: ['Pagination'] },
+  { frame: 'Badges', page: 'Badges and tags', code: ['Badge', 'StatusBadge', 'Tag', 'ContextLabel'] },
+  { frame: 'Code', page: 'Code block', code: ['CodeBlock', 'InlineCode'] },
+  { frame: 'Data visualization', page: 'Data visualization', code: ['KeyLegend', 'ScaleLegend'] },
+  { frame: 'Gene search', page: 'Gene search and matching', code: ['GeneMatchTable', 'SearchField'] },
+  { frame: 'Job submission', page: 'Job submission', code: ['FileDrop', 'VariantJobForm'] },
+  { frame: 'Job status', page: 'Job status and queue', code: ['JobRow', 'JobsMenu'] },
+  { frame: 'Heatmaps', page: 'Heatmaps and score legends', code: ['Heatmap', 'LegendStepped'] },
+];
+---
+
+<DocsLayout title="Figma library" description="Where the HumanBase design system lives in Figma, and how it maps to the docs and the code.">
+  <Intro
+    lead="Every page in this design system starts as a frame in one Figma file. The file holds the documentation pages, the component sets and the variables that the code’s tokens are named after."
+    status="Resources · Figma file: HumanBase design system, page Design System Draft"
+  >
+    <p class="figma-link">
+      <a href={figmaFile} target="_blank" rel="noopener noreferrer">
+        Open the HumanBase design system in Figma<span class="visually-hidden"> (opens in a new tab)</span>
+      </a>
+    </p>
+  </Intro>
+
+  <DocSection title="Use it as a library" lead="To place these components in your own Figma files, turn the file on as a library.">
+    <ol class="steps">
+      <li>Open a design file in Figma.</li>
+      <li>Open the Assets panel, then Libraries.</li>
+      <li>Find the HumanBase design system and turn it on.</li>
+      <li>Insert components from the Assets panel. Use them as they are, and propose changes instead of detaching them.</li>
+    </ol>
+  </DocSection>
+
+  <DocSection title="What’s in the file" lead="The Design System Draft page holds every documentation page and one component frame per family. Each frame maps to a docs page and to the components in code.">
+    <DocTable caption="Figma component frames, docs pages and code components" columns={['Figma frame', 'Docs page', 'Code']} widths={['300px', '420px']}>
+      {
+        frames.map(({ frame, page, code }) => {
+          const href = hrefFor(page);
+          return (
+            <tr>
+              <th scope="row">Components: {frame}</th>
+              <td>{href ? <a href={href}>{page}</a> : page}</td>
+              <td>{code.map((name, index) => <>{index > 0 && ', '}<code>{name}</code></>)}</td>
+            </tr>
+          );
+        })
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Keeping Figma and code in sync" lead="One name for each decision, in both places.">
+    <ul class="points">
+      <li>Token names match the Figma variable names. <code>text/default</code> in Figma is <code>--text-default</code> in CSS, and <code>action/primary</code> is <code>--action-primary</code>.</li>
+      <li>Change a value in the token files under <code>packages/tokens</code>, then update the Figma variable to match, so neither drifts.</li>
+      <li>Where Figma disagrees with itself, such as a component drawn at one size and specified at another, the docs page says which side the code follows.</li>
+    </ul>
+    <NoteCard title="Open questions">
+      <p>
+        Mismatches still waiting on a decision are listed in <a href="https://github.com/jguerrero-prog/Humanbase-frontend/issues/18">GitHub issue #18</a>, with what the code does in the meantime.
+      </p>
+    </NoteCard>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .figma-link {
+    margin-block-start: var(--space-4);
+    font: var(--type-label);
+  }
+
+  .steps {
+    display: grid;
+    gap: var(--space-2);
+    max-inline-size: 72ch;
+    padding-inline-start: var(--space-6);
+    font: var(--type-body);
+    color: var(--text-secondary);
+  }
+</style>
