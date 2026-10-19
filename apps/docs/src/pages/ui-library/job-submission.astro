@@ -38,7 +38,7 @@ const examples = [
 const checks = [
   ['VCF', 'Tab-separated, at least 5 columns: chromosome, position, ID, REF, ALT. A header, if present, starts with #CHROM POS ID REF ALT. Position is within the chromosome’s length on the chosen assembly. The ID can be empty. REF and ALT are upper-case A, C, G, T, up to 100 characters.'],
   ['VCF for Seqweaver', 'A sixth column, strand: + or -.'],
-  ['BED', 'Tab-separated, at least 3 columns: chromosome, start, end. Start and end are non-negative and within the chromosome. Each interval is scored at its center; for an even length, the left center (chr1 100 106 is scored at 103).'],
+  ['BED', 'Tab-separated, at least 3 columns: chromosome, start, end. Start and end are non-negative and within the chromosome, and end is greater than start. Each interval is scored at its center; for an even length, the left center (chr1 100 106 is scored at 103).'],
   ['FASTA', 'Each sequence starts with >. Only A, C, G, T; lower case becomes upper case. Length set by the model: Sei 4,096 bp, Beluga 2,000 bp, Seqweaver 1,000 bp.'],
   ['Size', 'Up to 20,000 variants, 10,000 or fewer recommended. ExPecto’s docs say 10,000; the limit is on the facts to confirm.'],
 ];
