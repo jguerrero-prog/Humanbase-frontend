@@ -2,6 +2,7 @@
   display: inline-flex;
   gap: var(--space-3);
   align-items: center;
+  max-inline-size: 100%;
 }
 
 .segmented-label {
@@ -9,10 +10,13 @@
   color: var(--text-default);
 }
 
+/* Like a row of tabs, a track too wide for the screen scrolls sideways instead of wrapping. */
 .segmented-track {
   display: inline-flex;
   gap: var(--space-1);
+  max-inline-size: 100%;
   padding: var(--space-1);
+  overflow-x: auto;
   background: var(--surface-sunken);
   border-radius: var(--radius-md);
 }

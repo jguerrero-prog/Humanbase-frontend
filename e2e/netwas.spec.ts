@@ -1,13 +1,8 @@
-import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { apiOff } from './apiOff';
+import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
-const axeTags = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
-const violationsOf = async (page: Page) => {
-  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
-  return (await new AxeBuilder({ page }).withTags(axeTags).analyze()).violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`);
-};
 
 test('the NetWAS form checks the example and explains a missing file, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);

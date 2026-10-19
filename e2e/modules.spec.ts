@@ -1,14 +1,8 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { apiOff } from './apiOff';
+import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
-const axeTags = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
-// Scans once entrance animations end, so fading layers aren't measured halfway.
-const violationsOf = async (page: Parameters<typeof apiOff>[0]) => {
-  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
-  return (await new AxeBuilder({ page }).exclude('[data-illustration]').withTags(axeTags).analyze()).violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`);
-};
 
 test('Modules on the homepage checks an example list and starts a job, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);

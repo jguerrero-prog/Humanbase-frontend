@@ -1,6 +1,14 @@
 .job-form {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
+}
+
+/* Job submission spec: each segmented choice gets its own label above. */
+.job-form .segmented {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
 }
 
 .job-form-row {
@@ -28,6 +36,75 @@
 
 @media (width < 48rem) {
   .job-form-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Job submission spec: the form and its About panel side by side, 64px apart (848px and 400px at 1440). */
+.job-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 848fr) minmax(0, 400fr);
+  gap: var(--space-16);
+  align-items: start;
+}
+
+.job-about {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+  padding: var(--space-6);
+  background: var(--surface-subtle);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.job-about h2 {
+  font: var(--type-label);
+  font-size: 17px;
+}
+
+.job-about h3 {
+  padding-block-start: var(--space-4);
+  font: var(--type-label-sm);
+  border-block-start: var(--border-width-1) solid var(--border-subtle);
+  inline-size: 100%;
+}
+
+.job-about > p {
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+.job-examples {
+  display: grid;
+  gap: var(--space-2);
+  inline-size: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.job-examples li {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.job-examples span {
+  display: grid;
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.job-examples strong {
+  font: var(--type-label-sm);
+  font-size: 13px;
+  color: var(--text-default);
+}
+
+@media (width < 64rem) {
+  .job-columns {
     grid-template-columns: minmax(0, 1fr);
   }
 }
