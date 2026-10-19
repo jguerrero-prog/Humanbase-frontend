@@ -309,9 +309,18 @@ importers:
 
   packages/data:
     dependencies:
+      '@gmod/bbi':
+        specifier: 11.3.2
+        version: 11.3.2
+      '@gmod/trix':
+        specifier: 3.1.0
+        version: 3.1.0
       '@tanstack/react-query':
         specifier: 5.104.1
         version: 5.104.1(react@19.3.0)
+      generic-filehandle2:
+        specifier: 2.5.1
+        version: 2.5.1
     devDependencies:
       '@types/react':
         specifier: 19.3.0
@@ -1002,6 +1011,15 @@ packages:
 
   '@fontsource/lato@5.3.0':
     resolution: {integrity: sha512-0WhF/4rhrw+ErIyneKvhHn2YAl+xf8GDtllgOgOzDmeaSlLQtjpChXaQOpWhG2BchQW0WJy2zLV12Hdg0ndOMw==}
+
+  '@gmod/bbi@11.3.2':
+    resolution: {integrity: sha512-u5K9sRQSLlKiWGcU4ypqaX+lPwE8+emblz3NFoKlng80Z+iiVLM2k3qBfkVn6pXyCRnSiZscSRJ97VtkNmBN9g==}
+
+  '@gmod/shared-read-cache@2.1.0':
+    resolution: {integrity: sha512-AyiUt0hiEGl7lWc1fuigbXR/RToIw3h72dalaRoSNau9WL9ux9rEfkcsXDYTgSDudehfAEQac1jTvn2zrfnELQ==}
+
+  '@gmod/trix@3.1.0':
+    resolution: {integrity: sha512-A+JPMdH87Ncie4WyFC7L6H/mTVGsL5qYZkojMveBDcLYQsFwS9ralYMsOio5vxGLoqphV/1G2xhKr7nyn4b06g==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -2384,6 +2402,9 @@ packages:
   generator-function@2.0.1:
     resolution: {integrity: sha512-SFdFmIJi+ybC0vjlHN0ZGVGHc3lgE0DxPAT0djjVg+kjOnSqclqmj0KQ7ykTOLP6YxoqOvuAODGdcHJn+43q3g==}
     engines: {node: '>= 0.4'}
+
+  generic-filehandle2@2.5.1:
+    resolution: {integrity: sha512-+0F0k0xH4erZEB3xOVBdrlJi0hyURYb/CygF8QyqAjLsitmoZYl86pMfTZ91/w2Z1CPK610mBy93bxyiby1CHA==}
 
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
@@ -4595,6 +4616,15 @@ snapshots:
 
   '@fontsource/lato@5.3.0': {}
 
+  '@gmod/bbi@11.3.2':
+    dependencies:
+      '@gmod/shared-read-cache': 2.1.0
+      generic-filehandle2: 2.5.1
+
+  '@gmod/shared-read-cache@2.1.0': {}
+
+  '@gmod/trix@3.1.0': {}
+
   '@humanfs/core@0.19.2':
     dependencies:
       '@humanfs/types': 0.15.0
@@ -6076,6 +6106,8 @@ snapshots:
   functions-have-names@1.2.3: {}
 
   generator-function@2.0.1: {}
+
+  generic-filehandle2@2.5.1: {}
 
   gensync@1.0.0-beta.2: {}
 

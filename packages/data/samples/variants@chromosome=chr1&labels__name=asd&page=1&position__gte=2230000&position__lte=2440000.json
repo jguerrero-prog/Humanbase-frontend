@@ -1,0 +1,510 @@
+{
+  "status": 200,
+  "body": {
+    "count": 34,
+    "next": "http://hb.flatironinstitute.org/api/variants/?chromosome=chr1&labels__name=asd&page=2&position__gte=2230000&position__lte=2440000",
+    "previous": null,
+    "results": [
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2232996,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "T",
+            "Proband": "TRUE",
+            "Individual ID": "14208-p1",
+            "DNA Disease impact score": "0.209876863",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "1738",
+            "RNA Disease impact score": "1.132667566",
+            "RNA gene symbol": "SKI",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2234187,
+        "ref_allele": "C",
+        "alt_allele": "G",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "G",
+            "Proband": "TRUE",
+            "Individual ID": "14613-p1",
+            "DNA Disease impact score": "0.214186813",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "547",
+            "RNA Disease impact score": "1.550305347",
+            "RNA gene symbol": "SKI",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "TRUE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2235106,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "T",
+            "Proband": "FALSE",
+            "Individual ID": "13618-s1",
+            "DNA Disease impact score": "-0.25348038",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "372",
+            "RNA Disease impact score": "0.449770618",
+            "RNA gene symbol": "SKI",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2235168,
+        "ref_allele": "A",
+        "alt_allele": "G",
+        "features": {
+          "asd": {
+            "Ref": "A",
+            "Alt": "G",
+            "Proband": "TRUE",
+            "Individual ID": "14613-p1",
+            "DNA Disease impact score": "0.155135785",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "434",
+            "RNA Disease impact score": "0.538847887",
+            "RNA gene symbol": "SKI",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2235624,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "T",
+            "Proband": "FALSE",
+            "Individual ID": "14151-s1",
+            "DNA Disease impact score": "0.31912944",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "890",
+            "RNA Disease impact score": "1.229254854",
+            "RNA gene symbol": "SKI",
+            "Exon junction proximal 200bp": "TRUE",
+            "Exon junction proximal 400bp": "TRUE",
+            "AS  junction proximal 200bp": "TRUE",
+            "AS  junction proximal 400bp": "TRUE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2247509,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "T",
+            "Proband": "FALSE",
+            "Individual ID": "12329-s1",
+            "DNA Disease impact score": "0.243471194",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "12775",
+            "RNA Disease impact score": "",
+            "RNA gene symbol": "",
+            "Exon junction proximal 200bp": "",
+            "Exon junction proximal 400bp": "",
+            "AS  junction proximal 200bp": "",
+            "AS  junction proximal 400bp": ""
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2250950,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "T",
+            "Proband": "FALSE",
+            "Individual ID": "11872-s1",
+            "DNA Disease impact score": "0.758653667",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "16216",
+            "RNA Disease impact score": "",
+            "RNA gene symbol": "",
+            "Exon junction proximal 200bp": "",
+            "Exon junction proximal 400bp": "",
+            "AS  junction proximal 200bp": "",
+            "AS  junction proximal 400bp": ""
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2254905,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "T",
+            "Proband": "TRUE",
+            "Individual ID": "13346-p1",
+            "DNA Disease impact score": "0.301121207",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "20171",
+            "RNA Disease impact score": "0.833747142",
+            "RNA gene symbol": "MORN1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2255213,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {
+          "asd": {
+            "Ref": "G",
+            "Alt": "A",
+            "Proband": "TRUE",
+            "Individual ID": "11838-p1",
+            "DNA Disease impact score": "0.038402132",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "20479",
+            "RNA Disease impact score": "1.600693871",
+            "RNA gene symbol": "MORN1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "TRUE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "TRUE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2259317,
+        "ref_allele": "G",
+        "alt_allele": "C",
+        "features": {
+          "asd": {
+            "Ref": "G",
+            "Alt": "C",
+            "Proband": "FALSE",
+            "Individual ID": "14237-s1",
+            "DNA Disease impact score": "1.185019977",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "24583",
+            "RNA Disease impact score": "3.219927158",
+            "RNA gene symbol": "MORN1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2265131,
+        "ref_allele": "C",
+        "alt_allele": "G",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "G",
+            "Proband": "FALSE",
+            "Individual ID": "13443-s1",
+            "DNA Disease impact score": "0.914229571",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "30397",
+            "RNA Disease impact score": "3.673813395",
+            "RNA gene symbol": "MORN1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2267153,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "T",
+            "Proband": "FALSE",
+            "Individual ID": "14497-s1",
+            "DNA Disease impact score": "0.929681119",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "32419",
+            "RNA Disease impact score": "0.506565274",
+            "RNA gene symbol": "MORN1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2269488,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "T",
+            "Proband": "FALSE",
+            "Individual ID": "14070-s1",
+            "DNA Disease impact score": "-0.258599363",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "34754",
+            "RNA Disease impact score": "1.427382528",
+            "RNA gene symbol": "MORN1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2274955,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "T",
+            "Proband": "FALSE",
+            "Individual ID": "13746-s1",
+            "DNA Disease impact score": "0.928463897",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "40221",
+            "RNA Disease impact score": "0.56188858",
+            "RNA gene symbol": "MORN1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2275915,
+        "ref_allele": "G",
+        "alt_allele": "C",
+        "features": {
+          "asd": {
+            "Ref": "G",
+            "Alt": "C",
+            "Proband": "TRUE",
+            "Individual ID": "14233-p1",
+            "DNA Disease impact score": "0.908027701",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "41181",
+            "RNA Disease impact score": "3.68240375",
+            "RNA gene symbol": "MORN1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2278348,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {
+          "asd": {
+            "Ref": "G",
+            "Alt": "A",
+            "Proband": "TRUE",
+            "Individual ID": "11587-p1",
+            "DNA Disease impact score": "1.119481346",
+            "DNA gene symbol (nearest representative TSS-based)": "SKI",
+            "Distance to representative TSS": "43614",
+            "RNA Disease impact score": "2.045827516",
+            "RNA gene symbol": "MORN1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2285043,
+        "ref_allele": "T",
+        "alt_allele": "C",
+        "features": {
+          "asd": {
+            "Ref": "T",
+            "Alt": "C",
+            "Proband": "FALSE",
+            "Individual ID": "14032-s1",
+            "DNA Disease impact score": "2.37884167",
+            "DNA gene symbol (nearest representative TSS-based)": "MORN1",
+            "Distance to representative TSS": "37950",
+            "RNA Disease impact score": "0.570880042",
+            "RNA gene symbol": "MORN1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2288623,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "T",
+            "Proband": "FALSE",
+            "Individual ID": "14536-s1",
+            "DNA Disease impact score": "0.264889202",
+            "DNA gene symbol (nearest representative TSS-based)": "MORN1",
+            "Distance to representative TSS": "34370",
+            "RNA Disease impact score": "5.188454439",
+            "RNA gene symbol": "MORN1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "TRUE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "TRUE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2324363,
+        "ref_allele": "A",
+        "alt_allele": "C",
+        "features": {
+          "asd": {
+            "Ref": "A",
+            "Alt": "C",
+            "Proband": "TRUE",
+            "Individual ID": "11924-p1",
+            "DNA Disease impact score": "0.750030311",
+            "DNA gene symbol (nearest representative TSS-based)": "RER1",
+            "Distance to representative TSS": "1082",
+            "RNA Disease impact score": "1.014891483",
+            "RNA gene symbol": "RER1",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "TRUE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "TRUE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr1",
+        "gene": null,
+        "position": 2337101,
+        "ref_allele": "A",
+        "alt_allele": "C",
+        "features": {
+          "asd": {
+            "Ref": "A",
+            "Alt": "C",
+            "Proband": "FALSE",
+            "Individual ID": "11601-s1",
+            "DNA Disease impact score": "3.426537559",
+            "DNA gene symbol (nearest representative TSS-based)": "PEX10",
+            "Distance to representative TSS": "6881",
+            "RNA Disease impact score": "4.351336698",
+            "RNA gene symbol": "PEX10",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      }
+    ]
+  }
+}

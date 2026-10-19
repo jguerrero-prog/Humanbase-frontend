@@ -1,0 +1,70 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "name": "Ref",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "Alt",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "Proband",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "Individual ID",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "DNA Disease impact score",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "DNA gene symbol (nearest representative TSS-based)",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "Distance to representative TSS",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "RNA Disease impact score",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "RNA gene symbol",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "Exon junction proximal 200bp",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "Exon junction proximal 400bp",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "AS  junction proximal 200bp",
+      "description": "",
+      "label": "asd"
+    },
+    {
+      "name": "AS  junction proximal 400bp",
+      "description": "",
+      "label": "asd"
+    }
+  ]
+}

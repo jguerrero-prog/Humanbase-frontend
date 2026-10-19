@@ -489,11 +489,26 @@
           "omit": [
             "model_features"
           ]
+        },
+        {
+          "path": "/api/deepsea/DNA_Binding/features/",
+          "omit": [
+            "description"
+          ],
+          "digits": 0
+        },
+        {
+          "path": "/api/deepsea/RNA_Binding/features/",
+          "omit": [
+            "description"
+          ],
+          "digits": 0
         }
       ],
       "usedBy": [
         "DeepseaService.features",
-        "DeepseaService.features (ExPecto)"
+        "DeepseaService.features (ExPecto)",
+        "AsdService.features"
       ],
       "$note": "Sei answers with 4 MB, too large to bundle; its 40 sequence classes are hand-built below. Seqweaver and Beluga are recorded without descriptions. ExPecto reads the same Beluga list with expecto=true and only needs its 218 expecto_features, so that sample drops model_features.",
       "handBuiltSamples": {
@@ -502,6 +517,34 @@
           "deepsea/Sei/features"
         ]
       }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/{name}/feature_predictions/",
+      "documented": true,
+      "example": "/api/deepsea/DNA_Binding/feature_predictions/?chr_and_variant_range=1:2230000:2440000",
+      "$note": "Precomputed predictions for every ASD variant in a range: DNA_Binding has 2,002 features, RNA_Binding fewer. Samples round to two decimals: DNA for the default range, CHD8 and SCN2A; RNA for the default range.",
+      "samples": [
+        {
+          "path": "/api/deepsea/DNA_Binding/feature_predictions/?chr_and_variant_range=1:2230000:2440000",
+          "digits": 2
+        },
+        {
+          "path": "/api/deepsea/DNA_Binding/feature_predictions/?chr_and_variant_range=14:21853352:21905457",
+          "digits": 2
+        },
+        {
+          "path": "/api/deepsea/DNA_Binding/feature_predictions/?chr_and_variant_range=2:166095911:166248818",
+          "digits": 2
+        },
+        {
+          "path": "/api/deepsea/RNA_Binding/feature_predictions/?chr_and_variant_range=1:2230000:2440000",
+          "digits": 2
+        }
+      ],
+      "usedBy": [
+        "AsdService.predictions"
+      ]
     },
     {
       "method": "GET",
@@ -535,13 +578,44 @@
         "/api/variants/?version=v1&gene__standard_name__istartswith=IRGM&page=1",
         "/api/variants/?version=v1&rsid=rs531708574&page=1",
         "/api/variants/?version=v1&chromosome=chr1&position__gte=877047&position__lte=877047&page=1",
-        "/api/variants/?version=v1&gene__standard_name__istartswith=NOTAGENE&page=1"
+        "/api/variants/?version=v1&gene__standard_name__istartswith=NOTAGENE&page=1",
+        "/api/variants/?labels__name=asd&page=1",
+        "/api/variants/?labels__name=asd&page=2",
+        "/api/variants/?labels__name=asd&chromosome=chr1&position__gte=2230000&position__lte=2440000&page=1",
+        "/api/variants/?labels__name=asd&chromosome=chr14&position__gte=21853352&position__lte=21905457&page=1",
+        "/api/variants/?labels__name=asd&chromosome=chr2&position__gte=166095911&position__lte=166248818&page=1",
+        "/api/variants/?labels__name=asd&chromosome=chr16&position__gte=53088944&position__lte=53361413&page=1",
+        "/api/variants/?labels__name=asd&chromosome=chr1&position__gte=2230000&position__lte=2440000&page=2"
       ],
       "usedBy": [
         "ExpectoService.searchVariants",
-        "ExpectoService.variantTotal"
+        "ExpectoService.variantTotal",
+        "AsdService.page",
+        "AsdService.inRange"
       ],
-      "$note": "Not in /api/schema/ (see the issue for Julien beside the ExPecto lane). The gene filter matches the start of the symbol, so ExpectoService keeps the exact gene. position is ignored; position__gte and position__lte work. 20 rows a page."
+      "$note": "Not in /api/schema/ (see the issue for Julien beside the ExPecto lane). The gene filter matches the start of the symbol, so ExpectoService keeps the exact gene. position is ignored; position__gte and position__lte work. 20 rows a page. ASD Browser: labels__name=asd, 20 rows per API page (page_size is ignored); chromosome with position__gte and position__lte limit it to a range. Samples: the first two pages, the default range chr1:2,230,000-2,440,000 (34 variants, two pages) and the CHD8, SCN2A and CHD9 gene spans."
+    },
+    {
+      "method": "GET",
+      "path": "/api/variants/features/",
+      "documented": false,
+      "example": "/api/variants/features/?label=asd",
+      "$note": "The ASD columns by name, such as DNA Disease impact score and the four junction columns.",
+      "samples": [
+        "/api/variants/features/?label=asd"
+      ],
+      "usedBy": [
+        "AsdService.columns"
+      ]
     }
-  ]
+  ],
+  "geneLookups": {
+    "$note": "Not the API: gene names are looked up in the static files the live genome browser reads on S3 (geneIndex.ix and .ixx, then gencode.bb by transcript). pnpm samples:record saves each listed gene’s span; a name with no file reads as not found while the API is off.",
+    "tracks": "https://humanbase.s3.amazonaws.com/tracks/",
+    "genes": [
+      "CHD8",
+      "SCN2A",
+      "CHD9"
+    ]
+  }
 }
