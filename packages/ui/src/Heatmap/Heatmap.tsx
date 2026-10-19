@@ -35,6 +35,10 @@ export interface HeatmapProps {
   decimals?: number | undefined;
   /** A cell to show as hovered at first, for documentation. */
   initialActive?: readonly [row: number, column: number] | undefined;
+  /** Compact rows are 8px tall with labels hidden; the tooltip still works on every cell. */
+  density?: 'full' | 'compact' | undefined;
+  /** Prints the value beside each cell, for a heatmap with a single column. */
+  showValues?: boolean | undefined;
 }
 
 type Cell = readonly [number, number];
@@ -42,7 +46,7 @@ type Cell = readonly [number, number];
 const counts = new Intl.NumberFormat('en-US');
 const cellWidth = 34;
 
-export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive }: HeatmapProps) {
+export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', showValues = false }: HeatmapProps) {
   const id = useId();
   const scale = useMemo(() => new ScoreScale(spec), [spec]);
   const plot = useRef<HTMLDivElement>(null);
@@ -86,7 +90,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   const activeHeader = activeColumn === undefined ? undefined : columns[activeColumn];
 
   return (
-    <figure className="heatmap" aria-labelledby={`${id}-title`}>
+    <figure className={['heatmap', density === 'compact' && 'heatmap-compact', showValues && 'heatmap-with-values'].filter(Boolean).join(' ')} aria-labelledby={`${id}-title`}>
       <div className="heatmap-head">
         <figcaption>
           <p id={`${id}-title`} className="heatmap-title">
@@ -135,6 +139,11 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
                   />
                 );
               })}
+              {showValues && (
+                <span className="heatmap-value" aria-hidden="true">
+                  {row.values[0] === null || row.values[0] === undefined ? '' : format(row.values[0])}
+                </span>
+              )}
             </div>
           ))}
         </div>
