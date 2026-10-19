@@ -1,0 +1,18 @@
+{
+  "note": "Hand-built, not recorded: submitting a Sei or Beluga job to record one was blocked by the permission checker. Values come from the Figma result screens; the ID is clearly not a real job. Replace with a recorded job once one is submitted. What submitting this tool's example answers with the API off; any other file explains that jobs need the API.",
+  "status": 201,
+  "body": {
+    "created": "2026-10-17T10:42:00",
+    "ds_model": "SeqWeaver",
+    "email": "",
+    "expecto": false,
+    "input_type": "vcf",
+    "insilico": false,
+    "job_id": "00000000-0000-4000-8000-000000000113",
+    "output_format": "tsv",
+    "sequence_names": [],
+    "status": "queued",
+    "title": "",
+    "genome_assembly": "hg19"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "note": "Hand-built, not recorded: submitting a Sei or Beluga job to record one was blocked by the permission checker. Values come from the Figma result screens; the ID is clearly not a real job. Replace with a recorded job once one is submitted.",
+  "status": 200,
+  "body": {
+    "created": "2026-10-17T10:42:00",
+    "ds_model": "Beluga",
+    "email": "",
+    "expecto": false,
+    "input_type": "vcf",
+    "insilico": false,
+    "job_id": "00000000-0000-4000-8000-000000000112",
+    "output_format": "tsv",
+    "sequence_names": [],
+    "status": "running",
+    "title": "",
+    "genome_assembly": "hg19",
+    "files": {
+      "variant_dis": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/00000000-0000-4000-8000-000000000112/00000000-0000-4000-8000-000000000112_variant_dis.bw",
+        "name": "Disease impact score"
+      },
+      "variant_mean-evalue": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/00000000-0000-4000-8000-000000000112/00000000-0000-4000-8000-000000000112_variant_mean-evalue.bw",
+        "name": "Mean -log e-value"
+      },
+      "feature_zscore": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/00000000-0000-4000-8000-000000000112/00000000-0000-4000-8000-000000000112_feature_zscore.tsv.gz",
+        "name": "z-score"
+      },
+      "feature_evalue": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/00000000-0000-4000-8000-000000000112/00000000-0000-4000-8000-000000000112_feature_evalue.tsv.gz",
+        "name": "e-value"
+      },
+      "feature_diffs": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/00000000-0000-4000-8000-000000000112/00000000-0000-4000-8000-000000000112_feature_diffs.tsv.gz",
+        "name": "Probability diffs"
+      },
+      "uploaded_query": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/00000000-0000-4000-8000-000000000112/00000000-0000-4000-8000-000000000112_textarea.vcf",
+        "name": "Uploaded query"
+      },
+      "gz_file": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/00000000-0000-4000-8000-000000000112/00000000-0000-4000-8000-000000000112.tar.gz",
+        "name": "Archive of results"
+      }
+    }
+  }
+}

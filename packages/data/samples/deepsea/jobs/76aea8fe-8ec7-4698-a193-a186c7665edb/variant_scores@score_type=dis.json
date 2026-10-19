@@ -1,0 +1,139 @@
+{
+  "status": 200,
+  "body": {
+    "ds_model": "SeqWeaver",
+    "score_type": "dis",
+    "scores": [
+      {
+        "sequence": {
+          "chromosome": "chr1",
+          "position": 109817590,
+          "name": "[known_CEBP_binding_increase]",
+          "ref_allele": "G",
+          "alt_allele": "T",
+          "strand": "-",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.0026267232754535
+      },
+      {
+        "sequence": {
+          "chromosome": "chr10",
+          "position": 23508363,
+          "name": "[known_FOXA2_binding_decrease]",
+          "ref_allele": "A",
+          "alt_allele": "G",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 0.5862577828308495
+      },
+      {
+        "sequence": {
+          "chromosome": "chr16",
+          "position": 209709,
+          "name": "[known_GATA1_binding_increase]",
+          "ref_allele": "T",
+          "alt_allele": "C",
+          "strand": "-",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.0470671722854354
+      },
+      {
+        "sequence": {
+          "chromosome": "chr16",
+          "position": 52599188,
+          "name": "[known_FOXA1_binding_increase]",
+          "ref_allele": "C",
+          "alt_allele": "T",
+          "strand": "-",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 0.20385323406232808
+      },
+      {
+        "sequence": {
+          "chromosome": "chr16",
+          "position": 83947129,
+          "name": "MLYCD",
+          "ref_allele": "T",
+          "alt_allele": "A",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 0.642884990487708
+      },
+      {
+        "sequence": {
+          "chromosome": "chr16",
+          "position": 85833314,
+          "name": "COX4I1",
+          "ref_allele": "G",
+          "alt_allele": "T",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 2.05266432400223
+      },
+      {
+        "sequence": {
+          "chromosome": "chr17",
+          "position": 76352731,
+          "name": "SOCS3",
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 0.9619722810915643
+      },
+      {
+        "sequence": {
+          "chromosome": "chr19",
+          "position": 1854681,
+          "name": "REXO1",
+          "ref_allele": "C",
+          "alt_allele": "G",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.9217970174600412
+      },
+      {
+        "sequence": {
+          "chromosome": "chr19",
+          "position": 55999138,
+          "name": "SSC5D",
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.6094711305027218
+      },
+      {
+        "sequence": {
+          "chromosome": "chr19",
+          "position": 59070227,
+          "name": "UBE2M",
+          "ref_allele": "C",
+          "alt_allele": "A",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.261615876479912
+      }
+    ]
+  }
+}

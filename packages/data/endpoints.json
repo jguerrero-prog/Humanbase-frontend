@@ -327,6 +327,140 @@
           "files/s3-us-west-2.amazonaws.com/humanbase/netwas/results/00000000-0000-4000-8000-000000000003.txt"
         ]
       }
+    },
+    {
+      "method": "POST",
+      "path": "/api/deepsea/jobs/",
+      "documented": true,
+      "readOnly": false,
+      "usedBy": [
+        "DeepseaService.submit"
+      ],
+      "$note": "Multipart upload. The schema does not name the file field; DeepseaService.fileField holds the guess to confirm.",
+      "handBuiltSamples": {
+        "why": "Submitting starts a real job. With the API off, submitting a tool’s example answers with a hand-built running job; any other file explains that jobs need the API.",
+        "files": [
+          "deepsea/jobs@post-f4c79f7c",
+          "deepsea/jobs@post-d5d72e89",
+          "deepsea/jobs@post-c312bddc"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/jobs/{job_id}/",
+      "documented": true,
+      "$note": "The Seqweaver example job 76aea8fe-8ec7-4698-a193-a186c7665edb, written on the Figma job screens and checked in the Seqweaver API note on October 18, 2026.",
+      "samples": [
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/",
+        "/api/deepsea/jobs/00000000-0000-4000-8000-000000000000/"
+      ],
+      "usedBy": [
+        "DeepseaService.get"
+      ],
+      "handBuiltSamples": {
+        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
+        "files": [
+          "deepsea/jobs/00000000-0000-4000-8000-000000000101",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000111",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000112",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000113",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000121",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000131"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/jobs/{job_id}/score_types/",
+      "documented": true,
+      "samples": [
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/score_types/"
+      ],
+      "usedBy": [
+        "DeepseaService.scoreTypes"
+      ],
+      "handBuiltSamples": {
+        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
+        "files": [
+          "deepsea/jobs/00000000-0000-4000-8000-000000000101/score_types",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102/score_types"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/jobs/{job_id}/variant_scores/",
+      "documented": true,
+      "samples": [
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/variant_scores/?score_type=dis",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/variant_scores/?score_type=mean-evalue"
+      ],
+      "usedBy": [
+        "DeepseaService.variantScores"
+      ],
+      "handBuiltSamples": {
+        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
+        "files": [
+          "deepsea/jobs/00000000-0000-4000-8000-000000000101/variant_scores@score_type=max_seqclass",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000101/variant_scores@score_type=mean-evalue",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102/variant_scores@score_type=dis",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102/variant_scores@score_type=mean-evalue"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/jobs/{job_id}/feature_predictions/",
+      "documented": true,
+      "samples": [
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=1:109817590",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=10:23508363",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:52599188",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:209709",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:83947129",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:85833314",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=17:76352731",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=19:1854681",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=19:55999138",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=19:59070227",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=evalue&chr_variant=1:109817590",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=diffs&chr_variant=1:109817590"
+      ],
+      "usedBy": [
+        "DeepseaService.featurePredictions"
+      ],
+      "handBuiltSamples": {
+        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
+        "files": [
+          "deepsea/jobs/00000000-0000-4000-8000-000000000101/feature_predictions@chr_variant=7%3A49813589&score_type=seqclass",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102/feature_predictions@chr_variant=3%3A12598855&score_type=zscore"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/{name}/features/",
+      "documented": true,
+      "omit": [
+        "description",
+        "expecto_features"
+      ],
+      "samples": [
+        "/api/deepsea/SeqWeaver/features/",
+        "/api/deepsea/Beluga/features/"
+      ],
+      "usedBy": [
+        "DeepseaService.features"
+      ],
+      "$note": "Sei answers with 4 MB, too large to bundle; its 40 sequence classes are hand-built below. Seqweaver and Beluga are recorded without descriptions.",
+      "handBuiltSamples": {
+        "why": "Sei’s live list is 4 MB of chromatin profiles; the sample holds its 40 sequence classes instead.",
+        "files": [
+          "deepsea/Sei/features"
+        ]
+      }
     }
   ]
 }
