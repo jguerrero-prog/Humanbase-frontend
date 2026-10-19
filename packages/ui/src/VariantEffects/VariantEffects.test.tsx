@@ -38,6 +38,12 @@ describe('VariantScorePlot', () => {
 describe('StrongestEffects', () => {
   const effects = new EffectGroups([experiment('LIN28A', 'H9', 28), experiment('LARP4', 'K562', 4.4), experiment('LARP4', 'HepG2', 2.8), experiment('QKI', 'K562', 3.9)]);
 
+  it('names only the first three cell types when a feature has many experiments', () => {
+    const many = new EffectGroups(['H9', 'K562', 'HepG2', 'GM12878', 'A549'].map((cell, index) => experiment('H3K27me3', cell, 6 - index * 0.1)));
+    render(<StrongestEffects effects={many} threshold={2} />);
+    expect(screen.getByText('5 experiments: H9, K562, HepG2 and 2 more')).toBeInTheDocument();
+  });
+
   it('folds repeats, opens them on request and says when nothing is lowered', async () => {
     const onToggle = vi.fn();
     render(<StrongestEffects effects={effects} threshold={2} onToggle={onToggle} limit={2} />);

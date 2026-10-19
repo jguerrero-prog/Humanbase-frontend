@@ -10,7 +10,7 @@
 .genome-location {
   display: grid;
   gap: var(--space-1);
-  inline-size: 400px;
+  inline-size: min(100%, 400px);
 }
 
 .genome-location-help {
@@ -37,6 +37,14 @@
 
 .genome-actions {
   gap: var(--space-2);
+}
+
+.genome-zoom {
+  max-inline-size: 100%;
+}
+
+.genome-zoom > .segmented {
+  min-inline-size: 0;
 }
 
 .genome-next {
@@ -113,4 +121,59 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
+}
+
+.score-tracks {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  border-block-start: var(--border-width-1) solid var(--border-subtle);
+}
+
+.score-tracks-column {
+  display: grid;
+  background: var(--surface-subtle);
+}
+
+.score-tracks-ruler-label {
+  padding: var(--space-1) var(--space-3);
+  font: var(--type-label-sm);
+}
+
+.score-tracks-area {
+  display: block;
+  padding-inline: var(--space-4);
+  overflow: visible;
+}
+
+.score-tracks-axis {
+  stroke: var(--text-secondary);
+}
+
+.score-tracks-baseline {
+  stroke: var(--border-subtle);
+}
+
+.score-tracks-tick {
+  font: 400 11px "Atkinson Hyperlegible Mono", monospace;
+  fill: var(--text-secondary);
+}
+
+.score-tracks-bar {
+  stroke: var(--viz-seq-6);
+  stroke-width: 3;
+}
+
+.score-tracks-selected,
+.score-tracks-guide {
+  stroke: var(--text-default);
+}
+
+.score-tracks-guide {
+  stroke-width: 1;
+}
+
+@media (width < 48rem) {
+  .score-tracks {
+    grid-template-columns: 120px minmax(0, 1fr);
+  }
 }

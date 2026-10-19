@@ -46,6 +46,10 @@ class EffectBars {
   }
 }
 
+// Opening the row lists every experiment, so the summary names only the first few cell types.
+const namedCells = 3;
+const cellsInBrief = (cells: readonly string[]) => (cells.length > namedCells ? `${cells.slice(0, namedCells).join(', ')} and ${cells.length - namedCells} more` : cells.join(', '));
+
 export function StrongestEffects({ effects, counts, threshold, expanded = [], onToggle, limit = 14, onShowMore, plural = 'proteins', verb = 'binding' }: StrongestEffectsProps) {
   const shown = useMemo(() => effects.atLeast(threshold), [effects, threshold]);
   const tally = counts ?? effects.counts();
@@ -133,7 +137,7 @@ function EffectList({ bars, groups, expanded, onToggle }: { bars: EffectBars; gr
         const several = group.experiments.length > 1;
         const open = several && expanded.includes(group.feature);
         const value = several ? `${bars.format(group.low)} to ${bars.format(group.high)}` : bars.format(group.peak);
-        const detail = several ? `${group.experiments.length} experiments: ${group.cells.join(', ')}` : group.experiments[0]?.context;
+        const detail = several ? `${group.experiments.length} experiments: ${cellsInBrief(group.cells)}` : group.experiments[0]?.context;
         return (
           <li key={group.feature} className="effect">
             <div className="effect-row">

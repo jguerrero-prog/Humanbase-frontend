@@ -2,13 +2,8 @@ import { useDeepseaVariants, useFeatureEffects, type DeepseaJob, type ScoreType,
 import {
   ActionMenu,
   Alert,
-  AllFeaturesPlot,
   byGenomePosition,
-  EffectGroups,
-  EffectsControls,
-  EffectsHeatmap,
   expressionEffects,
-  MolecularEffects,
   ResultHeader,
   ResultLayout,
   SearchField,
@@ -16,19 +11,18 @@ import {
   Select,
   sequenceClassEffects,
   Skeleton,
-  StrongestEffects,
   VariantFocus,
   variantLabel,
   VariantScorePlot,
   VariantsTable,
   zEffects,
   type EffectScale,
-  type EffectsView,
   type PlotBy,
 } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { jobDateTime } from '../Jobs/JobPage';
 import { deepseaFormLink } from './DeepseaForm';
+import { EffectsCard } from './EffectsCard';
 import './Deepsea.css';
 
 export interface DeepseaResultViewProps {
@@ -43,7 +37,6 @@ export interface DeepseaResultViewProps {
 
 const tableLabels: Record<string, string> = { dis: 'Disease impact', 'mean-evalue': 'Mean −log e', max_seqclass: 'Max class score' };
 const shownRows = 9;
-const heatmapRows = 20;
 const number = new Intl.NumberFormat('en-US');
 
 function effectScaleOf(model: DeepseaJob['model']): EffectScale {
@@ -199,82 +192,25 @@ interface VariantEffectsCardProps {
   featureTypes: readonly ScoreType[];
 }
 
-/** The selected variant's effect on every feature: Strongest effects, Heatmap and All features. */
+/** The selected variant's effect on every feature, for the chosen feature-level score. */
 function VariantEffectsCard({ job, variant, featureTypes }: VariantEffectsCardProps) {
   const model = job.model;
-  const scale = effectScaleOf(model);
   const [typeKey, setTypeKey] = useState<string>();
   const type = featureTypes.find((item) => item.short_name === typeKey) ?? featureTypes[0];
-  const [view, setView] = useState<EffectsView>('strongest');
-  const [threshold, setThreshold] = useState<number | null>(model.threshold);
-  const [search, setSearch] = useState('');
-  const [expanded, setExpanded] = useState<readonly string[]>([]);
-  const [limit, setLimit] = useState(14);
-  const [rows, setRows] = useState(heatmapRows);
-  const [density, setDensity] = useState<'full' | 'compact'>('full');
-  const [lowestFirst, setLowestFirst] = useState(false);
-  const { effects, isPending, error, refetch } = useFeatureEffects(job, type?.short_name, variant);
-  const label = variantLabel(variant);
-  const found = useMemo(() => (effects ?? []).filter((effect) => `${effect.feature} ${effect.context}`.toLowerCase().includes(search.trim().toLowerCase())), [effects, search]);
-  const groups = useMemo(() => new EffectGroups(found, scale), [found, scale]);
-  const all = useMemo(() => new EffectGroups(effects ?? [], scale), [effects, scale]);
+  const { effects, error, refetch } = useFeatureEffects(job, type?.short_name, variant);
   if (!type) return null;
-
-  const content = error ? (
-    <Alert tone="error" title="These effects couldn’t load" action={{ label: 'Try again', onSelect: refetch }}>
-      Humanbase didn’t send this variant’s feature scores. Trying again is safe.
-    </Alert>
-  ) : isPending || !effects ? (
-    <Skeleton width="100%" height="240px" />
-  ) : view === 'strongest' ? (
-    <StrongestEffects
-      effects={groups}
-      counts={all.counts()}
-      threshold={threshold}
-      expanded={expanded}
-      onToggle={(feature) => setExpanded((open) => (open.includes(feature) ? open.filter((item) => item !== feature) : [...open, feature]))}
-      limit={limit}
-      onShowMore={() => setLimit((shown) => shown + 14)}
-      plural={model.featurePlural}
-      verb={model.verb}
-    />
-  ) : view === 'heatmap' ? (
-    <EffectsHeatmap
-      variants={[label]}
-      rows={[...found].sort((a, b) => (lowestFirst ? a.value - b.value : b.value - a.value)).slice(0, rows).map((experiment) => ({ experiment, values: [experiment.value] }))}
-      total={effects.length}
-      density={density}
-      lowestFirst={lowestFirst}
-      scale={scale}
-      {...(found.length > rows ? { onShowMore: () => setRows((shown) => shown + heatmapRows) } : {})}
-    />
-  ) : (
-    <AllFeaturesPlot
-      values={effects.map((effect) => effect.value)}
-      labels={[...effects].sort((a, b) => b.value - a.value).slice(0, 5).map((effect) => ({ label: effect.label, value: effect.value }))}
-      scale={scale}
-      summary={`${type.name} of all ${number.format(effects.length)} ${model.featurePlural} for ${label}, lowest to highest.`}
-    />
-  );
-
   return (
-    <MolecularEffects variant={label} view={view} onViewChange={setView}>
-      <EffectsControls
-        scores={scoreOptions(featureTypes)}
-        score={type.short_name}
-        onScore={setTypeKey}
-        {...(view === 'strongest' ? { threshold, onThreshold: setThreshold, thresholdSteps: [scale.bins.weak, scale.bins.moderate, scale.bins.strong] } : {})}
-        search={search}
-        onSearch={setSearch}
-        featureNoun={model.featureNoun}
-        {...(view === 'heatmap' ? { density, onDensity: setDensity, lowestFirst, onLowestFirst: setLowestFirst } : {})}
-      />
-      {content}
-      {effects && search && found.length === 0 && (
-        <p className="deepsea-note" role="status">
-          No features match “{search}” for this variant. Search by cell type or feature, such as {effects[0]?.cell ?? 'K562'}.
-        </p>
-      )}
-    </MolecularEffects>
+    <EffectsCard
+      label={variantLabel(variant)}
+      effects={effects}
+      failed={Boolean(error)}
+      onRetry={refetch}
+      scale={effectScaleOf(model)}
+      threshold={model.threshold}
+      featureNoun={model.featureNoun}
+      featurePlural={model.featurePlural}
+      verb={model.verb}
+      choice={{ label: 'Score', options: scoreOptions(featureTypes), value: type.short_name, onChange: setTypeKey, name: type.name }}
+    />
   );
 }

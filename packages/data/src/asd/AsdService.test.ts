@@ -1,3 +1,4 @@
+import { featureEffects } from '../deepsea/DeepseaResult';
 import { GenomeLocation } from '../genome/GenomeLocation';
 import { SampleGeneLocator } from '../genome/SampleGeneLocator';
 import { SampleClient } from '../sample/SampleClient';
@@ -51,6 +52,14 @@ describe('AsdService', () => {
     const [predictions, features] = await Promise.all([service.predictions(browserRange, 'dna'), service.features('dna')]);
     expect(predictions).toHaveLength(34);
     expect(predictions[0]?.feature_predictions).toHaveLength(features.model_features?.length ?? 0);
+  });
+
+  it('names each feature the selected variant moves, though the list also sends an empty ExPecto list', async () => {
+    const [predictions, features] = await Promise.all([service.predictions(browserRange, 'dna'), service.features('dna')]);
+    const selected = predictions.find((record) => record.position === 2337101);
+    const effects = selected ? featureEffects(selected, features) : [];
+    expect(effects).toHaveLength(2002);
+    expect(Math.max(...effects.map((effect) => effect.value))).toBeGreaterThan(5);
   });
 });
 
