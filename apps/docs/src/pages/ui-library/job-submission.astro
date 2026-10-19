@@ -48,7 +48,7 @@ const sequenceNotes = [
   'A range must already be the right length; otherwise the field says how many bases to add or remove.',
   'The header records position and assembly, so the job and its download show exactly what was cut.',
   'In silico mutagenesis uses the same step to build its list of sequences.',
-  'Needs a sequence service on the HumanBase side. Until it exists, this option is hidden and the form works as it does today.',
+  'Needs a sequence service on the Humanbase side. Until it exists, this option is hidden and the form works as it does today.',
 ];
 
 const tools = [
@@ -64,7 +64,7 @@ const words = [
   ['File ready', '1,284 variants on chromosomes 1 to 22 and X, ready to run.'],
   ['A line breaks a rule', 'Line 14: REF is N. Use A, C, G or T.'],
   ['Many lines, same rule', '212 lines are past the end of their chromosome on GRCh37/hg19. If this file uses GRCh38/hg38, change the genome assembly.'],
-  ['Too many variants', 'This file has 26,400 variants; HumanBase runs up to 20,000 per job. Split it into two files.'],
+  ['Too many variants', 'This file has 26,400 variants; Humanbase runs up to 20,000 per job. Split it into two files.'],
   ['Wrong input type', 'This looks like a BED file. Switch to Regions (BED) to use it.'],
   ['Button, nothing to run', 'Add a file to run Seqweaver.'],
   ['Started', 'Seqweaver started on 1,284 variants. Follow it on the job page; it’s saved in this browser.'],
@@ -105,7 +105,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
 
 <DocsLayout title="Job submission" description="One form for every variant tool: model, input type, a file checked in the browser, and a run button that says what will run.">
   <Intro
-    lead="Sei, Beluga, Seqweaver, ExPecto and In silico mutagenesis share one form: choose a model, give it variants or sequences, and start a job. HumanBase checks the file before it is sent, so a job never fails an hour later because of line 14."
+    lead="Sei, Beluga, Seqweaver, ExPecto and In silico mutagenesis share one form: choose a model, give it variants or sequences, and start a job. Humanbase checks the file before it is sent, so a job never fails an hour later because of line 14."
     status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
@@ -196,7 +196,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
     </DocTable>
   </DocSection>
 
-  <DocSection title="Getting a sequence from the genome" lead="New. FASTA input needs sequences of an exact length, so people leave for NCBI to cut them. Here they enter a position, and HumanBase cuts a sequence of the right length, centered on it.">
+  <DocSection title="Getting a sequence from the genome" lead="New. FASTA input needs sequences of an exact length, so people leave for NCBI to cut them. Here they enter a position, and Humanbase cuts a sequence of the right length, centered on it.">
     <div class="sequence">
       <div class="sequence-form" inert>
         <SegmentedControl label="What are you submitting?" segments={inputTypes} defaultValue="fasta" />

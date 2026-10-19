@@ -1,5 +1,6 @@
 {
   "name": "humanbase-frontend",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@12.9.1",
@@ -17,7 +18,8 @@
     "check": "pnpm typecheck && pnpm lint && pnpm test",
     "tokens": "pnpm --filter @humanbase/tokens build",
     "api:generate": "node scripts/generate-api-types.mjs",
-    "api:verify": "node scripts/verify-api.mjs"
+    "api:verify": "node scripts/verify-api.mjs",
+    "samples:record": "node scripts/record-samples.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

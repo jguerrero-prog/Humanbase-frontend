@@ -1,10 +1,13 @@
-export { ApiClient, type Query } from './ApiClient';
+export { ApiClient } from './ApiClient';
+export type { DataClient, Query, QueryValue } from './DataClient';
+export { SampleClient, type RecordedResponse, type SampleLoaders } from './sample/SampleClient';
+export { sampleKey, type SampleMethod } from './sample/sampleKey';
 export { ApiError } from './ApiError';
 export { loadAppConfig, type AppConfig } from './AppConfig';
-export { HumanBase } from './HumanBase';
+export { Humanbase } from './Humanbase';
 export { Gene, type DataVersion, type GeneRecord } from './genes/Gene';
 export { GeneService } from './genes/GeneService';
-export { HumanBaseProvider, useHumanBase } from './react/HumanBaseProvider';
+export { HumanbaseProvider, useHumanbase } from './react/HumanbaseProvider';
 export { useGene } from './react/useGene';
 export { GenomeLocation, assemblyNames, type Assembly } from './genome/GenomeLocation';
 export { VariantFileCheck, type FileCheckResult, type FileProblem, type InputKind, type VariantModel } from './jobs/VariantFileCheck';

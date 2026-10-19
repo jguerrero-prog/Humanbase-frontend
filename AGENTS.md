@@ -13,18 +13,19 @@ Read this before changing anything. It applies to people and coding agents alike
 
 ## Where things go
 
-- **API calls** happen only in `packages/data`, through `ApiClient`. Components never call `fetch` or build URLs.
-- **New endpoints** need three things: a method on the right service, an entry in `packages/data/endpoints.json` (mark `documented: false` if the endpoint is missing from `/api/schema/`), and a test.
+- **API calls** happen only in `packages/data`, through a `DataClient`: `ApiClient` when the API is on, `SampleClient` when it is off. Components never call `fetch` or build URLs, and never check which client is in use.
+- **New endpoints** need four things: a method on the right service, an entry in `packages/data/endpoints.json` (mark `documented: false` if the endpoint is missing from `/api/schema/`), the `samples` that endpoint's screens request, recorded with `pnpm samples:record`, and a test. Every state a screen shows with the API on (found, empty, not found) needs a sample so it also shows with the API off. Mark a POST `readOnly: true` only if it never creates a job.
 - **Pure components** go in `packages/ui`: props in, markup out, every state (loading, empty, error) controlled by props.
 - **Connected components** go in `packages/hb`: a hook from `packages/data` plus a pure component from `packages/ui`.
 - **Design system pages** go in `apps/docs/src/pages` and are added to `apps/docs/src/navigation.ts`.
+- **Owner details** (maintainer, contact email, repository and Figma links) live only in `apps/docs/src/data/site.ts`. A new owner or fork edits that file.
 
 ## Generated files: do not edit by hand
 
 - `packages/tokens/tokens.css`: edit `packages/tokens/src/*.tokens.json`, then run `pnpm tokens`.
 - `packages/data/src/schema.d.ts`: run `pnpm api:generate`.
 
-## Connecting this front end to another HumanBase API
+## Connecting this front end to another Humanbase API
 
 1. Run `pnpm api:verify <your-api-origin>` and note any failing endpoints.
 2. Run `pnpm api:generate <your-api-origin>`, then `pnpm typecheck`. Fix type errors in `packages/data` only.

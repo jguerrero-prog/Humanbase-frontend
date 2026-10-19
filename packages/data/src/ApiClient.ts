@@ -1,9 +1,7 @@
 import { ApiError } from './ApiError';
+import type { DataClient, Query } from './DataClient';
 
-type QueryValue = string | number | boolean | undefined;
-export type Query = Record<string, QueryValue | readonly QueryValue[]>;
-
-export class ApiClient {
+export class ApiClient implements DataClient {
   constructor(
     private readonly baseUrl: string,
     private readonly fetcher: typeof fetch = globalThis.fetch.bind(globalThis),

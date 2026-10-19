@@ -87,7 +87,7 @@ const buildingBlocks: { block: string; usedBy: string; pages: string[]; note?: s
 ];
 
 const leaving = [
-  ['NCBI Genome Data Viewer, to cut a FASTA file', 'In silico mutagenesis needs a sequence of a set length', 'Enter coordinates or a gene and let HumanBase extract the sequence.'],
+  ['NCBI Genome Data Viewer, to cut a FASTA file', 'In silico mutagenesis needs a sequence of a set length', 'Enter coordinates or a gene and let Humanbase extract the sequence.'],
   ['UCSC hgdownload, to find track URLs', 'Beyond a few defaults (Conservation, GM12878 ChromHMM), new tracks need a URL or an indexed file', 'Offer common tracks as presets; keep URL entry for anything else.'],
   ['insulatordb and other sources, to find regions', 'Use cases depend on outside region lists', 'Link out clearly from the docs; nothing to change in the tool.'],
   ['Email, for NetWAS results', 'There is no results page', 'A NetWAS results page with the same data as the file.'],
@@ -122,10 +122,10 @@ const terminology = [
 ];
 ---
 
-<DocsLayout title="What exists today" description="A functional reference for every HumanBase tool: inputs, options, outputs and the features any redesign must keep.">
+<DocsLayout title="What exists today" description="A functional reference for every Humanbase tool: inputs, options, outputs and the features any redesign must keep.">
   <section class="intro" aria-label="Introduction">
     <p class="intro-lead">
-      A functional reference for every HumanBase tool: what it does, what it takes in, what it gives back, and the features any redesign must keep. It records behavior, not today’s look. The design system replaces the visuals; nothing here changes what a tool computes.
+      A functional reference for every Humanbase tool: what it does, what it takes in, what it gives back, and the features any redesign must keep. It records behavior, not today’s look. The design system replaces the visuals; nothing here changes what a tool computes.
     </p>
     <p class="intro-status">Compiled October 16, 2026 · Sources: humanbase-docs (all 34 pages and their screenshots), the UX audit, and Playwright captures of humanbase.io</p>
     <aside class="how-to" aria-labelledby="how-to-heading">
@@ -179,8 +179,8 @@ const terminology = [
     </DocTable>
   </DocSection>
 
-  <DocSection title="Where people leave HumanBase" lead="Each is a chance to keep people in the tool, without changing any analysis.">
-    <DocTable caption="Where people leave HumanBase" columns={['Step today', 'Why they leave', 'Opportunity']} widths={['384px', '444px']}>
+  <DocSection title="Where people leave Humanbase" lead="Each is a chance to keep people in the tool, without changing any analysis.">
+    <DocTable caption="Where people leave Humanbase" columns={['Step today', 'Why they leave', 'Opportunity']} widths={['384px', '444px']}>
       {leaving.map(([step, why, opportunity]) => <tr><th scope="row">{step}</th><td>{why}</td><td>{opportunity}</td></tr>)}
     </DocTable>
   </DocSection>

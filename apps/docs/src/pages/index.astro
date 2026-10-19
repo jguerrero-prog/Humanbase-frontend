@@ -6,6 +6,7 @@ import KeyRules from '../components/docs/KeyRules.astro';
 import NoteCard from '../components/docs/NoteCard.astro';
 import DocsLayout from '../layouts/DocsLayout.astro';
 import { navigation } from '../navigation';
+import { site } from '../data/site';
 
 const principles = [
   { title: 'Start from the research question', text: 'Organize screens around what people are trying to learn, not around which model answers it.' },
@@ -20,7 +21,7 @@ const areas = [
   { heading: 'Tokens', unit: 'token sets', summary: 'Named values shared by Figma and code, so a change is made once.' },
   { heading: 'Usage guidelines', unit: 'guides', summary: 'How to write, show data and handle the moments where things go wrong.' },
   { heading: 'Components', unit: 'components', summary: 'Reusable interface parts with every state and variant specified.' },
-  { heading: 'UI library', unit: 'patterns', summary: 'Ready-made HumanBase screens assembled from the components.' },
+  { heading: 'UI library', unit: 'patterns', summary: 'Ready-made Humanbase screens assembled from the components.' },
   { heading: 'Resources', unit: 'resources', summary: 'Everything needed to use and improve the system.' },
 ];
 
@@ -53,30 +54,30 @@ const usage = `@import url("@humanbase/ui/root.css");
 }`;
 ---
 
-<DocsLayout title="A Comprehensive Design System for Humanbase" description="What the HumanBase design system is, the principles behind it and how to use it.">
+<DocsLayout title="A Comprehensive Design System for Humanbase" description="What the Humanbase design system is, the principles behind it and how to use it.">
   <Intro
-    lead="The HumanBase Design System is the single source of truth for how HumanBase looks, reads and behaves. It brings together the foundations, tokens, components and patterns used to build tools for exploring human gene function, regulation and disease."
-    status="Version 0.1, draft · Updated October 16, 2026 · Maintained by Joel Guerrero of the Digital Technology team at Simons Foundation"
+    lead="The Humanbase Design System is the single source of truth for how Humanbase looks, reads and behaves. It brings together the foundations, tokens, components and patterns used to build tools for exploring human gene function, regulation and disease."
+    status={`Version 0.1, draft · Updated October 16, 2026 · Maintained by ${site.maintainer} of ${site.team}`}
   />
 
   <DocSection
     id="about"
-    title="About HumanBase"
-    lead="HumanBase is a free platform from the Flatiron Institute that uses AI to integrate tens of thousands of public genomic datasets into tissue-specific gene networks and variant effect predictions."
+    title="About Humanbase"
+    lead="Humanbase is a free platform from the Flatiron Institute that uses AI to integrate tens of thousands of public genomic datasets into tissue-specific gene networks and variant effect predictions."
   >
     <KeyRules
       size="medium"
       rules={[
-        { title: 'What it is', text: 'A shared library of design decisions, reusable components and usage guidance for every HumanBase tool, from gene networks to variant effect predictions.' },
-        { title: 'Who it is for', text: 'Designers, front-end developers, researchers writing help content, and anyone contributing a new analysis tool to HumanBase.' },
-        { title: 'Why it exists', text: 'HumanBase grew tool by tool. An audit in October 2026 found ten tools with separate patterns for search, job status, results and errors. This system replaces them with one consistent experience.' },
+        { title: 'What it is', text: 'A shared library of design decisions, reusable components and usage guidance for every Humanbase tool, from gene networks to variant effect predictions.' },
+        { title: 'Who it is for', text: 'Designers, front-end developers, researchers writing help content, and anyone contributing a new analysis tool to Humanbase.' },
+        { title: 'Why it exists', text: 'Humanbase grew tool by tool. An audit in October 2026 found ten tools with separate patterns for search, job status, results and errors. This system replaces them with one consistent experience.' },
       ]}
     />
   </DocSection>
 
   <section class="vision" id="vision" aria-labelledby="vision-heading">
     <h2 id="vision-heading">Vision</h2>
-    <p>Every researcher, at every level of computational fluency, can ask a biological question and trust the answer HumanBase gives.</p>
+    <p>Every researcher, at every level of computational fluency, can ask a biological question and trust the answer Humanbase gives.</p>
   </section>
 
   <DocSection id="principles" title="Design principles" lead="Five rules that settle decisions when two options both seem reasonable.">
@@ -122,7 +123,7 @@ const usage = `@import url("@humanbase/ui/root.css");
     </NoteCard>
   </DocSection>
 
-  <p class="overview-footer">Questions or proposals? Open a request in the contribution guide or contact the HumanBase team.</p>
+  <p class="overview-footer">Questions or proposals? Open a request in the contribution guide or contact the Humanbase team.</p>
 </DocsLayout>
 
 <style>

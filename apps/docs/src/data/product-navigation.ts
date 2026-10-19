@@ -1,6 +1,6 @@
 import type { JobsMenuSummary, NavSection } from '@humanbase/ui';
 
-// The proposed HumanBase top bar, shared by every page that draws a product screen.
+// The proposed Humanbase top bar, shared by every page that draws a product screen.
 export const productSections: NavSection[] = [
   {
     label: 'Network analysis',
@@ -46,7 +46,7 @@ export const productSections: NavSection[] = [
           links: [
             { label: 'Data sources', href: '/data-sources/', description: 'Datasets behind each network' },
             { label: 'Downloads', href: '/downloads/', description: 'Networks and models to download' },
-            { label: 'HumanBase API', href: '/api/docs/', description: 'Query HumanBase from code' },
+            { label: 'Humanbase API', href: '/api/docs/', description: 'Query Humanbase from code' },
           ],
         },
       ],

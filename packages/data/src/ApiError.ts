@@ -3,7 +3,7 @@ export class ApiError extends Error {
     readonly status: number,
     readonly url: string,
   ) {
-    super(`HumanBase API returned ${status} for ${url}`);
+    super(`Humanbase API returned ${status} for ${url}`);
     this.name = 'ApiError';
   }
 

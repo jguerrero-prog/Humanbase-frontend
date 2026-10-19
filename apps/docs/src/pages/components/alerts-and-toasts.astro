@@ -64,7 +64,7 @@ const toastTiming = [
 const lifecycle: { step: string; text: string; props: ToastProps }[] = [
   { step: '1. Submit', text: 'Replaces itself when the upload finishes', props: { tone: 'loading', message: 'Submitting NetWAS job…' } },
   { step: '2. Submitted', text: 'Stays until dismissed because it has an action', props: { tone: 'success', message: 'NetWAS job submitted', action: act('View job') } },
-  { step: '3. Ready, on another page', text: 'Arrives wherever people are in HumanBase', props: { tone: 'success', message: 'BMI GWAS results are ready', action: act('Open') } },
+  { step: '3. Ready, on another page', text: 'Arrives wherever people are in Humanbase', props: { tone: 'success', message: 'BMI GWAS results are ready', action: act('Open') } },
   { step: 'Or: failed', text: 'Stays until dismissed; also listed in job history', props: { tone: 'error', message: 'NetWAS job failed', action: act('See why') } },
 ];
 
@@ -128,7 +128,7 @@ toasts.update(id, { tone: 'success', message: 'NetWAS job submitted', action: { 
 
 <DocsLayout title="Alerts and toasts" description="Inline alerts, toasts and banners: which to use, timing, placement, accessibility and writing.">
   <Intro
-    lead="Messages tell people what happened and what to do next. HumanBase has four kinds, from a quiet toast that confirms a job was submitted to a banner that pauses job submission for everyone. Choosing the right one depends on how urgent the message is and how long it needs to stay."
+    lead="Messages tell people what happened and what to do next. Humanbase has four kinds, from a quiet toast that confirms a job was submitted to a banner that pauses job submission for everyone. Choosing the right one depends on how urgent the message is and how long it needs to stay."
     status="Updated October 16, 2026 · Components: Alert, Toast, Banner · Timing from the Motion page"
   >
     <KeyRules
@@ -141,7 +141,7 @@ toasts.update(id, { tone: 'success', message: 'NetWAS job submitted', action: { 
   </Intro>
 
   <DocSection title="Which message to use" lead="From most local to most global.">
-    <DocTable caption="Which message to use" columns={['Message', 'Use for', 'Stays', 'HumanBase example']} widths={['224px', '444px', '244px']}>
+    <DocTable caption="Which message to use" columns={['Message', 'Use for', 'Stays', 'Humanbase example']} widths={['224px', '444px', '244px']}>
       {which.map(([message, use, stays, example]) => <tr><th scope="row">{message}</th><td>{use}</td><td>{stays}</td><td>{example}</td></tr>)}
     </DocTable>
   </DocSection>
@@ -183,14 +183,14 @@ toasts.update(id, { tone: 'success', message: 'NetWAS job submitted', action: { 
 
   <DocSection title="Banners" lead="Full width, directly under the top bar, on every page. Only one at a time, for news that affects everyone.">
     <div class="stage stage-stack">
-      <Banner tone="info" action={act('Learn more')}>HumanBase works best on a larger screen. Some views are limited on phones.</Banner>
+      <Banner tone="info" action={act('Learn more')}>Humanbase works best on a larger screen. Some views are limited on phones.</Banner>
       <Banner tone="warning" action={act('Details')}>Scheduled maintenance Saturday, October 24, 9 to 11 AM ET. Running jobs will continue.</Banner>
       <Banner tone="error" action={act('Status page')}>Job submission is paused while we fix a server problem. Results you already have are safe.</Banner>
     </div>
     <p class="doc-note">The Info banner replaces the phone overlay found in the audit, which blocked the whole site and couldn’t be dismissed. Error banners can’t be dismissed until the problem is fixed.</p>
   </DocSection>
 
-  <DocSection title="HumanBase patterns" lead="Messages in context, including the moments the audit found people left without feedback." spacing="loose">
+  <DocSection title="Humanbase patterns" lead="Messages in context, including the moments the audit found people left without feedback." spacing="loose">
     <div class="patterns">
       <article class="pattern-card">
         <p class="pattern-label">NetWAS job form: upload problem</p>

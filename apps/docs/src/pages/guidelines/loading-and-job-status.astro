@@ -65,7 +65,7 @@ const jobsShown = [
       { label: 'Results ready', state: 'upcoming' },
     ],
     nextTitle: 'You can leave this page',
-    next: 'When it finishes, a toast appears on whatever HumanBase page you’re on.',
+    next: 'When it finishes, a toast appears on whatever Humanbase page you’re on.',
   },
   {
     name: 'Failed',
@@ -87,7 +87,7 @@ const updates = [
   ['Checking', 'Every 10 seconds, as today, and ask the API for queue_position. Slow to every 30 seconds after 10 minutes.'],
   ['What updates', 'Only the status text and steps; the page doesn’t jump or reload. “Checked 8 seconds ago” shows it’s alive.'],
   ['Announcements', 'Status changes use a polite live region: “Now running”. Finished and Failed are also shown as toasts.'],
-  ['Browser tab', 'The title starts with the status, such as “Queued, 3rd · BMI GWAS · HumanBase”, so people can watch from another tab.'],
+  ['Browser tab', 'The title starts with the status, such as “Queued, 3rd · BMI GWAS · Humanbase”, so people can watch from another tab.'],
   ['Reduced motion', 'Nothing in the steps animates. Spinners elsewhere follow the Motion page.'],
   ['Loading regions', 'aria-busy="true" on the area that is loading, with its words read once, not repeated.'],
 ];
@@ -101,9 +101,9 @@ const writing = [
 
 ---
 
-<DocsLayout title="Loading and job status" description="How HumanBase handles short waits while pages load and long waits while jobs run.">
+<DocsLayout title="Loading and job status" description="How Humanbase handles short waits while pages load and long waits while jobs run.">
   <Intro
-    lead="HumanBase waits in two very different ways: a second or two while a network or table loads, and minutes to hours while a NetWAS or Sei job runs on the cluster. Short waits should feel calm and show what’s coming; long ones should say where the job is and let people leave."
+    lead="Humanbase waits in two very different ways: a second or two while a network or table loads, and minutes to hours while a NetWAS or Sei job runs on the cluster. Short waits should feel calm and show what’s coming; long ones should say where the job is and let people leave."
     status="Updated October 16, 2026 · Usage guideline · Timing from the Motion page; status words from Badges and tags"
   >
     <KeyRules
@@ -116,8 +116,8 @@ const writing = [
   </Intro>
 
   <section class="today" aria-labelledby="today-heading">
-    <h2 id="today-heading">What HumanBase does today (audit and Playwright captures)</h2>
-    <DocTable caption="What HumanBase does today" columns={['Moment', 'Today', 'With this guideline']} widths={['300px', '500px']}>
+    <h2 id="today-heading">What Humanbase does today (audit and Playwright captures)</h2>
+    <DocTable caption="What Humanbase does today" columns={['Moment', 'Today', 'With this guideline']} widths={['300px', '500px']}>
       {
         today.map(([moment, now, next]) => (
           <tr>
