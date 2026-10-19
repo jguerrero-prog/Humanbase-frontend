@@ -1,5 +1,6 @@
 {
   "name": "humanbase-frontend",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@12.9.1",

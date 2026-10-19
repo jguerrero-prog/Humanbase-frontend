@@ -57,3 +57,7 @@ The design system site (`pnpm dev:docs`) documents every token and component.
 Every change starts as a GitHub issue, labeled feature, bug, enhancement, accessibility, code quality, documentation or api. Work happens on a branch named after the issue, such as `feature/12-gene-search`, and merges into `development` through a pull request once CI passes. `development` merges into `master` for releases. Both branches are protected.
 
 The code standards are in [AGENTS.md](AGENTS.md). They apply to people and coding agents alike.
+
+## License
+
+The front end and design system in this repository are [MIT licensed](LICENSE). The license does not cover the HumanBase API, the data it serves, or any graph renderer added to `packages/graph` under its own license; those belong to their owners.
