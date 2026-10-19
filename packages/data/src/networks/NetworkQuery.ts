@@ -12,12 +12,14 @@ export class NetworkQuery {
     readonly version: DataVersion = NetworkQuery.defaultVersion,
     /** Data type slugs to integrate; empty means all of them. */
     readonly dataTypes: readonly string[] = [],
+    /** The biological process network chosen in the Process network tab. */
+    readonly process: string | undefined = undefined,
   ) {}
 
   static fromSearch(search: URLSearchParams): NetworkQuery {
     const entrez = [...new Set(search.getAll('entrez').map(Number).filter((id) => Number.isInteger(id) && id > 0))];
     const version = search.get('version') === 'v3' ? 'v3' : NetworkQuery.defaultVersion;
-    return new NetworkQuery(entrez, search.get('tissue') || undefined, version, [...new Set(search.getAll('datatype'))]);
+    return new NetworkQuery(entrez, search.get('tissue') || undefined, version, [...new Set(search.getAll('datatype'))], search.get('process') || undefined);
   }
 
   get isEmpty(): boolean {
@@ -33,8 +35,19 @@ export class NetworkQuery {
     return this.tissue ?? (this.version === 'v3' ? 'global-v3' : 'global');
   }
 
-  with(changes: { entrez?: readonly number[]; tissue?: string | undefined; version?: DataVersion; dataTypes?: readonly string[] }): NetworkQuery {
-    return new NetworkQuery(changes.entrez ?? this.entrez, 'tissue' in changes ? changes.tissue : this.tissue, changes.version ?? this.version, changes.dataTypes ?? this.dataTypes);
+  with(changes: { entrez?: readonly number[]; tissue?: string | undefined; version?: DataVersion; dataTypes?: readonly string[]; process?: string | undefined }): NetworkQuery {
+    return new NetworkQuery(
+      changes.entrez ?? this.entrez,
+      'tissue' in changes ? changes.tissue : this.tissue,
+      changes.version ?? this.version,
+      changes.dataTypes ?? this.dataTypes,
+      'process' in changes ? changes.process : this.process,
+    );
+  }
+
+  /** The request for the chosen process network. Process networks exist for GIANT only. */
+  get processNetwork(): NetworkQuery | undefined {
+    return this.process ? new NetworkQuery(this.entrez, this.process, 'v1', this.dataTypes) : undefined;
   }
 
   toSearch(): URLSearchParams {
@@ -43,6 +56,7 @@ export class NetworkQuery {
     if (this.tissue) search.set('tissue', this.tissue);
     search.set('version', this.version);
     for (const type of this.dataTypes) search.append('datatype', type);
+    if (this.process) search.set('process', this.process);
     return search;
   }
 

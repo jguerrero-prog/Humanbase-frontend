@@ -70,3 +70,49 @@
   max-block-size: 520px;
   overflow: auto;
 }
+
+.tab-heading {
+  font: var(--type-h4);
+  color: var(--text-default);
+}
+
+.tissue-expression {
+  display: grid;
+  grid-template-columns: 284px minmax(0, 1fr);
+  gap: var(--space-6);
+}
+
+.tissue-systems {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.tissue-systems legend {
+  font: var(--type-label);
+}
+
+.tissue-systems p {
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+.tissue-systems .button {
+  justify-self: start;
+}
+
+.tissue-expression-results,
+.gene-associations {
+  display: grid;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+@media (width < 60rem) {
+  .tissue-expression {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

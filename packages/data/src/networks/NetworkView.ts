@@ -2,6 +2,9 @@ import type { NetworkViewOptions } from './Network';
 
 export type NetworkDisplay = 'graph' | 'table';
 
+export const networkTabs = ['network', 'expression', 'process', 'processes', 'diseases'] as const;
+export type NetworkTab = (typeof networkTabs)[number];
+
 export type NetworkSelection = { kind: 'gene'; entrez: number } | { kind: 'connection'; source: number; target: number };
 
 // How a network is shown: filters applied in the browser, kept in the URL beside the request.
@@ -19,6 +22,7 @@ export class NetworkView {
     readonly display: NetworkDisplay = 'graph',
     /** The graph takes the full width and the genes panel moves below it. */
     readonly expanded = false,
+    readonly tab: NetworkTab = 'network',
   ) {}
 
   static fromSearch(search: URLSearchParams): NetworkView {
@@ -32,6 +36,7 @@ export class NetworkView {
       NetworkView.readSelection(search),
       search.get('display') === 'table' ? 'table' : 'graph',
       search.get('expand') === '1',
+      networkTabs.find((tab) => tab === search.get('tab')) ?? 'network',
     );
   }
 
@@ -47,15 +52,15 @@ export class NetworkView {
     return { shown: this.shown, minConfidence: this.minConfidence ?? suggestedConfidence, prioritizeUniqueness: this.prioritizeUniqueness };
   }
 
-  with(changes: Partial<Pick<NetworkView, 'shown' | 'minConfidence' | 'prioritizeUniqueness' | 'selection' | 'display' | 'expanded'>>): NetworkView {
+  with(changes: Partial<Pick<NetworkView, 'shown' | 'minConfidence' | 'prioritizeUniqueness' | 'selection' | 'display' | 'expanded' | 'tab'>>): NetworkView {
     const next = { ...this, ...changes };
-    return new NetworkView(next.shown, next.minConfidence, next.prioritizeUniqueness, next.selection, next.display, next.expanded);
+    return new NetworkView(next.shown, next.minConfidence, next.prioritizeUniqueness, next.selection, next.display, next.expanded, next.tab);
   }
 
   /** Writes the view into a copy of the page's search parameters. */
   applyTo(search: URLSearchParams): URLSearchParams {
     const next = new URLSearchParams(search);
-    for (const key of ['shown', 'confidence', 'unique', 'gene', 'connection', 'display', 'expand']) next.delete(key);
+    for (const key of ['shown', 'confidence', 'unique', 'gene', 'connection', 'display', 'expand', 'tab']) next.delete(key);
     if (this.shown !== NetworkView.defaultShown) next.set('shown', String(this.shown));
     if (this.minConfidence !== undefined) next.set('confidence', String(this.minConfidence));
     if (this.prioritizeUniqueness) next.set('unique', '1');
@@ -63,6 +68,7 @@ export class NetworkView {
     if (this.selection?.kind === 'connection') next.set('connection', `${this.selection.source}-${this.selection.target}`);
     if (this.display === 'table') next.set('display', 'table');
     if (this.expanded) next.set('expand', '1');
+    if (this.tab !== 'network') next.set('tab', this.tab);
     return next;
   }
 }
