@@ -8,6 +8,7 @@ const svgNs = 'http://www.w3.org/2000/svg';
 const radius = { node: 6, query: 10, ring: 4 };
 const layoutTicks = 300;
 const padding = 40;
+const maxStretch = 1.8;
 
 interface PlacedNode extends SimulationNodeDatum, GraphNode {
   x: number;
@@ -53,6 +54,7 @@ export class ForceGraphRenderer implements GraphRenderer {
     const { svg, canvas } = this;
     if (!svg || !canvas) return;
     const placed = this.layout(data);
+    this.stretchToFit(placed.nodes, svg);
     canvas.replaceChildren();
     this.nodes.clear();
     this.links = [];
@@ -107,16 +109,27 @@ export class ForceGraphRenderer implements GraphRenderer {
       return source && target ? [{ source, target, weight: link.weight }] : [];
     });
     forceSimulation(nodes)
-      .force('link', forceLink<PlacedNode, PlacedLink>(links).distance((link) => 60 + (1 - link.weight) * 120).strength((link) => link.weight * 0.6))
-      .force('charge', forceManyBody().strength(-260))
+      .force('link', forceLink<PlacedNode, PlacedLink>(links).distance((link) => 90 + (1 - link.weight) * 160).strength((link) => link.weight * 0.6))
+      .force('charge', forceManyBody().strength(-420))
       .force('center', forceCenter(0, 0))
-      .force('collide', forceCollide<PlacedNode>().radius((node) => (node.query ? 34 : 26)))
+      .force('collide', forceCollide<PlacedNode>().radius((node) => (node.query ? 40 : 32)))
       .stop()
       .tick(layoutTicks);
     return { nodes, links };
   }
 
-  select(selection: GraphSelection): void {
+  // Force layouts come out roughly round; widen them to use a wide graph area without crowding labels.
+  private stretchToFit(nodes: PlacedNode[], svg: SVGSVGElement): void {
+    const box = svg.getBoundingClientRect();
+    if (!nodes.length || !box.width || !box.height) return;
+    const xs = nodes.map((n) => n.x);
+    const ys = nodes.map((n) => n.y);
+    const spread = (Math.max(...xs) - Math.min(...xs) || 1) / (Math.max(...ys) - Math.min(...ys) || 1);
+    const stretch = Math.min(maxStretch, Math.max(1, box.width / box.height / spread));
+    for (const node of nodes) node.x *= stretch;
+  }
+
+    select(selection: GraphSelection): void {
     const linked = new Set<string>();
     if (selection?.kind === 'node') {
       linked.add(selection.id);

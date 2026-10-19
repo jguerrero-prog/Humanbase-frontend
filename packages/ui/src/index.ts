@@ -81,7 +81,8 @@ export { NavMenu, NavPanelContent, type NavMenuProps } from './Navigation/NavMen
 export { TopBar, type TopBarProps } from './Navigation/TopBar';
 export type { NavGroup, NavItemState, NavLink, NavSection } from './Navigation/types';
 export { DataTooltip, type DataTooltipProps } from './Tooltip/DataTooltip';
-export { placeNearPoint, type Placement } from './Tooltip/placement';
+export { anchorSupported, placeNearPoint, placeUnder, type Placement } from './Tooltip/placement';
+export { saveFile } from './utils/saveFile';
 export { Toggletip, type ToggletipProps } from './Tooltip/Toggletip';
 export { Tooltip, type TooltipProps } from './Tooltip/Tooltip';
 export { TooltipController, tooltips } from './Tooltip/TooltipController';

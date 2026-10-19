@@ -17,10 +17,38 @@ for (const path of pages) {
   });
 }
 
-test('the Networks placeholder reads genes, tissue and version from the URL', async ({ page }) => {
+const axeTags = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
+
+test('the Networks result has no WCAG 2.2 AA violations once loaded, with the data types open', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&entrez=100188314&version=v1`);
+  await expect(page.getByText(/Showing 15 of 50 genes, \d+ connections at 0\.48 or more/)).toBeVisible();
+  await expect(page.getByText('AUTS12 was left out because it isn’t in any Humanbase network. This network uses IL1B and TNF.')).toBeVisible();
+  await page.getByRole('button', { name: 'Data types' }).click();
+  await expect(page.getByRole('checkbox', { name: 'Co-expression' })).toBeVisible();
+  const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
+  expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
+test('Networks keeps filters and the selected gene in the URL, so a refresh shows the same view', async ({ page }) => {
   await apiOff(page);
-  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&tissue=blood-vessel&version=v3`);
-  await expect(page.getByText('2 genes in the blood-vessel network, MAGE')).toBeVisible();
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1`);
+  const genes = page.getByRole('table', { name: /Genes functionally related/ });
+  await genes.getByRole('button', { name: /^ICAM1/ }).click();
+  await expect(page).toHaveURL(/gene=3383/);
+  await page.getByRole('textbox', { name: 'Genes shown, exact value' }).fill('20');
+  await page.getByRole('textbox', { name: 'Genes shown, exact value' }).press('Enter');
+  await expect(page).toHaveURL(/shown=20/);
+  await page.reload();
+  await expect(page.getByText(/Showing 20 of 50 genes/)).toBeVisible();
+  await expect(page.locator('.force-graph-node.is-selected')).toHaveAttribute('aria-label', 'ICAM1, related gene');
+});
+
+test('Networks explains a gene that is in no network', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=100188314&version=v1`);
+  await expect(page.getByText('AUTS12 is not in this network')).toBeVisible();
 });
 
 test('Display settings saves reduced motion in this browser', async ({ page }) => {
