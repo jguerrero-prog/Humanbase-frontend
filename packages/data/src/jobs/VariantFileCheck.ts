@@ -37,7 +37,7 @@ export class VariantFileCheck {
     const { count, problems, chromosomes } = this.kind === 'fasta' ? this.checkFasta(lines) : this.checkTable(lines);
     const result: FileCheckResult = { count, problems, summary: this.summary(count, chromosomes) };
     if (count > VariantFileCheck.maxVariants) {
-      result.limit = `This file has ${number.format(count)} ${nouns[this.kind][1]}; HumanBase runs up to ${number.format(VariantFileCheck.maxVariants)} per job. Split it into two files.`;
+      result.limit = `This file has ${number.format(count)} ${nouns[this.kind][1]}; Humanbase runs up to ${number.format(VariantFileCheck.maxVariants)} per job. Split it into two files.`;
     }
     if (otherKind && otherKind !== this.kind) result.otherKind = `This looks like a ${otherKind.toUpperCase()} file. Switch to ${kindNames[otherKind]} to use it.`;
     return result;

@@ -66,7 +66,7 @@ const accessibility = [
 ];
 ---
 
-<DocsLayout title="Errors and validation" description="Where HumanBase shows errors, when it checks, and how it words them.">
+<DocsLayout title="Errors and validation" description="Where Humanbase shows errors, when it checks, and how it words them.">
   <Intro
     lead="Errors happen when a file has the wrong columns, a gene symbol is misspelled or the server is slow. A good error says what went wrong, where, and how to fix it, and never costs people the work they already did."
     status="Updated October 16, 2026 · Usage guideline · Uses Text inputs, Alerts and toasts, and Badges"
@@ -81,8 +81,8 @@ const accessibility = [
   </Intro>
 
   <section class="today" aria-labelledby="today-heading">
-    <h2 id="today-heading">What HumanBase shows today (from the audit captures)</h2>
-    <DocTable caption="What HumanBase shows today" columns={['Moment', 'Today', 'With this guideline']} widths={['300px', '500px']}>
+    <h2 id="today-heading">What Humanbase shows today (from the audit captures)</h2>
+    <DocTable caption="What Humanbase shows today" columns={['Moment', 'Today', 'With this guideline']} widths={['300px', '500px']}>
       {
         today.map(([moment, now, next]) => (
           <tr>
@@ -154,7 +154,7 @@ const accessibility = [
       <figure class="compare-card" aria-label="Proposed page not found">
         <p class="compare-label compare-proposed">Proposed</p>
         <p class="compare-title">We couldn’t find that gene page</p>
-        <p>The link asked for gene 99999999, which isn’t in HumanBase. It may have a typo, or come from an older version of the site.</p>
+        <p>The link asked for gene 99999999, which isn’t in Humanbase. It may have a typo, or come from an older version of the site.</p>
         <SearchField label="Search genes" size="medium" placeholder="Search a gene, for example IL1B" />
         <ul class="next-links">
           <li><a href="#page-not-found">Go to Networks</a></li>

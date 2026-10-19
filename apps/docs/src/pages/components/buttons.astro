@@ -14,10 +14,10 @@ import SpecimenCard from '../../components/docs/SpecimenCard.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const styles: { variant: ButtonVariant; title: string; label: string; text: string; example: string }[] = [
-  { variant: 'primary', title: 'Primary', label: 'Run analysis', text: 'The main action on a screen or in a panel. Only one per view.', example: 'In HumanBase: Run analysis, Search, Submit job' },
-  { variant: 'secondary', title: 'Secondary', label: 'Explore', text: 'A highlighted action on emerald or dark backgrounds, where Primary would disappear.', example: 'In HumanBase: Explore on the homepage hero, Try an example' },
-  { variant: 'ghost', title: 'Ghost', label: 'Add network', text: 'Lower-priority actions next to a Primary, and actions inside toolbars and panels.', example: 'In HumanBase: Add network, Clear, Download' },
-  { variant: 'destructive', title: 'Destructive', label: 'Delete job', text: 'Actions that delete, cancel or lose work. Always confirm first.', example: 'In HumanBase: Delete job, Clear job history, Cancel run' },
+  { variant: 'primary', title: 'Primary', label: 'Run analysis', text: 'The main action on a screen or in a panel. Only one per view.', example: 'In Humanbase: Run analysis, Search, Submit job' },
+  { variant: 'secondary', title: 'Secondary', label: 'Explore', text: 'A highlighted action on emerald or dark backgrounds, where Primary would disappear.', example: 'In Humanbase: Explore on the homepage hero, Try an example' },
+  { variant: 'ghost', title: 'Ghost', label: 'Add network', text: 'Lower-priority actions next to a Primary, and actions inside toolbars and panels.', example: 'In Humanbase: Add network, Clear, Download' },
+  { variant: 'destructive', title: 'Destructive', label: 'Delete job', text: 'Actions that delete, cancel or lose work. Always confirm first.', example: 'In Humanbase: Delete job, Clear job history, Cancel run' },
 ];
 
 const previewStates = ['default', 'hover', 'pressed', 'focus'] as const;
@@ -52,9 +52,9 @@ const usage = `import { Button } from '@humanbase/ui';
 <Button loading>Running</Button>`;
 ---
 
-<DocsLayout title="Buttons" description="Button styles, sizes, states and usage in HumanBase.">
+<DocsLayout title="Buttons" description="Button styles, sizes, states and usage in Humanbase.">
   <Intro
-    lead="Buttons start actions: running an analysis, adding a network, downloading results. HumanBase has four button styles in two sizes, and every button shows a clear state when people hover, press, focus it with the keyboard, or wait for it to finish."
+    lead="Buttons start actions: running an analysis, adding a network, downloading results. Humanbase has four button styles in two sizes, and every button shows a clear state when people hover, press, focus it with the keyboard, or wait for it to finish."
     status="Updated October 16, 2026 · Components: Button / Medium and Button / Small, in the “Components: Button” section to the right of this page"
   >
     <KeyRules

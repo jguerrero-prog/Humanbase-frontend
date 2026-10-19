@@ -57,7 +57,7 @@ With `"api": false` the front end never calls an API. Every screen shows sample 
 
 The sample data is real Humanbase API responses. `packages/data/endpoints.json` lists, for each endpoint, the requests the screens make, including not-found cases. `pnpm samples:record` fetches them from the public API, or from the origin you pass, and saves one file per request. It only sends read requests; it never submits a job.
 
-To connect your own engine instead of the Humanbase API, write a class that implements `DataClient` (`get` and `post`) and pass it to `new HumanBase(yourClient)` in `apps/web/src/main.tsx`. Services and screens don't change.
+To connect your own engine instead of the Humanbase API, write a class that implements `DataClient` (`get` and `post`) and pass it to `new Humanbase(yourClient)` in `apps/web/src/main.tsx`. Services and screens don't change.
 
 ## Using the design system
 

@@ -14,7 +14,7 @@ interface PageInfo {
 type Props = PageInfo | { frontmatter: PageInfo };
 
 const page = 'frontmatter' in Astro.props ? Astro.props.frontmatter : Astro.props;
-const { title, description = 'The HumanBase design system.' } = page;
+const { title, description = 'The Humanbase design system.' } = page;
 ---
 
 <!doctype html>
@@ -24,7 +24,7 @@ const { title, description = 'The HumanBase design system.' } = page;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <title>{title} · HumanBase design system</title>
+    <title>{title} · Humanbase design system</title>
   </head>
   <body>
     <a class="skip-link" href="#content">Skip to content</a>

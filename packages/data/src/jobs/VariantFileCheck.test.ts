@@ -35,6 +35,6 @@ describe('VariantFileCheck', () => {
 
   it('says when a file is over the limit', () => {
     const rows = Array.from({ length: 20001 }, (_, i) => `chr1\t${i + 1}\t.\tA\tG`);
-    expect(new VariantFileCheck('vcf', 'sei').check(rows.join('\n')).limit).toBe('This file has 20,001 variants; HumanBase runs up to 20,000 per job. Split it into two files.');
+    expect(new VariantFileCheck('vcf', 'sei').check(rows.join('\n')).limit).toBe('This file has 20,001 variants; Humanbase runs up to 20,000 per job. Split it into two files.');
   });
 });

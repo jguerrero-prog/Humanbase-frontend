@@ -45,11 +45,11 @@ const colorExamples = [
 const originalIcons: { title: string; text: string; file: string; src?: string }[] = [
   { title: 'Networks', src: networks, file: 'networks_fa-connectdevelop.svg', text: 'Font Awesome 4.7 “connectdevelop”, grey #444. A brand icon (Connect Develop’s logo).' },
   { title: 'Modules', src: modules, file: 'modules_fa-certificate.svg', text: 'Font Awesome 4.7 “certificate”, grey #444' },
-  { title: 'Sei and Beluga', src: deepsea, file: 'sei-and-beluga_deepsea_logo.svg', text: 'HumanBase SVG of the DeepSEA whale; Sei and Beluga share it. The file also holds a small “DeepSEA” wordmark.' },
-  { title: 'Seqweaver', src: seqweaver, file: 'seqweaver_seqweaver-icon.svg', text: 'HumanBase SVG, blue #24A4D3; the file credits Stephen Plaster' },
+  { title: 'Sei and Beluga', src: deepsea, file: 'sei-and-beluga_deepsea_logo.svg', text: 'Humanbase SVG of the DeepSEA whale; Sei and Beluga share it. The file also holds a small “DeepSEA” wordmark.' },
+  { title: 'Seqweaver', src: seqweaver, file: 'seqweaver_seqweaver-icon.svg', text: 'Humanbase SVG, blue #24A4D3; the file credits Stephen Plaster' },
   { title: 'In silico mutagenesis', src: inSilico, file: 'in-silico-mutagenesis_fa-th.svg', text: 'Font Awesome 4.7 “th”, blue #24A4D3' },
   { title: 'ExPecto', src: expecto, file: 'expecto_fa-magic.svg', text: 'Font Awesome 4.7 “magic”, blue #24A4D3' },
-  { title: 'ExPecto SC', src: expectoSc, file: 'expecto-sc_dendritic_cell.png', text: 'HumanBase SVG of a dendritic cell, created with BioRender.com. Shown here as a 2x image: the file is 335 KB, 1,189 paths' },
+  { title: 'ExPecto SC', src: expectoSc, file: 'expecto-sc_dendritic_cell.png', text: 'Humanbase SVG of a dendritic cell, created with BioRender.com. Shown here as a 2x image: the file is 335 KB, 1,189 paths' },
   { title: 'GWAS (NetWAS)', src: gwas, file: 'gwas-netwas_fa-list-ol.svg', text: 'Font Awesome 4.7 “list-ol”, grey #444' },
   { title: 'ASD Browser', file: 'No file', text: 'No icon in the live dropdown or menu' },
 ];
@@ -61,9 +61,9 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
 <Icon name="alert-circle" label="Error" />`;
 ---
 
-<DocsLayout title="Iconography" description="HumanBase interface and science icons: drawing style, sizes, color and accessibility.">
+<DocsLayout title="Iconography" description="Humanbase interface and science icons: drawing style, sizes, color and accessibility.">
   <Intro
-    lead="HumanBase icons are simple line drawings that help people find and recognize actions faster. They start from Feather, a widely used open-source set, and add two things of their own: softened corners that make the set feel friendlier, and science icons drawn for HumanBase’s tools, such as gene networks, variants and genome tracks."
+    lead="Humanbase icons are simple line drawings that help people find and recognize actions faster. They start from Feather, a widely used open-source set, and add two things of their own: softened corners that make the set feel friendlier, and science icons drawn for Humanbase’s tools, such as gene networks, variants and genome tracks."
     status="Updated October 17, 2026 · 49 icons: 10 science, 39 interface · Interface icons based on Feather Icons by Cole Bemis, MIT license"
   >
     <KeyRules
@@ -76,13 +76,13 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
   </Intro>
 
   <DocSection
-    title="The HumanBase touch"
+    title="The Humanbase touch"
     lead="Every sharp corner in the set is rounded by 2px, and rectangles by at least 3px. It is a small change, but it echoes the rounded buttons and the Cabin typeface and makes the set feel approachable. Shown at 3x."
     spacing="loose"
   >
-    <div class="comparison" role="region" aria-label="Feather icons compared with HumanBase icons" tabindex="0">
+    <div class="comparison" role="region" aria-label="Feather icons compared with Humanbase icons" tabindex="0">
       <table>
-        <caption class="visually-hidden">Feather icons as published, compared with the HumanBase versions</caption>
+        <caption class="visually-hidden">Feather icons as published, compared with the Humanbase versions</caption>
         <thead class="visually-hidden">
           <tr>
             <th scope="col">Set</th>
@@ -105,7 +105,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
             }
           </tr>
           <tr>
-            <th scope="row" class="comparison-humanbase">HumanBase</th>
+            <th scope="row" class="comparison-humanbase">Humanbase</th>
             {
               featherReference.map((reference) => (
                 <td>
@@ -121,7 +121,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
 
   <DocSection
     title="Science icons"
-    lead="Drawn for HumanBase on the same grid as the interface icons, with a lighter 1.5px stroke because they carry more detail. Network icons leave a small gap where links meet nodes, the same way the hero illustration does. Shown at 2x."
+    lead="Drawn for Humanbase on the same grid as the interface icons, with a lighter 1.5px stroke because they carry more detail. Network icons leave a small gap where links meet nodes, the same way the hero illustration does. Shown at 2x."
     spacing="loose"
   >
     <ul class="icon-cards">
@@ -264,7 +264,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
 
   <DocSection
     title="Original icons"
-    lead="The icons beside each analysis in the live site’s Select an analysis dropdown and Analyses menu, extracted October 17, 2026, for reference. The redesign uses the HumanBase icons above. Five are Font Awesome 4.7 glyphs from the site’s icon font, in the colors the dropdown gives them; three are HumanBase’s own SVG files. Shown at 48px."
+    lead="The icons beside each analysis in the live site’s Select an analysis dropdown and Analyses menu, extracted October 17, 2026, for reference. The redesign uses the Humanbase icons above. Five are Font Awesome 4.7 glyphs from the site’s icon font, in the colors the dropdown gives them; three are Humanbase’s own SVG files. Shown at 48px."
     spacing="loose"
   >
     <ul class="icon-cards">
@@ -279,7 +279,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
         ))
       }
     </ul>
-    <p class="doc-note">Font Awesome 4.7 icons by Dave Gandy, SIL Open Font License 1.1. Seqweaver icon by Stephen Plaster from the Noun Project, CC BY 3.0. The DeepSEA logo belongs to HumanBase. The ExPecto SC dendritic cell was created with BioRender.com. Sources and licenses are listed in <code>apps/docs/src/assets/original-icons/ATTRIBUTION.md</code>.</p>
+    <p class="doc-note">Font Awesome 4.7 icons by Dave Gandy, SIL Open Font License 1.1. Seqweaver icon by Stephen Plaster from the Noun Project, CC BY 3.0. The DeepSEA logo belongs to Humanbase. The ExPecto SC dendritic cell was created with BioRender.com. Sources and licenses are listed in <code>apps/docs/src/assets/original-icons/ATTRIBUTION.md</code>.</p>
   </DocSection>
 
   <NoteCard title="Using icons in Figma">
