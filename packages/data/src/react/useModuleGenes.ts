@@ -1,0 +1,19 @@
+import { useQuery } from '@tanstack/react-query';
+import type { GeneHit } from '../genes/GeneHit';
+import type { ModuleResult } from '../modules/ModuleResult';
+import { useHumanbase } from './HumanbaseProvider';
+
+/** Symbols and names for every gene in a module result, looked up by Entrez ID in one request. */
+export function useModuleGenes(result: ModuleResult | undefined) {
+  const api = useHumanbase();
+  const entrez = result?.entrez ?? [];
+  return useQuery({
+    queryKey: ['module-genes', [...entrez]],
+    queryFn: async () => {
+      const matches = await api.search.list(entrez.map(String));
+      return new Map<number, GeneHit>(matches.flatMap((term) => term.genes.slice(0, 1).map((gene) => [gene.entrez, gene] as const)));
+    },
+    enabled: entrez.length > 0,
+    staleTime: Infinity,
+  });
+}

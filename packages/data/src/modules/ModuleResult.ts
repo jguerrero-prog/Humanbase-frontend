@@ -2,6 +2,13 @@ import type { DataVersion } from '../genes/Gene';
 
 // The schema leaves the community result undefined. This shape follows what the live site reads
 // (query.integration, query.title, query.entrez_list, enrichment per database) and is checked against a real result before launch.
+/** How the term databases a result can draw from are named on screen. */
+export const termDatabaseNames: Readonly<Record<string, string>> = {
+  'gene-ontology-bp': 'Gene Ontology (BP)',
+  'disease-ontology': 'Disease Ontology',
+  'brenda-ontology': 'Tissues (BRENDA)',
+};
+
 export interface CommunityTermRecord {
   identifier: string;
   title: string;

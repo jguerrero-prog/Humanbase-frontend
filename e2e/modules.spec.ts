@@ -4,8 +4,11 @@ import { apiOff } from './apiOff';
 
 const web = 'http://localhost:4173';
 const axeTags = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
-const violationsOf = async (page: Parameters<typeof apiOff>[0]) =>
-  (await new AxeBuilder({ page }).exclude('[data-illustration]').withTags(axeTags).analyze()).violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`);
+// Scans once entrance animations end, so fading layers aren't measured halfway.
+const violationsOf = async (page: Parameters<typeof apiOff>[0]) => {
+  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
+  return (await new AxeBuilder({ page }).exclude('[data-illustration]').withTags(axeTags).analyze()).violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`);
+};
 
 test('Modules on the homepage checks an example list and starts a job, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
@@ -30,5 +33,51 @@ test('a module result that no longer exists says so', async ({ page }) => {
   await page.goto(`${web}/modules/?body_tag=0000`);
   await expect(page.getByText('This module result isn’t available')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
+const renal = `${web}/modules/?body_tag=faa09d1786f0998dbd03d7323f544f5457d98936`;
+
+test('the module result has no WCAG 2.2 AA violations in each view, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(renal);
+  await expect(page.getByText('Showing 5 enriched modules of 2 genes or more. Edges hidden.')).toBeVisible();
+  expect(await violationsOf(page)).toEqual([]);
+
+  await page.getByRole('table', { name: 'Modules and their top terms' }).getByRole('button', { name: 'M1' }).click();
+  await expect(page.getByRole('dialog', { name: 'M1, renal system development' })).toBeVisible();
+  await expect(page).toHaveURL(/module=1/);
+  expect(await violationsOf(page)).toEqual([]);
+  await page.getByRole('button', { name: 'Close' }).click();
+
+  await page.getByRole('tab', { name: 'Genes' }).click();
+  await expect(page.getByRole('table', { name: 'Genes in each module' }).getByText('ABCB11')).toBeVisible();
+  await page.getByRole('button', { name: 'View as table' }).click();
+  await expect(page.getByRole('table', { name: 'Genes in the modules of Renal disease panel' })).toBeVisible();
+  expect(await violationsOf(page)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
+test('the module result keeps its view in the URL, so a refresh shows the same thing', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(renal);
+  // The checkboxes follow the URL, so each is clicked and then checked once the URL has caught up.
+  await page.getByRole('checkbox', { name: 'Show edges' }).click();
+  await expect(page.getByRole('checkbox', { name: 'Show edges' })).toBeChecked();
+  await page.getByRole('checkbox', { name: 'Hide modules with no enriched terms' }).click();
+  await expect(page.getByRole('checkbox', { name: 'Hide modules with no enriched terms' })).not.toBeChecked();
+  await expect(page).toHaveURL(/edges=1&all=1/);
+  await page.reload();
+  await expect(page.getByText('Showing 16 modules of 2 genes or more. Edges shown.')).toBeVisible();
+  await expect(page.locator('.force-graph-links line').first()).toBeAttached();
+});
+
+test('Edit genes takes the result’s list back to the search', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(renal);
+  await page.getByRole('button', { name: 'Edit genes' }).click();
+  await expect(page).toHaveURL(/\/\?analysis=modules$/);
+  await expect(page.getByRole('textbox', { name: 'Title' })).toHaveValue('Renal disease panel');
+  await expect(page.getByRole('button', { name: 'Find modules in 504 genes' })).toBeVisible();
   expect(apiRequests).toEqual([]);
 });

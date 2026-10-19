@@ -18,6 +18,7 @@ import {
 import { useMemo, useState, type ReactNode } from 'react';
 import { analysisColumns, analysisOptions } from '../content/product';
 import { matchOf } from '../HomeSearch/geneMatches';
+import type { ModuleDraft } from '../Modules/ModuleExplorer';
 import '../HomeSearch/HomeSearch.css';
 import './ModuleSearch.css';
 
@@ -27,6 +28,8 @@ export interface ModuleSearchProps {
   onStarted: (link: string) => void;
   /** An example to load straight away, by its id. */
   example?: string | undefined;
+  /** A result's list and settings, from its Edit genes. */
+  draft?: ModuleDraft | undefined;
   afterExamples?: ReactNode;
 }
 
@@ -34,18 +37,18 @@ const versionOptions = (Object.keys(dataVersionNames) as DataVersion[]).map((ver
 const genesWord = (count: number) => (count === 1 ? '1 gene' : `${count.toLocaleString('en-US')} genes`);
 const rangeHint = `Enter ${ModuleService.minimumGenes} to ${ModuleService.maximumGenes.toLocaleString('en-US')} genes.`;
 
-export function ModuleSearch({ onChooseAnalysis, onStarted, example, afterExamples }: ModuleSearchProps) {
+export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afterExamples }: ModuleSearchProps) {
   const api = useHumanbase();
   const preset = moduleExamples.find((item) => item.id === example);
-  const [text, setText] = useState(preset ? preset.genes.join('\n') : '');
+  const [text, setText] = useState(preset ? preset.genes.join('\n') : (draft?.entrez.join('\n') ?? ''));
   // What was typed or pasted; removing genes from the table edits the text without matching it again.
   const [typed, setTyped] = useState(text);
   const [removed, setRemoved] = useState<readonly string[]>([]);
   const [chosen, setChosen] = useState<ReadonlyMap<string, string>>(new Map());
-  const [title, setTitle] = useState(preset?.title ?? '');
-  const [tissue, setTissue] = useState(preset?.tissue ?? '');
+  const [title, setTitle] = useState(preset?.title ?? draft?.title ?? '');
+  const [tissue, setTissue] = useState(preset?.tissue ?? draft?.tissue ?? '');
   const [fromExample, setFromExample] = useState(Boolean(preset));
-  const [version, setVersion] = useState<DataVersion>('v1');
+  const [version, setVersion] = useState<DataVersion>(draft?.version ?? 'v1');
   const [submitting, setSubmitting] = useState(false);
   const [failed, setFailed] = useState(false);
   const [toasts] = useState(() => new ToastQueue());
