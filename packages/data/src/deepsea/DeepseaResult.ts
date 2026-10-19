@@ -1,4 +1,5 @@
 import { expectoTissues } from '../expecto/expectoTissues';
+import { tissueTitle } from '../expecto/TissueVariants';
 
 export interface ScoreType {
   name: string;
@@ -119,6 +120,7 @@ function tissueEffects(prediction: FeaturePredictionRecord, tissues: readonly { 
     const tissue = expectoTissues.get(title);
     const resource = tissue?.resource.replace(', redundant', '') ?? '';
     const context = [resource, tissue?.systems.join(' and ')].filter(Boolean).join(', ');
-    return [{ feature: title, cell: resource, context, label: title, value }];
+    const name = tissueTitle(title);
+    return [{ feature: name, cell: resource, context, label: name, value }];
   });
 }

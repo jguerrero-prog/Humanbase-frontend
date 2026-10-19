@@ -1,6 +1,7 @@
 import { JobHistory, type JobState } from '@humanbase/data';
-import { Breadcrumbs, Button, Dialog, JobSteps, StatusBadge, TextInput, ToastQueue, ToastRegion, type JobStep } from '@humanbase/ui';
+import { Breadcrumbs, Button, Dialog, JobSteps, StatusBadge, TextInput, type JobStep } from '@humanbase/ui';
 import { useId, useState, type ReactNode } from 'react';
+import { useCopyLink } from './useCopyLink';
 import './JobPage.css';
 
 export interface JobIdentity {
@@ -40,16 +41,7 @@ export function useJobTitle(job: JobIdentity | undefined) {
 export function useJobActions(title: string, rename: (title: string) => void) {
   const [renaming, setRenaming] = useState(false);
   const [draft, setDraft] = useState('');
-  const [toasts] = useState(() => new ToastQueue());
-  const copyLink = async () => {
-    await navigator.clipboard?.writeText(window.location.href);
-    toasts.show({ tone: 'info', message: 'Link copied' });
-  };
-  const copyButton = (
-    <Button variant="ghost" size="small" icon="link" onClick={() => void copyLink()}>
-      Copy link
-    </Button>
-  );
+  const { copyButton, toastRegion } = useCopyLink();
   const renameButton = (
     <Button
       variant="ghost"
@@ -86,7 +78,7 @@ export function useJobActions(title: string, rename: (title: string) => void) {
       >
         <TextInput label="Title" value={draft} hint="Kept in this browser and shown in your job list." onChange={(event) => setDraft(event.target.value)} />
       </Dialog>
-      <ToastRegion queue={toasts} />
+      {toastRegion}
     </>
   );
   return { copyButton, renameButton, overlays };

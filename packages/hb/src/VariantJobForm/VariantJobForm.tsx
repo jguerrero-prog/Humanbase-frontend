@@ -29,6 +29,8 @@ export interface VariantJobFormProps {
 }
 
 const models = variantModels.map((value) => ({ value, label: deepseaModels[value].option }));
+// ExPecto runs on Beluga, so its Model field names Beluga and offers nothing else.
+const modelOptions = (model: VariantModel) => (deepseaModels[model].basedOn ? [{ value: model, label: deepseaModels[model].option }] : models);
 const extensions: Record<InputKind, string> = { vcf: '.vcf,.txt', bed: '.bed,.txt', fasta: '.fasta,.fa,.txt' };
 const nouns: Record<InputKind, string> = { vcf: 'variants', bed: 'regions', fasta: 'sequences' };
 
@@ -87,15 +89,17 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
     <form className="job-form" onSubmit={(event) => { event.preventDefault(); run(); }}>
       {notice}
       <div className="job-form-row">
-        <Select label="Model" options={models} value={model} onChange={(value) => chooseModel(value as VariantModel)} hint={deepseaModels[model].otherModels} />
+        <Select label="Model" options={modelOptions(model)} value={model} onChange={(value) => chooseModel(value as VariantModel)} hint={deepseaModels[model].otherModels} />
         <Select label="Genome assembly" options={[{ value: 'hg19', label: 'GRCh37/hg19' }]} defaultValue="hg19" hint="Coordinates in the file must match." />
       </div>
-      <SegmentedControl
-        label="What are you submitting?"
-        value={kind}
-        onChange={(value) => start(value as InputKind, source === 'example' && examples[value as InputKind] ? 'example' : 'upload')}
-        segments={[{ value: 'vcf', label: 'Variants (VCF)' }, { value: 'bed', label: 'Regions (BED)' }, { value: 'fasta', label: 'Sequences (FASTA)' }]}
-      />
+      {!deepseaModels[model].expecto && (
+        <SegmentedControl
+          label="What are you submitting?"
+          value={kind}
+          onChange={(value) => start(value as InputKind, source === 'example' && examples[value as InputKind] ? 'example' : 'upload')}
+          segments={[{ value: 'vcf', label: 'Variants (VCF)' }, { value: 'bed', label: 'Regions (BED)' }, { value: 'fasta', label: 'Sequences (FASTA)' }]}
+        />
+      )}
       <SegmentedControl
         label="Add the file"
         value={source}

@@ -56,6 +56,11 @@ export interface PositionAxis {
 
 const tickSteps = [50, 100, 200, 500, 1000, 2000, 5000, 10000];
 
+/** A tissue's name without the resource the API adds to tell repeats apart, as in Spleen | GTEx. */
+export function tissueTitle(title: string): string {
+  return title.replace(/ \| [^|]+$/, '');
+}
+
 /** The value furthest from zero, keeping its sign; null when there is none. */
 export function strongestOf(values: readonly (number | null)[]): number | null {
   let strongest: number | null = null;
@@ -71,7 +76,7 @@ export class TissueVariants {
   constructor(record: TissueVariantsRecord) {
     this.positions = record.variants.map(({ chr, position, ref }) => ({ chromosome: chr, position, ref }));
     this.tissues = record.tissues.map((tissue) => ({
-      title: tissue.title,
+      title: tissueTitle(tissue.title),
       resource: tissue.description,
       groups: [...new Set(tissue.slim_terms.map((term) => term.title))],
       values: tissue.variants.map((alleles) => strongestOf(Object.values(alleles))),

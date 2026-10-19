@@ -5,7 +5,7 @@ import { variantModels } from '../deepsea/DeepseaModel';
 import { Humanbase } from '../Humanbase';
 import { SampleClient } from '../sample/SampleClient';
 import { ExpectoService } from './ExpectoService';
-import { TissueVariants } from './TissueVariants';
+import { tissueTitle, TissueVariants } from './TissueVariants';
 
 const offline = () => Humanbase.fromConfig({ api: false, apiBase: '/api' });
 
@@ -28,7 +28,7 @@ describe('TissueVariants', () => {
     ],
     tissues: [
       { title: 'Whole Blood', description: 'GTEx', identifier: 'EX:1', slim_terms: [{ title: 'hematopoietic system' }], variants: [{ A: 0.1 }, { A: -0.29, C: -0.601, G: -0.3 }] },
-      { title: 'Spleen', description: 'GTEx', identifier: 'EX:2', slim_terms: [{ title: 'hematopoietic system' }, { title: 'integument' }], variants: [{ A: 0.4 }, {}] },
+      { title: 'Spleen | GTEx', description: 'GTEx', identifier: 'EX:2', slim_terms: [{ title: 'hematopoietic system' }, { title: 'integument' }], variants: [{ A: 0.4 }, {}] },
       { title: '4Star-hESC', description: 'Roadmap', identifier: 'EX:3', slim_terms: [], variants: [{ T: 0.01 }, { A: 0.02 }] },
     ],
   });
@@ -48,6 +48,7 @@ describe('TissueVariants', () => {
 
   it('filters by system and resource', () => {
     expect(table.tissuesIn('integument').map((tissue) => tissue.title)).toEqual(['Spleen']);
+    expect(tissueTitle('Spleen | GTEx')).toBe('Spleen');
     expect(table.tissuesIn(undefined, 'Roadmap').map((tissue) => tissue.title)).toEqual(['4Star-hESC']);
     expect(table.resources).toEqual(['GTEx', 'Roadmap']);
   });
