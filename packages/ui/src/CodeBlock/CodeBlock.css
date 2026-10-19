@@ -26,6 +26,10 @@
   white-space: pre;
 }
 
+.code-block > .disclosure {
+  justify-self: start;
+}
+
 .code-block-code ::selection,
 .inline-code::selection {
   background: var(--syntax-selection);

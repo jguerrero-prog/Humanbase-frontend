@@ -1,6 +1,7 @@
 ---
-import { Accordion, AccordionItem, Button, Checkbox, Disclosure, Select } from '@humanbase/ui';
+import { Accordion, AccordionItem, Button, Checkbox, Select } from '@humanbase/ui';
 import { Code } from 'astro:components';
+import CodeSample from '../../components/docs/CodeSample.astro';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
@@ -58,12 +59,41 @@ const specs = [
 
 const versions = [{ value: 'mage', label: 'MAGE (current)' }, { value: 'giant', label: 'GIANT v1' }];
 
+// The Dataset shape from /api/schema/, with nested objects written out.
 const responseShape = `{
   "url": string (uri),
   "identifier": string,
+  "identifier_with_platform": string,
   "title": string,
   "description": string,
-  …`;
+  "etype": {
+    "title": string,
+    "slug": string,
+    "description": string
+  },
+  "publication": {
+    "pmid": integer | null,
+    "title": string,
+    "authors": string,
+    "date": string (date),
+    "journal": string,
+    "mesh_headings": [
+      {
+        "descriptor": string,
+        "qualifier": string
+      }
+    ]
+  },
+  "annotations": [
+    {
+      "annotation_source": string,
+      "term_source": string,
+      "name": string,
+      "identifier": string
+    }
+  ],
+  "metadata": object
+}`;
 
 const markup = `<h3>
   <button aria-expanded="false" aria-controls="advanced">
@@ -175,11 +205,7 @@ const usage = `import { Accordion, AccordionItem, Disclosure } from '@humanbase/
     </div>
     <section class="disclosure-pattern" aria-labelledby="disclosure-heading">
       <h3 id="disclosure-heading">Disclosure: a long response, shortened</h3>
-      <figure class="code-panel" id="response-shape">
-        <figcaption>Response shape</figcaption>
-        <Code code={responseShape} lang="text" theme="css-variables" />
-      </figure>
-      <Disclosure label="Show full response" expandedLabel="Show less" controls="response-shape" />
+      <CodeSample label="Response shape" code={responseShape} lang="text" collapseAfter={24} />
       <p class="caption">Shows the first 12 lines. The button names what it reveals and becomes “Show less”. Copy always copies the full response.</p>
     </section>
   </DocSection>
@@ -356,6 +382,10 @@ const usage = `import { Accordion, AccordionItem, Disclosure } from '@humanbase/
     display: grid;
     gap: var(--space-3);
     justify-items: start;
+  }
+
+  .disclosure-pattern :global(.code-block) {
+    justify-self: stretch;
   }
 
   .disclosure-pattern h3 {
