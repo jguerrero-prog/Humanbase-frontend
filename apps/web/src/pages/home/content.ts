@@ -6,23 +6,51 @@ export interface Feature {
   illustration: 'heatmap' | 'network' | 'gwas';
 }
 
+const links = {
+  data: { label: 'Genomics data compendium', href: '/data-sources/' },
+  tissue: { label: 'IL1B in mononuclear phagocyte', href: '/networks/?entrez=3553&tissue=mononuclear-phagocyte&version=v1' },
+  netwas: { label: 'NetWAS analysis', href: '/netwas/' },
+};
+
 export const features: readonly Feature[] = [
   {
     title: 'Data-driven',
     text: 'Humanbase applies machine learning to learn biological associations from massive genomic data collections. These integrative analyses reach beyond existing biological knowledge in the literature to find new, data-driven associations.',
-    link: { label: 'Genomics data compendium', href: '/data-sources/' },
+    link: links.data,
     illustration: 'heatmap',
   },
   {
     title: 'Tissue-specific',
     text: 'Humanbase models tissue-specific gene interactions using experimentally verified tissue expression and gene function, learning from a compendium of diverse tissues and cell types. The resulting networks capture tissue-specific gene function.',
-    link: { label: 'IL1B in mononuclear phagocyte', href: '/networks/?entrez=3553&tissue=mononuclear-phagocyte&version=v1' },
+    link: links.tissue,
     illustration: 'network',
   },
   {
     title: 'Network-guided',
     text: 'Tissue-specific networks can guide genome-wide association (GWAS) analysis by reprioritizing the associations from a GWAS study. With NetWAS, network-guided GWAS analysis, researchers can find additional disease-associated genes.',
-    link: { label: 'NetWAS analysis', href: '/netwas/' },
+    link: links.netwas,
+    illustration: 'gwas',
+  },
+];
+
+// The same section when Modules is the chosen analysis.
+export const moduleFeatures: readonly Feature[] = [
+  {
+    title: 'Functional modules',
+    text: 'Humanbase applies community detection to find cohesive gene clusters from a provided gene list and a selected relevant tissue. Genes within a cluster share local network neighborhoods and together form a cohesive, specific functional module.',
+    link: links.data,
+    illustration: 'network',
+  },
+  {
+    title: 'Gene function prediction',
+    text: 'Module detection enables systematic association of genes, even functionally uncharacterized genes, to specific processes and phenotypes represented in the detected modules.',
+    link: links.tissue,
+    illustration: 'heatmap',
+  },
+  {
+    title: 'Tissue-specific',
+    text: 'Functional modules are identified with tissue-specific networks, which predict gene interactions from massive data collections. Thus the discovered modules potentially capture higher-order tissue-specific function.',
+    link: links.netwas,
     illustration: 'gwas',
   },
 ];
