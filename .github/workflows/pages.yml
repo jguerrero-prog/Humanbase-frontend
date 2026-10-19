@@ -1,0 +1,56 @@
+name: Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+env:
+  ASTRO_TELEMETRY_DISABLED: 1
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build the design system and the front end
+    runs-on: ubuntu-latest
+    env:
+      DOCS_BASE: /${{ github.event.repository.name }}
+      WEB_BASE: /${{ github.event.repository.name }}/app/
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      # The docs fill the site root and the front end sits under app/, with the API off because Pages can't reach it.
+      - run: |
+          mkdir -p site
+          cp -R apps/docs/dist/. site/
+          cp -R apps/web/dist site/app
+          printf '{\n  "api": false,\n  "apiBase": "/api"\n}\n' > site/app/config.json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

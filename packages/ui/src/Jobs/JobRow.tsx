@@ -2,6 +2,7 @@ import { StatusBadge, type JobStatus } from '../Badge/Badge';
 import { Cell } from '../Table/Table';
 import '../Button/Button.css';
 import './Jobs.css';
+import { useLinkHref } from '../hooks/useLinkHref';
 
 export interface JobLink {
   label: string;
@@ -18,6 +19,7 @@ export interface JobRowProps {
 }
 
 export function JobRow({ title, detail, status, statusDetail, started, action }: JobRowProps) {
+  const linkHref = useLinkHref();
   return (
     <tr className="job-row">
       <Cell rowHeader>
@@ -32,7 +34,7 @@ export function JobRow({ title, detail, status, statusDetail, started, action }:
       </Cell>
       <Cell>{started}</Cell>
       <Cell>
-        <a className="button button-ghost button-small" href={action.href} aria-label={`${action.label}: ${title}`}>
+        <a className="button button-ghost button-small" href={linkHref(action.href)} aria-label={`${action.label}: ${title}`}>
           {action.label}
         </a>
       </Cell>

@@ -120,3 +120,4 @@ export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFo
 export { VariantScorePlot, type PlotBy, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
 export { VariantsTable, type VariantsTableProps } from './VariantEffects/VariantsTable';
 export { useDebounced } from './hooks/useDebounced';
+export { LinkBaseProvider, useLinkHref } from './hooks/useLinkHref';

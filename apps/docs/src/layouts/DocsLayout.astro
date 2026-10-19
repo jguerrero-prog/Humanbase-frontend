@@ -5,6 +5,7 @@ import '../styles/docs-blocks.css';
 import { Logo } from '@humanbase/ui';
 import heroNetwork from '../assets/hero-network.svg?url';
 import SideMenu from '../components/SideMenu.astro';
+import { withBase } from '../withBase';
 
 interface PageInfo {
   title: string;
@@ -23,7 +24,7 @@ const { title, description = 'The Humanbase design system.' } = page;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
     <title>{title} · Humanbase design system</title>
   </head>
   <body>
@@ -34,7 +35,7 @@ const { title, description = 'The Humanbase design system.' } = page;
       </aside>
       <div class="docs-page">
         <header class="hero">
-          <a class="hero-logo" href="/"><Logo surface="green" /></a>
+          <a class="hero-logo" href={withBase('/')}><Logo surface="green" /></a>
           <h1>{title}</h1>
           <img class="hero-illustration" src={heroNetwork} alt="" width="454" height="529" />
           <svg class="hero-wave" viewBox="0 0 1571 47.08" preserveAspectRatio="none" aria-hidden="true">

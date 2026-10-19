@@ -1,5 +1,6 @@
 import { Icon } from '../Icon/Icon';
 import './Navigation.css';
+import { useLinkHref } from '../hooks/useLinkHref';
 
 export interface Crumb {
   label: string;
@@ -12,11 +13,12 @@ export interface BreadcrumbsProps {
 }
 
 export function Breadcrumbs({ items, compact = false }: BreadcrumbsProps) {
+  const linkHref = useLinkHref();
   const parent = items.at(-2);
   if (compact && parent) {
     return (
       <nav className="breadcrumbs" aria-label="Breadcrumb">
-        <a className="breadcrumbs-back" href={parent.href}>
+        <a className="breadcrumbs-back" href={linkHref(parent.href)}>
           <Icon name="chevron-left" size={16} />
           Back to {parent.label}
         </a>
@@ -31,7 +33,7 @@ export function Breadcrumbs({ items, compact = false }: BreadcrumbsProps) {
           return (
             <li key={item.label}>
               {index > 0 && <Icon name="chevron-right" size={16} />}
-              {last ? <span aria-current="page">{item.label}</span> : <a href={item.href}>{item.label}</a>}
+              {last ? <span aria-current="page">{item.label}</span> : <a href={linkHref(item.href)}>{item.label}</a>}
             </li>
           );
         })}

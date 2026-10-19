@@ -4,6 +4,7 @@ import { Logo } from '../Logo/Logo';
 import { TextInput } from '../TextInput/TextInput';
 import type { NavLink } from './types';
 import './Navigation.css';
+import { useLinkHref } from '../hooks/useLinkHref';
 
 export interface FooterGroup {
   heading: string;
@@ -20,11 +21,12 @@ export interface FooterProps {
 }
 
 function LinkList({ links }: { links: readonly NavLink[] }) {
+  const linkHref = useLinkHref();
   return (
     <ul className="footer-links">
       {links.map((link) => (
         <li key={link.href}>
-          <a href={link.href}>{link.label}</a>
+          <a href={linkHref(link.href)}>{link.label}</a>
         </li>
       ))}
     </ul>

@@ -1,5 +1,5 @@
 import { HomeSearch, ModuleSearch } from '@humanbase/hb';
-import { Icon } from '@humanbase/ui';
+import { Icon, useLinkHref } from '@humanbase/ui';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { features, moduleFeatures, updates, type Feature } from './home/content';
 import { GwasIllustration, HeatmapIllustration, NetworkIllustration } from './home/illustrations';
@@ -14,13 +14,14 @@ const leads = {
 };
 
 export function HomePage() {
+  const linkHref = useLinkHref();
   const navigate = useNavigate();
   const [search] = useSearchParams();
   const draft = (useLocation().state as ModulesLocationState | null)?.draft;
   const modules = search.get('analysis') === 'modules';
   const chooseAnalysis = (analysis: string) => void navigate(analysis === 'modules' ? '/?analysis=modules' : `/${analysis}/`);
   const cite = (
-    <a className="home-hero-cite" href="/cite/">
+    <a className="home-hero-cite" href={linkHref('/cite/')}>
       How to cite Humanbase
     </a>
   );
@@ -55,7 +56,7 @@ export function HomePage() {
                 <div className="home-feature-text">
                   <h3>{feature.title}</h3>
                   <p>{feature.text}</p>
-                  <a className="home-arrow-link" href={feature.link.href}>
+                  <a className="home-arrow-link" href={linkHref(feature.link.href)}>
                     {feature.link.label}
                     <Icon name="arrow-right" size={24} />
                   </a>
@@ -73,7 +74,7 @@ export function HomePage() {
         <div className="home-inner">
           <div className="home-news-heading">
             <h2 id="home-news-title">What’s new</h2>
-            <a href="/whats-new/">All updates</a>
+            <a href={linkHref('/whats-new/')}>All updates</a>
           </div>
           <ul className="home-news-list">
             {updates.map((update) => (

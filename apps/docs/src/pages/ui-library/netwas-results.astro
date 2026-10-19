@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../../withBase';
 import { Code } from 'astro:components';
 import { NetwasResult } from '@humanbase/data';
 import { NetwasGenes } from '@humanbase/hb';
@@ -44,7 +45,7 @@ const names = {
 };
 const citation = 'Greene CS, Krishnan A, Wong AK, et al. (2015). Understanding multicellular function and disease with human tissue-specific networks. Nature Genetics.';
 
-const crumbs = [{ label: 'Jobs', href: '/ui-library/job-status-and-queue/' }, { label: title }];
+const crumbs = [{ label: 'Jobs', href: withBase('/ui-library/job-status-and-queue/') }, { label: title }];
 const context = [
   { name: 'Tissue network', value: tissueNetwork },
   { name: 'GWAS file', value: `${gwasFile}, ${gwasFormat}` },

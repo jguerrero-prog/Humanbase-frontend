@@ -1,5 +1,5 @@
 import { ExpectoService, useVariantSearch, useVariantTotal } from '@humanbase/data';
-import { Alert, Button, Cell, HeaderCell, SearchExamples, SearchField, Table, TableSkeleton, useDebounced } from '@humanbase/ui';
+import { Alert, Button, Cell, HeaderCell, SearchExamples, SearchField, Table, TableSkeleton, useDebounced, useLinkHref } from '@humanbase/ui';
 import { useState } from 'react';
 
 export interface VariantSearchProps {
@@ -16,6 +16,7 @@ const examples = ['IRGM', 'rs531708574', 'chr1:877047'];
 
 /** ExPecto's SNP rsID tab: the variants with the strongest predicted effects, found by gene, rsID or position. */
 export function VariantSearch({ query, onQueryChange, geneHref }: VariantSearchProps) {
+  const linkHref = useLinkHref();
   const [text, setText] = useState(query);
   const [showAll, setShowAll] = useState(false);
   const settled = useDebounced(text, 400);
@@ -73,7 +74,7 @@ export function VariantSearch({ query, onQueryChange, geneHref }: VariantSearchP
                         {variant.chromosome}:{counts.format(variant.position)}
                       </Cell>
                       <Cell type="id">{variant.rsid}</Cell>
-                      <Cell type="gene">{variant.gene ? <a href={geneHref(variant.gene.entrez)}>{variant.gene.symbol}</a> : 'None'}</Cell>
+                      <Cell type="gene">{variant.gene ? <a href={linkHref(geneHref(variant.gene.entrez))}>{variant.gene.symbol}</a> : 'None'}</Cell>
                       <Cell type="id">{variant.change}</Cell>
                     </tr>
                   ))}

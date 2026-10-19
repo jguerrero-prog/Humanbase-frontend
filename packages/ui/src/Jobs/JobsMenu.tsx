@@ -5,6 +5,7 @@ import { useDismiss } from '../List/useDismiss';
 import '../Button/Button.css';
 import '../Navigation/Navigation.css';
 import './Jobs.css';
+import { useLinkHref } from '../hooks/useLinkHref';
 
 export interface JobsMenuJob {
   title: string;
@@ -27,6 +28,7 @@ export type JobsMenuSummary = Pick<JobsMenuProps, 'jobs' | 'total' | 'allHref'>;
 export const activeJobCount = (jobs: readonly JobsMenuJob[]) => jobs.filter((job) => job.status === 'queued' || job.status === 'running').length;
 
 export function JobsMenu({ jobs, total, allHref, open, onOpenChange, shown = 5 }: JobsMenuProps) {
+  const linkHref = useLinkHref();
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
@@ -62,7 +64,7 @@ export function JobsMenu({ jobs, total, allHref, open, onOpenChange, shown = 5 }
         <ul className="jobs-menu-list" aria-labelledby={`${id}-heading`} hidden={jobs.length === 0}>
           {jobs.slice(0, shown).map((job) => (
             <li key={job.href}>
-              <a className="jobs-menu-job" href={job.href} onKeyDown={closeOnEscape}>
+              <a className="jobs-menu-job" href={linkHref(job.href)} onKeyDown={closeOnEscape}>
                 <span className="jobs-menu-text">
                   <span className="jobs-menu-title">{job.title}</span>
                   <span className="jobs-menu-detail">{job.detail}</span>
@@ -73,7 +75,7 @@ export function JobsMenu({ jobs, total, allHref, open, onOpenChange, shown = 5 }
           ))}
         </ul>
         <p className="jobs-menu-footer" hidden={total === 0}>
-          <a className="button button-ghost button-small" href={allHref} onKeyDown={closeOnEscape}>
+          <a className="button button-ghost button-small" href={linkHref(allHref)} onKeyDown={closeOnEscape}>
             See all {total} jobs
           </a>
         </p>

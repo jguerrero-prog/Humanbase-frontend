@@ -1,5 +1,5 @@
 import { ApiError, useDeepseaJob, type DeepseaJob } from '@humanbase/data';
-import { Alert, ContextLabel, EmptyState, ResultFiles, Skeleton, type JobStep } from '@humanbase/ui';
+import { Alert, ContextLabel, EmptyState, ResultFiles, Skeleton, type JobStep, useLinkHref } from '@humanbase/ui';
 import { useEffect } from 'react';
 import { elapsed, jobDateTime, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
 import { deepseaFormLink, deepseaJobLink } from './DeepseaForm';
@@ -21,6 +21,7 @@ function stepsOf(job: DeepseaJob, now: number): JobStep[] {
 
 /** A Sei, Beluga or Seqweaver job: its progress while it runs, then its results. */
 export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewProps) {
+  const linkHref = useLinkHref();
   const job = useDeepseaJob(id);
   const data = job.data;
   const { title, rename } = useJobTitle(data && { id: data.id, tool: data.model.tool, title: data.title });
@@ -38,7 +39,7 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
         title="This job isn’t available"
         text="No job has this link. Check that it was copied whole, or run Sei, Beluga or Seqweaver again."
         actions={
-          <a className="button button-secondary" href="/sei/">
+          <a className="button button-secondary" href={linkHref('/sei/')}>
             Run a sequence model
           </a>
         }
@@ -93,7 +94,7 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
         }
         actions={
           data.status === 'failed' && (
-            <a className="button button-secondary button-medium" href={deepseaFormLink(data.model.id)}>
+            <a className="button button-secondary button-medium" href={linkHref(deepseaFormLink(data.model.id))}>
               Run {tool} again
             </a>
           )

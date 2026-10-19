@@ -1,6 +1,6 @@
 import { ApiError, IntegrationService, JobHistory, useHumanbase, useIntegrations, useModuleResult, type DataVersion, type ModuleView } from '@humanbase/data';
 import type { GraphRendererFactory } from '@humanbase/graph';
-import { Alert, Button, Dialog, EmptyState, TextInput } from '@humanbase/ui';
+import { Alert, Button, Dialog, EmptyState, TextInput, useLinkHref } from '@humanbase/ui';
 import { useEffect, useState } from 'react';
 import { GraphLoading } from '../Networks/GraphPanel';
 import { ModuleResultView } from './ModuleResultView';
@@ -25,6 +25,7 @@ export interface ModuleExplorerProps {
 
 /** A module job: waiting while it runs, then its result, or why there is none. */
 export function ModuleExplorer({ bodyTag, view, onViewChange, onEditGenes, onStarted, renderer }: ModuleExplorerProps) {
+  const linkHref = useLinkHref();
   const api = useHumanbase();
   const result = useModuleResult(bodyTag);
   const integrations = useIntegrations();
@@ -51,7 +52,7 @@ export function ModuleExplorer({ bodyTag, view, onViewChange, onEditGenes, onSta
         title="This module result isn’t available"
         text="Results are kept for a while after a job finishes, and this one has expired or never started. Paste the gene list again to find its modules."
         actions={
-          <a className="button button-secondary" href="/?analysis=modules">
+          <a className="button button-secondary" href={linkHref('/?analysis=modules')}>
             Find modules
           </a>
         }
