@@ -1,6 +1,6 @@
 ---
 import { GenomeLocation } from '@humanbase/data';
-import { ActionMenu, BrowserSettingsDialog, ExportDialog, GenomeBrowserToolbar, TrackHeader, TrackSettingsDialog, TracksDrawer, genomeBrowserKeyHelp, type ActionMenuItem } from '@humanbase/ui';
+import { ActionMenu, BrowserSettingsDialog, ExportDialog, GenomeBrowserToolbar, Heatmap, TrackHeader, TrackSettingsDialog, TracksDrawer, genomeBrowserKeyHelp, type ActionMenuItem } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -8,6 +8,7 @@ import GenomeTracksSketch from '../../components/docs/GenomeTracksSketch.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import { scoreLegends } from '../../data/score-legends';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const view = new GenomeLocation('chr1', 109_792_590, 109_842_590);
@@ -65,10 +66,13 @@ const heatmapNotes = [
   'Hovering a cell shows the data tooltip; hovering a column highlights its line and its bars in the browser.',
 ];
 const heatmapColumns = [2_232_996, 2_234_187, 2_235_106, 2_235_168, 2_235_624, 2_247_509, 2_250_950, 2_254_905, 2_255_213, 2_259_317];
-const heatmapStart = 2_230_000;
-const heatmapEnd = 2_430_000;
-const heatmapX = (position: number) => 220 + ((position - heatmapStart) / (heatmapEnd - heatmapStart)) * 1000;
-const steps = ['--viz-div-n2', '--viz-div-n1', '--viz-div-0', '--viz-div-p1', '--viz-div-p2', '--viz-div-p3'];
+const zLegend = scoreLegends[0]!.spec;
+// Illustrative values in the same repeating pattern as the earlier diagram, one per diverging step.
+const stepValues = [-4, -2.5, 0, 2.5, 4, 6];
+const heatmapRows = Array.from({ length: 12 }, (_, row) => ({
+  label: `Feature ${row + 1}`,
+  values: heatmapColumns.map((_, column) => stepValues[(row * 7 + column * 3) % stepValues.length]!),
+}));
 
 const keyboard = [
   ...genomeBrowserKeyHelp,
@@ -193,24 +197,18 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
   </DocSection>
 
   <DocSection title="Browser and heatmap together (ASD Browser)" lead="With many variants in view, the heatmap sits under the browser: one column per variant in genomic order, rows sorted by the size of the center variant’s effect. Clicking a column, or dragging the heatmap, changes the center, and both views follow, as today.">
-    <figure class="linked" data-illustration>
-      <svg viewBox="0 0 1260 420" aria-hidden="true" focusable="false">
-        <line class="linked-ruler" x1="220" y1="40" x2="1220" y2="40" />
-        {[2_240_000, 2_280_000, 2_320_000, 2_360_000, 2_400_000].map((tick) => <text class="linked-label" x={heatmapX(tick)} y="30" text-anchor="middle">{tick.toLocaleString('en-US')}</text>)}
-        <text class="linked-title" x="0" y="80">DNA disease impact score</text>
-        <text class="linked-title" x="0" y="130">RNA disease impact score</text>
-        {heatmapColumns.map((position, column) => <line class={column === 4 ? 'linked-connector linked-center' : 'linked-connector'} x1={heatmapX(position)} y1="40" x2={220 + column * 18 + 8} y2="170" />)}
-        {
-          heatmapColumns.map((_, column) =>
-            Array.from({ length: 12 }, (_, row) => (
-              <rect class="linked-cell" x={220 + column * 18} y={176 + row * 18} width="16" height="16" style={`fill: var(${steps[(row * 7 + column * 3) % steps.length]})`} />
-            )),
-          )
-        }
-        <rect class="linked-outline" x={220 + 4 * 18 - 2} y="174" width="20" height={12 * 18 + 2} />
-        <text class="linked-label" x="0" y="410">z-score. Showing the top 20 of 2,002 features, sorted by chr1:2,337,101 A&gt;C. Cells are illustrative.</text>
-      </svg>
-    </figure>
+    <Heatmap
+      client:visible
+      title="DNA features, z-score"
+      summary="z-score. Showing the top 20 of 2,002 features, sorted by chr1:2,337,101 A>C. Cells are illustrative."
+      scale={zLegend}
+      columns={heatmapColumns.map((position) => ({ label: String(position), position }))}
+      rows={heatmapRows}
+      rowHeader="Feature"
+      columnHeader="Position"
+      axis={{ title: 'Position on chr1, GRCh37/hg19', offset: 2_230_000, ticks: [5_000, 10_000, 15_000, 20_000, 25_000] }}
+      decimals={1}
+    />
     <ul class="points">
       {heatmapNotes.map((note) => <li>{note}</li>)}
     </ul>
@@ -316,42 +314,4 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
     inset-inline-end: var(--space-4);
   }
 
-  .linked {
-    margin: 0;
-  }
-
-  .linked svg {
-    inline-size: 100%;
-    block-size: auto;
-  }
-
-  .linked-ruler {
-    stroke: var(--text-secondary);
-  }
-
-  .linked-label {
-    font: 400 12px Lato, sans-serif;
-    fill: var(--text-secondary);
-  }
-
-  .linked-title {
-    font: 700 13px Lato, sans-serif;
-    fill: var(--text-default);
-  }
-
-  .linked-connector {
-    stroke: var(--border-default);
-    stroke-width: 0.75;
-  }
-
-  .linked-center {
-    stroke: var(--text-default);
-    stroke-width: 1.5;
-  }
-
-  .linked-outline {
-    fill: none;
-    stroke: var(--text-default);
-    stroke-width: 2;
-  }
 </style>
