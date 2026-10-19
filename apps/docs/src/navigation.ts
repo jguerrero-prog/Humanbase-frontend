@@ -91,7 +91,7 @@ export const navigation: NavSection[] = [
   },
   {
     heading: 'Resources',
-    items: [{ label: 'Figma library', href: '/resources/figma-library/' }, { label: 'Changelog', href: '/resources/changelog/' }, { label: 'Contribution guide', href: '/resources/contribution-guide/' }, { label: 'Contact the team' }],
+    items: [{ label: 'Figma library', href: '/resources/figma-library/' }, { label: 'Changelog', href: '/resources/changelog/' }, { label: 'Contribution guide', href: '/resources/contribution-guide/' }, { label: 'Contact the team', href: '/resources/contact-the-team/' }],
   },
 ];
 
