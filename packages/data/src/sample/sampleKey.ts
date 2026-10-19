@@ -16,7 +16,9 @@ export function sampleKey(method: SampleMethod, path: string, query: Query = {},
   for (const [key, value] of Object.entries(query).sort(([a], [b]) => a.localeCompare(b))) {
     for (const item of [value].flat()) if (item !== undefined) params.append(key, String(item));
   }
-  const search = params.size ? `@${params}` : '';
+  // Long queries, such as every gene in a network, become a hash so the file name stays within file system limits.
+  const encoded = String(params);
+  const search = !params.size ? '' : encoded.length > 120 ? `@query-${hash(encoded)}` : `@${encoded}`;
   const payload = method === 'POST' ? `@post-${hash(JSON.stringify(body ?? null))}` : '';
   return `${route}${search}${payload}`;
 }

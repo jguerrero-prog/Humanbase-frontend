@@ -10,6 +10,11 @@ describe('sampleKey', () => {
     expect(sampleKey('GET', 'integrations/', { b: 2, a: [1, 3], skip: undefined })).toBe('integrations@a=1&a=3&b=2');
   });
 
+  it('hashes a query too long for a file name', () => {
+    const entrez = Array.from({ length: 52 }, (_, i) => 1000 + i);
+    expect(sampleKey('GET', 'terms/annotated/', { entrez, database: 'gene-ontology-bp' })).toMatch(/^terms\/annotated@query-[0-9a-f]{8}$/);
+  });
+
   it('tells POST bodies apart', () => {
     const one = sampleKey('POST', 'integrations/relevant/', {}, { entrez: [3553] });
     expect(one).toMatch(/^integrations\/relevant@post-[0-9a-f]{8}$/);
