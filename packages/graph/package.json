@@ -8,5 +8,21 @@
   },
   "scripts": {
     "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "d3-force": "3.0.0",
+    "d3-selection": "3.0.0",
+    "d3-zoom": "3.0.0"
+  },
+  "devDependencies": {
+    "@types/d3-force": "3.0.10",
+    "@types/d3-selection": "3.0.11",
+    "@types/d3-zoom": "3.0.8",
+    "@types/react": "19.3.0",
+    "react": "19.3.0",
+    "vite": "8.3.2"
+  },
+  "peerDependencies": {
+    "react": "^19.3.0"
   }
 }

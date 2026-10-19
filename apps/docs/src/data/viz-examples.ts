@@ -56,13 +56,7 @@ export const modules = [
   { id: 'other', label: 'Other' },
 ] as const;
 
-export const edgeBands = [
-  { min: 0.9, label: '0.9 and up', color: '--viz-seq-7', width: '--viz-edge-strong' },
-  { min: 0.75, label: '0.75 to 0.9', color: '--viz-seq-6', width: '--viz-edge-medium' },
-  { min: 0.5, label: '0.5 to 0.75', color: '--viz-seq-5', width: '--viz-edge-weak' },
-] as const;
-
-export const edgeBand = (weight: number) => edgeBands.find((band) => weight >= band.min);
+export { edgeBand, edgeBands } from '@humanbase/graph';
 
 export const tissueScores = {
   columns: ['Blood vessel', 'Liver', 'Lung', 'Brain', 'Kidney', 'Heart', 'Skin', 'Spleen'],
