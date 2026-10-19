@@ -1,0 +1,664 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 3586,
+      "standard_name": "IL10",
+      "aliases": "CSIF|IL10A|GVHDS|IL-10|TGIF",
+      "xrefs": "124092|HGNC:5962|ENSG00000136634|3586",
+      "description": "interleukin 10",
+      "terms": [
+        "REACTOME FCGR3A MEDIATED IL10 SYNTHESIS",
+        "KEGG MEDICUS REFERENCE IL10 FAMILY TO JAK STAT SIGNALING PATHWAY",
+        "BIOCARTA IL10 PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3587,
+      "standard_name": "IL10RA",
+      "aliases": "CD210a|CD210|HIL-10R|CDW210A|IL-10R1|IL10R",
+      "xrefs": "146933|HGNC:5964|3587|ENSG00000110324",
+      "description": "interleukin 10 receptor subunit alpha",
+      "terms": [
+        "KEGG MEDICUS REFERENCE IL10 FAMILY TO JAK STAT SIGNALING PATHWAY",
+        "BIOCARTA IL10 PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3588,
+      "standard_name": "IL10RB",
+      "aliases": "D21S66|CRFB4|D21S58|CRF2-4|CDW210B|IL-10R2",
+      "xrefs": "123889|ENSG00000243646|3588|HGNC:5965",
+      "description": "interleukin 10 receptor subunit beta",
+      "terms": [
+        "KEGG MEDICUS REFERENCE IL10 FAMILY TO JAK STAT SIGNALING PATHWAY",
+        "BIOCARTA IL10 PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 100288432,
+      "standard_name": "IL10RB-DT",
+      "aliases": "IL10RB-AS1|IFNAR2-AS1",
+      "xrefs": "HGNC:44303|100288432",
+      "description": "IL10RB divergent transcript",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3589,
+      "standard_name": "IL11",
+      "aliases": "IL-11|AGIF",
+      "xrefs": "147681|3589|HGNC:5966|ENSG00000095752",
+      "description": "interleukin 11",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3590,
+      "standard_name": "IL11RA",
+      "aliases": "CRSDA",
+      "xrefs": "3590|HGNC:5967|ENSG00000137070|600939",
+      "description": "interleukin 11 receptor subunit alpha",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3592,
+      "standard_name": "IL12A",
+      "aliases": "NKSF1|CLMF|IL-12A|NFSK|P35",
+      "xrefs": "HGNC:5969|161560|ENSG00000168811|3592",
+      "description": "interleukin 12A",
+      "terms": [
+        "KEGG MEDICUS REFERENCE IL12 23 TO JAK STAT SIGNALING PATHWAY",
+        "PID IL12 2PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 101928376,
+      "standard_name": "IL12A-AS1",
+      "aliases": "ILAS1-AS1",
+      "xrefs": "HGNC:49094|ENSG00000244040|101928376",
+      "description": "IL12A antisense RNA 1",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3593,
+      "standard_name": "IL12B",
+      "aliases": "CLMF2|CLMF|IMD28|IMD29|IL-12B|NKSF|NKSF2",
+      "xrefs": "HGNC:5970|161561|3593|ENSG00000113302",
+      "description": "interleukin 12B",
+      "terms": [
+        "KEGG MEDICUS REFERENCE IL12 23 TO JAK STAT SIGNALING PATHWAY",
+        "PID IL12 2PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3594,
+      "standard_name": "IL12RB1",
+      "aliases": "IL12RB|CD212|IMD30|IL-12R-BETA1",
+      "xrefs": "ENSG00000096996|3594|HGNC:5971|601604",
+      "description": "interleukin 12 receptor subunit beta 1",
+      "terms": [
+        "PID IL12 2PATHWAY",
+        "KEGG MEDICUS REFERENCE IL12 23 TO JAK STAT SIGNALING PATHWAY",
+        "BIOCARTA NO2IL12 PATHWAY",
+        "BIOCARTA IL12 PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3595,
+      "standard_name": "IL12RB2",
+      "aliases": "",
+      "xrefs": "3595|HGNC:5972|601642|ENSG00000081985",
+      "description": "interleukin 12 receptor subunit beta 2",
+      "terms": [
+        "PID IL12 2PATHWAY",
+        "KEGG MEDICUS REFERENCE IL12 23 TO JAK STAT SIGNALING PATHWAY",
+        "BIOCARTA NO2IL12 PATHWAY",
+        "BIOCARTA IL12 PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3596,
+      "standard_name": "IL13",
+      "aliases": "IL-13|P600",
+      "xrefs": "147683|3596|ENSG00000169194|HGNC:5973",
+      "description": "interleukin 13",
+      "terms": [
+        "PID IL12 STAT4 PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3597,
+      "standard_name": "IL13RA1",
+      "aliases": "IL-13Ra|NR4|CT19|CD213A1",
+      "xrefs": "HGNC:5974|3597|ENSG00000131724|300119",
+      "description": "interleukin 13 receptor subunit alpha 1",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3598,
+      "standard_name": "IL13RA2",
+      "aliases": "IL-13R|CT19|CD213A2|IL13BP",
+      "xrefs": "ENSG00000123496|300130|3598|HGNC:5975",
+      "description": "interleukin 13 receptor subunit alpha 2",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3600,
+      "standard_name": "IL15",
+      "aliases": "IL-15",
+      "xrefs": "ENSG00000164136|HGNC:5977|600554|3600",
+      "description": "interleukin 15",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3601,
+      "standard_name": "IL15RA",
+      "aliases": "CD215",
+      "xrefs": "601070|3601|HGNC:5978|ENSG00000134470",
+      "description": "interleukin 15 receptor subunit alpha",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3603,
+      "standard_name": "IL16",
+      "aliases": "LCF|NIL16|PRIL16|prIL-16",
+      "xrefs": "3603|ENSG00000172349|603035|HGNC:5980",
+      "description": "interleukin 16",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3605,
+      "standard_name": "IL17A",
+      "aliases": "IL17|ILA17|IL-17A|CTLA-8|IL-17|CTLA8",
+      "xrefs": "HGNC:5981|603149|ENSG00000112115|3605",
+      "description": "interleukin 17A",
+      "terms": [
+        "BIOCARTA IL17 PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 27190,
+      "standard_name": "IL17B",
+      "aliases": "IL-20|IL-17B|ZCYTO7|NIRF",
+      "xrefs": "604627|27190|ENSG00000127743|HGNC:5982",
+      "description": "interleukin 17B",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 27189,
+      "standard_name": "IL17C",
+      "aliases": "IL-17C|CX2",
+      "xrefs": "ENSG00000124391|27189|HGNC:5983|604628",
+      "description": "interleukin 17C",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 53342,
+      "standard_name": "IL17D",
+      "aliases": "IL-17D",
+      "xrefs": "607587|HGNC:5984|53342|ENSG00000172458",
+      "description": "interleukin 17D",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 112744,
+      "standard_name": "IL17F",
+      "aliases": "IL17A|IL-17F|ML1|ML-1|CANDF6",
+      "xrefs": "ENSG00000112116|606496|HGNC:16404|112744",
+      "description": "interleukin 17F",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 23765,
+      "standard_name": "IL17RA",
+      "aliases": "hIL-17R|CDw217|IL17R|IMD51|CD217|IL-17RA|CANDF5",
+      "xrefs": "23765|HGNC:5985|605461|ENSG00000177663",
+      "description": "interleukin 17 receptor A",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 55540,
+      "standard_name": "IL17RB",
+      "aliases": "EVI27|IL17BR|IL17RH1|CRL4",
+      "xrefs": "HGNC:18015|55540|ENSG00000056736|605458",
+      "description": "interleukin 17 receptor B",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 84818,
+      "standard_name": "IL17RC",
+      "aliases": "IL17RL|CANDF9|IL17-RL",
+      "xrefs": "610925|84818|ENSG00000163702|HGNC:18358",
+      "description": "interleukin 17 receptor C",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 54756,
+      "standard_name": "IL17RD",
+      "aliases": "IL17RLM|IL-17RD|SEF|HH18",
+      "xrefs": "606807|54756|HGNC:17616|ENSG00000144730",
+      "description": "interleukin 17 receptor D",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 132014,
+      "standard_name": "IL17RE",
+      "aliases": "",
+      "xrefs": "132014|614995|HGNC:18439|ENSG00000163701",
+      "description": "interleukin 17 receptor E",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 400935,
+      "standard_name": "IL17REL",
+      "aliases": "",
+      "xrefs": "ENSG00000188263|HGNC:33808|400935|613414",
+      "description": "interleukin 17 receptor E like",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3606,
+      "standard_name": "IL18",
+      "aliases": "IL-18|IGIF|IL-1g|IL1F4",
+      "xrefs": "3606|ENSG00000150782|600953|HGNC:5986",
+      "description": "interleukin 18",
+      "terms": [
+        "BIOCARTA IL12 PATHWAY",
+        "WP IL1 AND MEGAKARYOCYTES IN OBESITY",
+        "PID IL12 2PATHWAY",
+        "PID IL12 STAT4 PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 10068,
+      "standard_name": "IL18BP",
+      "aliases": "FVH|IL18BPa",
+      "xrefs": "604113|10068|ENSG00000137496|HGNC:5987",
+      "description": "interleukin 18 binding protein",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 8809,
+      "standard_name": "IL18R1",
+      "aliases": "IL-18Ralpha|IL18RA|IL18Ralpha2|IL-18R-alpha|CDw218a|IL1RRP|IL-1Rrp|CD218a",
+      "xrefs": "ENSG00000115604|HGNC:5988|8809|604494",
+      "description": "interleukin 18 receptor 1",
+      "terms": [
+        "PID IL12 2PATHWAY",
+        "PID IL12 STAT4 PATHWAY",
+        "BIOCARTA IL12 PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 8807,
+      "standard_name": "IL18RAP",
+      "aliases": "IL-1RAcPL|CDw218b|IL-18RAcP|ACPL|CD218b|IL-1R-7|IL-18Rbeta|IL-18R-beta|IL-1R7|IL18RB",
+      "xrefs": "HGNC:5989|ENSG00000115607|8807|604509",
+      "description": "interleukin 18 receptor accessory protein",
+      "terms": [
+        "PID IL12 2PATHWAY",
+        "PID IL12 STAT4 PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 29949,
+      "standard_name": "IL19",
+      "aliases": "NG.1|ZMDA1|IL-10C|MDA1",
+      "xrefs": "29949|ENSG00000142224|HGNC:5990|605687",
+      "description": "interleukin 19",
+      "terms": [
+        "KEGG MEDICUS REFERENCE IL10 FAMILY TO JAK STAT SIGNALING PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3552,
+      "standard_name": "IL1A",
+      "aliases": "IL-1 alpha|IL1|IL-1A|IL1F1|IL1-ALPHA",
+      "xrefs": "147760|3552|HGNC:5991|ENSG00000115008",
+      "description": "interleukin 1 alpha",
+      "terms": [
+        "PID IL1 PATHWAY",
+        "KEGG MEDICUS REFERENCE IL1 IL1R P38 SIGNALING PATHWAY",
+        "KEGG MEDICUS REFERENCE IL1 IL1R JNK SIGNALING PATHWAY",
+        "BIOCARTA IL10 PATHWAY",
+        "BIOCARTA IL1R PATHWAY",
+        "WP SIGNAL TRANSDUCTION THROUGH IL1R"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3553,
+      "standard_name": "IL1B",
+      "aliases": "IL1F2|IL1beta|IL-1|IL1-BETA",
+      "xrefs": "147720|HGNC:5992|ENSG00000125538|3553",
+      "description": "interleukin 1 beta",
+      "terms": [
+        "WP SIGNAL TRANSDUCTION THROUGH IL1R",
+        "WP IL1 AND MEGAKARYOCYTES IN OBESITY",
+        "KEGG MEDICUS REFERENCE IL1 IL1R P38 SIGNALING PATHWAY",
+        "PID IL12 2PATHWAY",
+        "PID IL1 PATHWAY",
+        "KEGG MEDICUS REFERENCE IL1 IL1R JNK SIGNALING PATHWAY",
+        "BIOCARTA IL1R PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 84639,
+      "standard_name": "IL1F10",
+      "aliases": "IL1-theta|IL1HY2|IL-38|IL-1HY2|FKSG75|FIL1-theta",
+      "xrefs": "615296|84639|HGNC:15552|ENSG00000136697",
+      "description": "interleukin 1 family member 10",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3554,
+      "standard_name": "IL1R1",
+      "aliases": "D2S1473|IL-1R-alpha|IL1RA|P80|IL1R|CD121A",
+      "xrefs": "147810|ENSG00000115594|HGNC:5993|3554",
+      "description": "interleukin 1 receptor type 1",
+      "terms": [
+        "KEGG MEDICUS REFERENCE IL1 IL1R P38 SIGNALING PATHWAY",
+        "PID IL12 2PATHWAY",
+        "KEGG MEDICUS REFERENCE IL1 IL1R JNK SIGNALING PATHWAY",
+        "PID IL1 PATHWAY",
+        "WP IL1 AND MEGAKARYOCYTES IN OBESITY",
+        "BIOCARTA IL1R PATHWAY",
+        "WP SIGNAL TRANSDUCTION THROUGH IL1R"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 112577460,
+      "standard_name": "IL1R1-AS1",
+      "aliases": "",
+      "xrefs": "ENSG00000226925|HGNC:53898|112577460",
+      "description": "IL1R1 antisense RNA 1",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    },
+    {
+      "entrez": 7850,
+      "standard_name": "IL1R2",
+      "aliases": "CDw121b|IL1RB|IL-1RT2|IL1R2c|CD121b|IL-1R-2|IL-1RT-2",
+      "xrefs": "HGNC:5994|147811|ENSG00000115590|7850",
+      "description": "interleukin 1 receptor type 2",
+      "terms": [
+        "PID IL1 PATHWAY"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3556,
+      "standard_name": "IL1RAP",
+      "aliases": "IL1R3|C3orf13|IL-1RAcP",
+      "xrefs": "ENSG00000196083|602626|3556|HGNC:5995",
+      "description": "interleukin 1 receptor accessory protein",
+      "terms": [
+        "KEGG MEDICUS REFERENCE IL1 IL1R P38 SIGNALING PATHWAY",
+        "KEGG MEDICUS REFERENCE IL1 IL1R JNK SIGNALING PATHWAY",
+        "PID IL1 PATHWAY",
+        "BIOCARTA IL1R PATHWAY",
+        "WP SIGNAL TRANSDUCTION THROUGH IL1R"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 11141,
+      "standard_name": "IL1RAPL1",
+      "aliases": "IL1R8|TIGIRR-2|IL-1RAPL-1|IL1RAPL|IL-1-RAPL-1|MRX10|MRX34|IL1RAPL-1|OPHN4|MRX21",
+      "xrefs": "300206|HGNC:5996|ENSG00000169306|11141",
+      "description": "interleukin 1 receptor accessory protein like 1",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 26280,
+      "standard_name": "IL1RAPL2",
+      "aliases": "IL1R9|IL1RAPL-2|IL-1R9|TIGIRR-1",
+      "xrefs": "26280|300277|ENSG00000189108|HGNC:5997",
+      "description": "interleukin 1 receptor accessory protein like 2",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 9173,
+      "standard_name": "IL1RL1",
+      "aliases": "ST2L|IL33R|T1|ST2V|FIT-1|DER4|ST2",
+      "xrefs": "ENSG00000115602|HGNC:5998|601203|9173",
+      "description": "interleukin 1 receptor like 1",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 8808,
+      "standard_name": "IL1RL2",
+      "aliases": "IL1RRP2|IL-1Rrp2|IL-36R|IL1R-rp2",
+      "xrefs": "HGNC:5999|ENSG00000115598|8808|604512",
+      "description": "interleukin 1 receptor like 2",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3557,
+      "standard_name": "IL1RN",
+      "aliases": "IL-1RN|ICIL-1RA|MVCD4|IL1F3|IL1RA|IL-1ra|IL-1ra3|DIRA|IRAP",
+      "xrefs": "ENSG00000136689|3557|147679|HGNC:6000",
+      "description": "interleukin 1 receptor antagonist",
+      "terms": [
+        "PID IL1 PATHWAY",
+        "BIOCARTA IL1R PATHWAY",
+        "WP SIGNAL TRANSDUCTION THROUGH IL1R"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}

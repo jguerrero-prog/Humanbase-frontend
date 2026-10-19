@@ -33,3 +33,14 @@ test('Display settings saves reduced motion in this browser', async ({ page }) =
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduce');
 });
+
+test('the homepage with genes matched has no WCAG 2.2 AA violations', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(web);
+  await page.getByRole('combobox', { name: 'Search genes' }).fill('AUTS12 IL1B TNF');
+  await page.getByRole('combobox', { name: 'Search genes' }).press('Enter');
+  await expect(page.getByRole('table', { name: 'How your genes matched' })).toBeVisible();
+  const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+  expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});

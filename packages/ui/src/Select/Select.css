@@ -33,6 +33,10 @@
   color: var(--text-default);
 }
 
+.select-trigger-icon + :is(.select-value, .select-placeholder) {
+  flex: 1;
+}
+
 .select-trigger:disabled .icon {
   color: var(--text-disabled);
 }

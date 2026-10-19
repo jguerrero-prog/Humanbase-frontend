@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 3553,
+      "standard_name": "IL1B",
+      "aliases": "IL1F2|IL1beta|IL-1|IL1-BETA",
+      "xrefs": "147720|HGNC:5992|ENSG00000125538|3553",
+      "description": "interleukin 1 beta",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 834,
+      "standard_name": "CASP1",
+      "aliases": "P45|ICE|IL1BC",
+      "xrefs": "147678|ENSG00000137752|HGNC:1499|834",
+      "description": "caspase 1",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}

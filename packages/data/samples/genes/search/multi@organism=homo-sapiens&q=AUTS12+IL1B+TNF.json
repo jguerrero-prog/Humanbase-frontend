@@ -1,0 +1,56 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "query": "AUTS12",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 100188314,
+          "standard_name": "AUTS12",
+          "aliases": "",
+          "xrefs": "100188314|610838",
+          "description": "autism, susceptibility to, 12",
+          "organism": "homo-sapiens",
+          "versions_available": []
+        }
+      ]
+    },
+    {
+      "query": "IL1B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3553,
+          "standard_name": "IL1B",
+          "aliases": "IL1F2|IL1beta|IL-1|IL1-BETA",
+          "xrefs": "147720|HGNC:5992|ENSG00000125538|3553",
+          "description": "interleukin 1 beta",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TNF",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7124,
+          "standard_name": "TNF",
+          "aliases": "TNF-alpha|DIF|TNFSF2|TNLG1F|TNFA",
+          "xrefs": "HGNC:11892|7124|ENSG00000232810|191160",
+          "description": "tumor necrosis factor",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    }
+  ]
+}

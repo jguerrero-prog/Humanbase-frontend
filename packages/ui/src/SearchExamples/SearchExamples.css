@@ -1,0 +1,46 @@
+.search-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.search-examples span {
+  font: var(--type-body-sm);
+  line-height: 1.4;
+}
+
+.search-examples button {
+  min-block-size: 32px;
+  padding: 6px var(--space-3);
+  font: var(--type-label-sm);
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.search-examples-brand span {
+  color: var(--color-mint-100);
+}
+
+.search-examples-light span {
+  color: var(--text-muted);
+}
+
+.search-examples-brand button {
+  color: var(--text-on-brand);
+  background: var(--overlay-on-brand-hover);
+}
+
+.search-examples-light button {
+  color: var(--text-link);
+  background: var(--action-ghost-hover);
+}
+
+.search-examples-brand button:hover {
+  background: var(--overlay-on-brand-open);
+}
+
+.search-examples-light button:hover {
+  background: var(--action-ghost-pressed);
+}

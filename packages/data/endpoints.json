@@ -6,8 +6,77 @@
       "path": "/api/genes/{entrez}/",
       "documented": true,
       "example": "/api/genes/3553/",
-      "samples": ["/api/genes/3553/", "/api/genes/7124/", "/api/genes/0/"],
-      "usedBy": ["GeneService.get"]
+      "samples": [
+        "/api/genes/3553/",
+        "/api/genes/7124/",
+        "/api/genes/0/"
+      ],
+      "usedBy": [
+        "GeneService.get"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/genes/search/partial/",
+      "documented": false,
+      "example": "/api/genes/search/partial/?organism=homo-sapiens&q=IL1",
+      "samples": [
+        "/api/genes/search/partial/?organism=homo-sapiens&q=IL1",
+        "/api/genes/search/partial/?organism=homo-sapiens&q=IL1B",
+        "/api/genes/search/partial/?organism=homo-sapiens&q=NOTAGENE123"
+      ],
+      "usedBy": [
+        "GeneSearchService.suggest"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/genes/search/exact/",
+      "documented": false,
+      "example": "/api/genes/search/exact/?organism=homo-sapiens&q=il1b",
+      "samples": [
+        "/api/genes/search/exact/?organism=homo-sapiens&q=IL1B",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=BRCA1",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=PTEN"
+      ],
+      "usedBy": [
+        "GeneSearchService.exact"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/integrations/",
+      "documented": true,
+      "example": "/api/integrations/",
+      "samples": [
+        "/api/integrations/"
+      ],
+      "usedBy": [
+        "IntegrationService.list"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/genes/search/multi/",
+      "documented": false,
+      "example": "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF",
+      "samples": [
+        "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF+AUTS12+NOTAGENE123+p53",
+        "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF",
+        "/api/genes/search/multi/?organism=homo-sapiens&q=AUTS12+IL1B+TNF"
+      ],
+      "usedBy": [
+        "GeneSearchService.list"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/genes/search/multi/",
+      "documented": false,
+      "readOnly": true,
+      "usedBy": [
+        "GeneSearchService.list (lists too long for a URL)"
+      ]
     }
   ]
 }
