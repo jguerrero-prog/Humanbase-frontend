@@ -56,18 +56,26 @@ export function DeepseaForm({ model, onModelChange, onStarted }: DeepseaFormProp
   return (
     <div className="job-columns">
       <VariantJobForm key={model} model={model} onModelChange={onModelChange} examples={examples} onRun={run} running={running} notice={notice} />
-      <JobAbout
-        tool={info.tool}
-        docsHref={info.docsHref}
-        examples={Object.entries(examples).map(([kind, text]) => ({
-          name: `example.${kind}`,
-          detail: info.strand ? 'Variants with strand, for Seqweaver' : 'Variants, 5 columns',
-          onDownload: () => saveFile(text, `example.${kind}`, 'text/plain'),
-        }))}
-      >
-        {info.about}
-      </JobAbout>
+      <DeepseaAbout model={model} />
     </div>
+  );
+}
+
+/** The About panel for a sequence model: what it does, its documentation and its example files. */
+export function DeepseaAbout({ model }: { model: VariantModel }) {
+  const info = deepseaModels[model];
+  return (
+    <JobAbout
+      tool={info.tool}
+      docsHref={info.docsHref}
+      examples={Object.entries(deepseaExamples[model]).map(([kind, text]) => ({
+        name: `example.${kind}`,
+        detail: info.strand ? 'Variants with strand, for Seqweaver' : 'Variants, 5 columns',
+        onDownload: () => saveFile(text, `example.${kind}`, 'text/plain'),
+      }))}
+    >
+      {info.about}
+    </JobAbout>
   );
 }
 

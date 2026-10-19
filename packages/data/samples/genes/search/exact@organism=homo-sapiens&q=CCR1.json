@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 1230,
+      "standard_name": "CCR1",
+      "aliases": "CKR1|HM145|CKR-1|CD191|CMKBR1|SCYAR1|MIP1aR",
+      "xrefs": "ENSG00000163823|1230|HGNC:1602|601159",
+      "description": "C-C motif chemokine receptor 1",
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}

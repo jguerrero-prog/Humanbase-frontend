@@ -11,7 +11,10 @@
         "/api/genes/7124/",
         "/api/genes/0/",
         "/api/genes/100188314/",
-        "/api/genes/3383/"
+        "/api/genes/3383/",
+        "/api/genes/345611/",
+        "/api/genes/5728/",
+        "/api/genes/1230/"
       ],
       "usedBy": [
         "GeneService.get"
@@ -39,7 +42,9 @@
       "samples": [
         "/api/genes/search/exact/?organism=homo-sapiens&q=IL1B",
         "/api/genes/search/exact/?organism=homo-sapiens&q=BRCA1",
-        "/api/genes/search/exact/?organism=homo-sapiens&q=PTEN"
+        "/api/genes/search/exact/?organism=homo-sapiens&q=PTEN",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=IRGM",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=CCR1"
       ],
       "usedBy": [
         "GeneSearchService.exact"

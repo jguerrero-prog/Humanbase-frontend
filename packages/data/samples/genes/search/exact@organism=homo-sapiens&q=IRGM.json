@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 345611,
+      "standard_name": "IRGM",
+      "aliases": "IFI1|LRG-47|LRG47|IRGM1",
+      "xrefs": "608212|HGNC:29597|345611|ENSG00000237693",
+      "description": "immunity related GTPase M",
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}

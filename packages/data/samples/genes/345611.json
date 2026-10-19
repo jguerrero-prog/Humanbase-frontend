@@ -1,0 +1,50 @@
+{
+  "status": 200,
+  "body": {
+    "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+    "entrez": 345611,
+    "systematic_name": "IRGM",
+    "standard_name": "IRGM",
+    "description": "immunity related GTPase M",
+    "xrefs": [
+      {
+        "xrid": "608212",
+        "crossrefdb": {
+          "name": "MIM",
+          "url": "http://www.omim.org/entry/_REPL_"
+        }
+      },
+      {
+        "xrid": "HGNC:29597",
+        "crossrefdb": {
+          "name": "HGNC",
+          "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+        }
+      },
+      {
+        "xrid": "345611",
+        "crossrefdb": {
+          "name": "Entrez",
+          "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+        }
+      },
+      {
+        "xrid": "ENSG00000237693",
+        "crossrefdb": {
+          "name": "Ensembl",
+          "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+        }
+      }
+    ],
+    "aliases": [
+      "IFI1",
+      "LRG-47",
+      "LRG47",
+      "IRGM1"
+    ],
+    "versions_available": [
+      "v1",
+      "v3"
+    ]
+  }
+}

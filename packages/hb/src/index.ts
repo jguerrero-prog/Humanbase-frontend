@@ -4,7 +4,11 @@ export { AsdBrowser, type AsdBrowserProps, type AsdView } from './AsdBrowser/Asd
 export { analysisColumns, analysisIcons, analysisOptions, productFooter, productSections } from './content/product';
 export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
 export { JobAbout, type JobAboutProps, type JobExample } from './Jobs/JobAbout';
-export { DeepseaForm, deepseaJobLink, type DeepseaFormProps } from './Deepsea/DeepseaForm';
+export { DeepseaAbout, DeepseaForm, deepseaJobLink, type DeepseaFormProps } from './Deepsea/DeepseaForm';
+export { GeneFinder, type GeneFinderProps } from './Expecto/GeneFinder';
+export { GeneExpression, type GeneExpressionProps, type GeneExpressionState, type GeneExpressionView } from './Expecto/GeneExpression';
+export { expectoGeneScale, expectoScGeneScale, geneExpressionTools, type GeneExpressionTool, type GeneExpressionToolInfo } from './Expecto/geneExpressionTools';
+export { VariantSearch, type VariantSearchProps } from './Expecto/VariantSearch';
 export { DeepseaJobView, type DeepseaJobViewProps } from './Deepsea/DeepseaJobView';
 export { DeepseaResultView, type DeepseaResultViewProps } from './Deepsea/DeepseaResultView';
 export { HomeSearch, type HomeSearchProps } from './HomeSearch/HomeSearch';

@@ -1,0 +1,56 @@
+{
+  "status": 200,
+  "body": {
+    "url": "http://hb.flatironinstitute.org/api/genes/5728/",
+    "entrez": 5728,
+    "systematic_name": "PTEN",
+    "standard_name": "PTEN",
+    "description": "phosphatase and tensin homolog",
+    "xrefs": [
+      {
+        "xrid": "ENSG00000171862",
+        "crossrefdb": {
+          "name": "Ensembl",
+          "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+        }
+      },
+      {
+        "xrid": "5728",
+        "crossrefdb": {
+          "name": "Entrez",
+          "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+        }
+      },
+      {
+        "xrid": "601728",
+        "crossrefdb": {
+          "name": "MIM",
+          "url": "http://www.omim.org/entry/_REPL_"
+        }
+      },
+      {
+        "xrid": "HGNC:9588",
+        "crossrefdb": {
+          "name": "HGNC",
+          "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+        }
+      }
+    ],
+    "aliases": [
+      "MHAM",
+      "MMAC1",
+      "PTEN1",
+      "PTENbeta",
+      "DEC",
+      "10q23del",
+      "BZS",
+      "TEP1",
+      "CWS1",
+      "GLM2"
+    ],
+    "versions_available": [
+      "v1",
+      "v3"
+    ]
+  }
+}
