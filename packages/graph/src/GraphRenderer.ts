@@ -29,7 +29,17 @@ export interface GraphData {
   groups?: readonly GraphGroup[];
 }
 
-export type GraphSelection = { kind: 'node'; id: string } | { kind: 'link'; source: string; target: string } | { kind: 'group'; id: string } | null;
+/** A starred set of genes, such as a tissue or process, highlighted in the graph. */
+export interface GraphHighlight {
+  id: string;
+  label: string;
+  /** A color custom property, such as `--viz-cat-1`. */
+  color: string;
+  /** Node ids; genes not in the graph are ignored. */
+  nodes: readonly string[];
+}
+
+export type GraphSelection ={ kind: 'node'; id: string } | { kind: 'link'; source: string; target: string } | { kind: 'group'; id: string } | null;
 
 export interface GraphEvents {
   onSelectNode?: (id: string) => void;
@@ -50,6 +60,8 @@ export interface GraphRenderer {
   mount(container: HTMLElement, options: MountOptions): void;
   render(data: GraphData): void;
   select(selection: GraphSelection): void;
+  /** Rings each set's genes in its color, in the order given, and shades the area around them. An empty list clears it. */
+  highlight(sets: readonly GraphHighlight[]): void;
   zoomBy(factor: number): void;
   fit(): void;
   /** A standalone SVG file of what is drawn, with colors resolved. */
