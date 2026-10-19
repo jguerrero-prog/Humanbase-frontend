@@ -77,6 +77,7 @@ const specs = [
   ['viz.edge (diagrams, new graphs)', '≥ 0.9: seq.7, 2.5px; 0.75 to 0.9: seq.6, 1.75px; 0.5 to 0.75: seq.5, 1px; below 0.5 hidden by default'],
   ['viz.node (diagrams, new graphs)', '12px, white with 1.5px grey 600 outline; query gene 20px ink; fixed size'],
   ['viz.selection (diagrams, new graphs)', '2px ink ring, 5px out from the node; others at 35% opacity'],
+  ['viz.highlight (starred sets)', 'A 3.5px ring per starred set in viz.cat.1 to .6, in starring order, stacked outward; a 1px ink edge outside the last ring; a hull of the same color at 12% behind the set'],
   ['viz.label (diagrams, new graphs)', 'Lato Bold 12 ink with a 3px white halo; query gene 14'],
   ['viz.heatmap.cell', '34px with a 1px white gap; missing: white, grey 300 outline and diagonal'],
   ['viz.axis', 'Lato 12 grey 600 labels; Lato Bold 12 ink titles with units; 1px grey 200 gridlines'],
@@ -190,6 +191,7 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
         <ul class="points">
           <li>Selection is a 2px ink ring around the node, never a green fill. Unrelated nodes and edges fade to 35%; nothing moves.</li>
           <li>The selected gene’s details open in the drawer beside the graph, as on the Modals and drawers page.</li>
+          <li>Starring a process or tissue rings its genes in that set’s categorical color, with a light hull behind them. A gene in several starred sets gets one ring per set, stacked outward in the order they were starred. A 1px ink edge outside the rings keeps light colors visible on white.</li>
           <li>Labels are Lato Bold 12 ink with a 3px white halo, so they stay readable over edges. The query gene is 14px.</li>
           <li>Show labels for the query gene and the top 15 neighbors; others show on hover, focus or zoom.</li>
           <li>Node size stays fixed. Size encodes nothing, which keeps dense graphs calm and comparable.</li>

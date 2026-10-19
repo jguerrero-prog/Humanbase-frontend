@@ -40,6 +40,16 @@
   object-fit: contain;
 }
 
+.menu-item-swatch {
+  flex: none;
+  inline-size: 12px;
+  block-size: 12px;
+  margin: 4px;
+  background: var(--swatch);
+  border: var(--border-width-1) solid var(--text-default);
+  border-radius: 50%;
+}
+
 .menu-item-check {
   margin-inline-start: auto;
   color: var(--action-primary);

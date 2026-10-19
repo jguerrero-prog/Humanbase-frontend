@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { IconButton } from '../IconButton/IconButton';
 import type { IconName } from '../Icon/Icon';
 import './Results.css';
@@ -18,9 +18,11 @@ export interface GraphToolbarProps {
   onViewTable?: () => void;
   /** The view switch's text; "View as graph" while the table is showing. */
   tableLabel?: string;
+  /** Extra controls after the action groups, such as the starred-sets menu. */
+  children?: ReactNode;
 }
 
-export function GraphToolbar({ label, groups, tableHref, onViewTable, tableLabel = 'View as table' }: GraphToolbarProps) {
+export function GraphToolbar({ label, groups, tableHref, onViewTable, tableLabel = 'View as table', children }: GraphToolbarProps) {
   const linkHref = useLinkHref();
   return (
     <div className="graph-toolbar" role="toolbar" aria-label={label}>
@@ -32,6 +34,12 @@ export function GraphToolbar({ label, groups, tableHref, onViewTable, tableLabel
           ))}
         </Fragment>
       ))}
+      {children && (
+        <>
+          <span className="graph-toolbar-divider" aria-hidden="true" />
+          {children}
+        </>
+      )}
       {tableHref ? (
         <a className="graph-toolbar-table" href={linkHref(tableHref)}>
           {tableLabel}

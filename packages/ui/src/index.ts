@@ -2,6 +2,7 @@ export { ActionMenu, type ActionMenuItem, type ActionMenuProps } from './ActionM
 export { Badge, StatusBadge, type BadgeProps, type BadgeSize, type BadgeTone, type JobStatus, type StatusBadgeProps } from './Badge/Badge';
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from './Button/Button';
 export { IconButton, type IconButtonProps } from './IconButton/IconButton';
+export { StarToggle, type StarToggleProps } from './StarToggle/StarToggle';
 export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
 export { ScoreTracks, type ScoreTrack, type ScoreTracksProps } from './GenomeBrowser/ScoreTracks';
 export {
