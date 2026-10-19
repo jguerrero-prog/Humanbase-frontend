@@ -24,6 +24,7 @@ import { useMemo, useState, type ReactNode } from 'react';
 import { jobDateTime } from '../Jobs/JobPage';
 import { deepseaFormLink } from './DeepseaForm';
 import { EffectsCard } from './EffectsCard';
+import { VariantGenomeBrowser } from './VariantGenomeBrowser';
 import './Deepsea.css';
 
 export interface DeepseaResultViewProps {
@@ -180,6 +181,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
             onPrevious={() => step(-1)}
             onNext={() => step(1)}
           />
+          <VariantGenomeBrowser assembly={job.assembly} chromosome={selected.chromosome} position={selected.position} label={variantLabel(selected)} />
           <VariantEffectsCard key={selected.id} job={job} variant={selected} featureTypes={featureTypes} />
         </>
       )}

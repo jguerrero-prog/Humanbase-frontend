@@ -82,6 +82,10 @@ export class DeepseaJob {
     return genomeLabels[this.record.genome_assembly as Genome] ?? this.record.genome_assembly;
   }
 
+  get assembly(): Genome {
+    return this.record.genome_assembly === 'hg38' ? 'hg38' : 'hg19';
+  }
+
   get status(): JobState {
     const status = this.record.status?.trim().toLowerCase() ?? '';
     if (status === 'completed' || status === 'finished') return 'finished';
