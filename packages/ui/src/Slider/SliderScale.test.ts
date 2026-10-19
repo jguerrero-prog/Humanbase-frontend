@@ -21,4 +21,13 @@ describe('SliderScale', () => {
   it('gives the fill position as a percentage', () => {
     expect(genes.percent(15)).toBeCloseTo(22.22, 1);
   });
+
+  it('steps from the value as shown, even when the value sits between steps', () => {
+    const scale = new SliderScale(0, 1, 0.01);
+    expect(scale.next(0.4769, 1)).toBe(0.49);
+    expect(scale.next(0.4769, -1)).toBe(0.47);
+    expect(scale.next(0.48, 1)).toBe(0.49);
+    expect(scale.next(0.48, -1, 10)).toBe(0.38);
+    expect(scale.next(1, 1)).toBe(1);
+  });
 });

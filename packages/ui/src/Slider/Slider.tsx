@@ -29,12 +29,14 @@ export interface RangeSliderProps extends SliderBaseProps {
   onCommit?: (value: [number, number]) => void;
 }
 
-function bigStep(event: KeyboardEvent<HTMLInputElement>, scale: SliderScale, current: number): number | undefined {
-  const up = event.key === 'PageUp' || (event.shiftKey && (event.key === 'ArrowUp' || event.key === 'ArrowRight'));
-  const down = event.key === 'PageDown' || (event.shiftKey && (event.key === 'ArrowDown' || event.key === 'ArrowLeft'));
+// Handled here rather than by the browser so a value between steps, such as a suggested cutoff, moves visibly on the first press.
+function keyStep(event: KeyboardEvent<HTMLInputElement>, scale: SliderScale, current: number): number | undefined {
+  const up = event.key === 'PageUp' || event.key === 'ArrowUp' || event.key === 'ArrowRight';
+  const down = event.key === 'PageDown' || event.key === 'ArrowDown' || event.key === 'ArrowLeft';
   if (!up && !down) return undefined;
   event.preventDefault();
-  return scale.snap(current + (up ? 10 : -10) * scale.step);
+  const big = event.key.startsWith('Page') || event.shiftKey;
+  return scale.next(current, up ? 1 : -1, big ? 10 : 1);
 }
 
 interface NumberFieldProps {
@@ -102,7 +104,7 @@ export function Slider({ label, min, max, step = 1, value, defaultValue, onChang
           aria-valuetext={scale.format(current)}
           onChange={(event) => update(Number(event.target.value))}
           onKeyDown={(event) => {
-            const next = bigStep(event, scale, current);
+            const next = keyStep(event, scale, current);
             if (next !== undefined) update(next, true);
           }}
           onKeyUp={() => onCommit?.(current)}
@@ -157,7 +159,7 @@ export function RangeSlider({ label, min, max, step = 1, value, defaultValue, on
         aria-valuetext={scale.format(own)}
         onChange={(event) => set(Number(event.target.value))}
         onKeyDown={(event) => {
-          const next = bigStep(event, scale, own);
+          const next = keyStep(event, scale, own);
           if (next !== undefined) set(next, true);
         }}
         onKeyUp={() => onCommit?.([low, high])}
