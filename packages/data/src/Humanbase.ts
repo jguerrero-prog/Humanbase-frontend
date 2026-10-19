@@ -1,10 +1,13 @@
 import { ApiClient } from './ApiClient';
+import { AsdService } from './asd/AsdService';
 import type { AppConfig } from './AppConfig';
 import type { DataClient } from './DataClient';
 import { ConnectionService } from './connections/ConnectionService';
 import { GeneFunctionService } from './functions/GeneFunctionService';
 import { TermService } from './functions/TermService';
 import { GeneService } from './genes/GeneService';
+import { SampleGeneLocator } from './genome/SampleGeneLocator';
+import { S3GeneLocator } from './genome/S3GeneLocator';
 import { DeepseaService } from './deepsea/DeepseaService';
 import { ExpectoService } from './expecto/ExpectoService';
 import { NetwasService } from './jobs/NetwasService';
@@ -26,6 +29,7 @@ export class Humanbase {
   readonly netwas: NetwasService;
   readonly deepsea: DeepseaService;
   readonly expecto: ExpectoService;
+  readonly asd: AsdService;
 
   constructor(
     readonly client: DataClient,
@@ -42,6 +46,8 @@ export class Humanbase {
     this.netwas = new NetwasService(client);
     this.deepsea = new DeepseaService(client);
     this.expecto = new ExpectoService(client);
+    // Gene lookups read static files on S3, which also stay off while the API is off.
+    this.asd = new AsdService(client, showsSamples ? new SampleGeneLocator(client) : new S3GeneLocator());
   }
 
   static fromConfig(config: AppConfig): Humanbase {

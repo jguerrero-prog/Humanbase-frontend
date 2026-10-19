@@ -28,7 +28,11 @@ export { ExpectoService, type ScoredVariant, type VariantQuery } from './expecto
 export { TissueVariants, strongestOf, tissueTitle, type EffectRow, type GenePosition, type PositionAxis, type TissueDatabase, type TissueEffects, type TissueVariantsRecord } from './expecto/TissueVariants';
 export { expectoTissues, type ExpectoTissue } from './expecto/expectoTissues';
 export { useTissueVariants, useVariantSearch, useVariantTotal } from './react/useExpecto';
-export { AsdVariant, type AsdVariantRow } from './asd/AsdVariant';
+export { AsdVariant, type AsdRecord, type AsdVariantRow } from './asd/AsdVariant';
+export { AsdService, type AsdFeatureSet, type AsdPage } from './asd/AsdService';
+export { S3GeneLocator, type GeneLocator, type GeneSpan } from './genome/S3GeneLocator';
+export { SampleGeneLocator } from './genome/SampleGeneLocator';
+export { useAsdColumns, useAsdEffects, useAsdPage, useAsdRange } from './react/useAsd';
 export { NetworkQuery, dataVersionNames, type ComparedNetwork } from './networks/NetworkQuery';
 export { GeneHit, type GeneHitRecord } from './genes/GeneHit';
 export { GeneSearchService, type TermMatches } from './search/GeneSearchService';
