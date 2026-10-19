@@ -17,7 +17,7 @@ export { NetwasJob, type NetwasJobRecord } from './jobs/NetwasJob';
 export { NetwasService, type Mhc, type NetwasExample, type NetwasRequest, type SubmitProblem } from './jobs/NetwasService';
 export { GwasFileCheck, type GwasCheckResult, type GwasFormat } from './jobs/GwasFileCheck';
 export { useNetwasExample, useNetwasJob, useNetwasResult } from './react/useNetwasJob';
-export { deepseaModels, modelOf, variantModels, type DeepseaModel, type EffectBins } from './deepsea/DeepseaModel';
+export { deepseaModels, genomeLabels, modelOf, variantModels, type DeepseaModel, type EffectBins, type Genome } from './deepsea/DeepseaModel';
 export { DeepseaJob, type DeepseaFile, type DeepseaJobRecord, type ResultFile } from './deepsea/DeepseaJob';
 export { chrVariant, featureEffects, featureLabel, variantIdOf, variantRows, type FeatureEffect, type FeaturePredictionRecord, type FeaturesRecord, type ModelFeature, type ScoreType, type VariantRow, type VariantScoresRecord, type VariantSequence } from './deepsea/DeepseaResult';
 export { DeepseaService, type DeepseaRequest } from './deepsea/DeepseaService';

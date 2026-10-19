@@ -1,5 +1,5 @@
 {
-  "note": "Hand-built, not recorded: the one approved ExPecto example job was submitted on October 20, 2026 and the API answered 500 (Server Error), most likely the guessed upload field name, so no job exists to record. Values follow the Figma ExPecto result screens; the ID is clearly not a real job. Replace with a recorded job once one runs.",
+  "note": "Hand-built, not recorded: the one approved ExPecto example job was sent on October 20, 2026 with the input under a guessed field, input_file, and the API answered 500. The live form sends upload_file or upload_textarea, now fixed, but no ExPecto job has been recorded since. Values follow the Figma ExPecto result screens; the ID is clearly not a real job.",
   "status": 200,
   "body": {
     "ds_model": "Beluga",

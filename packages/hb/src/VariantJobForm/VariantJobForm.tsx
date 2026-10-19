@@ -1,4 +1,4 @@
-import { deepseaModels, variantModels, VariantFileCheck, type FileCheckResult, type InputKind, type VariantModel } from '@humanbase/data';
+import { deepseaModels, genomeLabels, variantModels, VariantFileCheck, type FileCheckResult, type Genome, type InputKind, type VariantModel } from '@humanbase/data';
 import { Accordion, AccordionItem, Button, Field, FileDrop, SegmentedControl, saveFile, Select, TextInput, type ChosenFile } from '@humanbase/ui';
 import { useId, useMemo, useState, type ReactNode } from 'react';
 import '../Jobs/JobForm.css';
@@ -11,6 +11,9 @@ export interface VariantJob {
   kind: InputKind;
   text: string;
   fileName: string;
+  /** True when the text came from an uploaded file, not pasted or the example. */
+  uploaded: boolean;
+  genome: Genome;
   count: number;
   title: string;
   email: string;
@@ -20,7 +23,7 @@ export interface VariantJobFormProps {
   model: VariantModel;
   /** Choosing another model calls this instead of switching in place, such as to open that tool's page. */
   onModelChange?: ((model: VariantModel) => void) | undefined;
-  examples: Partial<Record<InputKind, string>>;
+  examples: Record<Genome, Partial<Record<InputKind, string>>>;
   onRun?: ((job: VariantJob) => void | Promise<void>) | undefined;
   /** True while the job is being started. */
   running?: boolean | undefined;
@@ -54,6 +57,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
   const id = useId();
   const [model, setModel] = useState(initialModel);
   const [kind, setKind] = useState<InputKind>(deepseaModels[initialModel].inputs[0] ?? 'vcf');
+  const [genome, setGenome] = useState<Genome>(deepseaModels[initialModel].genomes[0] ?? 'hg19');
   const [source, setSource] = useState<Source>('upload');
   const [file, setFile] = useState<ChosenFile>();
   const [text, setText] = useState('');
@@ -70,15 +74,15 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
   const sources = [
     { value: 'upload', label: 'Upload a file' },
     { value: 'paste', label: 'Paste' },
-    ...(examples[kind] ? [{ value: 'example', label: 'Use the example' }] : []),
+    ...(examples[genome][kind] ? [{ value: 'example', label: 'Use the example' }] : []),
   ];
   const chooseModel = (next: VariantModel) => (onModelChange ? onModelChange(next) : setModel(next));
   const choose = async (chosen: File) => {
     setFile({ name: chosen.name, size: chosen.size });
     setText(await chosen.text());
   };
-  const start = (nextKind: InputKind, nextSource: Source) => {
-    const example = examples[nextKind] ?? '';
+  const start = (nextKind: InputKind, nextSource: Source, nextGenome = genome) => {
+    const example = examples[nextGenome][nextKind] ?? '';
     setKind(nextKind);
     setSource(nextSource);
     setFile(nextSource === 'example' ? { name: `example.${nextKind}`, size: example.length } : undefined);
@@ -86,7 +90,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
   };
   const run = () => {
     if (!ready) return;
-    if (onRun) void onRun({ model, kind, text, fileName: file?.name ?? `pasted.${kind}`, count: result?.count ?? 0, title, email });
+    if (onRun) void onRun({ model, kind, text, fileName: file?.name ?? `pasted.${kind}`, uploaded: source === 'upload', genome, count: result?.count ?? 0, title, email });
     else setNote(`${named} would start on ${result?.count.toLocaleString('en-US')} ${nouns[kind]}. This example doesn’t send a job.`);
   };
 
@@ -95,13 +99,24 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
       {notice}
       <div className="job-form-row">
         <Select label="Model" options={modelOptions(model)} value={model} onChange={(value) => chooseModel(value as VariantModel)} hint={deepseaModels[model].otherModels} />
-        <Select label="Genome assembly" options={[{ value: 'hg19', label: 'GRCh37/hg19' }]} defaultValue="hg19" hint="Coordinates in the file must match." />
+        {kind !== 'fasta' && (
+          <Select
+            label="Genome assembly"
+            options={deepseaModels[model].genomes.map((value) => ({ value, label: genomeLabels[value] }))}
+            value={genome}
+            onChange={(value) => {
+              setGenome(value as Genome);
+              if (source === 'example') start(kind, examples[value as Genome][kind] ? 'example' : 'upload', value as Genome);
+            }}
+            hint="Coordinates in the file must match."
+          />
+        )}
       </div>
       {deepseaModels[model].inputs.length > 1 && (
         <SegmentedControl
           label="What are you submitting?"
           value={kind}
-          onChange={(value) => start(value as InputKind, source === 'example' && examples[value as InputKind] ? 'example' : 'upload')}
+          onChange={(value) => start(value as InputKind, source === 'example' && examples[genome][value as InputKind] ? 'example' : 'upload')}
           segments={[{ value: 'vcf', label: 'Variants (VCF)' }, { value: 'bed', label: 'Regions (BED)' }, { value: 'fasta', label: 'Sequences (FASTA)' }].filter((segment) => deepseaModels[model].inputs.includes(segment.value as InputKind))}
         />
       )}

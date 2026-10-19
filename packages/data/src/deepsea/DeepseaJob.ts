@@ -1,6 +1,6 @@
 import type { InputKind } from '../jobs/VariantFileCheck';
 import type { JobState } from '../jobs/JobHistory';
-import { deepseaModels, modelOf, type DeepseaModel } from './DeepseaModel';
+import { deepseaModels, genomeLabels, modelOf, type DeepseaModel, type Genome } from './DeepseaModel';
 
 export interface DeepseaFile {
   url: string;
@@ -32,7 +32,6 @@ export interface ResultFile extends DeepseaFile {
   format: string;
 }
 
-const genomes: Record<string, string> = { hg19: 'GRCh37/hg19', hg38: 'GRCh38/hg38' };
 
 const isFile = (entry: DeepseaFile | Record<string, DeepseaFile>): entry is DeepseaFile => typeof entry.url === 'string';
 
@@ -80,7 +79,7 @@ export class DeepseaJob {
   }
 
   get genome(): string {
-    return genomes[this.record.genome_assembly] ?? this.record.genome_assembly;
+    return genomeLabels[this.record.genome_assembly as Genome] ?? this.record.genome_assembly;
   }
 
   get status(): JobState {

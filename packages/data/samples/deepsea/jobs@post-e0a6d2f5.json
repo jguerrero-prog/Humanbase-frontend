@@ -1,5 +1,5 @@
 {
-  "note": "Hand-built, not recorded: submitting an in silico mutagenesis job needs approval and the shared DeepSEA upload field is unconfirmed. Shaped like the real example job 0576e894, with an ID that is clearly not a real job.",
+  "note": "Hand-built, not recorded: what submitting this tool’s example answers with while the API is off. No example job has been recorded for this tool yet; the ID is clearly not a real job.",
   "status": 201,
   "body": {
     "created": "2026-10-17T22:37:12",
