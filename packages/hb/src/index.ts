@@ -8,4 +8,4 @@ export { EmptyNetworkQuery, NetworkExplorer, type NetworkDetailContext, type Net
 export { NetworkDetail } from './Networks/NetworkDetail';
 export { tissueConfidenceScale } from './Networks/tabs/scales';
 export { ModuleSearch, type ModuleSearchProps } from './ModuleSearch/ModuleSearch';
-export { ModuleExplorer, type ModuleExplorerProps } from './Modules/ModuleExplorer';
+export { ModuleExplorer, type ModuleDraft, type ModuleExplorerProps } from './Modules/ModuleExplorer';

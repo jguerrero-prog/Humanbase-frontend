@@ -1,8 +1,9 @@
 import { HomeSearch, ModuleSearch } from '@humanbase/hb';
 import { Icon } from '@humanbase/ui';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { features, moduleFeatures, updates, type Feature } from './home/content';
 import { GwasIllustration, HeatmapIllustration, NetworkIllustration } from './home/illustrations';
+import type { ModulesLocationState } from './ModulesPage';
 import './HomePage.css';
 
 const illustrations: Record<Feature['illustration'], () => React.JSX.Element> = { heatmap: HeatmapIllustration, network: NetworkIllustration, gwas: GwasIllustration };
@@ -15,6 +16,7 @@ const leads = {
 export function HomePage() {
   const navigate = useNavigate();
   const [search] = useSearchParams();
+  const draft = (useLocation().state as ModulesLocationState | null)?.draft;
   const modules = search.get('analysis') === 'modules';
   const chooseAnalysis = (analysis: string) => void navigate(analysis === 'modules' ? '/?analysis=modules' : `/${analysis}/`);
   const cite = (
@@ -31,7 +33,7 @@ export function HomePage() {
           <h1 id="home-title">Predictions of gene function, regulation and interactions in human</h1>
           <p className="home-hero-lead">{modules ? leads.modules : leads.networks}</p>
           {modules ? (
-            <ModuleSearch key={search.get('example') ?? ''} example={search.get('example') ?? undefined} onChooseAnalysis={chooseAnalysis} onStarted={(link) => void navigate(link)} afterExamples={cite} />
+            <ModuleSearch key={search.get('example') ?? draft?.title ?? ''} example={search.get('example') ?? undefined} draft={draft} onChooseAnalysis={chooseAnalysis} onStarted={(link) => void navigate(link)} afterExamples={cite} />
           ) : (
             <HomeSearch
               onShowNetwork={(query) => void navigate(query.href, { state: { fromSearch: true } })}
