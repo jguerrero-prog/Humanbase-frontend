@@ -293,6 +293,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
       <li><code>Tooltip</code> wraps one trigger. By default it repeats the trigger’s <code>aria-label</code> and is hidden from screen readers; with <code>describes</code> it is linked to the trigger with <code>aria-describedby</code>.</li>
       <li>All tooltips share one <code>TooltipController</code>, which keeps one open at a time and skips the delay while moving between triggers.</li>
       <li><code>DataTooltip</code> only draws the values. The graph or heatmap passes a position from <code>placeNearPoint</code>, which keeps it inside the view.</li>
+      <li><code>Toggletip</code> opens in the top layer as a popover, anchored under its button, so a scrolling table can’t clip it. It flips sideways or above when there isn’t room.</li>
     </ul>
     <Code code={usage} lang="tsx" theme="css-variables" />
   </NoteCard>
