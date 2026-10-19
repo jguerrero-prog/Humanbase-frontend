@@ -14,6 +14,14 @@ describe('FileDrop', () => {
     expect(screen.getByText('choose a file')).toHaveAttribute('for', input.id);
   });
 
+  it('takes an id and an error, so an error summary can link to it', () => {
+    render(<FileDrop {...base} id="gwas-file" error="Add a GWAS file to run NetWAS." />);
+    const input = screen.getByLabelText('GWAS file');
+    expect(input).toHaveAttribute('id', 'gwas-file');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAccessibleDescription(/Add a GWAS file to run NetWAS\./);
+  });
+
   it('lists the first three problems and marks the input invalid', () => {
     const problems = [1, 2, 3, 4].map((line) => ({ line, rule: `Rule ${line}` }));
     render(<FileDrop {...base} file={{ name: 'variants.vcf', size: 63488 }} problems={problems} problemSummary="4 lines need fixing" onDownloadProblems={() => {}} />);

@@ -17,6 +17,8 @@ export interface ChosenFile {
 
 export interface FileDropProps {
   label: string;
+  id?: string | undefined;
+  error?: string | undefined;
   hideLabel?: boolean;
   accept?: string;
   prompt: string;
@@ -42,7 +44,7 @@ export function fileSize(bytes: number): string {
 }
 
 export function FileDrop({
-  label, hideLabel = false, accept, prompt, hint, file, progress, result, problems = [], problemSummary, onFile, onRemove, onDownloadProblems, 'data-state': dataState,
+  label, id: givenId, error, hideLabel = false, accept, prompt, hint, file, progress, result, problems = [], problemSummary, onFile, onRemove, onDownloadProblems, 'data-state': dataState,
 }: FileDropProps) {
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
@@ -62,7 +64,7 @@ export function FileDrop({
 
   return (
     <div className={['file-drop-field', hideLabel && 'file-drop-label-hidden'].filter(Boolean).join(' ')}>
-      <Field label={label}>
+      <Field label={label} id={givenId} error={error}>
         {(control) => (
           // Dropping a file is a pointer shortcut; the native file input inside is the keyboard and screen reader path.
           // eslint-disable-next-line jsx-a11y/no-static-element-interactions
@@ -83,8 +85,8 @@ export function FileDrop({
               type="file"
               accept={accept}
               className="visually-hidden"
-              aria-describedby={`${id}-status`}
-              aria-invalid={hasProblems || undefined}
+              aria-describedby={[control['aria-describedby'], `${id}-status`].filter(Boolean).join(' ')}
+              aria-invalid={control['aria-invalid'] ?? (hasProblems || undefined)}
               onChange={(event) => {
                 take(event.target.files);
                 event.target.value = '';
