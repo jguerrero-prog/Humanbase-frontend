@@ -1,0 +1,30 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "title": "Co-expression",
+      "slug": "co-expression",
+      "description": "The genes are co-expressed"
+    },
+    {
+      "title": "Interaction",
+      "slug": "interaction",
+      "description": "Physical and genetic interaction"
+    },
+    {
+      "title": "TF binding",
+      "slug": "tf-binding",
+      "description": "Shared upstream tanscription factor binding motifs"
+    },
+    {
+      "title": "GSEA microRNA targets",
+      "slug": "gsea-microrna-targets",
+      "description": "Co-membership in GSEA genesets"
+    },
+    {
+      "title": "GSEA perturbations",
+      "slug": "gsea-perturbations",
+      "description": "Co-membership in GSEA genesets"
+    }
+  ]
+}

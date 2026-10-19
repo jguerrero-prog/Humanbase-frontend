@@ -9,7 +9,8 @@
       "samples": [
         "/api/genes/3553/",
         "/api/genes/7124/",
-        "/api/genes/0/"
+        "/api/genes/0/",
+        "/api/genes/100188314/"
       ],
       "usedBy": [
         "GeneService.get"
@@ -76,6 +77,37 @@
       "readOnly": true,
       "usedBy": [
         "GeneSearchService.list (lists too long for a URL)"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/integrations/{slug}/network/",
+      "documented": true,
+      "example": "/api/integrations/global/network/?entrez=3553&entrez=7124&giant_version=v1",
+      "samples": [
+        "/api/integrations/global/network/?entrez=3553&entrez=7124&giant_version=v1",
+        "/api/integrations/global/network/?entrez=3553&giant_version=v1",
+        "/api/integrations/global/network/?entrez=3553&entrez=7124&entrez=100188314&giant_version=v1",
+        "/api/integrations/global/network/?entrez=3553&entrez=7124&giant_version=v1&datatypes=co-expression",
+        "/api/integrations/global-v3/network/?entrez=3553&entrez=7124&giant_version=v3",
+        "/api/integrations/mononuclear-phagocyte/network/?entrez=3553&entrez=7124&giant_version=v1",
+        "/api/integrations/global/network/?entrez=100188314&giant_version=v1"
+      ],
+      "usedBy": [
+        "NetworkService.get"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/datatypes/",
+      "documented": true,
+      "example": "/api/datatypes/?version=1",
+      "samples": [
+        "/api/datatypes/?version=1",
+        "/api/datatypes/?version=3"
+      ],
+      "usedBy": [
+        "NetworkService.dataTypes"
       ]
     }
   ]
