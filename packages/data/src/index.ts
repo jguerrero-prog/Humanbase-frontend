@@ -10,3 +10,4 @@ export { GenomeLocation, assemblyNames, type Assembly } from './genome/GenomeLoc
 export { VariantFileCheck, type FileCheckResult, type FileProblem, type InputKind, type VariantModel } from './jobs/VariantFileCheck';
 export { JobHistory, type JobEntry, type JobState } from './jobs/JobHistory';
 export { NetwasResult, type NetwasFilter, type NetwasGene, type TrainingLabel } from './jobs/NetwasResult';
+export { AsdVariant, type AsdVariantRow } from './asd/AsdVariant';
