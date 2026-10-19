@@ -50,11 +50,11 @@ const moves = [
   ['Checkbox, radio', 'Select', 'Mark fades in', '100ms, linear', 'Same'],
   ['Menu, select, suggestions', 'Open', 'Fade in, 4px down. Closes at once.', '150ms, enter', 'Fade only'],
   ['Tooltip', 'Hover 400ms, focus at once', 'Fade in. No movement.', '100ms, linear', 'Same'],
-  ['Tab indicator, segment', 'Select', 'Bar or fill slides to the new option', '150ms, enter', 'Switches at once'],
+  ['Tab indicator, segment', 'Select', 'Switches at once. Nothing slides.', '0ms', 'Same'],
   ['Toast', 'Arrives, leaves', 'Fade in, 8px up; fade out', '200ms enter, 150ms exit', 'Fade only'],
   ['Dialog', 'Open, close', 'Backdrop fades; dialog fades and grows from 98%', '200ms enter, 150ms exit', 'Fade only'],
   ['Drawer', 'Open, close', 'Fades in while moving 16px from its edge', '280ms enter, 200ms exit', 'Fade only, 150ms'],
-  ['Expanding row, section', 'Expand, collapse', 'Height grows; content fades', '200ms, enter', 'Opens at once'],
+  ['Expanding row, section', 'Expand, collapse', 'Height grows; content fades', '200ms, enter', 'Content fades, 150ms; no height change'],
   ['Spinner', 'Waiting over 300ms', '16 or 20px ring turns once per second', '1s per turn, linear', 'Same; it is small and shows the page is working'],
   ['Progress bar', 'Job status update', 'Bar grows to the new value', '400ms, enter', 'Jumps to the value'],
   ['Table sort, filter', 'Sort, filter', 'Rows change at once. No reordering animation.', '0ms', 'Same'],
@@ -94,8 +94,8 @@ const motionOptions = [
 ];
 
 const reducedChanges = [
-  'Movement becomes a fade: menus, toasts, dialogs and drawers.',
-  'Indicators switch at once: tabs, segments, expanding rows, progress bars.',
+  'Movement becomes a fade: menus, toasts, dialogs, drawers and expanding sections.',
+  'Progress bars jump to their new value.',
   'Visualizations jump to their new view with no animated zoom.',
   'The spinner keeps turning; it is 20px at most and shows the page hasn’t frozen.',
   'Nothing flashes more than 3 times a second, in any mode.',
