@@ -72,3 +72,23 @@ test('the homepage with genes matched has no WCAG 2.2 AA violations', async ({ p
   expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
   expect(apiRequests).toEqual([]);
 });
+
+test('the Processes panel and both drawers have no WCAG 2.2 AA violations with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  const scan = async () => {
+    await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
+    const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
+    expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  };
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1`);
+  await page.getByRole('tab', { name: /^Processes/ }).click();
+  await expect(page.getByRole('table', { name: /Biological processes over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
+  await scan();
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&gene=3383`);
+  await expect(page.getByRole('dialog', { name: 'ICAM1' }).getByRole('region', { name: 'Annotations' }).getByRole('listitem').first()).toBeVisible();
+  await scan();
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&connection=6348-7185`);
+  await expect(page.getByRole('dialog', { name: 'CCL3 and TRAF1' }).getByText('MSigDB CGP')).toBeVisible();
+  await scan();
+  expect(apiRequests).toEqual([]);
+});

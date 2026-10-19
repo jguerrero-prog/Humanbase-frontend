@@ -65,4 +65,44 @@ describe('NetworkExplorer', () => {
     expect(await screen.findByText('Detail for the selection')).toBeInTheDocument();
     expect(detail.mock.lastCall?.[0]).toMatchObject({ selection: { kind: 'gene', entrez: 3383 } });
   });
+
+  it('ranks processes and tissues against the genes in the graph', async () => {
+    renderExplorer(new NetworkQuery([3553, 7124]));
+    await screen.findByRole('table', { name: /Genes functionally related/ });
+    await userEvent.click(await screen.findByRole('tab', { name: /^Processes \d+$/ }));
+    const processes = await screen.findByRole('table', { name: /Biological processes over-represented/ });
+    const [, first] = await within(processes).findAllByRole('row');
+    expect(first).toHaveTextContent(/Gene Ontology \(BP\), \d+ genes/);
+    expect(first).toHaveTextContent(/× 10⁻/);
+    await userEvent.click(screen.getByRole('tab', { name: /^Tissues \d+$/ }));
+    const tissues = await screen.findByRole('table', { name: /Tissues and cell types/ });
+    expect(await within(tissues).findAllByText('BRENDA Ontology')).not.toHaveLength(0);
+  });
+
+  it('opens the gene drawer with aliases, IDs and annotations', async () => {
+    render(
+      <HumanbaseProvider api={new Humanbase(SampleClient.bundled())}>
+        <NetworkExplorer query={new NetworkQuery([3553, 7124])} view={new NetworkView().with({ selection: { kind: 'gene', entrez: 3383 } })} onQueryChange={vi.fn()} onViewChange={vi.fn()} />
+      </HumanbaseProvider>,
+    );
+    const drawer = await screen.findByRole('dialog', { name: 'ICAM1' });
+    expect(within(drawer).getByText('BB2, P3.58, CD54')).toBeInTheDocument();
+    expect(within(drawer).getByRole('link', { name: /Entrez 3383/ })).toHaveAttribute('href', 'https://www.ncbi.nlm.nih.gov/gene/3383');
+    const annotations = within(drawer).getByRole('region', { name: 'Annotations' });
+    expect((await within(annotations).findAllByRole('listitem')).length).toBeGreaterThan(0);
+    expect(within(drawer).getByRole('button', { name: 'Add to query' })).toBeInTheDocument();
+  });
+
+  it('opens the connection drawer with the evidence behind it', async () => {
+    render(
+      <HumanbaseProvider api={new Humanbase(SampleClient.bundled())}>
+        <NetworkExplorer query={new NetworkQuery([3553, 7124])} view={new NetworkView().with({ selection: { kind: 'connection', source: 7185, target: 6348 } })} onQueryChange={vi.fn()} onViewChange={vi.fn()} />
+      </HumanbaseProvider>,
+    );
+    const drawer = await screen.findByRole('dialog', { name: 'TRAF1 and CCL3' });
+    expect(await within(drawer).findByText('MSigDB CGP')).toBeInTheDocument();
+    expect(within(drawer).getByText(/GSEA perturbations, Co-expression|Co-expression, GSEA perturbations/)).toBeInTheDocument();
+    await userEvent.click(within(drawer).getByRole('radio', { name: 'All networks' }));
+    expect(await within(drawer).findByRole('table', { name: /Connection weight in each network/ })).toBeInTheDocument();
+  });
 });

@@ -105,7 +105,7 @@ export { JobDetails, type JobDetail } from './Results/JobDetails';
 export { NetwasGeneTable, NetwasScore, type NetwasGeneRow, type NetwasGeneTableProps } from './Results/NetwasGeneTable';
 export { NetwasGuide, type NetwasGuideProps } from './Results/NetwasGuide';
 export { RankedAnnotationTable, type AnnotationEvidence, type Publication, type RankedAnnotation, type RankedAnnotationTableProps } from './Results/RankedAnnotationTable';
-export { EvidenceTable, GeneDetail, NetworkWeightTable, ScoreMeter, WeightHistogram, type EvidenceRow, type GeneDetailProps, type NetworkWeight } from './Results/ResultDetail';
+export { EvidenceTable, GeneDetail, NetworkWeightTable, ScoreMeter, WeightHistogram, type AnnotationSource, type EvidenceRow, type GeneDetailProps, type NetworkWeight } from './Results/ResultDetail';
 export { ResultHeader, STACKED_QUERY, type ResultHeaderProps } from './Results/ResultHeader';
 export { ResultLayout, type ResultLayoutProps } from './Results/ResultLayout';
 export { AllFeaturesPlot, type AllFeaturesPlotProps } from './VariantEffects/AllFeaturesPlot';
