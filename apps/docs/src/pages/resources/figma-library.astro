@@ -5,8 +5,9 @@ import Intro from '../../components/docs/Intro.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import { hrefFor } from '../../navigation';
+import { site } from '../../data/site';
 
-const figmaFile = 'https://www.figma.com/design/qc47Wo9Vj5lYjo9U7zdvWa/?node-id=68-188';
+const figmaFile = site.figmaFile;
 
 const frames = [
   { frame: 'Button', page: 'Buttons', code: ['Button'] },
@@ -79,7 +80,7 @@ const frames = [
     </ul>
     <NoteCard title="Open questions">
       <p>
-        Mismatches still waiting on a decision are listed in <a href="https://github.com/jguerrero-prog/Humanbase-frontend/issues/18">GitHub issue #18</a>, with what the code does in the meantime.
+        Mismatches still waiting on a decision are listed in <a href={`${site.repoUrl}/issues/18`}>GitHub issue #18</a>, with what the code does in the meantime.
       </p>
     </NoteCard>
   </DocSection>

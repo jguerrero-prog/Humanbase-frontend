@@ -4,8 +4,9 @@ import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
+import { site } from '../../data/site';
 
-const repo = 'https://github.com/jguerrero-prog/Humanbase-frontend';
+const repo = site.repoUrl;
 
 const steps = [
   ['1. Open an issue', 'Say what should change and why. Label it: feature, bug, enhancement, accessibility, code quality, documentation or api.'],
