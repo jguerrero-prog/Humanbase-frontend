@@ -106,3 +106,33 @@ test('View as table and Expand have no WCAG 2.2 AA violations and survive a refr
   expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
   expect(apiRequests).toEqual([]);
 });
+
+for (const [tab, ready] of [
+  ['expression', 'Where IL1B and TNF are expressed'],
+  ['processes', 'Biological processes linked to IL1B and TNF'],
+  ['diseases', 'Diseases linked to IL1B and TNF'],
+  ['process', 'Choose a biological process to see its network'],
+] as const) {
+  test(`the ${tab} tab has no WCAG 2.2 AA violations or horizontal scroll with the API off`, async ({ page }) => {
+    const apiRequests = await apiOff(page);
+    await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&tab=${tab}`);
+    await expect(page.getByText(ready).first()).toBeVisible();
+    await page.waitForLoadState('networkidle');
+    await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
+    const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
+    expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+    await page.setViewportSize({ width: 390, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    expect(apiRequests).toEqual([]);
+  });
+}
+
+test('choosing a process keeps the Process network tab and draws that network', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&tab=process`);
+  await page.getByRole('button', { name: 'Choose a process' }).click();
+  await page.getByRole('option', { name: 'acute inflammatory response' }).click();
+  await expect(page).toHaveURL(/process=acute-inflammatory-response/);
+  await expect(page).toHaveURL(/tab=process/);
+  await expect(page.getByRole('table', { name: /in the acute inflammatory response network/ })).toBeVisible();
+});

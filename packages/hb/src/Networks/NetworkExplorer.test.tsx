@@ -125,4 +125,38 @@ describe('NetworkExplorer', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Expand' }));
     expect(onViewChange.mock.lastCall?.[0].expanded).toBe(true);
   });
+
+  it('shows where the query genes are expressed, with a column per gene', async () => {
+    renderExplorer(new NetworkQuery([3553, 7124]), { view: new NetworkView().with({ tab: 'expression' }) });
+    expect(await screen.findByRole('heading', { name: 'Where IL1B and TNF are expressed' })).toBeInTheDocument();
+    expect(await screen.findByRole('checkbox', { name: 'Hematopoietic system' })).toBeChecked();
+    expect(await screen.findByRole('columnheader', { name: 'Average' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Download predictions' })).toBeEnabled();
+  });
+
+  it('lists biological processes with each gene’s confidence', async () => {
+    renderExplorer(new NetworkQuery([3553, 7124]), { view: new NetworkView().with({ tab: 'processes' }) });
+    const table = await screen.findByRole('table', { name: 'Biological processes linked to IL1B and TNF' });
+    expect(within(table).getByRole('columnheader', { name: 'IL1B confidence' })).toBeInTheDocument();
+    expect(within(table).getByRole('columnheader', { name: 'TNF confidence' })).toBeInTheDocument();
+    expect(screen.getByText(/Showing 50 of \d+ processes/)).toBeInTheDocument();
+  });
+
+  it('lists diseases the same way', async () => {
+    renderExplorer(new NetworkQuery([3553, 7124]), { view: new NetworkView().with({ tab: 'diseases' }) });
+    expect(await screen.findByRole('table', { name: 'Diseases linked to IL1B and TNF' })).toBeInTheDocument();
+  });
+
+  it('asks for a process, then requests that process network', async () => {
+    const { onQueryChange } = renderExplorer(new NetworkQuery([3553, 7124]), { view: new NetworkView().with({ tab: 'process' }) });
+    expect(await screen.findByText('Choose a biological process to see its network')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Choose a process' }));
+    await userEvent.click(await screen.findByRole('option', { name: 'acute inflammatory response' }));
+    expect(onQueryChange.mock.lastCall?.[0].process).toBe('acute-inflammatory-response');
+  });
+
+  it('draws the chosen process network', async () => {
+    renderExplorer(new NetworkQuery([3553, 7124], undefined, 'v1', [], 'acute-inflammatory-response'), { view: new NetworkView().with({ tab: 'process' }) });
+    expect(await screen.findByRole('table', { name: /Genes functionally related to IL1B and TNF in the acute inflammatory response network/ })).toBeInTheDocument();
+  });
 });

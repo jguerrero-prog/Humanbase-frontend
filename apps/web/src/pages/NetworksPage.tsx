@@ -27,7 +27,7 @@ export function NetworksPage() {
           query={query}
           view={view}
           fromSearch={fromSearch}
-          onQueryChange={(next) => void navigate(next.href)}
+          onQueryChange={(next) => void navigate(`/networks/?${view.with({ selection: undefined }).applyTo(next.toSearch())}`)}
           onViewChange={(next) => setSearch(next.applyTo(search), { replace: true })}
         />
       )}

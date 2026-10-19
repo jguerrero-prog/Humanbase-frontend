@@ -23,7 +23,10 @@ export interface RankedAnnotation {
   name: string;
   identifier: string;
   confidence: number;
+  /** One confidence per gene when the table has a column per gene; null where a gene has none. */
+  confidences?: readonly (number | null)[];
   sources?: number;
+  /** Undefined while the evidence loads; empty when the sources list no publication. */
   evidence?: readonly AnnotationEvidence[];
 }
 
@@ -31,13 +34,16 @@ export interface RankedAnnotationTableProps {
   caption: string;
   termLabel: string;
   scoreLabel: string;
+  /** Column headers for several genes, such as "IL1B confidence"; they replace the single score column. */
+  scoreLabels?: readonly string[];
   rows: readonly RankedAnnotation[];
   defaultExpanded?: readonly string[];
 }
 
 const sourceCount = (count: number) => `${count} ${count === 1 ? 'source' : 'sources'}`;
 
-export function RankedAnnotationTable({ caption, termLabel, scoreLabel, rows, defaultExpanded = [] }: RankedAnnotationTableProps) {
+export function RankedAnnotationTable({ caption, termLabel, scoreLabel, scoreLabels = [scoreLabel], rows, defaultExpanded = [] }: RankedAnnotationTableProps) {
+  const columns = scoreLabels.length + 3;
   const id = useId();
   const [expanded, setExpanded] = useState(() => new Set(defaultExpanded));
   const toggle = (name: string) =>
@@ -48,12 +54,16 @@ export function RankedAnnotationTable({ caption, termLabel, scoreLabel, rows, de
     });
 
   return (
-    <Table caption={caption} density="compact" columnWidths={['auto', '180px', '200px', '200px']}>
+    <Table caption={caption} density="compact" columnWidths={['auto', '180px', ...scoreLabels.map(() => '200px'), '200px']}>
       <thead>
         <tr>
           <HeaderCell>{termLabel}</HeaderCell>
           <HeaderCell>Identifier</HeaderCell>
-          <HeaderCell align="end">{scoreLabel}</HeaderCell>
+          {scoreLabels.map((label) => (
+            <HeaderCell key={label} align="end">
+              {label}
+            </HeaderCell>
+          ))}
           <HeaderCell>Evidence</HeaderCell>
         </tr>
       </thead>
@@ -77,7 +87,9 @@ export function RankedAnnotationTable({ caption, termLabel, scoreLabel, rows, de
                   )}
                 </Cell>
                 <Cell type="id">{row.identifier}</Cell>
-                <ScoreCell value={row.confidence} />
+                {(row.confidences ?? [row.confidence]).map((value, column) => (
+                  <ScoreCell key={column} value={value} />
+                ))}
                 <Cell>
                   {sources > 0 ? (
                     <span className="annotation-evidence">
@@ -91,16 +103,18 @@ export function RankedAnnotationTable({ caption, termLabel, scoreLabel, rows, de
               </tr>
               {sources > 0 && (
                 <tr id={panelId} className="annotation-panel" hidden={!open}>
-                  <td colSpan={4} aria-busy={evidence.length === 0 || undefined}>
-                    {evidence.length === 0 ? (
+                  <td colSpan={columns} aria-busy={row.evidence === undefined || undefined}>
+                    {row.evidence === undefined ? (
                       <span className="annotation-loading">
                         Loading evidence
                         <Skeleton width="60%" />
                       </span>
+                    ) : evidence.length === 0 ? (
+                      <span className="annotation-loading">The sources list no publication for this annotation.</span>
                     ) : (
                     <ul className="annotation-publications" aria-label={`Evidence for ${row.name}`}>
-                      {evidence.map((item) => (
-                        <li key={item.publication.title}>
+                      {evidence.map((item, index) => (
+                        <li key={`${index}-${item.publication.title}`}>
                           <span>{item.source}</span>
                           <span className="annotation-code">
                             <Badge size="small">{item.code}</Badge>

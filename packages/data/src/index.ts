@@ -22,7 +22,7 @@ export { IntegrationService } from './networks/IntegrationService';
 export { DataType, type DataTypeRecord } from './networks/DataType';
 export { Network, NetworkGene, type NetworkEdge, type NetworkEdgeRecord, type NetworkGeneRecord, type NetworkRecord, type NetworkSubset, type NetworkViewOptions } from './networks/Network';
 export { NetworkService } from './networks/NetworkService';
-export { NetworkView, type NetworkDisplay, type NetworkSelection } from './networks/NetworkView';
+export { NetworkView, networkTabs, type NetworkDisplay, type NetworkSelection, type NetworkTab } from './networks/NetworkView';
 export { useGeneSuggestions } from './react/useGeneSuggestions';
 export { useIntegrations } from './react/useIntegrations';
 export { useDataTypes, useNetwork } from './react/useNetwork';
@@ -32,4 +32,4 @@ export { TermEnrichment, type AnnotatedTermRecord, type TermHit } from './functi
 export { TermService, type TermDatabase } from './functions/TermService';
 export { ConnectionEvidence, ConnectionInNetwork, type DatasetEvidence, type EvidenceRecord } from './connections/Connection';
 export { ConnectionService } from './connections/ConnectionService';
-export { useAnnotatedTerms, useConnectionEvidence, useConnectionInAllNetworks, useGeneFunctions, useGenesFunctions } from './react/useNetworkDetail';
+export { useAnnotatedTerms, useConnectionEvidence, useConnectionInAllNetworks, useGeneFunctions, useGenesFunctions, type GenesFunctions } from './react/useNetworkDetail';

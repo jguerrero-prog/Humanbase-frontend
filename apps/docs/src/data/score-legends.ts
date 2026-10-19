@@ -1,3 +1,4 @@
+import { tissueConfidenceScale } from '@humanbase/hb';
 import type { HeatmapRow, ScaleSpec } from '@humanbase/ui';
 
 export type LegendStatus = 'Decided' | 'Proposed' | 'To confirm';
@@ -12,7 +13,7 @@ const zEdges = [-5, -3, -2, 2, 3, 5];
 
 export const expressionGeneLegend: ScaleSpec = { title: 'Log fold change', kind: 'diverging', edges: [-1, -0.3, -0.1, 0.1, 0.3, 1], words: ['Decreases', 'Increases'] };
 
-export const tissueConfidenceLegend: ScaleSpec = { title: 'Tissue expression, confidence', kind: 'sequential', edges: [0.5, 0.7, 0.8, 0.9], ends: [0, 1], words: ['Lower', 'Higher'] };
+export const tissueConfidenceLegend: ScaleSpec = tissueConfidenceScale;
 
 // One stepped legend per score. Statuses and notes are as Figma records them on October 17, 2026.
 export const scoreLegends: LegendPreset[] = [
