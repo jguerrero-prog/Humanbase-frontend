@@ -17,6 +17,7 @@ import type { GraphRendererFactory, GraphSelection } from '@humanbase/graph';
 import { Alert, Button, EmptyState, ResultHeader, ResultLayout, saveFile } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { DataTypesFilter } from './DataTypesFilter';
+import { EditGenesDialog } from './EditGenesDialog';
 import { GraphLoading, GraphPanel } from './GraphPanel';
 import { NetworkCompanion } from './NetworkCompanion';
 import { NetworkDetail } from './NetworkDetail';
@@ -77,6 +78,7 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
   const names = useGenes(query.entrez);
   const [missingDismissed, setMissingDismissed] = useState(false);
   const [processMenuOpen, setProcessMenuOpen] = useState(false);
+  const [editingGenes, setEditingGenes] = useState(false);
 
   const symbolOf = (id: number) => names.get(id)?.symbol ?? base.data?.queryGenes.find((gene) => gene.entrez === id)?.symbol ?? String(id);
   const symbols = query.entrez.map(symbolOf);
@@ -129,6 +131,23 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
     </Button>
   );
 
+  const editGenes = (
+    <Button variant="ghost" size="small" icon="plus" onClick={() => setEditingGenes(true)}>
+      Edit genes
+    </Button>
+  );
+  const editGenesDialog = (
+    <EditGenesDialog
+      open={editingGenes}
+      symbols={symbols}
+      onClose={() => setEditingGenes(false)}
+      onApply={(entrez) => {
+        setEditingGenes(false);
+        onQueryChange(query.with({ entrez }));
+      }}
+    />
+  );
+
   const single = shownIds.length === 1 ? names.get(shownIds[0] as number) : undefined;
   const header = (
     <>
@@ -145,7 +164,12 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
             : []
         }
         settings={settings[view.tab]}
-        {...(view.tab === 'expression' ? { actions: downloadPredictions } : {})}
+        actions={
+          <>
+            {editGenes}
+            {view.tab === 'expression' && downloadPredictions}
+          </>
+        }
         tabs={tabs}
         tabsLabel={`Views of ${listJoin(found)}`}
         tab={view.tab}
@@ -156,6 +180,7 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
           {`${listJoin(missing)} ${missing.length === 1 ? 'was' : 'were'} left out because ${missing.length === 1 ? 'it isn’t' : 'they aren’t'} in any Humanbase network. This network uses ${listJoin(found)}.`}
         </Alert>
       )}
+      {editGenesDialog}
       {onProcessTab && query.version === 'v3' && (
         <Alert tone="info">Process networks are built from GIANT data, so this tab uses GIANT even though the page is set to MAGE.</Alert>
       )}

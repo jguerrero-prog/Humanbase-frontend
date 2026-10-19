@@ -10,7 +10,8 @@
         "/api/genes/3553/",
         "/api/genes/7124/",
         "/api/genes/0/",
-        "/api/genes/100188314/"
+        "/api/genes/100188314/",
+        "/api/genes/3383/"
       ],
       "usedBy": [
         "GeneService.get"
@@ -64,7 +65,9 @@
       "samples": [
         "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF+AUTS12+NOTAGENE123+p53",
         "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF",
-        "/api/genes/search/multi/?organism=homo-sapiens&q=AUTS12+IL1B+TNF"
+        "/api/genes/search/multi/?organism=homo-sapiens&q=AUTS12+IL1B+TNF",
+        "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF+ICAM1",
+        "/api/genes/search/multi/?organism=homo-sapiens&q=3553+7124+3383"
       ],
       "usedBy": [
         "GeneSearchService.list"
@@ -92,7 +95,8 @@
         "/api/integrations/global-v3/network/?entrez=3553&entrez=7124&giant_version=v3",
         "/api/integrations/mononuclear-phagocyte/network/?entrez=3553&entrez=7124&giant_version=v1",
         "/api/integrations/global/network/?entrez=100188314&giant_version=v1",
-        "/api/integrations/acute-inflammatory-response/network/?entrez=3553&entrez=7124&giant_version=v1"
+        "/api/integrations/acute-inflammatory-response/network/?entrez=3553&entrez=7124&giant_version=v1",
+        "/api/integrations/global/network/?entrez=3383&entrez=3553&entrez=7124&giant_version=v1"
       ],
       "usedBy": [
         "NetworkService.get"
@@ -126,7 +130,9 @@
         "/api/terms/annotated/?entrez=330&entrez=355&entrez=366&entrez=597&entrez=941&entrez=1230&entrez=1236&entrez=1440&entrez=1536&entrez=2919&entrez=2921&entrez=3055&entrez=3383&entrez=3458&entrez=3552&entrez=3553&entrez=3554&entrez=3557&entrez=3569&entrez=3575&entrez=3576&entrez=3627&entrez=3726&entrez=3937&entrez=4790&entrez=4791&entrez=4792&entrez=5055&entrez=5266&entrez=5329&entrez=5341&entrez=5724&entrez=5743&entrez=5791&entrez=5971&entrez=6347&entrez=6348&entrez=6351&entrez=6352&entrez=6364&entrez=6648&entrez=7124&entrez=7127&entrez=7128&entrez=7133&entrez=7185&entrez=8638&entrez=8843&entrez=8870&entrez=9308&entrez=23645&entrez=80149&database=brenda-ontology",
         "/api/terms/annotated/?entrez=366&entrez=597&entrez=602&entrez=834&entrez=960&entrez=963&entrez=1839&entrez=1848&entrez=2207&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3383&entrez=3553&entrez=3554&entrez=3557&entrez=3569&entrez=3575&entrez=3576&entrez=3627&entrez=4688&entrez=4790&entrez=5054&entrez=5055&entrez=5271&entrez=5329&entrez=5341&entrez=5552&entrez=5743&entrez=5791&entrez=6280&entrez=6347&entrez=6351&entrez=6364&entrez=6515&entrez=6648&entrez=6775&entrez=7097&entrez=7127&entrez=7128&entrez=7130&entrez=8638&entrez=8843&entrez=8870&entrez=8942&entrez=9308&entrez=10135&entrez=22822&entrez=54210&entrez=80149&database=brenda-ontology",
         "/api/terms/annotated/?entrez=205&entrez=272&entrez=356&entrez=597&entrez=713&entrez=969&entrez=1440&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3290&entrez=3383&entrez=3458&entrez=3552&entrez=3553&entrez=3554&entrez=3557&entrez=3569&entrez=3576&entrez=3624&entrez=4049&entrez=4321&entrez=4792&entrez=4916&entrez=5142&entrez=5271&entrez=5329&entrez=5341&entrez=5552&entrez=5743&entrez=6347&entrez=6348&entrez=6351&entrez=6364&entrez=6368&entrez=6648&entrez=7124&entrez=7127&entrez=7128&entrez=7130&entrez=7133&entrez=7980&entrez=8843&entrez=8870&entrez=9103&entrez=23645&entrez=53831&entrez=54210&entrez=80149&entrez=374286&entrez=414062&database=gene-ontology-bp",
-        "/api/terms/annotated/?entrez=205&entrez=272&entrez=356&entrez=597&entrez=713&entrez=969&entrez=1440&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3290&entrez=3383&entrez=3458&entrez=3552&entrez=3553&entrez=3554&entrez=3557&entrez=3569&entrez=3576&entrez=3624&entrez=4049&entrez=4321&entrez=4792&entrez=4916&entrez=5142&entrez=5271&entrez=5329&entrez=5341&entrez=5552&entrez=5743&entrez=6347&entrez=6348&entrez=6351&entrez=6364&entrez=6368&entrez=6648&entrez=7124&entrez=7127&entrez=7128&entrez=7130&entrez=7133&entrez=7980&entrez=8843&entrez=8870&entrez=9103&entrez=23645&entrez=53831&entrez=54210&entrez=80149&entrez=374286&entrez=414062&database=brenda-ontology"
+        "/api/terms/annotated/?entrez=205&entrez=272&entrez=356&entrez=597&entrez=713&entrez=969&entrez=1440&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3290&entrez=3383&entrez=3458&entrez=3552&entrez=3553&entrez=3554&entrez=3557&entrez=3569&entrez=3576&entrez=3624&entrez=4049&entrez=4321&entrez=4792&entrez=4916&entrez=5142&entrez=5271&entrez=5329&entrez=5341&entrez=5552&entrez=5743&entrez=6347&entrez=6348&entrez=6351&entrez=6364&entrez=6368&entrez=6648&entrez=7124&entrez=7127&entrez=7128&entrez=7130&entrez=7133&entrez=7980&entrez=8843&entrez=8870&entrez=9103&entrez=23645&entrez=53831&entrez=54210&entrez=80149&entrez=374286&entrez=414062&database=brenda-ontology",
+        "/api/terms/annotated/?entrez=330&entrez=355&entrez=597&entrez=602&entrez=960&entrez=1230&entrez=2207&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3383&entrez=3553&entrez=3557&entrez=3569&entrez=3575&entrez=3576&entrez=3627&entrez=3659&entrez=3726&entrez=3937&entrez=4600&entrez=4688&entrez=4790&entrez=4791&entrez=4792&entrez=4794&entrez=5155&entrez=5328&entrez=5329&entrez=5341&entrez=5743&entrez=5971&entrez=6347&entrez=6348&entrez=6351&entrez=6352&entrez=6364&entrez=6648&entrez=7097&entrez=7124&entrez=7127&entrez=7128&entrez=7130&entrez=7133&entrez=7185&entrez=8638&entrez=8843&entrez=8870&entrez=9308&entrez=22822&entrez=23645&entrez=80149&database=gene-ontology-bp",
+        "/api/terms/annotated/?entrez=330&entrez=355&entrez=597&entrez=602&entrez=960&entrez=1230&entrez=2207&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3383&entrez=3553&entrez=3557&entrez=3569&entrez=3575&entrez=3576&entrez=3627&entrez=3659&entrez=3726&entrez=3937&entrez=4600&entrez=4688&entrez=4790&entrez=4791&entrez=4792&entrez=4794&entrez=5155&entrez=5328&entrez=5329&entrez=5341&entrez=5743&entrez=5971&entrez=6347&entrez=6348&entrez=6351&entrez=6352&entrez=6364&entrez=6648&entrez=7097&entrez=7124&entrez=7127&entrez=7128&entrez=7130&entrez=7133&entrez=7185&entrez=8638&entrez=8843&entrez=8870&entrez=9308&entrez=22822&entrez=23645&entrez=80149&database=brenda-ontology"
       ],
       "usedBy": [
         "TermService.annotated"
@@ -150,7 +156,8 @@
         "/api/genes/7124/annotations/?database=gene-ontology-bp&score_cutoff=0.05&max_term_size=300",
         "/api/genes/7124/annotations/?database=disease-ontology&score_cutoff=0.05&max_term_size=300",
         "/api/genes/3383/annotations/?database=gene-ontology-bp&score_cutoff=0.05&max_term_size=300",
-        "/api/genes/3383/annotations/?database=disease-ontology&score_cutoff=0.05&max_term_size=300"
+        "/api/genes/3383/annotations/?database=disease-ontology&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/3383/annotations/?database=brenda-ontology"
       ],
       "usedBy": [
         "GeneFunctionService.get"
@@ -173,7 +180,8 @@
         "/api/genes/7124/predictions/?database=gene-ontology-bp&score_cutoff=0.05&max_term_size=300",
         "/api/genes/7124/predictions/?database=disease-ontology&score_cutoff=0.05&max_term_size=300",
         "/api/genes/3383/predictions/?database=gene-ontology-bp&score_cutoff=0.05&max_term_size=300",
-        "/api/genes/3383/predictions/?database=disease-ontology&score_cutoff=0.05&max_term_size=300"
+        "/api/genes/3383/predictions/?database=disease-ontology&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/3383/predictions/?database=brenda-ontology"
       ],
       "usedBy": [
         "GeneFunctionService.get"
