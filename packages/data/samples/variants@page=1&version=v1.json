@@ -1,0 +1,979 @@
+{
+  "status": 200,
+  "body": {
+    "count": 85312,
+    "next": "http://hb.flatironinstitute.org/api/variants/?page=2&version=v1",
+    "previous": null,
+    "results": [
+      {
+        "rsid": "rs955320297",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/148398/",
+          "entrez": 148398,
+          "systematic_name": "SAMD11",
+          "standard_name": "SAMD11",
+          "description": "sterile alpha motif domain containing 11",
+          "xrefs": [
+            {
+              "xrid": "616765",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:28706",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187634",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "148398",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "MRS"
+          ]
+        },
+        "position": 877047,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs1002417589",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/148398/",
+          "entrez": 148398,
+          "systematic_name": "SAMD11",
+          "standard_name": "SAMD11",
+          "description": "sterile alpha motif domain containing 11",
+          "xrefs": [
+            {
+              "xrid": "616765",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:28706",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187634",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "148398",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "MRS"
+          ]
+        },
+        "position": 877127,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs996791011",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/148398/",
+          "entrez": 148398,
+          "systematic_name": "SAMD11",
+          "standard_name": "SAMD11",
+          "description": "sterile alpha motif domain containing 11",
+          "xrefs": [
+            {
+              "xrid": "616765",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:28706",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187634",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "148398",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "MRS"
+          ]
+        },
+        "position": 877154,
+        "ref_allele": "T",
+        "alt_allele": "C",
+        "features": {}
+      },
+      {
+        "rsid": "rs558973910",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/148398/",
+          "entrez": 148398,
+          "systematic_name": "SAMD11",
+          "standard_name": "SAMD11",
+          "description": "sterile alpha motif domain containing 11",
+          "xrefs": [
+            {
+              "xrid": "616765",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:28706",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187634",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "148398",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "MRS"
+          ]
+        },
+        "position": 877264,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs938295190",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/148398/",
+          "entrez": 148398,
+          "systematic_name": "SAMD11",
+          "standard_name": "SAMD11",
+          "description": "sterile alpha motif domain containing 11",
+          "xrefs": [
+            {
+              "xrid": "616765",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:28706",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187634",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "148398",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "MRS"
+          ]
+        },
+        "position": 877333,
+        "ref_allele": "C",
+        "alt_allele": "G",
+        "features": {}
+      },
+      {
+        "rsid": "rs185122266",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/148398/",
+          "entrez": 148398,
+          "systematic_name": "SAMD11",
+          "standard_name": "SAMD11",
+          "description": "sterile alpha motif domain containing 11",
+          "xrefs": [
+            {
+              "xrid": "616765",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:28706",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187634",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "148398",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "MRS"
+          ]
+        },
+        "position": 877363,
+        "ref_allele": "G",
+        "alt_allele": "C",
+        "features": {}
+      },
+      {
+        "rsid": "rs559635742",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/148398/",
+          "entrez": 148398,
+          "systematic_name": "SAMD11",
+          "standard_name": "SAMD11",
+          "description": "sterile alpha motif domain containing 11",
+          "xrefs": [
+            {
+              "xrid": "616765",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:28706",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187634",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "148398",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "MRS"
+          ]
+        },
+        "position": 877381,
+        "ref_allele": "G",
+        "alt_allele": "C",
+        "features": {}
+      },
+      {
+        "rsid": "rs926657902",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/148398/",
+          "entrez": 148398,
+          "systematic_name": "SAMD11",
+          "standard_name": "SAMD11",
+          "description": "sterile alpha motif domain containing 11",
+          "xrefs": [
+            {
+              "xrid": "616765",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:28706",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187634",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "148398",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "MRS"
+          ]
+        },
+        "position": 877447,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs545322136",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/148398/",
+          "entrez": 148398,
+          "systematic_name": "SAMD11",
+          "standard_name": "SAMD11",
+          "description": "sterile alpha motif domain containing 11",
+          "xrefs": [
+            {
+              "xrid": "616765",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:28706",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187634",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "148398",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "MRS"
+          ]
+        },
+        "position": 877448,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs769309996",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/148398/",
+          "entrez": 148398,
+          "systematic_name": "SAMD11",
+          "standard_name": "SAMD11",
+          "description": "sterile alpha motif domain containing 11",
+          "xrefs": [
+            {
+              "xrid": "616765",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:28706",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187634",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "148398",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "MRS"
+          ]
+        },
+        "position": 877828,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs751037777",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/26155/",
+          "entrez": 26155,
+          "systematic_name": "NOC2L",
+          "standard_name": "NOC2L",
+          "description": "NOC2 like nucleolar associated transcriptional repressor",
+          "xrefs": [
+            {
+              "xrid": "26155",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "610770",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000188976",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:24517",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "NIR",
+            "PPP1R112",
+            "NET7",
+            "NET15"
+          ]
+        },
+        "position": 894087,
+        "ref_allele": "T",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs751323008",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/26155/",
+          "entrez": 26155,
+          "systematic_name": "NOC2L",
+          "standard_name": "NOC2L",
+          "description": "NOC2 like nucleolar associated transcriptional repressor",
+          "xrefs": [
+            {
+              "xrid": "26155",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "610770",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000188976",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:24517",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "NIR",
+            "PPP1R112",
+            "NET7",
+            "NET15"
+          ]
+        },
+        "position": 894614,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs564751777",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/26155/",
+          "entrez": 26155,
+          "systematic_name": "NOC2L",
+          "standard_name": "NOC2L",
+          "description": "NOC2 like nucleolar associated transcriptional repressor",
+          "xrefs": [
+            {
+              "xrid": "26155",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "610770",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000188976",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:24517",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "NIR",
+            "PPP1R112",
+            "NET7",
+            "NET15"
+          ]
+        },
+        "position": 894651,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs566289169",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/339451/",
+          "entrez": 339451,
+          "systematic_name": "KLHL17",
+          "standard_name": "KLHL17",
+          "description": "kelch like family member 17",
+          "xrefs": [
+            {
+              "xrid": "HGNC:24023",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "339451",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187961",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "619262",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "AF"
+          ]
+        },
+        "position": 895657,
+        "ref_allele": "C",
+        "alt_allele": "CGGA",
+        "features": {}
+      },
+      {
+        "rsid": "rs981449659",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/339451/",
+          "entrez": 339451,
+          "systematic_name": "KLHL17",
+          "standard_name": "KLHL17",
+          "description": "kelch like family member 17",
+          "xrefs": [
+            {
+              "xrid": "HGNC:24023",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "339451",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187961",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "619262",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "AF"
+          ]
+        },
+        "position": 895896,
+        "ref_allele": "A",
+        "alt_allele": "G",
+        "features": {}
+      },
+      {
+        "rsid": "rs554487982",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/339451/",
+          "entrez": 339451,
+          "systematic_name": "KLHL17",
+          "standard_name": "KLHL17",
+          "description": "kelch like family member 17",
+          "xrefs": [
+            {
+              "xrid": "HGNC:24023",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "339451",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187961",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "619262",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "AF"
+          ]
+        },
+        "position": 895917,
+        "ref_allele": "G",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs971198200",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/339451/",
+          "entrez": 339451,
+          "systematic_name": "KLHL17",
+          "standard_name": "KLHL17",
+          "description": "kelch like family member 17",
+          "xrefs": [
+            {
+              "xrid": "HGNC:24023",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "339451",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187961",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "619262",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "AF"
+          ]
+        },
+        "position": 895949,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs944623035",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/339451/",
+          "entrez": 339451,
+          "systematic_name": "KLHL17",
+          "standard_name": "KLHL17",
+          "description": "kelch like family member 17",
+          "xrefs": [
+            {
+              "xrid": "HGNC:24023",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "339451",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187961",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "619262",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "AF"
+          ]
+        },
+        "position": 896022,
+        "ref_allele": "G",
+        "alt_allele": "C",
+        "features": {}
+      },
+      {
+        "rsid": "rs925723770",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/339451/",
+          "entrez": 339451,
+          "systematic_name": "KLHL17",
+          "standard_name": "KLHL17",
+          "description": "kelch like family member 17",
+          "xrefs": [
+            {
+              "xrid": "HGNC:24023",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "339451",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187961",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "619262",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "AF"
+          ]
+        },
+        "position": 896825,
+        "ref_allele": "A",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs761537128",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/339451/",
+          "entrez": 339451,
+          "systematic_name": "KLHL17",
+          "standard_name": "KLHL17",
+          "description": "kelch like family member 17",
+          "xrefs": [
+            {
+              "xrid": "HGNC:24023",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "339451",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187961",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "619262",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "AF"
+          ]
+        },
+        "position": 896859,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {}
+      }
+    ]
+  }
+}

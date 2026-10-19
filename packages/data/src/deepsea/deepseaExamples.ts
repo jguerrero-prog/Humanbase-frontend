@@ -37,4 +37,5 @@ export const deepseaExamples: Record<VariantModel, Partial<Record<InputKind, str
   sei: { vcf: dnaVariants },
   beluga: { vcf: dnaVariants },
   seqweaver: { vcf: rnaVariants },
+  expecto: { vcf: dnaVariants },
 };

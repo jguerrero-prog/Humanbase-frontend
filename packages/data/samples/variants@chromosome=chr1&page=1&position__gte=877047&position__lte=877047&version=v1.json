@@ -1,0 +1,58 @@
+{
+  "status": 200,
+  "body": {
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "rsid": "rs955320297",
+        "chromosome": "chr1",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/148398/",
+          "entrez": 148398,
+          "systematic_name": "SAMD11",
+          "standard_name": "SAMD11",
+          "description": "sterile alpha motif domain containing 11",
+          "xrefs": [
+            {
+              "xrid": "616765",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:28706",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000187634",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "148398",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "MRS"
+          ]
+        },
+        "position": 877047,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      }
+    ]
+  }
+}

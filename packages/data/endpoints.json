@@ -449,18 +449,65 @@
       ],
       "samples": [
         "/api/deepsea/SeqWeaver/features/",
-        "/api/deepsea/Beluga/features/"
+        "/api/deepsea/Beluga/features/",
+        {
+          "path": "/api/deepsea/Beluga/features/?expecto=true",
+          "omit": [
+            "model_features"
+          ]
+        }
       ],
       "usedBy": [
-        "DeepseaService.features"
+        "DeepseaService.features",
+        "DeepseaService.features (ExPecto)"
       ],
-      "$note": "Sei answers with 4 MB, too large to bundle; its 40 sequence classes are hand-built below. Seqweaver and Beluga are recorded without descriptions.",
+      "$note": "Sei answers with 4 MB, too large to bundle; its 40 sequence classes are hand-built below. Seqweaver and Beluga are recorded without descriptions. ExPecto reads the same Beluga list with expecto=true and only needs its 218 expecto_features, so that sample drops model_features.",
       "handBuiltSamples": {
         "why": "Sei’s live list is 4 MB of chromatin profiles; the sample holds its 40 sequence classes instead.",
         "files": [
           "deepsea/Sei/features"
         ]
       }
+    },
+    {
+      "method": "GET",
+      "path": "/api/genes/{entrez}/tissue_variants/",
+      "documented": true,
+      "example": "/api/genes/345611/tissue_variants/?database=expecto-tissues&collapse=true",
+      "samples": [
+        {
+          "path": "/api/genes/345611/tissue_variants/?database=expecto-tissues&collapse=true",
+          "digits": 3
+        },
+        {
+          "path": "/api/genes/5728/tissue_variants/?database=clever-tissues&collapse=true",
+          "digits": 2
+        },
+        "/api/genes/100188314/tissue_variants/?database=expecto-tissues&collapse=true",
+        "/api/genes/100188314/tissue_variants/?database=clever-tissues&collapse=true"
+      ],
+      "usedBy": [
+        "ExpectoService.tissueVariants"
+      ],
+      "$note": "ExPecto (expecto-tissues) and ExPecto SC (clever-tissues). collapse=true leaves out the 14 tissues marked redundant. A gene without predictions answers 404. Samples are rounded (3 and 2 decimals, beyond what the heatmaps show) to keep them small; CCR1, the second ExPecto example, is 1.6 MB and is not bundled."
+    },
+    {
+      "method": "GET",
+      "path": "/api/variants/",
+      "documented": false,
+      "example": "/api/variants/?version=v1&gene__standard_name__istartswith=IRGM&page=1",
+      "samples": [
+        "/api/variants/?version=v1&page=1",
+        "/api/variants/?version=v1&gene__standard_name__istartswith=IRGM&page=1",
+        "/api/variants/?version=v1&rsid=rs531708574&page=1",
+        "/api/variants/?version=v1&chromosome=chr1&position__gte=877047&position__lte=877047&page=1",
+        "/api/variants/?version=v1&gene__standard_name__istartswith=NOTAGENE&page=1"
+      ],
+      "usedBy": [
+        "ExpectoService.searchVariants",
+        "ExpectoService.variantTotal"
+      ],
+      "$note": "Not in /api/schema/ (see the issue for Julien beside the ExPecto lane). The gene filter matches the start of the symbol, so ExpectoService keeps the exact gene. position is ignored; position__gte and position__lte work. 20 rows a page."
     }
   ]
 }
