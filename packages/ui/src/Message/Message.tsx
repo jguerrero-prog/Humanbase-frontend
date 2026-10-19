@@ -2,6 +2,7 @@ import type { KeyboardEvent, ReactNode } from 'react';
 import { Icon, type IconName } from '../Icon/Icon';
 import { Spinner } from '../Spinner/Spinner';
 import './Message.css';
+import { useLinkHref } from '../hooks/useLinkHref';
 
 export type MessageTone = 'info' | 'success' | 'warning' | 'error';
 
@@ -43,9 +44,10 @@ export function MessageFrame({ kind, tone, role, dismissible, onDismiss, classNa
 }
 
 export function MessageActionControl({ action, onEscape }: { action: MessageAction; onEscape?: (() => void) | undefined }) {
+  const linkHref = useLinkHref();
   if ('href' in action) {
     return (
-      <a className="message-action" href={action.href} onKeyDown={escapeTo(onEscape)}>
+      <a className="message-action" href={linkHref(action.href)} onKeyDown={escapeTo(onEscape)}>
         {action.label}
       </a>
     );

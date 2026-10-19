@@ -14,6 +14,7 @@ import {
   ToastQueue,
   ToastRegion,
   useDebounced,
+  useLinkHref,
 } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { analysisColumns, analysisOptions } from '../content/product';
@@ -38,6 +39,7 @@ const genesWord = (count: number) => (count === 1 ? '1 gene' : `${count.toLocale
 const rangeHint = `Enter ${ModuleService.minimumGenes} to ${ModuleService.maximumGenes.toLocaleString('en-US')} genes.`;
 
 export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afterExamples }: ModuleSearchProps) {
+  const linkHref = useLinkHref();
   const api = useHumanbase();
   const preset = moduleExamples.find((item) => item.id === example);
   const [text, setText] = useState(preset ? preset.genes.join('\n') : (draft?.entrez.join('\n') ?? ''));
@@ -126,7 +128,7 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
           className="home-search-analysis"
           footer={
             <p>
-              Not sure which tool? <a href="/sequence-tools/">Compare them</a>
+              Not sure which tool? <a href={linkHref('/sequence-tools/')}>Compare them</a>
             </p>
           }
           onChange={(value) => value !== 'modules' && onChooseAnalysis(value)}

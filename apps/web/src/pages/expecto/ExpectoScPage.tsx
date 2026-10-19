@@ -1,9 +1,10 @@
 import { GeneFinder, geneExpressionTools, JobAbout } from '@humanbase/hb';
-import { Breadcrumbs, Icon } from '@humanbase/ui';
+import { Breadcrumbs, Icon, useLinkHref } from '@humanbase/ui';
 import { useNavigate } from 'react-router';
 import '../ToolPage.css';
 
 export function ExpectoScPage() {
+  const linkHref = useLinkHref();
   const navigate = useNavigate();
   const tool = geneExpressionTools['expecto-sc'];
   return (
@@ -21,7 +22,7 @@ export function ExpectoScPage() {
           docsHref="/docs/expecto-sc/"
           examples={[]}
           links={
-            <a className="button button-ghost button-small" href="/downloads/">
+            <a className="button button-ghost button-small" href={linkHref('/downloads/')}>
               <Icon name="download" size={16} />
               Download additional files
             </a>

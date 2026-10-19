@@ -1,4 +1,4 @@
-import { Button, Icon } from '@humanbase/ui';
+import { Button, Icon, useLinkHref } from '@humanbase/ui';
 import { useId, type ReactNode } from 'react';
 import './JobForm.css';
 
@@ -20,12 +20,13 @@ export interface JobAboutProps {
 
 /** The About panel beside a job form: what the tool does, its documentation and its example files. */
 export function JobAbout({ tool, children, docsHref, links, examplesTitle = 'Example files', examples }: JobAboutProps) {
+  const linkHref = useLinkHref();
   const id = useId();
   return (
     <aside className="job-about" aria-labelledby={id}>
       <h2 id={id}>About {tool}</h2>
       <p>{children}</p>
-      <a className="button button-ghost button-small" href={docsHref}>
+      <a className="button button-ghost button-small" href={linkHref(docsHref)}>
         <Icon name="book-open" size={16} />
         Read the {tool} documentation
       </a>

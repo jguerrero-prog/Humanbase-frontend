@@ -1,5 +1,5 @@
 import { ApiError, useGene, useHumanbase, useTissueVariants, type EffectRow, type TissueDatabase, type TissueVariants } from '@humanbase/data';
-import { Alert, Button, EmptyState, Heatmap, ResultHeader, saveFile, SearchField, SegmentedControl, Select, Skeleton, type ScaleSpec } from '@humanbase/ui';
+import { Alert, Button, EmptyState, Heatmap, ResultHeader, saveFile, SearchField, SegmentedControl, Select, Skeleton, type ScaleSpec, useLinkHref } from '@humanbase/ui';
 import { useMemo } from 'react';
 import { useCopyLink } from '../Jobs/useCopyLink';
 import { geneExpressionTools, type GeneExpressionTool } from './geneExpressionTools';
@@ -38,6 +38,7 @@ function download(rows: readonly EffectRow[], table: TissueVariants, fileName: s
 
 /** One gene's predicted expression effects by position: tissue systems or organs, then each tissue or cell type. */
 export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: GeneExpressionProps) {
+  const linkHref = useLinkHref();
   const tool = geneExpressionTools[toolId];
   const api = useHumanbase();
   const gene = useGene(entrez);
@@ -84,7 +85,7 @@ export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: G
             title={`${tool.name} has no predictions for ${symbol}`}
             text={api.showsSamples ? `This copy of Humanbase shows sample data, which covers ${tool.examples[0]} only. Turn the API on to see every gene.` : `${tool.name} scores positions near a gene’s start; this gene isn’t in its set. Try another gene.`}
             actions={
-              <a className="button button-secondary" href={tool.home}>
+              <a className="button button-secondary" href={linkHref(tool.home)}>
                 Search another gene
               </a>
             }

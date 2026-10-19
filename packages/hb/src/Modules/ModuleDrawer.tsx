@@ -1,5 +1,5 @@
 import { NetworkQuery, termDatabaseNames, type DataVersion, type GeneHit, type Module, type ModuleResult } from '@humanbase/data';
-import { Button, Cell, Drawer, HeaderCell, saveFile, SegmentedControl, Table, ValueFormat } from '@humanbase/ui';
+import { Button, Cell, Drawer, HeaderCell, saveFile, SegmentedControl, Table, ValueFormat, useLinkHref } from '@humanbase/ui';
 import { useState } from 'react';
 
 export interface ModuleDrawerProps {
@@ -17,6 +17,7 @@ const format = new ValueFormat();
 const namedGenes = 4;
 
 export function ModuleDrawer({ result, module, database, genes, integration, version, onClose }: ModuleDrawerProps) {
+  const linkHref = useLinkHref();
   const [part, setPart] = useState('terms');
   const terms = result.terms(module.id, database);
   const symbolOf = (entrez: number) => genes?.get(entrez)?.symbol ?? String(entrez);
@@ -39,7 +40,7 @@ export function ModuleDrawer({ result, module, database, genes, integration, ver
       onClose={onClose}
       footer={
         <>
-          <a className="button button-primary" href={networks.href}>
+          <a className="button button-primary" href={linkHref(networks.href)}>
             Open {module.label} genes in Networks
           </a>
           <Button variant="ghost" onClick={download}>

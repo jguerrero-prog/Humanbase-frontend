@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../../withBase';
 import { Alert, Disclosure } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -219,7 +220,7 @@ const rewrites = [
         style.map(([rule, detail]) => (
           <tr>
             <th scope="row">{rule}</th>
-            <td>{rule === 'Numbers and units' ? <>Follow <a href="/guidelines/scientific-notation-and-units/">Scientific notation and units</a>.</> : detail}</td>
+            <td>{rule === 'Numbers and units' ? <>Follow <a href={withBase('/guidelines/scientific-notation-and-units/')}>Scientific notation and units</a>.</> : detail}</td>
           </tr>
         ))
       }

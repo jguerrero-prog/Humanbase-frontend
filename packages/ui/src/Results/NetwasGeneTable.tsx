@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import { Cell, HeaderCell, Table, TableMessage } from '../Table/Table';
 import { ValueFormat } from '../Table/ValueFormat';
 import './Results.css';
+import { useLinkHref } from '../hooks/useLinkHref';
 
 export interface NetwasGeneRow {
   rank: number;
@@ -37,6 +38,7 @@ export function NetwasScore({ score }: { score: number }) {
 }
 
 export function NetwasGeneTable({ caption, rows, empty = { title: 'No genes to show' } }: NetwasGeneTableProps) {
+  const linkHref = useLinkHref();
   return (
     <Table caption={caption} density="compact" columnWidths={['64px', 'auto', '168px', '216px', '152px']}>
       <thead>
@@ -71,7 +73,7 @@ export function NetwasGeneTable({ caption, rows, empty = { title: 'No genes to s
               </Cell>
               <Cell>
                 {row.href ? (
-                  <a href={row.href}>
+                  <a href={linkHref(row.href)}>
                     Open in Networks <span className="visually-hidden">for {row.symbol}</span>
                   </a>
                 ) : (
