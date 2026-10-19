@@ -49,6 +49,7 @@ const pages = [
   'http://localhost:4322/ui-library/asd-browser/',
   'http://localhost:4322/resources/figma-library/',
   'http://localhost:4322/resources/changelog/',
+  'http://localhost:4322/resources/contribution-guide/',
 ];
 
 for (const url of pages) {
