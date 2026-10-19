@@ -30,3 +30,14 @@ export const sequenceClassEffects: EffectScale = {
   ticks: [0, 0.5, 1, 2, 2.5],
   digits: 2,
 };
+
+/** ExPecto's job results, in log fold change: edges at 0.02, 0.05 and 0.1, as decided on Heatmaps and score legends. */
+export const expressionEffects: EffectScale = {
+  legend: { title: 'ExPecto, expression effect (log fold change)', kind: 'diverging', edges: [-0.1, -0.05, -0.02, 0.02, 0.05, 0.1], words: ['Decreases', 'Increases expression'] },
+  axis: 'effect',
+  prefix: '',
+  bins: { strong: 0.1, moderate: 0.05, weak: 0.02 },
+  cut: 0.5,
+  ticks: [0, 0.05, 0.1, 0.5],
+  digits: 2,
+};

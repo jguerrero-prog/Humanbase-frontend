@@ -72,6 +72,19 @@ test('the ExPecto Submit variants tab checks its example, with the API off', asy
   expect(apiRequests).toEqual([]);
 });
 
+test('running the ExPecto example opens its result, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/expecto/variants/`);
+  await page.getByRole('radio', { name: 'Use the example' }).click();
+  await page.getByRole('button', { name: 'Run ExPecto on 12 variants' }).click();
+  await expect(page).toHaveURL(`${web}/deepsea/jobs/00000000-0000-4000-8000-000000000141/`);
+  await expect(page.getByRole('heading', { level: 1, name: 'Untitled ExPecto job' })).toBeVisible();
+  await page.getByRole('button', { name: /NEUROG1/ }).click();
+  await expect(page.getByText('Fallopian Tube')).toBeVisible();
+  expect(await violationsOf(page)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
 test('the ExPecto pages fit a phone without scrolling sideways', async ({ page }) => {
   await apiOff(page);
   await page.setViewportSize({ width: 375, height: 812 });

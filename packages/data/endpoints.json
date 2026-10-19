@@ -341,13 +341,14 @@
       "usedBy": [
         "DeepseaService.submit"
       ],
-      "$note": "Multipart upload. The schema does not name the file field; DeepseaService.fileField holds the guess to confirm.",
+      "$note": "Multipart upload. The schema does not name the file field; DeepseaService.fileField holds the guess to confirm. On October 20, 2026 the one approved ExPecto example job (ds_model=Beluga, expecto=true, the example VCF as input_file) answered 500 Server Error, so the field name is still unconfirmed and ExPecto’s samples are hand-built too.",
       "handBuiltSamples": {
         "why": "Submitting starts a real job. With the API off, submitting a tool’s example answers with a hand-built running job; any other file explains that jobs need the API.",
         "files": [
           "deepsea/jobs@post-f4c79f7c",
           "deepsea/jobs@post-d5d72e89",
-          "deepsea/jobs@post-c312bddc"
+          "deepsea/jobs@post-c312bddc",
+          "deepsea/jobs@post-3d67f823"
         ]
       }
     },
@@ -372,7 +373,8 @@
           "deepsea/jobs/00000000-0000-4000-8000-000000000112",
           "deepsea/jobs/00000000-0000-4000-8000-000000000113",
           "deepsea/jobs/00000000-0000-4000-8000-000000000121",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000131"
+          "deepsea/jobs/00000000-0000-4000-8000-000000000131",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000141"
         ]
       }
     },
@@ -390,7 +392,8 @@
         "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
         "files": [
           "deepsea/jobs/00000000-0000-4000-8000-000000000101/score_types",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000102/score_types"
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102/score_types",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000141/score_types"
         ]
       }
     },
@@ -411,7 +414,8 @@
           "deepsea/jobs/00000000-0000-4000-8000-000000000101/variant_scores@score_type=max_seqclass",
           "deepsea/jobs/00000000-0000-4000-8000-000000000101/variant_scores@score_type=mean-evalue",
           "deepsea/jobs/00000000-0000-4000-8000-000000000102/variant_scores@score_type=dis",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000102/variant_scores@score_type=mean-evalue"
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102/variant_scores@score_type=mean-evalue",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000141/variant_scores@score_type=expecto"
         ]
       }
     },
@@ -440,7 +444,9 @@
         "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
         "files": [
           "deepsea/jobs/00000000-0000-4000-8000-000000000101/feature_predictions@chr_variant=7%3A49813589&score_type=seqclass",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000102/feature_predictions@chr_variant=3%3A12598855&score_type=zscore"
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102/feature_predictions@chr_variant=3%3A12598855&score_type=zscore",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000141/feature_predictions@chr_variant=3%3A12598855&score_type=expecto",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000141/feature_predictions@chr_variant=5%3A134871851&score_type=expecto"
         ]
       }
     },

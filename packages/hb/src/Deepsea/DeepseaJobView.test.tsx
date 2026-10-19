@@ -1,5 +1,6 @@
 import { Humanbase, HumanbaseProvider, SampleClient } from '@humanbase/data';
 import { render, screen } from '@testing-library/react';
+import { deepseaFormLink } from './DeepseaForm';
 import { DeepseaJobView } from './DeepseaJobView';
 
 const job = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
@@ -32,6 +33,19 @@ describe('DeepseaJobView', () => {
     expect(await screen.findByText('P Promoter', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByText('Raises, 13 sequence classes')).toBeInTheDocument();
     expect(screen.getByText('strong, 2 or more')).toBeInTheDocument();
+  });
+
+  it('reads ExPecto effects as tissues, with their resource and system', async () => {
+    renderJob(job(141), 'chr5-134871851-A-G');
+    expect(await screen.findByRole('heading', { level: 1, name: 'Untitled ExPecto job' }, { timeout: 5000 })).toBeInTheDocument();
+    expect(await screen.findByText('Fallopian Tube', {}, { timeout: 5000 })).toBeInTheDocument();
+    expect(screen.getAllByText('GTEx, reproductive system')[0]).toBeInTheDocument();
+    expect(screen.getByText('strong, 0.1 or more')).toBeInTheDocument();
+  });
+
+  it('sends a failed ExPecto job back to its Submit variants tab', () => {
+    expect(deepseaFormLink('expecto')).toBe('/expecto/variants/');
+    expect(deepseaFormLink('beluga')).toBe('/beluga/');
   });
 
   it('lists the files a running job will write', async () => {
