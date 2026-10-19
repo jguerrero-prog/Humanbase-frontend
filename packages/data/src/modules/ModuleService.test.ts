@@ -11,7 +11,7 @@ async function renalRequest(): Promise<ModuleRequest> {
   if (!renal) throw new Error('The renal disease panel example is missing.');
   const matches = await samples().search.list(renal.genes);
   const entrez = [...new Set(matches.flatMap((term) => term.genes.slice(0, 1).map((gene) => gene.entrez)))];
-  return { entrez, integration: renal.tissue, version: 'v1', title: renal.title };
+  return { entrez, integration: renal.tissue, version: 'v1', title: '' };
 }
 
 describe('ModuleService', () => {
@@ -29,7 +29,8 @@ describe('ModuleService', () => {
     expect(result).toBeNull();
     const finished = await api.modules.poll(bodyTag);
     expect(finished).toBeInstanceOf(ModuleResult);
-    expect(finished?.title).toBe('Renal disease panel');
+    // The live site sends examples without a title, so the real result has none; the page shows the name kept in this browser.
+    expect(finished?.title).toBe('');
     expect(finished?.entrez).toHaveLength(504);
   });
 
@@ -51,8 +52,8 @@ describe('ModuleResult', () => {
   it('shows enriched modules of two genes or more by default', async () => {
     const modules = await result();
     const shown = modules.shown('gene-ontology-bp');
-    expect(shown.map((module) => module.label)).toEqual(['M1', 'M3', 'M4', 'M5', 'M6']);
-    expect(modules.shown('gene-ontology-bp', { minimumSize: 2, hideUnenriched: false })).toHaveLength(16);
+    expect(shown.map((module) => module.label)).toEqual(['M1', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M11', 'M12', 'M13', 'M14', 'M15', 'M20']);
+    expect(modules.shown('gene-ontology-bp', { minimumSize: 2, hideUnenriched: false })).toHaveLength(20);
     expect(modules.shown('gene-ontology-bp', { minimumSize: 30, hideUnenriched: false }).every((module) => module.genes.length >= 30)).toBe(true);
   });
 
@@ -63,6 +64,8 @@ describe('ModuleResult', () => {
     expect(terms.map((term) => term.qValue)).toEqual([...terms.map((term) => term.qValue)].sort((a, b) => a - b));
     const nphs1 = terms.at(-1)?.genes[0] as number;
     expect(modules.moduleOf(nphs1)?.label).toBe('M1');
-    expect(modules.databases).toEqual(['gene-ontology-bp']);
+    expect(modules.databases).toEqual(['gene-ontology-bp', 'msigdb-h', 'disease-ontology', 'msigdb-c2-cp']);
+    expect(modules.databaseName('msigdb-h')).toBe('MSigDB: Hallmark (H)');
+    expect(modules.symbol(80000)).toBe('GREB1L');
   });
 });
