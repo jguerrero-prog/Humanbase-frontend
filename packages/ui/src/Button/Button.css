@@ -1,0 +1,106 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  font: var(--type-label);
+  line-height: 20px;
+  white-space: nowrap;
+  border: 0;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.button-small {
+  gap: 6px;
+  padding: var(--space-2) var(--space-4);
+  font: var(--type-label-sm);
+  line-height: 20px;
+  border-radius: var(--radius-sm);
+}
+
+.button-primary {
+  color: var(--text-on-brand);
+  background: var(--action-primary);
+}
+
+.button-primary:hover,
+.button-primary[data-state="hover"] {
+  background: var(--action-primary-hover);
+}
+
+.button-primary:active,
+.button-primary[data-state="pressed"] {
+  background: var(--action-primary-pressed);
+}
+
+.button-secondary {
+  color: var(--text-default);
+  background: var(--action-secondary);
+}
+
+.button-secondary:hover,
+.button-secondary[data-state="hover"] {
+  background: var(--action-secondary-hover);
+}
+
+.button-secondary:active,
+.button-secondary[data-state="pressed"] {
+  background: var(--action-secondary-pressed);
+}
+
+.button-ghost {
+  color: var(--text-link);
+  background: transparent;
+}
+
+.button-ghost:focus-visible,
+.button-ghost[data-state="focus"] {
+  background: var(--surface-page);
+}
+
+.button-ghost:hover,
+.button-ghost[data-state="hover"] {
+  background: var(--action-ghost-hover);
+}
+
+.button-ghost:active,
+.button-ghost[data-state="pressed"] {
+  background: var(--action-ghost-pressed);
+}
+
+.button-destructive {
+  color: var(--text-on-brand);
+  background: var(--action-destructive);
+}
+
+.button-destructive:hover,
+.button-destructive[data-state="hover"] {
+  background: var(--action-destructive-hover);
+}
+
+.button-destructive:active,
+.button-destructive[data-state="pressed"] {
+  background: var(--action-destructive-pressed);
+}
+
+.button[data-state="focus"] {
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  color: var(--text-disabled);
+  background: var(--color-grey-200);
+  cursor: not-allowed;
+}
+
+.button-ghost:disabled,
+.button-ghost[aria-disabled="true"] {
+  background: transparent;
+}
+
+.button[aria-busy="true"] {
+  cursor: progress;
+}

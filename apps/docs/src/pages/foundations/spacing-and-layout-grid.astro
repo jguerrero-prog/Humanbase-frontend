@@ -1,0 +1,744 @@
+---
+import { aliasPath, flattenTokens } from '@humanbase/tokens/catalog';
+import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import DoDont from '../../components/docs/DoDont.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const entries = flattenTokens(primitives);
+const byName = new Map(entries.map((entry) => [entry.path.join('.'), entry]));
+const pixels = (value: unknown): number => (typeof value === 'string' ? pixels(byName.get(aliasPath(value).join('.'))?.token.$value) : (value as { value: number }).value);
+const formatPx = (px: number) => (px === 0 ? '0' : `${px.toLocaleString('en-US')}px`);
+
+const spacing = entries
+  .filter(({ path, token }) => path[0] === 'space' && token.$description)
+  .map(({ path, token }) => ({ name: path.join('.'), px: pixels(token.$value), use: token.$description }))
+  .sort((a, b) => a.px - b.px);
+
+const layout = entries
+  .filter(({ path }) => path[0] === 'layout')
+  .map(({ path, token }) => ({ name: path.join('.'), px: pixels(token.$value), use: token.$description }));
+
+const inUse = [
+  ['24', 'space.6', 'Card padding on all four sides'],
+  ['8', 'space.2', 'Eyebrow to heading: they read as one unit'],
+  ['16', 'space.4', 'Heading to text, and text to actions'],
+  ['12', 'space.3', 'Between buttons that sit side by side'],
+  ['24', 'space.6', 'Gap between cards in a grid (not shown)'],
+  ['96', 'space.24', 'Between page sections (not shown)'],
+];
+
+const breakpoints = [
+  { name: 'Mobile', range: '360 to 767px', spec: '4 columns · 16px gutter · 16px margin', text: 'Single-column flow. Tables scroll sideways, panels stack.', screen: '375px', width: 188, columns: 4, gutter: 8, margin: 8 },
+  { name: 'Tablet', range: '768 to 1,279px', spec: '8 columns · 24px gutter · 32px margin', text: 'Two-column layouts. Side panels become drawers.', screen: '768px', width: 384, columns: 8, gutter: 12, margin: 16 },
+  { name: 'Desktop', range: '1,280 to 1,727px', spec: '12 columns · 24px gutter · 64px margin', text: 'The main HumanBase layout: list and detail side by side.', screen: '1440px', width: 720, columns: 12, gutter: 12, margin: 32 },
+  { name: 'Wide', range: '1,728px and up', spec: '12 columns · 32px gutter · 64px margin · 1600px max content', text: 'Content stops growing at 1,600px and centers, so lines and tables stay readable.', screen: '1920px', width: 960, columns: 12, gutter: 16, margin: 80, max: true },
+];
+
+const resultsNotes = [
+  ['Top bar, 64px', 'Holds the logo, search and main menu. Stays fixed when scrolling, with a solid background.'],
+  ['List, 4 columns', 'Genes, modules or variants. Selecting a row updates the main view without leaving the page.'],
+  ['Main view, 8 columns', 'The network graph, genome browser or heatmap. One view at a time, switched with a segmented control.'],
+  ['Inspector', 'Details for whatever is selected. Replaces the nested Process, Tissue and Detail tabs.'],
+  ['Smaller screens', 'On tablet the list becomes a drawer. On mobile, list and main view stack and the inspector opens as a sheet.'],
+];
+
+const genes = [
+  ['IL1R1', 'interleukin 1 receptor type 1', '1.00'],
+  ['PLAUR', 'plasminogen activator, urokinase receptor', '0.97'],
+  ['PTGS2', 'prostaglandin-endoperoxide synthase 2', '0.96'],
+];
+
+const densities = [
+  { name: 'Comfortable', text: 'Default. Row height 48px, cell padding 16px at the sides, body text 16px.' },
+  { name: 'Compact', text: 'For long tables. Row height 36px, cell padding 12px at the sides, body small text 14px. Never below 36px.' },
+];
+
+const targets = [
+  { title: '24 × 24px minimum', text: 'Icon buttons in toolbars, table row actions. Add 8px between neighbors.', size: 'small' },
+  { title: '44 × 44px recommended', text: 'Primary actions and anything used on touch screens.', size: 'medium' },
+  { title: '48px row height', text: 'Comfortable table rows and menu items: the whole row is the target, not only the text.', size: 'row' },
+];
+
+const usage = `.card {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+}
+
+.page {
+  max-inline-size: var(--layout-content-max);
+  padding-inline: var(--layout-margin-desktop);
+}`;
+---
+
+<DocsLayout title="Spacing and layout grid" description="The 4px spacing scale, the column grid at each breakpoint, density and target sizes.">
+  <Intro
+    lead="Space is how HumanBase shows what belongs together. Every gap, margin and padding comes from one scale built on a 4px base unit, and every page sits on a column grid that adapts from phones to wide monitors. Consistent spacing makes dense scientific screens feel calm and easy to scan."
+    status="Updated October 16, 2026 · Values are in pixels; code uses the same values in rem (16px = 1rem)"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Multiples of 4', text: 'Every spacing value is a step on the scale. Use 8px steps for layout and 4px steps only for fine detail inside components.' },
+        { title: 'Closer means related', text: 'Items that belong together sit closer than items that don’t. Space inside a group is always smaller than space between groups.' },
+        { title: 'Snap to the grid', text: 'Content aligns to the column grid. Components stretch across whole columns, never part of one.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection
+    title="Spacing scale"
+    lead="Thirteen steps. Token names count in 4px units, so space.6 is 6 × 4 = 24px. Small steps are close together for detail work; large steps grow quickly for page layout."
+  >
+    <div class="scale-table">
+      <DocTable caption="Spacing scale" columns={['Token', 'px', 'rem', 'Size', 'Use']} widths={['184px', '94px', '104px', '324px']}>
+        {
+          spacing.map(({ name, px, use }) => (
+            <tr>
+              <th scope="row"><code>{name}</code></th>
+              <td class="strong">{formatPx(px)}</td>
+              <td>{px / 16}rem</td>
+              <td><span class="scale-bar" style={`inline-size: ${px * 2}px`} /></td>
+              <td>{use}</td>
+            </tr>
+          ))
+        }
+      </DocTable>
+    </div>
+    <p class="footnote">Bars are drawn at twice their real size so the small steps are visible.</p>
+  </DocSection>
+
+  <DocSection title="Spacing in use" lead="The gene card from the Typography page, with its spacing marked. Each highlighted band is a step from the scale.">
+    <div class="in-use">
+      <figure class="annotated">
+        <div class="annotated-card" aria-hidden="true">
+          <div class="annotated-heading">
+            <span class="annotated-eyebrow">Network analysis</span>
+            <span class="annotated-title"><i>IL1B</i> interleukin 1 beta</span>
+          </div>
+          <p>Top functional partners of IL1B in the global network, ranked by how likely each pair shares a biological process.</p>
+          <div class="annotated-actions">
+            <span class="annotated-button">View network</span>
+            <span class="annotated-button annotated-button-outline">Download</span>
+          </div>
+          <span class="band" style="inset: 0 0 auto; block-size: 24px" />
+          <span class="band" style="inset: auto 0 0; block-size: 24px" />
+          <span class="band" style="inset: 24px auto 24px 0; inline-size: 24px" />
+          <span class="band" style="inset: 24px 0 24px auto; inline-size: 24px" />
+          <span class="band" style="inset: 42px 24px auto; block-size: 8px" />
+          <span class="band" style="inset: 85px 24px auto; block-size: 16px" />
+          <span class="band" style="inset: 151px 24px auto; block-size: 16px" />
+          <span class="band" style="inset: 167px auto auto 173px; inline-size: 12px; block-size: 48px" />
+          <span class="band-tag" style="inset: 3px auto auto 268px">24</span>
+          <span class="band-tag" style="inset: 219px auto auto 268px">24</span>
+          <span class="band-tag" style="inset: 111px auto auto 0">24</span>
+          <span class="band-tag" style="inset: 111px auto auto 536px">24</span>
+          <span class="band-tag" style="inset: 37px auto auto 271px">8</span>
+          <span class="band-tag" style="inset: 84px auto auto 268px">16</span>
+          <span class="band-tag" style="inset: 150px auto auto 268px">16</span>
+          <span class="band-tag" style="inset: 182px auto auto 167px">12</span>
+        </div>
+        <figcaption class="visually-hidden">A gene card with its padding and gaps highlighted. The key beside it lists each one.</figcaption>
+      </figure>
+      <ul class="in-use-key">
+        {
+          inUse.map(([px, token, text]) => (
+            <li>
+              <span class="key-value">{px}</span>
+              <code>{token}</code>
+              <span>{text}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </DocSection>
+
+  <DocSection
+    title="Layout grid"
+    lead="Four breakpoints. Each has a set number of columns, a gutter between columns and a margin at the page edges. Diagrams are drawn at half size; green columns are where content goes."
+    spacing="loose"
+  >
+    <ul class="breakpoints">
+      {
+        breakpoints.map((point) => (
+          <li>
+            <div class="breakpoint-specs">
+              <h3>{point.name}</h3>
+              <p class="breakpoint-range">{point.range}</p>
+              <p class="breakpoint-spec">{point.spec}</p>
+              <p>{point.text}</p>
+            </div>
+            <div
+              class="grid-diagram"
+              style={`inline-size: ${point.width}px; --columns: ${point.columns}; --gutter: ${point.gutter}px; --margin: ${point.margin}px`}
+              aria-hidden="true"
+            >
+              <span class="grid-screen">{point.screen}</span>
+              {Array.from({ length: point.columns }, () => <span class="grid-column" />)}
+              {point.max && <span class="grid-max">max 1600</span>}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection
+    title="Results page layout"
+    lead="The standard layout for analysis results on desktop, on the 12-column grid. It replaces nested tabs with a list and a detail panel side by side, so people keep their place while exploring."
+  >
+    <div class="results">
+      <figure class="results-diagram">
+        <div class="results-frame" aria-hidden="true">
+          {Array.from({ length: 12 }, () => <span class="results-column" />)}
+          <span class="results-area results-topbar">Top bar · 64px</span>
+          <span class="results-area results-title">Page title and tool switcher · 12 columns</span>
+          <span class="results-area results-list">Results list · 4 columns</span>
+          <span class="results-area results-main">Network graph or main view · 8 columns</span>
+          <span class="results-area results-inspector">Inspector: details for the selected gene or link</span>
+        </div>
+        <figcaption class="visually-hidden">The results page at half size: a top bar, a full-width title, a 4-column list beside an 8-column main view, and an inspector under the main view.</figcaption>
+      </figure>
+      <ul class="results-notes">
+        {
+          resultsNotes.map(([title, text]) => (
+            <li>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </DocSection>
+
+  <DocSection
+    title="Density"
+    lead="Data tables come in two densities. Comfortable is the default; compact lets people see more rows when comparing results. The spacing scale does not change, only which steps are used."
+  >
+    <div class="densities">
+      {
+        densities.map((density) => (
+          <section class:list={['density', `density-${density.name.toLowerCase()}`]} aria-labelledby={`density-${density.name}`}>
+            <h3 id={`density-${density.name}`}>{density.name}</h3>
+            <p>{density.text}</p>
+            <table>
+              <caption class="visually-hidden">{density.name} rows</caption>
+              <thead>
+                <tr><th scope="col">Gene</th><th scope="col">Name</th><th scope="col">Score</th></tr>
+              </thead>
+              <tbody>
+                {genes.map(([gene, name, score]) => (
+                  <tr><th scope="row">{gene}</th><td>{name}</td><td>{score}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        ))
+      }
+    </div>
+  </DocSection>
+
+  <DocSection
+    title="Click and touch targets"
+    lead="Anything people click must be easy to hit, which matters most in dense graphs and tables (Fitts’s law). WCAG 2.2 AA sets 24 × 24px as the minimum."
+  >
+    <ul class="targets">
+      {
+        targets.map((target) => (
+          <li>
+            <span class:list={['target', `target-${target.size}`]} />
+            <h3>{target.title}</h3>
+            <p>{target.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <DoDont
+      dos={[
+        'Use the smallest step that still separates two groups clearly.',
+        'Keep the same gap between items of the same kind, such as every card in a grid.',
+        'Align text, tables and graphs to the column edges.',
+        'Let long text wrap at about 720px even when the page is wider.',
+      ]}
+      donts={[
+        'Don’t use values outside the scale, such as 10px or 22px.',
+        'Don’t put more space inside a group than between groups.',
+        'Don’t stretch tables or paragraphs across a wide monitor.',
+        'Don’t shrink targets below 24 × 24px to fit more on screen.',
+      ]}
+    />
+  </DocSection>
+
+  <DocSection title="Layout tokens" lead="Grid and layout values, alongside the spacing tokens listed above.">
+    <DocTable caption="Layout tokens" columns={['Token', 'Value', 'Use']} widths={['344px', '164px']}>
+      {
+        layout.map(({ name, px, use }) => (
+          <tr>
+            <th scope="row"><code>{name}</code></th>
+            <td class="strong">{formatPx(px)}</td>
+            <td>{use}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using spacing in code">
+    <ul>
+      <li>Each step is a CSS custom property named after the token: <code>space.6</code> is <code>var(--space-6)</code>, <code>layout.gutter</code> is <code>var(--layout-gutter)</code>.</li>
+      <li>The values live in <code>packages/tokens/src/primitives.tokens.json</code>; both tables above are generated from that file.</li>
+    </ul>
+    <Code code={usage} lang="css" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .doc-table code,
+  .in-use-key code {
+    font: 400 15px/1.4 "Atkinson Hyperlegible Mono", monospace;
+    color: var(--text-default);
+  }
+
+  .doc-table .strong {
+    font-weight: 700;
+    color: var(--text-default);
+  }
+
+  .scale-table :global(td),
+  .scale-table :global(th[scope="row"]) {
+    padding-block: 14px;
+  }
+
+  .scale-bar {
+    display: block;
+    block-size: 24px;
+    background: var(--action-primary);
+    border-radius: var(--radius-2xs);
+  }
+
+  .footnote {
+    font: var(--type-caption);
+    color: var(--text-muted);
+  }
+
+  .in-use {
+    display: grid;
+    grid-template-columns: 560px minmax(0, 1fr);
+    gap: var(--space-16);
+    align-items: start;
+  }
+
+  .annotated {
+    margin: 0;
+  }
+
+  .annotated-card {
+    position: relative;
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .annotated-heading {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .annotated-eyebrow {
+    font: var(--type-eyebrow);
+    letter-spacing: var(--type-eyebrow-tracking);
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .annotated-title {
+    font: italic 600 28px/1.25 Cabin, sans-serif;
+  }
+
+  .annotated-title i {
+    font-style: italic;
+  }
+
+  .annotated-card p {
+    color: var(--text-secondary);
+  }
+
+  .annotated-actions {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .annotated-button {
+    padding: var(--space-3) var(--space-6);
+    font: var(--type-label);
+    color: var(--text-on-brand);
+    background: var(--action-primary);
+    border: var(--border-width-1) solid var(--action-primary);
+    border-radius: var(--radius-md);
+  }
+
+  .annotated-button-outline {
+    color: var(--text-link);
+    background: none;
+  }
+
+  .band {
+    position: absolute;
+    background: color-mix(in srgb, var(--action-secondary) 45%, transparent);
+  }
+
+  .band-tag {
+    position: absolute;
+    padding: 2px 6px;
+    font: 700 11px/1.3 Lato, sans-serif;
+    color: var(--text-on-brand);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+  }
+
+  .in-use-key {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .in-use-key li {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+    padding: 14px 0;
+    border-block-end: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .in-use-key code {
+    flex: 0 0 110px;
+    font-size: 14px;
+  }
+
+  .in-use-key li > span:last-child {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .key-value {
+    padding: 2px var(--space-2);
+    font: var(--type-label-sm);
+    background: color-mix(in srgb, var(--action-secondary) 45%, transparent);
+    border-radius: var(--radius-xs);
+  }
+
+  .breakpoints {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .breakpoints li {
+    display: flex;
+    gap: var(--space-10);
+    padding: var(--space-6) 0;
+    border-block-end: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .breakpoints li + li {
+    margin-block-start: var(--space-8);
+  }
+
+  .breakpoint-specs {
+    display: grid;
+    flex: 0 0 300px;
+    align-content: start;
+    gap: 6px;
+  }
+
+  .breakpoint-specs h3 {
+    font: var(--type-h4);
+  }
+
+  .breakpoint-specs p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .breakpoint-specs .breakpoint-range {
+    font: var(--docs-small);
+    color: var(--text-muted);
+  }
+
+  .breakpoint-specs .breakpoint-spec {
+    font: var(--type-label-sm);
+    color: var(--text-default);
+  }
+
+  .grid-diagram {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+    gap: var(--gutter);
+    block-size: 180px;
+    padding: var(--space-6) var(--margin);
+    background: var(--surface-subtle);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .grid-column,
+  .results-column {
+    background: color-mix(in srgb, var(--color-mint-500) 28%, transparent);
+  }
+
+  .grid-screen {
+    position: absolute;
+    inset: 6px auto auto var(--space-2);
+    font: 700 10px/1.2 Lato, sans-serif;
+    color: var(--text-muted);
+  }
+
+  .grid-max {
+    position: absolute;
+    inset: auto var(--margin) 2px;
+    padding-block-start: 2px;
+    font: 700 9px/1.2 Lato, sans-serif;
+    border-block-start: 2px solid color-mix(in srgb, var(--text-default) 50%, transparent);
+  }
+
+  .results {
+    display: grid;
+    grid-template-columns: 720px minmax(0, 1fr);
+    gap: var(--space-12);
+    align-items: start;
+  }
+
+  .results-diagram {
+    margin: 0;
+  }
+
+  .results-frame {
+    display: grid;
+    grid-template-rows: 32px 16px 36px 16px 210px 12px 78px 30px;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 12px;
+    padding-inline: var(--space-8);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .results-column {
+    grid-row: 1 / -1;
+    opacity: 0.3;
+  }
+
+  .results-area {
+    padding: 10px;
+    font: 700 11px/1.2 Lato, sans-serif;
+    border-radius: var(--radius-sm);
+  }
+
+  .results-topbar {
+    grid-row: 1;
+    grid-column: 1 / -1;
+    margin-inline: calc(-1 * var(--space-8));
+    padding-inline: var(--space-8);
+    color: var(--text-on-brand);
+    background: var(--action-primary);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+
+  .results-title {
+    grid-row: 3;
+    grid-column: 1 / -1;
+    background: var(--border-subtle);
+  }
+
+  .results-list {
+    grid-row: 5 / 8;
+    grid-column: 1 / 5;
+    background: var(--color-emerald-50);
+  }
+
+  .results-main {
+    grid-row: 5;
+    grid-column: 5 / -1;
+    background: var(--surface-sunken);
+  }
+
+  .results-inspector {
+    grid-row: 7;
+    grid-column: 5 / -1;
+    background: var(--color-yellow-50);
+  }
+
+  .results-notes {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .results-notes li {
+    display: grid;
+    gap: var(--space-1);
+    padding: 14px 0;
+    border-block-end: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .results-notes h3 {
+    font: var(--docs-small-strong);
+  }
+
+  .results-notes p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .densities {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  .density {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .density h3 {
+    font: var(--type-h4);
+  }
+
+  .density > p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .density table {
+    border-spacing: 0;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .density th,
+  .density td {
+    block-size: var(--layout-row-comfortable);
+    padding: 0 var(--space-4);
+    font: var(--type-body);
+    text-align: start;
+    color: var(--text-secondary);
+    border-block-start: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .density th[scope="col"] {
+    font: 700 12px/1.4 Lato, sans-serif;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--surface-subtle);
+    border: 0;
+  }
+
+  .density th[scope="col"]:first-child {
+    border-start-start-radius: var(--radius-sm);
+  }
+
+  .density th[scope="col"]:last-child {
+    border-start-end-radius: var(--radius-sm);
+  }
+
+  .density th[scope="row"] {
+    inline-size: 80px;
+    font-style: italic;
+    color: var(--text-default);
+  }
+
+  .density td:last-child,
+  .density th[scope="col"]:last-child {
+    inline-size: 56px;
+    text-align: end;
+  }
+
+  .density td:last-child {
+    color: var(--text-default);
+  }
+
+  .density-compact th,
+  .density-compact td {
+    block-size: var(--layout-row-compact);
+    padding: 0 var(--space-3);
+    font: var(--type-body-sm);
+  }
+
+  .targets {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-12);
+    align-items: end;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .targets li {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .target {
+    background: color-mix(in srgb, var(--action-secondary) 45%, transparent);
+    border: var(--border-width-1) solid var(--text-default);
+    border-radius: var(--radius-sm);
+  }
+
+  .target-small {
+    inline-size: var(--layout-target-min);
+    block-size: var(--layout-target-min);
+  }
+
+  .target-medium {
+    inline-size: 44px;
+    block-size: 44px;
+  }
+
+  .target-row {
+    inline-size: 220px;
+    block-size: var(--layout-row-comfortable);
+  }
+
+  .targets h3 {
+    font: var(--type-label);
+  }
+
+  .targets p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  @media (width < 64rem) {
+    .in-use,
+    .results,
+    .densities,
+    .targets {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .breakpoints li {
+      flex-direction: column;
+    }
+
+    .grid-diagram {
+      max-inline-size: 100%;
+    }
+  }
+</style>

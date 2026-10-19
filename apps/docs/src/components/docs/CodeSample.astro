@@ -1,0 +1,18 @@
+---
+import { CodeBlock } from '@humanbase/ui';
+import type { BundledLanguage } from 'shiki';
+import { highlighter } from '../../syntax';
+
+interface Props {
+  label: string;
+  code: string;
+  lang: BundledLanguage | 'text';
+  copy?: boolean;
+  collapseAfter?: number;
+}
+
+const { label, code, lang, copy = true, collapseAfter } = Astro.props;
+const lines = await highlighter.lines(code, lang);
+---
+
+<CodeBlock client:load label={label} code={code} lines={lines} copy={copy} {...(collapseAfter ? { collapseAfter } : {})} />

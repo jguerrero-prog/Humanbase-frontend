@@ -1,0 +1,235 @@
+import { useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import { DataTooltip } from '../Tooltip/DataTooltip';
+import { placeNearPoint } from '../Tooltip/placement';
+import { HeatmapCell } from './HeatmapCell';
+import { LegendStepped } from './LegendStepped';
+import { ScoreScale, type ScaleSpec } from './ScoreScale';
+
+export interface HeatmapColumn {
+  label: string;
+  /** A genome position, drawn on the ruler instead of a rotated label. */
+  position?: number;
+}
+
+export interface HeatmapRow {
+  label: string;
+  values: readonly (number | null)[];
+}
+
+export interface HeatmapAxis {
+  title: string;
+  /** The shared prefix, such as 150,226,000; ticks are offsets from it. */
+  offset: number;
+  ticks: readonly number[];
+}
+
+export interface HeatmapProps {
+  title: string;
+  summary: string;
+  scale: ScaleSpec;
+  columns: readonly HeatmapColumn[];
+  rows: readonly HeatmapRow[];
+  rowHeader: string;
+  columnHeader: string;
+  axis?: HeatmapAxis | undefined;
+  decimals?: number | undefined;
+  /** A cell to show as hovered at first, for documentation. */
+  initialActive?: readonly [row: number, column: number] | undefined;
+  /** Compact rows are 8px tall with labels hidden; the tooltip still works on every cell. */
+  density?: 'full' | 'compact' | undefined;
+  /** Prints the value beside each cell, for a heatmap with a single column. */
+  showValues?: boolean | undefined;
+}
+
+type Cell = readonly [number, number];
+
+const counts = new Intl.NumberFormat('en-US');
+const cellWidth = 34;
+
+export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', showValues = false }: HeatmapProps) {
+  const id = useId();
+  const scale = useMemo(() => new ScoreScale(spec), [spec]);
+  const plot = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState<Cell | null>(initialActive ?? null);
+  const [focus, setFocus] = useState<Cell>(initialActive ?? [0, 0]);
+  const [highlighted, setHighlighted] = useState<number | null>(null);
+  const [place, setPlace] = useState<{ x: number; y: number }>();
+  const format = (value: number) => ScoreScale.number(Number(value.toFixed(decimals)));
+  const columnLabel = (column: HeatmapColumn) => (column.position === undefined ? column.label : counts.format(column.position));
+  const valueAt = ([row, column]: Cell) => rows[row]?.values[column] ?? null;
+
+  useLayoutEffect(() => {
+    const box = plot.current;
+    const cell = active && box?.querySelector<HTMLElement>(`[data-cell="${active[0]}-${active[1]}"]`);
+    if (!box || !cell) return setPlace(undefined);
+    const point = { x: cell.offsetLeft + cell.offsetWidth, y: cell.offsetTop + cell.offsetHeight };
+    setPlace(placeNearPoint(point, { width: 240, height: 140 }, { width: box.clientWidth, height: Math.max(box.clientHeight, point.y + 160) }, 4));
+  }, [active]);
+
+  const move = (event: KeyboardEvent<HTMLSpanElement>) => {
+    const [row, column] = focus;
+    const next: Record<string, Cell> = {
+      ArrowUp: [Math.max(0, row - 1), column],
+      ArrowDown: [Math.min(rows.length - 1, row + 1), column],
+      ArrowLeft: [row, Math.max(0, column - 1)],
+      ArrowRight: [row, Math.min(columns.length - 1, column + 1)],
+      Home: [row, 0],
+      End: [row, columns.length - 1],
+    };
+    if (event.key === 'Escape') return setActive(null);
+    const target = next[event.key];
+    if (!target) return;
+    event.preventDefault();
+    setFocus(target);
+    plot.current?.querySelector<HTMLElement>(`[data-cell="${target[0]}-${target[1]}"]`)?.focus();
+  };
+
+  const activeColumn = active?.[1];
+  const activeValue = active ? valueAt(active) : null;
+  const activeRow = active ? rows[active[0]] : undefined;
+  const activeHeader = activeColumn === undefined ? undefined : columns[activeColumn];
+
+  return (
+    <figure className={['heatmap', density === 'compact' && 'heatmap-compact', showValues && 'heatmap-with-values'].filter(Boolean).join(' ')} aria-labelledby={`${id}-title`}>
+      <div className="heatmap-head">
+        <figcaption>
+          <p id={`${id}-title`} className="heatmap-title">
+            {title}
+          </p>
+          <p className="heatmap-summary">{summary}</p>
+        </figcaption>
+        <LegendStepped spec={spec} highlighted={highlighted ?? (activeValue === null ? null : scale.step(activeValue))} onHighlight={setHighlighted} />
+      </div>
+      <div className="heatmap-plot" ref={plot} style={{ '--heatmap-columns': columns.length, '--heatmap-cell': `${cellWidth}px` } as CSSProperties}>
+        {!axis && (
+          <div className="heatmap-column-labels" aria-hidden="true">
+            {columns.map((column) => (
+              <span key={column.label}>{columnLabel(column)}</span>
+            ))}
+          </div>
+        )}
+        <div role="grid" aria-label={title} className="heatmap-grid">
+          {rows.map((row, r) => (
+            <div role="row" key={row.label} className="heatmap-row">
+              <span role="rowheader" className="heatmap-row-label" title={row.label}>
+                {row.label}
+              </span>
+              {row.values.map((value, c) => {
+                const column = columns[c];
+                const step = scale.step(value);
+                const isActive = active?.[0] === r && active[1] === c;
+                return (
+                  <HeatmapCell
+                    key={column?.label ?? c}
+                    role="gridcell"
+                    tabIndex={focus[0] === r && focus[1] === c ? 0 : -1}
+                    data-cell={`${r}-${c}`}
+                    data-state={isActive ? 'hover' : undefined}
+                    color={step === null ? null : scale.color(step)}
+                    outlined={highlighted !== null && step === highlighted}
+                    aria-label={`${row.label}, ${column ? columnLabel(column) : ''}: ${scale.describe(value, format)}`}
+                    onPointerEnter={() => setActive([r, c])}
+                    onPointerLeave={() => setActive(null)}
+                    onFocus={() => {
+                      setFocus([r, c]);
+                      setActive([r, c]);
+                    }}
+                    onBlur={() => setActive(null)}
+                    onKeyDown={move}
+                  />
+                );
+              })}
+              {showValues && (
+                <span className="heatmap-value" aria-hidden="true">
+                  {row.values[0] === null || row.values[0] === undefined ? '' : format(row.values[0])}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+        {axis && <PositionAxis axis={axis} columns={columns} active={activeColumn} />}
+        {active && activeRow && place && (
+          <DataTooltip
+            id={`${id}-tip`}
+            title={activeRow.label}
+            {...(activeHeader && { subtitle: `${columnHeader} ${columnLabel(activeHeader)}` })}
+            rows={[[spec.title, scale.describe(activeValue, format)]]}
+            position={place}
+          />
+        )}
+      </div>
+      <details className="heatmap-table">
+        <summary>View as table</summary>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the table scrolls sideways, so it takes focus for arrow-key scrolling */}
+        <div className="heatmap-table-scroll" role="region" aria-label={`${title}, as a table`} tabIndex={0}>
+          <table>
+            <caption>{summary}</caption>
+            <thead>
+              <tr>
+                <th scope="col">{rowHeader}</th>
+                {columns.map((column) => (
+                  <th scope="col" key={column.label}>
+                    {columnLabel(column)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.label}>
+                  <th scope="row">{row.label}</th>
+                  {row.values.map((value, c) => (
+                    <td key={columns[c]?.label ?? c}>{scale.describe(value, format)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </figure>
+  );
+}
+
+interface PositionAxisProps {
+  axis: HeatmapAxis;
+  columns: readonly HeatmapColumn[];
+  active: number | undefined;
+}
+
+// A ruler of short offsets, with a line from each column to its position.
+function PositionAxis({ axis, columns, active }: PositionAxisProps) {
+  const width = columns.length * (cellWidth + 1) - 1;
+  const first = axis.ticks[0] ?? 0;
+  const last = axis.ticks.at(-1) ?? 1;
+  const x = (offset: number) => ((offset - first) / (last - first)) * width;
+  const activePosition = active === undefined ? undefined : columns[active]?.position;
+  return (
+    <div className="heatmap-axis" aria-hidden="true">
+      <svg width={width} height="64" viewBox={`0 0 ${width} 64`}>
+        {columns.map((column, index) => {
+          const position = column.position === undefined ? first : x(column.position - axis.offset);
+          return <line key={column.label} className={index === active ? 'connector connector-active' : 'connector'} x1={index * (cellWidth + 1) + cellWidth / 2} y1="0" x2={position} y2="28" />;
+        })}
+        <line className="ruler" x1="0" y1="34" x2={width} y2="34" />
+        {columns.map((column) => column.position !== undefined && <line key={`v-${column.label}`} className="variant-tick" x1={x(column.position - axis.offset)} y1="28" x2={x(column.position - axis.offset)} y2="34" />)}
+        {axis.ticks.map((tick) => (
+          <g key={tick}>
+            <line className="ruler" x1={x(tick)} y1="34" x2={x(tick)} y2="38" />
+            <text x={x(tick)} y="52">
+              {tick}
+            </text>
+          </g>
+        ))}
+      </svg>
+      {activePosition !== undefined && (
+        <span className="heatmap-axis-pill" style={{ insetInlineStart: `${x(activePosition - axis.offset)}px` } as CSSProperties}>
+          {counts.format(activePosition)}
+        </span>
+      )}
+      <p className="heatmap-axis-title">
+        {axis.title}: {counts.format(axis.offset)} +
+      </p>
+    </div>
+  );
+}

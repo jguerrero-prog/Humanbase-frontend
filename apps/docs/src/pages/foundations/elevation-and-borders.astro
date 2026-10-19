@@ -1,0 +1,710 @@
+---
+import { flattenTokens, type TokenEntry } from '@humanbase/tokens/catalog';
+import effects from '@humanbase/tokens/src/effects.tokens.json';
+import layers from '@humanbase/tokens/src/layers.tokens.json';
+import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import semantic from '@humanbase/tokens/src/semantic.tokens.json';
+import { ColorCatalog } from '@humanbase/tokens/color';
+import { Icon } from '@humanbase/ui';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { displayColor, displayValue } from '../../tokenDisplay';
+
+const byName = (entries: TokenEntry[]) => new Map(entries.map((entry) => [entry.path.join('.'), entry]));
+const effectTokens = byName(flattenTokens(effects));
+const colors = new ColorCatalog(primitives, semantic);
+const primitiveTokens = byName(flattenTokens(primitives));
+const layerTokens = flattenTokens(layers);
+const layerByName = byName(layerTokens);
+const token = (map: Map<string, TokenEntry>, name: string) => {
+  const entry = map.get(name);
+  if (!entry) throw new Error(`Missing token ${name}`);
+  return entry;
+};
+
+const levels = [
+  { level: 0, name: 'Flat', text: 'Page content, cards, tables. Separated with a 1px grey 200 border instead of a shadow.' },
+  { level: 1, name: 'Raised', text: 'Clickable cards on hover, so they lift slightly under the pointer.' },
+  { level: 2, name: 'Overlay', text: 'Dropdowns, menus, search suggestions, tooltips.' },
+  { level: 3, name: 'Floating', text: 'The top bar once the page scrolls, drawers, toasts.' },
+  { level: 4, name: 'Modal', text: 'Dialogs, always over a 40% ink backdrop.' },
+].map((level) => ({ ...level, value: displayValue(token(effectTokens, `elevation.${level.level}`)) }));
+
+const borderColors = [
+  ['subtle', 'Grey 200. Dividers, table rows, card outlines. Decorative, so it never carries meaning alone.'],
+  ['default', 'Grey 300. Card outline on hover, panel edges next to grey 50 surfaces.'],
+  ['strong', 'Grey 500. Text inputs, checkboxes, selects. Meets the 3:1 rule for controls you need to find.'],
+  ['selected', 'Emerald 600. Focused fields, selected cards and rows, at 2px.'],
+  ['error', 'Error 700. Fields with an error, at 2px, always with a message.'],
+].map(([name = '', use]) => {
+  const ratio = colors.contrast(`border.${name}`, 'color.white');
+  return { name, use, hex: colors.hex(`border.${name}`), ratio: `${ratio.toFixed(2)}:1`, passes: ratio >= 3 };
+});
+
+const surfaces = [
+  { name: 'page', token: 'surface.page', text: 'White, 1px subtle border, elevation 0' },
+  { name: 'sunken', token: 'surface.sunken', text: 'Grey 100. Wells and empty graph areas. Code blocks use grey 50 with a border.' },
+  { name: 'overlay', token: 'surface.overlay', text: 'White, subtle border, elevation 2. Menus, suggestions' },
+  { name: 'inverse', token: 'surface.inverse', text: 'Ink. Tooltips only, with white text (17.4:1)' },
+  { name: 'backdrop', token: 'overlay.backdrop', text: 'Ink at 40% behind dialogs and the phone sheet; side drawers have none' },
+];
+
+const cardStates = [
+  { state: 'default', title: 'Default', text: '1px border.subtle, elevation 0' },
+  { state: 'hover', title: 'Hover', text: '1px border.default, elevation 1' },
+  { state: 'selected', title: 'Selected', text: '2px border.selected, white fill, check' },
+  { state: 'focus', title: 'Focus', text: 'Focus ring, 2px white gap + 3px ink' },
+  { state: 'disabled', title: 'Disabled', text: 'Grey 50 fill, grey 500 text' },
+];
+
+const zGroup = (names: string[]) => ({
+  name: `z.${names.join(' / ')}`,
+  value: names.map((name) => displayValue(token(layerByName, `z.${name}`))).join(' / '),
+});
+
+const tokenRows = [
+  ...[0, 1, 2, 3, 4].map((level) => ({ name: `elevation.${level}`, value: displayValue(token(effectTokens, `elevation.${level}`)) })),
+  { name: 'border.width.1 / .2', value: ['1', '2'].map((width) => displayValue(token(primitiveTokens, `border-width.${width}`))).join(' / ') },
+  ...borderColors.map(({ name, hex }) => ({ name: `border.${name}`, value: hex })),
+  { name: 'overlay.backdrop', value: displayColor(colors.value('overlay.backdrop')) },
+  { name: 'focus.ring', value: displayValue(token(effectTokens, 'focus.ring')) },
+  zGroup(['base', 'sticky', 'dropdown']),
+  zGroup(['drawer', 'modal', 'toast', 'tooltip']),
+];
+
+const sceneGenes = ['IL1R1 1.00', 'PLAUR 0.97', 'PTGS2 0.96', 'TNFAIP6 0.96', 'ICAM1 0.94'];
+const sceneSuggestions = ['IL1A interleukin 1 alpha', 'IL1B interleukin 1 beta', 'IL1R1 interleukin 1 receptor type 1', 'IL1RN interleukin 1 receptor antagonist'];
+---
+
+<DocsLayout title="Elevation and borders" description="Elevation levels, layer order, borders, surfaces and card states.">
+  <Intro
+    lead="Elevation shows what sits on top of what. Most of HumanBase is flat and separated by thin borders, which keeps dense scientific screens calm. Shadows are kept for things that float above the page, such as menus, the scrolled top bar and dialogs, so a shadow always means “this is on top and can be dismissed”."
+    status="Updated October 16, 2026 · Shadows use ink (#1A1A1A) at low opacity, never color"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Borders before shadows', text: 'Cards, tables and panels sit flat with a 1px border. Only add a shadow when something truly floats.' },
+        { title: 'A shadow means on top', text: 'Menus, suggestions, drawers and dialogs get shadows because they cover content and can be closed.' },
+        { title: 'Higher means more important', text: 'Each level has one job. Something at a higher level always appears above everything below it.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Elevation levels" lead="Five levels from flat to modal. Each shadow pairs a tight, darker shadow that defines the edge with a soft, wide one that sets the height.">
+    <ul class="levels">
+      {
+        levels.map(({ level, name, text }) => (
+          <li>
+            <div class="level-surface" style={`--elevation: var(--shadow-elevation-${level})`} data-level={level}>
+              <span class="level-number">{level}</span>
+              <strong>{name}</strong>
+            </div>
+            <code>elevation.{level}</code>
+            <p>{text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <DocTable caption="Elevation values" columns={['Level', 'Shadow']} widths={['184px']}>
+      {levels.map(({ level, name, value }) => <tr><th scope="row">{level} {name}</th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Elevation in context" lead="A HumanBase results page with every level in use. Numbers mark each level.">
+    <figure class="scene-figure">
+      <div class="scene" aria-hidden="true">
+        <div class="scene-topbar"><span>humanbase</span><span class="scene-search">IL1</span><span class="level-tag scene-tag-3">3</span></div>
+        <div class="scene-list">
+          <strong>Functionally related genes</strong>
+          <ul>{sceneGenes.map((gene) => <li>{gene}</li>)}</ul>
+          <span class="level-tag">0</span>
+        </div>
+        <div class="scene-card">
+          <strong>IL1B interleukin 1 beta</strong>
+          <span>Card lifts on hover</span>
+          <span class="level-tag">1</span>
+        </div>
+        <div class="scene-main"><strong>Network graph</strong></div>
+        <ul class="scene-suggestions">
+          {sceneSuggestions.map((suggestion, index) => <li data-highlighted={index === 1 || undefined}>{suggestion}</li>)}
+          <span class="level-tag">2</span>
+        </ul>
+        <span class="scene-tooltip">Score: 0.94</span>
+        <div class="scene-backdrop">
+          <div class="scene-dialog">
+            <strong>Delete this job?</strong>
+            <span>Results will no longer be available.</span>
+            <p><span class="scene-keep">Keep</span><span class="scene-delete">Delete</span></p>
+          </div>
+          <span class="level-tag">4</span>
+        </div>
+      </div>
+      <figcaption>
+        <span class="visually-hidden">A results page: the gene list and main view are flat at level 0, a hovered card is at level 1, search suggestions and a tooltip are at level 2, the top bar is at level 3 and a dialog is at level 4.</span>
+        The dialog is shown small over part of the page for the example; in the product its backdrop covers the whole window.
+      </figcaption>
+    </figure>
+  </DocSection>
+
+  <DocSection title="Layer order" lead="When elements overlap, this order decides which one is on top. Developers set it with z-index tokens, spaced by 100 so new layers can fit between.">
+    <DocTable caption="Layer order tokens" columns={['Token', 'Value', 'Use']} widths={['244px', '104px']}>
+      {layerTokens.map((entry) => <tr><th scope="row"><code>{entry.path.join('.')}</code></th><td><strong>{displayValue(entry)}</strong></td><td>{entry.token.$description}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Borders" lead="Two widths and five colors. A 1px border separates; a 2px border signals a state, such as focus, selection or an error." spacing="loose">
+    <div class="card-grid" style="--columns: 2">
+      <div class="border-width">
+        <p class="border-sample" data-width="1">1px</p>
+        <code>border.width.1</code>
+        <p>Default for cards, tables, dividers and fields</p>
+      </div>
+      <div class="border-width">
+        <p class="border-sample" data-width="2">2px</p>
+        <code>border.width.2</code>
+        <p>Focused field, selected card, error</p>
+      </div>
+    </div>
+    <DocTable caption="Border colors" columns={['Sample', 'Token', 'Value', 'On white', 'Use']} widths={['80px', '264px', '144px', '124px']}>
+      {
+        borderColors.map(({ name, use, hex, ratio, passes }) => (
+          <tr>
+            <td><span class="border-swatch" style={`--swatch: var(--border-${name})`} /></td>
+            <th scope="row"><code>border.{name}</code></th>
+            <td><code>{hex}</code></td>
+            <td><strong class:list={['contrast', { 'contrast-pass': passes }]}>{ratio}</strong></td>
+            <td>{use}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Surfaces" lead="Each surface pairs a fill with its border and elevation, so a layer always looks the same wherever it appears." spacing="loose">
+    <ul class="samples">
+      {
+        surfaces.map(({ name, token, text }) => (
+          <li>
+            <span class="surface-sample" data-surface={name}>Aa</span>
+            <code>{token}</code>
+            <p>{text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Card states" lead="How a clickable card, such as a gene, network or dataset card, combines borders and elevation. The card stays white in every state; selected uses a 2px border and a check, not a fill color." spacing="loose">
+    <ul class="samples">
+      {
+        cardStates.map(({ state, title, text }) => (
+          <li>
+            <div class="state-card-sample" data-state={state}>
+              <strong>Blood vessel {state === 'selected' && <Icon name="check-circle" size={20} label="Selected" />}</strong>
+              <span>Tissue network, 25,825 genes</span>
+            </div>
+            <strong class="sample-title">{title}</strong>
+            <p>{text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Do and don’t" spacing="loose">
+    <ul class="pairs">
+      <li class="pair pair-do">
+        <div class="pair-stage" aria-hidden="true"><span /><span /><span class="wide" /></div>
+        <h3>Do. Keep page cards flat</h3>
+        <p>Cards and tables on the page use a 1px border. The page stays quiet and menus stand out.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage pair-stage-shadowed" aria-hidden="true"><span /><span /><span class="wide" /></div>
+        <h3>Don’t. Shadow everything</h3>
+        <p>When every card has a shadow, nothing looks on top and dense screens look busy.</p>
+      </li>
+      <li class="pair pair-do">
+        <div class="pair-stage pair-stage-single" aria-hidden="true"><span /></div>
+        <h3>Do. Use ink for shadows</h3>
+        <p>Shadows are ink at low opacity, so they read as depth on white and grey surfaces.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage pair-stage-single pair-stage-glow" aria-hidden="true"><span /></div>
+        <h3>Don’t. Use colored glows</h3>
+        <p>Green or yellow glows look like a state or an error, and fade on the green header.</p>
+      </li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Tokens" lead="Names developers can use now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Elevation, border, surface and layer tokens" columns={['Token', 'Value']} widths={['364px']}>
+      {tokenRows.map(({ name, value }) => <tr><th scope="row"><code>{name}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .levels,
+  .samples {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    list-style: none;
+  }
+
+  .levels {
+    padding: var(--space-12) var(--space-10);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .samples {
+    gap: var(--space-5);
+    padding: var(--space-10) var(--space-8);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .levels li,
+  .samples li,
+  .border-width {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+  }
+
+  .levels li {
+    gap: var(--space-4);
+  }
+
+  .levels code,
+  .samples code,
+  .border-width code {
+    font: var(--type-code-sm);
+    color: var(--text-default);
+  }
+
+  .levels p,
+  .samples p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .level-surface {
+    display: grid;
+    align-content: start;
+    gap: var(--space-1);
+    block-size: 140px;
+    padding: var(--space-6) var(--space-5);
+    background: var(--surface-page);
+    border-radius: var(--radius-md);
+    box-shadow: var(--elevation);
+  }
+
+  .level-surface[data-level="0"] {
+    border: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .level-surface[data-level="4"] {
+    border-radius: var(--radius-lg);
+  }
+
+  .level-number {
+    font: 500 40px/1.1 Cabin, sans-serif;
+  }
+
+  .level-surface strong {
+    font: var(--type-label);
+  }
+
+  .level-tag {
+    padding: var(--space-0-5) 7px;
+    font: 700 12px/16px Lato, sans-serif;
+    color: var(--text-on-brand);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+  }
+
+  .scene-figure {
+    display: grid;
+    gap: var(--space-6);
+    margin: 0;
+  }
+
+  .scene-figure figcaption {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .scene {
+    position: relative;
+    block-size: 600px;
+    overflow: hidden;
+    font: 400 15px/18px Lato, sans-serif;
+    color: var(--text-secondary);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .scene > *,
+  .scene .level-tag {
+    position: absolute;
+  }
+
+  .scene-topbar {
+    inset: 0 0 auto;
+    display: flex;
+    align-items: center;
+    block-size: 64px;
+    padding-inline: var(--space-8);
+    font: 600 20px/24px Cabin, sans-serif;
+    color: var(--text-on-brand);
+    background: var(--action-primary);
+    box-shadow: var(--shadow-elevation-3);
+  }
+
+  .scene-search {
+    position: absolute;
+    inset: 12px auto auto 900px;
+    inline-size: 420px;
+    block-size: 40px;
+    padding: 10px var(--space-4);
+    font: 400 15px/18px Lato, sans-serif;
+    color: var(--text-default);
+    background: var(--surface-page);
+    border-radius: var(--radius-md);
+  }
+
+  .scene-tag-3 {
+    inset: 22px auto auto 1336px;
+  }
+
+  .scene-list,
+  .scene-card,
+  .scene-main {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .scene strong {
+    font: 600 18px/22px Cabin, sans-serif;
+    color: var(--text-default);
+  }
+
+  .scene-list {
+    inset: 96px auto auto 32px;
+    inline-size: 400px;
+    block-size: 472px;
+  }
+
+  .scene-list ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .scene-list li {
+    padding-block: var(--space-3) 14px;
+    border-block-start: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .scene-list .level-tag {
+    inset: 8px 8px auto auto;
+  }
+
+  .scene-card {
+    inset: 96px auto auto 456px;
+    inline-size: 420px;
+    block-size: 180px;
+    background: var(--surface-page);
+    box-shadow: var(--shadow-elevation-1);
+  }
+
+  .scene-card span:not(.level-tag) {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .scene-card .level-tag {
+    inset: 8px 8px auto auto;
+  }
+
+  .scene-main {
+    inset: 296px auto auto 456px;
+    inline-size: 895px;
+    block-size: 272px;
+    background: var(--surface-subtle);
+  }
+
+  .scene-main strong {
+    color: var(--text-muted);
+  }
+
+  .scene-suggestions {
+    inset: 58px auto auto 900px;
+    inline-size: 420px;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    color: var(--text-default);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-elevation-2);
+  }
+
+  .scene-suggestions li {
+    padding: 11px 14px;
+    border-radius: 6px;
+  }
+
+  .scene-suggestions li[data-highlighted] {
+    background: var(--surface-sunken);
+  }
+
+  .scene-suggestions .level-tag {
+    inset: 8px -24px auto auto;
+  }
+
+  .scene-tooltip {
+    inset: 300px auto auto 720px;
+    padding: var(--space-2) var(--space-4);
+    font: var(--type-body-sm);
+    color: var(--text-on-brand);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-elevation-2);
+  }
+
+  .scene-backdrop {
+    inset: 330px auto auto 940px;
+    inline-size: 411px;
+    block-size: 238px;
+    background: var(--overlay-backdrop);
+    border-radius: var(--radius-md);
+  }
+
+  .scene-dialog {
+    position: absolute;
+    inset: 26px auto auto 28px;
+    display: grid;
+    gap: var(--space-2);
+    inline-size: 355px;
+    block-size: 186px;
+    padding: 22px var(--space-6);
+    font: var(--type-body-sm);
+    background: var(--surface-page);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-elevation-4);
+  }
+
+  .scene-dialog p {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: end;
+    align-self: end;
+  }
+
+  .scene-dialog p span {
+    padding: 10px 22px;
+    font: 700 15px/18px Lato, sans-serif;
+    border-radius: var(--radius-md);
+  }
+
+  .scene-keep {
+    color: var(--action-primary);
+    border: var(--border-width-1) solid var(--action-primary);
+  }
+
+  .scene-delete {
+    color: var(--text-on-brand);
+    background: var(--status-error-fg);
+  }
+
+  .scene-backdrop .level-tag {
+    inset: 10px 10px auto auto;
+  }
+
+  .border-sample {
+    padding: 28px var(--space-6);
+    font: 500 32px/1.1 Cabin, sans-serif;
+    color: var(--text-default);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-strong);
+    border-radius: var(--radius-md);
+  }
+
+  .border-sample[data-width="2"] {
+    border: var(--border-width-2) solid var(--border-selected);
+  }
+
+  .border-width p:last-child {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .border-swatch {
+    display: block;
+    inline-size: 56px;
+    block-size: 36px;
+    background: var(--surface-page);
+    border: var(--border-width-2) solid var(--swatch);
+    border-radius: var(--radius-sm);
+  }
+
+  .contrast {
+    font: var(--type-label-sm);
+    color: var(--text-muted);
+  }
+
+  .contrast-pass {
+    color: var(--status-success-fg);
+  }
+
+  .surface-sample {
+    display: block;
+    block-size: 110px;
+    padding: var(--space-5) var(--space-4);
+    font: 500 28px/1.1 Cabin, sans-serif;
+    color: var(--text-default);
+    border-radius: var(--radius-md);
+  }
+
+  .surface-sample[data-surface="page"] {
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .surface-sample[data-surface="sunken"] {
+    background: var(--surface-sunken);
+  }
+
+  .surface-sample[data-surface="overlay"] {
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    box-shadow: var(--shadow-elevation-2);
+  }
+
+  .surface-sample[data-surface="inverse"] {
+    color: var(--text-on-brand);
+    background: var(--surface-inverse);
+    box-shadow: var(--shadow-elevation-2);
+  }
+
+  .surface-sample[data-surface="backdrop"] {
+    background: var(--overlay-backdrop);
+  }
+
+  .state-card-sample {
+    display: grid;
+    gap: 6px;
+    padding: var(--space-5);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .state-card-sample strong {
+    display: flex;
+    justify-content: space-between;
+    font: 600 18px/23px Cabin, sans-serif;
+    color: var(--text-default);
+  }
+
+  .state-card-sample strong :global(svg) {
+    color: var(--action-primary);
+  }
+
+  .state-card-sample span {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .state-card-sample[data-state="hover"] {
+    border-color: var(--border-default);
+    box-shadow: var(--shadow-elevation-1);
+  }
+
+  .state-card-sample[data-state="selected"] {
+    border: var(--border-width-2) solid var(--border-selected);
+  }
+
+  .state-card-sample[data-state="focus"] {
+    box-shadow: var(--shadow-focus-ring);
+  }
+
+  .state-card-sample[data-state="disabled"] {
+    background: var(--surface-subtle);
+  }
+
+  .state-card-sample[data-state="disabled"] strong,
+  .state-card-sample[data-state="disabled"] span {
+    color: var(--text-muted);
+  }
+
+  .sample-title {
+    font: var(--docs-small-strong);
+    color: var(--text-default);
+  }
+
+  .pair-stage {
+    display: grid;
+    grid-template-columns: repeat(2, 128px);
+    grid-template-rows: 72px 64px;
+    gap: var(--space-4);
+    block-size: 200px;
+    padding: var(--space-6) var(--space-5);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .pair-stage span {
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .pair-stage .wide {
+    grid-column: span 2;
+  }
+
+  .pair-stage-shadowed span {
+    border-color: transparent;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-grey-900) 18%, transparent);
+  }
+
+  .pair-stage-single {
+    grid-template-columns: 200px;
+    grid-template-rows: 100px;
+    place-content: center;
+  }
+
+  .pair-stage-single span {
+    box-shadow: var(--shadow-elevation-2);
+  }
+
+  .pair-stage-glow span {
+    border-color: transparent;
+    box-shadow: 0 0 28px color-mix(in srgb, var(--color-mint-500) 55%, transparent);
+  }
+
+  @media (width < 64rem) {
+    .levels,
+    .samples {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .scene {
+      display: none;
+    }
+  }
+</style>

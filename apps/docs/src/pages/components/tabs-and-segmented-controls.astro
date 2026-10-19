@@ -1,0 +1,675 @@
+---
+import { RadioGroup, SegmentedControl, Select, Tabs, type Segment, type TabItem } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import Pair from '../../components/docs/Pair.astro';
+import PairList from '../../components/docs/PairList.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const geneTabs: TabItem[] = [
+  { value: 'overview', label: 'Overview' },
+  { value: 'interactions', label: 'Interactions', count: 210 },
+  { value: 'functions', label: 'Functions' },
+  { value: 'diseases', label: 'Diseases' },
+];
+const countedTabs: TabItem[] = [
+  { value: 'overview', label: 'Overview' },
+  { value: 'interactions', label: 'Interactions', count: 210 },
+  { value: 'functions', label: 'Functions', count: 48 },
+  { value: 'diseases', label: 'Diseases', count: 12 },
+];
+const resultTabs: TabItem[] = [
+  { value: 'genes', label: 'Genes', count: 25 },
+  { value: 'edges', label: 'Edges', count: 210 },
+  { value: 'terms', label: 'GO terms', count: 48 },
+  { value: 'diseases', label: 'Diseases', count: 12 },
+];
+const views: Segment[] = [
+  { value: 'network', label: 'Network' },
+  { value: 'table', label: 'Table' },
+  { value: 'heatmap', label: 'Heatmap' },
+];
+const topCounts: Segment[] = ['10', '25', '50'].map((value) => ({ value, label: value }));
+const networks = [
+  { value: 'tissue', label: 'Tissue-specific network', description: 'Uses genes active in the tissue you choose.' },
+  { value: 'global', label: 'Global network', description: 'Uses all tissues. Best when the trait has no clear tissue.' },
+];
+const tissues = ['Adipose tissue', 'Blood vessel', 'Brain', 'Heart', 'Liver'].map((label) => ({ value: label, label }));
+
+const tabStates = [
+  { title: 'Default', text: 'Grey 600 label (8.9:1)', value: 'none', tab: {} },
+  { title: 'Hover', text: 'Ink label, 2px grey 300 bar', value: 'none', tab: { 'data-state': 'hover' as const } },
+  { title: 'Selected', text: 'Ink label, 3px emerald bar', value: 'functions', tab: {} },
+  { title: 'Focus', text: 'Focus ring, 8px radius', value: 'none', tab: { 'data-state': 'focus' as const } },
+  { title: 'Disabled', text: 'Grey 400 label, skipped by arrow keys', value: 'none', tab: { disabled: true } },
+];
+const segmentStates = [
+  { title: 'Default', text: 'Grey 600 label on the grey 100 track', value: 'none', segment: {} },
+  { title: 'Hover', text: 'Grey 200 fill, ink label', value: 'none', segment: { 'data-state': 'hover' as const } },
+  { title: 'Selected', text: 'White fill, 1px grey 300 border, bold ink label', value: 'table', segment: {} },
+  { title: 'Focus', text: 'Focus ring on the selected segment', value: 'table', segment: { 'data-state': 'focus' as const } },
+  { title: 'Disabled', text: 'Grey 400 label, can’t be chosen', value: 'none', segment: { disabled: true } },
+];
+const radioStates = [
+  { title: 'Default', text: '1.5px grey 500 ring (5.3:1)', value: '', option: {} },
+  { title: 'Hover', text: '2px ink ring', value: '', option: { 'data-state': 'hover' as const } },
+  { title: 'Selected', text: '2px emerald ring, 10px emerald center', value: 'global', option: {} },
+  { title: 'Focus', text: 'Focus ring around the control', value: '', option: { 'data-state': 'focus' as const } },
+  { title: 'Disabled selected', text: 'Grey 300 ring, grey center', value: 'global', option: { disabled: true } },
+  { title: 'Error', text: '2px error ring with a message for the group', value: '', option: { 'data-state': 'error' as const } },
+];
+
+const tables = {
+  which: [
+    ['Tabs', 'The section of the page. Each tab has its own content and URL.', 'Gene page: Overview, Interactions, Functions, Diseases.'],
+    ['Segmented control', 'How the same data is shown. Nothing is submitted.', 'Results view: Network, Table, Heatmap. Show top 10, 25 or 50 genes.'],
+    ['Radio buttons', 'An answer in a form, sent when the form is submitted.', 'NetWAS job: tissue-specific or global network.'],
+    ['Select', 'Same as radios, but with more than 5 options or little room.', 'Tissue network (144 options). See Dropdowns and selects.'],
+  ],
+  keys: [
+    ['Tab', 'Moves to the selected tab, then on to the tab panel.', 'Moves to the selected option, then out of the group.'],
+    ['Left / Right Arrow', 'Moves to and opens the next or previous tab.', 'Selects the next or previous option. Up and Down work too.'],
+    ['Home / End', 'Opens the first or last tab.', 'Selects the first or last option.'],
+    ['Space', 'Opens the focused tab if it isn’t open.', 'Selects the focused option.'],
+  ],
+  writing: [
+    ['Name the content', 'Interactions', 'More info'],
+    ['Keep it short', 'GO terms', 'Gene Ontology biological process terms'],
+    ['Use sentence case', 'Top genes', 'Top Genes'],
+    ['Put counts in the badge, not the label', 'Diseases 12', 'Diseases (12)'],
+    ['Radios answer the legend', 'Network: Tissue-specific network', 'Network: Yes, use tissue'],
+  ],
+  specs: [
+    ['tab.height / padding / gap', '48px / 0 16px / 4px between tabs'],
+    ['tab.label', 'Lato Bold 16/24; grey 600 #4A4A4A, ink #1A1A1A when hovered or selected'],
+    ['tab.indicator', '3px emerald 600 #11713C, 2px top radius; hover 2px grey 300 #D1D1D1'],
+    ['tab.list.border', '1px border.subtle #E8E8E8'],
+    ['tab.count', 'Lato Bold 12/18, 6px side padding, radius.xs 4px, grey 100; emerald 50 with emerald 700 text when selected'],
+    ['segmented.track', 'grey 100 #EFEFEF, 4px padding, 4px gap, radius 12px (Medium) / 8px (Small)'],
+    ['segment.height.md / .sm', '36px / 28px, so the control is 44px / 36px'],
+    ['segment.radius.md / .sm', 'radius.sm 8px / radius.xs 4px'],
+    ['segment.selected', 'white, 1px border.default #D1D1D1, Lato Bold'],
+    ['segment.hover', 'grey 200 #E8E8E8'],
+    ['radio.size', '20px ring in a 24px box, 12px gap to the label'],
+    ['radio.ring', '1.5px grey 500 #6B6B6B; hover 2px ink; selected 2px emerald with 10px center; error 2px #B42318'],
+    ['focus.ring', '0 0 0 2px #FFFFFF, 0 0 0 5px #1A1A1A'],
+  ],
+};
+
+const usage = `import { RadioGroup, SegmentedControl, Tabs } from '@humanbase/ui';
+
+<Tabs label="IL1B sections" tabs={sections} value={tab} onChange={setTab}>
+  {panels[tab]}
+</Tabs>
+<SegmentedControl label="View" segments={views} value={view} onChange={setView} />
+<RadioGroup legend="Network" options={networks} defaultValue="tissue" name="network" />`;
+---
+
+<DocsLayout title="Tabs and segmented controls" description="Tabs, segmented controls and radio buttons: which to use, anatomy, states, keyboard support and writing.">
+  <Intro
+    lead="Tabs, segmented controls and radio buttons all let people pick one of a few options. They look different because they do different jobs: tabs move between sections of a page, a segmented control changes how the same results are shown, and radio buttons answer a question in a form."
+    status="Updated October 16, 2026 · Components: Tab, Tabs, Segment, Segmented control, Radio"
+  >
+    <KeyRules
+      rules={[
+        { title: 'One row of tabs', text: 'Never stack tabs inside tabs. The audit found gene pages nested five levels deep; a second level becomes a segmented control or a select.' },
+        { title: 'Selected is a shape', text: 'The selected tab gets a 3px emerald bar, the selected segment a white raised fill, the selected radio a filled center. Color is never the only signal.' },
+        { title: 'Keep the view in the URL', text: 'Each tab and view has its own address, so people can share a link to the Interactions tab or the table view.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Which control to use" lead="All three choose one option at a time. Pick by what changes when people choose.">
+    <DocTable caption="Which control to use" columns={['Control', 'What changes', 'HumanBase example']} widths={['264px', '464px']}>
+      {tables.which.map(([control, changes, example]) => <tr><th scope="row">{control}</th><td>{changes}</td><td>{example}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Tabs" lead="A row of tabs on a 1px grey 200 line. The selected tab is marked with a 3px emerald bar that sits on the line.">
+    <figure class="anatomy">
+      <div class="anatomy-page">
+        <Tabs label="IL1B sections" tabs={geneTabs} defaultValue="overview" />
+        <p>IL1B is a cytokine that drives inflammation and is linked to …</p>
+      </div>
+      <ol class="callouts">
+        <li style="--x: 315px; --line: 64px"><span>Selected tab: ink, 3px emerald bar</span></li>
+        <li class="callout-end" style="--x: 499px; --line: 64px"><span>Count, optional</span></li>
+        <li class="callout-end" style="--x: 1000px; --line: 101px"><span>1px grey 200 line under the whole row</span></li>
+      </ol>
+      <figcaption class="visually-hidden">The parts of a tab row, numbered.</figcaption>
+    </figure>
+  </DocSection>
+
+  <DocSection title="Tab states" lead="Labels are Lato Bold 16 in every state, so the width never jumps when a tab is selected.">
+    <ul class="states states-5 states-white tab-states">
+      {
+        tabStates.map((state) => (
+          <li>
+            <Tabs label={`${state.title} tab example`} tabs={[{ value: 'functions', label: 'Functions', ...state.tab }]} value={state.value} />
+            <strong>{state.title}</strong>
+            <span>{state.text}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Counts and narrow screens" lead="Counts tell people how much is behind a tab before they open it. On narrow screens the row scrolls sideways instead of wrapping.">
+    <div class="counts">
+      <h3 class="eyebrow">With counts</h3>
+      <Tabs label="Network results" tabs={resultTabs} defaultValue="genes" />
+    </div>
+    <div class="narrow">
+      <figure class="phone-figure">
+        <div class="phone">
+          <Tabs label="IL1B sections on a phone" tabs={geneTabs.map(({ count: _count, ...tab }) => tab)} defaultValue="overview" />
+        </div>
+        <figcaption>375px: the row scrolls, and a white fade shows there is more</figcaption>
+      </figure>
+      <ul class="points">
+        <li>Scroll the selected tab into view when the page loads.</li>
+        <li>Don’t shorten labels to make them fit; let the row scroll.</li>
+        <li>With more than 6 tabs, the page needs fewer sections, not more tabs.</li>
+      </ul>
+    </div>
+  </DocSection>
+
+  <DocSection title="Segmented control" lead="A compact switch for 2 to 4 views of the same results. It changes the view right away; nothing is submitted.">
+    <div class="stage sizes">
+      <figure>
+        <h3 class="eyebrow">Medium</h3>
+        <SegmentedControl label="View, medium" hideLabel segments={views} />
+        <figcaption>44px overall, 36px segments, 12px track radius. Page toolbars.</figcaption>
+      </figure>
+      <figure>
+        <h3 class="eyebrow">Small</h3>
+        <SegmentedControl label="View, small" hideLabel size="small" segments={views} />
+        <figcaption>36px overall, 28px segments, 8px track radius. Panels and graph controls.</figcaption>
+      </figure>
+    </div>
+    <ul class="states states-5 stage">
+      {
+        segmentStates.map((state) => (
+          <li>
+            <SegmentedControl label={`${state.title} segment example`} hideLabel segments={[{ value: 'table', label: 'Table', ...state.segment }]} value={state.value} />
+            <strong>{state.title}</strong>
+            <span>{state.text}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="stage options">
+      <figure>
+        <h3 class="eyebrow">Two options</h3>
+        <SegmentedControl label="View, two options" hideLabel segments={views.slice(0, 2)} />
+      </figure>
+      <figure>
+        <h3 class="eyebrow">With icons</h3>
+        <SegmentedControl
+          label="View, with icons"
+          hideLabel
+          segments={[
+            { value: 'network', label: 'Network', icon: 'gene-network' },
+            { value: 'modules', label: 'Modules', icon: 'module' },
+            { value: 'heatmap', label: 'Heatmap', icon: 'heatmap' },
+          ]}
+        />
+      </figure>
+      <figure>
+        <h3 class="eyebrow">Short values</h3>
+        <SegmentedControl label="Show top, short values" hideLabel size="small" segments={topCounts} defaultValue="25" />
+      </figure>
+    </div>
+    <ul class="points points-tight">
+      <li>Segments size to their labels; keep labels to one or two words.</li>
+      <li>Icons are optional and always come with a label. Use the science icons at the segment size.</li>
+      <li>Give the control a visible label or place it under a heading, such as “View” or “Show top”.</li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Radio buttons" lead="For a choice in a form. All options are visible, one is always selected by default when there is a safe choice.">
+    <ul class="states states-6 states-white">
+      {
+        radioStates.map((state) => (
+          <li>
+            <RadioGroup legend={`${state.title} radio example`} hideLegend options={[{ value: 'global', label: 'Global network', ...state.option }]} value={state.value} />
+            <strong>{state.title}</strong>
+            <span>{state.text}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="groups">
+      <div class="group-card">
+        <h3 class="eyebrow">Stacked, with descriptions</h3>
+        <RadioGroup legend="Network" hint="Which network NetWAS uses to reweight your GWAS results." options={networks} defaultValue="tissue" />
+      </div>
+      <div class="group-card">
+        <h3 class="eyebrow">In a row, short labels</h3>
+        <RadioGroup legend="Input" direction="row" options={[{ value: 'list', label: 'Gene list' }, { value: 'file', label: 'Upload file' }]} defaultValue="list" />
+      </div>
+      <div class="group-card">
+        <h3 class="eyebrow">Error</h3>
+        <RadioGroup legend="Network" options={networks.map(({ description: _description, ...option }) => option)} error="Choose a network so NetWAS knows which genes to compare." />
+      </div>
+    </div>
+  </DocSection>
+
+  <DocSection title="HumanBase patterns" lead="Each control in a real screen, so the difference between them is easy to see." spacing="loose">
+    <section class="pattern gene-page" aria-labelledby="gene-page-heading">
+      <h3 id="gene-page-heading" class="eyebrow">Gene page: tabs for sections</h3>
+      <header class="gene-header">
+        <p class="gene-symbol">IL1B</p>
+        <p class="gene-meta"><span>interleukin 1 beta</span><span>Entrez 3553</span><span>Human</span></p>
+      </header>
+      <Tabs label="IL1B sections, pattern" tabs={countedTabs} defaultValue="interactions" />
+      <div class="toolbar">
+        <SegmentedControl label="View" segments={views.slice(0, 2)} />
+        <SegmentedControl label="Show top" size="small" segments={topCounts} defaultValue="25" />
+        <p>Tabs choose the section. The segmented controls change how the Interactions tab is shown.</p>
+      </div>
+    </section>
+    <section class="pattern job-form" aria-labelledby="job-form-heading">
+      <div class="job-notes">
+        <h3 id="job-form-heading" class="eyebrow">NetWAS job form: radios for answers</h3>
+        <p>Radio buttons sit in the form with the other fields and are sent with it. A safe default is selected, so most people can submit without changing it.</p>
+      </div>
+      <form class="job-fields" aria-label="NetWAS job example">
+        <RadioGroup legend="Network" options={[networks[0]!, { value: 'global', label: 'Global network', description: 'Uses all tissues.' }]} defaultValue="tissue" name="network" />
+        <Select label="Tissue network" placeholder="Choose a tissue" hint="Pick the tissue closest to your study." options={tissues} defaultValue="Blood vessel" />
+      </form>
+    </section>
+  </DocSection>
+
+  <DocSection title="Keyboard and accessibility" lead="Tabs follow the ARIA tabs pattern. Segmented controls and radios are radio groups. In all three, Tab enters the group once and the arrow keys move inside it.">
+    <DocTable caption="Keyboard support" columns={['Key', 'Tabs', 'Segmented control and radios']} widths={['224px', '404px']}>
+      {tables.keys.map(([key, tabs, radios]) => <tr><th scope="row"><kbd>{key}</kbd></th><td>{tabs}</td><td>{radios}</td></tr>)}
+    </DocTable>
+    <ul class="checks rounded-checks">
+      <li><h3>Name the group</h3><p>Tab lists get a label such as “IL1B sections”. Radio groups use a fieldset and legend.</p></li>
+      <li><h3>Selected is announced</h3><p>Use aria-selected on tabs and aria-checked on segments, not only the visual bar.</p></li>
+      <li><h3>Contrast</h3><p>Unselected labels are grey 600 (8.9:1 on white, 7.9:1 on grey 100). Radio rings are grey 500 (5.3:1).</p></li>
+      <li><h3>Targets</h3><p>Tabs are 48px tall, segments 36px or 28px inside a 44px or 36px control, radio rows at least 24px with the label clickable.</p></li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Writing labels" lead="One or two words, in sentence case, named for what is inside.">
+    <DocTable caption="How to write labels" columns={['Guideline', 'Write', 'Not']} widths={['384px', '384px']}>
+      {tables.writing.map(([guideline, write, not]) => <tr><th scope="row">{guideline}</th><td class="write-yes">{write}</td><td class="write-no">{not}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <div class="tab-pairs">
+      <PairList>
+        <Pair kind="do" title="Do. Use one row of tabs" text="Use a segmented control for the second choice.">
+          <Tabs label="Do example sections" tabs={geneTabs.slice(0, 2).map(({ count: _count, ...tab }) => tab)} defaultValue="interactions" />
+          <SegmentedControl label="Do example view" hideLabel size="small" segments={views.slice(0, 2)} />
+        </Pair>
+        <Pair kind="dont" title="Don’t. Stack tabs inside tabs" text="Two rows of tabs hide where people are. This is how gene pages reach five levels today.">
+          <Tabs label="Don’t example sections" tabs={geneTabs.slice(0, 2).map(({ count: _count, ...tab }) => tab)} defaultValue="interactions" />
+          <Tabs label="Don’t example views" tabs={views.slice(0, 2)} defaultValue="network" />
+        </Pair>
+        <Pair kind="do" title="Do. Switch views with segments" text="Network and Table show the same results, so they belong in a segmented control.">
+          <SegmentedControl label="Do example results view" hideLabel size="small" segments={views} />
+        </Pair>
+        <Pair kind="dont" title="Don’t. Use segments for actions" text="“Download” runs a command; it isn’t a view. Use a button instead.">
+          <SegmentedControl label="Don’t example results view" hideLabel size="small" segments={[...views.slice(0, 2), { value: 'download', label: 'Download' }]} />
+        </Pair>
+      </PairList>
+    </div>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Tab, segment and radio tokens and values" columns={['Token', 'Value']} widths={['404px']}>
+      {tables.specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the components in code">
+    <ul>
+      <li><code>Tabs</code> follows the ARIA tabs pattern with automatic activation: arrow keys move focus and open the tab, disabled tabs are skipped, and only the selected tab is in the Tab order. Pass the open tab’s content as children to get a labelled tab panel.</li>
+      <li>Keep the tab or view in the URL: control <code>value</code> from the route and update it in <code>onChange</code>.</li>
+      <li><code>SegmentedControl</code> and <code>RadioGroup</code> use native radio inputs, so the browser provides the radio role, checked state and arrow keys. <code>RadioGroup</code> is a fieldset with a legend and works in a plain form with <code>name</code>.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .eyebrow {
+    font: var(--docs-small-strong);
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .anatomy {
+    position: relative;
+    block-size: 280px;
+    margin: 0;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .anatomy-page {
+    position: absolute;
+    inset: 60px auto auto 240px;
+    display: grid;
+    gap: 28px;
+    inline-size: 900px;
+    block-size: 180px;
+    padding: var(--space-6);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .anatomy-page p {
+    padding-inline: var(--space-4);
+    font: 400 15px/1.5 Lato, sans-serif;
+    color: var(--text-secondary);
+  }
+
+  .callouts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: callout;
+  }
+
+  .callouts li {
+    position: absolute;
+    inset: 8px auto auto calc(var(--x) - 10px);
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 6px;
+    align-items: center;
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+    counter-increment: callout;
+    translate: calc(-100% + 21px) 0;
+  }
+
+  .callouts .callout-end {
+    flex-direction: row;
+    translate: none;
+  }
+
+  .callouts li::before {
+    padding: 2px 7px;
+    font: 700 12px/16px Lato, sans-serif;
+    color: var(--text-on-brand);
+    content: counter(callout);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+  }
+
+  .callouts li::after {
+    position: absolute;
+    inset: 22px auto auto 10px;
+    inline-size: 1px;
+    block-size: var(--line);
+    content: "";
+    background: var(--text-default);
+  }
+
+  .callouts li:first-child::after {
+    inset-inline: auto 10px;
+  }
+
+  .states {
+    display: grid;
+    gap: var(--space-6);
+    margin: 0;
+    padding: var(--space-10);
+    list-style: none;
+    border-radius: var(--radius-md);
+  }
+
+  .states-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .states-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .states-white {
+    border: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .states li {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+  }
+
+  .states strong {
+    font: 700 15px/1.4 Lato, sans-serif;
+  }
+
+  .states span {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .tab-states :global(.tabs-list) {
+    border-block-end: 0;
+  }
+
+  .stage {
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .counts {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-10);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .narrow {
+    display: grid;
+    grid-template-columns: 375px minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  .phone-figure {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .phone {
+    position: relative;
+    padding: 36px 0 36px var(--space-4);
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .phone::after {
+    position: absolute;
+    inset: 36px 0 auto auto;
+    inline-size: 48px;
+    block-size: 48px;
+    content: "";
+    background: linear-gradient(to right, transparent, var(--surface-page));
+  }
+
+  .phone figcaption,
+  .phone-figure figcaption,
+  .sizes figcaption {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .points-tight {
+    gap: 10px;
+  }
+
+  .sizes,
+  .options {
+    display: flex;
+    gap: var(--space-16);
+    padding: var(--space-10);
+  }
+
+  .sizes figure {
+    flex: 1;
+  }
+
+  .sizes figure,
+  .options figure {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+
+  .group-card {
+    display: grid;
+    align-content: start;
+    gap: var(--space-4);
+    padding: var(--space-8);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .pattern {
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .gene-page {
+    padding: var(--space-8) var(--space-10) 0;
+  }
+
+  .gene-header {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4) 0 var(--space-5);
+  }
+
+  .gene-symbol {
+    font: var(--type-h2);
+    color: var(--text-default);
+  }
+
+  .gene-meta {
+    display: flex;
+    gap: var(--space-3);
+    font: var(--type-body);
+    color: var(--text-secondary);
+  }
+
+  .toolbar {
+    display: flex;
+    gap: var(--space-6);
+    align-items: center;
+    padding: 76px 0 var(--space-12);
+  }
+
+  .toolbar p {
+    margin-inline-start: auto;
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .job-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 520px;
+    gap: var(--space-12);
+    padding: var(--space-10);
+  }
+
+  .job-notes {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+  }
+
+  .job-notes p {
+    font: 400 17px/1.55 Lato, sans-serif;
+    color: var(--text-secondary);
+  }
+
+  .job-fields {
+    display: grid;
+    gap: var(--space-5);
+    padding: 28px;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .rounded-checks li {
+    border-radius: var(--radius-md);
+  }
+
+  .tab-pairs :global(.pair-stage) {
+    justify-items: start;
+    gap: var(--space-3);
+    padding-block: 28px;
+  }
+
+  .tab-pairs :global(.pair-stage > .tabs) {
+    justify-self: stretch;
+  }
+
+  @media (width < 64rem) {
+    .states-5,
+    .states-6,
+    .groups,
+    .narrow,
+    .job-form {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sizes,
+    .options,
+    .toolbar {
+      flex-wrap: wrap;
+    }
+
+    .anatomy {
+      block-size: auto;
+      padding: var(--space-6);
+    }
+
+    .anatomy-page {
+      position: static;
+      inline-size: auto;
+    }
+
+    .callouts {
+      display: grid;
+      gap: var(--space-2);
+      margin-block-start: var(--space-4);
+    }
+
+    .callouts li,
+    .callouts .callout-end {
+      position: static;
+      flex-direction: row;
+      translate: none;
+    }
+
+    .callouts li::after {
+      display: none;
+    }
+  }
+</style>

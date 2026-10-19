@@ -1,0 +1,420 @@
+---
+import { Alert, Disclosure } from '@humanbase/ui';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const modes = [
+  {
+    name: 'Direct',
+    when: 'For people in the middle of a task: running a search, changing a filter, submitting a job, fixing a field.',
+    sounds: 'The action or answer first, in one short sentence. The reason follows only if it changes what they do.',
+    where: 'Forms, filters, tables, toasts, job status, a first error.',
+  },
+  {
+    name: 'Instructive',
+    when: 'For people arriving, exploring or stuck: on a tool’s landing page, using it for the first time, or hitting the same problem twice.',
+    sounds: 'Why first, then how, with an example to try. A few more sentences are fine, set in plain steps.',
+    where: 'Tool landing pages, empty states, toggletips, help panels, a repeated error.',
+  },
+];
+
+const signals = [
+  ['Arrived from a link in a paper or search engine', 'Instructive', 'The tool page leads with what the tool does and an example, before the form.'],
+  ['First time using this tool in this browser', 'Instructive', 'Short “How this works” notes are open by default; they stay closed afterwards.'],
+  ['Moving through a form or result', 'Direct', 'Labels, helper text and confirmations stay to one line.'],
+  ['Repeating a search or a job', 'Direct', 'Settings from last time are kept; explanations stay collapsed.'],
+  ['The same error twice in a row', 'Instructive', 'The message grows: why it happens, and an example or a link to fix it.'],
+  ['Nothing to show', 'Instructive', 'Empty states explain why and offer the next step.'],
+  ['Waiting for a job', 'Direct, then reassuring', 'Status first; what happens next and permission to leave below it.'],
+];
+
+const layers = [
+  ['The direct line', 'Always visible, complete on its own: what the field needs.'],
+  ['The why and how', 'One click away, in a disclosure or toggletip. Open by default the first time someone uses the tool here.'],
+  ['Something to try', 'An example file, gene or query, so people learn by doing rather than reading.'],
+];
+
+const phrasing = [
+  ['Error: choose a GWAS file.', 'Add a GWAS file to run NetWAS.', 'NetWAS needs your study’s GWAS results to rerank genes. Add a tab-separated file, or try the example.'],
+  ['Enter 20 to 3,500 genes.', 'Add at least 20 genes, up to 3,500.', 'Module discovery needs at least 20 genes to find groups, and handles up to 3,500. Paste a list or try the autism gene set.'],
+  ['Invalid threshold.', 'Use a threshold between 0 and 1, such as 0.01.', 'The p-value threshold sets which genes count as associated. Most studies use 0.01 or 0.05.'],
+  ['No results.', 'No genes match IL1Z.', 'IL1Z isn’t a known human gene symbol. Check the spelling, or search by Entrez ID or full name.'],
+];
+
+const tone = [
+  ['Arriving at a tool', 'Instructive', 'Find disease genes your GWAS may have missed. NetWAS reranks your results using a tissue network. Try the example BMI study.'],
+  ['Exploring results', 'Direct', 'IL1B’s strongest connection in blood vessel is IL1R1, at 0.97.'],
+  ['Something worked', 'Direct', 'NetWAS job submitted.'],
+  ['Waiting', 'Direct, then reassuring', 'Queued, 3rd in line. You can leave this page; Jobs in the top bar shows its progress.'],
+  ['Something went wrong', 'Direct, growing if repeated', 'This file has no p-value column. NetWAS needs a column named p or pvalue.'],
+  ['About to lose work', 'Direct', 'Delete this job? “BMI GWAS, adipose tissue” and its results will be removed.'],
+  ['Nothing to show', 'Instructive', 'No edges at 0.95 or more. IL1B’s strongest connection here is 0.93; lower the minimum to see the network.'],
+];
+
+const style = [
+  ['Sentence case', 'Every heading, button, tab, label and menu item: “Enriched terms”, not “Enriched Terms”. Proper nouns and gene symbols keep their case.'],
+  ['No em dashes', 'Use a comma, colon, parentheses or a new sentence instead.'],
+  ['Lists without a final comma', '“Network, Genes and Enriched terms”. Add the comma only when a list would be unclear without it.'],
+  ['Contractions are fine', '“Can’t”, “isn’t”, “you’re” read more naturally than their long forms.'],
+  ['Buttons start with a verb', '“Submit job”, “Download results”, “Copy link”. Never “OK” or “Yes”.'],
+  ['Links say where they go', '“See the file format”, not “click here” or “learn more” on its own.'],
+  ['Explain abbreviations once', 'GWAS, TSS and FDR get a toggletip or a short definition the first time on a page.'],
+  ['“You”, sparingly', 'Most text doesn’t need a subject: “Choose a tissue” rather than “You need to choose a tissue”.'],
+  ['Courtesy where it’s meant', '“Thanks, we got your report” when someone helps us. Not “please” in front of every instruction.'],
+  ['No accounts', 'Never “sign in”, “your profile” or “your account”. Jobs and settings belong to “this browser”.'],
+  ['Numbers and units', 'Follow Scientific notation and units.'],
+];
+
+const words = [
+  ['job', 'task, run, analysis request', 'Anything submitted that runs on the cluster: NetWAS, Sei, ExPecto.'],
+  ['result', 'output, report', 'What a search or job produces.'],
+  ['gene', 'node', 'In the interface. “Node” is fine in the docs’ methods.'],
+  ['connection', 'edge, link, interaction', 'Between two genes in a network. Its strength is a score. To confirm.'],
+  ['score', 'confidence, weight, probability', 'A number from 0 to 1. Today’s site says “minimum interaction confidence”. To confirm.'],
+  ['tissue network', 'tissue context, tissue-specific model', '“Blood vessel network”.'],
+  ['data version', 'method, model, release', 'MAGE (current) or GIANT v1. Today the network page labels this “Method”.'],
+  ['module', 'cluster, community', 'A group of genes found by module discovery; M1, M2.'],
+  ['enriched term', 'enrichment, GO hit', 'A GO term over-represented in a gene set.'],
+  ['this browser', 'your account', 'Where jobs and settings are kept.'],
+];
+
+const rewrites = [
+  ['We’ve made some changes and we’d like to show you around!', 'HumanBase has a new menu. See what moved.', 'Direct. Says what changed; drops the exclamation.'],
+  ['Please select a GWAS file as input.', 'Add a GWAS file to run NetWAS.', 'Direct. Gives the reason with the instruction.'],
+  ['Sorry, the page you were trying to view does not exist.', 'We couldn’t find that gene page. The link may be from an older version of the site.', 'Instructive. Explains why, then offers a way forward.'],
+  [
+    'Integrate tissue-specific networks and genome-wide association results to identify relevant disease-gene associations.',
+    'Find disease genes your GWAS may have missed, using tissue-specific networks.',
+    'Instructive, for arrival. Leads with the outcome; to check with the NetWAS team.',
+  ],
+  ['No results found', 'No genes match NOTAGENE123. Check the spelling, or search by Entrez ID or name.', 'Direct. Names the search and the next step.'],
+  ['running', 'Queued, 3rd in line', 'Direct. The API already knows the place in line.'],
+];
+---
+
+<DocsLayout title="Voice and content" description="How HumanBase writes: two modes of one voice, layered help, tone by moment, style rules and a word list.">
+  <Intro
+    lead="HumanBase speaks to researchers around the world, many reading in a second language. Some arrive mid-experiment and want an answer in seconds; others are exploring and want to understand what they’re looking at. We can’t tell which from the outside, so the words have to work for both: clear enough for the person in a hurry, and patient enough for the person who wants to stay and learn."
+    status="Updated October 16, 2026 · Usage guideline · Collects the writing rules from every page"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Precise', text: 'Name the real thing: the gene, the tissue, the data version, the number. “IL1B in blood vessel”, not “your results”.' },
+        { title: 'Plain', text: 'Short sentences and common words. Explain terms where they appear instead of avoiding them.' },
+        { title: 'Considerate', text: 'Direct never means curt. Give the reason with the instruction, so it reads as help, not an order. No exclamation marks, jokes or alarms.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Direct or instructive" lead="Two modes of the same voice. The interface can’t see who is in a hurry, but it knows where people are, so the moment decides the mode.">
+    <div class="modes">
+      {
+        modes.map((mode) => (
+          <article class="mode">
+            <h3>{mode.name}</h3>
+            <p class="mode-when">{mode.when}</p>
+            <h4>How it sounds</h4>
+            <p>{mode.sounds}</p>
+            <h4>Where</h4>
+            <p>{mode.where}</p>
+          </article>
+        ))
+      }
+    </div>
+  </DocSection>
+
+  <DocSection title="Reading the moment" lead="Signals the interface already has. None of them need tracking people or asking who they are.">
+    <DocTable caption="Reading the moment" columns={['Signal', 'Suggests', 'What changes']} widths={['420px', '240px']}>
+      {
+        signals.map(([signal, mode, change]) => (
+          <tr>
+            <th scope="row" class="signal">{signal}</th>
+            <td class="ink strong">{mode}</td>
+            <td>{change}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+    <p class="section-note">Opened or closed help is remembered in this browser, like other display settings. People can always open it, and always close it.</p>
+  </DocSection>
+
+  <DocSection title="Direct first, more on request" lead="The pattern that serves both at once. The first line is complete on its own; the next layer is one click away for anyone who wants it.">
+    <div class="layering">
+      <div class="upload">
+        <p class="upload-label">GWAS file</p>
+        <p class="upload-zone" data-illustration>Drop a file here, or choose one</p>
+        <p class="upload-hint">Tab-separated, with a gene column and a p-value column.</p>
+        <Disclosure label="Show how NetWAS uses this file" expandedLabel="Hide how NetWAS uses this file" controls="netwas-file-help" defaultOpen />
+        <div id="netwas-file-help" class="upload-more">
+          <p>NetWAS reranks the genes in your GWAS using the network for the tissue you choose, so genes with modest p-values but strong network support rise to the top.</p>
+          <p class="upload-more-detail">Each row is one gene and its p-value from your study. Gene symbols or Entrez IDs both work.</p>
+          <a href="#netwas-file-help">Try the example BMI file</a>
+        </div>
+      </div>
+      <ol class="layers">
+        {
+          layers.map(([title, text]) => (
+            <li>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </DocSection>
+
+  <DocSection title="When help grows" lead="A first mistake gets a short, kind fix. If the same thing happens again, the message turns instructive, because the short version clearly wasn’t enough.">
+    <div class="escalation">
+      <figure>
+        <figcaption>First time: direct</figcaption>
+        <Alert tone="error" title="This file has no p-value column">NetWAS needs a column named p or pvalue.</Alert>
+      </figure>
+      <figure>
+        <figcaption>Same problem again: instructive</figcaption>
+        <Alert tone="error" title="Still no p-value column" action={{ label: 'Download the example file', href: '#when-help-grows' }}>
+          NetWAS reads the column header to find the p-values. Rename the column to p or pvalue, keep the file tab-separated, and upload it again. The example file shows the layout.
+        </Alert>
+      </figure>
+    </div>
+  </DocSection>
+
+  <DocSection title="Firm, curt or considerate" lead="The same instruction three ways. Aim for the third: as short as the moment allows, with the reason that makes it reasonable.">
+    <DocTable caption="Firm, curt or considerate" columns={['Curt', 'Considerate, direct mode', 'Considerate, instructive mode']} widths={['300px', '420px']}>
+      {
+        phrasing.map(([curt, direct, instructive]) => (
+          <tr>
+            <td class="write-no">{curt}</td>
+            <td class="write-yes">{direct}</td>
+            <td class="write-yes">{instructive}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+    <p class="section-note">
+      Screen readers still hear “Error” first: it’s added as visually hidden text, so the visible message can lead with the fix. The red icon and border mark it on screen.
+    </p>
+  </DocSection>
+
+  <DocSection title="Tone by moment" lead="The voice stays the same; the mode and tone follow the moment.">
+    <DocTable caption="Tone by moment" columns={['Moment', 'Mode', 'Example']} widths={['260px', '260px']}>
+      {
+        tone.map(([moment, mode, example]) => (
+          <tr>
+            <th scope="row">{moment}</th>
+            <td>{mode}</td>
+            <td class="ink">{example}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Style rules" lead="The same everywhere: interface, docs, emails and Figma.">
+    <DocTable caption="Style rules" columns={['Rule', 'Detail']} widths={['320px']}>
+      {
+        style.map(([rule, detail]) => (
+          <tr>
+            <th scope="row">{rule}</th>
+            <td>{rule === 'Numbers and units' ? <>Follow <a href="/guidelines/scientific-notation-and-units/">Scientific notation and units</a>.</> : detail}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Word list" lead="One word for each thing, used everywhere. Items marked “to confirm” are for Julien and Natalie.">
+    <DocTable caption="Word list" columns={['Use', 'Not', 'Notes']} widths={['240px', '360px']}>
+      {
+        words.map(([use, not, notes]) => (
+          <tr>
+            <th scope="row"><code>{use}</code></th>
+            <td class="write-no">{not}</td>
+            <td>{notes}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Today’s copy, rewritten" lead="Real lines from the live site, with the mode each one should use.">
+    <DocTable caption="Today’s copy, rewritten" columns={['Today', 'Rewritten', 'Mode and why']} widths={['440px', '440px']}>
+      {
+        rewrites.map(([before, after, why]) => (
+          <tr>
+            <td class="write-no">{before}</td>
+            <td class="write-yes">{after}</td>
+            <td>{why}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .modes,
+  .escalation {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .mode {
+    display: grid;
+    gap: var(--space-3);
+    padding: 28px;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .mode h3 {
+    font: 600 24px/1.3 Cabin, sans-serif;
+  }
+
+  .mode-when {
+    font: var(--type-body);
+  }
+
+  .mode h4 {
+    font: var(--type-eyebrow);
+    color: var(--text-muted);
+  }
+
+  .mode p:not(.mode-when) {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .ink {
+    color: var(--text-default);
+  }
+
+  .strong {
+    font: var(--docs-small-strong);
+  }
+
+  .signal {
+    font-weight: 400;
+  }
+
+  .section-note {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .layering {
+    display: grid;
+    grid-template-columns: 600px minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .upload {
+    display: grid;
+    gap: 10px;
+    justify-items: start;
+    padding: 28px;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .upload-label {
+    font: var(--docs-small-strong);
+  }
+
+  .upload-zone,
+  .upload-more {
+    inline-size: 100%;
+  }
+
+  .upload-zone {
+    padding: 14px var(--space-4);
+    font: var(--docs-small);
+    color: var(--text-secondary);
+    border: var(--border-width-1) solid var(--border-strong);
+    border-radius: var(--radius-md);
+  }
+
+  .upload-hint {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .upload-more {
+    display: grid;
+    gap: var(--space-2);
+    padding: 14px var(--space-4);
+    font: var(--type-body-sm);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .upload-more-detail {
+    color: var(--text-secondary);
+  }
+
+  .upload-more a {
+    font: var(--type-label-sm);
+    color: var(--text-link);
+  }
+
+  .layers {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: layer;
+  }
+
+  .layers li {
+    display: grid;
+    grid-template-columns: 21px minmax(0, 1fr);
+    gap: 2px var(--space-3);
+    counter-increment: layer;
+  }
+
+  .layers li::before {
+    grid-row: span 2;
+    block-size: 20px;
+    font: 700 12px/16px Lato, sans-serif;
+    text-align: center;
+    color: var(--text-on-brand);
+    content: counter(layer);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+    padding-block: 2px;
+  }
+
+  .layers h3 {
+    font: var(--type-label);
+  }
+
+  .layers p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .escalation figure {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .escalation figcaption {
+    font: var(--type-label-sm);
+  }
+
+  @media (width < 64rem) {
+    .modes,
+    .escalation,
+    .layering {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,41 @@
+.action-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.action-menu-button {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 36px;
+  block-size: 36px;
+  padding: 0;
+  color: var(--text-default);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.action-menu-small .action-menu-button {
+  inline-size: 28px;
+  block-size: 28px;
+}
+
+.action-menu-button:hover,
+.action-menu-button[aria-expanded="true"] {
+  background: var(--surface-sunken);
+}
+
+.action-menu-panel {
+  position: absolute;
+  z-index: 200;
+  inset-block-start: calc(100% + var(--space-1));
+  inset-inline-end: 0;
+  min-inline-size: 240px;
+  animation: menu-open var(--motion-duration-base) var(--motion-easing-enter);
+}
+
+.action-menu-panel .menu-item:focus {
+  outline: none;
+  background: var(--surface-sunken);
+}

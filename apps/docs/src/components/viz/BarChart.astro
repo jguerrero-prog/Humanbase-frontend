@@ -1,0 +1,107 @@
+---
+interface Props {
+  title: string;
+  summary: string;
+  bars: [string, number][];
+  max: number;
+  ticks: number[];
+  axisTitle: string;
+  threshold: { value: number; label: string };
+}
+
+const { title, summary, bars, max, ticks, axisTitle, threshold } = Astro.props;
+const left = 216;
+const plot = 300;
+const row = 34;
+const x = (value: number) => left + (value / max) * plot;
+const height = bars.length * row + 52;
+---
+
+<figure class="viz-card bar-chart">
+  <figcaption>
+    <h3>{title}</h3>
+    <p class="visually-hidden">{summary}</p>
+  </figcaption>
+  <svg viewBox={`0 0 560 ${height}`} aria-hidden="true">
+    {ticks.map((tick) => <line class="grid" x1={x(tick)} x2={x(tick)} y1="0" y2={bars.length * row} />)}
+    {
+      bars.map(([label, value], i) => (
+        <g>
+          <text class="label" x={left - 10} y={i * row + 21}>{label}</text>
+          <rect x={left} y={i * row + 7} width={x(value) - left} height="20" rx="2" />
+          <text class="value" x={x(value) + 6} y={i * row + 21}>{value.toFixed(1)}</text>
+        </g>
+      ))
+    }
+    <line class="threshold" x1={x(threshold.value)} x2={x(threshold.value)} y1="0" y2={bars.length * row} />
+    {ticks.map((tick) => <text class="tick" x={x(tick)} y={bars.length * row + 18}>{tick}</text>)}
+    <text class="axis-title" x={left} y={bars.length * row + 40}>{axisTitle}</text>
+  </svg>
+  <slot />
+  <details class="table-view">
+    <summary>View as table</summary>
+    <div class="doc-table" role="region" aria-label={title} tabindex="0">
+      <table>
+        <caption class="visually-hidden">{summary}</caption>
+        <thead>
+          <tr><th scope="col">Term</th><th scope="col">{axisTitle}</th></tr>
+        </thead>
+        <tbody>
+          {bars.map(([label, value]) => <tr><th scope="row">{label}</th><td class="number">{value.toFixed(1)}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <p class="threshold-note">The dashed line marks {threshold.label}.</p>
+  </details>
+</figure>
+
+<style>
+  text {
+    font: 400 12px Lato, sans-serif;
+    fill: var(--text-secondary);
+  }
+
+  .label {
+    text-anchor: end;
+    fill: var(--text-default);
+  }
+
+  .value {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    fill: var(--text-default);
+  }
+
+  .tick {
+    text-anchor: middle;
+  }
+
+  .axis-title {
+    font-weight: 700;
+    fill: var(--text-default);
+  }
+
+  rect {
+    fill: var(--text-secondary);
+  }
+
+  .grid {
+    stroke: var(--border-subtle);
+  }
+
+  .threshold {
+    stroke: var(--text-muted);
+    stroke-dasharray: 3 3;
+  }
+
+  .number {
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  .threshold-note {
+    margin-block-start: var(--space-2);
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+</style>

@@ -1,0 +1,638 @@
+---
+import { Button, Dialog, Drawer, DrawerSection, TextInput, Toast } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import GeneDrawer from '../../components/docs/GeneDrawer.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NetworkSketch from '../../components/docs/NetworkSketch.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const deleteBody = '“BMI GWAS, adipose tissue” and its results will be removed. This can’t be undone.';
+
+const containers = [
+  ['Dialog', 'People must decide before going on, and the task fits in a few lines.', 'Delete a job. Share a result. Rename a job.'],
+  ['Drawer beside content', 'People want details or settings for something on the page while still seeing it.', 'Click a gene in the network to see its scores and functions. Edge evidence.'],
+  ['Drawer over content', 'The same, on narrow screens, or for settings that affect the whole view.', 'Network filters on a laptop or phone.'],
+  ['Page', 'A long task with several steps, or something people will want to link to.', 'Submit a NetWAS job. Gene page. Job results.'],
+  ['Toast', 'Nothing to decide; just confirming.', '“Link copied.” See Alerts and toasts.'],
+];
+
+const anatomy = [
+  ['Title', 'Cabin SemiBold 22. Asks the question or names the task.'],
+  ['Close', '32px icon button labeled “Close”. Same as Cancel.'],
+  ['Body', 'Lato 16, grey 600. Says what will happen, in one or two sentences.'],
+  ['Actions', 'Right-aligned. The main action is last; Cancel is a ghost button before it.'],
+  ['Backdrop', 'Ink at 40%. Clicking it closes simple dialogs, never forms or deletes.'],
+];
+const anatomyTags = [
+  [244, 197],
+  [640, 199],
+  [244, 245],
+  [658, 345],
+  [24, 520],
+];
+
+const sizes = [
+  ['Small', '400px', 'Confirmations and single fields. The default.'],
+  ['Medium', '560px', 'Short forms with two or three fields, or a list to choose from.'],
+  ['Large', '720px', 'Previewing a file or a share link with options. Anything bigger should be a page.'],
+];
+
+const evidence = [
+  ['MSigDB CGP', 'GSEA perturbations', '0.20'],
+  ['Tumor suppressor protein p53 gene dosage effects', 'Co-expression', '< 0.01'],
+  ['Skeletal muscle response to insulin infusion (HuGeneFL)', 'Co-expression', '< 0.01'],
+  ['Atypical ductal hyperplasia and breast cancer', 'Co-expression', '< 0.01'],
+  ['Androgen receptor modulator effect: time course (HG-U133A)', 'Co-expression', '< 0.01'],
+];
+const connectionNotes = [
+  'Opens when someone clicks a connection in the graph or a row in the connections table. Over content, Large, like gene detail.',
+  'Title names both genes; the subtitle names the network. Then the connection weight with its bar and one sentence on what it means.',
+  'Data types lists the types with evidence for this connection. Evidence by dataset ranks each dataset by its contribution, with its data type underneath.',
+  'Contribution is P(FR | D) − P(FR), as in the docs, so the note under the list says contributions don’t add up to the weight. Values under 0.01 read “< 0.01”.',
+  'The footer action shows the same connection in every network. Data from the live CCL3 and TRAF1 connection in the global network, October 17, 2026.',
+];
+
+const behavior = [
+  ['Opens', 'After an action, never on page load.', 'Clicking a gene, edge or row, or a Filters button.'],
+  ['Motion', 'Backdrop fades; dialog fades and grows from 98%, 200ms. Fade only with reduced motion.', 'Fades in while moving 16px from the right, 280ms. Fade only with reduced motion.'],
+  ['Closes', 'Escape, Close, Cancel, or the main action. Clicking the backdrop closes Confirm dialogs only.', 'Escape or Close. Clicking the page closes it only in over-content mode.'],
+  ['Unsaved changes', 'Form dialogs ask “Discard changes?” before closing.', 'Filter drawers apply as people change them, so nothing is lost.'],
+  ['Scrolling', 'The page behind doesn’t scroll. Long bodies scroll inside, actions stay fixed.', 'The drawer body scrolls; header and footer stay fixed.'],
+  ['Stacking', 'Never a dialog over a dialog. A dialog can open over a drawer.', 'One drawer at a time; a new item replaces the content.'],
+  ['Layer', 'z.modal (400).', 'z.drawer (300).'],
+];
+
+const focus = [
+  ['Dialog opens', 'The first field in a form; otherwise the least destructive button, such as Keep job. Never the delete button.'],
+  ['Inside a dialog', 'Tab and Shift Tab loop through the dialog only. The page behind is inert.'],
+  ['Drawer opens beside content', 'The drawer title, so screen readers announce it. Tab can leave the drawer and return to the graph.'],
+  ['Drawer over content', 'Same as a dialog: focus stays inside until it closes.'],
+  ['Closing either', 'Back to the button, gene or row that opened it, so people don’t lose their place.'],
+];
+
+const phoneNotes = [
+  'Dialog buttons stack full width when they don’t fit on one line, main action on top.',
+  'The sheet has a handle and a Close button. Swiping down closes it, but the button is always there for people who can’t swipe.',
+  'Sheets fade in with a 16px rise, never a full slide up the screen.',
+];
+
+const writing = [
+  ['Ask the real question', 'Delete this job?', 'Are you sure?'],
+  ['Name what is affected', '“BMI GWAS, adipose tissue” and its results will be removed.', 'This action will delete the selected item.'],
+  ['Buttons say what they do', 'Delete job Keep job', 'Yes No'],
+  ['Say if it can’t be undone', 'This can’t be undone.', 'Warning!!'],
+  ['Keep it short', 'One or two sentences', 'A paragraph of terms'],
+];
+
+const specs = [
+  ['dialog.width.sm / md / lg', '400px / 560px / 720px; 16px from the edges on phones'],
+  ['dialog.max-height', '85% of the window; body scrolls'],
+  ['dialog.surface', 'white, radius.lg 16px, elevation 4'],
+  ['dialog.padding', '24px; header 24 24 8 24, close button 16px from the right'],
+  ['dialog.title', 'Cabin SemiBold 22/30 ink'],
+  ['dialog.body', 'Lato 16/25 grey 600'],
+  ['dialog.actions', 'Medium buttons, 12px apart, right-aligned, main action last'],
+  ['drawer.width.md / lg', '480px / 640px; bottom sheet up to 90% height on phones'],
+  ['drawer.surface', 'white, 1px border.subtle on the left, elevation 3'],
+  ['drawer.header / footer', 'fixed, 1px border.subtle lines; body scrolls with 24px padding'],
+  ['backdrop', 'ink #1A1A1A at 40%'],
+  ['z.drawer / z.modal', '300 / 400'],
+  ['motion', 'dialog 200ms enter, 150ms exit; drawer 280ms enter, 200ms exit'],
+];
+
+const usage = `import { Button, Dialog, Drawer, DrawerSection } from '@humanbase/ui';
+
+<Dialog
+  title="Delete this job?"
+  kind="destructive"
+  open={confirming}
+  onClose={() => setConfirming(false)}
+  actions={<>
+    <Button variant="ghost" onClick={() => setConfirming(false)}>Keep job</Button>
+    <Button variant="destructive" onClick={deleteJob}>Delete job</Button>
+  </>}
+>
+  <p>“BMI GWAS, adipose tissue” and its results will be removed. This can’t be undone.</p>
+</Dialog>
+
+<Drawer title={gene.symbol} subtitle={gene.name} size="large" open={Boolean(gene)} onClose={clearGene}>
+  <DrawerSection label="Connection to IL1B">…</DrawerSection>
+</Drawer>`;
+---
+
+<DocsLayout title="Modals and drawers" description="Dialogs for decisions and drawers for detail: anatomy, sizes, behavior, focus and phones.">
+  <Intro
+    lead="Dialogs stop the page to ask one question. Drawers open beside the page to show more about something without leaving it. HumanBase uses dialogs rarely, for choices that can’t be undone, and drawers often, so people can read about a gene while its network stays in view."
+    status="Updated October 16, 2026 · Components: Dialog, Drawer · Elevation 4 and 3, motion from the Motion page"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Interrupt only when needed', text: 'A dialog is for a decision. Success messages, help and long forms belong on the page, in a toast or in a drawer.' },
+        {
+          title: 'Keep the context',
+          text: 'Gene, connection and module detail opens in a full-height drawer over the page, without a backdrop, so long annotation and evidence lists have room while the graph stays interactive. Clicking another node, edge or term updates the drawer; closing it returns to the result as it was.',
+        },
+        { title: 'Always a way out', text: 'Escape, a close button and a cancel option, every time. Focus returns to whatever opened it.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Dialog, drawer or page" lead="Pick the lightest container that fits.">
+    <DocTable caption="When to use a dialog, a drawer or a page" columns={['Container', 'Use when', 'HumanBase example']} widths={['244px', '504px']}>
+      {containers.map(([container, when, example]) => <tr><th scope="row">{container}</th><td>{when}</td><td>{example}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Dialogs" lead="Centered over a 40% ink backdrop that covers the whole window. Numbers mark each part.">
+    <figure class="anatomy">
+      <div class="screen anatomy-screen">
+        <div class="screen-bar" aria-hidden="true">humanbase</div>
+        <p class="screen-title" aria-hidden="true">IL1B in blood vessel</p>
+        <div class="screen-graph"><NetworkSketch /></div>
+        <div class="screen-backdrop" aria-hidden="true"></div>
+        <Dialog inline kind="destructive" title="Delete this job?" className="anatomy-dialog">
+          <p>{deleteBody}</p>
+          <Fragment slot="actions">
+            <Button variant="ghost">Keep job</Button>
+            <Button variant="destructive">Delete job</Button>
+          </Fragment>
+        </Dialog>
+        {anatomyTags.map(([x, y], index) => <span class="tag" style={`--x: ${x}px; --y: ${y}px`} aria-hidden="true">{index + 1}</span>)}
+      </div>
+      <ol class="legend">
+        {anatomy.map(([title, text], index) => <li><span class="tag-number">{index + 1}</span><div><strong>{title}</strong><p>{text}</p></div></li>)}
+      </ol>
+      <figcaption class="visually-hidden">The parts of a dialog, numbered.</figcaption>
+    </figure>
+  </DocSection>
+
+  <DocSection title="Sizes and types" lead="Three widths and three types. Height follows the content, up to 85% of the window; then the body scrolls and the actions stay visible.">
+    <ul class="types">
+      <li>
+        <strong>Confirm</strong>
+        <Dialog inline title="Share this result">
+          <p>Anyone with the link can view these results. They can’t change them or see your other jobs.</p>
+          <Fragment slot="actions">
+            <Button variant="ghost">Cancel</Button>
+            <Button>Copy link</Button>
+          </Fragment>
+        </Dialog>
+        <span>A decision with a safe main action</span>
+      </li>
+      <li>
+        <strong>Destructive</strong>
+        <Dialog inline kind="destructive" title="Delete this job?">
+          <p>{deleteBody}</p>
+          <Fragment slot="actions">
+            <Button variant="ghost">Keep job</Button>
+            <Button variant="destructive">Delete job</Button>
+          </Fragment>
+        </Dialog>
+        <span>The main action is red and names what is lost</span>
+      </li>
+      <li>
+        <strong>Form</strong>
+        <Dialog inline kind="form" title="Rename job">
+          <TextInput label="Job title" defaultValue="BMI GWAS, adipose tissue" hint="Shown in your job list and in the results email." />
+          <Fragment slot="actions">
+            <Button variant="ghost">Cancel</Button>
+            <Button>Save</Button>
+          </Fragment>
+        </Dialog>
+        <span>One to three fields, such as renaming a job</span>
+      </li>
+    </ul>
+    <DocTable caption="Dialog sizes" columns={['Size', 'Width', 'Use for']} widths={['224px', '164px']}>
+      {sizes.map(([size, width, use]) => <tr><th scope="row">{size}</th><td><code>{width}</code></td><td>{use}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection
+    title="Drawers"
+    lead="From the right edge, full height below the top bar. Over content, without a backdrop, is the default for gene, connection and module detail at every width, so the graph stays clickable. Beside content is for short panels, such as filters, where people keep working on the page."
+  >
+    <div class="drawer-mode">
+      <h3>Beside content: for short panels, such as filters</h3>
+      <div class="screen beside-screen">
+        <div class="screen-bar" aria-hidden="true">humanbase</div>
+        <div class="screen-main">
+          <p class="screen-title" aria-hidden="true">IL1B in blood vessel</p>
+          <div class="screen-graph"><NetworkSketch /></div>
+        </div>
+        <GeneDrawer />
+      </div>
+      <p class="mode-note">The graph shrinks to fit and stays interactive. Clicking another gene updates the drawer instead of opening a second one. No backdrop, and focus can move between the graph and the drawer.</p>
+    </div>
+
+    <div class="drawer-mode">
+      <h3>Over content: the default for gene, connection and module detail</h3>
+      <div class="screen over-screen">
+        <div class="screen-bar" aria-hidden="true">humanbase</div>
+        <div class="screen-main">
+          <p class="screen-title" aria-hidden="true">IL1B in blood vessel</p>
+          <div class="screen-graph"><NetworkSketch /></div>
+        </div>
+        <GeneDrawer />
+      </div>
+      <p class="mode-note">
+        The drawer sits over the page with no backdrop, so the graph underneath stays interactive: clicking another gene, connection or term updates the drawer instead of opening a second one, and focus can move between the graph and the drawer. Escape or the close button closes it. Large size, 640px. The header and footer stay fixed and the body scrolls. Revised October 17, 2026, after testing the live graphs: people click through nodes and terms while reading.
+      </p>
+    </div>
+
+    <div class="drawer-mode">
+      <h3>Connection detail: the same drawer for a link between two genes</h3>
+      <div class="connection">
+        <Drawer inline size="large" title="CCL3 and TRAF1" subtitle="Connection in the global network" className="connection-drawer">
+          <DrawerSection label="Connection weight">
+            <p class="detail-score"><strong>0.54</strong><span class="detail-bar" style="--score: 54%"></span></p>
+            <p class="detail-text">How likely CCL3 and TRAF1 are to work together in the global network, from all the evidence combined.</p>
+          </DrawerSection>
+          <DrawerSection label="Data types">
+            <p class="detail-text">Co-expression, GSEA perturbations</p>
+          </DrawerSection>
+          <DrawerSection label="Evidence by dataset">
+            <ul class="detail-rows evidence-rows">
+              {evidence.map(([name, type, value]) => <li><span><span class="evidence-name">{name}</span><span class="evidence-type">{type}</span></span><span>{value}</span></li>)}
+            </ul>
+            <p class="evidence-note">Contribution is how much one dataset raises the chance of this connection on its own, so contributions don’t add up to the weight.</p>
+          </DrawerSection>
+          <Fragment slot="footer"><Button>Show in all networks</Button></Fragment>
+        </Drawer>
+        <div class="connection-notes">{connectionNotes.map((note) => <p>{note}</p>)}</div>
+      </div>
+    </div>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="How they open, close and stack.">
+    <DocTable caption="How dialogs and drawers behave" columns={['Rule', 'Dialog', 'Drawer']} widths={['284px', '504px']}>
+      {behavior.map(([rule, dialog, drawer]) => <tr><th scope="row">{rule}</th><td>{dialog}</td><td>{drawer}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Keyboard and focus" lead="Use the native dialog element or role=&quot;dialog&quot; with aria-modal, labeled by the title.">
+    <DocTable caption="Where focus goes" columns={['Moment', 'Where focus goes']} widths={['284px']}>
+      {focus.map(([moment, where]) => <tr><th scope="row">{moment}</th><td>{where}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="On phones" lead="Dialogs keep 16px from the edges. Drawers become a sheet from the bottom that covers up to 90% of the screen.">
+    <div class="phones">
+      <div class="phone">
+        <div class="phone-bar" aria-hidden="true"></div>
+        <div class="screen-backdrop" aria-hidden="true"></div>
+        <Dialog inline kind="destructive" title="Delete this job?" className="phone-dialog">
+          <p>{deleteBody}</p>
+          <Fragment slot="actions">
+            <Button variant="ghost">Keep job</Button>
+            <Button variant="destructive">Delete job</Button>
+          </Fragment>
+        </Dialog>
+      </div>
+      <div class="phone">
+        <div class="phone-bar" aria-hidden="true"></div>
+        <div class="screen-backdrop" aria-hidden="true"></div>
+        <GeneDrawer sheet />
+      </div>
+      <ul class="points">{phoneNotes.map((note) => <li>{note}</li>)}</ul>
+    </div>
+  </DocSection>
+
+  <DocSection title="Writing dialogs" lead="The title asks the question; the buttons answer it.">
+    <DocTable caption="How to write dialogs" columns={['Guideline', 'Write', 'Not']} widths={['344px', '404px']}>
+      {writing.map(([guideline, write, not]) => <tr><th scope="row">{guideline}</th><td class="write-yes">{write}</td><td class="write-no">{not}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <ul class="pairs">
+      <li class="pair pair-do">
+        <div class="pair-stage">
+          <Dialog inline kind="destructive" title="Delete this job?">
+            <p>{deleteBody}</p>
+            <Fragment slot="actions">
+              <Button variant="ghost">Keep job</Button>
+              <Button variant="destructive">Delete job</Button>
+            </Fragment>
+          </Dialog>
+        </div>
+        <h3>Do. Name the action on the button</h3>
+        <p>People can answer without rereading the title.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage">
+          <Dialog inline kind="destructive" title="Are you sure?">
+            <p>This action cannot be undone.</p>
+            <Fragment slot="actions">
+              <Button variant="ghost">No</Button>
+              <Button variant="destructive">Yes</Button>
+            </Fragment>
+          </Dialog>
+        </div>
+        <h3>Don’t. Ask “Are you sure?” with Yes and No</h3>
+        <p>People must read the body to know what Yes does.</p>
+      </li>
+      <li class="pair pair-do">
+        <div class="pair-stage">
+          <Toast tone="success" message="NetWAS job submitted" action={{ label: 'View job', onSelect: () => {} }} onDismiss={() => {}} />
+        </div>
+        <h3>Do. Confirm success with a toast</h3>
+        <p>Nothing to decide, so nothing to dismiss.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage">
+          <Dialog inline title="Success!">
+            <p>Your job was submitted successfully.</p>
+            <Fragment slot="actions"><Button>OK</Button></Fragment>
+          </Dialog>
+        </div>
+        <h3>Don’t. Open a dialog to say it worked</h3>
+        <p>An extra click that blocks the page for no reason.</p>
+      </li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Dialog and drawer tokens and values" columns={['Token', 'Value']} widths={['404px']}>
+      {specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the components in code">
+    <ul>
+      <li><code>Dialog</code> and <code>Drawer</code> are built on the native <code>&lt;dialog&gt;</code> element. A dialog opens with <code>showModal()</code>, so the page behind is inert and Tab stays inside; a drawer opens with <code>show()</code>, so the graph stays clickable.</li>
+      <li>Both are controlled: pass <code>open</code> and <code>onClose</code>. Escape, the Close button and, for <code>kind="confirm"</code>, a backdrop click all call <code>onClose</code>. Focus returns to whatever had it when the layer opened.</li>
+      <li>Below 768px a drawer becomes a bottom sheet with a handle and a backdrop. Set <code>--drawer-top</code> to the top bar’s height so an over-content drawer starts below it.</li>
+      <li><code>inline</code> renders either one open in the page flow, as on this page.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .screen {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .screen-bar {
+    display: flex;
+    align-items: center;
+    block-size: 56px;
+    padding-inline: var(--space-6);
+    font: 600 18px/1.3 Cabin, sans-serif;
+    color: var(--text-on-brand);
+    background: var(--action-primary);
+  }
+
+  .screen-title {
+    margin: var(--space-6) var(--space-6) var(--space-4);
+    font: var(--type-h4);
+  }
+
+  .screen-graph {
+    margin-inline: var(--space-6);
+  }
+
+  .screen-backdrop {
+    position: absolute;
+    inset: 0;
+    background: var(--overlay-backdrop);
+  }
+
+  .anatomy {
+    display: grid;
+    grid-template-columns: 900px minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+    margin: 0;
+  }
+
+  .anatomy-screen {
+    block-size: 560px;
+  }
+
+  .anatomy-screen .screen-graph {
+    block-size: 410px;
+  }
+
+  .anatomy-screen :global(.anatomy-dialog) {
+    position: absolute;
+    inset: 169px auto auto 250px;
+  }
+
+  .tag,
+  .tag-number {
+    flex: none;
+    padding: var(--space-0-5) 7px;
+    font: 700 12px/16px Lato, sans-serif;
+    color: var(--text-on-brand);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+  }
+
+  .tag {
+    position: absolute;
+    inset: var(--y) auto auto var(--x);
+  }
+
+  .legend {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .legend li {
+    display: flex;
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  .legend strong {
+    font: var(--docs-small-strong);
+  }
+
+  .legend p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .types {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+    align-items: start;
+    margin: 0;
+    padding: var(--space-10);
+    list-style: none;
+    background: var(--surface-sunken);
+    border-radius: var(--radius-md);
+  }
+
+  .types li {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .types strong {
+    font: var(--type-label-sm);
+  }
+
+  .types span {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .types :global(.dialog),
+  .pair-stage :global(.dialog) {
+    inline-size: 100%;
+  }
+
+  .drawer-mode {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .drawer-mode + .drawer-mode {
+    margin-block-start: var(--space-8);
+  }
+
+  .drawer-mode h3 {
+    font: var(--docs-card-title);
+  }
+
+  .mode-note {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .beside-screen,
+  .over-screen {
+    display: grid;
+    grid-template-rows: 56px minmax(0, 1fr);
+    block-size: 640px;
+  }
+
+  .beside-screen {
+    grid-template-columns: minmax(0, 1fr) 480px;
+  }
+
+  .beside-screen .screen-bar {
+    grid-column: 1 / -1;
+  }
+
+  .over-screen {
+    inline-size: 1024px;
+  }
+
+  .screen-main {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    padding-block-end: var(--space-6);
+  }
+
+  .over-screen :global(.gene-drawer) {
+    position: absolute;
+    inset: 56px 0 0 auto;
+  }
+
+  .beside-screen :global(.gene-drawer) {
+    box-shadow: none;
+  }
+
+  .connection {
+    display: grid;
+    grid-template-columns: 640px 520px;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  .connection :global(.connection-drawer) {
+    border: var(--border-width-1) solid var(--border-subtle);
+    box-shadow: none;
+  }
+
+  .connection-notes {
+    display: grid;
+    gap: var(--space-3);
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .evidence-rows li {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: space-between;
+  }
+
+  .evidence-rows li > span:first-child {
+    display: grid;
+  }
+
+  .evidence-type,
+  .evidence-note {
+    font: var(--type-caption);
+    color: var(--text-muted);
+  }
+
+  .phones {
+    display: grid;
+    grid-template-columns: 375px 375px 480px;
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .phone {
+    position: relative;
+    display: grid;
+    block-size: 700px;
+    overflow: hidden;
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+  }
+
+  .phone-bar {
+    block-size: 56px;
+    background: var(--action-primary);
+  }
+
+  .phone :global(.phone-dialog) {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    block-size: fit-content;
+  }
+
+  .phone :global(.drawer-sheet) {
+    position: absolute;
+    inset: 140px 0 0;
+  }
+
+  .pair-stage {
+    padding: var(--space-6) var(--space-4);
+    background: var(--surface-sunken);
+  }
+
+  .pair-stage :global(.dialog-body p) {
+    font: inherit;
+    color: inherit;
+  }
+
+  @media (width < 64rem) {
+    .anatomy,
+    .types,
+    .connection,
+    .phones {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

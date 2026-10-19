@@ -1,0 +1,108 @@
+.code-block {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--space-5) var(--space-6);
+  background: var(--surface-subtle);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.code-block-label {
+  padding-inline-end: 96px;
+  font: var(--type-label-sm);
+  line-height: 17px;
+  color: var(--text-secondary);
+}
+
+.code-block-code {
+  max-block-size: 480px;
+  margin: 0;
+  overflow: auto;
+  font: var(--type-code);
+  color: var(--syntax-text);
+  white-space: pre;
+}
+
+.code-block > .disclosure {
+  justify-self: start;
+}
+
+.code-block-code ::selection,
+.inline-code::selection {
+  background: var(--syntax-selection);
+}
+
+.code-copy {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 7px 10px 7px var(--space-2);
+  font: var(--type-label-sm);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.code-copy:hover,
+.code-copy[data-state="hover"] {
+  color: var(--text-default);
+  background: var(--surface-sunken);
+}
+
+.code-copy[data-copied] {
+  color: var(--status-success-fg);
+}
+
+.code-block .code-copy {
+  position: absolute;
+  inset-block-start: var(--space-3);
+  inset-inline-end: var(--space-3);
+}
+
+.syntax-key {
+  font-weight: 700;
+}
+
+.syntax-command {
+  font-weight: 700;
+  color: var(--syntax-command);
+}
+
+.syntax-string {
+  color: var(--syntax-string);
+}
+
+.syntax-type {
+  color: var(--syntax-type);
+}
+
+.syntax-param {
+  font-weight: 700;
+  color: var(--syntax-param);
+}
+
+.syntax-flag {
+  color: var(--syntax-flag);
+}
+
+.syntax-comment {
+  font-style: italic;
+  color: var(--syntax-comment);
+}
+
+.inline-code {
+  padding: 1px var(--space-1);
+  font: var(--type-code-sm);
+  font-size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-xs);
+}

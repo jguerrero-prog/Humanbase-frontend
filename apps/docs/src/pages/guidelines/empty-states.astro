@@ -1,0 +1,332 @@
+---
+import { Button, ContextLabel, EmptyState, HeaderCell, Table, TableMessage } from '@humanbase/ui';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import Pair from '../../components/docs/Pair.astro';
+import PairList from '../../components/docs/PairList.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const kinds = [
+  ['First use', 'Nothing has happened yet in this browser.', 'How to start, such as submitting a first job, and an example to try.'],
+  ['No results', 'A search or filter matched nothing.', 'What was searched, and the change most likely to help.'],
+  ['No data', 'The data exists, but there’s none for this item.', 'Say so plainly; offer a related view or another data version if one has it.'],
+  ['Cleared', 'People removed everything, such as all genes from a query.', 'Undo, until the next change, and how to add more.'],
+  ['Not empty: an error', 'Something failed to load.', 'Use an error alert instead; see Errors and validation.'],
+];
+
+const anatomy = [
+  ['Title', 'Lato Bold 17 ink. States what’s empty and why.'],
+  ['Explanation', 'Lato 15 grey 600, one or two sentences, 440px wide at most.'],
+  ['Action', 'One Small button. Secondary when it’s the only way forward; Ghost when it’s optional.'],
+  ['Space', '40px above and below, centered where the content would be.'],
+];
+
+const notes = [
+  'Table headers stay in place when the table is empty, so people still see what would be there.',
+  'Numbers make the way forward concrete: “6 genes have a score of 0.98 or more”, “the strongest connection is 0.93”.',
+  'Empty is never shown while data is still loading. Loading comes first; empty only once the answer is known.',
+  'Undo after clearing lasts until the next change, not a fixed few seconds.',
+];
+
+const writing = [
+  ['Name what’s empty, and why', 'No edges at 0.95 or more', 'No data'],
+  ['Be honest about the browser', 'No jobs from this browser yet', 'You don’t have any jobs'],
+  ['Give the number that helps', '6 genes have a score of 0.98 or more', 'Try adjusting your filters'],
+  ['Skip the cheer', 'No genes match both filters', 'Nothing here yet! 🎉'],
+];
+---
+
+<DocsLayout title="Empty states" description="What HumanBase shows when there is nothing to show yet, and how to word it.">
+  <Intro
+    lead="An empty state is what people see when there is nothing to show yet: no jobs from this browser, no genes above a cutoff, no disease associations for a gene. It should explain why, in a sentence, and offer the one action that fills it."
+    status="Updated October 16, 2026 · Usage guideline"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Say why it’s empty', text: '“No edges at 0.95 or more” tells people the cutoff is the reason, not the gene.' },
+        { title: 'One way forward', text: 'A single action that fixes it, like lowering the cutoff or submitting a first job.' },
+        { title: 'Words, not pictures', text: 'No illustrations or mascots. A title, one sentence and a button, in the space the content would fill.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Four kinds of empty" lead="Each has a different cause, so each says something different.">
+    <DocTable caption="Four kinds of empty" columns={['Kind', 'Cause', 'What to offer']} widths={['260px', '480px']}>
+      {
+        kinds.map(([kind, cause, offer]) => (
+          <tr>
+            <th scope="row">{kind}</th>
+            <td>{cause}</td>
+            <td>{offer}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Anatomy" lead="Centered in the space the content would fill, so the layout doesn’t jump when content arrives.">
+    <div class="anatomy">
+      <div class="panel">
+        <EmptyState
+          title="No edges at 0.95 or more"
+          text="IL1B’s strongest connection in blood vessel is 0.93. Lower the minimum confidence to see its network."
+         >
+<Fragment slot="actions"><Button variant="secondary" size="small" tabIndex={-1}>Set to 0.80</Button></Fragment>
+</EmptyState>
+      </div>
+      <ol class="legend">
+        {
+          anatomy.map(([part, detail]) => (
+            <li>
+              <h3>{part}</h3>
+              <p>{detail}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </DocSection>
+
+  <DocSection title="HumanBase examples" lead="One for each kind, in the place it appears.">
+    <div class="examples">
+      <figure>
+        <figcaption><strong>Job history</strong> <span>First use</span></figcaption>
+        <Table caption="Job history">
+          <thead>
+            <tr>
+              <HeaderCell>Job</HeaderCell>
+              <HeaderCell>Tool</HeaderCell>
+              <HeaderCell>Status</HeaderCell>
+              <HeaderCell sort="descending">Submitted</HeaderCell>
+            </tr>
+          </thead>
+          <tbody>
+            <TableMessage columns={4} title="No jobs from this browser yet"
+                  text="HumanBase keeps jobs in the browser you submit them from. For a job submitted elsewhere, use the link in its email, if an address was given."
+                 >
+<Fragment slot="action"><Button variant="secondary" size="small" tabIndex={-1}>Submit a NetWAS job</Button>
+                      <Button variant="ghost" size="small" tabIndex={-1}>Try an example job</Button></Fragment>
+</TableMessage>
+          </tbody>
+        </Table>
+      </figure>
+      <figure>
+        <figcaption><strong>Filtered genes</strong> <span>No results</span></figcaption>
+        <div class="filters">
+          <ContextLabel name="Score" value="0.98 or more" onRemove={() => undefined} />
+          <ContextLabel name="Evidence" value="Shared regulation" onRemove={() => undefined} />
+        </div>
+        <Table caption="Filtered genes">
+          <thead>
+            <tr>
+              <HeaderCell>Gene</HeaderCell>
+              <HeaderCell>Name</HeaderCell>
+              <HeaderCell align="end" sort="descending">Score</HeaderCell>
+            </tr>
+          </thead>
+          <tbody>
+            <TableMessage columns={3} title="No genes match both filters"
+                  text="Without the evidence filter, 6 genes have a score of 0.98 or more."
+                 >
+<Fragment slot="action"><Button variant="secondary" size="small" tabIndex={-1}>Remove evidence filter</Button>
+                      <Button variant="ghost" size="small" tabIndex={-1}>Clear all filters</Button></Fragment>
+</TableMessage>
+          </tbody>
+        </Table>
+      </figure>
+      <figure>
+        <figcaption><strong>Disease tab on a gene page</strong> <span>No data</span></figcaption>
+        <div class="panel">
+          <EmptyState
+            title="No disease associations for PLEK in MAGE"
+            text="None of the disease datasets in this version link PLEK to a disease. GIANT v1 has 2 associations from older studies."
+           >
+<Fragment slot="actions"><Button variant="ghost" size="small" tabIndex={-1}>View in GIANT v1</Button></Fragment>
+</EmptyState>
+        </div>
+      </figure>
+      <figure>
+        <figcaption><strong>Gene query</strong> <span>Cleared</span></figcaption>
+        <div class="panel">
+          <EmptyState
+            title="All genes removed"
+            text="Add genes by typing symbols or pasting a list, up to 3,500."
+           >
+<Fragment slot="actions"><Button variant="secondary" size="small" tabIndex={-1}>Undo</Button>
+                <Button variant="ghost" size="small" tabIndex={-1}>Use an example list</Button></Fragment>
+</EmptyState>
+        </div>
+      </figure>
+    </div>
+    <ul class="points">{notes.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Writing empty states" lead="Factual and specific. HumanBase has no accounts, so never say “you have no…”.">
+    <DocTable caption="Writing empty states" columns={['Guideline', 'Write', 'Not']} widths={['360px', '420px']}>
+      {
+        writing.map(([guideline, write, not]) => (
+          <tr>
+            <th scope="row">{guideline}</th>
+            <td class="write-yes">{write}</td>
+            <td class="write-no">{not}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <PairList>
+      <Pair kind="do" title="Do. Explain and offer a fix" text="People know why, and what to do next." mock>
+        <div class="panel">
+          <EmptyState title="No edges at 0.95 or more" text="The strongest is 0.93.">
+<Fragment slot="actions"><Button variant="secondary" size="small" tabIndex={-1}>Set to 0.80</Button></Fragment>
+</EmptyState>
+        </div>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Add an illustration and a joke" text="A drawing of an empty box and “Nothing to see here!” fills space without helping." mock>
+        <div class="panel joke">
+          <span class="joke-art" />
+          <strong>Nothing to see here!</strong>
+          <span>Try something else.</span>
+        </div>
+      </Pair>
+      <Pair kind="do" title="Do. Keep the table’s shape" text="Headers stay, so people see what would be there." mock>
+        <div class="panel">
+          <div class="mock-header"><span>Gene</span><span>Score</span></div>
+          <EmptyState title="No genes match both filters" />
+        </div>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Show empty while loading" text="A flash of “No results” before data arrives makes people think the query failed." mock>
+        <div class="panel"><EmptyState title="No results" /></div>
+      </Pair>
+    </PairList>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .anatomy {
+    display: grid;
+    grid-template-columns: 640px minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .panel {
+    color: var(--text-default);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .legend {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: part;
+  }
+
+  .legend li {
+    display: grid;
+    grid-template-columns: 21px minmax(0, 1fr);
+    gap: 2px var(--space-3);
+    counter-increment: part;
+  }
+
+  .legend li::before {
+    grid-row: span 2;
+    block-size: 20px;
+    padding-block: 2px;
+    font: 700 12px/16px Lato, sans-serif;
+    text-align: center;
+    color: var(--text-on-brand);
+    content: counter(part);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-xs);
+  }
+
+  .legend h3 {
+    font: var(--docs-small-strong);
+  }
+
+  .legend p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .examples {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .examples figure {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .examples figcaption {
+    display: flex;
+    gap: var(--space-3);
+    align-items: baseline;
+  }
+
+  .examples figcaption strong {
+    font: 600 18px/1.3 Cabin, sans-serif;
+  }
+
+  .examples figcaption span {
+    font: var(--type-caption);
+    color: var(--text-muted);
+  }
+
+  .filters {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .joke {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: center;
+    padding: var(--space-6) 0;
+  }
+
+  .joke-art {
+    inline-size: 96px;
+    block-size: 64px;
+    background: linear-gradient(135deg, var(--color-yellow-200), var(--color-mint-200));
+    border-radius: var(--radius-md);
+  }
+
+  .joke span:last-child {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .mock-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: var(--space-3) var(--space-4);
+    font: var(--type-label-sm);
+    background: var(--surface-subtle);
+    border-block-end: var(--border-width-1) solid var(--border-default);
+  }
+
+  .mock-header span:last-child {
+    text-align: end;
+  }
+
+  @media (width < 64rem) {
+    .anatomy,
+    .examples {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

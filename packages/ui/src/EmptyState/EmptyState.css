@@ -1,0 +1,30 @@
+.empty-state {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: center;
+  padding: var(--space-10) var(--space-6);
+  text-align: center;
+}
+
+.empty-state-title {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  font: 700 17px/1.4 Lato, sans-serif;
+  color: var(--text-default);
+}
+
+.empty-state-text {
+  max-inline-size: 440px;
+  font: var(--type-body-sm);
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+.empty-state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: center;
+  padding-block-start: var(--space-2);
+}

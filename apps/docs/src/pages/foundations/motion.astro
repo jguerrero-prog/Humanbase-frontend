@@ -1,0 +1,558 @@
+---
+import { MenuItem, MenuPanel, RadioGroup } from '@humanbase/ui';
+import { flattenTokens, type TokenEntry } from '@humanbase/tokens/catalog';
+import motion from '@humanbase/tokens/src/motion.tokens.json';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+interface Amount {
+  value: number;
+  unit: string;
+}
+
+const tokens = flattenTokens(motion);
+const group = (name: string) => tokens.filter(({ path }) => path[1] === name);
+const tokenName = ({ path }: TokenEntry) => path.join('.');
+const amount = ({ token }: TokenEntry) => token.$value as Amount;
+const longest = 300;
+
+const factors = [
+  { title: 'Size of the moving area', text: 'A 240px menu moving 4px is fine. A full-width panel sliding across the screen, or a graph spreading out, fills the field of view.', rule: 'Keep moving areas small; fade large ones.' },
+  { title: 'Distance and speed', text: 'Fast movement over a long distance is the strongest trigger. Short distances feel like a nudge.', rule: 'Under 8px of travel for most elements.' },
+  { title: 'Movement without input', text: 'Motion the person didn’t start, like autoplay, parallax or a graph that keeps settling, is hard to predict and to ignore.', rule: 'Only move in response to an action or a real change.' },
+  { title: 'Repetition', text: 'Looping shimmer, pulsing and spinning content keep the eye busy for as long as they run.', rule: 'No loops except a small spinner while waiting.' },
+];
+
+const curves = group('easing').map((entry) => {
+  const [x1, y1, x2, y2] = entry.token.$value as number[];
+  const point = (x = 0, y = 0) => `${16 + x * 168} ${124 - y * 108}`;
+  return { name: entry.path[2] ?? '', entry, value: `cubic-bezier(${[x1, y1, x2, y2].join(', ')})`, path: `M${point()} C${point(x1, y1)} ${point(x2, y2)} ${point(1, 1)}` };
+});
+
+const distances = [
+  ...group('distance').map((entry) => ({ entry, value: `${amount(entry).value}px` })),
+  ...group('scale').map((entry) => ({ entry, value: `${entry.token.$value as number} to 1` })),
+];
+
+const tissues = ['Adipose tissue', 'Blood vessel', 'Brain', 'Heart', 'Liver'];
+const frames = [
+  { title: 'Default', steps: [['0ms', 'opacity 0, 4px above rest', 0, 4], ['50ms', 'opacity 0.6, 1.4px above rest', 0.6, 1.4], ['100ms', 'opacity 0.92, 0.3px above rest', 0.92, 0.3], ['150ms', 'opacity 1', 1, 0]] },
+  { title: 'Reduced motion', steps: [['0ms', 'opacity 0', 0, 0], ['50ms', 'opacity 0.33', 0.33, 0], ['100ms', 'opacity 0.67', 0.67, 0], ['150ms', 'opacity 1', 1, 0]] },
+] as const;
+
+const moves = [
+  ['Button, link', 'Hover, press', 'Color change only. No scale or lift.', '100ms, linear', 'Same'],
+  ['Focus ring', 'Keyboard focus', 'Appears at once', '0ms', 'Same'],
+  ['Checkbox, radio', 'Select', 'Mark fades in', '100ms, linear', 'Same'],
+  ['Menu, select, suggestions', 'Open', 'Fade in, 4px down. Closes at once.', '150ms, enter', 'Fade only'],
+  ['Tooltip', 'Hover 400ms, focus at once', 'Fade in. No movement.', '100ms, linear', 'Same'],
+  ['Tab indicator, segment', 'Select', 'Bar or fill slides to the new option', '150ms, enter', 'Switches at once'],
+  ['Toast', 'Arrives, leaves', 'Fade in, 8px up; fade out', '200ms enter, 150ms exit', 'Fade only'],
+  ['Dialog', 'Open, close', 'Backdrop fades; dialog fades and grows from 98%', '200ms enter, 150ms exit', 'Fade only'],
+  ['Drawer', 'Open, close', 'Fades in while moving 16px from its edge', '280ms enter, 200ms exit', 'Fade only, 150ms'],
+  ['Expanding row, section', 'Expand, collapse', 'Height grows; content fades', '200ms, enter', 'Opens at once'],
+  ['Spinner', 'Waiting over 300ms', '16 or 20px ring turns once per second', '1s per turn, linear', 'Same; it is small and shows the page is working'],
+  ['Progress bar', 'Job status update', 'Bar grows to the new value', '400ms, enter', 'Jumps to the value'],
+  ['Table sort, filter', 'Sort, filter', 'Rows change at once. No reordering animation.', '0ms', 'Same'],
+  ['Page, route change', 'Navigate', 'No transition. Scroll to anchors jumps.', '0ms', 'Same'],
+];
+
+const hub = { x: 150, y: 100 };
+const nodes = [
+  { x: 90, y: 60 },
+  { x: 150, y: 35 },
+  { x: 215, y: 55 },
+  { x: 260, y: 105 },
+  { x: 215, y: 150 },
+  { x: 90, y: 150 },
+  { x: 40, y: 110 },
+];
+const ring = nodes.map((node, index) => [node, nodes[(index + 1) % nodes.length] ?? node] as const).filter((_, index) => index !== nodes.length - 1);
+const spokes = nodes.filter((_, index) => index !== 3 && index !== 6);
+
+const visualizationRules = [
+  'Zoom and pan follow the pointer or trackpad directly. Zoom buttons step by 25% over 150ms, or instantly with reduced motion.',
+  'No inertia after dragging a graph or heatmap; it stops when the pointer stops.',
+  'Dragging a node moves only that node. The rest of the graph stays still.',
+  '“Fit to screen” and “Center on gene” jump to the new view, with a 150ms fade if anything is needed at all.',
+  'Heatmaps and genome tracks scroll with the page or their own scrollbar. No auto-scroll, no smooth scrolling over long distances.',
+];
+
+const timingLabels: Record<string, string> = { 'motion.delay.response': 'under 100ms', 'motion.hold.toast': '6s minimum' };
+const timing = [...group('delay'), ...group('hold')]
+  .sort((a, b) => amount(a).value - amount(b).value)
+  .map((entry) => ({ name: tokenName(entry), value: timingLabels[tokenName(entry)] ?? `${amount(entry).value}ms`, rule: entry.token.$description }));
+
+const motionOptions = [
+  { value: 'device', label: 'Match my device', description: 'Currently: full motion' },
+  { value: 'reduce', label: 'Reduce motion', description: 'Fades only, no movement' },
+  { value: 'full', label: 'Full motion', description: 'Even if my device asks to reduce it' },
+];
+
+const reducedChanges = [
+  'Movement becomes a fade: menus, toasts, dialogs and drawers.',
+  'Indicators switch at once: tabs, segments, expanding rows, progress bars.',
+  'Visualizations jump to their new view with no animated zoom.',
+  'The spinner keeps turning; it is 20px at most and shows the page hasn’t frozen.',
+  'Nothing flashes more than 3 times a second, in any mode.',
+];
+
+const never = [
+  ['Parallax', 'Background and foreground moving at different speeds while scrolling.'],
+  ['Shimmer loading', 'A light band sweeping across skeletons. Skeletons stay still.'],
+  ['Animated hero', 'The network illustration in the page header stays still.'],
+  ['Bounce and overshoot', 'Elastic curves that pass their target and spring back.'],
+  ['Page zoom transitions', 'Pages that scale or slide in when navigating.'],
+  ['Autoplay', 'Carousels, looping videos or animated charts that play on their own.'],
+  ['Pulsing attention', 'Badges, nodes or buttons that throb to get noticed.'],
+  ['Smooth long scrolls', 'Animated scrolling across a long page. Jump instead.'],
+];
+
+const usage = `.menu {
+  animation: menu-open var(--motion-duration-base) var(--motion-easing-enter);
+}
+
+@keyframes menu-open {
+  from {
+    opacity: 0;
+    translate: 0 calc(var(--motion-distance-xs) * -1);
+  }
+}
+
+/* Device setting, or the HumanBase setting via data-motion */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="full"]) {
+    --motion-distance-xs: 0;
+    --motion-distance-sm: 0;
+    --motion-distance-md: 0;
+  }
+}
+
+:root[data-motion="reduce"] {
+  --motion-distance-xs: 0;
+  --motion-distance-sm: 0;
+  --motion-distance-md: 0;
+}`;
+---
+
+<DocsLayout title="Motion" description="Durations, curves, distances and timing, and how reduced motion changes them.">
+  <Intro
+    lead="Motion in HumanBase is small and well timed. A menu fades in 4px, a toast rises 8px, a check appears in a tenth of a second. These cues make the product feel responsive without asking anyone’s inner ear to keep up. Researchers spend hours looking at dense networks and heatmaps, and some live with vestibular disorders, migraine or motion sensitivity, so large areas never move on their own."
+    status="Updated October 16, 2026 · Follows WCAG 2.2: 2.2.2 Pause, Stop, Hide; 2.3.1 Three Flashes; 2.3.3 Animation from Interactions"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Subtle', text: 'Move a few pixels, not across the screen. Fade more than you slide. Never scale the page, bounce or spin content.' },
+        { title: 'On cue', text: 'Motion answers something the person just did, or reports a change they need to see. Nothing loops or plays on its own.' },
+        { title: 'Short', text: 'Most motion ends in 100 to 200ms. Anything that moves a larger area stays under 300ms and can be turned off.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="What makes motion uncomfortable" lead="Most people with motion sensitivity still use and benefit from small cues. Discomfort comes from a few specific kinds of movement, and these are what HumanBase avoids.">
+    <ul class="checks factors">
+      {
+        factors.map((factor) => (
+          <li>
+            <h3>{factor.title}</h3>
+            <p>{factor.text}</p>
+            <p class="factor-rule">{factor.rule}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Duration" lead="Five steps. Small changes are fast; the bigger the element, the longer it gets, up to 300ms. Closing is faster than opening, because people already know what is going away.">
+    <DocTable caption="Duration tokens" columns={['Token', 'Duration', 'Length', 'Use']} widths={['264px', '88px', '344px']}>
+      {
+        group('duration').map((entry) => (
+          <tr>
+            <th scope="row"><code>{tokenName(entry)}</code></th>
+            <td class="amount">{amount(entry).value}ms</td>
+            <td><span class="bar" style={`--length: ${amount(entry).value / longest}`} /></td>
+            <td>{entry.token.$description}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+    <p class="doc-note">Bars are drawn against 300ms, the longest any interface motion runs.</p>
+  </DocSection>
+
+  <DocSection title="Easing" lead="Three curves. Things arrive quickly and slow down as they settle; things leave by speeding up. No bounce, overshoot or elastic curves.">
+    <ul class="card-grid curves" style="--columns: 3">
+      {
+        curves.map((curve) => (
+          <li>
+            <svg viewBox="0 0 200 140" width="200" height="140" aria-hidden="true">
+              <path class="curve-axes" d="M16 16 V124 H184" />
+              <path class="curve-line" d={curve.path} />
+            </svg>
+            <h3>{curve.name.charAt(0).toUpperCase() + curve.name.slice(1)}</h3>
+            <code>{tokenName(curve.entry)}</code>
+            <code class="curve-value">{curve.value}</code>
+            <p>{curve.entry.token.$description}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="doc-note">Curves plot progress (up) over time (right).</p>
+  </DocSection>
+
+  <DocSection title="Distance" lead="How far things travel. Short distances read as a cue; long ones read as movement.">
+    <DocTable caption="Distance tokens" columns={['Token', 'Distance', 'Use']} widths={['264px', '134px']}>
+      {
+        distances.map(({ entry, value }) => (
+          <tr>
+            <th scope="row"><code>{tokenName(entry)}</code></th>
+            <td class="amount">{value}</td>
+            <td>{entry.token.$description}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="A menu opening, frame by frame" lead="150ms with the enter curve. With reduced motion, the same menu only fades.">
+    {
+      frames.map((strip) => (
+        <section class="strip" aria-label={strip.title}>
+          <h3>{strip.title}</h3>
+          <ol class="frames">
+            {strip.steps.map(([time, state, opacity, offset]) => (
+              <li>
+                <div class="frame-stage" aria-hidden="true" data-illustration>
+                  <span class="frame-field" />
+                  <MenuPanel className="frame-menu" style={{ opacity, translate: `0 ${-offset}px` }}>
+                    {tissues.map((tissue) => (
+                      <MenuItem label={tissue} selected={tissue === 'Blood vessel'} highlighted={tissue === 'Brain'} />
+                    ))}
+                  </MenuPanel>
+                </div>
+                <p class="frame-time">{time}</p>
+                <p class="frame-state">{state}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+  </DocSection>
+
+  <DocSection title="What moves, and how" lead="Every animated element in the system, with its reduced motion version. If something isn’t listed, it doesn’t animate.">
+    <DocTable caption="Animated elements" columns={['Element', 'Trigger', 'Default', 'Duration and curve', 'Reduced motion']} widths={['210px', '210px', '350px', '220px']}>
+      {
+        moves.map(([element, trigger, normal, timing, reduced]) => (
+          <tr>
+            <th scope="row">{element}</th>
+            <td>{trigger}</td>
+            <td>{normal}</td>
+            <td><code class="timing">{timing}</code></td>
+            <td>{reduced}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Networks, heatmaps and the genome browser" lead="Visualizations fill most of the screen, so they follow stricter rules. The person drives every change; the view never moves itself.">
+    <ul class="card-grid graphs" style="--columns: 2">
+      {
+        [
+          { title: 'Network layout', text: 'Compute the layout before showing it, then fade the finished graph in over 200ms. Today’s renderer drifts for 11+ seconds; this is a configuration request to Julien, listed on the Data visualization page.', highlight: false },
+          { title: 'Highlighting a gene', text: 'Selecting a gene fades the unrelated nodes and edges to 50% over 200ms. Nothing moves, pulses or grows. With reduced motion the change is instant.', highlight: true },
+        ].map((card) => (
+          <li>
+            <h3>{card.title}</h3>
+            <svg class:list={['graph', { 'graph-highlight': card.highlight }]} viewBox="0 0 632 200" aria-hidden="true">
+              {ring.map(([from, to]) => <line class="graph-ring" x1={from.x} y1={from.y} x2={to.x} y2={to.y} />)}
+              {spokes.map((node) => <line x1={hub.x} y1={hub.y} x2={node.x} y2={node.y} />)}
+              {nodes.map((node, index) => <circle class:list={{ 'graph-far': index === 3 || index === 6 }} cx={node.x} cy={node.y} r="6" />)}
+              <circle class="graph-hub" cx={hub.x} cy={hub.y} r="9" />
+            </svg>
+            <p>{card.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <ul class="points">
+      {visualizationRules.map((rule) => <li>{rule}</li>)}
+    </ul>
+  </DocSection>
+
+  <DocSection title="The right moment" lead="When motion happens matters as much as how. These delays keep the interface calm and avoid flicker.">
+    <DocTable caption="Timing tokens" columns={['Token', 'Value', 'Rule']} widths={['300px', '140px']}>
+      {
+        timing.map((row) => (
+          <tr>
+            <th scope="row"><code>{row.name}</code></th>
+            <td class="amount">{row.value}</td>
+            <td>{row.rule}</td>
+          </tr>
+        ))
+      }
+      <tr>
+        <th scope="row">Long waits</th>
+        <td class="amount">after 10s</td>
+        <td>Replace the spinner with words: “Queued, 3rd in line” or “Running for 4 minutes”. Jobs show progress, not just motion.</td>
+      </tr>
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Reduced motion" lead="HumanBase follows the device setting, and also offers its own in Display settings, linked from the footer and saved in this browser, since there are no accounts. Reduced motion keeps fades, removes movement and caps everything at 150ms.">
+    <div class="reduced">
+      <figure class="setting">
+        <figcaption>Display settings Footer link, saved in this browser</figcaption>
+        <RadioGroup legend="Motion" hint="Small animations help show what changed." options={motionOptions} defaultValue="device" name="motion-example" />
+      </figure>
+      <ul class="points">
+        {reducedChanges.map((change) => <li>{change}</li>)}
+      </ul>
+    </div>
+  </DocSection>
+
+  <DocSection title="Never in HumanBase" lead="These are easy to add and hard to live with.">
+    <ul class="never">
+      {
+        never.map(([title, text]) => (
+          <li>
+            <h3>{title}</h3>
+            <p>{text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Tokens and code" lead="The tokens live in packages/tokens and are generated into tokens.css. Components animate with them, so the reduced motion settings apply everywhere at once.">
+    <Code code={usage} lang="css" theme="css-variables" />
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .factors li {
+    padding: var(--space-6);
+    border-radius: var(--radius-md);
+  }
+
+  .factors h3 {
+    font: 600 19px/1.3 Cabin, sans-serif;
+  }
+
+  .factors .factor-rule {
+    font: var(--docs-small-strong);
+    color: var(--text-link);
+  }
+
+  .timing {
+    font: var(--type-code-sm);
+  }
+
+  .doc-note {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .amount {
+    font: var(--type-label);
+    color: var(--text-default);
+  }
+
+  .bar {
+    display: block;
+    inline-size: 320px;
+    block-size: var(--space-2);
+    background: linear-gradient(to right, var(--color-grey-600) calc(var(--length) * 100%), var(--surface-sunken) 0);
+    border-radius: var(--radius-2xs);
+  }
+
+  .curves,
+  .graphs,
+  .never {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .curves li,
+  .graphs li {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .curves svg,
+  .graph {
+    background: var(--surface-page);
+    border-radius: var(--radius-sm);
+  }
+
+  .curves h3,
+  .graphs h3 {
+    font: var(--docs-card-title);
+  }
+
+  .curves code {
+    font: var(--type-code-sm);
+  }
+
+  .curves .curve-value {
+    color: var(--text-secondary);
+  }
+
+  .curves p,
+  .graphs p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .curve-axes {
+    fill: none;
+    stroke: var(--border-default);
+  }
+
+  .curve-line {
+    fill: none;
+    stroke: var(--text-default);
+    stroke-width: 1.5;
+  }
+
+  .graph {
+    inline-size: 100%;
+    block-size: auto;
+    border: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  .graph line {
+    stroke: var(--text-secondary);
+    stroke-width: 1.5;
+  }
+
+  .graph circle {
+    fill: var(--text-secondary);
+  }
+
+  .graph .graph-hub {
+    fill: var(--text-default);
+  }
+
+  .graph-highlight .graph-ring {
+    stroke: var(--border-subtle);
+  }
+
+  .graph-highlight .graph-far {
+    fill: var(--border-subtle);
+  }
+
+  .strip {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .strip h3 {
+    font: var(--docs-small-strong);
+  }
+
+  .frames {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .frame-stage {
+    position: relative;
+    block-size: 250px;
+    padding: var(--space-5);
+    overflow: hidden;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .frame-field {
+    display: block;
+    inline-size: 220px;
+    block-size: 44px;
+    background: var(--surface-page);
+    border: var(--border-width-2) solid var(--border-selected);
+    border-radius: var(--radius-md);
+  }
+
+  .frame-stage :global(.frame-menu) {
+    inline-size: 220px;
+    min-inline-size: 0;
+    margin-block-start: var(--space-1);
+  }
+
+  .frame-time {
+    margin-block-start: var(--space-2);
+    font: var(--type-code-sm);
+  }
+
+  .frame-state {
+    font: 400 12px/1.4 "Atkinson Hyperlegible Mono", monospace;
+    color: var(--text-muted);
+  }
+
+  .reduced {
+    display: grid;
+    grid-template-columns: 480px minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .setting {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 28px;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .setting figcaption {
+    font: var(--type-caption);
+    color: var(--text-muted);
+  }
+
+  .never {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .never li {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: var(--space-5);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .never h3 {
+    font: var(--type-label);
+  }
+
+  .never p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  @media (width < 64rem) {
+    .frames,
+    .reduced,
+    .never {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

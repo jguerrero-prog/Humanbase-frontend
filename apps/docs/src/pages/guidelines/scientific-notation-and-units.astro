@@ -1,0 +1,242 @@
+---
+import { ValueFormat } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import ExampleCard from '../../components/docs/ExampleCard.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const format = new ValueFormat();
+
+const geneSymbols = [
+  ['Human genes', 'IL1B', 'il1b, Il1b', 'HGNC symbols are upper case.'],
+  ['Mouse genes, in non-human collections', 'Il1b', 'IL1B', 'Mouse symbols use an initial capital; the case tells the species.'],
+  ['Previous or alias symbols', 'IL1B (alias IL1F2)', 'IL1F2 alone', 'Show the current symbol; aliases help people find it.'],
+  ['Proteins', 'IL-1β', 'IL1B protein', 'When the text means the protein, use its common name.'],
+];
+
+const identifiers = [
+  ['Entrez Gene', '3553', 'Entrez:3553, #3553', 'NCBI Gene'],
+  ['Ensembl', 'ENSG00000125538', 'ensg00000125538', 'Ensembl'],
+  ['Gene Ontology', 'GO:0006954', 'GO0006954, go:0006954', 'QuickGO'],
+  ['Variant', 'rs33944208', 'RS33944208, rs 33944208', 'dbSNP'],
+  ['GEO dataset', 'GSE48350', 'gse48350', 'GEO'],
+  ['Genomic position', 'chr2:112,829,751 (hg38)', '2:112829751', 'Says the assembly every time'],
+];
+
+const numbers = [
+  ['Network scores', format.score(0.97), '.97, 0.9700', 'Two decimals, with a leading zero.'],
+  ['p-values and q-values', format.pValue(1.2e-12).text, '1.2e-12, 0.0000000000012', 'Scientific notation below 0.001; two significant figures.'],
+  ['Small but readable p-values', format.pValue(0.0031).text, '3.1 × 10⁻³', 'Plain decimals from 0.001 up.'],
+  ['Very small values', format.pValue(0).text, '0', 'Never round a real value to zero.'],
+  ['Effect sizes and z-scores', `${format.signed(-2.41, 2)}, ${format.signed(1.9, 2)}`, '-2.41, 1.9', 'A true minus sign (−); show + when direction matters; same decimals in a column.'],
+  ['Counts', format.count(25825), '25825, 25.8k', 'Commas for thousands. “k” and “M” only on chart axes.'],
+  ['Percentages', format.percent(35), '35 %, 35 percent', 'No space before %.'],
+  ['Ranges', '10 to 30 minutes', '10–30 min', '“to” in text; an en dash only in dense tables.'],
+];
+
+const units = [
+  ['Sequence length', '812 bp, 2 kb, 3.1 Mb', '812bp, 2KB, 3.1 mb', 'Base pairs: bp, kb, Mb.'],
+  ['Distance from a gene', '1 kb upstream of the TSS', '-1000', 'Say the reference point; define TSS once with a toggletip.'],
+  ['Expression', '12.4 TPM', '12.4tpm', 'The unit goes in the column header when every row shares it: “Expression (TPM)”.'],
+  ['Log-scaled values', '−log10(q)', '-log(q), log q', 'Name the base.'],
+  ['Genome assembly', 'hg38 (GRCh38)', 'the genome', 'Name it wherever coordinates appear, including downloads.'],
+  ['Time', '4 minutes, Oct 16, 2026', '4m, 10/16/26', 'Words for durations; unambiguous dates.'],
+];
+
+const comparisons = [
+  ['Filters and context labels', 'Score 0.5 or more', 'Score ≥ 0.5', false],
+  ['Sentences', 'genes with q below 0.05', 'genes with q<0.05', false],
+  ['Table headers and axis titles', 'q < 0.05', 'q less than 0.05 (too long for a header)', false],
+  ['Code and the API', 'q<0.05', 'q below 0.05', true],
+] as const;
+
+const typesetting = [
+  ['Tabular figures', 'Numbers in tables and charts use tabular figures so digits line up by place.'],
+  ['Real superscripts', 'Exponents use superscript characters or <sup>, never a caret: 10⁻¹², not 10^-12.'],
+  ['Mono for identifiers', 'Atkinson Hyperlegible Mono for IDs, coordinates and code; Lato for gene symbols and numbers.'],
+  ['No wrapping inside a value', '“1.2 × 10⁻¹²”, “2 kb” and “chr2:112,829,751” never break across lines.'],
+  ['Screen readers', '“1.2 × 10⁻¹²” gets an accessible name such as “1.2 times 10 to the minus 12”; abbreviations use <abbr> with their full form.'],
+  ['Copying', 'Copying a value copies the raw form a script would use: 1.2e-12, chr2:112829751.'],
+];
+
+const toConfirm = [
+  ['Two significant figures for p and q, or three?', 'Matches what researchers will copy into papers.'],
+  [
+    'Which assembly do the variant tools report? The docs’ CTCF use case loads hg19 tracks and coordinates, so likely hg19; confirm, and whether MAGE-era tools moved to hg38.',
+    'Coordinates must say it, and downloads must match.',
+  ],
+  ['Should scores show two decimals or three when many genes tie at 0.96?', 'Ties look like errors if precision hides the difference.'],
+];
+
+const usage = `import { ValueFormat } from '@humanbase/ui';
+
+const format = new ValueFormat();
+format.pValue(1.2e-12);
+// { text: '1.2 × 10⁻¹²', spoken: '1.2 times 10 to the minus 12', raw: '1.2e-12' }
+format.signed(-2.41, 2); // '−2.41'
+format.count(25825); // '25,825'`;
+---
+
+<DocsLayout title="Scientific notation and units" description="How HumanBase writes gene symbols, identifiers, numbers, units and comparisons.">
+  <Intro
+    lead="Researchers copy HumanBase numbers and identifiers into papers, scripts and other databases. They have to be exact, in the form the field expects, and the same everywhere: on screen, in downloads and in the API."
+    status="Updated October 16, 2026 · Usage guideline · Follows HGNC naming and the Tables page’s number rules"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Exact and copyable', text: 'Identifiers appear exactly as the source database writes them, in the mono font, and copy without extra characters.' },
+        { title: 'Readable on screen, raw in downloads', text: '“1.2 × 10⁻¹²” on screen; “1.2e-12” in the downloaded file and the API, where scripts read it.' },
+        { title: 'Units always shown', text: 'Every number that has a unit shows it, once, in the column header, axis title or after the value.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Gene symbols" lead="Official symbols from HGNC for human genes. Case carries meaning, so never change it.">
+    <DocTable caption="Gene symbols" columns={['Case', 'Write', 'Not', 'Why']} widths={['300px', '260px', '260px']}>
+      {
+        geneSymbols.map(([use, write, not, why]) => (
+          <tr>
+            <th scope="row">{use}</th>
+            <td class="write-yes">{write}</td>
+            <td class="write-no">{not}</td>
+            <td>{why}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+    <div class="card-grid" style="--columns: 2">
+      <ExampleCard
+        title="In the interface"
+        caption="Tables, tags, labels and graphs use upright Lato Bold. Italics at small sizes are harder to read, and the column already says these are genes."
+      >
+        <p class="sample-genes">IL1R1 PTGS2 ICAM1</p>
+      </ExampleCard>
+      <ExampleCard title="In running text" caption="Docs, descriptions and help text follow the publishing convention: gene symbols in italics.">
+        <p class="sample-running"><i>IL1B</i> is upregulated in inflamed vessels.</p>
+      </ExampleCard>
+    </div>
+  </DocSection>
+
+  <DocSection title="Identifiers" lead="Atkinson Hyperlegible Mono, exact case, with the prefix the source uses. Where a source page exists, the ID links to it.">
+    <DocTable caption="Identifiers" columns={['Identifier', 'Write', 'Not', 'Links to']} widths={['300px', '300px', '300px']}>
+      {
+        identifiers.map(([kind, write, not, source]) => (
+          <tr>
+            <th scope="row">{kind}</th>
+            <td class="write-yes mono">{write}</td>
+            <td class="write-no mono">{not}</td>
+            <td>{source}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Numbers and statistics" lead="On screen, numbers are for reading and comparing. The download keeps full precision.">
+    <DocTable caption="Numbers and statistics" columns={['Value', 'On screen', 'Not', 'Rule']} widths={['300px', '240px', '260px']}>
+      {
+        numbers.map(([value, screen, not, rule]) => (
+          <tr>
+            <th scope="row">{value}</th>
+            <td class="write-yes nowrap">{screen}</td>
+            <td class="write-no">{not}</td>
+            <td>{rule}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+    <p class="section-note">The statistics themselves are written p-value, q-value and FDR, with a lowercase p and q and a hyphen. They stay upright in the interface.</p>
+  </DocSection>
+
+  <DocSection title="Units and coordinates" lead="A space between the number and its unit, and the unit written the way genomics papers write it.">
+    <DocTable caption="Units and coordinates" columns={['Quantity', 'Write', 'Not', 'Note']} widths={['300px', '280px', '240px']}>
+      {
+        units.map(([quantity, write, not, note]) => (
+          <tr>
+            <th scope="row">{quantity}</th>
+            <td class="write-yes">{write}</td>
+            <td class="write-no">{not}</td>
+            <td>{note}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Comparisons and thresholds" lead="Words in labels and sentences; symbols only where space is tight and the meaning is standard.">
+    <DocTable caption="Comparisons and thresholds" columns={['Where', 'Write', 'Not']} widths={['340px', '380px']}>
+      {
+        comparisons.map(([where, write, not, code]) => (
+          <tr>
+            <th scope="row">{where}</th>
+            <td class:list={['write-yes', { mono: code }]}>{write}</td>
+            <td class:list={['write-no', { mono: code }]}>{not}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Typesetting and screen readers" lead="How these look and how they are heard.">
+    <DocTable caption="Typesetting and screen readers" columns={['Rule', 'Detail']} widths={['300px']}>
+      {
+        typesetting.map(([rule, detail]) => (
+          <tr>
+            <th scope="row">{rule}</th>
+            <td>{detail}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="To confirm with Natalie" lead="Choices that depend on how the lab reports results.">
+    <DocTable caption="To confirm with Natalie" columns={['Question', 'Why it matters']} widths={['640px']}>
+      {
+        toConfirm.map(([question, why]) => (
+          <tr>
+            <th scope="row">{question}</th>
+            <td>{why}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the formats in code">
+    <ul>
+      <li><code>ValueFormat</code> in <code>@humanbase/ui</code> gives the on-screen text, what screen readers hear, and the raw form for copying and downloads.</li>
+      <li>The “On screen” column of the numbers table above is generated with it.</li>
+    </ul>
+    <Code code={usage} lang="ts" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .sample-genes {
+    font: 700 18px/1.4 Lato, sans-serif;
+    word-spacing: var(--space-2);
+  }
+
+  .sample-running {
+    font: var(--type-body-lg);
+  }
+
+  .mono {
+    font: var(--type-code-sm);
+    font-size: 14px;
+  }
+
+  .nowrap {
+    white-space: nowrap;
+  }
+
+  .section-note {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+</style>

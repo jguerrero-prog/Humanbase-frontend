@@ -1,0 +1,26 @@
+---
+interface Rule {
+  title: string;
+  text: string;
+  example?: string;
+}
+
+interface Props {
+  rules: Rule[];
+  size?: 'large' | 'medium';
+}
+
+const { rules, size = 'large' } = Astro.props;
+---
+
+<ul class:list={['key-rules', `key-rules-${size}`]} style={`--rule-count: ${rules.length}`}>
+  {
+    rules.map((rule) => (
+      <li>
+        <h3>{rule.title}</h3>
+        <p>{rule.text}</p>
+        {rule.example && <code>{rule.example}</code>}
+      </li>
+    ))
+  }
+</ul>

@@ -1,0 +1,224 @@
+---
+import { Code } from 'astro:components';
+import { NetwasResult } from '@humanbase/data';
+import { NetwasGenes } from '@humanbase/hb';
+import { Button, JobDetails, NetwasGuide, ResultHeader, ResultLayout, StatusBadge, TopBar } from '@humanbase/ui';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import { productJobs, productSections } from '../../data/product-navigation';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+// The documented example: its header fields and the five rows the NetWAS docs print.
+const resultFile = `# Job id: d7732f19-916d-4458-97b5-936b8d6345cb
+# Job title:
+# Email:
+# Created: August 21, 2017, 5:07 PM EDT
+# GWAS file: bmi-2012.out.txt
+# GWAS format: vegas
+# Tissue: adipose tissue
+# P-value threshold: 0.01
+KRT6B\t-1\t0.561327
+EMP1\t-1\t0.541169
+ZBTB41\t-1\t0.503238
+PNPLA8\t-1\t0.454396
+ITGB4\t-1\t0.440985
+`;
+const result = NetwasResult.parse(resultFile);
+const field = (name: string) => result.header.get(name) ?? '';
+const tissue = field('Tissue');
+const threshold = field('P-value threshold');
+const gwasFile = field('GWAS file');
+const gwasFormat = field('GWAS format').toUpperCase();
+const tissueNetwork = `${tissue.charAt(0).toUpperCase()}${tissue.slice(1)}, GIANT`;
+const title = field('Job title') || 'Untitled NetWAS job';
+
+const names = {
+  KRT6B: 'keratin 6B',
+  EMP1: 'epithelial membrane protein 1',
+  ZBTB41: 'zinc finger and BTB domain containing 41',
+  PNPLA8: 'patatin like phospholipase domain containing 8',
+  ITGB4: 'integrin subunit beta 4',
+};
+const citation = 'Greene CS, Krishnan A, Wong AK, et al. (2015). Understanding multicellular function and disease with human tissue-specific networks. Nature Genetics.';
+
+const crumbs = [{ label: 'Jobs', href: '/ui-library/job-status-and-queue/' }, { label: title }];
+const context = [
+  { name: 'Tissue network', value: tissueNetwork },
+  { name: 'GWAS file', value: `${gwasFile}, ${gwasFormat}` },
+  { name: 'p-value threshold', value: threshold },
+];
+const tabs = [
+  { value: 'genes', label: 'Genes' },
+  { value: 'details', label: 'Job details' },
+];
+
+const details = [
+  { term: 'Job ID', value: field('Job id'), mono: true },
+  { term: 'Job title', value: field('Job title') || `None given; shown as ${title}` },
+  { term: 'Email', value: field('Email') || 'None given' },
+  { term: 'Created', value: field('Created') },
+  { term: 'GWAS file', value: gwasFile, mono: true },
+  { term: 'GWAS format', value: gwasFormat },
+  { term: 'Tissue network', value: tissueNetwork },
+  { term: 'p-value threshold', value: threshold },
+  { term: 'Result columns', value: 'Gene symbol; training label (1, −1, 0); NetWAS score' },
+];
+
+const today = [
+  ['Delivery', 'A result file by email to the address given and, or, at a URL. There is no results page.'],
+  ['Header', 'Job id, Job title, Email, Created, GWAS file, GWAS format (vegas, forge or pseq), Tissue, P-value threshold.'],
+  ['Column 1', 'Gene symbol.'],
+  ['Column 2', 'Training label: 1 nominally significant p-value (positive example), −1 not nominally significant (negative example), 0 not used in training.'],
+  ['Column 3', 'NetWAS score: distance from the SVM separating hyperplane. Positive is more like the nominally significant genes, negative more like the non-significant ones.'],
+  ['Method', 'An SVM trained on nominally significant genes (P < 0.01) as positives and 10,000 random non-significant genes as negatives; features are each gene’s edge weights in the tissue network.'],
+  ['First rows of the example', 'KRT6B −1 0.561327; EMP1 −1 0.541169; ZBTB41 −1 0.503238; PNPLA8 −1 0.454396; ITGB4 −1 0.440985.'],
+  ['Citation', 'Greene, Krishnan, Wong et al. (2015), Understanding multicellular function and disease with human tissue-specific networks, Nature Genetics, in the file.'],
+];
+
+const words = [
+  ['Training label 1', 'Significant (1)'],
+  ['Training label −1', 'Not significant (−1)'],
+  ['Training label 0', 'Not used (0)'],
+  ['New candidates', 'Not significant in the GWAS (label −1 or 0) but with a positive NetWAS score, so the network places them with the hits.'],
+  ['Score help', 'Distance from the classifier’s boundary at 0: positive is more like the significant genes. It isn’t a p-value or a probability.'],
+  ['Email arrives', 'Your NetWAS results for bmi-2012.out.txt are ready. Open the results page, or download the result file.'],
+];
+
+const behavior = [
+  ['Default view', 'All genes, sorted by NetWAS score, highest first, as in the file.'],
+  ['Filters', 'All genes, New candidates (label −1 or 0 with a score above 0), GWAS hits (label 1). Filters only choose rows; no score changes.'],
+  ['Rank', 'The gene’s place in the whole file by score; it doesn’t renumber when filtering.'],
+  ['Open in Networks', 'Opens the gene in the same tissue network and data version, so a candidate’s neighbors are one click away.'],
+  ['Download', 'The identical text file, header and all; the email links to this page and to the file.'],
+  ['Saved', 'The job is in this browser’s Jobs list like any other (Job status and queue).'],
+];
+
+const specs = [
+  ['header', 'Results layout header; context labels for tissue network, GWAS file and format, p-value threshold'],
+  ['table', 'Rank right-aligned; gene symbol Lato Bold 14 with name Lato 12 grey; label in words with the raw value in mono; score bar 120px centered on 0, viz.div steps +2 and −2'],
+  ['filters', 'Segmented control, small: All genes, New candidates, GWAS hits'],
+  ['companion', 'How to read this: 4 columns, grey 50, with the score scale and the citation'],
+  ['job details', 'Two-column list; IDs and file names in Atkinson Hyperlegible Mono'],
+];
+
+const usage = `import { NetwasResult } from '@humanbase/data';
+import { NetwasGenes } from '@humanbase/hb';
+
+const result = NetwasResult.parse(fileText);
+result.filter('candidates'); // label −1 or 0 with a score above 0, ranks kept
+
+<NetwasGenes file={fileText} names={geneNames} networkHref="/networks/?genes={gene}" />`;
+---
+
+<DocsLayout title="NetWAS results" description="A results page for NetWAS: the genes the network lifts up, what the score means, and every field of today’s result file.">
+  <Intro
+    lead="NetWAS reranks the genes of a GWAS with a tissue network. Today the result is a text file, by email or link. This page gives it a results page with the same columns, so researchers can find the genes the network lifts up without opening the file in a spreadsheet."
+    status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Same data as the file', text: 'Every column and header field of today’s file is on the page, and Download gives the identical file.' },
+        { title: 'Lead with the discoveries', text: 'Genes not significant in the GWAS but scored like the hits are what NetWAS adds; one filter shows them.' },
+        { title: 'Say what the score means', text: 'Distance from the classifier’s boundary: positive is more like the significant genes. It isn’t a p-value or a probability.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="What NetWAS returns today" lead="From the NetWAS docs, including the example result file for bmi-2012.out.txt in adipose tissue, created August 21, 2017.">
+    <DocTable caption="What NetWAS returns today" columns={['Part', 'Today']} widths={['300px']}>
+      {today.map(([part, text]) => <tr><th scope="row">{part}</th><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="The results page" lead="The documented example file on the Results layout. The five rows are the first rows of that file; the total isn’t in the docs, so counts here are left out rather than invented.">
+    <figure class="screen">
+      <TopBar sections={productSections} current="Network analysis" jobs={productJobs} scrolled={false} />
+      <div class="screen-body">
+        <ResultLayout mainLabel="Genes ranked by NetWAS score" companionLabel="How to read this">
+          <ResultHeader slot="header" headingLevel={3} crumbs={crumbs} title={title} context={context} settingsLabel="Job actions" tabs={tabs} tabsLabel={`${title} views`}>
+            <Fragment slot="actions">
+              <StatusBadge status="finished" />
+              <span class="created">Created Aug 21, 2017</span>
+            </Fragment>
+            <Fragment slot="settings">
+              <Button variant="ghost" size="small">Rename</Button>
+              <Button variant="ghost" size="small" icon="link">Copy link</Button>
+              <Button variant="secondary" icon="download">Download result file</Button>
+            </Fragment>
+          </ResultHeader>
+          <NetwasGenes
+            slot="main"
+            client:visible
+            file={resultFile}
+            names={names}
+            networkHref="/ui-library/results-layout/?gene={gene}#network-result"
+            defaultFilter="candidates"
+            note="First rows of the example file; the score bar runs from −1 to 1 around the boundary at 0. Rows page with Show more; Download gives the whole file."
+          />
+          <NetwasGuide slot="companion" headingLevel={4} tissue={tissue} threshold={threshold} citation={citation} client:visible />
+        </ResultLayout>
+      </div>
+    </figure>
+  </DocSection>
+
+  <DocSection title="Job details" lead="The second tab holds the file’s header, field for field, so nothing from the emailed file is lost.">
+    <div class="details">
+      <JobDetails items={details} label={`${title} details`} />
+    </div>
+  </DocSection>
+
+  <DocSection title="Words" lead="Plain words for the training label; the raw value stays beside it so the page and the file agree.">
+    <DocTable caption="NetWAS result words" columns={['Moment', 'What it says']} widths={['300px']}>
+      {words.map(([moment, text]) => <tr><th scope="row">{moment}</th><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="What the NetWAS results page does.">
+    <DocTable caption="NetWAS results behavior" columns={['Rule', 'Detail']} widths={['300px']}>
+      {behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Specs" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="NetWAS results specs" columns={['Part', 'Value']} widths={['300px']}>
+      {specs.map(([part, value]) => <tr><th scope="row"><code>{part}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the results in code">
+    <ul>
+      <li><code>NetwasResult</code> in <code>@humanbase/data</code> reads the result file: header fields, then gene, training label and score. It ranks by score and filters without renumbering.</li>
+      <li><code>NetwasGenes</code> in <code>@humanbase/hb</code> pairs it with the filter, search and <code>NetwasGeneTable</code>. Gene names come from the gene service; the file only has symbols.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .screen {
+    margin: 0;
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .screen :global(.top-bar) {
+    position: relative;
+  }
+
+  .screen-body {
+    padding: var(--space-6) 61px var(--space-12);
+  }
+
+  .created {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .details {
+    max-inline-size: 832px;
+  }
+</style>

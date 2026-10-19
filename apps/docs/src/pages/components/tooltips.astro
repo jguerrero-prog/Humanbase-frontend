@@ -1,0 +1,544 @@
+---
+import { Button, Cell, DataTooltip, HeaderCell, Icon, Table, Toggletip, Tooltip } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import Pair from '../../components/docs/Pair.astro';
+import PairList from '../../components/docs/PairList.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const kinds = [
+  ['Tooltip', '“What is this button?”', 'Hover after 400ms, or focus', 'Zoom in, Fit to screen, Download on graph controls.'],
+  ['Data tooltip', '“What is this point?”', 'Hover or focus on a node, edge or cell', 'IL1R1: score 0.97 with IL1B, 212 datasets.'],
+  ['Toggletip', '“What does this term mean?”', 'Click or Enter on an info button', 'What a q-value is, what MAGE contains.'],
+  ['Not a tooltip', 'Errors, instructions, anything required', '', 'Use field help text, an inline alert or the page itself.'],
+];
+
+const controls = [
+  { icon: 'zoom-in', label: 'Zoom in' },
+  { icon: 'zoom-out', label: 'Zoom out' },
+  { icon: 'maximize', label: 'Fit to screen' },
+  { icon: 'download', label: 'Download' },
+] as const;
+
+const placements = [
+  { title: 'Top', text: 'Download', placement: 'top' },
+  { title: 'Bottom', text: 'Fit to screen', placement: 'bottom' },
+  { title: 'Right', text: 'Zoom out', placement: 'right' },
+] as const;
+
+const behavior = [
+  ['Delay', '400ms on hover, so tooltips don’t flash while the pointer crosses the screen. At once on keyboard focus.'],
+  ['Moving between triggers', 'Once one tooltip is showing, the next appears at once, so scanning the graph controls is quick.'],
+  ['Hoverable', 'The pointer can move onto the tooltip without it closing.'],
+  ['Dismissible', 'Escape hides it without moving focus.'],
+  ['Persistent', 'It stays until the pointer or focus leaves, or Escape. Hides 100ms after leaving.'],
+  ['One at a time', 'Showing a new tooltip hides the last.'],
+  ['Motion', '100ms fade, no movement, in every motion setting.'],
+];
+
+const nodes = [
+  [110, 120],
+  [350, 100],
+  [80, 250],
+  [370, 260],
+  [230, 50],
+  [190, 310],
+  [300, 320],
+  [30, 180],
+];
+const shades = [
+  [1, 2, 5, 3, 0, 1, 2, 4],
+  [3, 6, 4, 2, 1, 0, 3, 5],
+  [2, 1, 3, 6, 4, 2, 1, 0],
+  [5, 3, 2, 1, 2, 4, 6, 3],
+  [0, 2, 4, 5, 3, 1, 2, 1],
+  [4, 5, 1, 0, 2, 3, 4, 6],
+  [2, 3, 6, 4, 1, 0, 5, 2],
+];
+
+const access = [
+  ['Icon-only buttons', 'Use aria-label for the name. The tooltip shows the same words, so sighted and screen reader users hear the same thing.'],
+  ['Extra descriptions', 'Link the tooltip with aria-describedby, so it’s read after the control’s name.'],
+  ['Touch screens', 'Hover tooltips don’t appear. Icon buttons rely on their accessible name, data comes from tapping (which opens the drawer), and definitions use toggletips.'],
+  ['Contrast', 'White on ink 17.4:1. Data tooltip labels in grey 300, 11.4:1; the hint in grey 400, 6.9:1.'],
+  ['Zoom', 'At 200% zoom tooltips wrap at 280px and stay inside the window.'],
+];
+
+const writing = [
+  ['Name the action', 'Download network', 'Click here to download the network as a file.'],
+  ['Match the button’s label', 'Fit to screen', 'Maximize'],
+  ['Add only what’s missing', 'Last run Oct 15, 2026', 'Last run (date of last run)'],
+  ['Keep units with values', '212 datasets', '212'],
+];
+
+const specs = [
+  ['tooltip.surface', 'surface.inverse: ink #1A1A1A, elevation 2, radius.sm 8px'],
+  ['tooltip.padding / max-width', '6px 10px / 280px'],
+  ['tooltip.text', 'Lato 14/20 white'],
+  ['tooltip.arrow', '12 × 6px, ink'],
+  ['tooltip.offset', '8px from the trigger; data tooltips 12px from the pointer'],
+  ['tooltip.delay', 'motion.delay.tooltip 400ms; 0ms on focus'],
+  ['data-tooltip.width', '240px; padding 10px 12px'],
+  ['data-tooltip.text', 'title Lato Bold 14 white; labels Lato 13 grey 300 #D1D1D1; values Lato Bold 13 white'],
+  ['toggletip.surface', 'white, 1px border.subtle, elevation 2, radius.md 12px, 16px padding, 320px wide'],
+  ['z.tooltip', '600, above everything, including dialogs'],
+];
+
+const qValue = {
+  term: 'q-value',
+  body: 'The p-value adjusted for testing many GO terms at once. Below 0.05 means the term is unlikely to be enriched by chance.',
+  link: { label: 'How enrichment is calculated', href: '#toggletip' },
+};
+
+const terms = [
+  ['inflammatory response', '1.2 × 10⁻¹²'],
+  ['cytokine-mediated signaling', '3.4 × 10⁻⁹'],
+  ['response to lipopolysaccharide', '8.1 × 10⁻⁸'],
+];
+
+const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '@humanbase/ui';
+
+<Tooltip text="Zoom in">
+  <button type="button" aria-label="Zoom in"><Icon name="zoom-in" size={20} /></button>
+</Tooltip>
+
+<Tooltip text="Last run Oct 15, 2026" describes>
+  <button type="button">Rerun</button>
+</Tooltip>
+
+<Toggletip term="q-value" size="header" body="The p-value adjusted for testing many GO terms at once." />
+
+<DataTooltip title="IL1R1" rows={[['Score with IL1B', '1.00']]} position={placeNearPoint(pointer, size, view)} />`;
+---
+
+<DocsLayout title="Tooltips" description="Tooltips, data tooltips and toggletips: when to use each, behavior, accessibility and writing.">
+  <Intro
+    lead="Tooltips put a short label next to something when people point at it or move focus to it. In HumanBase they name icon-only controls, show values when hovering a network or heatmap, and explain terms like q-value without sending people away from their results."
+    status="Updated October 16, 2026 · Components: Tooltip, Data tooltip, Toggletip · Meets WCAG 1.4.13 Content on Hover or Focus"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Extra, never essential', text: 'If people need it to finish a task, it belongs on the page. Tooltips can be missed, and don’t exist on touch screens.' },
+        { title: 'Focus, not only hover', text: 'Everything that shows a tooltip on hover shows it on keyboard focus too.' },
+        { title: 'Short and still', text: 'One line for labels, a few values for data. They fade in place; they never slide or bounce.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Three kinds" lead="Each answers a different question.">
+    <DocTable caption="Which kind of tooltip to use" columns={['Kind', 'Answers', 'Opens on', 'HumanBase example']} widths={['244px', '324px', '244px']}>
+      {kinds.map(([kind, answers, opens, example]) => <tr><th scope="row">{kind}</th><td>{answers}</td><td>{opens}</td><td>{example}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Tooltip" lead="Ink with white text (17.4:1), 8px from its trigger, with a 6px arrow pointing at it. Top is the default; it flips when there isn’t room.">
+    <div class="tooltip-layout">
+      <figure class="graph-stage">
+        <figcaption>Graph controls in the corner of the network view</figcaption>
+        <div class="graph-controls">
+          {
+            controls.map((control, index) => (
+              <Tooltip text={control.label} placement="left" open={index === 0 ? true : undefined}>
+                <button type="button" class:list={['graph-control', { 'graph-control-hover': index === 0 }]} aria-label={control.label}>
+                  <Icon name={control.icon} size={20} />
+                </button>
+              </Tooltip>
+            ))
+          }
+        </div>
+      </figure>
+      <ul class="placements">
+        {
+          placements.map((item) => (
+            <li>
+              <strong>{item.title}</strong>
+              <span class:list={['placement-specimen', `placement-${item.placement}`]}>
+                <Tooltip text={item.text} placement={item.placement} open>
+                  <span class="placement-anchor" />
+                </Tooltip>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="Timing comes from the Motion page. These rules meet WCAG 1.4.13: hoverable, dismissible and persistent.">
+    <DocTable caption="How tooltips behave" columns={['Rule', 'Detail']} widths={['284px']}>
+      {behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Data tooltips" lead="The values behind a node, edge or heatmap cell. They follow the pointer, 12px below and to the right, and stay inside the view.">
+    <div class="data-examples">
+      <figure class="data-stage">
+        <figcaption>Network: hovering IL1R1</figcaption>
+        <svg class="data-art" viewBox="0 0 680 380" aria-hidden="true" focusable="false">
+          {nodes.map(([x, y]) => <line x1="230" y1="190" x2={x} y2={y} />)}
+          {nodes.map(([x, y]) => <circle cx={x} cy={y} r="6" />)}
+          <circle class="data-art-query" cx="230" cy="190" r="9" />
+          <circle class="data-art-ring" cx="370" cy="260" r="10" />
+          <text x="353" y="290">IL1R1</text>
+        </svg>
+        <DataTooltip
+          title="IL1R1"
+          subtitle="interleukin 1 receptor type 1"
+          rows={[['Score with IL1B', '1.00'], ['Entrez', '3554']]}
+          hint="Click for details"
+          position={{ x: 393, y: 105 }}
+        />
+      </figure>
+      <figure class="data-stage">
+        <figcaption>Heatmap: hovering IL1B in liver</figcaption>
+        <svg class="data-art" viewBox="0 0 680 380" aria-hidden="true" focusable="false">
+          {shades.map((row, r) => row.map((shade, c) => <rect class={`shade-${shade}`} x={60 + c * 34} y={70 + r * 34} width="32" height="32" />))}
+          <rect class="data-art-cell" x="229" y="103" width="34" height="34" rx="2" />
+        </svg>
+        <DataTooltip
+          title="IL1B in monocyte"
+          subtitle="Tissue expression"
+          rows={[['Confidence', '0.93'], ['Tissue system', 'Hematopoietic']]}
+          hint="Click for details"
+          position={{ x: 276, y: 150 }}
+        />
+      </figure>
+    </div>
+    <ul class="points">
+      <li>Nodes, edges and cells can be reached with the keyboard; focus shows the same tooltip, placed next to the item instead of the pointer.</li>
+      <li>The hovered item gets a 2px ink outline, so it’s clear which point the values belong to.</li>
+      <li>Clicking opens the drawer with the full details. The tooltip is a preview, never the only place a value appears.</li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Toggletip" lead="A small white panel that opens from an info button. Use it for definitions researchers may want once, then never again.">
+    <div class="toggletip-example">
+      <div class="toggletip-table">
+        <Table caption="Enriched terms, with a q-value definition" columnWidths={['378px', '180px']}>
+          <thead>
+            <tr>
+              <HeaderCell>Term</HeaderCell>
+              <HeaderCell align="end">q-value <Toggletip {...qValue} size="header" open /></HeaderCell>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              terms.map(([term, q]) => (
+                <tr>
+                  <Cell>{term}</Cell>
+                  <Cell type="number">{q}</Cell>
+                </tr>
+              ))
+            }
+          </tbody>
+        </Table>
+      </div>
+      <ul class="points">
+        <li>Opens on click, tap or Enter; closes on Escape, a second click or clicking outside.</li>
+        <li>The info button is 28px in headers and 32px elsewhere, labeled “About q-value”.</li>
+        <li>Its content is announced with a live region when it opens, and can include one link.</li>
+        <li>Works on touch screens, unlike hover tooltips.</li>
+      </ul>
+    </div>
+  </DocSection>
+
+  <DocSection title="Accessibility and touch" lead="A tooltip is extra help; the control must still work without it.">
+    <DocTable caption="Tooltip accessibility rules" columns={['Rule', 'Detail']} widths={['324px']}>
+      {access.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Writing tooltips" lead="Name the action in two or three words. Sentence case, no period.">
+    <DocTable caption="How to write tooltips" columns={['Guideline', 'Write', 'Not']} widths={['344px', '404px']}>
+      {writing.map(([guideline, write, not]) => <tr><th scope="row">{guideline}</th><td class="write-yes">{write}</td><td class="write-no">{not}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <PairList>
+      <Pair kind="do" title="Do. Label icon-only buttons" text="The icon alone can be read more than one way.">
+        <span class="pair-specimen">
+          <Tooltip text="Fit to screen" open>
+            <button type="button" class="graph-control" aria-label="Fit to screen"><Icon name="maximize" size={20} /></button>
+          </Tooltip>
+        </span>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Repeat a visible label" text="“Download” next to a Download button says nothing new." mock>
+        <span class="mock-tooltip">Download</span>
+        <span class="mock-button"><Icon name="download" size={16} />Download</span>
+      </Pair>
+      <Pair kind="do" title="Do. Explain disabled controls on the page" text="Disabled buttons can’t take focus, so a tooltip on them is unreachable by keyboard." mock>
+        <Button variant="secondary" size="small" disabled className="pair-button">Delete job</Button>
+        <span class="mock-note">Running jobs can’t be deleted.</span>
+      </Pair>
+      <Pair kind="dont" title="Don’t. Hide instructions in a tooltip" text="“Enter 20 to 3,500 genes” is needed to succeed, so it belongs under the field." mock>
+        <span class="mock-tooltip">Enter 20 to 3,500 genes</span>
+        <span class="mock-field">Gene list <Icon name="info" size={16} /></span>
+      </Pair>
+    </PairList>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Tooltip tokens and values" columns={['Token', 'Value']} widths={['404px']}>
+      {specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the components in code">
+    <ul>
+      <li><code>Tooltip</code> wraps one trigger. By default it repeats the trigger’s <code>aria-label</code> and is hidden from screen readers; with <code>describes</code> it is linked to the trigger with <code>aria-describedby</code>.</li>
+      <li>All tooltips share one <code>TooltipController</code>, which keeps one open at a time and skips the delay while moving between triggers.</li>
+      <li><code>DataTooltip</code> only draws the values. The graph or heatmap passes a position from <code>placeNearPoint</code>, which keeps it inside the view.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .tooltip-layout {
+    display: grid;
+    grid-template-columns: 560px minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+
+  .graph-stage,
+  .data-stage {
+    position: relative;
+    margin: 0;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .graph-stage {
+    block-size: 320px;
+  }
+
+  .graph-stage figcaption,
+  .data-stage figcaption {
+    position: absolute;
+    inset: var(--space-5) auto auto var(--space-6);
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .graph-controls {
+    position: absolute;
+    inset-block-start: var(--space-12);
+    inset-inline-end: var(--space-6);
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .graph-control {
+    display: grid;
+    place-items: center;
+    inline-size: 36px;
+    block-size: 36px;
+    padding: 0;
+    color: var(--text-default);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .graph-control:hover,
+  .graph-control-hover {
+    background: var(--surface-sunken);
+  }
+
+  .placements {
+    display: flex;
+    gap: var(--space-10);
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: var(--space-10);
+    list-style: none;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .placements li {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: center;
+  }
+
+  .placements strong {
+    font: var(--type-label-sm);
+    color: var(--text-muted);
+  }
+
+  .placement-specimen {
+    display: grid;
+    place-items: center;
+    inline-size: 120px;
+    block-size: 100px;
+  }
+
+  .placement-anchor {
+    display: block;
+    inline-size: 12px;
+    block-size: 12px;
+    background: var(--border-default);
+    border-radius: var(--radius-full);
+  }
+
+  .placement-top {
+    align-content: end;
+  }
+
+  .placement-bottom {
+    align-content: start;
+  }
+
+  .placement-right {
+    justify-content: start;
+  }
+
+  .data-examples {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+
+  .data-stage {
+    block-size: 380px;
+  }
+
+  .data-art {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .data-art line {
+    stroke: var(--border-default);
+    stroke-width: 1.5;
+  }
+
+  .data-art circle {
+    fill: var(--text-secondary);
+  }
+
+  .data-art .data-art-query {
+    fill: var(--text-default);
+  }
+
+  .data-art .data-art-ring,
+  .data-art-cell {
+    fill: none;
+    stroke: var(--text-default);
+    stroke-width: 2;
+  }
+
+  .data-art text {
+    font: var(--type-label-sm);
+    font-size: 13px;
+    fill: var(--text-default);
+  }
+
+  .shade-0 {
+    fill: var(--color-grey-50);
+  }
+
+  .shade-1 {
+    fill: var(--color-grey-200);
+  }
+
+  .shade-2 {
+    fill: var(--color-grey-300);
+  }
+
+  .shade-3 {
+    fill: var(--color-grey-400);
+  }
+
+  .shade-4 {
+    fill: var(--color-grey-500);
+  }
+
+  .shade-5 {
+    fill: var(--color-grey-600);
+  }
+
+  .shade-6 {
+    fill: var(--color-grey-800);
+  }
+
+  .toggletip-example {
+    display: grid;
+    grid-template-columns: 560px minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+    min-block-size: 380px;
+    padding: var(--space-10);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  /* This short table never scrolls, so the open panel can overlap its rows as drawn. */
+  .toggletip-table :global(.table-scroll) {
+    overflow: visible;
+  }
+
+  .toggletip-table :global(.table-header .toggletip) {
+    margin-inline-start: var(--space-1);
+  }
+
+  .pair-specimen {
+    display: grid;
+    justify-items: center;
+    padding-block-start: var(--space-12);
+  }
+
+  .mock-tooltip {
+    justify-self: start;
+    padding: var(--space-2) var(--space-3);
+    font: var(--type-body-sm);
+    color: var(--text-on-brand);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-sm);
+  }
+
+  .mock-button,
+  .mock-field {
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: center;
+    justify-self: start;
+    font: var(--type-label-sm);
+    color: var(--text-default);
+  }
+
+  .mock-button {
+    padding: var(--space-2) var(--space-4);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-strong);
+    border-radius: var(--radius-md);
+  }
+
+  .pair-stage :global(.pair-button) {
+    justify-self: start;
+  }
+
+  .mock-note {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  @media (width < 64rem) {
+    .tooltip-layout,
+    .data-examples,
+    .toggletip-example {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

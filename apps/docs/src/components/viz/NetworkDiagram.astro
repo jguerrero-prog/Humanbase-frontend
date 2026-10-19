@@ -1,0 +1,81 @@
+---
+import { edgeBand, networkEdges, networkNodes, queryGene } from '../../data/viz-examples';
+
+interface Props {
+  mode: 'strength' | 'module' | 'selected';
+  selected?: string;
+}
+
+const { mode, selected = 'IL1R1' } = Astro.props;
+const points = new Map([[queryGene.gene, queryGene], ...networkNodes.map((node) => [node.gene, node] as const)]);
+const related = (gene: string) => mode !== 'selected' || gene === selected || networkEdges.some((e) => [e.from, e.to].includes(gene) && [e.from, e.to].includes(selected));
+const edges = networkEdges.flatMap((edge) => {
+  const band = edgeBand(edge.weight);
+  const from = points.get(edge.from);
+  const to = points.get(edge.to);
+  if (!band || !from || !to) return [];
+  return [{ ...edge, band, from, to, faded: mode === 'selected' && ![edge.from, edge.to].includes(selected) }];
+});
+const fill = (module: (typeof networkNodes)[number]['module']) => (mode === 'module' ? `var(--viz-cat-${module})` : 'var(--surface-page)');
+---
+
+<svg class="network-diagram" viewBox="0 0 680 420" aria-hidden="true">
+  {
+    edges.map(({ from, to, band, faded }) => (
+      <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} class:list={{ faded }} style={`stroke: var(${band.color}); stroke-width: var(${band.width})`} />
+    ))
+  }
+  {
+    networkNodes.map((node) => (
+      <g class:list={{ faded: !related(node.gene) }}>
+        {mode === 'selected' && node.gene === selected && <circle class="selection" cx={node.x} cy={node.y} r="11" />}
+        <circle class="node" cx={node.x} cy={node.y} r="6" style={`fill: ${fill(node.module)}`} />
+        <text x={node.x + 10} y={node.y + 4}>{node.gene}</text>
+      </g>
+    ))
+  }
+  <circle class="query" cx={queryGene.x} cy={queryGene.y} r="10" />
+  <text class="query-label" x={queryGene.x + 14} y={queryGene.y + 5}>{queryGene.gene}</text>
+</svg>
+
+<style>
+  .network-diagram {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .node {
+    stroke: var(--text-secondary);
+    stroke-width: 1.5px;
+  }
+
+  .query {
+    fill: var(--text-default);
+  }
+
+  .selection {
+    fill: none;
+    stroke: var(--text-default);
+    stroke-width: 2px;
+  }
+
+  text {
+    font: 700 12px Lato, sans-serif;
+    fill: var(--text-default);
+    paint-order: stroke;
+    stroke: var(--surface-page);
+    stroke-width: 3px;
+  }
+
+  .query-label {
+    font-size: 14px;
+  }
+
+  .faded {
+    opacity: 0.35;
+  }
+</style>

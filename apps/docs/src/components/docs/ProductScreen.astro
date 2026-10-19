@@ -1,0 +1,40 @@
+---
+import { TopBar } from '@humanbase/ui';
+import { productJobs, productSections } from '../../data/product-navigation';
+
+interface Props {
+  label: string;
+  current?: string;
+  /** Lay the slot out with the standard screen padding; off when the page sets its own regions. */
+  padded?: boolean;
+  /** Mockups are inert unless the page wants their controls to work. */
+  inert?: boolean;
+}
+
+const { label, current, padded = true, inert = true } = Astro.props;
+---
+
+<figure class="product-screen" aria-label={label} inert={inert}>
+  <TopBar sections={productSections} {...(current ? { current } : {})} jobs={productJobs} scrolled={false} />
+  {padded ? <div class="product-screen-body"><slot /></div> : <slot />}
+</figure>
+
+<style>
+  .product-screen {
+    margin: 0;
+    overflow: hidden;
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .product-screen :global(.top-bar) {
+    position: relative;
+  }
+
+  .product-screen-body {
+    display: grid;
+    gap: var(--space-6);
+    padding: var(--space-8) 61px 54px;
+  }
+</style>

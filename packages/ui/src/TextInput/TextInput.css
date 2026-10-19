@@ -1,0 +1,12 @@
+.text-input {
+  block-size: 44px;
+  padding: 0 var(--space-4);
+}
+
+.text-input-small {
+  block-size: 36px;
+  padding: 0 var(--space-3);
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: var(--radius-sm);
+}

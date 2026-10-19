@@ -1,0 +1,21 @@
+.netwas-genes {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.netwas-genes-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.netwas-genes-controls .search-field {
+  flex: 1;
+  min-inline-size: 200px;
+}
+
+.netwas-genes-note {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}

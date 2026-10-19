@@ -1,0 +1,12 @@
+{
+  "$description": "Every HumanBase API endpoint this front end calls. pnpm api:verify checks each GET example against a target API.",
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/genes/{entrez}/",
+      "documented": true,
+      "example": "/api/genes/3553/",
+      "usedBy": ["GeneService.get"]
+    }
+  ]
+}

@@ -1,0 +1,535 @@
+---
+import { flattenTokens } from '@humanbase/tokens/catalog';
+import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import { Button } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import DoDont from '../../components/docs/DoDont.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const radii = flattenTokens(primitives.radius, ['radius']).map(({ path, cssVar, token }) => {
+  const { value } = token.$value as { value: number };
+  return { name: path.join('.'), cssVar, use: token.$description ?? '', px: value === 0 ? '0' : `${value}px` };
+});
+
+const scaleLabel = (name: string, px: string) => (name === 'radius.full' ? 'Fully round' : px);
+
+const heatmap = ['yellow', 'grey', 'grey', 'mint', 'yellow', 'grey', 'grey', 'mint', 'yellow', 'grey', 'grey', 'mint', 'yellow', 'grey', 'mint'];
+
+const usage = `.card {
+  border-radius: var(--radius-md);
+}
+
+.tooltip {
+  border-radius: var(--radius-sm);
+}`;
+---
+
+<DocsLayout title="Corner radius" description="The HumanBase radius scale, which step each component uses, and how nested corners are worked out.">
+  <Intro
+    lead="Rounded corners give HumanBase its friendly, approachable feel without losing the precision a scientific tool needs. The radius scale starts from the 12px corner on the Explore button and grows with the size of the element: small parts get small corners, large surfaces get larger ones."
+    status="Updated October 16, 2026 · Values are in pixels"
+  >
+    <KeyRules
+      rules={[
+        { title: '12px is the default', text: 'Buttons, inputs and cards all use 12px, so the most common elements look like one family.' },
+        { title: 'Bigger element, bigger corner', text: 'Radius grows with size. A tag uses 4px, a dialog 16px. Never round a small element more than a large one around it.' },
+        { title: 'Nested corners match', text: 'When one rounded shape sits inside another, the inner radius equals the outer radius minus the padding between them.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Radius scale" lead="Eight steps. Each sample is a 120px square so the corners can be compared side by side." spacing="loose">
+    <ul class="radius-scale">
+      {
+        radii.map(({ name, cssVar, use, px }) => (
+          <li class:list={{ 'radius-default': name === 'radius.md' }}>
+            <span class="radius-sample" style={`border-radius: var(${cssVar})`} />
+            <h3>
+              {scaleLabel(name, px)}
+              {name === 'radius.md' && <span class="radius-default-label">default</span>}
+            </h3>
+            <code>{name}</code>
+            <p>{use}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Radius by component" lead="Which step each component uses. Pick the component’s radius from this list rather than adjusting by eye." spacing="loose">
+    <ul class="component-radii">
+      <li>
+        <div class="component-stage">
+          <Button size="medium" tabIndex={-1}>Search</Button>
+          <Button variant="secondary" tabIndex={-1}>Explore</Button>
+        </div>
+        <h3>Button</h3>
+        <code>12px md</code>
+      </li>
+      <li>
+        <div class="component-stage" aria-hidden="true">
+          <span class="mock-input">Search a gene, for example IL1B</span>
+        </div>
+        <h3>Text input</h3>
+        <code>12px md</code>
+      </li>
+      <li>
+        <div class="component-stage" aria-hidden="true">
+          <span class="mock-card"><i>IL1B</i><span>interleukin 1 beta</span></span>
+        </div>
+        <h3>Card</h3>
+        <code>12px md</code>
+      </li>
+      <li>
+        <div class="component-stage" aria-hidden="true">
+          <span class="mock-tag mock-tag-brand">Experimental</span>
+          <span class="mock-tag mock-tag-neutral">GO:0006954</span>
+          <span class="mock-tag mock-tag-beta">Beta</span>
+        </div>
+        <h3>Tag and badge</h3>
+        <code>4px xs</code>
+      </li>
+      <li>
+        <div class="component-stage" aria-hidden="true">
+          <span class="mock-tooltip">Score: 0.94</span>
+          <span class="mock-menu"><span>MAGE</span><span>GIANT</span></span>
+        </div>
+        <h3>Tooltip and menu</h3>
+        <code>8px sm</code>
+      </li>
+      <li>
+        <div class="component-stage" aria-hidden="true">
+          <span class="mock-dialog"><strong>Leave this page?</strong><span>Your job keeps running.</span></span>
+        </div>
+        <h3>Dialog</h3>
+        <code>16px lg</code>
+      </li>
+      <li>
+        <div class="component-stage" aria-hidden="true">
+          <span class="mock-pill">Kidney</span>
+          <span class="mock-toggle" />
+        </div>
+        <h3>Pill and toggle</h3>
+        <code>Fully round full</code>
+      </li>
+      <li>
+        <div class="component-stage" aria-hidden="true">
+          <span class="mock-node mock-node-query" />
+          <span class="mock-node mock-node-related" />
+          <span class="mock-node mock-node-other" />
+        </div>
+        <h3>Network nodes</h3>
+        <code>Fully round full</code>
+      </li>
+      <li>
+        <div class="component-stage component-stage-end" aria-hidden="true">
+          <span class="mock-bar" style="--bar: 60px" />
+          <span class="mock-bar" style="--bar: 40px" />
+          <span class="mock-bar mock-bar-accent" style="--bar: 72px" />
+          <span class="mock-bar" style="--bar: 28px" />
+          <span class="mock-heatmap">{heatmap.map((tone) => <span class={`mock-cell-${tone}`} />)}</span>
+        </div>
+        <h3>Data marks</h3>
+        <code>0 to 2px none, 2xs</code>
+      </li>
+    </ul>
+  </DocSection>
+
+  <DocSection
+    title="Nested corners"
+    lead="When a rounded element sits inside another, subtract the gap from the outer radius. The two curves then run parallel and look deliberate."
+    spacing="loose"
+  >
+    <div class="nested">
+      <figure>
+        <div class="nested-outer" aria-hidden="true"><span class="nested-inner">Gene network preview</span></div>
+        <figcaption>
+          <strong class="nested-do">Do: inner radius 8px</strong>
+          <span>Outer 16px minus 8px padding = 8px. The curves stay parallel.</span>
+        </figcaption>
+      </figure>
+      <figure>
+        <div class="nested-outer" aria-hidden="true"><span class="nested-inner nested-inner-wrong">Gene network preview</span></div>
+        <figcaption>
+          <strong class="nested-dont">Don’t: inner radius 16px</strong>
+          <span>The same radius inside and out leaves a thick, uneven corner.</span>
+        </figcaption>
+      </figure>
+    </div>
+    <p class="nested-note">
+      Focus rings follow the same rule in reverse: a 12px button with a 2px gap gets a 14px ring. The ring radius is worked out from the element, so it has no token of its own.
+    </p>
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <DoDont
+      dos={[
+        'Use 12px for buttons, inputs and cards so the main controls match.',
+        'Round all four corners of a component the same way.',
+        'Keep elements that sit side by side, such as a search field and its button, on the same radius.',
+        'Keep heatmap cells square so the grid reads as data.',
+      ]}
+      donts={[
+        'Don’t use values between steps, such as 6px or 10px.',
+        'Don’t make buttons fully round. Pills are for filters and tags, not actions.',
+        'Don’t round tables inside a card; let the card’s corners do the work.',
+        'Don’t round only some corners, except where an element touches an edge, such as a drawer.',
+      ]}
+    />
+  </DocSection>
+
+  <DocSection title="Radius tokens">
+    <DocTable caption="Radius tokens" columns={['Token', 'Value', 'Use']} widths={['264px', '164px']}>
+      {
+        radii.map(({ name, use, px }) => (
+          <tr>
+            <th scope="row"><code>{name}</code></th>
+            <td class="token-value">{px}</td>
+            <td>{use}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using radius in code">
+    <ul>
+      <li>Each step is a CSS custom property named after the token: <code>radius.md</code> is <code>var(--radius-md)</code>.</li>
+      <li>The values live in <code>packages/tokens/src/primitives.tokens.json</code>; the table above is generated from that file.</li>
+    </ul>
+    <Code code={usage} lang="css" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .radius-scale,
+  .component-radii {
+    display: grid;
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .radius-scale {
+    --columns: 4;
+
+    gap: var(--space-8) var(--space-6);
+  }
+
+  .radius-scale li {
+    display: grid;
+    gap: 10px;
+  }
+
+  .radius-sample {
+    inline-size: 120px;
+    block-size: 120px;
+    background: var(--surface-subtle);
+    border: var(--border-width-1) solid var(--text-default);
+  }
+
+  .radius-default .radius-sample {
+    background: var(--color-emerald-50);
+    border-color: var(--border-selected);
+  }
+
+  .radius-scale h3 {
+    display: flex;
+    gap: var(--space-3);
+    font: var(--type-label);
+  }
+
+  .radius-default-label {
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+
+  .radius-scale code {
+    font: 400 14px/1.4 "Atkinson Hyperlegible Mono", monospace;
+    color: var(--text-secondary);
+  }
+
+  .radius-scale p {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .component-radii {
+    --columns: 3;
+
+    gap: var(--space-6);
+  }
+
+  .component-radii li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-4) var(--space-2);
+    padding: var(--space-6);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .component-stage {
+    display: flex;
+    grid-column: 1 / -1;
+    gap: var(--space-3);
+    align-items: center;
+    block-size: 96px;
+  }
+
+  .component-stage-end {
+    align-items: flex-end;
+  }
+
+  .component-radii h3 {
+    font: var(--type-label);
+  }
+
+  .component-radii code {
+    font: 400 14px/1.4 "Atkinson Hyperlegible Mono", monospace;
+    color: var(--text-secondary);
+  }
+
+  .mock-input {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+    color: var(--text-muted);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-strong);
+    border-radius: var(--radius-md);
+  }
+
+  .mock-card {
+    display: grid;
+    flex: 1;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .mock-card span,
+  .mock-dialog span {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .mock-tag {
+    padding: var(--space-1) var(--space-2);
+    font: var(--type-eyebrow);
+    border-radius: var(--radius-xs);
+  }
+
+  .mock-tag-brand {
+    color: var(--text-link);
+    background: var(--color-emerald-50);
+  }
+
+  .mock-tag-neutral {
+    background: var(--surface-sunken);
+  }
+
+  .mock-tag-beta {
+    color: var(--color-yellow-800);
+    background: var(--color-yellow-50);
+  }
+
+  .mock-tooltip {
+    padding: var(--space-2) var(--space-3);
+    font: var(--type-body-sm);
+    color: var(--text-on-brand);
+    background: var(--surface-inverse);
+    border-radius: var(--radius-sm);
+  }
+
+  .mock-menu {
+    display: grid;
+    padding: var(--space-1) 0;
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .mock-menu span {
+    padding: 6px var(--space-6) 6px var(--space-3);
+    font: var(--type-body-sm);
+  }
+
+  .mock-dialog {
+    display: grid;
+    flex: 1;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: var(--surface-page);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-elevation-3);
+  }
+
+  .mock-dialog strong {
+    font: 600 16px/1.4 Cabin, sans-serif;
+  }
+
+  .mock-pill {
+    padding: 6px 14px;
+    font: var(--type-label-sm);
+    color: var(--text-link);
+    background: var(--color-emerald-50);
+    border-radius: var(--radius-full);
+  }
+
+  .mock-toggle {
+    position: relative;
+    inline-size: 44px;
+    block-size: 24px;
+    background: var(--action-primary);
+    border-radius: var(--radius-full);
+  }
+
+  .mock-toggle::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 3px;
+    inset-inline-end: 3px;
+    inline-size: 18px;
+    block-size: 18px;
+    background: var(--surface-page);
+    border-radius: var(--radius-full);
+  }
+
+  .mock-node {
+    border-radius: var(--radius-full);
+  }
+
+  .mock-node-query {
+    inline-size: 28px;
+    block-size: 28px;
+    background: var(--action-secondary);
+  }
+
+  .mock-node-related {
+    inline-size: 18px;
+    block-size: 18px;
+    background: var(--data-highlight);
+  }
+
+  .mock-node-other {
+    inline-size: 12px;
+    block-size: 12px;
+    background: var(--text-disabled);
+  }
+
+  .mock-bar {
+    inline-size: 18px;
+    block-size: var(--bar);
+    background: var(--action-primary);
+    border-radius: var(--radius-2xs) var(--radius-2xs) 0 0;
+  }
+
+  .mock-bar-accent {
+    background: var(--action-secondary);
+  }
+
+  .mock-heatmap {
+    display: grid;
+    grid-template-columns: repeat(5, 12px);
+    gap: 2px;
+    margin-inline-start: var(--space-3);
+  }
+
+  .mock-heatmap span {
+    block-size: 12px;
+  }
+
+  .mock-cell-yellow {
+    background: var(--action-secondary);
+  }
+
+  .mock-cell-grey {
+    background: var(--border-subtle);
+  }
+
+  .mock-cell-mint {
+    background: var(--data-highlight);
+  }
+
+  .nested {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-12);
+  }
+
+  .nested figure {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .nested-outer {
+    inline-size: 360px;
+    padding: var(--space-2);
+    background: var(--action-primary);
+    border-radius: var(--radius-lg);
+  }
+
+  .nested-inner {
+    display: block;
+    padding: var(--space-6);
+    background: var(--surface-page);
+    border-radius: var(--radius-sm);
+  }
+
+  .nested-inner-wrong {
+    border-radius: var(--radius-lg);
+  }
+
+  .nested figcaption {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .nested figcaption span {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .nested-do {
+    font: var(--type-label);
+    color: var(--status-success-fg);
+  }
+
+  .nested-dont {
+    font: var(--type-label);
+    color: var(--status-error-fg);
+  }
+
+  .nested-note {
+    color: var(--text-secondary);
+  }
+
+  .token-value {
+    font-weight: 700;
+    color: var(--text-default);
+  }
+
+  @media (width < 64rem) {
+    .radius-scale {
+      --columns: 2;
+    }
+
+    .component-radii,
+    .nested {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .nested-outer {
+      inline-size: auto;
+    }
+  }
+</style>

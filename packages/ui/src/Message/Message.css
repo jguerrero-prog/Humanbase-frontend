@@ -1,0 +1,206 @@
+.message {
+  --message-fg: var(--text-default);
+  --message-bg: var(--surface-page);
+  --message-border: var(--border-subtle);
+
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  color: var(--text-default);
+  background: var(--message-bg);
+}
+
+.message-info {
+  --message-fg: var(--status-info-fg);
+  --message-bg: var(--status-info-bg);
+  --message-border: var(--status-info-border);
+}
+
+.message-success {
+  --message-fg: var(--status-success-fg);
+  --message-bg: var(--status-success-bg);
+  --message-border: var(--status-success-border);
+}
+
+.message-warning {
+  --message-fg: var(--status-warning-fg);
+  --message-bg: var(--status-warning-bg);
+  --message-border: var(--status-warning-border);
+}
+
+.message-error {
+  --message-fg: var(--status-error-fg);
+  --message-bg: var(--status-error-bg);
+  --message-border: var(--status-error-border);
+}
+
+.message > .icon {
+  flex: none;
+  color: var(--message-fg);
+}
+
+.message-text {
+  flex: 1;
+  min-inline-size: 0;
+  font: var(--type-body);
+}
+
+.message-action {
+  flex: none;
+  padding: 0;
+  font: var(--type-label);
+  font-size: 15px;
+  color: var(--text-default);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.message-dismiss {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.message-dismiss:hover {
+  color: var(--text-default);
+  background: var(--surface-sunken);
+}
+
+.alert {
+  align-items: start;
+  padding: var(--space-4) var(--space-3) var(--space-4) var(--space-4);
+  border: var(--border-width-1) solid var(--message-border);
+  border-radius: var(--radius-md);
+}
+
+.alert > .icon {
+  margin-block-start: 1px;
+}
+
+.alert > .message-dismiss {
+  margin-block: -6px;
+}
+
+.alert-content {
+  display: grid;
+  flex: 1;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.alert-title {
+  font: var(--type-label);
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.alert-body {
+  font: var(--type-body);
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--text-secondary);
+}
+
+.alert-actions {
+  display: flex;
+  gap: var(--space-5);
+  padding-block-start: var(--space-2);
+}
+
+.toast {
+  inline-size: min(400px, 100%);
+  min-block-size: 52px;
+  padding: var(--space-3) var(--space-2) var(--space-3) var(--space-4);
+  border: var(--border-width-1) solid var(--message-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevation-3);
+}
+
+.toast.message {
+  --message-bg: var(--surface-page);
+  --message-border: var(--border-subtle);
+}
+
+.toast .message-text {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.toast .message-action {
+  color: var(--text-link);
+}
+
+.toast > .spinner {
+  color: var(--text-default);
+}
+
+.toast-frame {
+  animation: toast-enter var(--motion-duration-moderate) var(--motion-easing-enter);
+}
+
+.toast-frame[data-leaving] {
+  animation: toast-leave var(--motion-duration-base) var(--motion-easing-exit) forwards;
+}
+
+.toast-region {
+  position: fixed;
+  z-index: var(--z-toast);
+  inset-block-end: var(--space-6);
+  inset-inline-start: var(--space-6);
+  pointer-events: none;
+}
+
+.toast-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toast-list li {
+  pointer-events: auto;
+}
+
+.banner {
+  inline-size: 100%;
+  min-block-size: 52px;
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-6);
+  border-block-end: var(--border-width-1) solid var(--message-border);
+}
+
+@media (width < 48rem) {
+  .toast-region {
+    inset-inline: var(--space-4);
+  }
+
+  .toast {
+    inline-size: 100%;
+  }
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    translate: 0 var(--motion-distance-sm);
+  }
+}
+
+@keyframes toast-leave {
+  to {
+    opacity: 0;
+  }
+}

@@ -1,0 +1,317 @@
+---
+import { GenomeLocation } from '@humanbase/data';
+import { ActionMenu, BrowserSettingsDialog, ExportDialog, GenomeBrowserToolbar, Heatmap, TrackHeader, TrackSettingsDialog, TracksDrawer, genomeBrowserKeyHelp, type ActionMenuItem } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import GenomeTracksSketch from '../../components/docs/GenomeTracksSketch.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import { scoreLegends } from '../../data/score-legends';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const view = new GenomeLocation('chr1', 109_792_590, 109_842_590);
+const trackCount = 3;
+const variant = { position: 109_817_590, label: 'chr1:109,817,590 G>T', scores: [1, 0.9] };
+const genes = [
+  { name: 'CELSR2', from: 109_794_000, to: 109_816_000, strand: '+' as const },
+  { name: 'PSRC1', from: 109_822_000, to: 109_826_500, strand: '-' as const },
+  { name: 'MYBPHL', from: 109_830_000, to: 109_836_000, strand: '-' as const },
+  { name: 'SORT1', from: 109_838_000, to: 109_842_590, strand: '-' as const },
+];
+const tracks = [
+  { name: 'Disease impact score', source: 'This job', scale: 'scale 0 to 3' },
+  { name: 'Mean −log e-value', source: 'This job', scale: 'scale 0 to 3' },
+  { name: 'Genes', source: 'GENCODE 19' },
+];
+const trackMenu: ActionMenuItem[] = [
+  { label: 'About this track', description: 'Source and what the values mean' },
+  { label: 'Download track data', icon: 'download' },
+  { label: 'Track settings…' },
+  { label: 'Move up', dividerBefore: true },
+  { label: 'Move down' },
+  { label: 'Remove track', destructive: true, dividerBefore: true },
+];
+const moreMenu: ActionMenuItem[] = [{ label: 'Browser settings…' }, { label: 'Clear highlights' }];
+const suggested = [
+  { id: 'impact', label: 'Disease impact score', source: 'This job', shown: true },
+  { id: 'evalue', label: 'Mean −log e-value', source: 'This job', shown: true },
+  { id: 'genes', label: 'Genes', source: 'GENCODE 19', shown: true },
+  { id: 'sequence', label: 'Genome sequence', source: 'Bases appear from about 200 bp', shown: true },
+  { id: 'conservation', label: 'Conservation', source: 'Suggested track, as today', shown: false },
+  { id: 'chromhmm', label: 'GM12878 ChromHMM', source: 'Chromatin states in GM12878 cells', shown: false },
+];
+const trackSettings = { name: 'Disease impact score', style: 'bars' as const, min: '0', max: '3', height: '50 px', thresholdLeap: 'Off', pinned: true };
+const browserSettings = { reverseTrackpad: false, reverseButtons: false, highlightLocation: false, guideline: 'left' };
+
+const today = [
+  ['Location', 'A field that takes a location or gene name (“1:109,767,590..109,867,590”). The assembly is only in the section title, “Genome browser (hg19)”.'],
+  ['Zoom', 'Zoom in (+) and out (-), and a slider with 200bp, 2kb, 50kb and 500kb stops; Space toggles between two zoom levels.'],
+  ['Jump', '« and » jump to the previous or next feature in the selected track (ctrl+left, ctrl+right): in a result, the previous or next variant.'],
+  ['Add track (A)', 'A panel with Defaults (Conservation, GM12878 ChromHMM, GENCODE 19, Genome, and the job’s score tracks, as checkboxes), DAS, Files, and + for a new source by URL.'],
+  ['Configure track (E)', 'About the track with Download data; Name, Pin to top, Height, Style (Histogram, Line Plot, Ribbon, Scatter), Colours, Min and Max value, Threshold leap, Reset track.'],
+  ['Export (X)', 'Export as SVG; include highlights, include vertical guideline, width in pixels, label with genomic coordinates.'],
+  ['Options', 'Reverse trackpad scrolling, reverse scrolling buttons and keys, vertical guideline position, highlight current location, Reset browser.'],
+  ['Tracks', 'Ruler; Disease impact score and Mean -log e-value (ASD: DNA and RNA disease impact scores, from -0.5 to 3); GENCODE 19 genes with names and strand arrows. Clear highlights (C).'],
+  ['Linked views', 'The browser follows the selected variant. In the ASD Browser the heatmap’s columns are the variants in view, in genomic order; selecting one centers both.'],
+  ['Gaps', 'Icon buttons have tooltips but no accessible names; track names sit on top of the data; the panels open beside the tracks and shrink them; ASD heatmap row labels are cut off on the left.'],
+];
+
+const heatmapNotes = [
+  'The same three tabs as on Variant effect results. Today’s Heatmap and Features tabs become Heatmap and All features; Strongest effects is added. With many variants in view the card opens on Heatmap.',
+  'Columns stay in genomic order. Close variants pack side by side; a strip just above them repeats the browser’s positions, and a thin line runs from each column to its exact place on it, so packing never hides where a variant is.',
+  'The center variant’s column is outlined in ink and its line is darker; its bars in the score tracks are ink.',
+  'DNA features and RNA features stay a select above the heatmap, as today; the stepped z-score legend sits beside it.',
+  'Hovering a cell shows the data tooltip; hovering a column highlights its line and its bars in the browser.',
+];
+const heatmapColumns = [2_232_996, 2_234_187, 2_235_106, 2_235_168, 2_235_624, 2_247_509, 2_250_950, 2_254_905, 2_255_213, 2_259_317];
+const zLegend = scoreLegends[0]!.spec;
+// Illustrative values in the same repeating pattern as the earlier diagram, one per diverging step.
+const stepValues = [-4, -2.5, 0, 2.5, 4, 6];
+const heatmapRows = Array.from({ length: 12 }, (_, row) => ({
+  label: `Feature ${row + 1}`,
+  values: heatmapColumns.map((_, column) => stepValues[(row * 7 + column * 3) % stepValues.length]!),
+}));
+
+const keyboard = [
+  ...genomeBrowserKeyHelp,
+  ['Screen readers', `The browser region is labeled with its location, such as “${view.regionLabel(trackCount)}”; View as table lists the variants and genes in view with positions and scores.`],
+  ['Focus', 'Tab reaches the toolbar, each track header’s menu, then the tracks; the 2px focus ring from Tokens shows on all of them.'],
+];
+
+const integration = [
+  ['Hide the built-in toolbar and panels', 'The system toolbar, Tracks drawer and dialogs replace them; Biodalliance already drives location, zoom, tracks and export through its API.'],
+  ['Track header column', 'Names, sources and scales move out of the data area into a fixed column, so labels never sit on top of bars.'],
+  ['Track colors from the system', 'Score tracks use viz.seq step 6 (#1F5FAE); the selected variant is ink. Gene exons stay grey 600.'],
+  ['Location in words', 'Show chr1:109,792,590-109,842,590 with commas and the assembly beside it; accept today’s 1:109,767,590..109,867,590 format too.'],
+  ['Linked heatmap', 'Column positions and the center variant come from the browser’s view, as today; the connectors read the same positions.'],
+  ['Remember choices', 'Tracks and settings are kept in this browser, like other preferences (no accounts).'],
+];
+
+const words = [
+  ['Location help', view.help()],
+  ['Gene not found', GenomeLocation.geneNotFound('ILB1')],
+  ['Out of range', new GenomeLocation('chr1', 249_240_000, 249_290_000).clamp(249_250_621).message ?? ''],
+  ['Track loading', 'Loading GENCODE 19…'],
+  ['Track failed', 'GM12878 ChromHMM didn’t load. Try again, or remove it from Tracks.'],
+  ['Nothing in view', 'No variants in this range. Previous variant and Next variant jump to the nearest ones.'],
+];
+
+const behavior = [
+  ['Follows the selection', 'On a result, selecting a variant centers the browser on it at the current zoom. Moving the browser by hand doesn’t change the selection.'],
+  ['Zoom stops', '200 bp, 2 kb, 50 kb and 500 kb, as today; the view can sit between stops, and the field shows the exact width.'],
+  ['Tracks', 'The job’s score tracks and genes are on by default. Suggested tracks, your file and By URL add more; Remove track is in each track menu.'],
+  ['Export', `SVG for publication with today’s options; the file is named after the location, such as ${view.fileName()}.`],
+  ['Panels', 'Tracks is a drawer over the page; settings and export are dialogs. None of them resizes the tracks.'],
+  ['URL', 'Location and tracks are in the URL, so a view can be shared.'],
+];
+
+const specs = [
+  ['toolbar', '12px by 16px padding, 12px gaps; labeled buttons for Previous variant, Tracks, Export, Next variant; 36px icon buttons with tooltip and shortcut'],
+  ['location', 'Search field medium, 400px; assembly Lato Bold 12 grey and width Lato 12 grey under it'],
+  ['track header', '220px column, grey 50; name Lato Bold 13; source and scale Lato 12 grey; 28px menu button'],
+  ['ruler and positions', 'Atkinson Hyperlegible Mono 11 grey 600 with commas; ticks every tenth of the view'],
+  ['score tracks', 'viz.seq step 6 bars; selected variant ink with its value in Lato Bold 11'],
+  ['selected variant', '1px ink line at 50% through all tracks; mono label on an ink pill'],
+  ['linked heatmap', '16px columns in genomic order; 0.75px grey connectors to the ruler; center column 2px ink outline'],
+];
+
+const usage = `import { GenomeLocation } from '@humanbase/data';
+import { GenomeBrowserToolbar, TrackHeader, TracksDrawer, genomeCommand } from '@humanbase/ui';
+
+const view = GenomeLocation.parse('1:109,767,590..109,867,590');
+<GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="50 kb shown. A gene name works too."
+  zoomStop={view.width} onZoom={(direction) => engine.zoomTo(view.zoom(direction))} />
+
+// One place maps keys to commands; the Biodalliance adapter carries them out.
+element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
+---
+
+<DocsLayout title="Genome browser" description="The toolbar, track headers, panels and words around Biodalliance, the genome browser that stays the engine.">
+  <Intro
+    lead="Variant results and the ASD Browser show variants in their genomic context with Biodalliance, an open-source genome browser. The redesign keeps Biodalliance as the engine and replaces what people see and touch around it: the toolbar, track headers, panels and words."
+    status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Always say where you are', text: 'Location, assembly and the width of the view are always written out, such as chr1:109,767,590-109,867,590, GRCh37/hg19, 100 kb.' },
+        { title: 'Every control has a name', text: 'Frequent actions are labeled buttons; the rest are icon buttons with a tooltip that also gives the shortcut.' },
+        { title: 'Tracks explain themselves', text: 'Each track header says what it shows, its scale and where it comes from, with its settings one click away.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="What the browser does today" lead="Biodalliance on the Seqweaver example result and the ASD Browser, captured with Playwright on October 16, 2026. Every function stays.">
+    <DocTable caption="The genome browser today" columns={['Part', 'Today']} widths={['240px']}>
+      {today.map(([part, text]) => <tr><th scope="row">{part}</th><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="The browser" lead="On a variant result, centered on the selected variant at 50 kb. The toolbar and track headers are system components; the tracks are drawn by Biodalliance. Gene positions in this drawing are approximate.">
+    <section class="browser" aria-label={view.regionLabel(trackCount)}>
+      <GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="50 kb shown. A gene name works too." zoomStop={50000} moreItems={moreMenu} />
+      <div class="browser-tracks">
+        <div class="track-column">
+          <div class="track-column-ruler">Position</div>
+          {tracks.map((track) => <TrackHeader name={track.name} source={track.source} scale={track.scale} menuItems={trackMenu} />)}
+        </div>
+        <div class="track-area" data-illustration>
+          <GenomeTracksSketch
+            start={view.start}
+            end={view.end}
+            ticks={[109_800_000, 109_810_000, 109_820_000, 109_830_000, 109_840_000]}
+            variant={variant}
+            scoreMax={3}
+            genes={genes}
+          />
+        </div>
+      </div>
+    </section>
+    <p class="browser-help">Drag to move along the genome. Scroll with Ctrl or pinch to zoom. Keyboard: arrow keys move, + and - zoom, Ctrl and arrows jump between variants. <a href="#in-view">View as table</a></p>
+    <DocTable caption="In view: variants and genes" columns={['Item', 'Position', 'Value']} widths={['260px', '360px']}>
+      <tr id="in-view"><th scope="row">{variant.label}</th><td>{variant.label.split(' ')[0]}, {view.assemblyName}</td><td>Disease impact score 1.00, Mean −log e-value 0.90</td></tr>
+      {genes.map((gene) => <tr><th scope="row">{gene.name}</th><td>Approximate, {gene.strand === '+' ? 'forward' : 'reverse'} strand</td><td>GENCODE 19</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Tracks, track settings and export" lead="Today these panels open beside the tracks and squeeze them. Here Tracks opens as a drawer over the page, track settings start from a menu on each track header, and export and options are dialogs. Every option from today is kept.">
+    <div class="panels" inert>
+      <figure>
+        <figcaption>Tracks drawer</figcaption>
+        <TracksDrawer inline tracks={suggested} />
+      </figure>
+      <figure>
+        <figcaption>Track menu, then Track settings</figcaption>
+        <div class="menu-specimen">
+          <ActionMenu label="Disease impact score track options" items={trackMenu} open size="small" />
+        </div>
+        <TrackSettingsDialog inline settings={trackSettings} />
+      </figure>
+      <figure>
+        <figcaption>Export, and Browser settings</figcaption>
+        <ExportDialog inline />
+        <BrowserSettingsDialog inline settings={browserSettings} />
+      </figure>
+    </div>
+  </DocSection>
+
+  <DocSection title="Browser and heatmap together (ASD Browser)" lead="With many variants in view, the heatmap sits under the browser: one column per variant in genomic order, rows sorted by the size of the center variant’s effect. Clicking a column, or dragging the heatmap, changes the center, and both views follow, as today.">
+    <Heatmap
+      client:visible
+      title="DNA features, z-score"
+      summary="z-score. Showing the top 20 of 2,002 features, sorted by chr1:2,337,101 A>C. Cells are illustrative."
+      scale={zLegend}
+      columns={heatmapColumns.map((position) => ({ label: String(position), position }))}
+      rows={heatmapRows}
+      rowHeader="Feature"
+      columnHeader="Position"
+      axis={{ title: 'Position on chr1, GRCh37/hg19', offset: 2_230_000, ticks: [5_000, 10_000, 15_000, 20_000, 25_000] }}
+      decimals={1}
+    />
+    <ul class="points">
+      {heatmapNotes.map((note) => <li>{note}</li>)}
+    </ul>
+  </DocSection>
+
+  <DocSection title="Keyboard and screen readers" lead="The browser keeps every shortcut it has today. The new toolbar names each control and gives the browser a text alternative.">
+    <DocTable caption="Keys and what they do" columns={['Key or need', 'What happens']} widths={['240px']}>
+      {keyboard.map(([key, text]) => <tr><th scope="row">{key}</th><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="What the Biodalliance integration needs" lead="Biodalliance stays the engine. The system toolbar and panels call its existing interface instead of showing its own, so nothing about the data or scores changes. For the team building the front end.">
+    <DocTable caption="What the Biodalliance adapter needs" columns={['Need', 'Why']} widths={['320px']}>
+      {integration.map(([need, why]) => <tr><th scope="row">{need}</th><td>{why}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Words" lead="Coordinates in the mono font with commas; the assembly always beside them (Scientific notation and units).">
+    <DocTable caption="What the browser says" columns={['Moment', 'What it says']} widths={['240px']}>
+      {words.map(([moment, says]) => <tr><th scope="row">{moment}</th><td>{says}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="What every genome browser in HumanBase does the same way.">
+    <DocTable caption="Genome browser behavior" columns={['Rule', 'Detail']} widths={['240px']}>
+      {behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Specs" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Genome browser specs" columns={['Part', 'Value']} widths={['404px']}>
+      {specs.map(([part, value]) => <tr><th scope="row"><code>{part}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the browser in code">
+    <ul>
+      <li>Biodalliance isn’t in this repository. An adapter in the product calls its interface; these components only show controls and report what people choose.</li>
+      <li><code>GenomeLocation</code> in <code>@humanbase/data</code> reads both location formats, writes them with commas and the assembly, and works out zoom steps. The chromosome length for the out-of-range message comes from the engine.</li>
+      <li><code>genomeCommand</code> maps a key press to a command, so the shortcuts live in one place.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .browser {
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .browser-tracks {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .track-column {
+    display: grid;
+    grid-template-rows: 30px repeat(2, 60px) 1fr;
+    background: var(--surface-subtle);
+  }
+
+  .track-column-ruler {
+    padding: var(--space-1) var(--space-3);
+    font: 700 13px/1.4 Lato, sans-serif;
+  }
+
+  .track-area {
+    padding: var(--space-1) var(--space-4);
+  }
+
+  .browser-help {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .panels {
+    display: grid;
+    grid-template-columns: 437fr 510fr 364fr;
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .panels figure {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .panels figcaption {
+    font: 700 13px/1.4 Lato, sans-serif;
+    color: var(--text-secondary);
+  }
+
+  .menu-specimen {
+    position: relative;
+    block-size: 340px;
+  }
+
+  .menu-specimen :global(.action-menu) {
+    position: absolute;
+    inset-inline-end: var(--space-4);
+  }
+
+</style>

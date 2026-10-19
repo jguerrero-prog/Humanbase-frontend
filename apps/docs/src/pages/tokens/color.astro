@@ -1,0 +1,221 @@
+---
+import { flattenTokens, type TokenEntry } from '@humanbase/tokens/catalog';
+import { ColorCatalog } from '@humanbase/tokens/color';
+import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import semantic from '@humanbase/tokens/src/semantic.tokens.json';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { displayValue } from '../../tokenDisplay';
+
+const colors = new ColorCatalog(primitives, semantic);
+const slash = (path: string[]) => path.join('/');
+
+const uses: Record<string, string> = {
+  'action/destructive': 'Destructive buttons',
+  'action/destructive-hover': 'Destructive hover',
+  'action/destructive-pressed': 'Destructive pressed',
+  'action/primary': 'Primary buttons, selected tabs',
+  'action/primary-hover': 'Primary hover',
+  'action/primary-pressed': 'Primary pressed',
+  'action/secondary': 'Secondary buttons',
+  'action/secondary-hover': 'Secondary hover',
+  'action/secondary-pressed': 'Secondary pressed',
+  'border/default': 'Inputs, buttons',
+  'border/error': 'Fields with errors, 2px',
+  'border/selected': 'Focused and selected fields, 2px',
+  'border/strong': 'Checkbox and radio edges',
+  'border/subtle': 'Dividers, card edges',
+  'data/highlight': 'Highlighted rows and marks in data views',
+  'focus/ring': 'Focus ring, with the focus/ring effect style',
+  'surface/inverse': 'Tooltips',
+  'surface/page': 'Page, cards, tables',
+  'surface/subtle': 'Panels, headers, sidebars',
+  'surface/sunken': 'Wells, segmented control tracks',
+  'text/default': 'Body text, titles',
+  'text/disabled': 'Disabled labels',
+  'text/error': 'Error messages',
+  'text/link': 'Links and ghost buttons',
+  'text/muted': 'Captions, meta, placeholders',
+  'text/on-brand': 'Text on emerald or ink',
+  'text/secondary': 'Supporting text, descriptions',
+  'action/ghost-hover': 'Hover tint on light surfaces',
+  'action/ghost-pressed': 'Pressed tint on light surfaces',
+  'action/ghost-selected': 'Selected tint on light surfaces',
+  'overlay/on-brand-hover': 'Hover tint on emerald',
+  'overlay/on-brand-open': 'Open menu tint on emerald',
+  'overlay/on-brand-selected': 'Selected tint on emerald',
+  'syntax/command': 'Commands and methods in code',
+  'syntax/comment': 'Comments in code, italic',
+  'syntax/flag': 'Flags in code',
+  'syntax/key': 'JSON keys, bold',
+  'syntax/param': 'Path parameters, bold',
+  'syntax/selection': 'Selected code',
+  'syntax/string': 'Strings and URLs in code',
+  'syntax/text': 'Text and punctuation in code',
+  'syntax/type': 'Types and values in code',
+};
+
+const statusUse = (path: string[]) => {
+  const [, kind, role] = path;
+  const parts: Record<string, string> = { bg: 'backgrounds', border: 'borders', fg: 'icons and text' };
+  return path[0] === 'status' && kind && role ? `${kind} ${parts[role] ?? role}` : undefined;
+};
+
+const ramps = [
+  { title: 'Emerald', group: 'emerald' },
+  { title: 'Simons Yellow', group: 'yellow' },
+  { title: 'Mint', group: 'mint' },
+  { title: 'Grey', group: 'grey' },
+].map(({ title, group }) => ({ title, steps: flattenTokens(primitives.color[group as keyof typeof primitives.color] as never, ['color', group]) }));
+
+const status = (['error', 'warning', 'success', 'info'] as const).flatMap((group) =>
+  flattenTokens(primitives.color[group] as never, ['color', group])
+    .filter(({ path }) => ['50', '200', '700'].includes(path.at(-1) ?? ''))
+    .map((entry) => ({ entry, label: `${group} ${entry.path.at(-1)}` })),
+);
+
+const roles = flattenTokens(semantic)
+  .filter(({ token }) => token.$type === 'color')
+  .map((entry) => {
+    const name = slash(entry.path);
+    const target = colors.target(entry.path.join('.'));
+    return { entry, name, target: target ? target.split('.').slice(1).join('/') : displayValue(entry), use: uses[name] ?? statusUse(entry.path) ?? entry.token.$description ?? '' };
+  })
+  .toSorted((a, b) => a.name.localeCompare(b.name));
+
+// Object keys put "0" first; diverging steps read n3 to p3, with 0 in the middle.
+const divergingRank = ({ path }: TokenEntry) => {
+  const key = path.at(-1) ?? '';
+  return path[1] === 'div' && /^[np]\d$/.test(key) ? (key[0] === 'n' ? -1 : 1) * Number(key.slice(1)) : 0;
+};
+
+const vizGroups = [
+  { title: 'Sequential', group: 'seq' },
+  { title: 'Diverging', group: 'div' },
+  { title: 'Categorical', group: 'cat' },
+].map(({ title, group }) => ({ title, steps: flattenTokens(primitives.viz[group as keyof typeof primitives.viz] as never, ['viz', group]).toSorted((a, b) => divergingRank(a) - divergingRank(b)) }));
+
+const swatchLabel = (entry: TokenEntry) => `${slash(entry.path.slice(1))} ${colors.hex(entry.path.join('.'))}`;
+---
+
+<DocsLayout title="Color tokens" description="Primitive ramps, the semantic tokens components use, and the data visualization scales.">
+  <Intro
+    lead="Colors live in two Figma variable collections. Primitives hold every value once: four ramps, status colors and the data scales. Semantic tokens point at primitives by role, such as text/default or border/selected. Components use semantic tokens; data views use viz tokens."
+    status="Updated October 16, 2026 · Tokens · Every swatch on this page is bound to its variable"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Use the role, not the value', text: 'Pick text/muted, not grey 500. When a role changes, every component follows.' },
+        { title: 'Green is for actions', text: 'Emerald is the brand and the primary action; it never encodes data (Data visualization).' },
+        { title: 'Status means status', text: 'Error, warning, success and info appear only with an icon and words, never as decoration.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Primitive ramps" lead="Ten steps each, 50 to 900. Steps are named, not used directly by components except where no role fits.">
+    {
+      ramps.map(({ title, steps }) => (
+        <section class="ramp" aria-label={title}>
+          <h3>{title}</h3>
+          <ol class="swatches">
+            {steps.map((entry) => (
+              <li>
+                <span class="swatch" style={`background: var(${entry.cssVar})`} />
+                <span>{entry.path.at(-1)}</span>
+                <code>{colors.hex(entry.path.join('.'))}</code>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+    <section class="ramp" aria-label="Status">
+      <h3>Status</h3>
+      <ol class="swatches">
+        {
+          status.map(({ entry, label }) => (
+            <li>
+              <span class="swatch" style={`background: var(${entry.cssVar})`} />
+              <span>{label}</span>
+              <code>{colors.hex(entry.path.join('.'))}</code>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+  </DocSection>
+
+  <DocSection title="Semantic tokens" lead="What components use. Each points at one primitive; the swatch shows the resolved color.">
+    <DocTable caption="Semantic color tokens" columns={['Swatch', 'Token', 'Points at', 'Use']} widths={['8%', '30%', '22%', '40%']}>
+      {
+        roles.map(({ entry, name, target, use }) => (
+          <tr>
+            <td><span class="swatch swatch-small" style={`background: var(${entry.cssVar})`} /></td>
+            <th scope="row"><code>{name}</code></th>
+            <td><code>{target}</code></td>
+            <td>{use}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Data visualization tokens" lead="Only for data. Sequential for amounts, diverging for direction, categorical for groups (Data visualization, Heatmaps and score legends).">
+    {
+      vizGroups.map(({ title, steps }) => (
+        <section class="ramp" aria-label={title}>
+          <h3>{title}</h3>
+          <ol class="swatches">
+            {steps.map((entry) => (
+              <li>
+                <span class="swatch" style={`background: var(${entry.cssVar})`} />
+                <code>{swatchLabel(entry)}</code>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .ramp + .ramp {
+    margin-block-start: var(--space-6);
+  }
+
+  .ramp h3 {
+    margin-block-end: var(--space-3);
+    font: var(--type-h4);
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .swatches li {
+    display: grid;
+    gap: var(--space-1);
+    font: var(--type-caption);
+  }
+
+  .swatch {
+    display: block;
+    block-size: var(--space-12);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+  }
+
+  .swatch-small {
+    inline-size: var(--space-8);
+    block-size: var(--space-6);
+  }
+</style>

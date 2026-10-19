@@ -1,0 +1,112 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Accordion, AccordionItem } from '../Accordion/Accordion';
+import { Icon } from '../Icon/Icon';
+import { useDismiss } from '../List/useDismiss';
+import { Logo } from '../Logo/Logo';
+import { NavMenu } from './NavMenu';
+import type { NavSection } from './types';
+import './Navigation.css';
+
+export interface TopBarProps {
+  sections: readonly NavSection[];
+  current?: string;
+  jobs?: { href: string; running: number };
+  homeHref?: string;
+  searchAction?: string;
+  openSection?: string;
+  menuOpen?: boolean;
+  scrolled?: boolean;
+  className?: string;
+}
+
+const searchPlaceholder = 'Search genes, terms or diseases';
+
+function useScrolled(forced: boolean | undefined) {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    if (forced !== undefined) return;
+    const update = () => setScrolled(window.scrollY > 0);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    return () => window.removeEventListener('scroll', update);
+  }, [forced]);
+  return forced ?? scrolled;
+}
+
+export function TopBar({ sections, current, jobs, homeHref = '/', searchAction = '/search', openSection, menuOpen, scrolled, className }: TopBarProps) {
+  const nav = useRef<HTMLElement>(null);
+  const [open, setOpen] = useState(openSection);
+  const [phoneMenu, setPhoneMenu] = useState(menuOpen ?? false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const isScrolled = useScrolled(scrolled);
+  const closeMenus = useCallback(() => setOpen(undefined), []);
+  useDismiss(nav, open !== undefined && openSection === undefined, closeMenus);
+
+  const jobsLink = jobs && (
+    <a className="top-bar-jobs" href={jobs.href}>
+      Jobs{' '}
+      {jobs.running > 0 && <span className="top-bar-jobs-count">{jobs.running} running</span>}
+    </a>
+  );
+
+  return (
+    <header className={['top-bar', className].filter(Boolean).join(' ')} data-scrolled={isScrolled || undefined}>
+      <div className="top-bar-inner" data-search={searchOpen || undefined}>
+        <a className="top-bar-home" href={homeHref}>
+          <Logo surface="green" />
+        </a>
+        <nav ref={nav} className="top-bar-sections" aria-label="Main">
+          {sections.map((section) => (
+            <NavMenu
+              key={section.label}
+              section={section}
+              current={section.label === current}
+              open={open === section.label}
+              onOpenChange={(next) => setOpen(next ? section.label : undefined)}
+            />
+          ))}
+        </nav>
+        <form className="top-bar-search" role="search" action={searchAction}>
+          <Icon name="search" size={16} />
+          <input type="search" name="q" aria-label="Search" placeholder={searchPlaceholder} />
+        </form>
+        <button type="button" className="top-bar-icon-button top-bar-search-button" aria-label="Search" aria-expanded={searchOpen} onClick={() => setSearchOpen(!searchOpen)}>
+          <Icon name={searchOpen ? 'x' : 'search'} size={20} />
+        </button>
+        {jobsLink}
+        <button type="button" className="top-bar-icon-button top-bar-menu-button" aria-label={phoneMenu ? 'Close' : 'Menu'} aria-expanded={phoneMenu} onClick={() => setPhoneMenu(!phoneMenu)}>
+          <Icon name={phoneMenu ? 'x' : 'menu'} size={20} />
+        </button>
+      </div>
+      {phoneMenu && (
+        <nav className="phone-menu" aria-label="Main">
+          <Accordion>
+            {sections.map((section) =>
+              section.columns ? (
+                <AccordionItem key={section.label} title={section.label} summary={section.label === current ? 'Current' : undefined} defaultOpen={section.label === current}>
+                  <ul className="phone-menu-links">
+                    {section.columns.flat().flatMap((group) =>
+                      group.links.map((link) => (
+                        <li key={link.href}>
+                          <a href={link.href}>
+                            <span className="nav-menu-link-label">{link.label}</span>
+                            {link.description && <span className="nav-menu-link-description">{link.description}</span>}
+                          </a>
+                        </li>
+                      )),
+                    )}
+                  </ul>
+                </AccordionItem>
+              ) : (
+                <a key={section.label} className="phone-menu-row" href={section.href}>
+                  {section.label}
+                </a>
+              ),
+            )}
+          </Accordion>
+          {jobsLink}
+        </nav>
+      )}
+    </header>
+  );
+}

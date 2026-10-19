@@ -1,0 +1,521 @@
+---
+import { Badge, ContextLabel, GeneTagInput, StatusBadge, Tabs, Tag, type BadgeSize, type JobStatus, type TabItem } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const statuses: JobStatus[] = ['queued', 'running', 'finished', 'failed'];
+const sizes: { size: BadgeSize; title: string }[] = [
+  { size: 'small', title: 'Small' },
+  { size: 'medium', title: 'Medium' },
+];
+const knownGenes = ['IL1B', 'TNF', 'IL6', 'CXCL8'];
+const resultTabs: TabItem[] = [
+  { value: 'genes', label: 'Genes', count: 50 },
+  { value: 'terms', label: 'Enriched terms', count: 48 },
+];
+
+const contrast = [
+  ['Label, Count, Queued', 'Grey 600 on grey 100; Queued on white', '7.7:1; 8.9:1'],
+  ['Running', 'Info 700 #175CD3 on white', '6.0:1'],
+  ['Finished', 'Success 700 #067647 on white', '5.7:1'],
+  ['Failed', 'Error 700 #B42318 on white', '6.6:1'],
+  ['On emerald', 'Emerald 600 on white', '6.1:1'],
+];
+
+const statusWords: { status: JobStatus; means: string; after: string }[] = [
+  { status: 'queued', means: 'Submitted and waiting for a free worker.', after: 'Place in line: “Queued, 3rd in line”.' },
+  { status: 'running', means: 'Being computed now.', after: 'Time so far: “Running for 4 minutes”.' },
+  { status: 'finished', means: 'Results are ready to open.', after: 'When: “Finished Oct 15”.' },
+  { status: 'failed', means: 'Stopped without results.', after: 'Why, in plain words: “Failed: no p-value column”.' },
+];
+
+const tagStates = [
+  { title: 'Default', text: 'Ready', props: { label: 'IL1B' } },
+  { title: 'Hover', text: 'Darker border; remove button grey 100', props: { label: 'IL1B', 'data-state': 'hover' as const } },
+  { title: 'Focus', text: 'Focus ring; Backspace removes it', props: { label: 'IL1B', 'data-state': 'focus' as const } },
+  { title: 'Invalid', text: 'Not a known gene; explained below the field', props: { label: 'IL1Z', invalid: true } },
+  { title: 'Disabled', text: 'While a job is submitting', props: { label: 'IL1B', disabled: true } },
+];
+
+const accessibility = [
+  ['Counts have words', '“Genes, 50 results” for screen readers, not just “Genes 50”.'],
+  ['Status icons are hidden', 'The icon is aria-hidden; the word is read. Status changes are announced politely in job history.'],
+  ['Remove buttons are named', '“Remove IL1B”, 24px target, reachable with Tab, and Backspace works from the field.'],
+  ['Not interactive', 'Labels, counts and statuses are plain text, never focusable on their own.'],
+  ['Contrast', 'All text at least 5.7:1; see the table under Badges.'],
+];
+
+const specs = [
+  ['badge.height.sm / md', '20px / 24px'],
+  ['badge.padding.sm / md', '0 6px / 0 8px; none for status'],
+  ['badge.text', 'Lato Bold 12/16 (sm), 13/18 (md)'],
+  ['badge.radius', 'radius.xs 4px'],
+  ['badge.neutral', 'grey 100 #EFEFEF fill, grey 600 #4A4A4A text'],
+  ['badge.status', 'no fill; 12 or 14px icon and word in info, success or error 700; Queued in grey 600'],
+  ['badge.on-emerald', 'white fill, emerald 600 text'],
+  ['tag.height / radius', '32px / radius.sm 8px'],
+  ['tag.border', '1px grey 300 #D1D1D1; hover grey 500; invalid 1.5px error 700'],
+  ['tag.text', 'Lato Bold 14/20 ink'],
+  ['tag.remove', '24px button, 14px x icon, grey 100 on hover'],
+  ['context.height / radius', '28px / radius.xs 4px'],
+  ['context.key', 'grey 100 fill, Lato 13 grey 600, 1px grey 300 divider'],
+  ['context.value', 'white, Lato Bold 13 ink'],
+];
+
+const usage = `import { Badge, ContextLabel, GeneTagInput, StatusBadge } from '@humanbase/ui';
+
+<Badge tone="count" spokenAs=", 50 results">50</Badge>
+<StatusBadge status="queued">Queued, 3rd in line</StatusBadge>
+<GeneTagInput label="Genes" isKnownGene={(gene) => symbols.has(gene)} onChange={setGenes} />
+<ContextLabel name="Score" value="0.5 or more" onRemove={clearScore} />`;
+---
+
+<DocsLayout title="Badges and tags" description="Badges, job status words, gene tags and context labels: forms, states, writing and accessibility.">
+  <Intro
+    lead="Badges label things; tags are things people add and remove. In HumanBase they are small, text-first and mostly grey: a count on a tab, the status of a job, the genes in a query, the tissue a result comes from. They earn their place by helping someone decide or keep their bearings, never by decorating."
+    status="Updated October 16, 2026 · Components: Badge, Tag, Context label"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Words first', text: 'A badge reads correctly in black and white. Color is added only for job status, always with an icon and a word.' },
+        { title: 'Nothing to catch the eye', text: 'No dots, no red notification marks, no “New”. The red dot on About in today’s menu goes away.' },
+        { title: 'Same corners as everything', text: '4px for badges and labels, 8px for tags. Never pill-shaped, which keeps them from reading as buttons.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Which to use" lead="Five jobs, five forms. If something is clickable and isn’t removing itself, it is a button or a link, not a badge.">
+    <DocTable caption="Which badge or tag to use" columns={['Form', 'Example', 'Use for']} widths={['224px', '244px']}>
+      <tr><th scope="row">Label</th><td><Badge>2019 model</Badge></td><td>A fact about an item that people may need when choosing: “2019 model”, “Beta”.</td></tr>
+      <tr><th scope="row">Count</th><td><Badge tone="count">210</Badge></td><td>How many things are behind a tab or in a group. Numbers only; the label next to it says what they are.</td></tr>
+      <tr><th scope="row">Status</th><td><StatusBadge status="running" /></td><td>Where a job is: Queued, Running, Finished or Failed. Icon and word, no background.</td></tr>
+      <tr><th scope="row">Tag</th><td><Tag label="IL1B" onRemove={() => {}} /></td><td>Something people added and can remove, such as a gene in a query.</td></tr>
+      <tr><th scope="row">Context label</th><td><ContextLabel name="Tissue" value="Blood vessel" /></td><td>The settings behind a result, such as tissue, data version or score cutoff. Removable when it is an active filter.</td></tr>
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Badges" lead="Two sizes: Small (20px) inside table rows and tabs, Medium (24px) next to headings and in cards. Lato Bold 12 or 13.">
+    <div class="badge-grid">
+      {
+        sizes.map(({ size, title }) => (
+          <div class="badge-row">
+            <span class="row-title">{title}</span>
+            <Badge size={size}>2019 model</Badge>
+            <Badge size={size} tone="count">210</Badge>
+            {statuses.map((status) => <StatusBadge status={status} size={size} />)}
+          </div>
+        ))
+      }
+    </div>
+    <div class="on-emerald">
+      <strong>Jobs</strong>
+      <Badge size="small" tone="on-emerald">1 running</Badge>
+      <span>On the emerald top bar only: white with emerald text (6.1:1).</span>
+    </div>
+    <DocTable caption="Badge colors and contrast" columns={['Type', 'Colors', 'Contrast']} widths={['244px', '404px']}>
+      {contrast.map(([type, colors, ratio]) => <tr><th scope="row">{type}</th><td>{colors}</td><td><code>{ratio}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Job status words" lead="Four words, used the same way everywhere: job history, toasts, the top bar and job pages. The words carry the meaning; the icon and color repeat it.">
+    <DocTable caption="Job status words" columns={['Status', 'Means', 'Add after the word']} widths={['224px', '444px']}>
+      {statusWords.map(({ status, means, after }) => <tr><td><StatusBadge status={status} /></td><td>{means}</td><td>{after}</td></tr>)}
+    </DocTable>
+    <p class="doc-note">The Running icon is a still quarter ring, not a spinner. It doesn’t animate in tables, where many could turn at once.</p>
+  </DocSection>
+
+  <DocSection title="Tags" lead="Genes in a query. White with a 1px grey 300 border, 32px tall, 8px corners, and a 24px remove button labeled “Remove IL1B”.">
+    <ul class="states">
+      {
+        tagStates.map((state) => (
+          <li>
+            <Tag {...state.props} onRemove={() => {}} />
+            <strong>{state.title}</strong>
+            <span>{state.text}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="query">
+      <GeneTagInput label="Genes" defaultGenes={['IL1B', 'TNF', 'IL6', 'IL1Z', 'CXCL8']} isKnownGene={(gene) => knownGenes.includes(gene)} data-state="focus" />
+    </div>
+    <ul class="points">
+      <li>Typing a comma, space or Enter turns the text into a tag. Pasting a list makes one tag per gene.</li>
+      <li>Backspace in an empty field selects the last tag; a second Backspace removes it.</li>
+      <li>Invalid tags stay so people can see and fix them; the message names the gene.</li>
+      <li>Over 20 genes, switch to the Gene list field from Text inputs, which handles up to 3,500.</li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Context labels" lead="A key and a value, joined. They show the settings a result was computed with, so a screenshot or a shared link always says where the numbers came from.">
+    <div class="context-examples">
+      <div>
+        <span class="row-caption">Under a result title: what this result is based on</span>
+        <div class="label-row">
+          <ContextLabel name="Tissue" value="Blood vessel" />
+          <ContextLabel name="Data" value="MAGE 2026" />
+          <ContextLabel name="Genes" value="50" />
+          <ContextLabel name="Datasets" value="7,463" />
+        </div>
+      </div>
+      <div>
+        <span class="row-caption">Above a table: active filters people can remove</span>
+        <div class="label-row">
+          <ContextLabel name="Score" value="0.5 or more" onRemove={() => {}} />
+          <ContextLabel name="Evidence" value="Co-expression" onRemove={() => {}} />
+          <button type="button" class="link-button">Clear filters</button>
+        </div>
+      </div>
+    </div>
+    <p class="doc-note doc-note-body">The key is grey 600 on grey 100 (7.7:1), the value ink and bold. Keys use the same words as the controls that set them.</p>
+  </DocSection>
+
+  <DocSection title="Where they appear" lead="The same few forms across the product.">
+    <div class="card-grid" style="--columns: 3">
+      <article class="place">
+        <h3>Tab counts</h3>
+        <Tabs label="Result sections" tabs={resultTabs} defaultValue="genes" />
+      </article>
+      <article class="place">
+        <h3>Job history</h3>
+        <dl class="history">
+          <div><dt>Height GWAS</dt><dd><StatusBadge status="queued" size="small">Queued, 3rd in line</StatusBadge></dd></div>
+          <div><dt>BMI GWAS</dt><dd><StatusBadge status="running" size="small">Running for 4 minutes</StatusBadge></dd></div>
+          <div><dt>IL1B variants</dt><dd><StatusBadge status="finished" size="small">Finished Oct 15</StatusBadge></dd></div>
+        </dl>
+      </article>
+      <article class="place">
+        <h3>Menus and versions</h3>
+        <p class="version">Beluga <Badge size="small">2019 model</Badge></p>
+        <p class="version version-strong">Network analysis <Badge size="small">Current</Badge></p>
+      </article>
+    </div>
+  </DocSection>
+
+  <DocSection title="Accessibility" lead="Badges are read as part of the thing they label.">
+    <DocTable caption="Badge and tag accessibility" columns={['Rule', 'Detail']} widths={['324px']}>
+      {accessibility.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Do and don’t" lead="The don’ts are the patterns that make interfaces look generated.">
+    <ul class="pairs" style="--columns: 2">
+      <li class="pair pair-do">
+        <div class="pair-stage"><StatusBadge status="running" /><StatusBadge status="finished" /><StatusBadge status="failed" /></div>
+        <h3>Do. Status as an icon and a word</h3>
+        <p>Reads the same in grey scale and to a screen reader.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage" aria-hidden="true">
+          <span class="mock-pill"><span class="mock-dot mock-dot-info"></span>Running</span>
+          <span class="mock-pill"><span class="mock-dot mock-dot-success"></span>Finished</span>
+          <span class="mock-pill"><span class="mock-dot mock-dot-error"></span>Failed</span>
+        </div>
+        <h3>Don’t. A colored dot next to a word</h3>
+        <p>The dot repeats the word, adds noise and is the most common generated pattern.</p>
+      </li>
+      <li class="pair pair-do">
+        <div class="pair-stage"><Badge>2019 model</Badge><Badge>Beta</Badge></div>
+        <h3>Do. Neutral labels for facts</h3>
+        <p>Grey, 4px corners, sentence case.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage" aria-hidden="true">
+          <span class="mock-pill mock-pill-mint">Network</span>
+          <span class="mock-pill mock-pill-yellow">Variant</span>
+          <span class="mock-pill mock-pill-blue">Expression</span>
+        </div>
+        <h3>Don’t. Rainbow pills for categories</h3>
+        <p>Each color asks to be decoded, and none of them mean anything.</p>
+      </li>
+      <li class="pair pair-do">
+        <div class="pair-stage pair-stage-roomy"><span class="count-label">Enriched terms</span><Badge tone="count">48</Badge></div>
+        <h3>Do. A count where it helps decide</h3>
+        <p>“Enriched terms 48” tells people what is behind the tab.</p>
+      </li>
+      <li class="pair pair-dont">
+        <div class="pair-stage" aria-hidden="true">
+          <span class="mock-nav">About<span class="mock-dot mock-dot-error"></span></span>
+          <span class="mock-new">NEW</span>
+        </div>
+        <h3>Don’t. Red dots and “New” to get attention</h3>
+        <p>A red dot on About, as on today’s site, makes people look without telling them why.</p>
+      </li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Specs and tokens" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Badge, tag and context label tokens" columns={['Token', 'Value']} widths={['404px']}>
+      {specs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the components in code">
+    <ul>
+      <li><code>Badge</code> is plain text. Give a count <code>spokenAs</code> when the number alone would be unclear to a screen reader.</li>
+      <li><code>StatusBadge</code> takes one of four statuses and shows its word; pass children to add detail after it, such as the place in line.</li>
+      <li><code>GeneTagInput</code> keeps unknown genes as tags and names them in the error. Pass <code>isKnownGene</code> from the gene lookup; the field never decides on its own.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .badge-grid {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .badge-row,
+  .label-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    align-items: center;
+  }
+
+  .label-row {
+    gap: var(--space-2);
+  }
+
+  .row-title {
+    inline-size: 80px;
+    font: var(--type-eyebrow);
+    color: var(--text-muted);
+  }
+
+  .on-emerald {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+    padding: var(--space-5) var(--space-8);
+    color: var(--text-on-brand);
+    background: var(--action-primary);
+    border-radius: var(--radius-md);
+  }
+
+  .on-emerald strong {
+    font: 700 15px/1.4 Lato, sans-serif;
+  }
+
+  .on-emerald span:last-child {
+    font: var(--type-body-sm);
+  }
+
+  .doc-note {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .doc-note-body {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .states {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-8);
+    margin: 0;
+    padding: 28px var(--space-8);
+    list-style: none;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .states li {
+    display: grid;
+    justify-items: start;
+    gap: 10px;
+  }
+
+  .states strong {
+    font: var(--type-label-sm);
+  }
+
+  .states span:last-child {
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .query {
+    padding: 28px var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .query :global(.field-label) {
+    font: 700 15px/1.4 Lato, sans-serif;
+  }
+
+  .context-examples {
+    display: grid;
+    gap: var(--space-6);
+    padding: 28px var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .context-examples > div {
+    display: grid;
+    gap: 10px;
+  }
+
+  .row-caption {
+    font: var(--type-eyebrow);
+    color: var(--text-muted);
+  }
+
+  .link-button {
+    padding: 0;
+    margin-inline-start: var(--space-2);
+    font: var(--type-label-sm);
+    color: var(--text-link);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .place {
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: var(--space-6);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .place h3 {
+    font: var(--type-eyebrow);
+    color: var(--text-muted);
+  }
+
+  .history {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+  }
+
+  .history div {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+  }
+
+  .history dt {
+    inline-size: 110px;
+    font: var(--type-label-sm);
+  }
+
+  .history dd {
+    margin: 0;
+  }
+
+  .version {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    font: 400 15px/1.4 Lato, sans-serif;
+  }
+
+  .version-strong {
+    font-weight: 700;
+  }
+
+  .pair-stage {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin: 0;
+    padding: var(--space-6) var(--space-5);
+    color: var(--text-default);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .pair-stage-roomy {
+    padding-inline: 28px;
+  }
+
+  .count-label {
+    font: 700 15px/1.4 Lato, sans-serif;
+  }
+
+  .mock-pill {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: 3px 10px;
+    font: var(--type-caption);
+    background: var(--surface-page);
+    border-radius: var(--radius-full);
+  }
+
+  .mock-dot {
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: var(--radius-full);
+  }
+
+  .mock-dot-info {
+    background: var(--status-info-fg);
+  }
+
+  .mock-dot-success {
+    background: var(--color-mint-500);
+  }
+
+  .mock-dot-error {
+    background: var(--status-error-fg);
+  }
+
+  .mock-pill-mint {
+    color: var(--color-mint-800);
+    background: var(--color-mint-50);
+  }
+
+  .mock-pill-yellow {
+    color: var(--color-yellow-800);
+    background: var(--color-yellow-100);
+  }
+
+  .mock-pill-blue {
+    color: var(--status-info-fg);
+    background: var(--status-info-bg);
+  }
+
+  .mock-nav {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    font: var(--type-label-sm);
+    color: var(--text-on-brand);
+    background: var(--action-primary);
+    border-radius: var(--radius-sm);
+  }
+
+  .mock-new {
+    padding: 2px var(--space-2);
+    font: 700 11px/1.4 Lato, sans-serif;
+    color: var(--color-yellow-800);
+    letter-spacing: 0.06em;
+    background: var(--color-yellow-50);
+    border-radius: var(--radius-full);
+  }
+
+  @media (width < 64rem) {
+    .states {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

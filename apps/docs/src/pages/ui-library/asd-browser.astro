@@ -1,0 +1,158 @@
+---
+import type { AsdVariantRow } from '@humanbase/data';
+import { AsdBrowser, type AsdBrowserProps } from '@humanbase/hb';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import ProductScreen from '../../components/docs/ProductScreen.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+// The first four rows of the live table on October 16, 2026.
+const variants: AsdVariantRow[] = [
+  { chromosome: 'chr1', position: 665_024, ref: 'A', alt: 'G', individual: '14405-p1', dnaScore: -0.197, nearestGene: 'SAMD11', tssDistance: 212_469, rnaScore: 0.18, rnaGene: 'RP5-857K21.4, RP11-206L10.2' },
+  { chromosome: 'chr1', position: 778_112, ref: 'G', alt: 'A', individual: '13373-p1', dnaScore: 0.217, nearestGene: 'SAMD11', tssDistance: 99_381, rnaScore: 0.336, rnaGene: 'LINC01128' },
+  { chromosome: 'chr1', position: 779_360, ref: 'A', alt: 'G', individual: '13807-s1', dnaScore: -0.365, nearestGene: 'SAMD11', tssDistance: 98_133, rnaScore: -0.34, rnaGene: 'LINC01128' },
+  { chromosome: 'chr1', position: 783_547, ref: 'A', alt: 'G', individual: '12626-p1', dnaScore: -0.301, nearestGene: 'SAMD11', tssDistance: 93_946, rnaScore: -0.448, rnaGene: 'LINC01128' },
+];
+
+// Column positions are from the live view; the cell values and feature names weren't captured, so they are illustrative.
+const positions = [2_232_996, 2_234_187, 2_235_106, 2_235_168, 2_235_624, 2_247_509, 2_250_950, 2_254_905, 2_255_213, 2_259_317];
+const pattern = [0.4, -1.1, 2.6, 0.9, -2.4, 3.4, 1.2, -0.6, 5.2, -3.1, 0.2];
+const heatmap: AsdBrowserProps['heatmap'] = {
+  title: 'z-score. Showing the top 20 of 2,002 features, sorted by chr1:2,337,101 A>C.',
+  summary: 'Illustrative values: the feature names and scores in this drawing weren’t captured from the live browser.',
+  scale: { title: 'z-score', kind: 'diverging', edges: [-5, -3, -2, 2, 3, 5], words: ['Lowers', 'Raises'] },
+  columns: positions.map((position) => ({ label: String(position), position })),
+  rows: Array.from({ length: 6 }, (_, row) => ({ label: `DNA feature ${row + 1}`, values: positions.map((_, column) => pattern[(row * 3 + column) % pattern.length] ?? 0) })),
+  axis: { title: 'Position on chr1, GRCh37/hg19', offset: 2_230_000, ticks: [0, 10_000, 20_000, 30_000] },
+};
+
+const notice = 'Simons Simplex Collection (and Simons VIP) data may only be used for projects that advance autism and related developmental disorder research. Questions about the data go to collections@sfari.org.';
+const shared: Omit<AsdBrowserProps, 'defaultView' | 'noticeKey'> = {
+  crumbs: [{ label: 'Sequence analysis', href: '#' }, { label: 'ASD Browser' }],
+  subtitle: 'Predicted effects of de novo noncoding variants in autism, from Simons Simplex Collection whole-genome sequencing.',
+  context: [
+    { name: 'Study', value: 'Simons Simplex Collection' },
+    { name: 'Variants', value: '127,140' },
+    { name: 'Genome', value: 'GRCh37/hg19' },
+    { name: 'Paper', value: 'Zhou et al., 2019' },
+  ],
+  variants,
+  total: 127_133,
+  location: 'chr1:2,230,000-2,440,000',
+  assembly: 'GRCh37/hg19',
+  widthHelp: '210 kb shown. A gene name works too.',
+  heatmap,
+  heatmapNote: 'One column per variant in the browser’s view, in genomic order; rows sorted by the center variant. Values in this drawing are illustrative.',
+  examples: ['CHD8', 'SCN2A', 'chr1:2,230,000-2,440,000'],
+  notice,
+};
+
+const today = [
+  ['Header', '“Whole-genome deep learning analysis reveals causal role of noncoding mutations in autism”; “Explore the predicted effects of 127,140 autism proband mutations”; View as table.'],
+  ['Browser', 'Biodalliance at chr1:2,230,000-2,440,000 with DNA and RNA disease impact score tracks (−0.5 to 3) and GENCODE 19 (Genome browser page).'],
+  ['Heatmap', 'Heatmap and Features tabs; DNA features (2,002) or RNA features; top 20 sorted by the center variant; −3 to 3; drag or click to change the center.'],
+  ['Table view', 'Its own page, /dis_asd: View as genome browser, Download data, a data-use notice, search (“any column or a specific chromosome position (chr1:877047)”), 10 pages shown of “Results: 127133”.'],
+  ['Table columns', 'CHR, POSITION, Ref, Alt, Proband, Individual ID, DNA Disease impact score, DNA gene symbol (nearest representative TSS-based), Distance to representative TSS, RNA Disease impact score, RNA gene symbol, Exon junction proximal 200bp and 400bp, AS junction proximal 200bp and 400bp.'],
+  ['Data use', '“The use of Simons Simplex Collection (and Simons VIP) data sets is limited to projects related to advancing the field of autism and related developmental disorder research. Questions regarding content should be directed to collections@sfari.org.”'],
+  ['To confirm', '127,140 in the header and 127,133 in the table; individual IDs ending in -p1 and -s1 (proband and sibling in SSC naming), though the header says proband mutations.'],
+];
+
+const words = [
+  ['Subtitle', shared.subtitle],
+  ['Search help', 'Find a gene, region or position, such as CHD8 or chr1:2,337,101.'],
+  ['Nothing found', 'No variants in this dataset near “CHD9”. Check the gene name, or search a region such as chr14:21,853,000-21,906,000.'],
+  ['Blank score', 'Not available, where a variant has no RNA disease impact score.'],
+  ['Data use', notice],
+  ['Count', '127,133 variants, the number in the data, in the table; the header’s 127,140 is on the facts to confirm.'],
+];
+
+const behavior = [
+  ['One page, two views', 'Genome browser and Table are a switch on the same page; the URL keeps the view, location and search, so either can be shared.'],
+  ['Search', 'Takes a gene, region or position, or any column value as today; in the browser it moves there, in the table it filters.'],
+  ['Rows and the browser', 'Clicking a row switches to the browser centered on that variant, with the heatmap sorted by it. Only the browser’s range limits the table to what the browser shows.'],
+  ['Columns', 'Position, change, individual, both disease impact scores, nearest gene and distance to TSS, RNA gene; the four junction columns are one click away under Columns.'],
+  ['Sorting', 'Any column; position by default, as today. Scores sort by value, keeping sign.'],
+  ['Data use', 'The notice can be dismissed for this browser; it always shows again beside Download data.'],
+  ['Download data', 'The same file as today.'],
+];
+
+const specs = [
+  ['header', 'Results layout header: breadcrumb, Cabin Medium 36 title, Lato 16 subtitle, context labels, view switch and Download data'],
+  ['search', 'Search field large, 640px, with three example searches as ghost buttons'],
+  ['data use', 'Alert, Info, dismissible, full width under the search'],
+  ['table', 'Table component; positions, changes and IDs in Atkinson Hyperlegible Mono 14; scores right-aligned, bold at 1.5 or more'],
+  ['pagination', 'Pagination, Full; 20 rows per page'],
+  ['browser view', 'Genome browser with the linked heatmap (Genome browser page) at full width'],
+];
+
+const usage = `import { AsdVariant } from '@humanbase/data';
+import { AsdBrowser } from '@humanbase/hb';
+
+AsdVariant.score(-0.197); // "−0.197"
+AsdVariant.isStrong(1.62); // true: shown bold
+
+<AsdBrowser {...study} variants={rows} total={127133} defaultView="table" />`;
+---
+
+<DocsLayout title="ASD Browser" description="The ASD Browser on one page: a genome browser and a table of every variant, sharing one search and the data-use terms.">
+  <Intro
+    lead="The ASD Browser explores predicted effects of de novo noncoding variants from Simons Simplex Collection whole-genome sequencing. It isn’t a job: the data is fixed, so the page opens straight on the genome, with a table of every variant one switch away."
+    status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Start from a gene', text: 'One search takes a gene, a region or a position; the browser and the table both go there.' },
+        { title: 'Two views, one set of variants', text: 'Browser and table share the location and search, so switching never loses your place.' },
+        { title: 'Data use at the door', text: 'The SSC data-use terms sit next to Download data, where the data leaves HumanBase.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="What the ASD Browser does today" lead="hb.flatironinstitute.org/asdbrowser and its table view, /dis_asd, captured with Playwright on October 16, 2026, and the ASD Browser docs page.">
+    <DocTable caption="What the ASD Browser does today" columns={['Part', 'Today']} widths={['300px']}>
+      {today.map(([part, text]) => <tr><th scope="row">{part}</th><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="The browser view" lead="Where the ASD Browser opens. The header names the study and data; one search moves the browser and the heatmap. Browser and heatmap are the components from the Genome browser and Heatmaps pages.">
+    <ProductScreen label="The ASD Browser, browser view, at 1440px" current="Sequence analysis">
+      <AsdBrowser {...shared} defaultView="browser" noticeKey="" />
+    </ProductScreen>
+  </DocSection>
+
+  <DocSection title="The table view" lead="Every variant as a row: the same page and header with Table selected, not a separate page. Rows from the live table; the four junction columns are behind Columns, since they are blank for most variants.">
+    <ProductScreen label="The ASD Browser, table view, at 1440px" current="Sequence analysis">
+      <AsdBrowser {...shared} defaultView="table" noticeKey="" />
+    </ProductScreen>
+  </DocSection>
+
+  <DocSection title="Words" lead="Plain and exact: name the study, keep the paper’s terms, and say what a blank means.">
+    <DocTable caption="ASD Browser words" columns={['Moment', 'What it says']} widths={['300px']}>
+      {words.map(([moment, text]) => <tr><th scope="row">{moment}</th><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="What the ASD Browser does the same way in both views.">
+    <DocTable caption="ASD Browser behavior" columns={['Rule', 'Detail']} widths={['300px']}>
+      {behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Specs" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="ASD Browser specs" columns={['Part', 'Value']} widths={['300px']}>
+      {specs.map(([part, value]) => <tr><th scope="row"><code>{part}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the ASD Browser in code">
+    <ul>
+      <li><code>AsdVariant</code> in <code>@humanbase/data</code> writes a row the way the table shows it: positions with commas, a true minus, three decimals, and “Not available” for blanks.</li>
+      <li><code>AsdBrowser</code> in <code>@humanbase/hb</code> puts the header, search, data-use notice and both views on one page. The data comes from the caller; the page never fetches it.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>

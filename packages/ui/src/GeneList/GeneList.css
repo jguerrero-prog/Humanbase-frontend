@@ -1,0 +1,7 @@
+.gene-list {
+  display: block;
+  block-size: 160px;
+  padding: var(--space-3) var(--space-4);
+  line-height: 24px;
+  resize: vertical;
+}

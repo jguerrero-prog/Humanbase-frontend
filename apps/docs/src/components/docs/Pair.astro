@@ -1,0 +1,17 @@
+---
+interface Props {
+  kind: 'do' | 'dont';
+  title: string;
+  text: string;
+  mock?: boolean;
+}
+
+const { kind, title, text, mock = false } = Astro.props;
+const Stage = mock ? 'figure' : 'div';
+---
+
+<li class:list={['pair', `pair-${kind}`]}>
+  <Stage class="pair-stage" aria-hidden={mock ? 'true' : undefined}><slot /></Stage>
+  <h3>{title}</h3>
+  <p>{text}</p>
+</li>

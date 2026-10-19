@@ -1,0 +1,327 @@
+{
+  "$description": "Role-based colors that point at primitives. Components use these, not primitives. Exported from the HumanBase Figma file (qc47Wo9Vj5lYjo9U7zdvWa) on 2026-10-18.",
+  "text": {
+    "default": {
+      "$type": "color",
+      "$value": "{color.grey.900}"
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": "{color.grey.600}"
+    },
+    "muted": {
+      "$type": "color",
+      "$value": "{color.grey.500}"
+    },
+    "disabled": {
+      "$type": "color",
+      "$value": "{color.grey.400}"
+    },
+    "on-brand": {
+      "$type": "color",
+      "$value": "{color.white}"
+    },
+    "link": {
+      "$type": "color",
+      "$value": "{color.emerald.600}"
+    },
+    "error": {
+      "$type": "color",
+      "$value": "{color.error.700}"
+    }
+  },
+  "surface": {
+    "page": {
+      "$type": "color",
+      "$value": "{color.white}"
+    },
+    "subtle": {
+      "$type": "color",
+      "$value": "{color.grey.50}"
+    },
+    "sunken": {
+      "$type": "color",
+      "$value": "{color.grey.100}"
+    },
+    "inverse": {
+      "$type": "color",
+      "$value": "{color.grey.900}"
+    }
+  },
+  "border": {
+    "subtle": {
+      "$type": "color",
+      "$value": "{color.grey.200}"
+    },
+    "default": {
+      "$type": "color",
+      "$value": "{color.grey.300}"
+    },
+    "strong": {
+      "$type": "color",
+      "$value": "{color.grey.500}"
+    },
+    "selected": {
+      "$type": "color",
+      "$value": "{color.emerald.600}"
+    },
+    "error": {
+      "$type": "color",
+      "$value": "{color.error.700}"
+    }
+  },
+  "action": {
+    "primary": {
+      "$type": "color",
+      "$value": "{color.emerald.600}"
+    },
+    "primary-hover": {
+      "$type": "color",
+      "$value": "{color.emerald.700}"
+    },
+    "primary-pressed": {
+      "$type": "color",
+      "$value": "{color.emerald.800}"
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": "{color.yellow.500}"
+    },
+    "secondary-hover": {
+      "$type": "color",
+      "$value": "{color.yellow.600}"
+    },
+    "secondary-pressed": {
+      "$type": "color",
+      "$value": "{color.yellow.700}"
+    },
+    "destructive": {
+      "$type": "color",
+      "$value": "{color.error.700}"
+    },
+    "destructive-hover": {
+      "$type": "color",
+      "$value": "{color.error.800}"
+    },
+    "destructive-pressed": {
+      "$type": "color",
+      "$value": "{color.error.900}"
+    },
+    "ghost-hover": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0667,
+          0.4431,
+          0.2353
+        ],
+        "hex": "#11713C",
+        "alpha": 0.0784
+      }
+    },
+    "ghost-pressed": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0667,
+          0.4431,
+          0.2353
+        ],
+        "hex": "#11713C",
+        "alpha": 0.1608
+      }
+    },
+    "ghost-selected": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0667,
+          0.4431,
+          0.2353
+        ],
+        "hex": "#11713C",
+        "alpha": 0.2392
+      }
+    }
+  },
+  "overlay": {
+    "on-brand-hover": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          1,
+          1,
+          1
+        ],
+        "hex": "#FFFFFF",
+        "alpha": 0.1216
+      }
+    },
+    "on-brand-open": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          1,
+          1,
+          1
+        ],
+        "hex": "#FFFFFF",
+        "alpha": 0.14
+      }
+    },
+    "on-brand-selected": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          1,
+          1,
+          1
+        ],
+        "hex": "#FFFFFF",
+        "alpha": 0.3216
+      }
+    },
+    "backdrop": {
+      "$type": "color",
+      "$description": "Behind modal dialogs and phone sheets: ink at 40%.",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.102,
+          0.102,
+          0.102
+        ],
+        "hex": "#1A1A1A",
+        "alpha": 0.4
+      }
+    }
+  },
+  "focus": {
+    "ring": {
+      "$type": "color",
+      "$value": "{color.grey.900}"
+    }
+  },
+  "data": {
+    "highlight": {
+      "$type": "color",
+      "$value": "{color.mint.300}"
+    }
+  },
+  "status": {
+    "error": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.error.50}"
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.error.200}"
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.error.700}"
+      }
+    },
+    "warning": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.warning.50}"
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.warning.200}"
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.warning.700}"
+      }
+    },
+    "success": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.success.50}"
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.success.200}"
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.success.700}"
+      }
+    },
+    "info": {
+      "bg": {
+        "$type": "color",
+        "$value": "{color.info.50}"
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.info.200}"
+      },
+      "fg": {
+        "$type": "color",
+        "$value": "{color.info.700}"
+      },
+      "track": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.0902,
+            0.3608,
+            0.8275
+          ],
+          "hex": "#175CD3",
+          "alpha": 0.251
+        }
+      }
+    }
+  },
+  "syntax": {
+    "$description": "Code block syntax colors: five palette colors, with weight and style telling apart roles that share one.",
+    "text": {
+      "$type": "color",
+      "$value": "{color.grey.900}"
+    },
+    "key": {
+      "$type": "color",
+      "$value": "{color.grey.900}"
+    },
+    "command": {
+      "$type": "color",
+      "$value": "{color.info.700}"
+    },
+    "string": {
+      "$type": "color",
+      "$value": "{color.emerald.700}"
+    },
+    "type": {
+      "$type": "color",
+      "$value": "{color.warning.700}"
+    },
+    "param": {
+      "$type": "color",
+      "$value": "{color.warning.700}"
+    },
+    "flag": {
+      "$type": "color",
+      "$value": "{color.grey.600}"
+    },
+    "comment": {
+      "$type": "color",
+      "$value": "{color.grey.600}"
+    },
+    "selection": {
+      "$type": "color",
+      "$value": "{color.emerald.50}"
+    }
+  }
+}

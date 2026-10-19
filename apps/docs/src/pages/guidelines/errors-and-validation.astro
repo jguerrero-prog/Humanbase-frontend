@@ -1,0 +1,297 @@
+---
+import { Button, ErrorSummary, FileDrop, SearchField, TextInput } from '@humanbase/ui';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const today = [
+  [
+    'Submitting NetWAS with no file',
+    'A yellow box: “Please select a GWAS file as input.” Styled as a warning, not tied to the field, no icon.',
+    'A field error under the file picker, and an error summary at the top that links to it.',
+  ],
+  ['Searching a gene that doesn’t exist', '“No results found” in the suggestions.', '“No genes match NOTAGENE123. Check the spelling, or search by Entrez ID or name.”'],
+  [
+    'Opening a broken gene link',
+    '“Page Not Found. Sorry, the page you were trying to view does not exist.” No search, no way forward.',
+    'Says what was looked for, offers search and the most likely next pages.',
+  ],
+  ['A NetWAS job that fails', 'Results and failures arrive only by email.', 'A Failed status with the reason in job history, plus a toast if the person is on the site.'],
+];
+
+const placement = [
+  ['One field is wrong', 'Field error under the field (Text inputs)', '“Use a p-value threshold between 0 and 1, such as 0.01.”'],
+  ['Several fields, on submit', 'Error summary at the top of the form, plus each field error', '“2 things to fix before submitting”, each a link to its field.'],
+  ['A file’s contents', 'Inline alert above the file, with a link to the format', '“This file has no p-value column.”'],
+  ['Some genes not recognized', 'Invalid tags in the gene field, and a message naming them', '“IL1Z isn’t a known human gene.” The other genes stay.'],
+  ['Nothing matches a search', 'The suggestions panel’s no-match state', '“No genes match IL1Z.”'],
+  ['A section can’t load', 'Inline alert in that section, with Try again', '“Couldn’t load related genes.” The rest of the page still works.'],
+  ['A page doesn’t exist', 'Page not found, with search and next steps', 'Below on this page.'],
+  ['A background job fails', 'Failed status in job history, and a toast', '“NetWAS job failed: no p-value column.”'],
+  ['The whole service is down', 'Error banner under the top bar', '“Job submission is paused while we fix a server problem.”'],
+];
+
+const timing = [
+  ['Required fields', 'On submit. An empty field isn’t an error until people try to continue.'],
+  ['Format and range, such as a p-value threshold', 'When the field loses focus.'],
+  ['Gene symbols in a list', 'Half a second after typing stops, so each gene is matched as people go.'],
+  ['File contents', 'Right after upload, before submit: columns, size and format.'],
+  ['Clearing an error', 'As soon as the value is fixed, while typing. People don’t have to submit again to see it’s fixed.'],
+];
+
+const formNotes = [
+  'The summary appears only after submit, at the top, and takes focus so screen readers read it first.',
+  'Each line in the summary is a link that moves focus to its field.',
+  'Field errors stay until the value is fixed, then clear at once.',
+  'Submit stays enabled. A disabled button can’t explain why it’s disabled.',
+  'The file field shows its format before anyone gets it wrong, with an example file to try.',
+];
+
+const writing = [
+  ['Say what to do', 'Use a value between 0 and 1, such as 0.01.', 'Invalid value.'],
+  ['Name the thing', 'Add a GWAS file to run NetWAS.', 'Please select a GWAS file as input.'],
+  ['Explain the file problem', 'This file has no p-value column.', 'Parsing failed (422).'],
+  ['Keep it calm', 'Couldn’t load related genes.', 'Oops! Something went wrong!'],
+  ['Offer the next step', 'Try again, or check the server status page.', 'Contact the administrator.'],
+];
+
+const accessibility = [
+  ['Not color alone', 'Every error has an icon or the word “Error”, and a 2px border on the field.'],
+  ['Linked to the field', 'aria-invalid="true" on the field and aria-describedby pointing to its message.'],
+  ['Focus', 'After a failed submit, focus moves to the error summary; each link in it moves focus to its field.'],
+  ['Announced', 'Errors that appear without a submit, such as an unknown gene, use a polite live region.'],
+  ['Contrast', 'Error 700 on white is 6.6:1; the error alert’s icon on its fill is 6.1:1.'],
+];
+---
+
+<DocsLayout title="Errors and validation" description="Where HumanBase shows errors, when it checks, and how it words them.">
+  <Intro
+    lead="Errors happen when a file has the wrong columns, a gene symbol is misspelled or the server is slow. A good error says what went wrong, where, and how to fix it, and never costs people the work they already did."
+    status="Updated October 16, 2026 · Usage guideline · Uses Text inputs, Alerts and toasts, and Badges"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Prevent first', text: 'Show the format, the limits and an example file before people submit, so fewer errors happen at all.' },
+        { title: 'Say it where it happened', text: 'Next to the field, file or section it is about, in error red with an icon and the word “Error”.' },
+        { title: 'Keep their work', text: 'Never clear a form or a gene list because of an error. Fixing one thing never means redoing the rest.' },
+      ]}
+    />
+  </Intro>
+
+  <section class="today" aria-labelledby="today-heading">
+    <h2 id="today-heading">What HumanBase shows today (from the audit captures)</h2>
+    <DocTable caption="What HumanBase shows today" columns={['Moment', 'Today', 'With this guideline']} widths={['300px', '500px']}>
+      {
+        today.map(([moment, now, next]) => (
+          <tr>
+            <th scope="row">{moment}</th>
+            <td>{now}</td>
+            <td>{next}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </section>
+
+  <DocSection title="Where each error goes" lead="The closer to the problem, the better. Each kind has one home.">
+    <DocTable caption="Where each error goes" columns={['Error', 'Shown as', 'Example']} widths={['300px', '500px']}>
+      {
+        placement.map(([error, shown, example]) => (
+          <tr>
+            <th scope="row">{error}</th>
+            <td>{shown}</td>
+            <td>{example}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="When to check" lead="Check at the moment people can act on it, not while they are still typing.">
+    <DocTable caption="When to check" columns={['Check', 'When']} widths={['400px']}>
+      {
+        timing.map(([check, when]) => (
+          <tr>
+            <th scope="row">{check}</th>
+            <td>{when}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="A form with errors" lead="NetWAS, submitted with no file and a threshold of 5. The summary links to each problem; focus moves to the summary.">
+    <div class="form-example">
+      <form class="example-form" aria-labelledby="netwas-form-title" novalidate>
+        <h3 id="netwas-form-title">Submit a NetWAS job</h3>
+        <ErrorSummary
+          focusOnShow={false}
+          items={[
+            { fieldId: 'netwas-file', message: 'Choose a GWAS file.' },
+            { fieldId: 'netwas-threshold', message: 'Enter a p-value threshold between 0 and 1.' },
+          ]}
+        />
+        <div class="file-group">
+          <FileDrop id="netwas-file" label="GWAS file" accept=".txt,.tsv" prompt="Drop a GWAS file here, or" hint="Tab-separated, with gene and p columns." error="Add a GWAS file to run NetWAS." />
+          <a class="format-link" href="#netwas-file">See the format, or use the example BMI file</a>
+        </div>
+        <TextInput id="netwas-threshold" label="p-value threshold" defaultValue="5" error="Use a value between 0 and 1, such as 0.01." />
+        <Button type="submit" tabIndex={-1}>Submit job</Button>
+      </form>
+      <ul class="points">{formNotes.map((note) => <li>{note}</li>)}</ul>
+    </div>
+  </DocSection>
+
+  <DocSection title="Page not found" lead="Old links to gene pages and jobs are common in papers and emails. Say what was asked for and offer the way forward.">
+    <div class="compare">
+      <figure class="compare-card" data-illustration aria-label="Today’s page not found">
+        <p class="compare-label compare-today">Today</p>
+        <p class="compare-title">Page Not Found</p>
+        <p>Sorry, the page you were trying to view does not exist.</p>
+      </figure>
+      <figure class="compare-card" aria-label="Proposed page not found">
+        <p class="compare-label compare-proposed">Proposed</p>
+        <p class="compare-title">We couldn’t find that gene page</p>
+        <p>The link asked for gene 99999999, which isn’t in HumanBase. It may have a typo, or come from an older version of the site.</p>
+        <SearchField label="Search genes" size="medium" placeholder="Search a gene, for example IL1B" />
+        <ul class="next-links">
+          <li><a href="#page-not-found">Go to Networks</a></li>
+          <li><a href="#page-not-found">Your jobs</a></li>
+          <li><a href="#page-not-found">Report a broken link</a></li>
+        </ul>
+      </figure>
+    </div>
+  </DocSection>
+
+  <DocSection title="Writing error messages" lead="Lead with the fix, then the reason. Plain words, no blame, no codes on their own. Screen readers hear “Error” first.">
+    <DocTable caption="Writing error messages" columns={['Guideline', 'Write', 'Not']} widths={['320px', '400px']}>
+      {
+        writing.map(([guideline, write, not]) => (
+          <tr>
+            <th scope="row">{guideline}</th>
+            <td class="write-yes">{write}</td>
+            <td class="write-no">{not}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Accessibility" lead="Errors must be found and understood without seeing red.">
+    <DocTable caption="Accessibility" columns={['Rule', 'Detail']} widths={['320px']}>
+      {
+        accessibility.map(([rule, detail]) => (
+          <tr>
+            <th scope="row">{rule}</th>
+            <td>{detail}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .today {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6) 28px;
+    background: var(--status-info-bg);
+    border: var(--border-width-1) solid var(--status-info-border);
+    border-radius: var(--radius-md);
+  }
+
+  .today h2 {
+    font: var(--type-label);
+  }
+
+  .form-example {
+    display: grid;
+    grid-template-columns: 640px minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .example-form {
+    display: grid;
+    gap: var(--space-5);
+    justify-items: start;
+    padding: var(--space-8);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .example-form > :global(:not(button)) {
+    inline-size: 100%;
+  }
+
+  .example-form h3 {
+    font: 600 24px/1.3 Cabin, sans-serif;
+  }
+
+  .file-group {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .format-link {
+    font: var(--type-label-sm);
+    color: var(--text-link);
+  }
+
+  .compare {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+
+  .compare-card {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 28px;
+    color: var(--text-secondary);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .compare-label {
+    font: var(--type-eyebrow);
+  }
+
+  .compare-today {
+    color: var(--status-error-fg);
+  }
+
+  .compare-proposed {
+    color: var(--status-success-fg);
+  }
+
+  .compare-title {
+    font: 500 26px/1.2 Cabin, sans-serif;
+    color: var(--text-default);
+  }
+
+  .next-links {
+    display: flex;
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .next-links a {
+    font: var(--docs-small-strong);
+    color: var(--text-link);
+  }
+
+  @media (width < 64rem) {
+    .form-example,
+    .compare {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

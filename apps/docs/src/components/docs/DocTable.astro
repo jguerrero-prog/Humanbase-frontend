@@ -1,0 +1,30 @@
+---
+interface Props {
+  caption: string;
+  columns: string[];
+  widths?: string[];
+}
+
+const { caption, columns, widths = [] } = Astro.props;
+---
+
+<div class="doc-table" role="region" aria-label={caption} tabindex="0">
+  <table>
+    <caption class="visually-hidden">{caption}</caption>
+    {
+      widths.length > 0 && (
+        <colgroup>
+          {widths.map((width) => (
+            <col style={`width: ${width}`} />
+          ))}
+        </colgroup>
+      )
+    }
+    <thead>
+      <tr>{columns.map((column) => <th scope="col">{column}</th>)}</tr>
+    </thead>
+    <tbody>
+      <slot />
+    </tbody>
+  </table>
+</div>

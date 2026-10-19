@@ -1,0 +1,354 @@
+.variant-plot,
+.all-features {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.variant-plot svg,
+.all-features svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.variant-plot-grid {
+  stroke: var(--border-subtle);
+}
+
+.variant-plot-tick {
+  font: var(--type-caption);
+  fill: var(--text-secondary);
+}
+
+.variant-plot-title {
+  font: var(--type-label-sm);
+  fill: var(--text-default);
+}
+
+.variant-plot-point {
+  cursor: pointer;
+  fill: var(--color-grey-600);
+}
+
+.variant-plot-point-light {
+  fill: var(--color-grey-400);
+}
+
+.variant-plot-selected circle {
+  fill: none;
+  stroke: var(--text-default);
+  stroke-width: 2;
+}
+
+.variant-plot-selected text {
+  font: var(--type-code-sm);
+  fill: var(--text-default);
+}
+
+.variant-plot-summary {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.variants-table {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+
+.variants-table > .table {
+  inline-size: 100%;
+}
+
+.variants-table-row[data-selected] {
+  background: var(--surface-sunken);
+}
+
+.variants-table-pick {
+  display: grid;
+  gap: 2px;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.variants-table-location {
+  font: var(--type-code-sm);
+  color: var(--text-default);
+}
+
+.variants-table-row[data-selected] .variants-table-location {
+  font-weight: 700;
+}
+
+.variants-table-change {
+  color: var(--text-secondary);
+}
+
+.variants-table-name {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.variant-focus {
+  display: flex;
+  gap: var(--space-4);
+  align-items: end;
+  justify-content: space-between;
+}
+
+.variant-focus-text {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  align-items: baseline;
+}
+
+.variant-focus-eyebrow {
+  flex-basis: 100%;
+  font: var(--type-label-sm);
+  color: var(--text-secondary);
+}
+
+.variant-focus-label {
+  font: var(--type-code);
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--text-default);
+}
+
+.variant-focus-detail {
+  font: var(--type-body-sm);
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+.variant-focus-steps {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.molecular-effects {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.molecular-effects-title {
+  font: var(--type-label);
+  font-size: 18px;
+  color: var(--text-default);
+}
+
+.molecular-effects .tabs-panel {
+  display: grid;
+  gap: var(--space-5);
+  padding-block-start: var(--space-5);
+}
+
+.effects-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: end;
+}
+
+.effects-score,
+.effects-cells {
+  inline-size: 200px;
+}
+
+.effects-search {
+  inline-size: 300px;
+}
+
+.effects-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.effects-summary li {
+  display: grid;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.effects-summary strong {
+  font: var(--type-label);
+  font-size: 17px;
+  color: var(--text-default);
+}
+
+.effects-summary span {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.effects-legend {
+  justify-self: end;
+}
+
+.effects-directions {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.effects-column {
+  display: grid;
+  gap: var(--space-2);
+  justify-items: start;
+}
+
+.effects-column-title {
+  font: var(--type-label-sm);
+  color: var(--text-default);
+}
+
+.effects-axis,
+.effect-row {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 346px) auto;
+  gap: var(--space-4);
+  align-items: center;
+  inline-size: 100%;
+}
+
+.effects-axis {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.effects-axis-scale {
+  position: relative;
+  block-size: 1.4em;
+}
+
+.effects-axis-scale span {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.effects-list,
+.effects-experiments {
+  display: grid;
+  inline-size: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.effect {
+  border-block-end: var(--border-width-1) solid var(--border-subtle);
+}
+
+.effect > .effect-row {
+  min-block-size: 55px;
+}
+
+.effect-name {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  padding-inline-start: var(--space-6);
+}
+
+.effect-toggle {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.effect-toggle .icon {
+  flex: none;
+  inline-size: var(--space-4);
+}
+
+.effect-name-text {
+  display: grid;
+}
+
+.effect-feature {
+  font: var(--type-label-sm);
+  font-size: 13px;
+  color: var(--text-default);
+}
+
+.effect-detail {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.effect-bar {
+  display: block;
+  block-size: 13px;
+  background: var(--surface-sunken);
+}
+
+.effect-bar span {
+  display: block;
+  block-size: 100%;
+}
+
+.effect-value {
+  font: var(--type-label-sm);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-default);
+}
+
+.effect-experiment {
+  min-block-size: 29px;
+}
+
+.effect-experiment .effect-name {
+  padding-inline-start: 48px;
+}
+
+.effect-experiment .effect-bar {
+  block-size: 10px;
+}
+
+.effect-experiment .effect-value {
+  font: var(--type-caption);
+}
+
+.effects-heatmap {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+}
+
+.all-features-marked {
+  fill: var(--surface-subtle);
+}
+
+.all-features-point {
+  stroke: var(--color-grey-600);
+  stroke-width: 0.5;
+}
+
+.all-features-label {
+  font: var(--type-caption);
+  fill: var(--text-default);
+}

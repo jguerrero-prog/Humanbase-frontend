@@ -1,0 +1,42 @@
+---
+const center = [426, 205];
+const neighbors = [
+  [306, 145],
+  [536, 125],
+  [276, 265],
+  [556, 275],
+  [426, 85],
+  [386, 315],
+  [486, 325],
+  [196, 195],
+  [646, 205],
+];
+---
+
+<svg class="network-sketch" viewBox="0 0 852 410" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+  {neighbors.map(([x, y]) => <line x1={center[0]} y1={center[1]} x2={x} y2={y} />)}
+  {neighbors.map(([x, y]) => <circle cx={x} cy={y} r="6" />)}
+  <circle class="network-sketch-query" cx={center[0]} cy={center[1]} r="9" />
+</svg>
+
+<style>
+  .network-sketch {
+    inline-size: 100%;
+    block-size: 100%;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  line {
+    stroke: var(--border-default);
+    stroke-width: 1.5;
+  }
+
+  circle {
+    fill: var(--text-secondary);
+  }
+
+  .network-sketch-query {
+    fill: var(--text-default);
+  }
+</style>

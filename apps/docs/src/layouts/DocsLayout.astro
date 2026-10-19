@@ -1,0 +1,53 @@
+---
+import '@humanbase/ui/root.css';
+import '../styles/docs.css';
+import '../styles/docs-blocks.css';
+import { Logo } from '@humanbase/ui';
+import heroNetwork from '../assets/hero-network.svg?url';
+import SideMenu from '../components/SideMenu.astro';
+
+interface PageInfo {
+  title: string;
+  description?: string;
+}
+
+type Props = PageInfo | { frontmatter: PageInfo };
+
+const page = 'frontmatter' in Astro.props ? Astro.props.frontmatter : Astro.props;
+const { title, description = 'The HumanBase design system.' } = page;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title} · HumanBase design system</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="docs-frame">
+      <aside class="side-panel">
+        <SideMenu />
+      </aside>
+      <div class="docs-page">
+        <header class="hero">
+          <a class="hero-logo" href="/"><Logo surface="green" /></a>
+          <h1>{title}</h1>
+          <img class="hero-illustration" src={heroNetwork} alt="" width="454" height="529" />
+          <svg class="hero-wave" viewBox="0 0 1571 47.08" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 14.0828C636.513 -17.0046 971.416 7.56287 1571 47.0828H0V14.0828Z" fill="currentColor"></path>
+          </svg>
+        </header>
+        <main id="content" data-pagefind-body>
+          <h2 class="page-title">Overview</h2>
+          <div class="page-content">
+            <slot />
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

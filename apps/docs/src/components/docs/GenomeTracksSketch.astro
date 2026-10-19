@@ -1,0 +1,115 @@
+---
+// A stand-in for the tracks Biodalliance draws; gene positions are approximate, as in Figma.
+interface Props {
+  start: number;
+  end: number;
+  ticks: readonly number[];
+  variant: { position: number; label: string; scores: readonly number[] };
+  scoreMax: number;
+  genes: readonly { name: string; from: number; to: number; strand: '+' | '-' }[];
+}
+
+const { start, end, ticks, variant, scoreMax, genes } = Astro.props;
+const width = 1100;
+const x = (position: number) => ((position - start) / (end - start)) * width;
+const count = new Intl.NumberFormat('en-US');
+const trackTop = [36, 96];
+const trackHeight = 50;
+const geneTop = 168;
+---
+
+<svg class="genome-sketch" viewBox={`0 0 ${width} 236`} aria-hidden="true" focusable="false">
+  <line class="ruler" x1="0" y1="22" x2={width} y2="22" />
+  {
+    ticks.map((tick) => (
+      <g>
+        <line class="ruler" x1={x(tick)} y1="16" x2={x(tick)} y2="22" />
+        <text class="position" x={x(tick)} y="12" text-anchor="middle">
+          {count.format(tick)}
+        </text>
+      </g>
+    ))
+  }
+  {
+    variant.scores.map((score, index) => {
+      const top = trackTop[index] ?? 0;
+      const barHeight = (score / scoreMax) * trackHeight;
+      return (
+        <g>
+          <line class="baseline" x1="0" y1={top + trackHeight} x2={width} y2={top + trackHeight} />
+          <rect class="bar-selected" x={x(variant.position) - 3} y={top + trackHeight - barHeight} width="6" height={barHeight} />
+          <text class="value" x={x(variant.position) + 8} y={top + trackHeight - barHeight + 10}>
+            {score.toFixed(2)}
+          </text>
+        </g>
+      );
+    })
+  }
+  {
+    genes.map((gene) => (
+      <g>
+        <rect class="gene" x={x(gene.from)} y={geneTop} width={x(gene.to) - x(gene.from)} height="8" />
+        <text class="gene-name" x={(x(gene.from) + x(gene.to)) / 2} y={geneTop + 24} text-anchor="middle">
+          {gene.strand === '+' ? `${gene.name} →` : `← ${gene.name}`}
+        </text>
+      </g>
+    ))
+  }
+  <line class="guide" x1={x(variant.position)} y1="26" x2={x(variant.position)} y2="208" />
+  <rect class="pill" x={x(variant.position) - 92} y="212" width="184" height="22" rx="11" />
+  <text class="pill-text" x={x(variant.position)} y="227" text-anchor="middle">{variant.label}</text>
+</svg>
+
+<style>
+  .genome-sketch {
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .ruler,
+  .baseline {
+    stroke: var(--text-secondary);
+    stroke-width: 1;
+  }
+
+  .baseline {
+    stroke: var(--border-subtle);
+  }
+
+  .position {
+    font: 400 11px "Atkinson Hyperlegible Mono", monospace;
+    fill: var(--text-secondary);
+  }
+
+  .bar-selected {
+    fill: var(--text-default);
+  }
+
+  .value {
+    font: 700 11px Lato, sans-serif;
+    fill: var(--text-default);
+  }
+
+  .gene {
+    fill: var(--text-secondary);
+  }
+
+  .gene-name {
+    font: 700 12px Lato, sans-serif;
+    fill: var(--text-default);
+  }
+
+  .guide {
+    stroke: var(--text-default);
+    stroke-opacity: 0.5;
+  }
+
+  .pill {
+    fill: var(--surface-inverse);
+  }
+
+  .pill-text {
+    font: 400 12px "Atkinson Hyperlegible Mono", monospace;
+    fill: var(--text-on-brand);
+  }
+</style>

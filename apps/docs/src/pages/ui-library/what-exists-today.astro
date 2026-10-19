@@ -1,0 +1,232 @@
+---
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { hrefFor } from '../../navigation';
+
+const families = [
+  ['Network', 'Networks, Modules, NetWAS', 'Enter genes or a GWAS file, choose a tissue network and data version, then explore a network or module result with a gene table, enriched terms and evidence.'],
+  ['Variant', 'Sei, Beluga (DeepSEA), Seqweaver, ExPecto, ExPecto SC, In silico mutagenesis, ASD Browser', 'Submit variants or a sequence (or search a gene), wait for the job, then read a score summary, a genome browser view and a heatmap of predicted effects.'],
+];
+
+const toolColumns = ['Tool', 'What it does', 'Input and options', 'Output and downloads', 'Must keep'];
+const toolWidths = ['180px', '230px', '330px', '370px'];
+
+const networkTools = [
+  [
+    'Networks',
+    'Shows the genes most functionally related to a query gene or set, in a tissue-specific network.',
+    'Gene symbols or Entrez IDs. Tissue (144 in GIANT, 289 in MAGE). Data types (5 in GIANT). Minimum confidence, number of genes, “prioritize by uniqueness to the query genes”.',
+    'Network graph; related genes with scores; enriched processes with p-values; tissue expression; evidence for a connection (dataset contributions in GIANT, one score in MAGE). Download as image, visible or entire network as text, enrichment table.',
+    'Comparing networks side by side (“Add network”); evidence per connection; the gene page tabs: tissue network, tissue expression, process network, process, disease.',
+  ],
+  [
+    'Modules',
+    'Clusters a gene list into functional modules in a tissue network and finds what each module does.',
+    'Gene list, one per line. Tissue network and data version (GIANT or MAGE). Term database: GO BP, Disease Ontology, MSigDB. Minimum module size, show edges, hide unenriched modules. Editable title.',
+    'Module graph; per-module top terms with q-values, gene and term counts; genes table; count of genes assigned to a module. Download TSV, PNG, SVG, PDF or all as zip.',
+    'Gene search inside the result; term database choice; the assigned-genes count; all export formats.',
+  ],
+  [
+    'NetWAS',
+    'Reranks GWAS genes using a tissue network.',
+    'GWAS file (VEGAS, FORGE or PSEQ format; example bmi-2012.txt). Tissue. p-value threshold, default 0.01. Optional email and title.',
+    'A text file per gene: training label (1, −1, 0) and NetWAS score (distance from the SVM hyperplane). Delivered by email or URL; no results page.',
+    'Every field of the output file, including its header (job, file, format, tissue, threshold).',
+  ],
+];
+
+const variantTools = [
+  [
+    'Sei, Beluga, Seqweaver',
+    'Predict how variants change chromatin (Sei, Beluga) or RNA-binding protein activity (Seqweaver). One form with a Model choice.',
+    'VCF (5 columns; Seqweaver adds strand), FASTA (Seqweaver 1,000 bp, Beluga 2,000, Sei 4,096; centre base predicted), or BED (0-based). Genome assembly hg19. Up to 20,000 variants, 10,000 recommended. Optional title and email; example submission.',
+    'Variant score plot (disease impact score, mean −log e-value, or Sei’s max sequence class score; by rank or genome). Genome browser around each variant. Effects heatmap: probability diffs, z-score, e-value, sequence class score; search, top 20 of N, reverse sort, full or compact view. Per-variant ranked features. Tables downloadable.',
+    'Model choice and per-model rules; all score types; Sei’s 40 sequence classes in 8 groups; the per-variant features view.',
+  ],
+  [
+    'ExPecto',
+    'Predicts how variants change gene expression across tissues.',
+    'Search a gene, submit variants (VCF), or search an rsID. hg19. Up to 10,000 variants per job.',
+    'Gene view by tissue system, drilling into tissues. Variant results: genome browser and expression-effect heatmap (log fold change). Download table; bulk predictions on S3 (up to 128 GB).',
+    'The three ways in (gene, variants, rsID); the drill-down from tissue system to tissue.',
+  ],
+  [
+    'ExPecto SC',
+    'Predicts expression effects of ClinVar and 1000 Genomes variants near a gene, by cell type.',
+    'Search a gene. Choose up to 7 organs to compare.',
+    'Organ overview, then organ and cell type. Expression effect as a z-score (about 3 to 5 or more is reliable). Download TSV; bulk files on S3.',
+    'Comparing organs; the reliability guidance for z-scores.',
+  ],
+  [
+    'In silico mutagenesis',
+    'Shows how every possible single-base change in a sequence affects one chromatin feature.',
+    'FASTA, documented as 2,000 bp; several sequences per job. Then choose a sequence and one of 2,002 features.',
+    'Heatmap of A, C, G, T by position: log2 fold change of odds. Download CSV.',
+    'Choosing sequence and feature after the job; all 3 substitutions at every base.',
+  ],
+  [
+    'ASD Browser',
+    'Explores predicted effects of 127,140 de novo noncoding variants in autism probands (Simons Simplex Collection).',
+    'Search a region or gene; zoom and scroll; choose DNA or RNA features.',
+    'DNA and RNA disease impact score tracks; heatmap of per-variant z-scores for the top features. Click a variant to centre both; drag the heatmap to change the centre; hover for details.',
+    'Linked browser and heatmap; DNA/RNA switch; centring on a variant.',
+  ],
+];
+
+// Each building block names the UI library pages it becomes; names link once the page is in navigation.ts.
+const buildingBlocks: { block: string; usedBy: string; pages: string[]; note?: string }[] = [
+  { block: 'Variant submission form', usedBy: 'Sei, Beluga, Seqweaver, ExPecto, In silico mutagenesis', pages: ['Job submission'] },
+  { block: 'Genome browser', usedBy: 'ASD Browser, Sei, Beluga, Seqweaver, ExPecto', pages: ['Genome browser'], note: '(redesigned component)' },
+  { block: 'Effects heatmap with its controls', usedBy: 'Sei, Beluga, Seqweaver, ExPecto, ASD Browser', pages: ['Heatmaps and score legends'] },
+  { block: 'Gene drill-down heatmap', usedBy: 'ExPecto (tissue system to tissue), ExPecto SC (organ to cell type)', pages: ['Heatmaps and score legends'] },
+  { block: 'Variant score plot and per-variant features', usedBy: 'Sei, Beluga, Seqweaver', pages: ['Variant effect results'] },
+  { block: 'Network panel: genes, process, tissue, evidence', usedBy: 'Networks, gene pages', pages: ['Network graph'] },
+  { block: 'Gene search with autocomplete', usedBy: 'Homepage, Networks, Modules, ExPecto, ExPecto SC', pages: ['Gene search and matching'] },
+  { block: 'Job title, email, status and history', usedBy: 'Every job-based tool', pages: ['Job submission', 'Job status and queue'] },
+];
+
+const leaving = [
+  ['NCBI Genome Data Viewer, to cut a FASTA file', 'In silico mutagenesis needs a sequence of a set length', 'Enter coordinates or a gene and let HumanBase extract the sequence.'],
+  ['UCSC hgdownload, to find track URLs', 'Beyond a few defaults (Conservation, GM12878 ChromHMM), new tracks need a URL or an indexed file', 'Offer common tracks as presets; keep URL entry for anything else.'],
+  ['insulatordb and other sources, to find regions', 'Use cases depend on outside region lists', 'Link out clearly from the docs; nothing to change in the tool.'],
+  ['Email, for NetWAS results', 'There is no results page', 'A NetWAS results page with the same data as the file.'],
+  ['S3, for bulk downloads', 'Files are very large', 'Keep S3, and say the size and format before people click.'],
+];
+
+const notDocumented = [
+  ['Job history and retrieving a job', 'How jobs are listed today, how long they are kept, what a job link looks like (only /?body_tag=<job_id> is known).'],
+  ['rsID search in ExPecto', 'Its results and errors.'],
+  ['Job status and failures', 'Every state a job can be in, and the reasons a job fails.'],
+  ['Evidence for MAGE connections', 'What the evidence view shows when there is one score instead of dataset contributions.'],
+  ['Undocumented controls', '“Prioritize by uniqueness to the query genes”, the star menu, the two circle buttons on the network toolbar, “Full View” and “Compact View”.'],
+  ['Size in the graphs', 'What node size means in Networks and Modules.'],
+];
+
+const facts = [
+  ['Is the variant limit 20,000 (shared docs) or 10,000 (ExPecto)?', 'Job submission limits and messages.'],
+  ['Is In silico mutagenesis 2,000 bp? The example file is 1,000 bp.', 'The FASTA rules shown before upload.'],
+  ['For In silico mutagenesis, does a positive value mean the feature is gained or lost?', 'Which end of the legend says “decrease”. The formula stays as it is.'],
+  ['Which display range suits each score (z-score, probability diff, expression effect, log fold change)?', 'Diverging scale limits in heatmaps; values never change.'],
+  ['Do the variant tools stay on hg19, or will MAGE-era tools move to hg38?', 'Assembly labels on every coordinate and download.'],
+  ['Is “Mimimum interaction confidence” the same value as the network score?', 'The word list: score versus confidence.'],
+];
+
+const terminology = [
+  ['Tissue context', 'Tissue, Select network, tissue context, Tissue System, Organ', 'tissue network; tissue system and organ only where the data groups them that way'],
+  ['Data version', 'Method, GIANT/MAGE select', 'data version'],
+  ['Module discovery', 'Functional Module Detection, Functional module discovery, Modules, Functional module clustering', 'Modules (tool); module discovery (what it does)'],
+  ['Significance', 'P-VALUE, Q VAL', 'p-value or q-value, as computed'],
+  ['Genome browser', 'ASD Browser, ASD Genome Browser, Genome browser', 'Genome browser (the view); ASD Browser (the tool)'],
+  ['Variant', 'variant, mutation, SNP', 'variant; “de novo mutation” where the paper says so'],
+];
+---
+
+<DocsLayout title="What exists today" description="A functional reference for every HumanBase tool: inputs, options, outputs and the features any redesign must keep.">
+  <section class="intro" aria-label="Introduction">
+    <p class="intro-lead">
+      A functional reference for every HumanBase tool: what it does, what it takes in, what it gives back, and the features any redesign must keep. It records behavior, not today’s look. The design system replaces the visuals; nothing here changes what a tool computes.
+    </p>
+    <p class="intro-status">Compiled October 16, 2026 · Sources: humanbase-docs (all 34 pages and their screenshots), the UX audit, and Playwright captures of humanbase.io</p>
+    <aside class="how-to" aria-labelledby="how-to-heading">
+      <h2 id="how-to-heading">How to use this page</h2>
+      <p>
+        Keep every input, option, output, score and download listed here. Change only how they are presented, using the system’s components and scales. Anything under “Facts to confirm” needs an answer from Julien or Natalie before it is designed.
+      </p>
+    </aside>
+  </section>
+
+  <DocSection title="Two families of tools" lead="Every tool belongs to one family, and each family already shares most of its flow.">
+    <DocTable caption="Tool families" columns={['Family', 'Tools', 'Shared flow']} widths={['264px', '444px']}>
+      {families.map(([family, tools, flow]) => <tr><th scope="row">{family}</th><td>{tools}</td><td>{flow}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Network tools">
+    <DocTable caption="Network tools" columns={toolColumns} widths={toolWidths}>
+      {networkTools.map(([tool, does, input, output, keep]) => <tr><th scope="row">{tool}</th><td>{does}</td><td>{input}</td><td>{output}</td><td>{keep}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Variant tools">
+    <DocTable caption="Variant tools" columns={toolColumns} widths={toolWidths}>
+      {variantTools.map(([tool, does, input, output, keep]) => <tr><th scope="row">{tool}</th><td>{does}</td><td>{input}</td><td>{output}</td><td>{keep}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Shared building blocks" lead="Parts that repeat across tools. Each becomes one UI library pattern, used everywhere.">
+    <DocTable caption="Shared building blocks" columns={['Building block', 'Used by', 'UI library page']} widths={['384px', '504px']}>
+      {
+        buildingBlocks.map(({ block, usedBy, pages, note }) => (
+          <tr>
+            <th scope="row">{block}</th>
+            <td>{usedBy}</td>
+            <td>
+              {pages.map((label, index) => {
+                const href = hrefFor(label);
+                return (
+                  <>
+                    {index > 0 && ', '}
+                    {href ? <a href={href}>{label}</a> : label}
+                  </>
+                );
+              })}
+              {note && ` ${note}`}
+            </td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Where people leave HumanBase" lead="Each is a chance to keep people in the tool, without changing any analysis.">
+    <DocTable caption="Where people leave HumanBase" columns={['Step today', 'Why they leave', 'Opportunity']} widths={['384px', '444px']}>
+      {leaving.map(([step, why, opportunity]) => <tr><th scope="row">{step}</th><td>{why}</td><td>{opportunity}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Not documented anywhere" lead="Needed for the design; to learn from Julien or the live site.">
+    <DocTable caption="Not documented anywhere" columns={['Area', 'What we need to know']} widths={['384px']}>
+      {notDocumented.map(([area, need]) => <tr><th scope="row">{area}</th><td>{need}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Facts to confirm" lead="The docs disagree with themselves or with the examples. The design waits on these answers; the science doesn’t change.">
+    <DocTable caption="Facts to confirm" columns={['Question', 'Where it matters']} widths={['704px']}>
+      {facts.map(([question, where]) => <tr><th scope="row">{question}</th><td>{where}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="One concept, many names" lead="The system picks one word; the Voice and content word list holds the decision.">
+    <DocTable caption="One concept, many names" columns={['Concept', 'Names used today', 'System word']} widths={['264px', '564px']}>
+      {terminology.map(([concept, names, word]) => <tr><th scope="row">{concept}</th><td>{names}</td><td>{word}</td></tr>)}
+    </DocTable>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .how-to {
+    display: grid;
+    gap: 6px;
+    padding: var(--space-4) var(--space-5);
+    background: var(--status-info-bg);
+    border: var(--border-width-1) solid var(--status-info-border);
+    border-radius: var(--radius-md);
+  }
+
+  .how-to h2 {
+    font: var(--type-label);
+    font-size: 15px;
+    color: var(--text-default);
+  }
+
+  .how-to p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .doc-table a {
+    font-weight: 700;
+    color: var(--text-link);
+  }
+</style>
