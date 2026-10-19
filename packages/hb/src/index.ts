@@ -11,6 +11,7 @@ export { expectoGeneScale, expectoScGeneScale, geneExpressionTools, type GeneExp
 export { VariantSearch, type VariantSearchProps } from './Expecto/VariantSearch';
 export { DeepseaJobView, type DeepseaJobViewProps } from './Deepsea/DeepseaJobView';
 export { DeepseaResultView, type DeepseaResultViewProps } from './Deepsea/DeepseaResultView';
+export { InsilicoResultView, type InsilicoResultViewProps } from './Deepsea/InsilicoResultView';
 export { HomeSearch, type HomeSearchProps } from './HomeSearch/HomeSearch';
 export { EmptyNetworkQuery, NetworkExplorer, type NetworkDetailContext, type NetworkExplorerProps } from './Networks/NetworkExplorer';
 export { NetworkDetail } from './Networks/NetworkDetail';

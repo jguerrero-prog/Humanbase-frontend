@@ -28,6 +28,7 @@ import {
 } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { jobDateTime } from '../Jobs/JobPage';
+import { deepseaFormLink } from './DeepseaForm';
 import './Deepsea.css';
 
 export interface DeepseaResultViewProps {
@@ -75,7 +76,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
   const files = job.resultFiles;
   const header = (
     <ResultHeader
-      crumbs={[{ label: 'Jobs', href: '/jobs/' }, { label: model.tool, href: `/${model.id}/` }, { label: title }]}
+      crumbs={[{ label: 'Jobs', href: '/jobs/' }, { label: model.tool, href: deepseaFormLink(model.id) }, { label: title }]}
       title={title}
       context={[
         { name: 'Model', value: model.kind },
