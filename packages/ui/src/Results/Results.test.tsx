@@ -4,6 +4,8 @@ import { GeneMatchList } from '../GeneMatch/GeneMatchList';
 import { EditGenesDialog } from './EditGenesDialog';
 import { GeneIdsMenu } from './GeneIdsMenu';
 import { GraphToolbar } from './GraphToolbar';
+import { JobDetails } from './JobDetails';
+import { NetwasGeneTable } from './NetwasGeneTable';
 import { RankedAnnotationTable } from './RankedAnnotationTable';
 import { ResultHeader } from './ResultHeader';
 import { ResultLayout } from './ResultLayout';
@@ -96,5 +98,27 @@ describe('RankedAnnotationTable', () => {
     expect(screen.getByRole('list', { name: 'Evidence for drug metabolic process' })).toHaveTextContent('Inferred from direct assay');
     expect(screen.queryByRole('button', { name: 'cervical cancer' })).not.toBeInTheDocument();
     expect(screen.getByText('Predicted')).toBeInTheDocument();
+  });
+});
+
+describe('NetwasGeneTable', () => {
+  it('shows the label in words with the raw value, and signs negative scores', () => {
+    render(<NetwasGeneTable caption="Genes" rows={[{ rank: 7, symbol: 'ZNF1', label: 0, gwas: 'Not used', score: -0.2, href: '#ZNF1' }]} />);
+    const row = screen.getByRole('row', { name: /ZNF1/ });
+    expect(row).toHaveTextContent('Not used (0)');
+    expect(row).toHaveTextContent('−0.200');
+    expect(within(row).getByRole('cell', { name: '7' })).toBeInTheDocument();
+  });
+
+  it('says so when no rows match', () => {
+    render(<NetwasGeneTable caption="Genes" rows={[]} empty={{ title: 'No GWAS hits in this result' }} />);
+    expect(screen.getByText('No GWAS hits in this result')).toBeInTheDocument();
+  });
+});
+
+describe('JobDetails', () => {
+  it('pairs each field with its value', () => {
+    render(<JobDetails items={[{ term: 'GWAS file', value: 'bmi-2012.out.txt', mono: true }]} />);
+    expect(screen.getByText('GWAS file').nextElementSibling).toHaveTextContent('bmi-2012.out.txt');
   });
 });

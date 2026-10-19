@@ -44,6 +44,7 @@ const pages = [
   'http://localhost:4322/ui-library/gene-search-and-matching/',
   'http://localhost:4322/ui-library/genome-browser/',
   'http://localhost:4322/ui-library/results-layout/',
+  'http://localhost:4322/ui-library/netwas-results/',
 ];
 
 for (const url of pages) {

@@ -335,3 +335,113 @@
   font: var(--type-caption);
   color: var(--text-secondary);
 }
+
+.netwas-score {
+  display: inline-flex;
+  gap: var(--space-4);
+  align-items: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.netwas-score-track {
+  position: relative;
+  inline-size: 120px;
+  block-size: var(--space-2);
+  background: linear-gradient(var(--border-default), var(--border-default)) 50% 0 / var(--border-width-1) 100% no-repeat;
+}
+
+.netwas-score-bar {
+  position: absolute;
+  inset-block: 0;
+  inline-size: var(--extent);
+  border-radius: var(--radius-2xs);
+}
+
+.netwas-score-bar[data-sign="positive"] {
+  inset-inline-start: 50%;
+  background: var(--viz-div-p2);
+}
+
+.netwas-score-bar[data-sign="negative"] {
+  inset-inline-end: 50%;
+  background: var(--viz-div-n2);
+}
+
+.netwas-label {
+  font: var(--type-code-sm);
+  color: var(--text-secondary);
+}
+
+.netwas-guide {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+  background: var(--surface-subtle);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.netwas-guide-heading {
+  font: var(--type-h4);
+  color: var(--text-default);
+}
+
+.netwas-guide .legend,
+.netwas-guide .legend-ramp,
+.netwas-guide .legend-ticks {
+  inline-size: 100%;
+}
+
+.netwas-guide-cite {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  padding-block-start: var(--space-4);
+  border-block-start: var(--border-width-1) solid var(--border-subtle);
+}
+
+.netwas-guide-subheading {
+  font: var(--type-label-sm);
+  color: var(--text-default);
+}
+
+.job-details-list {
+  margin: 0;
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.job-details-list > div {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: baseline;
+  padding: var(--space-3) var(--space-5);
+}
+
+.job-details-list > div + div {
+  border-block-start: var(--border-width-1) solid var(--border-subtle);
+}
+
+.job-details-list dt {
+  font: var(--type-label-sm);
+  color: var(--text-default);
+}
+
+.job-details-list dd {
+  margin: 0;
+  font: var(--type-body-sm);
+  overflow-wrap: anywhere;
+}
+
+.job-details-list .job-details-mono {
+  font: var(--type-code-sm);
+}
+
+.netwas-guide-heading,
+.netwas-guide-subheading,
+.netwas-guide p {
+  margin: 0;
+}
