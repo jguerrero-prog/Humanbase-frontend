@@ -5,6 +5,7 @@ import { ModulesPage } from './pages/ModulesPage';
 import { NetworksPage } from './pages/NetworksPage';
 import { NetwasJobPage } from './pages/netwas/NetwasJobPage';
 import { NetwasPage } from './pages/netwas/NetwasPage';
+import { DeepseaPage } from './pages/deepsea/DeepseaPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -16,6 +17,9 @@ export const router = createBrowserRouter([
       { path: 'modules', element: <ModulesPage /> },
       { path: 'netwas', element: <NetwasPage /> },
       { path: 'netwas/:id', element: <NetwasJobPage /> },
+      { path: 'sei', element: <DeepseaPage model="sei" /> },
+      { path: 'beluga', element: <DeepseaPage model="beluga" /> },
+      { path: 'seqweaver', element: <DeepseaPage model="seqweaver" /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

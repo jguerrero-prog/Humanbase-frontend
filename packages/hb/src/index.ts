@@ -1,8 +1,10 @@
-export { VariantJobForm, type VariantJobFormProps } from './VariantJobForm/VariantJobForm';
+export { VariantJobForm, type VariantJob, type VariantJobFormProps } from './VariantJobForm/VariantJobForm';
 export { NetwasGenes, type NetwasGenesProps } from './NetwasGenes/NetwasGenes';
 export { AsdBrowser, type AsdBrowserProps, type AsdView } from './AsdBrowser/AsdBrowser';
 export { analysisColumns, analysisIcons, analysisOptions, productFooter, productSections } from './content/product';
 export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
+export { JobAbout, type JobAboutProps, type JobExample } from './Jobs/JobAbout';
+export { DeepseaForm, deepseaJobLink, type DeepseaFormProps } from './Deepsea/DeepseaForm';
 export { HomeSearch, type HomeSearchProps } from './HomeSearch/HomeSearch';
 export { EmptyNetworkQuery, NetworkExplorer, type NetworkDetailContext, type NetworkExplorerProps } from './Networks/NetworkExplorer';
 export { NetworkDetail } from './Networks/NetworkDetail';
