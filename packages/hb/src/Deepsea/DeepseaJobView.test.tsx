@@ -28,7 +28,7 @@ describe('DeepseaJobView', () => {
   });
 
   it('reads Sei effects as sequence classes', async () => {
-    renderJob(job(101), 'chr7-49813589-G-C');
+    renderJob('2e18fedf-3de7-4d08-a894-9a937a2b860b', 'chr7-49813589-G-C');
     expect(await screen.findByText('Molecular effects of chr7:49,813,589 G>C', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(await screen.findByText('P Promoter', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByText('Raises, 13 sequence classes')).toBeInTheDocument();

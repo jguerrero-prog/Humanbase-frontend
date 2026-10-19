@@ -1,0 +1,47 @@
+{
+  "status": 200,
+  "body": {
+    "created": "2026-10-19T16:47:26",
+    "ds_model": "Sei",
+    "email": "",
+    "files": {
+      "feature_seqclass": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/2e18fedf-3de7-4d08-a894-9a937a2b860b_feature_seqclass.tsv.gz",
+        "name": "Sequence class score"
+      },
+      "variant_seqclass": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/2e18fedf-3de7-4d08-a894-9a937a2b860b_variant_seqclass.bw",
+        "name": "Max sequence class score"
+      },
+      "feature_diffs": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/2e18fedf-3de7-4d08-a894-9a937a2b860b_feature_diffs.tsv.gz",
+        "name": "Probability diffs"
+      },
+      "feature_seqclass_index": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/2e18fedf-3de7-4d08-a894-9a937a2b860b_feature_seqclass.tsv.gz.tbi",
+        "name": "Sequence class score tabix index"
+      },
+      "feature_diffs_index": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/2e18fedf-3de7-4d08-a894-9a937a2b860b_feature_diffs.tsv.gz.tbi",
+        "name": "Probability diffs tabix index"
+      },
+      "uploaded_query": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/2e18fedf-3de7-4d08-a894-9a937a2b860b_textarea.vcf",
+        "name": "Uploaded query"
+      },
+      "gz_file": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/2e18fedf-3de7-4d08-a894-9a937a2b860b.tar.gz",
+        "name": "Archive of results"
+      }
+    },
+    "expecto": false,
+    "input_type": "vcf",
+    "insilico": false,
+    "job_id": "2e18fedf-3de7-4d08-a894-9a937a2b860b",
+    "output_format": "tsv",
+    "sequence_names": [],
+    "status": "completed",
+    "title": "",
+    "genome_assembly": "hg19"
+  }
+}

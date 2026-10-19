@@ -116,7 +116,7 @@ export { expressionEffects, sequenceClassEffects, zEffects, type EffectScale } f
 export { EffectsHeatmap, type EffectsHeatmapProps } from './VariantEffects/EffectsHeatmap';
 export { EffectsControls, MolecularEffects, effectZScale, type EffectsControlsProps, type EffectsView, type MolecularEffectsProps } from './VariantEffects/MolecularEffects';
 export { StrongestEffects, type StrongestEffectsProps } from './VariantEffects/StrongestEffects';
-export { byGenomePosition, variantLabel, variantLocation, type Variant, type VariantScore } from './VariantEffects/Variant';
+export { byGenomePosition, variantLabel, variantLocation, variantName, type Variant, type VariantScore } from './VariantEffects/Variant';
 export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFocus';
 export { VariantScorePlot, type PlotBy, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
 export { VariantsTable, type VariantsTableProps } from './VariantEffects/VariantsTable';

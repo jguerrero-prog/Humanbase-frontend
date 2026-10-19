@@ -71,8 +71,10 @@ export class DeepseaService {
     return new InsilicoResult(await this.client.get<InsilicoRecord>(`deepsea/jobs/${id}/in_silico_mutagenesis/`, { sequence_name: sequenceName, feature_name: featureIndex }));
   }
 
-  features(model: VariantModel): Promise<FeaturesRecord> {
+  /** A model's features; a score type the API's list doesn't name, such as Sei's sequence classes, uses the bundled names. */
+  features(model: VariantModel, scoreType?: string): Promise<FeaturesRecord> {
     const info = deepseaModels[model];
+    if (scoreType && info.classFeatures?.scoreType === scoreType) return Promise.resolve(info.classFeatures.features);
     return this.client.get<FeaturesRecord>(`deepsea/${info.apiName}/features/`, info.expecto ? { expecto: true } : {});
   }
 }

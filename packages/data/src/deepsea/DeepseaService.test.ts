@@ -3,7 +3,7 @@ import { VariantFileCheck } from '../jobs/VariantFileCheck';
 import { deepseaExamples } from './deepseaExamples';
 import { DeepseaJob } from './DeepseaJob';
 import { deepseaModels } from './DeepseaModel';
-import { featureEffects, variantRows } from './DeepseaResult';
+import { featureEffects, variantRows, variantScoreTypes } from './DeepseaResult';
 import { DeepseaService } from './DeepseaService';
 
 const exampleJob = '76aea8fe-8ec7-4698-a193-a186c7665edb';
@@ -69,6 +69,22 @@ describe('DeepseaService', () => {
     expect((file as File).name).toBe('mine.vcf');
     expect(await (file as File).text()).toBe('chr1\t1\t.\tA\tG');
     expect(DeepseaService.formOf({ model: 'insilico', kind: 'fasta', text: '>s', fileName: 'x.fasta', genome: 'hg19' }).get('insilico')).toBe('true');
+  });
+
+  it('reads the real Sei example job: its summary score, top classes and sequence class names', async () => {
+    const id = '2e18fedf-3de7-4d08-a894-9a937a2b860b';
+    const job = await service.get(id);
+    expect(job.model.tool).toBe('Sei');
+    const types = await service.scoreTypes(id);
+    expect(types.filter((type) => type.level === 'VARIANT')).toHaveLength(41);
+    expect(variantScoreTypes(job.model, types).map((type) => type.short_name)).toEqual(['seqclass']);
+    const rows = variantRows([await service.variantScores(id, 'seqclass')]);
+    expect(rows.find((row) => row.position === 49813589)).toMatchObject({ name: 'VWC2', topClass: 'P Promoter' });
+    const prediction = await service.featurePredictions(id, 'seqclass', '7:49813589');
+    if (!prediction) throw new Error('No prediction recorded');
+    const effects = featureEffects(prediction, await service.features('sei', 'seqclass'));
+    expect(effects).toHaveLength(40);
+    expect([...effects].sort((a, b) => b.value - a.value)[0]).toMatchObject({ feature: 'P Promoter', cell: 'Promoter' });
   });
 
   it('reads a failed job’s reason', () => {
