@@ -1,4 +1,5 @@
 import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { Button } from '../Button/Button';
 import { Icon, type IconName } from '../Icon/Icon';
 import { ListNavigator } from '../List/ListNavigator';
 import { useDismiss } from '../List/useDismiss';
@@ -21,10 +22,12 @@ export interface ActionMenuProps {
   open?: boolean;
   defaultHighlight?: number;
   size?: 'medium' | 'small';
+  /** `text` shows the label on a ghost button instead of the more icon. */
+  trigger?: 'icon' | 'text';
   className?: string;
 }
 
-export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1, size = 'medium', className }: ActionMenuProps) {
+export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1, size = 'medium', trigger = 'icon', className }: ActionMenuProps) {
   const id = useId();
   const wrapper = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
@@ -91,21 +94,25 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
     }
   };
 
+  const buttonProps = {
+    'aria-haspopup': 'menu',
+    'aria-expanded': open,
+    'aria-controls': open ? `${id}-menu` : undefined,
+    onClick: () => (open ? close() : openAt(navigator.first())),
+    onKeyDown: handleButtonKeys,
+  } as const;
+
   return (
     <div ref={wrapper} className={['action-menu', size === 'small' && 'action-menu-small', className].filter(Boolean).join(' ')}>
-      <button
-        ref={button}
-        type="button"
-        className="action-menu-button"
-        aria-label={label}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-controls={open ? `${id}-menu` : undefined}
-        onClick={() => (open ? close() : openAt(navigator.first()))}
-        onKeyDown={handleButtonKeys}
-      >
-        <Icon name="more-horizontal" size={size === 'small' ? 16 : 20} />
-      </button>
+      {trigger === 'text' ? (
+        <Button ref={button} variant="ghost" size={size} {...buttonProps}>
+          {label}
+        </Button>
+      ) : (
+        <button ref={button} type="button" className="action-menu-button" aria-label={label} {...buttonProps}>
+          <Icon name="more-horizontal" size={size === 'small' ? 16 : 20} />
+        </button>
+      )}
       {open && (
         <MenuPanel className="action-menu-panel">
           <div id={`${id}-menu`} role="menu" aria-label={label} tabIndex={-1} className="menu-list" onKeyDown={handleMenuKeys}>

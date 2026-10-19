@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, MouseEvent } from 'react';
+import type { ButtonHTMLAttributes, MouseEvent, Ref } from 'react';
 import { Icon, type IconName } from '../Icon/Icon';
 import { Spinner } from '../Spinner/Spinner';
 import './Button.css';
@@ -11,6 +11,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize;
   icon?: IconName;
   loading?: boolean;
+  ref?: Ref<HTMLButtonElement>;
 }
 
 export function Button({ variant = 'primary', size = 'medium', icon, loading = false, type = 'button', className, onClick, children, ...rest }: ButtonProps) {
