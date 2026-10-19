@@ -99,7 +99,7 @@ const words = [
   ['Matched an alias', 'p53 is an alias of TP53. TP53 will be used.'],
   ['Check the match', 'AUTS2 matches 2 genes. The standard symbol is picked; change it if you meant the other.'],
   ['Not found', 'FOOBAR1 wasn’t found and will be left out. Edit it to include it.'],
-  ['Not found again, or several', 'HumanBase didn’t recognize 3 terms. It knows human gene symbols, aliases, Entrez IDs and gene names; check the spelling or try the Entrez ID.'],
+  ['Not found again, or several', 'Humanbase didn’t recognize 3 terms. It knows human gene symbols, aliases, Entrez IDs and gene names; check the spelling or try the Entrez ID.'],
   ['Nothing matched', 'None of these terms matched a human gene, so there’s nothing to run yet. Try a symbol such as IL1B, or an example gene set.'],
   ['Checking', 'Checking 301 genes…'],
 ];
@@ -132,7 +132,7 @@ const versions = ['GIANT', 'MAGE (current)'].map((version) => ({ value: version,
 
 <DocsLayout title="Gene search and matching" description="One search box for every gene reference, suggestions that explain themselves, and a matching table that shows and fixes each term before anything runs.">
   <Intro
-    lead="Every HumanBase analysis starts with genes. People type a symbol, an alias, an ID, a disease, or paste a list of hundreds; HumanBase matches each term to a gene before anything runs, and shows the match so nobody analyzes the wrong gene by accident."
+    lead="Every Humanbase analysis starts with genes. People type a symbol, an alias, an ID, a disease, or paste a list of hundreds; Humanbase matches each term to a gene before anything runs, and shows the match so nobody analyzes the wrong gene by accident."
     status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
@@ -192,7 +192,7 @@ const versions = ['GIANT', 'MAGE (current)'].map((version) => ({ value: version,
         </div>
         <GeneMatchSummary list={query} />
         <GeneMatchTable list={query} onEdit={() => {}} onRemove={() => {}} />
-        <p class="screen-note">FOOBAR1 is left out unless it’s edited to a gene HumanBase knows. Nothing runs until the button is pressed.</p>
+        <p class="screen-note">FOOBAR1 is left out unless it’s edited to a gene Humanbase knows. Nothing runs until the button is pressed.</p>
       </div>
       <figcaption class="visually-hidden">The Networks query form with five terms and the table showing how each one matched.</figcaption>
     </figure>

@@ -22,7 +22,7 @@ function browserStorage(): KeyValueStore | null {
   }
 }
 
-// Jobs started in this browser, newest first. HumanBase has no accounts, so this list is all there is.
+// Jobs started in this browser, newest first. Humanbase has no accounts, so this list is all there is.
 export class JobHistory {
   // Each tool keeps its own entry today; their key names are an open question, so the list lives under one key.
   static readonly storageKey = 'humanbase:jobs';

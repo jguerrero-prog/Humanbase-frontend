@@ -48,7 +48,7 @@ const finishedSteps = [
   { label: 'Submitted', detail: 'Oct 16, 8:16 PM', state: 'done' },
   { label: 'Queued', detail: 'Started right away', state: 'done' },
   { label: 'Ran', detail: 'For 26 seconds', state: 'done' },
-  { label: 'Results ready', detail: 'Kept for as long as HumanBase keeps results', state: 'done' },
+  { label: 'Results ready', detail: 'Kept for as long as Humanbase keeps results', state: 'done' },
 ] as const;
 
 const menuJobs = [
@@ -71,7 +71,7 @@ const behavior = [
   ['Checking status', 'While a job page is open it checks as often as today, about every 2 seconds, and updates in place. Other pages check less often for the Jobs count; the interval is for the team to set.'],
   ['One list', 'The list reads the jobs each tool already saves in this browser, so jobs started before the redesign appear too.'],
   ['Jobs count', 'The top bar shows how many are running or queued. With none, it shows Jobs without a count.'],
-  ['Finishing', 'One toast, on any HumanBase page, polite to screen readers. On the job page itself, the page turns into the finished state instead.'],
+  ['Finishing', 'One toast, on any Humanbase page, polite to screen readers. On the job page itself, the page turns into the finished state instead.'],
   ['Links', 'Copy link gives the job page link. Opening it shows the job; Add a job by link puts it in this browser’s list.'],
   ['Removing', 'Remove from this list and Clear finished only change this browser. They ask once before clearing more than one job.'],
   ['Not offered', 'Queue position and cancelling a job, until the job service reports and supports them.'],
@@ -96,7 +96,7 @@ JobHistory.idFromLink(pasted); // the job ID inside a pasted link, or undefined`
 
 <DocsLayout title="Job status and queue" description="Jobs live in the browser that started them and in their links: one list for every tool, a Jobs menu, and one toast when a job finishes.">
   <Intro
-    lead="HumanBase has no accounts, so a job lives in the browser that started it, and in its link. This page puts the pieces together: the job page from Loading and job status, the list of jobs in this browser, the Jobs menu in the top bar, and the moment a job finishes."
+    lead="Humanbase has no accounts, so a job lives in the browser that started it, and in its link. This page puts the pieces together: the job page from Loading and job status, the list of jobs in this browser, the Jobs menu in the top bar, and the moment a job finishes."
     status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
@@ -141,7 +141,7 @@ JobHistory.idFromLink(pasted); // the job ID inside a pasted link, or undefined`
         </tbody>
       </Table>
       <div class="list-footer">
-        <p>Kept in this browser. Removing a job from the list doesn’t delete it; its link keeps working for as long as HumanBase keeps results.</p>
+        <p>Kept in this browser. Removing a job from the list doesn’t delete it; its link keeps working for as long as Humanbase keeps results.</p>
         <Button variant="ghost" size="small">Clear finished from this list</Button>
       </div>
     </ProductScreen>

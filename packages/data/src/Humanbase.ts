@@ -4,7 +4,7 @@ import type { DataClient } from './DataClient';
 import { GeneService } from './genes/GeneService';
 import { SampleClient } from './sample/SampleClient';
 
-export class HumanBase {
+export class Humanbase {
   readonly genes: GeneService;
 
   constructor(
@@ -14,7 +14,7 @@ export class HumanBase {
     this.genes = new GeneService(client);
   }
 
-  static fromConfig(config: AppConfig): HumanBase {
-    return new HumanBase(config.api ? new ApiClient(config.apiBase) : SampleClient.bundled());
+  static fromConfig(config: AppConfig): Humanbase {
+    return new Humanbase(config.api ? new ApiClient(config.apiBase) : SampleClient.bundled());
   }
 }

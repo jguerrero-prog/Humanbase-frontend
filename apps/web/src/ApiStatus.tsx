@@ -1,9 +1,9 @@
-import { useGene, useHumanBase } from '@humanbase/data';
+import { useGene, useHumanbase } from '@humanbase/data';
 
 const probeEntrez = 3553;
 
 export function ApiStatus() {
-  const { showsSamples } = useHumanBase();
+  const { showsSamples } = useHumanbase();
   const { data: gene, isPending, isError } = useGene(probeEntrez);
 
   if (isPending) return <p role="status">{showsSamples ? 'Loading sample data…' : 'Checking the API…'}</p>;

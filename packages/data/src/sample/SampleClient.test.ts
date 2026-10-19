@@ -1,5 +1,5 @@
 import { ApiError } from '../ApiError';
-import { HumanBase } from '../HumanBase';
+import { Humanbase } from '../Humanbase';
 import { SampleClient } from './SampleClient';
 import { sampleKey } from './sampleKey';
 
@@ -44,7 +44,7 @@ describe('the API switch', () => {
 
   it('makes no request when the API is off', async () => {
     const fetch = vi.spyOn(globalThis, 'fetch');
-    const humanbase = HumanBase.fromConfig({ api: false, apiBase: '/api' });
+    const humanbase = Humanbase.fromConfig({ api: false, apiBase: '/api' });
     const gene = await humanbase.genes.get(3553);
     expect(gene.symbol).toBe('IL1B');
     expect(humanbase.showsSamples).toBe(true);
@@ -52,6 +52,6 @@ describe('the API switch', () => {
   });
 
   it('uses the API when it is on', () => {
-    expect(HumanBase.fromConfig({ api: true, apiBase: '/api' }).showsSamples).toBe(false);
+    expect(Humanbase.fromConfig({ api: true, apiBase: '/api' }).showsSamples).toBe(false);
   });
 });

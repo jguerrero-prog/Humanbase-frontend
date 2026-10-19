@@ -1,5 +1,5 @@
 {
-  "$description": "Motion durations, curves, distances and timing from the Motion page of the HumanBase Figma file (qc47Wo9Vj5lYjo9U7zdvWa).",
+  "$description": "Motion durations, curves, distances and timing from the Motion page of the Humanbase Figma file (qc47Wo9Vj5lYjo9U7zdvWa).",
   "motion": {
     "duration": {
       "instant": { "$type": "duration", "$value": { "value": 0, "unit": "ms" }, "$description": "Focus rings, closing menus, sorting, switching tab panels" },

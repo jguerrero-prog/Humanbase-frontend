@@ -38,7 +38,7 @@ const writing = [
 ];
 ---
 
-<DocsLayout title="Empty states" description="What HumanBase shows when there is nothing to show yet, and how to word it.">
+<DocsLayout title="Empty states" description="What Humanbase shows when there is nothing to show yet, and how to word it.">
   <Intro
     lead="An empty state is what people see when there is nothing to show yet: no jobs from this browser, no genes above a cutoff, no disease associations for a gene. It should explain why, in a sentence, and offer the one action that fills it."
     status="Updated October 16, 2026 · Usage guideline"
@@ -89,7 +89,7 @@ const writing = [
     </div>
   </DocSection>
 
-  <DocSection title="HumanBase examples" lead="One for each kind, in the place it appears.">
+  <DocSection title="Humanbase examples" lead="One for each kind, in the place it appears.">
     <div class="examples">
       <figure>
         <figcaption><strong>Job history</strong> <span>First use</span></figcaption>
@@ -104,7 +104,7 @@ const writing = [
           </thead>
           <tbody>
             <TableMessage columns={4} title="No jobs from this browser yet"
-                  text="HumanBase keeps jobs in the browser you submit them from. For a job submitted elsewhere, use the link in its email, if an address was given."
+                  text="Humanbase keeps jobs in the browser you submit them from. For a job submitted elsewhere, use the link in its email, if an address was given."
                  >
 <Fragment slot="action"><Button variant="secondary" size="small" tabIndex={-1}>Submit a NetWAS job</Button>
                       <Button variant="ghost" size="small" tabIndex={-1}>Try an example job</Button></Fragment>
@@ -163,7 +163,7 @@ const writing = [
     <ul class="points">{notes.map((note) => <li>{note}</li>)}</ul>
   </DocSection>
 
-  <DocSection title="Writing empty states" lead="Factual and specific. HumanBase has no accounts, so never say “you have no…”.">
+  <DocSection title="Writing empty states" lead="Factual and specific. Humanbase has no accounts, so never say “you have no…”.">
     <DocTable caption="Writing empty states" columns={['Guideline', 'Write', 'Not']} widths={['360px', '420px']}>
       {
         writing.map(([guideline, write, not]) => (

@@ -25,7 +25,7 @@ Read this before changing anything. It applies to people and coding agents alike
 - `packages/tokens/tokens.css`: edit `packages/tokens/src/*.tokens.json`, then run `pnpm tokens`.
 - `packages/data/src/schema.d.ts`: run `pnpm api:generate`.
 
-## Connecting this front end to another HumanBase API
+## Connecting this front end to another Humanbase API
 
 1. Run `pnpm api:verify <your-api-origin>` and note any failing endpoints.
 2. Run `pnpm api:generate <your-api-origin>`, then `pnpm typecheck`. Fix type errors in `packages/data` only.

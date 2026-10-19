@@ -8,5 +8,5 @@ interface LogoProps {
 }
 
 export function Logo({ surface = 'light' }: LogoProps) {
-  return <img src={sources[surface]} alt="HumanBase" width={150} height={29} />;
+  return <img src={sources[surface]} alt="Humanbase" width={150} height={29} />;
 }

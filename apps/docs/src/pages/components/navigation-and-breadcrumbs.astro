@@ -32,7 +32,7 @@ const proposedPath = [
 
 const todayMenu = [
   ['Analyses (10 tools in one list)', 'Networks, Modules, Sei, Beluga, Seqweaver, In silico mutagenesis, ExPecto, ExPecto SC, GWAS (NetWAS), ASD Browser'],
-  ['Resources', 'Data sources, Downloads, HumanBase API'],
+  ['Resources', 'Data sources, Downloads, Humanbase API'],
   ['Documentation', ''],
   ['About', ''],
   ['Mailing list', ''],
@@ -41,7 +41,7 @@ const todayMenu = [
 const proposedMenu = [
   ['Network analysis', 'Networks, Modules, NetWAS'],
   ['Sequence analysis', 'Variant effects: Sei, Beluga, Seqweaver, ExPecto, ExPecto SC. Sequences: In silico mutagenesis. Browsers: ASD Browser. Plus a link to compare the tools.'],
-  ['Data', 'Data sources, Downloads, HumanBase API'],
+  ['Data', 'Data sources, Downloads, Humanbase API'],
   ['Docs', ''],
   ['About', 'Including the mailing list and contact details'],
   ['Right side: search, and Jobs with a running count', 'The homepage search uses these same tools, with the same names.'],
@@ -52,7 +52,7 @@ const topBarParts = [
   ['Current section', 'Bold white with a 3px Simons Yellow bar (4.3:1 on emerald). aria-current="true".'],
   ['Open menu', 'White at 14% behind the item; the chevron flips. Opens on click, not hover.'],
   ['Search', 'Genes, GO terms and diseases. The same search as the homepage, so there is one way in.'],
-  ['Jobs', 'Shows how many jobs are running. HumanBase has no accounts, so the list holds jobs submitted from this browser; jobs submitted with an email address also get their link by email.'],
+  ['Jobs', 'Shows how many jobs are running. Humanbase has no accounts, so the list holds jobs submitted from this browser; jobs submitted with an email address also get their link by email.'],
 ];
 const topBarTags = [32, 213, 378, 906, 1190];
 
@@ -117,12 +117,12 @@ const phoneNotes = [
 ];
 
 const footer = {
-  description: 'HumanBase is developed at the Flatiron Institute’s Center for Computational Biology to study gene function, regulation and disease.',
+  description: 'Humanbase is developed at the Flatiron Institute’s Center for Computational Biology to study gene function, regulation and disease.',
   groups: [
     { heading: 'Network analysis', links: [{ label: 'Networks', href: '/networks/' }, { label: 'Modules', href: '/modules/' }, { label: 'NetWAS', href: '/netwas/' }] },
     { heading: 'Sequence analysis', links: [{ label: 'Sei', href: '/sei/' }, { label: 'ExPecto', href: '/expecto/' }, { label: 'All sequence tools', href: '/sequence-tools/' }] },
-    { heading: 'Data', links: [{ label: 'Data sources', href: '/data-sources/' }, { label: 'Downloads', href: '/downloads/' }, { label: 'HumanBase API', href: '/api/docs/' }] },
-    { heading: 'About', links: [{ label: 'About HumanBase', href: '/about/' }, { label: 'Docs', href: '/docs/' }, { label: 'Contact us', href: '/contact/' }, { label: 'How to cite', href: '/cite/' }] },
+    { heading: 'Data', links: [{ label: 'Data sources', href: '/data-sources/' }, { label: 'Downloads', href: '/downloads/' }, { label: 'Humanbase API', href: '/api/docs/' }] },
+    { heading: 'About', links: [{ label: 'About Humanbase', href: '/about/' }, { label: 'Docs', href: '/docs/' }, { label: 'Contact us', href: '/contact/' }, { label: 'How to cite', href: '/cite/' }] },
   ],
   legal: '© 2026 Simons Foundation. Flatiron Institute.',
   dataVersion: 'Data: MAGE, June 2026',
@@ -151,7 +151,7 @@ const keyboard = [
   ['Escape', 'Closes the menu and returns focus to its section.'],
   ['Landmarks', 'header, nav labeled “Main”, nav labeled “Breadcrumb”, main. Screen reader users can jump straight to each.'],
   ['Current location', 'aria-current="true" on the current section, aria-current="page" on the last breadcrumb.'],
-  ['Page titles', '“IL1B in blood vessel · Networks · HumanBase”, so the most specific part is read first.'],
+  ['Page titles', '“IL1B in blood vessel · Networks · Humanbase”, so the most specific part is read first.'],
 ];
 
 const writing = [
@@ -250,7 +250,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     />
   </Intro>
 
-  <DocSection title="The navigation model" lead="Every HumanBase page sits on one of three levels. Anything deeper is a setting or a drawer, so the URL, the breadcrumbs and the Back button always agree.">
+  <DocSection title="The navigation model" lead="Every Humanbase page sits on one of three levels. Anything deeper is a setting or a drawer, so the URL, the breadcrumbs and the Back button always agree.">
     <ol class="levels">
       {
         levels.map(([level, name, where, examples], index) => (
@@ -317,7 +317,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
         </ol>
         <aside class="no-accounts" aria-label="No sign-in">
           <h3>No sign-in</h3>
-          <p>HumanBase has no user profiles. Jobs and display settings, such as motion and table density, are kept in this browser. Display settings are linked from the footer.</p>
+          <p>Humanbase has no user profiles. Jobs and display settings, such as motion and table density, are kept in this browser. Display settings are linked from the footer.</p>
         </aside>
       </div>
       <figcaption class="visually-hidden">The top bar with the Sequence analysis menu open, its parts numbered.</figcaption>
@@ -427,7 +427,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
           <div class="settings-body">
             <RadioGroup legend="Motion" options={motionOptions} defaultValue="device" />
             <SegmentedControl label="Table rows" segments={densities} defaultValue="comfortable" />
-            <p class="settings-note">Saved in this browser. HumanBase has no accounts.</p>
+            <p class="settings-note">Saved in this browser. Humanbase has no accounts.</p>
           </div>
           <Fragment slot="actions">
             <Button variant="ghost">Cancel</Button>

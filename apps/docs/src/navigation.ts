@@ -15,7 +15,7 @@ export const navigation: NavSection[] = [
     isTitle: true,
     items: [
       { label: 'Overview', href: '/' },
-      { label: 'About HumanBase', href: '/#about' },
+      { label: 'About Humanbase', href: '/#about' },
       { label: 'Vision and principles', href: '/#vision' },
       { label: 'How to use the system', href: '/#how-to-use' },
     ],
