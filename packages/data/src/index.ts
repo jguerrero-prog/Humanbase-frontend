@@ -22,7 +22,7 @@ export { IntegrationService } from './networks/IntegrationService';
 export { DataType, type DataTypeRecord } from './networks/DataType';
 export { Network, NetworkGene, type NetworkEdge, type NetworkEdgeRecord, type NetworkGeneRecord, type NetworkRecord, type NetworkSubset, type NetworkViewOptions } from './networks/Network';
 export { NetworkService } from './networks/NetworkService';
-export { NetworkView, type NetworkSelection } from './networks/NetworkView';
+export { NetworkView, type NetworkDisplay, type NetworkSelection } from './networks/NetworkView';
 export { useGeneSuggestions } from './react/useGeneSuggestions';
 export { useIntegrations } from './react/useIntegrations';
 export { useDataTypes, useNetwork } from './react/useNetwork';
