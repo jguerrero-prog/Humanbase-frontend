@@ -1,0 +1,38 @@
+.module-search-row {
+  align-items: start;
+}
+
+.module-search-row .field-label,
+.module-search-row .field-hint,
+.module-search-row .field-count {
+  color: var(--text-on-brand);
+}
+
+.module-search-list {
+  min-block-size: 112px;
+  resize: vertical;
+}
+
+.module-search-settings {
+  grid-template-columns: repeat(3, minmax(0, 224px)) auto;
+}
+
+.module-search-checking p {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+.module-search-range {
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+@media (width < 64rem) {
+  .module-search-settings {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

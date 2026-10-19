@@ -23,6 +23,12 @@ export class Integration {
     return this.record.context.title;
   }
 
+  /** The title in sentence case, as screens show it: "Nervous system". */
+  get name(): string {
+    const { title } = this;
+    return title.charAt(0).toUpperCase() + title.slice(1);
+  }
+
   get version(): DataVersion {
     return this.record.context.version?.identifier === '3' ? 'v3' : 'v1';
   }
