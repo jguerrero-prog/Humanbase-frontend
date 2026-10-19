@@ -1,0 +1,1629 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "term": {
+        "title": "epithelial cell differentiation",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0030855",
+        "annotation_count": 180
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 23264465,
+        "title": "MYADM controls endothelial barrier function through ERM-dependent regulation of ICAM-1 expression.",
+        "authors": "Aranda JF, Reglero-Real N, Marcos-Ramiro B, Ruiz-Sáenz A, Fernández-Martín L, Bernabé-Rubio M, Kremer L, Ridley AJ, Correas I, Alonso MA, Millán J",
+        "date": "2013-02-01",
+        "journal": "Mol Biol Cell"
+      },
+      "evidence": "IGI"
+    },
+    {
+      "term": {
+        "title": "lymphocyte activation",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0046649",
+        "annotation_count": 185
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "T cell activation",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0042110",
+        "annotation_count": 134
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "cell activation",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0001775",
+        "annotation_count": 283
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "epithelium development",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0060429",
+        "annotation_count": 282
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 23264465,
+        "title": "MYADM controls endothelial barrier function through ERM-dependent regulation of ICAM-1 expression.",
+        "authors": "Aranda JF, Reglero-Real N, Marcos-Ramiro B, Ruiz-Sáenz A, Fernández-Martín L, Bernabé-Rubio M, Kremer L, Ridley AJ, Correas I, Alonso MA, Millán J",
+        "date": "2013-02-01",
+        "journal": "Mol Biol Cell"
+      },
+      "evidence": "IGI"
+    },
+    {
+      "term": {
+        "title": "endothelial cell development",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0001885",
+        "annotation_count": 34
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 23264465,
+        "title": "MYADM controls endothelial barrier function through ERM-dependent regulation of ICAM-1 expression.",
+        "authors": "Aranda JF, Reglero-Real N, Marcos-Ramiro B, Ruiz-Sáenz A, Fernández-Martín L, Bernabé-Rubio M, Kremer L, Ridley AJ, Correas I, Alonso MA, Millán J",
+        "date": "2013-02-01",
+        "journal": "Mol Biol Cell"
+      },
+      "evidence": "IGI"
+    },
+    {
+      "term": {
+        "title": "epithelial cell development",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0002064",
+        "annotation_count": 51
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 23264465,
+        "title": "MYADM controls endothelial barrier function through ERM-dependent regulation of ICAM-1 expression.",
+        "authors": "Aranda JF, Reglero-Real N, Marcos-Ramiro B, Ruiz-Sáenz A, Fernández-Martín L, Bernabé-Rubio M, Kremer L, Ridley AJ, Correas I, Alonso MA, Millán J",
+        "date": "2013-02-01",
+        "journal": "Mol Biol Cell"
+      },
+      "evidence": "IGI"
+    },
+    {
+      "term": {
+        "title": "endothelial cell differentiation",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0045446",
+        "annotation_count": 47
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 23264465,
+        "title": "MYADM controls endothelial barrier function through ERM-dependent regulation of ICAM-1 expression.",
+        "authors": "Aranda JF, Reglero-Real N, Marcos-Ramiro B, Ruiz-Sáenz A, Fernández-Martín L, Bernabé-Rubio M, Kremer L, Ridley AJ, Correas I, Alonso MA, Millán J",
+        "date": "2013-02-01",
+        "journal": "Mol Biol Cell"
+      },
+      "evidence": "IGI"
+    },
+    {
+      "term": {
+        "title": "immune effector process",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0002252",
+        "annotation_count": 263
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "cell activation involved in immune response",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0002263",
+        "annotation_count": 66
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "leukocyte activation",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0045321",
+        "annotation_count": 242
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "leukocyte activation involved in immune response",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0002366",
+        "annotation_count": 62
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "lymphocyte activation involved in immune response",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0002285",
+        "annotation_count": 35
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "T cell activation involved in immune response",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0002286",
+        "annotation_count": 23
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "T cell activation via T cell receptor contact with antigen bound to MHC molecule on antigen presenting cell",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0002291",
+        "annotation_count": 6
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "leukocyte migration",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0050900",
+        "annotation_count": 148
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12902516,
+        "title": "Intracellular domain of brain endothelial intercellular adhesion molecule-1 is essential for T lymphocyte-mediated signaling and migration.",
+        "authors": "Greenwood J, Amos CL, Walters CE, Couraud PO, Lyck R, Engelhardt B, Adamson P",
+        "date": "2003-08-15",
+        "journal": "J Immunol"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "leukocyte migration",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0050900",
+        "annotation_count": 148
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12082081,
+        "title": "Dynamic interaction of VCAM-1 and ICAM-1 with moesin and ezrin in a novel endothelial docking structure for adherent leukocytes.",
+        "authors": "Barreiro O, Yanez-Mo M, Serrador JM, Montoya MC, Vicente-Manzanares M, Tejedor R, Furthmayr H, Sanchez-Madrid F",
+        "date": "2002-06-24",
+        "journal": "J Cell Biol"
+      },
+      "evidence": "IEP"
+    },
+    {
+      "term": {
+        "title": "regulation of leukocyte migration",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0002685",
+        "annotation_count": 88
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12902516,
+        "title": "Intracellular domain of brain endothelial intercellular adhesion molecule-1 is essential for T lymphocyte-mediated signaling and migration.",
+        "authors": "Greenwood J, Amos CL, Walters CE, Couraud PO, Lyck R, Engelhardt B, Adamson P",
+        "date": "2003-08-15",
+        "journal": "J Immunol"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "positive regulation of leukocyte migration",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0002687",
+        "annotation_count": 62
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12902516,
+        "title": "Intracellular domain of brain endothelial intercellular adhesion molecule-1 is essential for T lymphocyte-mediated signaling and migration.",
+        "authors": "Greenwood J, Amos CL, Walters CE, Couraud PO, Lyck R, Engelhardt B, Adamson P",
+        "date": "2003-08-15",
+        "journal": "J Immunol"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "positive regulation of cell migration",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0030335",
+        "annotation_count": 276
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12902516,
+        "title": "Intracellular domain of brain endothelial intercellular adhesion molecule-1 is essential for T lymphocyte-mediated signaling and migration.",
+        "authors": "Greenwood J, Amos CL, Walters CE, Couraud PO, Lyck R, Engelhardt B, Adamson P",
+        "date": "2003-08-15",
+        "journal": "J Immunol"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "regulation of cellular extravasation",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0002691",
+        "annotation_count": 9
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12902516,
+        "title": "Intracellular domain of brain endothelial intercellular adhesion molecule-1 is essential for T lymphocyte-mediated signaling and migration.",
+        "authors": "Greenwood J, Amos CL, Walters CE, Couraud PO, Lyck R, Engelhardt B, Adamson P",
+        "date": "2003-08-15",
+        "journal": "J Immunol"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "cellular extravasation",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0045123",
+        "annotation_count": 28
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12902516,
+        "title": "Intracellular domain of brain endothelial intercellular adhesion molecule-1 is essential for T lymphocyte-mediated signaling and migration.",
+        "authors": "Greenwood J, Amos CL, Walters CE, Couraud PO, Lyck R, Engelhardt B, Adamson P",
+        "date": "2003-08-15",
+        "journal": "J Immunol"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "positive regulation of cellular extravasation",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0002693",
+        "annotation_count": 4
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12902516,
+        "title": "Intracellular domain of brain endothelial intercellular adhesion molecule-1 is essential for T lymphocyte-mediated signaling and migration.",
+        "authors": "Greenwood J, Amos CL, Walters CE, Couraud PO, Lyck R, Engelhardt B, Adamson P",
+        "date": "2003-08-15",
+        "journal": "J Immunol"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "endothelium development",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0003158",
+        "annotation_count": 60
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 23264465,
+        "title": "MYADM controls endothelial barrier function through ERM-dependent regulation of ICAM-1 expression.",
+        "authors": "Aranda JF, Reglero-Real N, Marcos-Ramiro B, Ruiz-Sáenz A, Fernández-Martín L, Bernabé-Rubio M, Kremer L, Ridley AJ, Correas I, Alonso MA, Millán J",
+        "date": "2013-02-01",
+        "journal": "Mol Biol Cell"
+      },
+      "evidence": "IGI"
+    },
+    {
+      "term": {
+        "title": "positive regulation of cellular component movement",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0051272",
+        "annotation_count": 290
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12902516,
+        "title": "Intracellular domain of brain endothelial intercellular adhesion molecule-1 is essential for T lymphocyte-mediated signaling and migration.",
+        "authors": "Greenwood J, Amos CL, Walters CE, Couraud PO, Lyck R, Engelhardt B, Adamson P",
+        "date": "2003-08-15",
+        "journal": "J Immunol"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "positive regulation of MAPK cascade",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0043410",
+        "annotation_count": 244
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "cell-cell adhesion",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0098609",
+        "annotation_count": 280
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "leukocyte cell-cell adhesion",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0007159",
+        "annotation_count": 141
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2477710,
+        "title": "T-cell receptor cross-linking transiently stimulates adhesiveness through LFA-1.",
+        "authors": "Dustin ML, Springer TA",
+        "date": "1989-10-19",
+        "journal": "Nature"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "extrinsic apoptotic signaling pathway via death domain receptors",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0008625",
+        "annotation_count": 47
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "extrinsic apoptotic signaling pathway",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0097191",
+        "annotation_count": 118
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "symbiont process",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0044403",
+        "annotation_count": 270
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2538243,
+        "title": "The major human rhinovirus receptor is ICAM-1.",
+        "authors": "Greve JM, Davis G, Meyer AM, Forte CP, Yost SC, Marlor CW, Kamarck ME, McClelland A",
+        "date": "1989-03-10",
+        "journal": "Cell"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "establishment of endothelial barrier",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0061028",
+        "annotation_count": 32
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 23264465,
+        "title": "MYADM controls endothelial barrier function through ERM-dependent regulation of ICAM-1 expression.",
+        "authors": "Aranda JF, Reglero-Real N, Marcos-Ramiro B, Ruiz-Sáenz A, Fernández-Martín L, Bernabé-Rubio M, Kremer L, Ridley AJ, Correas I, Alonso MA, Millán J",
+        "date": "2013-02-01",
+        "journal": "Mol Biol Cell"
+      },
+      "evidence": "IGI"
+    },
+    {
+      "term": {
+        "title": "viral process",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0016032",
+        "annotation_count": 229
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2538243,
+        "title": "The major human rhinovirus receptor is ICAM-1.",
+        "authors": "Greve JM, Davis G, Meyer AM, Forte CP, Yost SC, Marlor CW, Kamarck ME, McClelland A",
+        "date": "1989-03-10",
+        "journal": "Cell"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "viral process",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0016032",
+        "annotation_count": 229
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2538243,
+        "title": "The major human rhinovirus receptor is ICAM-1.",
+        "authors": "Greve JM, Davis G, Meyer AM, Forte CP, Yost SC, Marlor CW, Kamarck ME, McClelland A",
+        "date": "1989-03-10",
+        "journal": "Cell"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "viral life cycle",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0019058",
+        "annotation_count": 174
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2538243,
+        "title": "The major human rhinovirus receptor is ICAM-1.",
+        "authors": "Greve JM, Davis G, Meyer AM, Forte CP, Yost SC, Marlor CW, Kamarck ME, McClelland A",
+        "date": "1989-03-10",
+        "journal": "Cell"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "virion attachment to host cell",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0019062",
+        "annotation_count": 6
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2538243,
+        "title": "The major human rhinovirus receptor is ICAM-1.",
+        "authors": "Greve JM, Davis G, Meyer AM, Forte CP, Yost SC, Marlor CW, Kamarck ME, McClelland A",
+        "date": "1989-03-10",
+        "journal": "Cell"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "adhesion of symbiont to host cell",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0044650",
+        "annotation_count": 7
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2538243,
+        "title": "The major human rhinovirus receptor is ICAM-1.",
+        "authors": "Greve JM, Davis G, Meyer AM, Forte CP, Yost SC, Marlor CW, Kamarck ME, McClelland A",
+        "date": "1989-03-10",
+        "journal": "Cell"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "adhesion of symbiont to host",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0044406",
+        "annotation_count": 10
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2538243,
+        "title": "The major human rhinovirus receptor is ICAM-1.",
+        "authors": "Greve JM, Davis G, Meyer AM, Forte CP, Yost SC, Marlor CW, Kamarck ME, McClelland A",
+        "date": "1989-03-10",
+        "journal": "Cell"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "membrane docking",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0022406",
+        "annotation_count": 18
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12082081,
+        "title": "Dynamic interaction of VCAM-1 and ICAM-1 with moesin and ezrin in a novel endothelial docking structure for adherent leukocytes.",
+        "authors": "Barreiro O, Yanez-Mo M, Serrador JM, Montoya MC, Vicente-Manzanares M, Tejedor R, Furthmayr H, Sanchez-Madrid F",
+        "date": "2002-06-24",
+        "journal": "J Cell Biol"
+      },
+      "evidence": "IEP"
+    },
+    {
+      "term": {
+        "title": "membrane to membrane docking",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0022614",
+        "annotation_count": 5
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12082081,
+        "title": "Dynamic interaction of VCAM-1 and ICAM-1 with moesin and ezrin in a novel endothelial docking structure for adherent leukocytes.",
+        "authors": "Barreiro O, Yanez-Mo M, Serrador JM, Montoya MC, Vicente-Manzanares M, Tejedor R, Furthmayr H, Sanchez-Madrid F",
+        "date": "2002-06-24",
+        "journal": "J Cell Biol"
+      },
+      "evidence": "IEP"
+    },
+    {
+      "term": {
+        "title": "positive regulation of cell motility",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:2000147",
+        "annotation_count": 286
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 12902516,
+        "title": "Intracellular domain of brain endothelial intercellular adhesion molecule-1 is essential for T lymphocyte-mediated signaling and migration.",
+        "authors": "Greenwood J, Amos CL, Walters CE, Couraud PO, Lyck R, Engelhardt B, Adamson P",
+        "date": "2003-08-15",
+        "journal": "J Immunol"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "receptor-mediated virion attachment to host cell",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0046813",
+        "annotation_count": 4
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2538243,
+        "title": "The major human rhinovirus receptor is ICAM-1.",
+        "authors": "Greve JM, Davis G, Meyer AM, Forte CP, Yost SC, Marlor CW, Kamarck ME, McClelland A",
+        "date": "1989-03-10",
+        "journal": "Cell"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "receptor-mediated virion attachment to host cell",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0046813",
+        "annotation_count": 4
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 2538243,
+        "title": "The major human rhinovirus receptor is ICAM-1.",
+        "authors": "Greve JM, Davis G, Meyer AM, Forte CP, Yost SC, Marlor CW, Kamarck ME, McClelland A",
+        "date": "1989-03-10",
+        "journal": "Cell"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "ERK1 and ERK2 cascade",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0070371",
+        "annotation_count": 151
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "regulation of ERK1 and ERK2 cascade",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0070372",
+        "annotation_count": 140
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "positive regulation of ERK1 and ERK2 cascade",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0070374",
+        "annotation_count": 103
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IMP"
+    },
+    {
+      "term": {
+        "title": "endothelial cell apoptotic process",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:0072577",
+        "annotation_count": 38
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "epithelial cell apoptotic process",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:1904019",
+        "annotation_count": 49
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "regulation of apoptotic signaling pathway",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:2001233",
+        "annotation_count": 203
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "negative regulation of apoptotic signaling pathway",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:2001234",
+        "annotation_count": 116
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "regulation of extrinsic apoptotic signaling pathway via death domain receptors",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:1902041",
+        "annotation_count": 29
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "regulation of extrinsic apoptotic signaling pathway",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:2001236",
+        "annotation_count": 84
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "negative regulation of extrinsic apoptotic signaling pathway via death domain receptors",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:1902042",
+        "annotation_count": 17
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "negative regulation of extrinsic apoptotic signaling pathway",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:2001237",
+        "annotation_count": 51
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "regulation of epithelial cell apoptotic process",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:1904035",
+        "annotation_count": 44
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "negative regulation of epithelial cell apoptotic process",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:1904036",
+        "annotation_count": 25
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "regulation of endothelial cell apoptotic process",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:2000351",
+        "annotation_count": 35
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    },
+    {
+      "term": {
+        "title": "negative regulation of endothelial cell apoptotic process",
+        "database": {
+          "name": "Gene Ontology (BP)",
+          "slug": "gene-ontology-bp",
+          "term_version": "releases/2018-05-14",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "GO:2000352",
+        "annotation_count": 22
+      },
+      "database": {
+        "name": "UniProt-GOA",
+        "slug": "uniprot-goa",
+        "term_version": "",
+        "annotation_version": ""
+      },
+      "pub": {
+        "pmid": 10903502,
+        "title": "Fibrinogen interactions with ICAM-1 (CD54) regulate endothelial cell survival.",
+        "authors": "Pluskota E, D'Souza SE",
+        "date": "2000-08-01",
+        "journal": "Eur J Biochem"
+      },
+      "evidence": "IDA"
+    }
+  ]
+}

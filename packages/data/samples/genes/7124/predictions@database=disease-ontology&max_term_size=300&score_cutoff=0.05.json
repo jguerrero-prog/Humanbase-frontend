@@ -1,0 +1,485 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "score": 0.965393818982,
+      "term": {
+        "title": "lymphedema",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:4977",
+        "annotation_count": 3
+      }
+    },
+    {
+      "score": 0.824915718249,
+      "term": {
+        "title": "hypersensitivity reaction disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0060056",
+        "annotation_count": 28
+      }
+    },
+    {
+      "score": 0.791632598342,
+      "term": {
+        "title": "systemic lupus erythematosus",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:9074",
+        "annotation_count": 13
+      }
+    },
+    {
+      "score": 0.745314179719,
+      "term": {
+        "title": "stomach carcinoma",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:5517",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.738296158377,
+      "term": {
+        "title": "hypersensitivity reaction type II disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:417",
+        "annotation_count": 20
+      }
+    },
+    {
+      "score": 0.724165685775,
+      "term": {
+        "title": "stomach cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:10534",
+        "annotation_count": 12
+      }
+    },
+    {
+      "score": 0.673355670649,
+      "term": {
+        "title": "lupus erythematosus",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:8857",
+        "annotation_count": 13
+      }
+    },
+    {
+      "score": 0.445746407678891,
+      "term": {
+        "title": "autism spectrum disorder",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0060041",
+        "annotation_count": 10
+      }
+    },
+    {
+      "score": 0.443916461059,
+      "term": {
+        "title": "collagen disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:854",
+        "annotation_count": 7
+      }
+    },
+    {
+      "score": 0.343704523073,
+      "term": {
+        "title": "leukemia",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1240",
+        "annotation_count": 25
+      }
+    },
+    {
+      "score": 0.271796838483,
+      "term": {
+        "title": "nose disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:2825",
+        "annotation_count": 1
+      }
+    },
+    {
+      "score": 0.26977727449,
+      "term": {
+        "title": "muscle tissue disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:66",
+        "annotation_count": 90
+      }
+    },
+    {
+      "score": 0.26977510664,
+      "term": {
+        "title": "muscular disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0080000",
+        "annotation_count": 91
+      }
+    },
+    {
+      "score": 0.260004787338,
+      "term": {
+        "title": "myopathy",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:423",
+        "annotation_count": 80
+      }
+    },
+    {
+      "score": 0.249900814586,
+      "term": {
+        "title": "lymphatic system disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:75",
+        "annotation_count": 14
+      }
+    },
+    {
+      "score": 0.230730813502,
+      "term": {
+        "title": "bacterial infectious disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:104",
+        "annotation_count": 4
+      }
+    },
+    {
+      "score": 0.225482189465,
+      "term": {
+        "title": "coronary artery disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:3393",
+        "annotation_count": 19
+      }
+    },
+    {
+      "score": 0.220136686818,
+      "term": {
+        "title": "lymphoblastic leukemia",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1037",
+        "annotation_count": 9
+      }
+    },
+    {
+      "score": 0.209036382802,
+      "term": {
+        "title": "primary immunodeficiency disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:612",
+        "annotation_count": 58
+      }
+    },
+    {
+      "score": 0.207976832372,
+      "term": {
+        "title": "bone marrow disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:4961",
+        "annotation_count": 3
+      }
+    },
+    {
+      "score": 0.184483523325,
+      "term": {
+        "title": "respiratory system disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1579",
+        "annotation_count": 21
+      }
+    },
+    {
+      "score": 0.162270007238,
+      "term": {
+        "title": "asthma",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:2841",
+        "annotation_count": 9
+      }
+    },
+    {
+      "score": 0.148309758562,
+      "term": {
+        "title": "stomach disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:76",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.142044352825,
+      "term": {
+        "title": "lower respiratory tract disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0050161",
+        "annotation_count": 21
+      }
+    },
+    {
+      "score": 0.133035833424,
+      "term": {
+        "title": "Ehlers-Danlos syndrome",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:13359",
+        "annotation_count": 7
+      }
+    },
+    {
+      "score": 0.132372498631,
+      "term": {
+        "title": "male reproductive system disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:48",
+        "annotation_count": 11
+      }
+    },
+    {
+      "score": 0.123278084731,
+      "term": {
+        "title": "arteriosclerotic cardiovascular disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:2348",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.123277735842,
+      "term": {
+        "title": "atherosclerosis",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1936",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.122634545924,
+      "term": {
+        "title": "arteriosclerosis",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:2349",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.111027848501,
+      "term": {
+        "title": "bronchial disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1176",
+        "annotation_count": 13
+      }
+    },
+    {
+      "score": 0.107865034386,
+      "term": {
+        "title": "gonadal disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:2277",
+        "annotation_count": 35
+      }
+    },
+    {
+      "score": 0.103719853609,
+      "term": {
+        "title": "arthropathy",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:381",
+        "annotation_count": 1
+      }
+    }
+  ]
+}
