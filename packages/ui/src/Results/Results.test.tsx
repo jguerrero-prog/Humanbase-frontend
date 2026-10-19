@@ -79,12 +79,13 @@ describe('EditGenesDialog', () => {
 });
 
 describe('RankedAnnotationTable', () => {
+  const assay = { source: 'UniProt-GOA', code: 'IDA', meaning: 'Inferred from direct assay', publication: { title: 'A study', authors: 'A Author', journal: 'J, 2006' } };
   const rows = [
     {
       name: 'drug metabolic process',
       identifier: 'GO:0017144',
       confidence: 1,
-      evidence: [{ source: 'UniProt-GOA', code: 'IDA', meaning: 'Inferred from direct assay', publication: { title: 'A study', authors: 'A Author', journal: 'J, 2006' } }],
+      evidence: [assay],
     },
     { name: 'cervical cancer', identifier: 'DOID:4362', confidence: 0.92 },
   ];
@@ -98,6 +99,25 @@ describe('RankedAnnotationTable', () => {
     expect(screen.getByRole('list', { name: 'Evidence for drug metabolic process' })).toHaveTextContent('Inferred from direct assay');
     expect(screen.queryByRole('button', { name: 'cervical cancer' })).not.toBeInTheDocument();
     expect(screen.getByText('Predicted')).toBeInTheDocument();
+  });
+
+  it('lists a source that has no publication', async () => {
+    const electronic = { source: 'UniProt-GOA', code: 'IEA', meaning: 'Inferred from electronic annotation' };
+    const row = { name: 'drug metabolic process', identifier: 'GO:0017144', confidence: 1, sources: 2, evidence: [assay, electronic] };
+    render(<RankedAnnotationTable caption="Processes" termLabel="Process" scoreLabel="IL1B confidence" rows={[row]} />);
+    await userEvent.click(screen.getByRole('button', { name: 'drug metabolic process' }));
+    const items = within(screen.getByRole('list', { name: 'Evidence for drug metabolic process' })).getAllByRole('listitem');
+    expect(items).toHaveLength(2);
+    expect(items[1]).toHaveTextContent('IEAInferred from electronic annotation');
+    expect(items[1]).toHaveTextContent('No publication listed');
+  });
+
+  it('leaves out the code badge when a source gives no evidence code', async () => {
+    const omim = { source: 'OMIM', code: '', meaning: '' };
+    render(<RankedAnnotationTable caption="Diseases" termLabel="Disease" scoreLabel="TNF confidence" rows={[{ name: 'asthma', identifier: 'DOID:2841', confidence: 1, sources: 1, evidence: [omim] }]} />);
+    await userEvent.click(screen.getByRole('button', { name: 'asthma' }));
+    const item = within(screen.getByRole('list', { name: 'Evidence for asthma' })).getByRole('listitem');
+    expect(item).toHaveTextContent('OMIMNo publication listed');
   });
 });
 
