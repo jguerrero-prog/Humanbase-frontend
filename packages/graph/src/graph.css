@@ -75,3 +75,28 @@
     opacity: 0;
   }
 }
+
+.is-member .force-graph-dot {
+  fill: var(--node-color);
+  stroke: var(--surface-page);
+  stroke-width: 1px;
+}
+
+.force-graph-group {
+  cursor: pointer;
+  outline: none;
+}
+
+.force-graph-group text {
+  font: 700 13px Lato, sans-serif;
+  fill: var(--text-default);
+  paint-order: stroke;
+  stroke: var(--surface-page);
+  stroke-width: 3px;
+}
+
+.force-graph-group.is-selected text,
+.force-graph-group:focus-visible text {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

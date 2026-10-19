@@ -6,9 +6,9 @@ Draws Humanbase networks. The front end talks only to the `GraphRenderer` interf
 
 ```ts
 interface GraphRenderer {
-  mount(container: HTMLElement, options: { label: string; onSelectNode?; onSelectLink? }): void;
-  render(data: GraphData): void;      // nodes { id, label, query } and links { source, target, weight }
-  select(selection: GraphSelection): void; // a gene, a connection, or null
+  mount(container: HTMLElement, options: { label: string; onSelectNode?; onSelectLink?; onSelectGroup? }): void;
+  render(data: GraphData): void;      // nodes { id, label, query, group? }, links { source, target, weight } and optional groups { id, label, color }
+  select(selection: GraphSelection): void; // a gene, a connection, a group, or null
   zoomBy(factor: number): void;
   fit(): void;
   exportSvg(): Blob;                  // a standalone file with colors resolved
@@ -31,5 +31,6 @@ interface GraphRenderer {
 - A selected gene gets an ink ring; genes and connections it doesn't touch fade to 35%.
 - The layout is computed before anything is drawn, so the graph never drifts. It fades in, which reduced motion keeps.
 - Every gene is a focusable button named by its symbol and role, and Enter or Space selects it. The table view is the full accessible equivalent.
+- With `groups`, as for modules, each group is laid out as its own cluster on a grid, its genes filled with the group's categorical color and its label (M1, M2…) drawn above it as a focusable button. Selecting a group fades the others. Gene labels are left off; the module tables name every gene.
 
 It is not the renderer the live Humanbase site uses. That renderer belongs to the Humanbase team and can replace this one through the same interface once its license allows, or if the API serves it.

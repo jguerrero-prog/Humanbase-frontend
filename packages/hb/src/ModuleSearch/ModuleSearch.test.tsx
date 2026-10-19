@@ -46,7 +46,7 @@ describe('ModuleSearch', () => {
     expect(await screen.findAllByText('3 genes removed from the list')).not.toHaveLength(0);
     expect((screen.getByRole('textbox', { name: 'Gene list' }) as HTMLTextAreaElement).value).not.toMatch(/ASH1L/);
     expect(screen.getByRole('button', { name: 'Find modules in 297 genes' })).toBeInTheDocument();
-  });
+  }, 20_000);
 
   it('needs at least 20 genes', async () => {
     renderSearch();

@@ -15,6 +15,7 @@ export interface NetworkGraphProps {
   selection?: GraphSelection;
   onSelectNode?: (id: string) => void;
   onSelectLink?: (source: string, target: string) => void;
+  onSelectGroup?: (id: string) => void;
   /** Swap in another renderer, such as the live site's. Defaults to the plain force-directed one. */
   renderer?: GraphRendererFactory | undefined;
   className?: string;
@@ -23,12 +24,12 @@ export interface NetworkGraphProps {
 
 const defaultRenderer: GraphRendererFactory = () => new ForceGraphRenderer();
 
-export function NetworkGraph({ data, label, selection = null, onSelectNode, onSelectLink, renderer, className, ref }: NetworkGraphProps) {
+export function NetworkGraph({ data, label, selection = null, onSelectNode, onSelectLink, onSelectGroup, renderer, className, ref }: NetworkGraphProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GraphRenderer | null>(null);
-  const events = useRef({ onSelectNode, onSelectLink });
+  const events = useRef({ onSelectNode, onSelectLink, onSelectGroup });
   useLayoutEffect(() => {
-    events.current = { onSelectNode, onSelectLink };
+    events.current = { onSelectNode, onSelectLink, onSelectGroup };
   });
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export function NetworkGraph({ data, label, selection = null, onSelectNode, onSe
       label,
       onSelectNode: (id) => events.current.onSelectNode?.(id),
       onSelectLink: (source, target) => events.current.onSelectLink?.(source, target),
+      onSelectGroup: (id) => events.current.onSelectGroup?.(id),
     });
     instance.current = graph;
     return () => {
