@@ -23,17 +23,11 @@ const copy = {
 const firstRows = 50;
 const months = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 
-function toEvidence(item: FunctionEvidence): AnnotationEvidence[] {
+function toEvidence(item: FunctionEvidence): AnnotationEvidence {
   const pub = item.publication;
-  if (!pub) return [];
-  return [
-    {
-      source: item.source,
-      code: item.code,
-      meaning: GeneFunction.evidenceName(item.code),
-      publication: { title: pub.title, authors: pub.authors, journal: `${pub.journal}, ${months.format(new Date(pub.date))}`, href: `https://pubmed.ncbi.nlm.nih.gov/${pub.pmid}/` },
-    },
-  ];
+  const evidence = { source: item.source, code: item.code, meaning: GeneFunction.evidenceName(item.code) };
+  if (!pub) return evidence;
+  return { ...evidence, publication: { title: pub.title, authors: pub.authors, journal: `${pub.journal}, ${months.format(new Date(pub.date))}`, href: `https://pubmed.ncbi.nlm.nih.gov/${pub.pmid}/` } };
 }
 
 /** One row per term across the query genes, with each gene's confidence and every source behind it. */
@@ -45,7 +39,7 @@ function mergeRows(perGene: readonly (readonly GeneFunction[])[]): RankedAnnotat
       row.confidences[column] = item.confidence;
       row.confidence = Math.max(row.confidence, item.confidence);
       row.sources = (row.sources ?? 0) + item.evidence.length;
-      row.evidence.push(...item.evidence.flatMap(toEvidence));
+      row.evidence.push(...item.evidence.map(toEvidence));
       rows.set(item.identifier, row);
     }
   });

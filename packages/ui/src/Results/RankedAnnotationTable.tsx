@@ -16,7 +16,8 @@ export interface AnnotationEvidence {
   source: string;
   code: string;
   meaning: string;
-  publication: Publication;
+  /** Missing for sources without a paper, such as electronic annotations (IEA). */
+  publication?: Publication;
 }
 
 export interface RankedAnnotation {
@@ -26,7 +27,7 @@ export interface RankedAnnotation {
   /** One confidence per gene when the table has a column per gene; null where a gene has none. */
   confidences?: readonly (number | null)[];
   sources?: number;
-  /** Undefined while the evidence loads; empty when the sources list no publication. */
+  /** Undefined while the evidence loads. */
   evidence?: readonly AnnotationEvidence[];
 }
 
@@ -110,21 +111,27 @@ export function RankedAnnotationTable({ caption, termLabel, scoreLabel, scoreLab
                         <Skeleton width="60%" />
                       </span>
                     ) : evidence.length === 0 ? (
-                      <span className="annotation-loading">The sources list no publication for this annotation.</span>
+                      <span className="annotation-loading">No evidence is listed for this annotation.</span>
                     ) : (
                     <ul className="annotation-publications" aria-label={`Evidence for ${row.name}`}>
                       {evidence.map((item, index) => (
-                        <li key={`${index}-${item.publication.title}`}>
+                        <li key={`${index}-${item.source}-${item.code}`}>
                           <span>{item.source}</span>
-                          <span className="annotation-code">
-                            <Badge size="small">{item.code}</Badge>
-                            {item.meaning}
-                          </span>
-                          <span className="annotation-citation">
-                            {item.publication.href ? <a href={item.publication.href}>{item.publication.title}</a> : <strong>{item.publication.title}</strong>}
-                            <span>{item.publication.authors}</span>
-                            <span>{item.publication.journal}</span>
-                          </span>
+                          {item.code && (
+                            <span className="annotation-code">
+                              <Badge size="small">{item.code}</Badge>
+                              {item.meaning}
+                            </span>
+                          )}
+                          {item.publication ? (
+                            <span className="annotation-citation">
+                              {item.publication.href ? <a href={item.publication.href}>{item.publication.title}</a> : <strong>{item.publication.title}</strong>}
+                              <span>{item.publication.authors}</span>
+                              <span>{item.publication.journal}</span>
+                            </span>
+                          ) : (
+                            <span className="annotation-citation">No publication listed</span>
+                          )}
                         </li>
                       ))}
                     </ul>
