@@ -42,3 +42,5 @@ The screens call the renderer in this order: `mount` once, `render` whenever the
 The built-in renderer is a stand-in so the screens work in an open-source copy. It doesn't try to look like the live Humanbase graph.
 
 The live site's renderer belongs to the Humanbase team. It is a D3 v3 force layout (`d3.layout.force`) with each connection drawn through a middle point that the layout also moves, which gives the curved edges, edge color and width by weight, and starred sets drawn as colored rings with a convex hull (`d3.geom.hull`). The Humanbase team can wrap it in a class that implements `GraphRenderer` and pass it as `renderer`. No screen needs to change: the toolbar, drawers, tables, star toggles and URL state all go through this interface. It can be bundled in this package once its license allows, or loaded at run time if the API serves it.
+
+The genome browser has the same kind of swap point: `GenomeBrowserEngine` in `packages/genome`, where Biodalliance is set up as the live site sets it up.

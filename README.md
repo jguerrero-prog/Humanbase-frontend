@@ -12,7 +12,8 @@ The redesigned front end for [Humanbase](https://hb.flatironinstitute.org) and t
 | `packages/ui` | Pure components and `root.css`, the single stylesheet entry point | |
 | `packages/data` | The only code that talks to the API: `ApiClient`, models, services, React provider and hooks | |
 | `packages/hb` | Connected components: a pure component plus a data hook | |
-| `packages/graph` | The network and module graph renderer (empty until its license is confirmed) | |
+| `packages/graph` | The network and module graph renderer, swappable through `GraphRenderer` | |
+| `packages/genome` | The genome browser engine, swappable through `GenomeBrowserEngine`; Biodalliance when the API is on | |
 
 ## Live preview
 
