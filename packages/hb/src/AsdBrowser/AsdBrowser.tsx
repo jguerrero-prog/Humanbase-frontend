@@ -136,8 +136,9 @@ export function AsdBrowser({
               <Checkbox label="Only the genome browser’s range" />
               <strong className="asd-browser-count">{counts.format(total)} variants</strong>
               <ActionMenu
-                label={`Columns (${hidden} hidden)`}
+                label={hidden ? `Columns (${hidden} hidden)` : 'Columns'}
                 size="small"
+                trigger="text"
                 items={junctions.map((column) => ({ label: shown.includes(column) ? `Hide ${column}` : `Show ${column}`, onSelect: () => toggle(column) }))}
               />
             </div>
