@@ -147,7 +147,7 @@ const queryGenes = new GeneMatchList([{ id: 'IL1B', typed: ['IL1B'], status: 'ma
 
 const notes = {
   regions: [
-    'Gene, connection and module detail opens in the Medium drawer over the page, with a backdrop, because annotation and evidence lists are long. The result underneath stays unchanged and comes back when the drawer closes.',
+    'Gene, connection and module detail opens in the Medium drawer over the page because annotation and evidence lists are long. The result underneath stays unchanged and comes back when the drawer closes.',
     'The header scrolls away; the top bar stays. Tabs in the header become sticky under the top bar once the header leaves the screen.',
     'Below 1280px the companion table moves under the main view; below 960px everything stacks and the drawer becomes a bottom sheet.',
   ],
@@ -245,7 +245,7 @@ const networkSettings = (tissue: string) => [
       <div class="region region-header"><strong>Result header</strong><span>Breadcrumbs, title, context labels, settings, tabs</span></div>
       <div class="region region-main"><strong>Main view: 8 columns</strong><span>Network, heatmap or track, with its toolbar, legend and filters</span></div>
       <div class="region region-companion"><strong>Companion table: 4 columns</strong><span>Genes or terms behind the view, sortable</span></div>
-      <div class="region region-drawer"><strong>Drawer: 480px (Medium)</strong><span>Opens over the page with a backdrop, below the top bar</span></div>
+      <div class="region region-drawer"><strong>Drawer: 480px (Medium)</strong><span>Opens over the page, below the top bar</span></div>
       <figcaption class="visually-hidden">The result page regions: top bar, result header, an 8-column main view, a 4-column companion table, and a Medium drawer over the page.</figcaption>
     </figure>
     <ul class="points">{notes.regions.map((note) => <li>{note}</li>)}</ul>
@@ -306,7 +306,7 @@ const networkSettings = (tissue: string) => [
     </figure>
   </DocSection>
 
-  <DocSection title="A gene selected" lead="Clicking IL1R1 opens the gene drawer over the page, below the top bar, with a backdrop. The URL gains ?gene=IL1R1, but no breadcrumb step or tab is added.">
+  <DocSection title="A gene selected" lead="Clicking IL1R1 opens the gene drawer over the page, below the top bar. The URL gains ?gene=IL1R1, but no breadcrumb step or tab is added.">
     <div class="drawer-specimen">
       <Drawer inline title="IL1R1" subtitle="interleukin 1 receptor type 1">
         <Fragment slot="footer">

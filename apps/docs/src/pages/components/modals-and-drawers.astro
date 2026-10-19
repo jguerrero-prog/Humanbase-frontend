@@ -59,7 +59,7 @@ const connectionNotes = [
 const behavior = [
   ['Opens', 'After an action, never on page load.', 'Clicking a gene, edge or row, or a Filters button.'],
   ['Motion', 'Backdrop fades; dialog fades and grows from 98%, 200ms. Fade only with reduced motion.', 'Fades in while moving 16px from the right, 280ms. Fade only with reduced motion.'],
-  ['Closes', 'Escape, Close, Cancel, or the main action. Clicking the backdrop closes Confirm dialogs only.', 'Escape or Close. Clicking the page closes it only in over-content mode.'],
+  ['Closes', 'Escape, Close, Cancel, or the main action. Clicking the backdrop closes Confirm dialogs only.', 'Escape or Close. Clicking the page doesn’t close it, so people can pick another gene.'],
   ['Unsaved changes', 'Form dialogs ask “Discard changes?” before closing.', 'Filter drawers apply as people change them, so nothing is lost.'],
   ['Scrolling', 'The page behind doesn’t scroll. Long bodies scroll inside, actions stay fixed.', 'The drawer body scrolls; header and footer stay fixed.'],
   ['Stacking', 'Never a dialog over a dialog. A dialog can open over a drawer.', 'One drawer at a time; a new item replaces the content.'],
@@ -70,7 +70,7 @@ const focus = [
   ['Dialog opens', 'The first field in a form; otherwise the least destructive button, such as Keep job. Never the delete button.'],
   ['Inside a dialog', 'Tab and Shift Tab loop through the dialog only. The page behind is inert.'],
   ['Drawer opens beside content', 'The drawer title, so screen readers announce it. Tab can leave the drawer and return to the graph.'],
-  ['Drawer over content', 'Same as a dialog: focus stays inside until it closes.'],
+  ['Drawer over content', 'The drawer title. Tab can leave the drawer and return to the page.'],
   ['Closing either', 'Back to the button, gene or row that opened it, so people don’t lose their place.'],
 ];
 
