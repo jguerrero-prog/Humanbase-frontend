@@ -1,10 +1,12 @@
+import motionTokens from '@humanbase/tokens/src/motion.tokens.json';
+
 // Shared by every tooltip so only one shows at a time, and the next appears at once while one is showing.
 export class TooltipController {
   #close: (() => void) | undefined;
   #warmUntil = 0;
 
   constructor(
-    readonly delay = 400,
+    readonly delay = motionTokens.motion.delay.tooltip.$value.value,
     readonly hideDelay = 100,
     readonly warmFor = 300,
   ) {}
