@@ -34,8 +34,12 @@ const modelOptions = (model: VariantModel) => (deepseaModels[model].basedOn ? [{
 const extensions: Record<InputKind, string> = { vcf: '.vcf,.txt', bed: '.bed,.txt', fasta: '.fasta,.fa,.txt' };
 const nouns: Record<InputKind, string> = { vcf: 'variants', bed: 'regions', fasta: 'sequences' };
 
+const bp = (model: VariantModel) => VariantFileCheck.sequenceLength[model].toLocaleString('en-US');
+// The model that reads the sequences: Beluga for in silico mutagenesis and ExPecto.
+const engineOf = (model: VariantModel) => deepseaModels[deepseaModels[model].basedOn ?? model].tool;
+
 function rulesFor(kind: InputKind, model: VariantModel): string {
-  if (kind === 'fasta') return `Each sequence starts with >. Only A, C, G and T, ${VariantFileCheck.sequenceLength[model].toLocaleString('en-US')} bp each for ${deepseaModels[model].tool}.`;
+  if (kind === 'fasta') return `Each sequence starts with >. Only A, C, G and T, ${bp(model)} bp each for ${engineOf(model)}.`;
   if (kind === 'bed') return 'Tab-separated: chromosome, start, end. Each interval is scored at its center.';
   if (deepseaModels[model].strand) return 'Tab-separated: chromosome, position, ID, REF, ALT, then strand (+ or -). A header line is optional.';
   return 'Tab-separated, at least 5 columns: chromosome, position, ID, reference and alternative allele.';
@@ -49,7 +53,7 @@ function downloadProblems(result: FileCheckResult) {
 export function VariantJobForm({ model: initialModel, onModelChange, examples, onRun, running, notice }: VariantJobFormProps) {
   const id = useId();
   const [model, setModel] = useState(initialModel);
-  const [kind, setKind] = useState<InputKind>('vcf');
+  const [kind, setKind] = useState<InputKind>(deepseaModels[initialModel].inputs[0] ?? 'vcf');
   const [source, setSource] = useState<Source>('upload');
   const [file, setFile] = useState<ChosenFile>();
   const [text, setText] = useState('');
@@ -57,10 +61,11 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
   const [email, setEmail] = useState('');
   const [note, setNote] = useState('');
   const tool = deepseaModels[model].tool;
+  const named = deepseaModels[model].inSentence ?? tool;
   const result = useMemo(() => (text.trim() ? new VariantFileCheck(kind, model).check(text) : undefined), [text, kind, model]);
   const blocking = result?.limit ?? result?.otherKind;
   const ready = Boolean(result && result.count > 0 && !result.problems.length && !blocking);
-  const runLabel = ready && result ? `Run ${tool} on ${result.count.toLocaleString('en-US')} ${nouns[kind]}` : `Run ${tool}`;
+  const runLabel = ready && result ? `Run ${named} on ${result.count.toLocaleString('en-US')} ${nouns[kind]}` : `Run ${named}`;
 
   const sources = [
     { value: 'upload', label: 'Upload a file' },
@@ -82,7 +87,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
   const run = () => {
     if (!ready) return;
     if (onRun) void onRun({ model, kind, text, fileName: file?.name ?? `pasted.${kind}`, count: result?.count ?? 0, title, email });
-    else setNote(`${tool} would start on ${result?.count.toLocaleString('en-US')} ${nouns[kind]}. This example doesn’t send a job.`);
+    else setNote(`${named} would start on ${result?.count.toLocaleString('en-US')} ${nouns[kind]}. This example doesn’t send a job.`);
   };
 
   return (
@@ -92,12 +97,12 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
         <Select label="Model" options={modelOptions(model)} value={model} onChange={(value) => chooseModel(value as VariantModel)} hint={deepseaModels[model].otherModels} />
         <Select label="Genome assembly" options={[{ value: 'hg19', label: 'GRCh37/hg19' }]} defaultValue="hg19" hint="Coordinates in the file must match." />
       </div>
-      {!deepseaModels[model].expecto && (
+      {deepseaModels[model].inputs.length > 1 && (
         <SegmentedControl
           label="What are you submitting?"
           value={kind}
           onChange={(value) => start(value as InputKind, source === 'example' && examples[value as InputKind] ? 'example' : 'upload')}
-          segments={[{ value: 'vcf', label: 'Variants (VCF)' }, { value: 'bed', label: 'Regions (BED)' }, { value: 'fasta', label: 'Sequences (FASTA)' }]}
+          segments={[{ value: 'vcf', label: 'Variants (VCF)' }, { value: 'bed', label: 'Regions (BED)' }, { value: 'fasta', label: 'Sequences (FASTA)' }].filter((segment) => deepseaModels[model].inputs.includes(segment.value as InputKind))}
         />
       )}
       <SegmentedControl
@@ -116,7 +121,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
           hideLabel
           accept={extensions[kind]}
           prompt={`Drop a ${kind.toUpperCase()} file here, or`}
-          hint="Up to 20,000 variants; 10,000 or fewer finish fastest."
+          hint={kind === 'fasta' ? `Sequences of ${bp(model)} bp each, for ${engineOf(model)}.` : 'Up to 20,000 variants; 10,000 or fewer finish fastest.'}
           file={file}
           result={result ? `${result.summary}, ready to run` : undefined}
           problems={result?.problems}
@@ -128,7 +133,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
       )}
       {blocking && <p className="job-form-blocking" role="alert">{blocking}</p>}
       <Accordion size="compact">
-        <AccordionItem title={`${kind.toUpperCase()} rules for ${tool}`}>
+        <AccordionItem title={`${kind.toUpperCase()} rules for ${named}`}>
           <p>{rulesFor(kind, model)}</p>
         </AccordionItem>
       </Accordion>

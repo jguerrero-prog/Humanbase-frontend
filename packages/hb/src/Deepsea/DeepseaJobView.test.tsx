@@ -64,4 +64,19 @@ describe('DeepseaJobView', () => {
     renderJob(job(0));
     expect(await screen.findByText('This job isn’t available', {}, { timeout: 5000 })).toBeInTheDocument();
   });
+
+  it('shows every substitution of the in silico mutagenesis example for HepG2 / CEBPB', async () => {
+    renderJob('0576e894-a2c5-48bb-9bdf-227962495d5f');
+    expect(await screen.findByRole('heading', { level: 1, name: 'Untitled in silico mutagenesis job' }, { timeout: 5000 })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Effect of every substitution on HepG2 / CEBPB' }, { timeout: 5000 })).toBeInTheDocument();
+    expect(await screen.findByRole('grid', { name: 'Substitutions at positions 984 to 1,013' }, { timeout: 5000 })).toBeInTheDocument();
+    const strongest = screen.getByRole('table', { name: 'Strongest changes to HepG2 / CEBPB' });
+    expect(strongest.querySelector('tbody tr')).toHaveTextContent('999chr1:109,817,590T>A−4.63');
+  });
+
+  it('lists an in silico mutagenesis job’s files once per kind while it runs', async () => {
+    renderJob(job(151));
+    expect(await screen.findByText('Logits', {}, { timeout: 5000 })).toBeInTheDocument();
+    expect(screen.getByText('4 sequences, FASTA')).toBeInTheDocument();
+  });
 });

@@ -1,4 +1,4 @@
-import type { VariantModel } from '../jobs/VariantFileCheck';
+import type { InputKind, VariantModel } from '../jobs/VariantFileCheck';
 
 /** The z-score bins every DeepSEA feature uses, and Sei's sequence class bins. */
 export interface EffectBins {
@@ -12,6 +12,10 @@ export interface DeepseaModel {
   /** The ds_model name the API uses. */
   apiName: 'Sei' | 'Beluga' | 'SeqWeaver';
   tool: string;
+  /** The tool's name mid-sentence, when it differs, as in Run in silico mutagenesis. */
+  inSentence?: string;
+  /** The inputs the tool takes; the first is where its form opens. */
+  inputs: readonly InputKind[];
   option: string;
   /** The model field's label on a result, such as Seqweaver (RNA). */
   kind: string;
@@ -43,6 +47,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'sei',
     apiName: 'Sei',
     tool: 'Sei',
+    inputs: ['vcf', 'bed', 'fasta'],
     option: 'Sei (DNA, 2021)',
     kind: 'Sei (DNA)',
     summary: 'Predict how variants change regulatory activity, across 40 sequence classes built from 21,907 chromatin profiles.',
@@ -60,6 +65,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'beluga',
     apiName: 'Beluga',
     tool: 'Beluga',
+    inputs: ['vcf', 'bed', 'fasta'],
     option: 'Beluga (DNA, 2019)',
     kind: 'Beluga (DNA)',
     summary: 'Predict how variants change chromatin features: transcription factor binding, histone marks and DNase sensitivity across cell types.',
@@ -77,6 +83,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'seqweaver',
     apiName: 'SeqWeaver',
     tool: 'Seqweaver',
+    inputs: ['vcf', 'bed', 'fasta'],
     option: 'Seqweaver (RNA)',
     kind: 'Seqweaver (RNA)',
     summary: 'Predict how variants change RNA-binding protein targets and post-transcriptional regulation.',
@@ -94,6 +101,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'expecto',
     apiName: 'Beluga',
     tool: 'ExPecto',
+    inputs: ['vcf'],
     option: 'Beluga (DNA, 2019)',
     kind: 'ExPecto (Beluga model)',
     summary: 'Predict how variants change gene expression across tissues.',
@@ -114,6 +122,8 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'insilico',
     apiName: 'Beluga',
     tool: 'In silico mutagenesis',
+    inSentence: 'in silico mutagenesis',
+    inputs: ['fasta'],
     option: 'Beluga (DNA, 2019)',
     kind: 'Beluga (DNA)',
     summary: 'Mutate every base of a sequence and see which changes move each of Beluga’s 2,002 chromatin features.',
