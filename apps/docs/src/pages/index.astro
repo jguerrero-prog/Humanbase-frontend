@@ -1,0 +1,243 @@
+---
+import { Code } from 'astro:components';
+import DocSection from '../components/docs/DocSection.astro';
+import Intro from '../components/docs/Intro.astro';
+import KeyRules from '../components/docs/KeyRules.astro';
+import NoteCard from '../components/docs/NoteCard.astro';
+import DocsLayout from '../layouts/DocsLayout.astro';
+import { navigation } from '../navigation';
+
+const principles = [
+  { title: 'Start from the research question', text: 'Organize screens around what people are trying to learn, not around which model answers it.' },
+  { title: 'Show the evidence', text: 'Every prediction links to the data, method and version behind it, so results can be trusted and cited.' },
+  { title: 'Make waiting visible', text: 'Jobs show their place in the queue, how long they will take and what happens next.' },
+  { title: 'Accessible by default', text: 'Meet WCAG 2.2 AA: visible focus, sufficient contrast, labelled controls and never color alone.' },
+  { title: 'One pattern, many tools', text: 'Search, submit, wait and results work the same way in every analysis.' },
+];
+
+const areas = [
+  { heading: 'Foundations', unit: 'sections', summary: 'The visual building blocks every screen shares.' },
+  { heading: 'Tokens', unit: 'token sets', summary: 'Named values shared by Figma and code, so a change is made once.' },
+  { heading: 'Usage guidelines', unit: 'guides', summary: 'How to write, show data and handle the moments where things go wrong.' },
+  { heading: 'Components', unit: 'components', summary: 'Reusable interface parts with every state and variant specified.' },
+  { heading: 'UI library', unit: 'patterns', summary: 'Ready-made HumanBase screens assembled from the components.' },
+  { heading: 'Resources', unit: 'resources', summary: 'Everything needed to use and improve the system.' },
+];
+
+// Keeps proper nouns such as NetWAS and ASD Browser as written; lowercases ordinary first words.
+const inSentence = (label: string) => (/[A-Z]/.test(label.split(' ')[0]!.slice(1)) ? label : label[0]!.toLowerCase() + label.slice(1));
+const listOf = (labels: string[]) => [labels[0], ...labels.slice(1).map(inSentence)].join(', ').replace(/, ([^,]+)$/, ' and $1');
+
+const cards = areas.map((area) => {
+  const items = navigation.find((section) => section.heading === area.heading)?.items ?? [];
+  return {
+    ...area,
+    count: `${items.length} ${area.unit}`,
+    contents: listOf(items.map((item) => item.label)),
+    href: items.find((item) => item.href)?.href,
+  };
+});
+
+const roles = [
+  { title: 'Designers', text: 'Start from the Figma library. Use components and styles as they are, and propose changes instead of detaching them.' },
+  { title: 'Developers', text: 'Build with tokens, not hard-coded values. Each component page lists its states, sizes and accessibility requirements.' },
+  { title: 'Researchers and writers', text: 'Follow the voice and notation guides so scores, units and gene names read the same in every tool and in the help docs.' },
+];
+
+const usage = `@import url("@humanbase/ui/root.css");
+
+.panel {
+  padding: var(--space-6);
+  background: var(--surface-subtle);
+  border-radius: var(--radius-md);
+}`;
+---
+
+<DocsLayout title="A Comprehensive Design System for Humanbase" description="What the HumanBase design system is, the principles behind it and how to use it.">
+  <Intro
+    lead="The HumanBase Design System is the single source of truth for how HumanBase looks, reads and behaves. It brings together the foundations, tokens, components and patterns used to build tools for exploring human gene function, regulation and disease."
+    status="Version 0.1, draft · Updated October 16, 2026 · Maintained by Joel Guerrero of the Digital Technology team at Simons Foundation"
+  />
+
+  <DocSection
+    id="about"
+    title="About HumanBase"
+    lead="HumanBase is a free platform from the Flatiron Institute that uses AI to integrate tens of thousands of public genomic datasets into tissue-specific gene networks and variant effect predictions."
+  >
+    <KeyRules
+      size="medium"
+      rules={[
+        { title: 'What it is', text: 'A shared library of design decisions, reusable components and usage guidance for every HumanBase tool, from gene networks to variant effect predictions.' },
+        { title: 'Who it is for', text: 'Designers, front-end developers, researchers writing help content, and anyone contributing a new analysis tool to HumanBase.' },
+        { title: 'Why it exists', text: 'HumanBase grew tool by tool. An audit in October 2026 found ten tools with separate patterns for search, job status, results and errors. This system replaces them with one consistent experience.' },
+      ]}
+    />
+  </DocSection>
+
+  <section class="vision" id="vision" aria-labelledby="vision-heading">
+    <h2 id="vision-heading">Vision</h2>
+    <p>Every researcher, at every level of computational fluency, can ask a biological question and trust the answer HumanBase gives.</p>
+  </section>
+
+  <DocSection id="principles" title="Design principles" lead="Five rules that settle decisions when two options both seem reasonable.">
+    <ol class="principles">
+      {
+        principles.map((principle) => (
+          <li>
+            <h3>{principle.title}</h3>
+            <p>{principle.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </DocSection>
+
+  <DocSection
+    title="What the system includes"
+    lead="Six areas, each with its own pages in the menu. Every component documents its default, hover, focus, active, disabled, loading and error states."
+  >
+    <ul class="area-cards">
+      {
+        cards.map((card) => (
+          <li>
+            <p class="area-count">{card.count}</p>
+            <h3>{card.heading}</h3>
+            <p class="area-summary">{card.summary}</p>
+            <p class="area-contents">{card.contents}</p>
+            {card.href && <a href={card.href}>View {inSentence(card.heading)} →</a>}
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection id="how-to-use" title="How to use the system">
+    <KeyRules size="medium" rules={roles} />
+    <NoteCard title="Using the system in code">
+      <ul>
+        <li>Import the root stylesheet once; every token is then a CSS custom property.</li>
+        <li>Components use semantic roles such as <code>--action-primary</code>, never primitives such as <code>--color-emerald-600</code>, so a change in Figma reaches every component through one token.</li>
+      </ul>
+      <Code code={usage} lang="css" theme="css-variables" />
+    </NoteCard>
+  </DocSection>
+
+  <p class="overview-footer">Questions or proposals? Open a request in the contribution guide or contact the HumanBase team.</p>
+</DocsLayout>
+
+<style>
+  .vision {
+    display: grid;
+    gap: var(--space-5);
+    margin-block: var(--space-16);
+    padding: calc(var(--space-12) + var(--space-2));
+    background: var(--color-emerald-50);
+    border-radius: var(--radius-md);
+  }
+
+  .vision h2 {
+    font: var(--type-eyebrow);
+    letter-spacing: var(--type-eyebrow-tracking);
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .vision p {
+    font: 500 40px/1.25 var(--font-family-heading);
+    color: var(--text-default);
+  }
+
+  .principles {
+    margin-block-start: var(--space-6);
+    padding: 0;
+    list-style: none;
+    counter-reset: principle;
+  }
+
+  .principles li {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    column-gap: var(--space-10);
+    padding-block: 28px;
+    border-block-end: var(--border-width-1) solid var(--border-subtle);
+    counter-increment: principle;
+  }
+
+  .principles li::before {
+    grid-row: span 2;
+    font: var(--type-h2);
+    color: var(--text-link);
+    content: counter(principle, decimal-leading-zero);
+  }
+
+  .principles h3 {
+    font: 600 24px/1.3 var(--font-family-heading);
+    color: var(--text-default);
+  }
+
+  .principles p {
+    margin-block-start: 6px;
+    font: var(--type-body-lg);
+    color: var(--text-secondary);
+  }
+
+  .area-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .area-cards li {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: 28px 28px var(--space-8);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .area-count {
+    font: var(--type-eyebrow);
+    letter-spacing: var(--type-eyebrow-tracking);
+    text-transform: uppercase;
+    color: var(--text-link);
+  }
+
+  .area-cards h3 {
+    font: var(--type-h3);
+    color: var(--text-default);
+  }
+
+  .area-summary {
+    font: 400 17px/1.55 var(--font-family-body);
+    color: var(--text-default);
+  }
+
+  .area-contents {
+    font: 400 15px/1.55 var(--font-family-body);
+    color: var(--text-muted);
+  }
+
+  .area-cards a {
+    font: var(--type-label);
+    color: var(--text-link);
+  }
+
+  .overview-footer {
+    margin-block-start: var(--space-24);
+    padding-block-start: 28px;
+    font: var(--type-body);
+    color: var(--text-muted);
+    border-block-start: var(--border-width-1) solid var(--border-subtle);
+  }
+
+  @media (width < 960px) {
+    .area-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

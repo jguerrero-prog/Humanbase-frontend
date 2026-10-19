@@ -3,10 +3,11 @@ interface Props {
   title: string;
   lead?: string;
   spacing?: 'default' | 'loose';
+  id?: string;
 }
 
 const { title, lead, spacing = 'default' } = Astro.props;
-const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const id = Astro.props.id ?? title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 ---
 
 <section class:list={['doc-section', `doc-section-${spacing}`]} aria-labelledby={id}>
