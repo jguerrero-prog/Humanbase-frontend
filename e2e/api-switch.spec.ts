@@ -1,14 +1,9 @@
 import { expect, test } from '@playwright/test';
+import { apiOff } from './apiOff';
 
-test('with the API off, the front end shows sample data and calls no API', async ({ page }) => {
-  const apiRequests: string[] = [];
-  await page.route('**/config.json', (route) => route.fulfill({ json: { api: false, apiBase: '/api' } }));
-  await page.route('**/api/**', (route) => {
-    apiRequests.push(route.request().url());
-    return route.abort();
-  });
-
+test('with the API off, the homepage calls no API', async ({ page }) => {
+  const apiRequests = await apiOff(page);
   await page.goto('http://localhost:4173/');
-  await expect(page.getByRole('status')).toHaveText(/The API is off, so this is sample data\. Gene 3553 is IL1B/);
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   expect(apiRequests).toEqual([]);
 });

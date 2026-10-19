@@ -1,5 +1,6 @@
 ---
 import { Alert, Breadcrumbs, Button, Dialog, Footer, Icon, NavMenu, NavPanelContent, RadioGroup, SegmentedControl, Select, SkipLink, Tabs, TopBar, type NavSection } from '@humanbase/ui';
+import { productFooter } from '@humanbase/hb';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -116,17 +117,7 @@ const phoneNotes = [
   'No overlay blocks the site on phones, unlike today; tools that need a wide screen say so in a banner.',
 ];
 
-const footer = {
-  description: 'Humanbase is developed at the Flatiron Institute’s Center for Computational Biology to study gene function, regulation and disease.',
-  groups: [
-    { heading: 'Network analysis', links: [{ label: 'Networks', href: '/networks/' }, { label: 'Modules', href: '/modules/' }, { label: 'NetWAS', href: '/netwas/' }] },
-    { heading: 'Sequence analysis', links: [{ label: 'Sei', href: '/sei/' }, { label: 'ExPecto', href: '/expecto/' }, { label: 'All sequence tools', href: '/sequence-tools/' }] },
-    { heading: 'Data', links: [{ label: 'Data sources', href: '/data-sources/' }, { label: 'Downloads', href: '/downloads/' }, { label: 'Humanbase API', href: '/api/docs/' }] },
-    { heading: 'About', links: [{ label: 'About Humanbase', href: '/about/' }, { label: 'Docs', href: '/docs/' }, { label: 'Contact us', href: '/contact/' }, { label: 'How to cite', href: '/cite/' }] },
-  ],
-  legal: '© 2026 Simons Foundation. Flatiron Institute.',
-  dataVersion: 'Data: MAGE, June 2026',
-};
+const footer = productFooter;
 const motionOptions = [
   { value: 'device', label: 'Match my device', description: 'Currently: full motion' },
   { value: 'reduce', label: 'Reduce motion', description: 'Fades only, no movement' },

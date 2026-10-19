@@ -8,14 +8,7 @@ import KeyList from '../../components/docs/KeyList.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import SizeCard from '../../components/docs/SizeCard.astro';
-import expecto from '../../assets/original-icons/expecto_fa-magic.svg?url';
-import expectoSc from '../../assets/original-icons/expecto-sc_dendritic_cell.png?url';
-import gwas from '../../assets/original-icons/gwas-netwas_fa-list-ol.svg?url';
-import inSilico from '../../assets/original-icons/in-silico-mutagenesis_fa-th.svg?url';
-import modules from '../../assets/original-icons/modules_fa-certificate.svg?url';
-import networks from '../../assets/original-icons/networks_fa-connectdevelop.svg?url';
-import deepsea from '../../assets/original-icons/sei-and-beluga_deepsea_logo.svg?url';
-import seqweaver from '../../assets/original-icons/seqweaver_seqweaver-icon.svg?url';
+import { analysisIcons } from '@humanbase/hb';
 import featherReference from '../../data/feather-reference.json';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
@@ -43,14 +36,14 @@ const colorExamples = [
 ] as const;
 
 const originalIcons: { title: string; text: string; file: string; src?: string }[] = [
-  { title: 'Networks', src: networks, file: 'networks_fa-connectdevelop.svg', text: 'Font Awesome 4.7 “connectdevelop”, grey #444. A brand icon (Connect Develop’s logo).' },
-  { title: 'Modules', src: modules, file: 'modules_fa-certificate.svg', text: 'Font Awesome 4.7 “certificate”, grey #444' },
-  { title: 'Sei and Beluga', src: deepsea, file: 'sei-and-beluga_deepsea_logo.svg', text: 'Humanbase SVG of the DeepSEA whale; Sei and Beluga share it. The file also holds a small “DeepSEA” wordmark.' },
-  { title: 'Seqweaver', src: seqweaver, file: 'seqweaver_seqweaver-icon.svg', text: 'Humanbase SVG, blue #24A4D3; the file credits Stephen Plaster' },
-  { title: 'In silico mutagenesis', src: inSilico, file: 'in-silico-mutagenesis_fa-th.svg', text: 'Font Awesome 4.7 “th”, blue #24A4D3' },
-  { title: 'ExPecto', src: expecto, file: 'expecto_fa-magic.svg', text: 'Font Awesome 4.7 “magic”, blue #24A4D3' },
-  { title: 'ExPecto SC', src: expectoSc, file: 'expecto-sc_dendritic_cell.png', text: 'Humanbase SVG of a dendritic cell, created with BioRender.com. Shown here as a 2x image: the file is 335 KB, 1,189 paths' },
-  { title: 'GWAS (NetWAS)', src: gwas, file: 'gwas-netwas_fa-list-ol.svg', text: 'Font Awesome 4.7 “list-ol”, grey #444' },
+  { title: 'Networks', src: analysisIcons.networks, file: 'networks_fa-connectdevelop.svg', text: 'Font Awesome 4.7 “connectdevelop”, grey #444. A brand icon (Connect Develop’s logo).' },
+  { title: 'Modules', src: analysisIcons.modules, file: 'modules_fa-certificate.svg', text: 'Font Awesome 4.7 “certificate”, grey #444' },
+  { title: 'Sei and Beluga', src: analysisIcons.deepsea, file: 'sei-and-beluga_deepsea_logo.svg', text: 'Humanbase SVG of the DeepSEA whale; Sei and Beluga share it. The file also holds a small “DeepSEA” wordmark.' },
+  { title: 'Seqweaver', src: analysisIcons.seqweaver, file: 'seqweaver_seqweaver-icon.svg', text: 'Humanbase SVG, blue #24A4D3; the file credits Stephen Plaster' },
+  { title: 'In silico mutagenesis', src: analysisIcons.ism, file: 'in-silico-mutagenesis_fa-th.svg', text: 'Font Awesome 4.7 “th”, blue #24A4D3' },
+  { title: 'ExPecto', src: analysisIcons.expecto, file: 'expecto_fa-magic.svg', text: 'Font Awesome 4.7 “magic”, blue #24A4D3' },
+  { title: 'ExPecto SC', src: analysisIcons.expectoSc, file: 'expecto-sc_dendritic_cell.png', text: 'Humanbase SVG of a dendritic cell, created with BioRender.com. Shown here as a 2x image: the file is 335 KB, 1,189 paths' },
+  { title: 'GWAS (NetWAS)', src: analysisIcons.netwas, file: 'gwas-netwas_fa-list-ol.svg', text: 'Font Awesome 4.7 “list-ol”, grey #444' },
   { title: 'ASD Browser', file: 'No file', text: 'No icon in the live dropdown or menu' },
 ];
 
@@ -279,7 +272,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
         ))
       }
     </ul>
-    <p class="doc-note">Font Awesome 4.7 icons by Dave Gandy, SIL Open Font License 1.1. Seqweaver icon by Stephen Plaster from the Noun Project, CC BY 3.0. The DeepSEA logo belongs to Humanbase. The ExPecto SC dendritic cell was created with BioRender.com. Sources and licenses are listed in <code>apps/docs/src/assets/original-icons/ATTRIBUTION.md</code>.</p>
+    <p class="doc-note">Font Awesome 4.7 icons by Dave Gandy, SIL Open Font License 1.1. Seqweaver icon by Stephen Plaster from the Noun Project, CC BY 3.0. The DeepSEA logo belongs to Humanbase. The ExPecto SC dendritic cell was created with BioRender.com. Sources and licenses are listed in <code>packages/hb/src/content/analysis-icons/ATTRIBUTION.md</code>.</p>
   </DocSection>
 
   <NoteCard title="Using icons in Figma">

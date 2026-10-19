@@ -1,0 +1,34 @@
+import { jobsMenuSummary, productFooter, productSections } from '@humanbase/hb';
+import { Banner, Footer, SkipLink, TopBar } from '@humanbase/ui';
+import { useState } from 'react';
+import { Outlet } from 'react-router';
+import { BrowserSetting } from './BrowserSetting';
+import { DisplaySettings } from './DisplaySettings';
+import './AppLayout.css';
+
+const whatsNew = new BrowserSetting<'shown' | 'dismissed'>('humanbase:whats-new', 'shown', ['shown', 'dismissed']);
+
+export function AppLayout({ current }: { current?: string }) {
+  const [bannerShown, setBannerShown] = useState(() => whatsNew.get() === 'shown');
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const dismissBanner = () => {
+    whatsNew.set('dismissed');
+    setBannerShown(false);
+  };
+  return (
+    <div className="app-layout">
+      <SkipLink />
+      {bannerShown && (
+        <Banner action={{ label: 'See what’s new', href: '/whats-new/' }} onDismiss={dismissBanner}>
+          We’ve made some changes to Humanbase and we’d like to show you around.
+        </Banner>
+      )}
+      <TopBar sections={productSections} jobs={jobsMenuSummary()} {...(current ? { current } : {})} />
+      <main id="main" tabIndex={-1}>
+        <Outlet />
+      </main>
+      <Footer {...productFooter} onDisplaySettings={() => setSettingsOpen(true)} />
+      <DisplaySettings open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+    </div>
+  );
+}
