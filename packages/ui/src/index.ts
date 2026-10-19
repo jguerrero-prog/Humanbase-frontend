@@ -95,7 +95,7 @@ export { EmptyState, type EmptyStateProps } from './EmptyState/EmptyState';
 export { JobSteps, type JobStep, type JobStepState } from './JobSteps/JobSteps';
 export { Skeleton, type SkeletonProps } from './Skeleton/Skeleton';
 export { JobRow, type JobLink, type JobRowProps } from './Jobs/JobRow';
-export { JobsMenu, type JobsMenuJob, type JobsMenuProps } from './Jobs/JobsMenu';
+export { JobsMenu, type JobsMenuJob, type JobsMenuProps, type JobsMenuSummary } from './Jobs/JobsMenu';
 export { EditGenesDialog, type EditGenesDialogProps } from './Results/EditGenesDialog';
 export { GeneIdsMenu, type GeneIdLink, type GeneIdsMenuProps } from './Results/GeneIdsMenu';
 export { GraphToolbar, type GraphAction, type GraphToolbarProps } from './Results/GraphToolbar';

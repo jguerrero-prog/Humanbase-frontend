@@ -13,7 +13,13 @@ const sections: NavSection[] = [
   { label: 'Docs', href: '/docs/' },
 ];
 
-const renderBar = () => render(<TopBar sections={sections} current="Network analysis" jobs={{ href: '/jobs/', running: 1 }} />);
+const jobs = {
+  jobs: [{ title: 'IL1B region variants', detail: 'Seqweaver, for 4 minutes', status: 'running', href: '/jobs/il1b/' }] as const,
+  total: 3,
+  allHref: '/jobs/',
+};
+
+const renderBar = () => render(<TopBar sections={sections} current="Network analysis" jobs={jobs} />);
 
 describe('TopBar', () => {
   it('marks the current section and links the plain sections', () => {
@@ -21,7 +27,14 @@ describe('TopBar', () => {
     const main = screen.getByRole('navigation', { name: 'Main' });
     expect(within(main).getByRole('button', { name: 'Network analysis' })).toHaveAttribute('aria-current', 'true');
     expect(within(main).getByRole('link', { name: 'Docs' })).toHaveAttribute('href', '/docs/');
-    expect(screen.getByRole('link', { name: 'Jobs 1 running' })).toBeInTheDocument();
+  });
+
+  it('opens the jobs menu from the Jobs button', async () => {
+    renderBar();
+    const button = screen.getByRole('button', { name: 'Jobs 1 running' });
+    await userEvent.click(button);
+    expect(button).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('link', { name: 'See all 3 jobs' })).toHaveAttribute('href', '/jobs/');
   });
 
   it('opens one section menu at a time on click', async () => {
