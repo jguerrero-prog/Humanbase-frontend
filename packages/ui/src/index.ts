@@ -106,3 +106,12 @@ export { RankedAnnotationTable, type AnnotationEvidence, type Publication, type 
 export { EvidenceTable, GeneDetail, NetworkWeightTable, ScoreMeter, WeightHistogram, type EvidenceRow, type GeneDetailProps, type NetworkWeight } from './Results/ResultDetail';
 export { ResultHeader, STACKED_QUERY, type ResultHeaderProps } from './Results/ResultHeader';
 export { ResultLayout, type ResultLayoutProps } from './Results/ResultLayout';
+export { AllFeaturesPlot, type AllFeaturesPlotProps } from './VariantEffects/AllFeaturesPlot';
+export { EffectGroups, type EffectExperiment, type EffectGroup, type StrengthCounts } from './VariantEffects/EffectGroups';
+export { EffectsHeatmap, type EffectsHeatmapProps } from './VariantEffects/EffectsHeatmap';
+export { EffectsControls, MolecularEffects, effectZScale, type EffectsControlsProps, type EffectsView, type MolecularEffectsProps } from './VariantEffects/MolecularEffects';
+export { StrongestEffects, type StrongestEffectsProps } from './VariantEffects/StrongestEffects';
+export { byGenomePosition, variantLabel, variantLocation, type Variant, type VariantScore } from './VariantEffects/Variant';
+export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFocus';
+export { VariantScorePlot, type PlotBy, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
+export { VariantsTable, type VariantsTableProps } from './VariantEffects/VariantsTable';

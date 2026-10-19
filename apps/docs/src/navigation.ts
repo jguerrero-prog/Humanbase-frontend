@@ -82,7 +82,7 @@ export const navigation: NavSection[] = [
       { label: 'Job submission', href: '/ui-library/job-submission/' },
       { label: 'Job status and queue', href: '/ui-library/job-status-and-queue/' },
       { label: 'Network graph' },
-      { label: 'Variant effect results' },
+      { label: 'Variant effect results', href: '/ui-library/variant-effect-results/' },
       { label: 'Genome browser', href: '/ui-library/genome-browser/' },
       { label: 'Heatmaps and score legends', href: '/ui-library/heatmaps-and-score-legends/' },
       { label: 'ASD Browser' },

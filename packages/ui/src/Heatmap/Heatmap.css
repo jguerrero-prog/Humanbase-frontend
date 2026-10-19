@@ -271,3 +271,25 @@
   font-variant-numeric: tabular-nums;
   text-align: end;
 }
+
+.heatmap-with-values .heatmap-row {
+  grid-template-columns: var(--heatmap-label) repeat(var(--heatmap-columns), var(--heatmap-cell)) auto;
+}
+
+.heatmap-value {
+  padding-inline-start: var(--space-2);
+  font: var(--type-body-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+.heatmap-compact .heatmap-cell {
+  block-size: var(--space-2);
+}
+
+.heatmap-compact .heatmap-row-label,
+.heatmap-compact .heatmap-value {
+  clip-path: inset(50%);
+  block-size: 1px;
+  overflow: hidden;
+}
