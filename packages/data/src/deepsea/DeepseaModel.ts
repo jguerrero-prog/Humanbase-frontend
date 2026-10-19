@@ -21,8 +21,8 @@ export interface DeepseaModel {
   /** What each feature is: an RNA-binding protein, a chromatin feature or a sequence class. */
   featureNoun: string;
   featurePlural: string;
-  /** The verb a raised feature takes, as in Raises binding. */
-  effectVerb: string;
+  /** What a raised feature does, as in Raises binding; empty reads as just Raises. */
+  verb: string;
   /** VCF files for this model add a strand column. */
   strand: boolean;
   /** Strongest effects opens at this threshold. */
@@ -45,7 +45,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     otherModels: 'Beluga also predicts DNA effects; Seqweaver predicts RNA effects.',
     featureNoun: 'sequence class',
     featurePlural: 'sequence classes',
-    effectVerb: 'Raises',
+    verb: '',
     strand: false,
     threshold: 0.5,
     bins: { strong: 2, moderate: 1, weak: 0.5 },
@@ -62,7 +62,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     otherModels: 'Sei also predicts DNA effects; Seqweaver predicts RNA effects.',
     featureNoun: 'chromatin feature',
     featurePlural: 'chromatin features',
-    effectVerb: 'Raises',
+    verb: '',
     strand: false,
     threshold: 3,
     bins: zBins,
@@ -79,7 +79,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     otherModels: 'Sei and Beluga predict DNA effects.',
     featureNoun: 'protein',
     featurePlural: 'proteins',
-    effectVerb: 'Raises binding',
+    verb: 'binding',
     strand: true,
     threshold: 2,
     bins: zBins,

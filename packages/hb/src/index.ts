@@ -5,6 +5,8 @@ export { analysisColumns, analysisIcons, analysisOptions, productFooter, product
 export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
 export { JobAbout, type JobAboutProps, type JobExample } from './Jobs/JobAbout';
 export { DeepseaForm, deepseaJobLink, type DeepseaFormProps } from './Deepsea/DeepseaForm';
+export { DeepseaJobView, type DeepseaJobViewProps } from './Deepsea/DeepseaJobView';
+export { DeepseaResultView, type DeepseaResultViewProps } from './Deepsea/DeepseaResultView';
 export { HomeSearch, type HomeSearchProps } from './HomeSearch/HomeSearch';
 export { EmptyNetworkQuery, NetworkExplorer, type NetworkDetailContext, type NetworkExplorerProps } from './Networks/NetworkExplorer';
 export { NetworkDetail } from './Networks/NetworkDetail';
@@ -12,4 +14,5 @@ export { tissueConfidenceScale } from './Networks/tabs/scales';
 export { ModuleSearch, type ModuleSearchProps } from './ModuleSearch/ModuleSearch';
 export { ModuleExplorer, type ModuleDraft, type ModuleExplorerProps } from './Modules/ModuleExplorer';
 export { NetwasForm, type NetwasDraft, type NetwasFormProps } from './Netwas/NetwasForm';
-export { NetwasJobView, elapsed, type NetwasJobViewProps } from './Netwas/NetwasJobView';
+export { NetwasJobView, type NetwasJobViewProps } from './Netwas/NetwasJobView';
+export { elapsed, JobWaiting, jobDateTime, syncJobHistory, useJobActions, useJobTitle, type JobIdentity, type JobWaitingProps } from './Jobs/JobPage';
