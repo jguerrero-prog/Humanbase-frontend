@@ -100,3 +100,24 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+.force-graph-hull {
+  fill: var(--set-color);
+  stroke: var(--set-color);
+  stroke-width: 36px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 0.12;
+}
+
+.force-graph-star {
+  fill: none;
+  stroke: var(--set-color);
+  stroke-width: 3.5px;
+}
+
+.force-graph-star-edge {
+  fill: none;
+  stroke: var(--text-default);
+  stroke-width: 1px;
+}

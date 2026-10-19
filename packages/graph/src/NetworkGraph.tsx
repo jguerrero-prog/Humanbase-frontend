@@ -1,6 +1,6 @@
 import { useEffect, useImperativeHandle, useLayoutEffect, useRef, type Ref } from 'react';
 import { ForceGraphRenderer } from './ForceGraphRenderer';
-import type { GraphData, GraphRenderer, GraphRendererFactory, GraphSelection } from './GraphRenderer';
+import type { GraphData, GraphHighlight, GraphRenderer, GraphRendererFactory, GraphSelection } from './GraphRenderer';
 import './graph.css';
 
 export interface NetworkGraphHandle {
@@ -13,6 +13,8 @@ export interface NetworkGraphProps {
   data: GraphData;
   label: string;
   selection?: GraphSelection;
+  /** Starred sets, ringed in their colors. */
+  highlights?: readonly GraphHighlight[];
   onSelectNode?: (id: string) => void;
   onSelectLink?: (source: string, target: string) => void;
   onSelectGroup?: (id: string) => void;
@@ -23,8 +25,9 @@ export interface NetworkGraphProps {
 }
 
 const defaultRenderer: GraphRendererFactory = () => new ForceGraphRenderer();
+const noHighlights: readonly GraphHighlight[] = [];
 
-export function NetworkGraph({ data, label, selection = null, onSelectNode, onSelectLink, onSelectGroup, renderer, className, ref }: NetworkGraphProps) {
+export function NetworkGraph({ data, label, selection = null, highlights = noHighlights, onSelectNode, onSelectLink, onSelectGroup, renderer, className, ref }: NetworkGraphProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GraphRenderer | null>(null);
   const events = useRef({ onSelectNode, onSelectLink, onSelectGroup });
@@ -50,6 +53,7 @@ export function NetworkGraph({ data, label, selection = null, onSelectNode, onSe
 
   useEffect(() => instance.current?.render(data), [data, renderer, label]);
   useEffect(() => instance.current?.select(selection), [selection, data, renderer, label]);
+  useEffect(() => instance.current?.highlight(highlights), [highlights, data, renderer, label]);
 
   useImperativeHandle(ref, () => ({
     zoomBy: (factor) => instance.current?.zoomBy(factor),

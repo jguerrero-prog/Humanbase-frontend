@@ -36,6 +36,24 @@ describe('edgeBand', () => {
 });
 
 describe('ForceGraphRenderer', () => {
+  it('rings starred genes in stacking order, shades each set and keeps the highlight across a redraw', () => {
+    const { container, renderer } = mounted();
+    const blood = { id: 'BTO:0000131', label: 'peripheral blood', color: '--viz-cat-1', nodes: ['3554', '366', '999'] };
+    const dendritic = { id: 'BTO:0002042', label: 'dendritic cell', color: '--viz-cat-2', nodes: ['366'] };
+    renderer.highlight([blood, dendritic]);
+    const ringsOf = (name: string) => [...(container.querySelector(`[aria-label^="${name},"]`)?.querySelectorAll<SVGCircleElement>('.force-graph-star') ?? [])];
+    expect(ringsOf('IL1R1').map((ring) => ring.style.getPropertyValue('--set-color'))).toEqual(['var(--viz-cat-1)']);
+    expect(ringsOf('AQP9').map((ring) => ring.style.getPropertyValue('--set-color'))).toEqual(['var(--viz-cat-1)', 'var(--viz-cat-2)']);
+    expect(ringsOf('IL1B')).toHaveLength(0);
+    expect(container.querySelectorAll('.force-graph-hull')).toHaveLength(2);
+    expect(container.querySelector('.force-graph-hulls')?.getAttribute('aria-hidden')).toBe('true');
+
+    renderer.render(data);
+    expect(ringsOf('AQP9')).toHaveLength(2);
+    renderer.highlight([]);
+    expect(container.querySelectorAll('.force-graph-star, .force-graph-hull')).toHaveLength(0);
+  });
+
   it('draws a labeled group with one focusable button per gene and one line per connection', () => {
     const { container } = mounted();
     expect(container.querySelector('svg')?.getAttribute('aria-label')).toBe('Network of IL1B and TNF');
