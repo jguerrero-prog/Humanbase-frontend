@@ -1,4 +1,4 @@
-import { jobsMenuSummary, productFooter, productSections } from '@humanbase/hb';
+import { productFooter, productSections, useJobsMenuSummary } from '@humanbase/hb';
 import { Banner, Footer, SkipLink, TopBar } from '@humanbase/ui';
 import { useState } from 'react';
 import { Outlet } from 'react-router';
@@ -11,6 +11,7 @@ const whatsNew = new BrowserSetting<'shown' | 'dismissed'>('humanbase:whats-new'
 export function AppLayout({ current }: { current?: string }) {
   const [bannerShown, setBannerShown] = useState(() => whatsNew.get() === 'shown');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const jobs = useJobsMenuSummary();
   const dismissBanner = () => {
     whatsNew.set('dismissed');
     setBannerShown(false);
@@ -23,7 +24,7 @@ export function AppLayout({ current }: { current?: string }) {
           We’ve made some changes to Humanbase and we’d like to show you around.
         </Banner>
       )}
-      <TopBar sections={productSections} jobs={jobsMenuSummary()} {...(current ? { current } : {})} />
+      <TopBar sections={productSections} jobs={jobs} {...(current ? { current } : {})} />
       <main id="main" tabIndex={-1}>
         <Outlet />
       </main>

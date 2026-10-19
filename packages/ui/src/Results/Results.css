@@ -381,6 +381,11 @@
   color: var(--text-secondary);
 }
 
+.netwas-no-network {
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
 .netwas-guide {
   display: grid;
   gap: var(--space-4);

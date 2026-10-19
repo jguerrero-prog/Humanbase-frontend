@@ -19,3 +19,7 @@
   font: var(--type-caption);
   color: var(--text-secondary);
 }
+
+.netwas-genes-more {
+  justify-self: start;
+}

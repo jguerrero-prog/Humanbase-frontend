@@ -2,7 +2,7 @@ export { VariantJobForm, type VariantJobFormProps } from './VariantJobForm/Varia
 export { NetwasGenes, type NetwasGenesProps } from './NetwasGenes/NetwasGenes';
 export { AsdBrowser, type AsdBrowserProps, type AsdView } from './AsdBrowser/AsdBrowser';
 export { analysisColumns, analysisIcons, analysisOptions, productFooter, productSections } from './content/product';
-export { jobsMenuSummary } from './Jobs/jobsMenuSummary';
+export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
 export { HomeSearch, type HomeSearchProps } from './HomeSearch/HomeSearch';
 export { EmptyNetworkQuery, NetworkExplorer, type NetworkDetailContext, type NetworkExplorerProps } from './Networks/NetworkExplorer';
 export { NetworkDetail } from './Networks/NetworkDetail';
@@ -10,3 +10,4 @@ export { tissueConfidenceScale } from './Networks/tabs/scales';
 export { ModuleSearch, type ModuleSearchProps } from './ModuleSearch/ModuleSearch';
 export { ModuleExplorer, type ModuleDraft, type ModuleExplorerProps } from './Modules/ModuleExplorer';
 export { NetwasForm, type NetwasDraft, type NetwasFormProps } from './Netwas/NetwasForm';
+export { NetwasJobView, elapsed, type NetwasJobViewProps } from './Netwas/NetwasJobView';
