@@ -1,0 +1,5 @@
+{
+  "note": "Hand-built from the five rows the NetWAS docs print for their BMI example in adipose tissue; the full result file needs a real job.",
+  "status": 200,
+  "body": "# Job id: 00000000-0000-4000-8000-000000000003\n# Job title:\n# Email:\n# Created: October 17, 2026, 10:42 AM EDT\n# GWAS file: bmi-vegas.txt\n# GWAS format: vegas\n# Tissue: adipose tissue\n# P-value threshold: 0.01\nKRT6B\t-1\t0.561327\nEMP1\t-1\t0.541169\nZBTB41\t-1\t0.503238\nPNPLA8\t-1\t0.454396\nITGB4\t-1\t0.440985\n"
+}

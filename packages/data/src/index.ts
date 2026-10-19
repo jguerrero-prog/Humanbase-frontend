@@ -13,6 +13,10 @@ export { GenomeLocation, assemblyNames, type Assembly } from './genome/GenomeLoc
 export { VariantFileCheck, type FileCheckResult, type FileProblem, type InputKind, type VariantModel } from './jobs/VariantFileCheck';
 export { JobHistory, type JobEntry, type JobState } from './jobs/JobHistory';
 export { NetwasResult, type NetwasFilter, type NetwasGene, type TrainingLabel } from './jobs/NetwasResult';
+export { NetwasJob, type NetwasJobRecord } from './jobs/NetwasJob';
+export { NetwasService, type Mhc, type NetwasExample, type NetwasRequest, type SubmitProblem } from './jobs/NetwasService';
+export { GwasFileCheck, type GwasCheckResult, type GwasFormat } from './jobs/GwasFileCheck';
+export { useNetwasExample, useNetwasJob, useNetwasResult } from './react/useNetwasJob';
 export { AsdVariant, type AsdVariantRow } from './asd/AsdVariant';
 export { NetworkQuery, dataVersionNames, type ComparedNetwork } from './networks/NetworkQuery';
 export { GeneHit, type GeneHitRecord } from './genes/GeneHit';
