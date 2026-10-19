@@ -1,12 +1,13 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { sampleKey } from '../packages/data/src/sample/sampleKey.ts';
 
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice('--only='.length);
 const target = (args.find((arg) => !arg.startsWith('--')) ?? process.env.HB_API_PROXY_TARGET ?? 'https://hb.flatironinstitute.org').replace(/\/$/, '');
 const { endpoints } = JSON.parse(readFileSync(new URL('../packages/data/endpoints.json', import.meta.url), 'utf8'));
-const samplesDir = new URL('../packages/data/samples/', import.meta.url);
+const samplesDir = fileURLToPath(new URL('../packages/data/samples/', import.meta.url));
 
 // Drops long text the screens never show, such as term descriptions, wherever it appears in a response.
 function without(value, keys) {
@@ -37,8 +38,9 @@ async function record(endpoint, sample) {
   const response = await fetch(url, init);
   const read = () => (isFile ? response.text() : response.json().then((json) => without(json, endpoint.omit ?? [])));
   const recorded = { status: response.status, body: response.ok ? await read() : null };
-  const file = new URL(`${key}.json`, samplesDir);
-  mkdirSync(dirname(file.pathname), { recursive: true });
+  // A plain path keeps the key as written; a file URL would decode %3A into a colon.
+  const file = join(samplesDir, `${key}.json`);
+  mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, `${JSON.stringify(recorded, null, 2)}\n`);
   return { sample: key, result: String(response.status) };
 }

@@ -1,0 +1,50 @@
+{
+  "note": "Hand-built, not recorded: submitting a Sei or Beluga job to record one was blocked by the permission checker. Values come from the Figma result screens; the ID is clearly not a real job. Replace with a recorded job once one is submitted.",
+  "status": 200,
+  "body": [
+    {
+      "name": "Disease impact score",
+      "level": "VARIANT",
+      "short_name": "dis"
+    },
+    {
+      "name": "Mean -log e-value",
+      "level": "VARIANT",
+      "short_name": "mean-evalue"
+    },
+    {
+      "name": "z-score",
+      "level": "FEATURE",
+      "short_name": "zscore",
+      "range": [
+        -2,
+        0,
+        2
+      ]
+    },
+    {
+      "name": "e-value",
+      "level": "FEATURE",
+      "short_name": "evalue",
+      "range": [
+        0,
+        0.05
+      ],
+      "reverse_order": true
+    },
+    {
+      "name": "Probability diffs",
+      "level": "FEATURE",
+      "short_name": "diffs",
+      "range": [
+        -0.3,
+        0,
+        0.3
+      ],
+      "non_sig_range": [
+        -0.01,
+        0.01
+      ]
+    }
+  ]
+}
