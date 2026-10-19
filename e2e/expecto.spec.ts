@@ -4,6 +4,9 @@ import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
 
+// IRGM and PTEN are large tables, and each scan reads every heatmap cell, so these tests get longer than 30 seconds.
+test.describe.configure({ timeout: 90_000 });
+
 test('the ExPecto Gene tab opens IRGM by tissue system, then by tissue, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/expecto/`);
@@ -11,17 +14,24 @@ test('the ExPecto Gene tab opens IRGM by tissue system, then by tissue, with the
   expect(await violationsOf(page)).toEqual([]);
   await page.getByRole('button', { name: 'IRGM' }).click();
   await expect(page).toHaveURL(`${web}/expecto/genes/345611/`);
-  await expect(page.getByText('Predicted effect on IRGM expression, log fold change')).toBeVisible();
+  await expect(page.getByText('Predicted effect on IRGM expression, log fold change')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText('hematopoietic system').first()).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   await page.getByRole('radio', { name: 'Tissues' }).click();
   await expect(page).toHaveURL(`${web}/expecto/genes/345611/?view=tissues`);
+  expect(apiRequests).toEqual([]);
+});
+
+test('IRGM’s tissues filter by system and keep the filter in the URL, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  const heading = page.getByText('Predicted effect on IRGM expression, log fold change: 10 of 204 tissues');
+  await page.goto(`${web}/expecto/genes/345611/?view=tissues`);
   await page.getByRole('combobox', { name: 'Tissue system' }).click();
   await page.getByRole('option', { name: 'hematopoietic system' }).click();
-  await expect(page.getByText('Predicted effect on IRGM expression, log fold change: 10 of 204 tissues')).toBeVisible();
+  await expect(heading).toBeVisible({ timeout: 15_000 });
   expect(await violationsOf(page)).toEqual([]);
   await page.reload();
-  await expect(page.getByText('Predicted effect on IRGM expression, log fold change: 10 of 204 tissues')).toBeVisible();
+  await expect(heading).toBeVisible({ timeout: 15_000 });
   expect(apiRequests).toEqual([]);
 });
 
@@ -46,7 +56,7 @@ test('ExPecto SC opens PTEN by organ, with the API off', async ({ page }) => {
   expect(await violationsOf(page)).toEqual([]);
   await page.getByRole('button', { name: 'PTEN' }).click();
   await expect(page).toHaveURL(`${web}/expecto-sc/genes/5728/`);
-  await expect(page.getByText('Predicted effect on PTEN expression, z-score')).toBeVisible();
+  await expect(page.getByText('Predicted effect on PTEN expression, z-score')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText('retina').first()).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   expect(apiRequests).toEqual([]);
