@@ -7,7 +7,9 @@
   --cell-font: 400 14px/20px "Lato", sans-serif;
 }
 
+/* Positioned, so visually hidden text in cells scrolls with the table instead of widening the page. */
 .table-scroll {
+  position: relative;
   overflow: auto;
   max-block-size: var(--table-max-height, none);
   background: var(--surface-page);

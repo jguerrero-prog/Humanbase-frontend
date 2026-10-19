@@ -78,9 +78,10 @@ test('each NetWAS job state has no WCAG 2.2 AA violations, with the API off', as
 test('the NetWAS job and result pages fit a phone without scrolling sideways', async ({ page }) => {
   await apiOff(page);
   await page.setViewportSize({ width: 375, height: 812 });
-  for (const n of [1, 3]) {
-    await page.goto(job(n));
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
-  }
+  await page.goto(job(1));
+  await expect(page.getByRole('status').filter({ hasText: /Running for/ })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
+  await page.goto(job(3));
+  await expect(page.getByRole('link', { name: 'Open in Networks for KRT6B' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
 });
