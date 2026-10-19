@@ -48,9 +48,10 @@ export class VariantFileCheck {
     if (!first) return undefined;
     if (first.startsWith('>')) return 'fasta';
     const columns = first.split('\t');
-    if (columns.length >= 5) return 'vcf';
+    // VCF holds bases in columns 4 and 5; a six-column BED holds a name and a score there.
+    if (columns.length >= 5 && /^[ACGTN]+$/i.test(columns[3] ?? '') && /^[ACGTN.,*]+$/i.test(columns[4] ?? '')) return 'vcf';
     if (columns.length >= 3 && whole.test(columns[1] ?? '') && whole.test(columns[2] ?? '')) return 'bed';
-    return undefined;
+    return columns.length >= 5 ? 'vcf' : undefined;
   }
 
   private checkTable(lines: readonly string[]) {

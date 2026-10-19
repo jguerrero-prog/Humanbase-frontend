@@ -2,6 +2,7 @@ import { SampleClient } from '../sample/SampleClient';
 import { VariantFileCheck } from '../jobs/VariantFileCheck';
 import { deepseaExamples } from './deepseaExamples';
 import { DeepseaJob } from './DeepseaJob';
+import { deepseaModels } from './DeepseaModel';
 import { featureEffects, variantRows } from './DeepseaResult';
 import { DeepseaService } from './DeepseaService';
 
@@ -38,9 +39,36 @@ describe('DeepseaService', () => {
   });
 
   it('answers the example submission with a queued job when the API is off', async () => {
-    const job = await service.submit({ model: 'beluga', kind: 'vcf', text: deepseaExamples.beluga.vcf ?? '', fileName: 'example.vcf', genome: 'hg19' });
+    const job = await service.submit({ model: 'beluga', kind: 'vcf', text: deepseaExamples.beluga.hg19.vcf ?? '', fileName: 'example.vcf', genome: 'hg19' });
     expect(job.model.tool).toBe('Beluga');
     expect(job.status).toBe('queued');
+  });
+
+  it('sends the fields the live form sends, with pasted or example text as upload_textarea', () => {
+    const form = DeepseaService.formOf({ model: 'seqweaver', kind: 'vcf', text: 'chr1\t1\t.\tA\tG\t+', fileName: 'example.vcf', genome: 'hg38', title: ' RNA check ' });
+    expect([...form.entries()]).toEqual([
+      ['title', 'RNA check'],
+      ['email', ''],
+      ['input_type', 'vcf'],
+      ['ds_model', 'seqweaver'],
+      ['signup', 'false'],
+      ['expecto', 'false'],
+      ['upload_textarea', 'chr1\t1\t.\tA\tG\t+'],
+      ['insilico', 'false'],
+      ['genome_assembly', 'hg38'],
+    ]);
+  });
+
+  it('sends an uploaded file as upload_file and marks ExPecto and in silico jobs', async () => {
+    const expecto = DeepseaService.formOf({ model: 'expecto', kind: 'vcf', text: 'chr1\t1\t.\tA\tG', fileName: 'mine.vcf', uploaded: true, genome: 'hg19' });
+    expect(expecto.get('ds_model')).toBe('beluga');
+    expect(expecto.get('expecto')).toBe('true');
+    expect(expecto.get('upload_textarea')).toBe('');
+    const file = expecto.get('upload_file');
+    expect(file).toBeInstanceOf(File);
+    expect((file as File).name).toBe('mine.vcf');
+    expect(await (file as File).text()).toBe('chr1\t1\t.\tA\tG');
+    expect(DeepseaService.formOf({ model: 'insilico', kind: 'fasta', text: '>s', fileName: 'x.fasta', genome: 'hg19' }).get('insilico')).toBe('true');
   });
 
   it('reads a failed job’s reason', () => {
@@ -51,9 +79,16 @@ describe('DeepseaService', () => {
 });
 
 describe('deepseaExamples', () => {
-  it.each(['sei', 'beluga', 'seqweaver'] as const)('passes the %s file check', (model) => {
-    const result = new VariantFileCheck('vcf', model).check(deepseaExamples[model].vcf ?? '');
+  const cases = (['sei', 'beluga', 'seqweaver', 'expecto', 'insilico'] as const).flatMap((model) =>
+    deepseaModels[model].genomes.flatMap((genome) => deepseaModels[model].inputs.map((kind) => [model, genome, kind] as const)),
+  );
+
+  it.each(cases)('the %s example for %s %s passes the file check', (model, genome, kind) => {
+    const example = deepseaExamples[model][genome][kind];
+    if (!example) throw new Error(`No ${kind} example for ${model} on ${genome}`);
+    const result = new VariantFileCheck(kind, model).check(example);
     expect(result.problems).toEqual([]);
-    expect(result.count).toBe(model === 'seqweaver' ? 10 : 12);
+    expect(result.otherKind).toBeUndefined();
+    expect(result.count).toBeGreaterThan(0);
   });
 });

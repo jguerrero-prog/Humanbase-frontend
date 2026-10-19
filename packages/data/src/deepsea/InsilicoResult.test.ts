@@ -49,19 +49,19 @@ describe('in silico mutagenesis', () => {
 
   it('submits sequences with insilico turned on', () => {
     const form = DeepseaService.formOf({ model: 'insilico', kind: 'fasta', text: '>a\nACGT', fileName: 'example.fasta', genome: 'hg19' });
-    expect(form.get('ds_model')).toBe('Beluga');
+    expect(form.get('ds_model')).toBe('beluga');
     expect(form.get('insilico')).toBe('true');
-    expect(form.get('expecto')).toBeNull();
+    expect(form.get('expecto')).toBe('false');
   });
 
   it('bundles the live example as four sequences of 2,000 bp', () => {
-    const check = new VariantFileCheck('fasta', 'insilico').check(deepseaExamples.insilico.fasta ?? '');
+    const check = new VariantFileCheck('fasta', 'insilico').check(deepseaExamples.insilico.hg19.fasta ?? '');
     expect(check.count).toBe(4);
     expect(check.problems).toEqual([]);
   });
 
   it('answers an example submission with the sample job while the API is off', async () => {
-    const job = await service.submit({ model: 'insilico', kind: 'fasta', text: deepseaExamples.insilico.fasta ?? '', fileName: 'example.fasta', genome: 'hg19' });
+    const job = await service.submit({ model: 'insilico', kind: 'fasta', text: deepseaExamples.insilico.hg19.fasta ?? '', fileName: 'example.fasta', genome: 'hg19' });
     expect(job.id).toBe('00000000-0000-4000-8000-000000000151');
     expect(job.model.id).toBe('insilico');
   });

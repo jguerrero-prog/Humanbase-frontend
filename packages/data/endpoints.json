@@ -341,15 +341,15 @@
       "usedBy": [
         "DeepseaService.submit"
       ],
-      "$note": "Multipart upload. The schema does not name the file field; DeepseaService.fileField holds the guess to confirm. On October 20, 2026 the one approved ExPecto example job (ds_model=Beluga, expecto=true, the example VCF as input_file) answered 500 Server Error, so the field name is still unconfirmed and ExPecto’s samples are hand-built too.",
+      "$note": "Multipart form, read from the live site’s form on October 20, 2026: title, email, input_type (vcf, bed or fasta), ds_model in lower case (sei, beluga or seqweaver; ExPecto and in silico mutagenesis send beluga with expecto or insilico set to true), signup, expecto, insilico and genome_assembly (hg19, or hg38 except for ExPecto). The input goes as upload_file for an uploaded file or upload_textarea for pasted text and examples.",
       "handBuiltSamples": {
         "why": "Submitting starts a real job. With the API off, submitting a tool’s example answers with a hand-built running job; any other file explains that jobs need the API.",
         "files": [
-          "deepsea/jobs@post-f4c79f7c",
-          "deepsea/jobs@post-d5d72e89",
-          "deepsea/jobs@post-c312bddc",
-          "deepsea/jobs@post-3d67f823",
-          "deepsea/jobs@post-930ed3e5"
+          "deepsea/jobs@post-3c7b32f3",
+          "deepsea/jobs@post-f1d6a42a",
+          "deepsea/jobs@post-274f113b",
+          "deepsea/jobs@post-f48d59f5",
+          "deepsea/jobs@post-e0a6d2f5"
         ]
       }
     },

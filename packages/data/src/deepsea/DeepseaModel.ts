@@ -1,5 +1,9 @@
 import type { InputKind, VariantModel } from '../jobs/VariantFileCheck';
 
+export type Genome = 'hg19' | 'hg38';
+
+export const genomeLabels: Record<Genome, string> = { hg19: 'GRCh37/hg19', hg38: 'GRCh38/hg38' };
+
 /** The z-score bins every DeepSEA feature uses, and Sei's sequence class bins. */
 export interface EffectBins {
   strong: number;
@@ -14,6 +18,8 @@ export interface DeepseaModel {
   tool: string;
   /** The tool's name mid-sentence, when it differs, as in Run in silico mutagenesis. */
   inSentence?: string;
+  /** The genomes the API accepts for this tool; the first is the default. */
+  genomes: readonly Genome[];
   /** The inputs the tool takes; the first is where its form opens. */
   inputs: readonly InputKind[];
   option: string;
@@ -47,6 +53,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'sei',
     apiName: 'Sei',
     tool: 'Sei',
+    genomes: ['hg19', 'hg38'],
     inputs: ['vcf', 'bed', 'fasta'],
     option: 'Sei (DNA, 2021)',
     kind: 'Sei (DNA)',
@@ -65,6 +72,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'beluga',
     apiName: 'Beluga',
     tool: 'Beluga',
+    genomes: ['hg19', 'hg38'],
     inputs: ['vcf', 'bed', 'fasta'],
     option: 'Beluga (DNA, 2019)',
     kind: 'Beluga (DNA)',
@@ -83,6 +91,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'seqweaver',
     apiName: 'SeqWeaver',
     tool: 'Seqweaver',
+    genomes: ['hg19', 'hg38'],
     inputs: ['vcf', 'bed', 'fasta'],
     option: 'Seqweaver (RNA)',
     kind: 'Seqweaver (RNA)',
@@ -101,6 +110,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'expecto',
     apiName: 'Beluga',
     tool: 'ExPecto',
+    genomes: ['hg19'],
     inputs: ['vcf'],
     option: 'Beluga (DNA, 2019)',
     kind: 'ExPecto (Beluga model)',
@@ -122,6 +132,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'insilico',
     apiName: 'Beluga',
     tool: 'In silico mutagenesis',
+    genomes: ['hg19', 'hg38'],
     inSentence: 'in silico mutagenesis',
     inputs: ['fasta'],
     option: 'Beluga (DNA, 2019)',

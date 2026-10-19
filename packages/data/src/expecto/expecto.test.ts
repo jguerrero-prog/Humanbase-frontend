@@ -95,7 +95,7 @@ describe('ExPecto variant search', () => {
 describe('ExPecto jobs', () => {
   it('runs on Beluga with expecto turned on, and keeps its own page', () => {
     const form = DeepseaService.formOf({ model: 'expecto', kind: 'vcf', text: 'chr1\t1\t.\tA\tG', fileName: 'example.vcf', genome: 'hg19' });
-    expect(form.get('ds_model')).toBe('Beluga');
+    expect(form.get('ds_model')).toBe('beluga');
     expect(form.get('expecto')).toBe('true');
     expect(variantModels).not.toContain('expecto');
   });
