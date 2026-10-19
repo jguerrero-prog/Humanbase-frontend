@@ -5,6 +5,7 @@ import { ConnectionService } from './connections/ConnectionService';
 import { GeneFunctionService } from './functions/GeneFunctionService';
 import { TermService } from './functions/TermService';
 import { GeneService } from './genes/GeneService';
+import { NetwasService } from './jobs/NetwasService';
 import { IntegrationService } from './networks/IntegrationService';
 import { ModuleService } from './modules/ModuleService';
 import { NetworkService } from './networks/NetworkService';
@@ -20,6 +21,7 @@ export class Humanbase {
   readonly terms: TermService;
   readonly connections: ConnectionService;
   readonly modules: ModuleService;
+  readonly netwas: NetwasService;
 
   constructor(
     readonly client: DataClient,
@@ -33,6 +35,7 @@ export class Humanbase {
     this.terms = new TermService(client);
     this.connections = new ConnectionService(client);
     this.modules = new ModuleService(client);
+    this.netwas = new NetwasService(client);
   }
 
   static fromConfig(config: AppConfig): Humanbase {

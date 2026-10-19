@@ -271,6 +271,61 @@
           "integrations/community@body_tag=faa09d1786f0998dbd03d7323f544f5457d98936@post-77074ba4"
         ]
       }
+    },
+    {
+      "method": "POST",
+      "path": "/api/netwas/",
+      "documented": true,
+      "readOnly": false,
+      "usedBy": [
+        "NetwasService.submit"
+      ],
+      "handBuiltSamples": {
+        "why": "Submitting starts a real job, which needs approval, so no submission is recorded. With the API off, submitting the example BMI file to adipose tissue answers with the hand-built running job below; any other submission explains that jobs need the API.",
+        "files": [
+          "netwas@post-ddae0d73"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/netwas/{id}/",
+      "documented": true,
+      "samples": [
+        "/api/netwas/00000000-0000-4000-8000-000000000000/"
+      ],
+      "usedBy": [
+        "NetwasService.get"
+      ],
+      "handBuiltSamples": {
+        "why": "The documented example job (d7732f19, 2017) has expired, so no real job can be read without submitting one. The queued, running, failed and finished jobs are hand-built, shaped like the schema, with IDs that are clearly not real jobs, and say so in their note field. The recorded sample is the not-found answer.",
+        "files": [
+          "netwas/00000000-0000-4000-8000-000000000001",
+          "netwas/00000000-0000-4000-8000-000000000002",
+          "netwas/00000000-0000-4000-8000-000000000003",
+          "netwas/00000000-0000-4000-8000-000000000004"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "https://s3-us-west-2.amazonaws.com/humanbase/netwas/{file}",
+      "documented": true,
+      "text": true,
+      "$note": "Not the API: the example files the API documents and the results_file a finished job links to, read as text.",
+      "samples": [
+        "https://s3-us-west-2.amazonaws.com/humanbase/netwas/examples/bmi-vegas.txt"
+      ],
+      "usedBy": [
+        "NetwasService.exampleFile",
+        "NetwasService.result"
+      ],
+      "handBuiltSamples": {
+        "why": "The result file of the hand-built finished job, made from the five rows the NetWAS docs print; a full result needs a real job.",
+        "files": [
+          "files/s3-us-west-2.amazonaws.com/humanbase/netwas/results/00000000-0000-4000-8000-000000000003.txt"
+        ]
+      }
     }
   ]
 }

@@ -34,7 +34,7 @@ describe('ModuleService', () => {
   });
 
   it('polls without a body and says when a job is still running', async () => {
-    const client = { get: vi.fn(), post: vi.fn().mockResolvedValue({ status: 'processing' }) };
+    const client = { get: vi.fn(), post: vi.fn().mockResolvedValue({ status: 'processing' }), text: vi.fn() };
     await expect(new ModuleService(client).poll('abc')).resolves.toBeNull();
     expect(client.post).toHaveBeenCalledWith('integrations/community/', undefined, { body_tag: 'abc' });
   });

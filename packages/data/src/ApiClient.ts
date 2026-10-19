@@ -15,6 +15,12 @@ export class ApiClient implements DataClient {
     return this.request<T>('POST', path, query, body);
   }
 
+  async text(url: string): Promise<string> {
+    const response = await this.fetcher(url);
+    if (!response.ok) throw new ApiError(response.status, url);
+    return response.text();
+  }
+
   url(path: string, query: Query = {}): string {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(query)) {
@@ -27,12 +33,13 @@ export class ApiClient implements DataClient {
   private async request<T>(method: 'GET' | 'POST', path: string, query?: Query, body?: unknown): Promise<T> {
     const url = this.url(path, query);
     const init: RequestInit = { method, headers: { Accept: 'application/json' } };
-    if (body !== undefined) {
+    if (body instanceof FormData) init.body = body;
+    else if (body !== undefined) {
       init.headers = { ...init.headers, 'Content-Type': 'application/json' };
       init.body = JSON.stringify(body);
     }
     const response = await this.fetcher(url, init);
-    if (!response.ok) throw new ApiError(response.status, url);
+    if (!response.ok) throw new ApiError(response.status, url, await response.json().catch(() => undefined));
     return (await response.json()) as T;
   }
 }
