@@ -1,5 +1,5 @@
 export type InputKind = 'vcf' | 'bed' | 'fasta';
-export type VariantModel = 'sei' | 'beluga' | 'seqweaver';
+export type VariantModel = 'sei' | 'beluga' | 'seqweaver' | 'expecto';
 
 export interface FileProblem {
   line: number;
@@ -14,7 +14,7 @@ export interface FileCheckResult {
   otherKind?: string;
 }
 
-const modelNames: Record<VariantModel, string> = { sei: 'Sei', beluga: 'Beluga', seqweaver: 'Seqweaver' };
+const modelNames: Record<VariantModel, string> = { sei: 'Sei', beluga: 'Beluga', seqweaver: 'Seqweaver', expecto: 'ExPecto' };
 const kindNames: Record<InputKind, string> = { vcf: 'Variants (VCF)', bed: 'Regions (BED)', fasta: 'Sequences (FASTA)' };
 const nouns: Record<InputKind, [string, string]> = { vcf: ['variant', 'variants'], bed: ['region', 'regions'], fasta: ['sequence', 'sequences'] };
 const bases = /^[ACGT]+$/;
@@ -24,7 +24,7 @@ const number = new Intl.NumberFormat('en-US');
 // Applies today's input rules in the browser, so a file is fixed before it is uploaded.
 export class VariantFileCheck {
   static readonly maxVariants = 20000;
-  static readonly sequenceLength: Record<VariantModel, number> = { sei: 4096, beluga: 2000, seqweaver: 1000 };
+  static readonly sequenceLength: Record<VariantModel, number> = { sei: 4096, beluga: 2000, seqweaver: 1000, expecto: 2000 };
 
   constructor(
     readonly kind: InputKind,

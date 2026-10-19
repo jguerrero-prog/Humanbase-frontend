@@ -1,0 +1,877 @@
+{
+  "status": 200,
+  "body": {
+    "count": 17,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "rsid": "rs200216796",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226123,
+        "ref_allele": "G",
+        "alt_allele": "GT",
+        "features": {}
+      },
+      {
+        "rsid": "rs572058992",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226308,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs892647391",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226330,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs1017137811",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226342,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs11748158",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226345,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs534856123",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226351,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs114393607",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226353,
+        "ref_allele": "C",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs529553393",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226354,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs541284649",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226357,
+        "ref_allele": "A",
+        "alt_allele": "G",
+        "features": {}
+      },
+      {
+        "rsid": "rs559869501",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226363,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs551890672",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226388,
+        "ref_allele": "A",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs986742272",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226392,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs934712628",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226403,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs568273310",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226447,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs996675428",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226452,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {}
+      },
+      {
+        "rsid": "rs983597257",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226857,
+        "ref_allele": "T",
+        "alt_allele": "A",
+        "features": {}
+      },
+      {
+        "rsid": "rs139195173",
+        "chromosome": "chr5",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/345611/",
+          "entrez": 345611,
+          "systematic_name": "IRGM",
+          "standard_name": "IRGM",
+          "description": "immunity related GTPase M",
+          "xrefs": [
+            {
+              "xrid": "608212",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:29597",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "345611",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000237693",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "IFI1",
+            "LRG-47",
+            "LRG47",
+            "IRGM1"
+          ]
+        },
+        "position": 150226890,
+        "ref_allele": "TTGTC",
+        "alt_allele": "T",
+        "features": {}
+      }
+    ]
+  }
+}

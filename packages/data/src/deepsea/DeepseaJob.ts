@@ -40,7 +40,7 @@ function describe(key: string, kind: InputKind): Pick<ResultFile, 'holds' | 'for
   return { holds: 'Every result file in one archive', format: 'tar.gz' };
 }
 
-/** One Sei, Beluga or Seqweaver job, as GET /api/deepsea/jobs/{job_id}/ returns it. */
+/** One Sei, Beluga, Seqweaver or ExPecto job, as GET /api/deepsea/jobs/{job_id}/ returns it. */
 export class DeepseaJob {
   constructor(private readonly record: DeepseaJobRecord) {}
 
@@ -53,6 +53,7 @@ export class DeepseaJob {
   }
 
   get model(): DeepseaModel {
+    if (this.record.expecto) return deepseaModels.expecto;
     return modelOf(this.record.ds_model) ?? deepseaModels.sei;
   }
 

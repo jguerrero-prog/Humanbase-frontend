@@ -29,6 +29,9 @@ export interface DeepseaModel {
   threshold: number;
   bins: EffectBins;
   docsHref: string;
+  /** ExPecto runs as a Beluga job with expecto turned on; it has no Model choice of its own. */
+  basedOn?: VariantModel;
+  expecto?: boolean;
 }
 
 const zBins: EffectBins = { strong: 5, moderate: 3, weak: 2 };
@@ -85,10 +88,31 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     bins: zBins,
     docsHref: '/docs/seqweaver/',
   },
+  expecto: {
+    id: 'expecto',
+    apiName: 'Beluga',
+    tool: 'ExPecto',
+    option: 'Beluga (DNA, 2019)',
+    kind: 'ExPecto (Beluga model)',
+    summary: 'Predict how variants change gene expression across tissues.',
+    about:
+      'ExPecto leverages deep learning-based sequence models trained on chromatin profiling data, and integrated with spatial transformation and regularized linear models. This framework does not use any variant information, enabling prediction of the expression effect for any variant, even those that are rare or have never been previously observed.',
+    otherModels: 'ExPecto builds on Beluga’s chromatin predictions.',
+    featureNoun: 'tissue',
+    featurePlural: 'tissues',
+    verb: 'expression',
+    strand: false,
+    threshold: 0.1,
+    bins: { strong: 0.1, moderate: 0.05, weak: 0.02 },
+    docsHref: '/docs/expecto/',
+    basedOn: 'beluga',
+    expecto: true,
+  },
 };
 
-export const variantModels = Object.keys(deepseaModels) as VariantModel[];
+/** The models a Model field offers; ExPecto has its own page. */
+export const variantModels = (Object.keys(deepseaModels) as VariantModel[]).filter((model) => !deepseaModels[model].basedOn);
 
 export function modelOf(apiName: string): DeepseaModel | undefined {
-  return Object.values(deepseaModels).find((model) => model.apiName.toLowerCase() === apiName.toLowerCase());
+  return Object.values(deepseaModels).find((model) => !model.basedOn && model.apiName.toLowerCase() === apiName.toLowerCase());
 }

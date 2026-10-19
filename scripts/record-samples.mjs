@@ -16,6 +16,14 @@ function without(value, keys) {
   return Object.fromEntries(Object.entries(value).filter(([key]) => !keys.includes(key)).map(([key, item]) => [key, without(item, keys)]));
 }
 
+// Rounds long decimals, so large score tables stay small enough to bundle.
+function rounded(value, digits) {
+  if (Array.isArray(value)) return value.map((item) => rounded(item, digits));
+  if (typeof value === 'number' && !Number.isInteger(value)) return Number(value.toFixed(digits));
+  if (value === null || typeof value !== 'object') return value;
+  return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, rounded(item, digits)]));
+}
+
 function queryOf(url) {
   const query = {};
   for (const key of new Set(url.searchParams.keys())) {
@@ -27,7 +35,8 @@ function queryOf(url) {
 
 // Records one response per sample. POST samples run only on endpoints marked readOnly, so no job is ever submitted.
 async function record(endpoint, sample) {
-  const { path, body } = typeof sample === 'string' ? { path: sample } : sample;
+  const { path, body, omit, digits } = typeof sample === 'string' ? { path: sample } : sample;
+  // A sample may set its own omit list, replacing the endpoint's, and round its numbers to digits.
   // A full URL is a file the API links to, such as an example or result file, read as text.
   const isFile = /^https?:\/\//.test(path);
   const url = new URL(isFile ? path : target + path);
@@ -36,12 +45,14 @@ async function record(endpoint, sample) {
   const init = { method: endpoint.method, headers: { Accept: 'application/json' } };
   if (body !== undefined) Object.assign(init, { body: JSON.stringify(body), headers: { ...init.headers, 'Content-Type': 'application/json' } });
   const response = await fetch(url, init);
-  const read = () => (isFile ? response.text() : response.json().then((json) => without(json, endpoint.omit ?? [])));
+  const shrink = (json) => (digits === undefined ? json : rounded(json, digits));
+  const read = () => (isFile ? response.text() : response.json().then((json) => shrink(without(json, omit ?? endpoint.omit ?? []))));
   const recorded = { status: response.status, body: response.ok ? await read() : null };
   // A plain path keeps the key as written; a file URL would decode %3A into a colon.
   const file = join(samplesDir, `${key}.json`);
   mkdirSync(dirname(file), { recursive: true });
-  writeFileSync(file, `${JSON.stringify(recorded, null, 2)}\n`);
+  // Rounded samples are large tables, so they skip the indentation too.
+  writeFileSync(file, `${JSON.stringify(recorded, null, digits === undefined ? 2 : 0)}\n`);
   return { sample: key, result: String(response.status) };
 }
 

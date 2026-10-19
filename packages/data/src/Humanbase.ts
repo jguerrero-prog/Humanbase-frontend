@@ -6,6 +6,7 @@ import { GeneFunctionService } from './functions/GeneFunctionService';
 import { TermService } from './functions/TermService';
 import { GeneService } from './genes/GeneService';
 import { DeepseaService } from './deepsea/DeepseaService';
+import { ExpectoService } from './expecto/ExpectoService';
 import { NetwasService } from './jobs/NetwasService';
 import { IntegrationService } from './networks/IntegrationService';
 import { ModuleService } from './modules/ModuleService';
@@ -24,6 +25,7 @@ export class Humanbase {
   readonly modules: ModuleService;
   readonly netwas: NetwasService;
   readonly deepsea: DeepseaService;
+  readonly expecto: ExpectoService;
 
   constructor(
     readonly client: DataClient,
@@ -39,6 +41,7 @@ export class Humanbase {
     this.modules = new ModuleService(client);
     this.netwas = new NetwasService(client);
     this.deepsea = new DeepseaService(client);
+    this.expecto = new ExpectoService(client);
   }
 
   static fromConfig(config: AppConfig): Humanbase {

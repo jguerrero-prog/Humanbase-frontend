@@ -1,3 +1,5 @@
+import { expectoTissues } from '../expecto/expectoTissues';
+
 export interface ScoreType {
   name: string;
   level: 'VARIANT' | 'FEATURE';
@@ -38,7 +40,9 @@ export interface ModelFeature {
 }
 
 export interface FeaturesRecord {
-  model_features: ModelFeature[];
+  model_features?: ModelFeature[];
+  /** With expecto=true: ExPecto's tissues, in the order its predictions use. */
+  expecto_features?: { title: string; idx: number }[];
 }
 
 /** One row of a result: a variant with each of its variant-level scores. */
@@ -92,7 +96,8 @@ export function variantRows(sets: readonly VariantScoresRecord[]): VariantRow[] 
 
 /** The selected variant’s score for every feature, named from the model’s feature list. */
 export function featureEffects(prediction: FeaturePredictionRecord, features: FeaturesRecord): FeatureEffect[] {
-  const byIndex = new Map(features.model_features.map((feature) => [feature.idx, feature]));
+  if (features.expecto_features) return tissueEffects(prediction, features.expecto_features);
+  const byIndex = new Map((features.model_features ?? []).map((feature) => [feature.idx, feature]));
   return prediction.feature_predictions.flatMap((value, index) => {
     const feature = byIndex.get(index);
     if (!feature) return [];
@@ -102,5 +107,18 @@ export function featureEffects(prediction: FeaturePredictionRecord, features: Fe
     const replicate = /rep\.?(\d+)/i.exec(treatment)?.[1];
     const context = replicate ? `${cell} rep ${replicate}` : cell;
     return [{ feature: name, cell, context, label: `${cell} / ${name}${treatment ? ` (${treatment})` : ''}`, value }];
+  });
+}
+
+/** An ExPecto job's effect on each tissue's expression, with its resource and tissue system. */
+function tissueEffects(prediction: FeaturePredictionRecord, tissues: readonly { title: string; idx: number }[]): FeatureEffect[] {
+  const byIndex = new Map(tissues.map((tissue) => [tissue.idx, tissue.title]));
+  return prediction.feature_predictions.flatMap((value, index) => {
+    const title = byIndex.get(index);
+    if (!title) return [];
+    const tissue = expectoTissues.get(title);
+    const resource = tissue?.resource.replace(', redundant', '') ?? '';
+    const context = [resource, tissue?.systems.join(' and ')].filter(Boolean).join(', ');
+    return [{ feature: title, cell: resource, context, label: title, value }];
   });
 }

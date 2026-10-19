@@ -15,7 +15,7 @@ export interface DeepseaRequest {
   email?: string | undefined;
 }
 
-/** Sei, Beluga and Seqweaver run as jobs on the same endpoints; only ds_model and the features change. */
+/** Sei, Beluga, Seqweaver and ExPecto run as jobs on the same endpoints; only ds_model, expecto and the features change. */
 export class DeepseaService {
   static readonly pollEvery = 10_000;
   // The schema doesn't name the upload field; confirm with the API team before relying on it.
@@ -30,6 +30,7 @@ export class DeepseaService {
   static formOf({ model, kind, text, fileName, genome, title, email }: DeepseaRequest): FormData {
     const form = new FormData();
     form.append('ds_model', deepseaModels[model].apiName);
+    if (deepseaModels[model].expecto) form.append('expecto', 'true');
     form.append('input_type', kind);
     form.append('genome_assembly', genome);
     if (title?.trim()) form.append('title', title.trim());
@@ -60,6 +61,7 @@ export class DeepseaService {
   }
 
   features(model: VariantModel): Promise<FeaturesRecord> {
-    return this.client.get<FeaturesRecord>(`deepsea/${deepseaModels[model].apiName}/features/`);
+    const info = deepseaModels[model];
+    return this.client.get<FeaturesRecord>(`deepsea/${info.apiName}/features/`, info.expecto ? { expecto: true } : {});
   }
 }
