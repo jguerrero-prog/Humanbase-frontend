@@ -46,6 +46,7 @@ const pages = [
   'http://localhost:4322/ui-library/results-layout/',
   'http://localhost:4322/ui-library/netwas-results/',
   'http://localhost:4322/ui-library/variant-effect-results/',
+  'http://localhost:4322/ui-library/asd-browser/',
 ];
 
 for (const url of pages) {

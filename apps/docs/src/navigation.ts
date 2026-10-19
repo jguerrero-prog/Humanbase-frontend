@@ -85,7 +85,7 @@ export const navigation: NavSection[] = [
       { label: 'Variant effect results', href: '/ui-library/variant-effect-results/' },
       { label: 'Genome browser', href: '/ui-library/genome-browser/' },
       { label: 'Heatmaps and score legends', href: '/ui-library/heatmaps-and-score-legends/' },
-      { label: 'ASD Browser' },
+      { label: 'ASD Browser', href: '/ui-library/asd-browser/' },
       { label: 'NetWAS results', href: '/ui-library/netwas-results/' },
     ],
   },
