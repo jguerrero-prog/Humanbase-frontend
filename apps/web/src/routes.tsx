@@ -6,6 +6,7 @@ import { NetworksPage } from './pages/NetworksPage';
 import { NetwasJobPage } from './pages/netwas/NetwasJobPage';
 import { NetwasPage } from './pages/netwas/NetwasPage';
 import { DeepseaPage } from './pages/deepsea/DeepseaPage';
+import { DeepseaJobPage } from './pages/deepsea/DeepseaJobPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       { path: 'sei', element: <DeepseaPage model="sei" /> },
       { path: 'beluga', element: <DeepseaPage model="beluga" /> },
       { path: 'seqweaver', element: <DeepseaPage model="seqweaver" /> },
+      { path: 'deepsea/jobs/:id', element: <DeepseaJobPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

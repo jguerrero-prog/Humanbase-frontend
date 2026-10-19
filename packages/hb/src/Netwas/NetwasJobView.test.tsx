@@ -1,6 +1,7 @@
 import { Humanbase, HumanbaseProvider, JobHistory, SampleClient } from '@humanbase/data';
 import { render, screen } from '@testing-library/react';
-import { elapsed, NetwasJobView } from './NetwasJobView';
+import { elapsed } from '../Jobs/JobPage';
+import { NetwasJobView } from './NetwasJobView';
 
 const job = (n: number) => `00000000-0000-4000-8000-00000000000${n}`;
 

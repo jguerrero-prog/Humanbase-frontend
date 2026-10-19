@@ -509,3 +509,14 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.result-file-name {
+  display: block;
+  font: var(--type-label-sm);
+}
+
+.result-file-about {
+  display: block;
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}

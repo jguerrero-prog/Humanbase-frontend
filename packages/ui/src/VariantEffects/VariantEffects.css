@@ -137,6 +137,7 @@
 
 .molecular-effects {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   padding: var(--space-6);
   background: var(--surface-page);
@@ -152,6 +153,7 @@
 
 .molecular-effects .tabs-panel {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
   padding-block-start: var(--space-5);
 }
@@ -286,6 +288,8 @@
 
 .effect-name-text {
   display: grid;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
 }
 
 .effect-feature {
@@ -351,4 +355,29 @@
 .all-features-label {
   font: var(--type-caption);
   fill: var(--text-default);
+}
+
+/* Phones: the focus line wraps, counts go two by two and raises sit above lowers. */
+@media (width < 48rem) {
+  .variant-focus {
+    flex-wrap: wrap;
+    align-items: start;
+  }
+
+  .molecular-effects {
+    padding: var(--space-4);
+  }
+
+  .effects-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .effects-directions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .effects-axis,
+  .effect-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
 }

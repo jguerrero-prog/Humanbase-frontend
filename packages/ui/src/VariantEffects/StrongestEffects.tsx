@@ -5,7 +5,7 @@ import { Icon } from '../Icon/Icon';
 import { LegendStepped } from '../Heatmap/LegendStepped';
 import { ScoreScale } from '../Heatmap/ScoreScale';
 import { EffectGroups, type EffectExperiment, type EffectGroup, type StrengthCounts } from './EffectGroups';
-import { effectZScale } from './MolecularEffects';
+import type { EffectScale } from './EffectScale';
 import './VariantEffects.css';
 
 export interface StrongestEffectsProps {
@@ -24,23 +24,41 @@ export interface StrongestEffectsProps {
   verb?: string | undefined;
 }
 
-const cut = 10;
-const axisTicks = [0, 2, 3, 5, 10];
-const scale = new ScoreScale(effectZScale);
-const one = (value: number) => value.toFixed(1).replace('-', '−');
-const share = (value: number) => `${(Math.min(Math.abs(value), cut) / cut) * 100}%`;
+
+/** Bar lengths, colors and numbers on one effect scale. */
+class EffectBars {
+  private readonly colors: ScoreScale;
+
+  constructor(readonly scale: EffectScale) {
+    this.colors = new ScoreScale(scale.legend);
+  }
+
+  share(value: number): string {
+    return `${(Math.min(Math.abs(value), this.scale.cut) / this.scale.cut) * 100}%`;
+  }
+
+  color(value: number): string {
+    return `var(${this.colors.color(this.colors.step(value) ?? 4)})`;
+  }
+
+  format(value: number): string {
+    return value.toFixed(this.scale.digits).replace('-', '−');
+  }
+}
 
 export function StrongestEffects({ effects, counts, threshold, expanded = [], onToggle, limit = 14, onShowMore, plural = 'proteins', verb = 'binding' }: StrongestEffectsProps) {
   const shown = useMemo(() => effects.atLeast(threshold), [effects, threshold]);
   const tally = counts ?? effects.counts();
   const raises = shown.groups('raises');
   const lowers = shown.groups('lowers');
+  const bars = useMemo(() => new EffectBars(effects.scale), [effects.scale]);
+  const { prefix, bins } = effects.scale;
   const lowest = threshold ?? 0;
   const stats: [number, string][] = [
-    [tally.strong, 'strong, z 5 or more'],
-    [tally.moderate, 'moderate, 3 to 5'],
-    [tally.weak, 'weak, 2 to 3'],
-    [tally.lowered, 'lowered by 2 or more'],
+    [tally.strong, `strong, ${prefix}${bins.strong} or more`],
+    [tally.moderate, `moderate, ${bins.moderate} to ${bins.strong}`],
+    [tally.weak, `weak, ${bins.weak} to ${bins.moderate}`],
+    [tally.lowered, `lowered by ${bins.weak} or more`],
   ];
 
   return (
@@ -52,18 +70,18 @@ export function StrongestEffects({ effects, counts, threshold, expanded = [], on
           </li>
         ))}
       </ul>
-      <LegendStepped spec={effectZScale} className="effects-legend" />
+      <LegendStepped spec={effects.scale.legend} className="effects-legend" />
       <div className="effects-directions">
-        <EffectColumn title={`Raises ${verb}, ${raises.length} ${plural}`} groups={raises} expanded={expanded} onToggle={onToggle} limit={limit} onShowMore={onShowMore} plural={plural} />
-        <section className="effects-column effects-lowers" aria-label={`Lowers ${verb}`}>
-          <h4 className="effects-column-title">Lowers {verb}</h4>
+        <EffectColumn bars={bars} title={`${['Raises', verb].filter(Boolean).join(' ')}, ${raises.length} ${plural}`} groups={raises} expanded={expanded} onToggle={onToggle} limit={limit} onShowMore={onShowMore} plural={plural} />
+        <section className="effects-column effects-lowers" aria-label={['Lowers', verb].filter(Boolean).join(' ')}>
+          <h4 className="effects-column-title">{['Lowers', verb].filter(Boolean).join(' ')}</h4>
           {lowers.length === 0 ? (
             <EmptyState
-              title={`No feature is lowered by ${lowest || 2} or more`}
+              title={`No feature is lowered by ${lowest || bins.weak} or more`}
               text="For this variant, the lowest scores sit just below 0 (see All features). Choose All to list them anyway."
             />
           ) : (
-            <EffectList groups={lowers} expanded={expanded} onToggle={onToggle} />
+            <EffectList bars={bars} groups={lowers} expanded={expanded} onToggle={onToggle} />
           )}
         </section>
       </div>
@@ -72,6 +90,7 @@ export function StrongestEffects({ effects, counts, threshold, expanded = [], on
 }
 
 interface EffectColumnProps {
+  bars: EffectBars;
   title: string;
   groups: EffectGroup[];
   expanded: readonly string[];
@@ -81,23 +100,23 @@ interface EffectColumnProps {
   plural: string;
 }
 
-function EffectColumn({ title, groups, expanded, onToggle, limit, onShowMore, plural }: EffectColumnProps) {
+function EffectColumn({ bars, title, groups, expanded, onToggle, limit, onShowMore, plural }: EffectColumnProps) {
   const hidden = groups.length - limit;
   return (
     <section className="effects-column" aria-label={title}>
       <h4 className="effects-column-title">{title}</h4>
       <div className="effects-axis" aria-hidden="true">
-        <span>z-score</span>
+        <span>{bars.scale.axis}</span>
         <span className="effects-axis-scale">
-          {axisTicks.map((tick) => (
-            <span key={tick} style={{ insetInlineStart: share(tick) } as CSSProperties}>
+          {bars.scale.ticks.map((tick) => (
+            <span key={tick} style={{ insetInlineStart: bars.share(tick) } as CSSProperties}>
               {tick}
             </span>
           ))}
         </span>
-        <span>cut at {cut}</span>
+        <span>cut at {bars.scale.cut}</span>
       </div>
-      <EffectList groups={groups.slice(0, limit)} expanded={expanded} onToggle={onToggle} />
+      <EffectList bars={bars} groups={groups.slice(0, limit)} expanded={expanded} onToggle={onToggle} />
       {hidden > 0 && (
         <Button variant="ghost" size="small" onClick={onShowMore}>
           Show {hidden} more {plural}
@@ -107,13 +126,13 @@ function EffectColumn({ title, groups, expanded, onToggle, limit, onShowMore, pl
   );
 }
 
-function EffectList({ groups, expanded, onToggle }: { groups: EffectGroup[]; expanded: readonly string[]; onToggle?: ((feature: string) => void) | undefined }) {
+function EffectList({ bars, groups, expanded, onToggle }: { bars: EffectBars; groups: EffectGroup[]; expanded: readonly string[]; onToggle?: ((feature: string) => void) | undefined }) {
   return (
     <ol className="effects-list">
       {groups.map((group) => {
         const several = group.experiments.length > 1;
         const open = several && expanded.includes(group.feature);
-        const value = several ? `${one(group.low)} to ${one(group.high)}` : one(group.peak);
+        const value = several ? `${bars.format(group.low)} to ${bars.format(group.high)}` : bars.format(group.peak);
         const detail = several ? `${group.experiments.length} experiments: ${group.cells.join(', ')}` : group.experiments[0]?.context;
         return (
           <li key={group.feature} className="effect">
@@ -128,13 +147,13 @@ function EffectList({ groups, expanded, onToggle }: { groups: EffectGroup[]; exp
                   <EffectName feature={group.feature} detail={detail} />
                 </span>
               )}
-              <EffectBar value={group.peak} />
+              <EffectBar bars={bars} value={group.peak} />
               <span className="effect-value">{value}</span>
             </div>
             {open && (
               <ol className="effects-experiments">
                 {group.experiments.map((experiment) => (
-                  <ExperimentRow key={experiment.label} experiment={experiment} />
+                  <ExperimentRow key={experiment.label} bars={bars} experiment={experiment} />
                 ))}
               </ol>
             )}
@@ -154,21 +173,20 @@ function EffectName({ feature, detail }: { feature: string; detail: string | und
   );
 }
 
-function ExperimentRow({ experiment }: { experiment: EffectExperiment }) {
+function ExperimentRow({ bars, experiment }: { bars: EffectBars; experiment: EffectExperiment }) {
   return (
     <li className="effect-row effect-experiment">
       <span className="effect-name effect-detail">{experiment.context}</span>
-      <EffectBar value={experiment.value} />
-      <span className="effect-value">{one(experiment.value)}</span>
+      <EffectBar bars={bars} value={experiment.value} />
+      <span className="effect-value">{bars.format(experiment.value)}</span>
     </li>
   );
 }
 
-function EffectBar({ value }: { value: number }) {
-  const step = scale.step(value) ?? 4;
+function EffectBar({ bars, value }: { bars: EffectBars; value: number }) {
   return (
     <span className="effect-bar" aria-hidden="true">
-      <span style={{ inlineSize: share(value), background: `var(${scale.color(step)})` } as CSSProperties} />
+      <span style={{ inlineSize: bars.share(value), background: bars.color(value) } as CSSProperties} />
     </span>
   );
 }

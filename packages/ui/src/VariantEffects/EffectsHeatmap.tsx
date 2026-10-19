@@ -1,7 +1,7 @@
 import { Button } from '../Button/Button';
 import { Heatmap } from '../Heatmap/Heatmap';
 import type { EffectExperiment } from './EffectGroups';
-import { effectZScale } from './MolecularEffects';
+import { zEffects, type EffectScale } from './EffectScale';
 import './VariantEffects.css';
 
 export interface EffectsHeatmapProps {
@@ -15,17 +15,18 @@ export interface EffectsHeatmapProps {
   lowestFirst?: boolean | undefined;
   onShowMore?: (() => void) | undefined;
   initialActive?: readonly [row: number, column: number] | undefined;
+  scale?: EffectScale | undefined;
 }
 
-export function EffectsHeatmap({ variants, rows, total, density = 'full', lowestFirst = false, onShowMore, initialActive }: EffectsHeatmapProps) {
+export function EffectsHeatmap({ variants, rows, total, density = 'full', lowestFirst = false, onShowMore, initialActive, scale = zEffects }: EffectsHeatmapProps) {
   const sorted = [...rows].sort((a, b) => (lowestFirst ? -1 : 1) * ((b.values[0] ?? 0) - (a.values[0] ?? 0)));
   const summary = `Showing the top ${sorted.length} of ${total} features for this variant.`;
   return (
     <div className="effects-heatmap">
       <Heatmap
-        title={`z-score of the strongest features for ${variants.join(', ')}`}
+        title={`${scale.legend.title} of the strongest features for ${variants.join(', ')}`}
         summary={summary}
-        scale={effectZScale}
+        scale={scale.legend}
         columns={variants.map((label) => ({ label }))}
         rows={sorted.map(({ experiment, values }) => ({ label: experiment.label, values }))}
         rowHeader="Experiment"

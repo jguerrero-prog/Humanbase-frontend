@@ -1,6 +1,5 @@
 import { useId, type ReactNode } from 'react';
 import { Checkbox } from '../Checkbox/Checkbox';
-import type { ScaleSpec } from '../Heatmap/ScoreScale';
 import { SearchField } from '../SearchField/SearchField';
 import { SegmentedControl } from '../SegmentedControl/SegmentedControl';
 import { Select, type SelectOption } from '../Select/Select';
@@ -9,8 +8,7 @@ import './VariantEffects.css';
 
 export type EffectsView = 'strongest' | 'heatmap' | 'all';
 
-/** The z-score legend every variant feature uses: edges at |z| 2, 3 and 5. */
-export const effectZScale: ScaleSpec = { title: 'z-score', kind: 'diverging', edges: [-5, -3, -2, 2, 3, 5], words: ['Lowers', 'Raises'] };
+export { effectZScale } from './EffectScale';
 
 export interface MolecularEffectsProps {
   /** The selected variant, such as chr1:109,817,590 G>T. */
@@ -41,12 +39,6 @@ export function MolecularEffects({ variant, view, onViewChange, allLabel = 'All 
   );
 }
 
-const thresholds = [
-  { value: '2', label: '2 or more' },
-  { value: '3', label: '3 or more' },
-  { value: '5', label: '5 or more' },
-  { value: 'all', label: 'All' },
-];
 
 const densities = [
   { value: 'full', label: 'Full' },
@@ -59,6 +51,8 @@ export interface EffectsControlsProps {
   onScore?: ((score: string) => void) | undefined;
   /** Shown when present: the threshold, cell types, search, grouping, rows and order. */
   threshold?: number | null | undefined;
+  /** The threshold choices, weakest first; z-scores use 2, 3 and 5. */
+  thresholdSteps?: readonly number[] | undefined;
   onThreshold?: ((threshold: number | null) => void) | undefined;
   cellTypes?: readonly SelectOption[] | undefined;
   search?: string | undefined;
@@ -74,7 +68,7 @@ export interface EffectsControlsProps {
 }
 
 export function EffectsControls(props: EffectsControlsProps) {
-  const { scores, score, onScore, threshold, onThreshold, cellTypes, search, onSearch, groupByFeature, onGroupByFeature, featureNoun = 'protein', density, onDensity, lowestFirst, onLowestFirst } = props;
+  const { scores, score, onScore, threshold, thresholdSteps = [2, 3, 5], onThreshold, cellTypes, search, onSearch, groupByFeature, onGroupByFeature, featureNoun = 'protein', density, onDensity, lowestFirst, onLowestFirst } = props;
   return (
     <div className="effects-controls">
       <Select label="Score" size="small" options={scores} value={score} {...(onScore && { onChange: onScore })} className="effects-score" />
@@ -82,7 +76,7 @@ export function EffectsControls(props: EffectsControlsProps) {
         <SegmentedControl
           label="Show effects of"
           size="small"
-          segments={thresholds}
+          segments={[...thresholdSteps.map((step) => ({ value: String(step), label: `${step} or more` })), { value: 'all', label: 'All' }]}
           value={threshold === null ? 'all' : String(threshold)}
           onChange={(value) => onThreshold?.(value === 'all' ? null : Number(value))}
         />

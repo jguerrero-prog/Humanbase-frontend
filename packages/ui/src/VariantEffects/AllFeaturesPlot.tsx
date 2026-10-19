@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { ScoreScale } from '../Heatmap/ScoreScale';
-import { effectZScale } from './MolecularEffects';
+import { zEffects, type EffectScale } from './EffectScale';
 import './VariantEffects.css';
 
 export interface AllFeaturesPlotProps {
@@ -11,6 +11,7 @@ export interface AllFeaturesPlotProps {
   /** How many of the strongest are drawn as the heatmap's top rows. */
   marked?: number | undefined;
   summary: string;
+  scale?: EffectScale | undefined;
 }
 
 const width = 1214;
@@ -20,12 +21,12 @@ const bottom = 56;
 const top = 16;
 const plotWidth = width - left - 260;
 const plotHeight = height - top - bottom;
-const scale = new ScoreScale(effectZScale);
 
-export function AllFeaturesPlot({ values, labels = [], marked = 20, summary }: AllFeaturesPlotProps) {
+export function AllFeaturesPlot({ values, labels = [], marked = 20, summary, scale: effectScale = zEffects }: AllFeaturesPlotProps) {
+  const scale = new ScoreScale(effectScale.legend);
   const id = useId();
   const sorted = [...values].sort((a, b) => a - b);
-  const max = Math.max(5, Math.ceil(Math.max(...sorted) / 5) * 5);
+  const max = Math.max(effectScale.bins.strong, Math.ceil(Math.max(...sorted) / effectScale.bins.strong) * effectScale.bins.strong);
   const min = Math.min(0, Math.floor(Math.min(...sorted)));
   const x = (rank: number) => left + ((rank - 1) / Math.max(sorted.length - 1, 1)) * plotWidth;
   const y = (value: number) => top + plotHeight - ((value - min) / (max - min)) * plotHeight;
@@ -53,7 +54,7 @@ export function AllFeaturesPlot({ values, labels = [], marked = 20, summary }: A
           Rank, lowest to highest
         </text>
         <text className="variant-plot-title" transform={`translate(14 ${top + plotHeight / 2}) rotate(-90)`} textAnchor="middle">
-          z-score
+          {effectScale.legend.title}
         </text>
         <rect className="all-features-marked" x={x(firstMarked) - 6} y={top} width={x(sorted.length) - x(firstMarked) + 12} height={plotHeight} />
         <text className="variant-plot-tick" x={x(firstMarked) - 10} y={top + 12} textAnchor="end">

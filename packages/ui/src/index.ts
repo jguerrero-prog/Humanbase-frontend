@@ -108,8 +108,10 @@ export { RankedAnnotationTable, type AnnotationEvidence, type Publication, type 
 export { EvidenceTable, GeneDetail, NetworkWeightTable, ScoreMeter, WeightHistogram, type AnnotationSource, type EvidenceRow, type GeneDetailProps, type NetworkWeight } from './Results/ResultDetail';
 export { ResultHeader, STACKED_QUERY, type ResultHeaderProps } from './Results/ResultHeader';
 export { ResultLayout, type ResultLayoutProps } from './Results/ResultLayout';
+export { ResultFiles, type ResultFile as ResultFileRow, type ResultFilesProps } from './Results/ResultFiles';
 export { AllFeaturesPlot, type AllFeaturesPlotProps } from './VariantEffects/AllFeaturesPlot';
 export { EffectGroups, type EffectExperiment, type EffectGroup, type StrengthCounts } from './VariantEffects/EffectGroups';
+export { sequenceClassEffects, zEffects, type EffectScale } from './VariantEffects/EffectScale';
 export { EffectsHeatmap, type EffectsHeatmapProps } from './VariantEffects/EffectsHeatmap';
 export { EffectsControls, MolecularEffects, effectZScale, type EffectsControlsProps, type EffectsView, type MolecularEffectsProps } from './VariantEffects/MolecularEffects';
 export { StrongestEffects, type StrongestEffectsProps } from './VariantEffects/StrongestEffects';

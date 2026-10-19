@@ -99,6 +99,8 @@ export function featureEffects(prediction: FeaturePredictionRecord, features: Fe
     const name = feature.chromatin_feature_type.name;
     const cell = feature.cell_type.name;
     const treatment = treatmentOf(feature);
-    return [{ feature: name, cell, context: treatment ? `${cell}, ${treatment}` : cell, label: `${cell} / ${name}${treatment ? ` (${treatment})` : ''}`, value }];
+    const replicate = /rep\.?(\d+)/i.exec(treatment)?.[1];
+    const context = replicate ? `${cell} rep ${replicate}` : cell;
+    return [{ feature: name, cell, context, label: `${cell} / ${name}${treatment ? ` (${treatment})` : ''}`, value }];
   });
 }
