@@ -153,3 +153,29 @@ test('Edit genes adds a gene without starting over and has no WCAG 2.2 AA violat
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/ICAM1/);
   expect(apiRequests).toEqual([]);
 });
+
+test('Compare adds a second network side by side, keeps it in the URL and has no WCAG 2.2 AA violations', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1`);
+  await page.getByRole('button', { name: 'Compare' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Add a network to compare' });
+  await dialog.getByRole('combobox', { name: 'Tissue' }).click();
+  await dialog.getByRole('option', { name: 'mononuclear phagocyte' }).click();
+  let scan = await new AxeBuilder({ page }).withTags(axeTags).analyze();
+  expect(scan.violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  await dialog.getByRole('button', { name: 'Add network' }).click();
+  await expect(page).toHaveURL(/compare=mononuclear-phagocyte/);
+  const compared = page.getByRole('region', { name: 'mononuclear phagocyte network', exact: true });
+  await expect(compared.getByText(/connections at 0\.51 or more/)).toBeVisible();
+  await expect(page.getByRole('region', { name: 'global network', exact: true }).getByText(/connections at 0\.48 or more/)).toBeVisible();
+  scan = await new AxeBuilder({ page }).withTags(axeTags).analyze();
+  expect(scan.violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  await compared.getByRole('slider', { name: 'Genes shown', exact: true }).press('ArrowRight');
+  await expect(page).toHaveURL(/compare_shown=16/);
+  await page.reload();
+  await expect(page.getByRole('region', { name: 'mononuclear phagocyte network', exact: true }).getByText(/Showing 16 of 50 genes/)).toBeVisible();
+  await page.getByRole('button', { name: 'Remove the global network' }).click();
+  await expect(page).toHaveURL(/tissue=mononuclear-phagocyte/);
+  await expect(page).not.toHaveURL(/compare=/);
+  expect(apiRequests).toEqual([]);
+});

@@ -4,14 +4,15 @@ import { Select } from '@humanbase/ui';
 export interface TissueSelectProps {
   networks: readonly Integration[];
   version: DataVersion;
-  /** A tissue slug, or undefined for the global network. */
-  value: string | undefined;
+  /** A tissue slug, undefined for the global network, or null when nothing is chosen yet. */
+  value: string | undefined | null;
   onChange: (tissue: string | undefined) => void;
+  size?: 'small' | 'medium';
 }
 
 const globalValue = 'global';
 
-export function TissueSelect({ networks, version, value, onChange }: TissueSelectProps) {
+export function TissueSelect({ networks, version, value, onChange, size = 'small' }: TissueSelectProps) {
   const group = 'All tissues and cell types';
   const options = [
     { value: globalValue, label: 'Global', group },
@@ -20,11 +21,12 @@ export function TissueSelect({ networks, version, value, onChange }: TissueSelec
   return (
     <Select
       label="Tissue"
-      size="small"
+      size={size}
       searchable
       filterLabel="Filter tissues"
+      placeholder="Choose a tissue"
       options={options}
-      value={value ?? globalValue}
+      value={value === null ? '' : (value ?? globalValue)}
       onChange={(slug) => onChange(slug === globalValue ? undefined : slug)}
     />
   );

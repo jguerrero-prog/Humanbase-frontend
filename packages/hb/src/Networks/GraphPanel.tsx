@@ -19,13 +19,15 @@ export interface GraphPanelProps {
   fileName: string;
   selection: GraphSelection;
   loading: ReactNode;
+  /** Off when two networks are compared, since neither can take the full width. */
+  canExpand?: boolean;
   onViewChange: (view: NetworkView) => void;
   onSelectGene: (entrez: number) => void;
   onSelectConnection: (source: number, target: number) => void;
   renderer?: GraphRendererFactory | undefined;
 }
 
-export function GraphPanel({ subset, relatedTotal, view, minConfidence, label, tableCaption, fileName, selection, loading, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
+export function GraphPanel({ subset, relatedTotal, view, minConfidence, label, tableCaption, fileName, selection, loading, canExpand = true, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
   const graph = useRef<NetworkGraphHandle>(null);
   const data = useMemo<GraphData | undefined>(
     () =>
@@ -38,24 +40,25 @@ export function GraphPanel({ subset, relatedTotal, view, minConfidence, label, t
   const shownRelated = subset ? subset.genes.filter((gene) => !gene.isQuery).length : 0;
 
   const asTable = view.display === 'table';
-  const expand: GraphAction = { label: 'Expand', icon: 'maximize', pressed: view.expanded, onSelect: () => onViewChange(view.with({ expanded: !view.expanded })) };
+  const expand: GraphAction[] = canExpand ? [{ label: 'Expand', icon: 'maximize', pressed: view.expanded, onSelect: () => onViewChange(view.with({ expanded: !view.expanded })) }] : [];
   const downloadConnections = () => {
     if (!subset) return;
     const lines = ['gene\tconnected_to\tweight', ...subset.edges.map((edge) => `${edge.source.symbol}\t${edge.target.symbol}\t${edge.weight.toFixed(3)}`)];
     saveFile(lines.join('\n'), `${fileName}_connections.tsv`, 'text/tab-separated-values');
   };
   // Zoom and fit only apply to the drawing, so the table keeps just Expand and its own download.
-  const toolbar: GraphAction[][] = asTable
-    ? [[expand], [{ label: 'Download the connections', icon: 'download', onSelect: downloadConnections }]]
+  const groups: GraphAction[][] = asTable
+    ? [expand, [{ label: 'Download the connections', icon: 'download', onSelect: downloadConnections }]]
     : [
         [
           { label: 'Zoom in', icon: 'zoom-in', onSelect: () => graph.current?.zoomBy(zoomStep) },
           { label: 'Zoom out', icon: 'zoom-out', onSelect: () => graph.current?.zoomBy(1 / zoomStep) },
           { label: 'Fit to screen', icon: 'fit', onSelect: () => graph.current?.fit() },
-          expand,
+          ...expand,
         ],
         [{ label: 'Download the graph as SVG', icon: 'download', onSelect: () => graph.current && saveFile(graph.current.exportSvg(), `${fileName}.svg`) }],
       ];
+  const toolbar = groups.filter((group) => group.length > 0);
 
   return (
     <>

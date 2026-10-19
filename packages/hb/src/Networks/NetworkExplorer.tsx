@@ -8,14 +8,17 @@ import {
   useNetwork,
   type DataVersion,
   type NetworkGene,
+  type NetworkPane,
   type NetworkQuery,
   type NetworkSelection,
   type NetworkTab,
   type NetworkView,
 } from '@humanbase/data';
 import type { GraphRendererFactory, GraphSelection } from '@humanbase/graph';
-import { Alert, Button, EmptyState, ResultHeader, ResultLayout, saveFile } from '@humanbase/ui';
+import { Alert, Button, EmptyState, ResultHeader, ResultLayout, saveFile, SegmentedControl } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
+import { CompareDialog } from './CompareDialog';
+import { ComparePane } from './ComparePane';
 import { DataTypesFilter } from './DataTypesFilter';
 import { EditGenesDialog } from './EditGenesDialog';
 import { GraphLoading, GraphPanel } from './GraphPanel';
@@ -44,10 +47,12 @@ export interface NetworkDetailContext {
 export interface NetworkExplorerProps {
   query: NetworkQuery;
   view: NetworkView;
-  /** A new request: other genes, tissue, process, version or data types. */
+  /** Filters of the compared network, kept apart from the first network's. */
+  compareView?: NetworkView;
+  /** A new request: other genes, tissue, process, version, data types or a compared network. */
   onQueryChange: (query: NetworkQuery) => void;
-  /** Tab, filters and selection, which never need a new request. */
-  onViewChange: (view: NetworkView) => void;
+  /** Tab, filters and selection, which never need a new request. Filters of the compared network come with pane "compare". */
+  onViewChange: (view: NetworkView, pane?: NetworkPane) => void;
   /** True when the page was opened from a search, which shows the fuller "Retrieving the network" state. */
   fromSearch?: boolean;
   /** Draws the gene or connection detail for the current selection; defaults to the gene and connection drawers. */
@@ -55,6 +60,7 @@ export interface NetworkExplorerProps {
   renderer?: GraphRendererFactory | undefined;
 }
 
+const capitalized = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 const listJoin = (items: readonly string[]) => (items.length < 2 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
 
 const tabs: { value: NetworkTab; label: string }[] = [
@@ -65,7 +71,7 @@ const tabs: { value: NetworkTab; label: string }[] = [
   { value: 'diseases', label: 'Diseases' },
 ];
 
-export function NetworkExplorer({ query, view, onQueryChange, onViewChange, fromSearch = false, detail = (context) => <NetworkDetail {...context} />, renderer }: NetworkExplorerProps) {
+export function NetworkExplorer({ query, view, compareView = view, onQueryChange, onViewChange, fromSearch = false, detail = (context) => <NetworkDetail {...context} />, renderer }: NetworkExplorerProps) {
   // The tissue network names the genes and finds those in no network; the process tab draws its own network.
   const base = useNetwork(query);
   const onProcessTab = view.tab === 'process';
@@ -73,22 +79,30 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
   const activeQuery = onProcessTab && processQuery ? processQuery : query;
   const active = useNetwork(activeQuery);
   const network = active.data;
+  const comparing = view.tab === 'network' && query.compared !== undefined;
+  const focusQuery = comparing && view.focus === 'compare' && query.compared ? query.compared : activeQuery;
+  const focused = useNetwork(focusQuery);
   const { data: integrations = [] } = useIntegrations();
   const { data: dataTypes = [] } = useDataTypes(activeQuery.version);
   const names = useGenes(query.entrez);
   const [missingDismissed, setMissingDismissed] = useState(false);
   const [processMenuOpen, setProcessMenuOpen] = useState(false);
   const [editingGenes, setEditingGenes] = useState(false);
+  const [addingNetwork, setAddingNetwork] = useState(false);
 
   const symbolOf = (id: number) => names.get(id)?.symbol ?? base.data?.queryGenes.find((gene) => gene.entrez === id)?.symbol ?? String(id);
   const symbols = query.entrez.map(symbolOf);
   const titleOf = (slug: string | undefined) => (slug ? (integrations.find((n) => n.slug === slug)?.title ?? slug) : 'global');
   const networkTitle = onProcessTab && processQuery ? titleOf(query.process) : titleOf(query.tissue);
+  const compareTitle = titleOf(query.compare?.tissue);
+  const focusTitle = view.focus === 'compare' && comparing ? compareTitle : networkTitle;
   const networkName = `${listJoin(symbols)} in the ${networkTitle} network, ${activeQuery.versionName} data`;
   const fileName = `${symbols.join('-')}_${activeQuery.slug}_${activeQuery.version}`;
 
   const minConfidence = view.minConfidence ?? network?.suggestedConfidence ?? Network.fallbackConfidence;
   const subset = useMemo(() => network?.subset(view.options(network.suggestedConfidence)), [network, view]);
+  const focusView = view.focus === 'compare' ? compareView : view;
+  const focusedSubset = useMemo(() => focused.data?.subset(focusView.options(focused.data.suggestedConfidence)), [focused.data, focusView]);
   const related = useMemo(() => subset?.genes.filter((gene) => !gene.isQuery), [subset]);
   const missingIds = base.data ? base.data.missing(query.entrez) : [];
   const missing = missingIds.map(symbolOf);
@@ -116,6 +130,9 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
       <>
         <TissueSelect networks={integrations} version={query.version} value={query.tissue} onChange={(tissue) => onQueryChange(query.with({ tissue }))} />
         {dataTypesFilter}
+        <Button size="small" icon="plus" onClick={() => setAddingNetwork(true)}>
+          Compare
+        </Button>
       </>
     ),
     process: (
@@ -163,7 +180,7 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
               ]
             : []
         }
-        settings={settings[view.tab]}
+        settings={comparing ? undefined : settings[view.tab]}
         actions={
           <>
             {editGenes}
@@ -181,6 +198,20 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
         </Alert>
       )}
       {editGenesDialog}
+      <CompareDialog
+        open={addingNetwork}
+        networks={integrations}
+        version={query.version}
+        versionName={query.versionName}
+        symbols={found}
+        queryNames={listJoin(found)}
+        dataTypes={dataTypes}
+        onClose={() => setAddingNetwork(false)}
+        onAdd={(compare) => {
+          setAddingNetwork(false);
+          onQueryChange(query.with({ compare }));
+        }}
+      />
       {onProcessTab && query.version === 'v3' && (
         <Alert tone="info">Process networks are built from GIANT data, so this tab uses GIANT even though the page is set to MAGE.</Alert>
       )}
@@ -255,6 +286,85 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
           </Alert>
         }
       />
+    );
+  }
+
+  if (comparing && query.compared) {
+    const choose = (pane: NetworkPane) => (selection: NetworkSelection) => onViewChange(view.with({ selection, focus: pane }));
+    const paneFile = (pane: NetworkQuery) => `${symbols.join('-')}_${pane.slug}_${pane.version}`;
+    return (
+      <>
+        <ResultLayout
+          className="network-comparing"
+          header={header}
+          mainLabel={`${listJoin(found)} in the ${networkTitle} and ${compareTitle} networks`}
+          expanded
+          main={
+            <div className="network-compare">
+              <ComparePane
+                query={query.with({ compare: undefined })}
+                view={view}
+                title={networkTitle}
+                integrations={integrations}
+                queryNames={listJoin(found)}
+                fileName={paneFile(query)}
+                selection={graphSelection}
+                onQueryChange={(next) => onQueryChange(next.with({ compare: query.compare }))}
+                onViewChange={(next) => onViewChange(next)}
+                onSelect={choose('main')}
+                onRemove={() => onQueryChange(query.withoutFirst())}
+                renderer={renderer}
+              />
+              <ComparePane
+                query={query.compared}
+                view={compareView}
+                title={compareTitle}
+                integrations={integrations}
+                queryNames={listJoin(found)}
+                fileName={paneFile(query.compared)}
+                selection={graphSelection}
+                onQueryChange={(next) => onQueryChange(query.with({ compare: { tissue: next.tissue, dataTypes: next.dataTypes } }))}
+                onViewChange={(next) => onViewChange(next, 'compare')}
+                onSelect={choose('compare')}
+                onRemove={() => onQueryChange(query.with({ compare: undefined }))}
+                renderer={renderer}
+              />
+            </div>
+          }
+          companionLabel="Genes, processes and tissues"
+          companion={
+            <>
+              <SegmentedControl
+                className="network-compare-focus"
+                label="The genes panel follows"
+                size="small"
+                segments={[
+                  { value: 'main', label: capitalized(networkTitle) },
+                  { value: 'compare', label: capitalized(compareTitle) },
+                ]}
+                value={view.focus}
+                onChange={(focus) => onViewChange(view.with({ focus: focus as NetworkPane }))}
+              />
+              <NetworkCompanion
+                network={focused.data}
+                shown={focusedSubset?.genes}
+                queryNames={listJoin(symbols)}
+                networkTitle={focusTitle}
+                fileName={paneFile(focusQuery)}
+                selected={view.selection?.kind === 'gene' ? view.selection.entrez : undefined}
+                onSelectGene={(entrez) => select({ kind: 'gene', entrez })}
+                onAddGene={addGene}
+              />
+              <p className="result-note">
+                The panel follows the network you used last, here {focusTitle}. Selecting a gene or connection in the other network switches it.
+              </p>
+            </>
+          }
+        />
+        {focused.data &&
+          view.selection &&
+          detail({ network: focused.data, selection: view.selection, slug: focusQuery.slug, version: focusQuery.version, networkTitle: focusTitle, queryNames: listJoin(found), addGene, close: () => select(undefined) })}
+      </>
     );
   }
 

@@ -138,3 +138,60 @@
 .edit-genes-status[data-tone="error"] {
   color: var(--text-error);
 }
+
+.network-comparing .result-main {
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+.network-compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.compare-pane {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  min-inline-size: 0;
+  padding: var(--space-5);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.compare-pane-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.compare-pane-head > .button {
+  margin-inline-start: auto;
+}
+
+.network-compare-focus {
+  justify-self: end;
+}
+
+.compare-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.compare-form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+@media (width < 60rem) {
+  .network-compare,
+  .compare-form-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

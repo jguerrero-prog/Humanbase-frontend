@@ -12,6 +12,7 @@ export function NetworksPage() {
   const location = useLocation();
   const query = NetworkQuery.fromSearch(search);
   const view = NetworkView.fromSearch(search);
+  const compareView = NetworkView.fromSearch(search, 'compare');
   const fromSearch = (location.state as NetworksLocationState | null)?.fromSearch ?? false;
 
   return (
@@ -26,9 +27,13 @@ export function NetworksPage() {
         <NetworkExplorer
           query={query}
           view={view}
+          compareView={compareView}
           fromSearch={fromSearch}
-          onQueryChange={(next) => void navigate(`/networks/?${view.with({ selection: undefined }).applyTo(next.toSearch())}`)}
-          onViewChange={(next) => setSearch(next.applyTo(search), { replace: true })}
+          onQueryChange={(next) => {
+            const kept = view.with({ selection: undefined, ...(next.compare ? {} : { focus: 'main' as const }) }).applyTo(next.toSearch());
+            void navigate(`/networks/?${next.compare ? compareView.with({ selection: undefined }).applyTo(kept, 'compare') : kept}`);
+          }}
+          onViewChange={(next, pane) => setSearch(next.applyTo(search, pane), { replace: true })}
         />
       )}
     </section>

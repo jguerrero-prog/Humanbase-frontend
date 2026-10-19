@@ -1,0 +1,3066 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "title": "bronchoalveolar system",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "respiratory system",
+          "identifier": "BTO:0000203"
+        }
+      ],
+      "identifier": "BTO:0000136",
+      "total_term_annotations": 159,
+      "annotations": [
+        7832,
+        6352,
+        5328,
+        2919,
+        960,
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "glia",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "nervous system",
+          "identifier": "BTO:0001484"
+        }
+      ],
+      "identifier": "BTO:0000524",
+      "total_term_annotations": 90,
+      "annotations": [
+        960,
+        962,
+        6648
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "glial cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "nervous system",
+          "identifier": "BTO:0001484"
+        }
+      ],
+      "identifier": "BTO:0002606",
+      "total_term_annotations": 83,
+      "annotations": [
+        960,
+        962,
+        6648
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "smooth muscle",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "muscular system",
+          "identifier": "BTO:0001485"
+        }
+      ],
+      "identifier": "BTO:0001260",
+      "total_term_annotations": 214,
+      "annotations": [
+        5743,
+        5328,
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "astrocyte",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "embryonic structure",
+          "identifier": "BTO:0000174"
+        },
+        {
+          "title": "nervous system",
+          "identifier": "BTO:0001484"
+        }
+      ],
+      "identifier": "BTO:0000099",
+      "total_term_annotations": 58,
+      "annotations": [
+        960,
+        962,
+        6648
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "macroglia",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "nervous system",
+          "identifier": "BTO:0001484"
+        }
+      ],
+      "identifier": "BTO:0000771",
+      "total_term_annotations": 72,
+      "annotations": [
+        960,
+        962,
+        6648
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "astroglial cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "nervous system",
+          "identifier": "BTO:0001484"
+        }
+      ],
+      "identifier": "BTO:0002609",
+      "total_term_annotations": 58,
+      "annotations": [
+        960,
+        962,
+        6648
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "endothelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000393",
+      "total_term_annotations": 254,
+      "annotations": [
+        5743,
+        8870,
+        5328,
+        22822,
+        2919,
+        960,
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "uterine cervix",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        }
+      ],
+      "identifier": "BTO:0001421",
+      "total_term_annotations": 148,
+      "annotations": [
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "uterine endometrium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001422",
+      "total_term_annotations": 228,
+      "annotations": [
+        5743,
+        8870,
+        2919,
+        960,
+        1520,
+        6648
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "nerve",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "nervous system",
+          "identifier": "BTO:0001484"
+        }
+      ],
+      "identifier": "BTO:0000925",
+      "total_term_annotations": 102,
+      "annotations": [
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "cartilage",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        },
+        {
+          "title": "skeletal system",
+          "identifier": "BTO:0001486"
+        }
+      ],
+      "identifier": "BTO:0000206",
+      "total_term_annotations": 139,
+      "annotations": [
+        5743,
+        3726,
+        3383,
+        2919,
+        960,
+        3557,
+        3576
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "chondrocyte",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        },
+        {
+          "title": "skeletal system",
+          "identifier": "BTO:0001486"
+        }
+      ],
+      "identifier": "BTO:0000249",
+      "total_term_annotations": 60,
+      "annotations": [
+        3726,
+        960,
+        2919,
+        5743,
+        3576
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "dermis",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000294",
+      "total_term_annotations": 41,
+      "annotations": [
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "neuron",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "embryonic structure",
+          "identifier": "BTO:0000174"
+        },
+        {
+          "title": "nervous system",
+          "identifier": "BTO:0001484"
+        }
+      ],
+      "identifier": "BTO:0000938",
+      "total_term_annotations": 99,
+      "annotations": [
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "decidua",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001360",
+      "total_term_annotations": 42,
+      "annotations": [
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "duodenum",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "alimentary canal",
+          "identifier": "BTO:0000058"
+        }
+      ],
+      "identifier": "BTO:0000365",
+      "total_term_annotations": 223,
+      "annotations": [
+        3108,
+        3109,
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "keratinocyte",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000667",
+      "total_term_annotations": 242,
+      "annotations": [
+        8870,
+        6352,
+        5328,
+        960,
+        3557,
+        1520
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "vascular endothelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001853",
+      "total_term_annotations": 254,
+      "annotations": [
+        5743,
+        8870,
+        5328,
+        22822,
+        2919,
+        960,
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "cervical mucosa",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000411",
+      "total_term_annotations": 42,
+      "annotations": [
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "respiratory epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "respiratory system",
+          "identifier": "BTO:0000203"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000419",
+      "total_term_annotations": 119,
+      "annotations": [
+        7832,
+        6352,
+        5328,
+        2919,
+        960,
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "erythrocyte",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        }
+      ],
+      "identifier": "BTO:0000424",
+      "total_term_annotations": 178,
+      "annotations": [
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "stratum spinosum",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000435",
+      "total_term_annotations": 261,
+      "annotations": [
+        3108,
+        3109,
+        9308,
+        8870,
+        5328,
+        6352,
+        960,
+        3557,
+        1520
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "hair follicle",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000554",
+      "total_term_annotations": 85,
+      "annotations": [
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "reticulocyte",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        }
+      ],
+      "identifier": "BTO:0001173",
+      "total_term_annotations": 25,
+      "annotations": [
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "sweat gland",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "exocrine gland",
+          "identifier": "BTO:0000765"
+        }
+      ],
+      "identifier": "BTO:0001331",
+      "total_term_annotations": 37,
+      "annotations": [
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "bronchus",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "respiratory system",
+          "identifier": "BTO:0000203"
+        }
+      ],
+      "identifier": "BTO:0001340",
+      "total_term_annotations": 101,
+      "annotations": [
+        7832,
+        5328,
+        2919,
+        960,
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "articular cartilage",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        },
+        {
+          "title": "skeletal system",
+          "identifier": "BTO:0001486"
+        }
+      ],
+      "identifier": "BTO:0001572",
+      "total_term_annotations": 16,
+      "annotations": [
+        960,
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "joint",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        }
+      ],
+      "identifier": "BTO:0001686",
+      "total_term_annotations": 22,
+      "annotations": [
+        960,
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "bronchial epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "respiratory system",
+          "identifier": "BTO:0000203"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001845",
+      "total_term_annotations": 65,
+      "annotations": [
+        7832,
+        960,
+        5328,
+        3557,
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "sebaceous gland",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        },
+        {
+          "title": "exocrine gland",
+          "identifier": "BTO:0000765"
+        }
+      ],
+      "identifier": "BTO:0001980",
+      "total_term_annotations": 32,
+      "annotations": [
+        960
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "bronchial epithelial cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "respiratory system",
+          "identifier": "BTO:0000203"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0002922",
+      "total_term_annotations": 65,
+      "annotations": [
+        7832,
+        960,
+        5328,
+        3557,
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "astroglia",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "nervous system",
+          "identifier": "BTO:0001484"
+        }
+      ],
+      "identifier": "BTO:0003852",
+      "total_term_annotations": 58,
+      "annotations": [
+        960,
+        962,
+        6648
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "mast cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        }
+      ],
+      "identifier": "BTO:0000830",
+      "total_term_annotations": 55,
+      "annotations": [
+        962
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "natural killer cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        }
+      ],
+      "identifier": "BTO:0000914",
+      "total_term_annotations": 103,
+      "annotations": [
+        962
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "null cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        }
+      ],
+      "identifier": "BTO:0004716",
+      "total_term_annotations": 103,
+      "annotations": [
+        962
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "large granular lymphocyte",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        }
+      ],
+      "identifier": "BTO:0004717",
+      "total_term_annotations": 103,
+      "annotations": [
+        962
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "bone",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        },
+        {
+          "title": "skeletal system",
+          "identifier": "BTO:0001486"
+        }
+      ],
+      "identifier": "BTO:0000140",
+      "total_term_annotations": 163,
+      "annotations": [
+        1026,
+        5743,
+        1520
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "hematopoietic stem cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        }
+      ],
+      "identifier": "BTO:0000725",
+      "total_term_annotations": 195,
+      "annotations": [
+        1026,
+        3659,
+        3055
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "adult stem cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0002666",
+      "total_term_annotations": 195,
+      "annotations": [
+        1026,
+        3659,
+        3055
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "pluripotent stem cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0006078",
+      "total_term_annotations": 197,
+      "annotations": [
+        1026,
+        3659,
+        3055
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "adipose tissue",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        }
+      ],
+      "identifier": "BTO:0001487",
+      "total_term_annotations": 195,
+      "annotations": [
+        8843,
+        5341,
+        3557,
+        1520
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "vascular endothelial cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "cardiovascular system",
+          "identifier": "BTO:0000088"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001854",
+      "total_term_annotations": 218,
+      "annotations": [
+        5743,
+        5328,
+        22822,
+        2919,
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "cornea",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "sense organ",
+          "identifier": "BTO:0000202"
+        }
+      ],
+      "identifier": "BTO:0000286",
+      "total_term_annotations": 101,
+      "annotations": [
+        3383,
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "corneal epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "sense organ",
+          "identifier": "BTO:0000202"
+        }
+      ],
+      "identifier": "BTO:0000287",
+      "total_term_annotations": 29,
+      "annotations": [
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "eosinophil",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        }
+      ],
+      "identifier": "BTO:0000399",
+      "total_term_annotations": 97,
+      "annotations": [
+        3383,
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "fibroblast",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        }
+      ],
+      "identifier": "BTO:0000452",
+      "total_term_annotations": 183,
+      "annotations": [
+        5743,
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "blood vessel endothelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "cardiovascular system",
+          "identifier": "BTO:0000088"
+        }
+      ],
+      "identifier": "BTO:0000766",
+      "total_term_annotations": 218,
+      "annotations": [
+        5743,
+        5328,
+        22822,
+        2919,
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "umbilical cord",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        },
+        {
+          "title": "embryonic structure",
+          "identifier": "BTO:0000174"
+        }
+      ],
+      "identifier": "BTO:0001415",
+      "total_term_annotations": 215,
+      "annotations": [
+        5743,
+        5328,
+        22822,
+        2919,
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "endothelial cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "cardiovascular system",
+          "identifier": "BTO:0000088"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001176",
+      "total_term_annotations": 218,
+      "annotations": [
+        5743,
+        5328,
+        22822,
+        2919,
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "breast epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        },
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001428",
+      "total_term_annotations": 74,
+      "annotations": [
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "skin fibroblast",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001255",
+      "total_term_annotations": 156,
+      "annotations": [
+        5743,
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "synovia",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        },
+        {
+          "title": "muscular system",
+          "identifier": "BTO:0001485"
+        }
+      ],
+      "identifier": "BTO:0001339",
+      "total_term_annotations": 11,
+      "annotations": [
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "umbilical vein endothelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        },
+        {
+          "title": "embryonic structure",
+          "identifier": "BTO:0000174"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001416",
+      "total_term_annotations": 174,
+      "annotations": [
+        5743,
+        5328,
+        22822,
+        2919,
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "umbilical vein",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        },
+        {
+          "title": "embryonic structure",
+          "identifier": "BTO:0000174"
+        }
+      ],
+      "identifier": "BTO:0001509",
+      "total_term_annotations": 183,
+      "annotations": [
+        5743,
+        5328,
+        22822,
+        2919,
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "mammary epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        },
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001430",
+      "total_term_annotations": 74,
+      "annotations": [
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "umbilical vein endothelial cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        },
+        {
+          "title": "cardiovascular system",
+          "identifier": "BTO:0000088"
+        },
+        {
+          "title": "embryonic structure",
+          "identifier": "BTO:0000174"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0004296",
+      "total_term_annotations": 174,
+      "annotations": [
+        5743,
+        5328,
+        22822,
+        2919,
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "stromal cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        }
+      ],
+      "identifier": "BTO:0002064",
+      "total_term_annotations": 28,
+      "annotations": [
+        3557,
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "endometrial stromal cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        },
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0003697",
+      "total_term_annotations": 10,
+      "annotations": [
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "corneal epithelial cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "sense organ",
+          "identifier": "BTO:0000202"
+        }
+      ],
+      "identifier": "BTO:0004298",
+      "total_term_annotations": 29,
+      "annotations": [
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "uterine endometrial stromal cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0006559",
+      "total_term_annotations": 10,
+      "annotations": [
+        2919
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "Langerhans cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000705",
+      "total_term_annotations": 17,
+      "annotations": [
+        3108,
+        3109,
+        9308
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "renal cortex",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "urinary system",
+          "identifier": "BTO:0003092"
+        }
+      ],
+      "identifier": "BTO:0001166",
+      "total_term_annotations": 22,
+      "annotations": [
+        3108,
+        3109
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "thymus",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        },
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        }
+      ],
+      "identifier": "BTO:0001374",
+      "total_term_annotations": 59,
+      "annotations": [
+        3108
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "tonsil",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        }
+      ],
+      "identifier": "BTO:0001387",
+      "total_term_annotations": 215,
+      "annotations": [
+        3108,
+        3109,
+        3134,
+        9308,
+        5971
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "thymic cortex",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0002934",
+      "total_term_annotations": 8,
+      "annotations": [
+        3108
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "thymic medulla",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0004560",
+      "total_term_annotations": 8,
+      "annotations": [
+        3108
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "thymic stromal cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0004561",
+      "total_term_annotations": 8,
+      "annotations": [
+        3108
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "thymic medullary epithelial cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0004563",
+      "total_term_annotations": 8,
+      "annotations": [
+        3108
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "thymic medullary epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0004565",
+      "total_term_annotations": 8,
+      "annotations": [
+        3108
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "myoblast",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "embryonic structure",
+          "identifier": "BTO:0000174"
+        }
+      ],
+      "identifier": "BTO:0000222",
+      "total_term_annotations": 10,
+      "annotations": [
+        3109
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "embryo",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "embryonic structure",
+          "identifier": "BTO:0000174"
+        }
+      ],
+      "identifier": "BTO:0000379",
+      "total_term_annotations": 120,
+      "annotations": [
+        3109
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "spermatid",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        }
+      ],
+      "identifier": "BTO:0001274",
+      "total_term_annotations": 38,
+      "annotations": [
+        3134
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "choroid",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "sense organ",
+          "identifier": "BTO:0000202"
+        }
+      ],
+      "identifier": "BTO:0001829",
+      "total_term_annotations": 32,
+      "annotations": [
+        3383,
+        6347,
+        3576
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "olfactory epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "sense organ",
+          "identifier": "BTO:0000202"
+        },
+        {
+          "title": "respiratory system",
+          "identifier": "BTO:0000203"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000108",
+      "total_term_annotations": 24,
+      "annotations": [
+        6352,
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "nasal mucosa",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "sense organ",
+          "identifier": "BTO:0000202"
+        },
+        {
+          "title": "respiratory system",
+          "identifier": "BTO:0000203"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000912",
+      "total_term_annotations": 47,
+      "annotations": [
+        6352,
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "vagina",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        }
+      ],
+      "identifier": "BTO:0000243",
+      "total_term_annotations": 20,
+      "annotations": [
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "milk",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0000868",
+      "total_term_annotations": 44,
+      "annotations": [
+        7133,
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "intestinal epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "alimentary canal",
+          "identifier": "BTO:0000058"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000781",
+      "total_term_annotations": 76,
+      "annotations": [
+        5328,
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "ileum",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "alimentary canal",
+          "identifier": "BTO:0000058"
+        }
+      ],
+      "identifier": "BTO:0000620",
+      "total_term_annotations": 201,
+      "annotations": [
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "nose",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "sense organ",
+          "identifier": "BTO:0000202"
+        }
+      ],
+      "identifier": "BTO:0000840",
+      "total_term_annotations": 95,
+      "annotations": [
+        6352,
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "respiratory mucosa",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "respiratory system",
+          "identifier": "BTO:0000203"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000973",
+      "total_term_annotations": 47,
+      "annotations": [
+        6352,
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "retinal pigment epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "sense organ",
+          "identifier": "BTO:0000202"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001177",
+      "total_term_annotations": 52,
+      "annotations": [
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "colonic epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "alimentary canal",
+          "identifier": "BTO:0000058"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0001709",
+      "total_term_annotations": 32,
+      "annotations": [
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "bone marrow stromal cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        }
+      ],
+      "identifier": "BTO:0004122",
+      "total_term_annotations": 18,
+      "annotations": [
+        3557
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "blood platelet",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        },
+        {
+          "title": "skeletal system",
+          "identifier": "BTO:0001486"
+        }
+      ],
+      "identifier": "BTO:0000132",
+      "total_term_annotations": 235,
+      "annotations": [
+        4688,
+        5341
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "osteoblast",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        },
+        {
+          "title": "skeletal system",
+          "identifier": "BTO:0001486"
+        }
+      ],
+      "identifier": "BTO:0001593",
+      "total_term_annotations": 49,
+      "annotations": [
+        5743
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "renal corpuscle",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "urinary system",
+          "identifier": "BTO:0003092"
+        }
+      ],
+      "identifier": "BTO:0000333",
+      "total_term_annotations": 59,
+      "annotations": [
+        5743
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "nephron",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "urinary system",
+          "identifier": "BTO:0003092"
+        }
+      ],
+      "identifier": "BTO:0000924",
+      "total_term_annotations": 128,
+      "annotations": [
+        5743,
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "epithelial cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0000414",
+      "total_term_annotations": 39,
+      "annotations": [
+        7832,
+        5743
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "myometrium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        },
+        {
+          "title": "muscular system",
+          "identifier": "BTO:0001485"
+        }
+      ],
+      "identifier": "BTO:0000907",
+      "total_term_annotations": 73,
+      "annotations": [
+        5743
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "osteogenic cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        },
+        {
+          "title": "skeletal system",
+          "identifier": "BTO:0001486"
+        }
+      ],
+      "identifier": "BTO:0002050",
+      "total_term_annotations": 63,
+      "annotations": [
+        5743
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "oviduct",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        }
+      ],
+      "identifier": "BTO:0000980",
+      "total_term_annotations": 42,
+      "annotations": [
+        5743
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "periosteum",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        },
+        {
+          "title": "skeletal system",
+          "identifier": "BTO:0001486"
+        }
+      ],
+      "identifier": "BTO:0001022",
+      "total_term_annotations": 63,
+      "annotations": [
+        5743
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "glomerular epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        },
+        {
+          "title": "urinary system",
+          "identifier": "BTO:0003092"
+        }
+      ],
+      "identifier": "BTO:0001515",
+      "total_term_annotations": 11,
+      "annotations": [
+        5743
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "renal glomerular capsule",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "urinary system",
+          "identifier": "BTO:0003092"
+        }
+      ],
+      "identifier": "BTO:0002297",
+      "total_term_annotations": 17,
+      "annotations": [
+        5743
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "podocyte",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        },
+        {
+          "title": "urinary system",
+          "identifier": "BTO:0003092"
+        }
+      ],
+      "identifier": "BTO:0002295",
+      "total_term_annotations": 11,
+      "annotations": [
+        5743
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "capsular epithelium",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        },
+        {
+          "title": "urinary system",
+          "identifier": "BTO:0003092"
+        }
+      ],
+      "identifier": "BTO:0002296",
+      "total_term_annotations": 11,
+      "annotations": [
+        5743
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "bone marrow cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "skeletal system",
+          "identifier": "BTO:0001486"
+        }
+      ],
+      "identifier": "BTO:0004850",
+      "total_term_annotations": 22,
+      "annotations": [
+        5971
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "plasma cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        },
+        {
+          "title": "skeletal system",
+          "identifier": "BTO:0001486"
+        }
+      ],
+      "identifier": "BTO:0000392",
+      "total_term_annotations": 19,
+      "annotations": [
+        5971
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "peripheral blood",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        }
+      ],
+      "identifier": "BTO:0000553",
+      "total_term_annotations": 271,
+      "annotations": [
+        9308,
+        5971,
+        7133
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "dendritic cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        },
+        {
+          "title": "hematopoietic system",
+          "identifier": "BTO:0000570"
+        }
+      ],
+      "identifier": "BTO:0002042",
+      "total_term_annotations": 147,
+      "annotations": [
+        9308,
+        5971,
+        7133
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "epithalamus",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "nervous system",
+          "identifier": "BTO:0001484"
+        }
+      ],
+      "identifier": "BTO:0000175",
+      "total_term_annotations": 34,
+      "annotations": [
+        6351
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "subarachnoid space",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0000230",
+      "total_term_annotations": 47,
+      "annotations": [
+        6351
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "spinal column",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0000818",
+      "total_term_annotations": 49,
+      "annotations": [
+        6351
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "cerebrospinal fluid",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0000237",
+      "total_term_annotations": 47,
+      "annotations": [
+        6351
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "pineal gland",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        },
+        {
+          "title": "nervous system",
+          "identifier": "BTO:0001484"
+        }
+      ],
+      "identifier": "BTO:0001067",
+      "total_term_annotations": 34,
+      "annotations": [
+        6351
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "endocrine pancreas",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        }
+      ],
+      "identifier": "BTO:0000650",
+      "total_term_annotations": 152,
+      "annotations": [
+        6648
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "pancreatic islet",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        }
+      ],
+      "identifier": "BTO:0000991",
+      "total_term_annotations": 148,
+      "annotations": [
+        6648
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "vermiform appendix",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "alimentary canal",
+          "identifier": "BTO:0000058"
+        }
+      ],
+      "identifier": "BTO:0000084",
+      "total_term_annotations": 283,
+      "annotations": [
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "cecum",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "alimentary canal",
+          "identifier": "BTO:0000058"
+        }
+      ],
+      "identifier": "BTO:0000166",
+      "total_term_annotations": 296,
+      "annotations": [
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "urinary bladder",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "urinary system",
+          "identifier": "BTO:0003092"
+        }
+      ],
+      "identifier": "BTO:0001418",
+      "total_term_annotations": 227,
+      "annotations": [
+        8870,
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "bladder",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0000123",
+      "total_term_annotations": 295,
+      "annotations": [
+        8870,
+        7127
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "exocrine pancreas",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        }
+      ],
+      "identifier": "BTO:0000434",
+      "total_term_annotations": 32,
+      "annotations": [
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "adrenal cortex",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        }
+      ],
+      "identifier": "BTO:0000045",
+      "total_term_annotations": 91,
+      "annotations": [
+        7832,
+        8638
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "adrenal medulla",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        }
+      ],
+      "identifier": "BTO:0000049",
+      "total_term_annotations": 74,
+      "annotations": [
+        7832,
+        8638
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "renal proximal tubule",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "urinary system",
+          "identifier": "BTO:0003092"
+        }
+      ],
+      "identifier": "BTO:0001498",
+      "total_term_annotations": 29,
+      "annotations": [
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "corpus luteum",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        },
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        }
+      ],
+      "identifier": "BTO:0000292",
+      "total_term_annotations": 39,
+      "annotations": [
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "mature ovarian follicle",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        },
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        }
+      ],
+      "identifier": "BTO:0000389",
+      "total_term_annotations": 39,
+      "annotations": [
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "renal tubule",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "urinary system",
+          "identifier": "BTO:0003092"
+        }
+      ],
+      "identifier": "BTO:0000343",
+      "total_term_annotations": 73,
+      "annotations": [
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "ovarian follicle",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        },
+        {
+          "title": "reproductive system",
+          "identifier": "BTO:0000081"
+        }
+      ],
+      "identifier": "BTO:0000475",
+      "total_term_annotations": 59,
+      "annotations": [
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "renal distal tubule",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "excretory gland",
+          "identifier": "BTO:0000431"
+        },
+        {
+          "title": "urinary system",
+          "identifier": "BTO:0003092"
+        }
+      ],
+      "identifier": "BTO:0000482",
+      "total_term_annotations": 16,
+      "annotations": [
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "hepatocyte",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        }
+      ],
+      "identifier": "BTO:0000575",
+      "total_term_annotations": 69,
+      "annotations": [
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "pancreatic duct",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        }
+      ],
+      "identifier": "BTO:0002362",
+      "total_term_annotations": 22,
+      "annotations": [
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "thyroid epithelial cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        },
+        {
+          "title": "integument",
+          "identifier": "BTO:0000634"
+        }
+      ],
+      "identifier": "BTO:0003736",
+      "total_term_annotations": 19,
+      "annotations": [
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "luteal cell",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "BTO:0003939",
+      "total_term_annotations": 28,
+      "annotations": [
+        7832
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "white adipose tissue",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "connective tissue",
+          "identifier": "BTO:0000421"
+        }
+      ],
+      "identifier": "BTO:0001456",
+      "total_term_annotations": 46,
+      "annotations": [
+        8843
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "esophagus",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "alimentary canal",
+          "identifier": "BTO:0000058"
+        }
+      ],
+      "identifier": "BTO:0000959",
+      "total_term_annotations": 270,
+      "annotations": [
+        8870
+      ],
+      "total_gene_annotations": 11482
+    },
+    {
+      "title": "parathyroid gland",
+      "database": {
+        "name": "BRENDA Ontology",
+        "slug": "brenda-ontology",
+        "term_version": "releases/2021-10-26",
+        "annotation_version": ""
+      },
+      "slim_terms": [
+        {
+          "title": "endocrine gland",
+          "identifier": "BTO:0001488"
+        }
+      ],
+      "identifier": "BTO:0000997",
+      "total_term_annotations": 39,
+      "annotations": [
+        8870
+      ],
+      "total_gene_annotations": 11482
+    }
+  ]
+}
