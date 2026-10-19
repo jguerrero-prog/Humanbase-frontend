@@ -274,7 +274,7 @@ const networkSettings = (tissue: string) => [
               <KeyLegend title="Connection" mark="line" items={edgeItems} />
               <p class="result-line">Showing 15 of 50 genes, 108 connections at 0.84 or more</p>
             </div>
-            <div class="filters">
+            <div class="graph-filters">
               <Slider label="Minimum confidence" min={0} max={1} step={0.01} defaultValue={0.84} />
               <Slider label="Genes shown" min={5} max={50} step={5} defaultValue={15} />
             </div>
@@ -298,7 +298,7 @@ const networkSettings = (tissue: string) => [
                 ))}
               </tbody>
             </Table>
-            <p class="screen-note">Score is the average weight of a gene’s connections to the query genes. 50 genes; the first 15 are drawn in the graph, and the table scrolls inside its panel.</p>
+            <p class="result-note">Score is the average weight of a gene’s connections to the query genes. 50 genes; the first 15 are drawn in the graph, and the table scrolls inside its panel.</p>
           </Fragment>
         </ResultLayout>
       </div>
@@ -374,19 +374,19 @@ const networkSettings = (tissue: string) => [
       </fieldset>
       <div class="expression-table">
         <h3>Where IL1B is expressed</h3>
-        <p class="screen-note">Experimentally validated and computationally predicted expression in tissues and cell types. The table scrolls inside its panel.</p>
+        <p class="result-note">Experimentally validated and computationally predicted expression in tissues and cell types. The table scrolls inside its panel.</p>
         <Table caption="Where IL1B is expressed" density="compact" columnWidths={['auto', '220px']}>
           <thead><tr><HeaderCell>Tissue or cell type</HeaderCell><HeaderCell align="end" sort="descending">IL1B confidence</HeaderCell></tr></thead>
           <tbody>{expression.map(([tissue, score]) => <tr><Cell rowHeader>{tissue}</Cell><ScoreCell value={score} /></tr>)}</tbody>
         </Table>
-        <p class="screen-note">With several query genes, each gene gets its own confidence column and the table becomes the sequential heatmap from Heatmaps and score legends.</p>
+        <p class="result-note">With several query genes, each gene gets its own confidence column and the table becomes the sequential heatmap from Heatmaps and score legends.</p>
       </div>
     </div>
     <h3 class="sub-heading">Biological processes linked to IL1B</h3>
-    <p class="screen-note">Experimentally associated and computationally predicted processes. Open a row to see the evidence and publications behind it.</p>
+    <p class="result-note">Experimentally associated and computationally predicted processes. Open a row to see the evidence and publications behind it.</p>
     <RankedAnnotationTable caption="Biological processes linked to IL1B" termLabel="Process" scoreLabel="IL1B confidence" rows={processes} defaultExpanded={['drug metabolic process']} />
     <h3 class="sub-heading">Diseases: experimental and predicted rows together</h3>
-    <p class="screen-note">The Diseases tab uses the same table. Predicted associations have no publications to open, so they have no chevron and say Predicted instead of a source count.</p>
+    <p class="result-note">The Diseases tab uses the same table. Predicted associations have no publications to open, so they have no chevron and say Predicted instead of a source count.</p>
     <RankedAnnotationTable caption="Diseases linked to IL1B" termLabel="Disease" scoreLabel="IL1B confidence" rows={diseases} />
     <ul class="points">{notes.views.map((note) => <li>{note}</li>)}</ul>
   </DocSection>
@@ -415,7 +415,7 @@ const networkSettings = (tissue: string) => [
             <tr><Cell type="number">2</Cell><Cell type="gene">EMP1</Cell><Cell>epithelial membrane protein 1</Cell><Cell type="number">−1</Cell><Cell type="number">0.541</Cell></tr>
           </tbody>
         </Table>
-        <p class="screen-note">First rows of the example result file in the NetWAS docs. Pages follow the Pagination rules.</p>
+        <p class="result-note">First rows of the example result file in the NetWAS docs. Pages follow the Pagination rules.</p>
       </div>
       <aside class="job-summary" aria-label="About this result">
         <h3>About this result</h3>
@@ -536,15 +536,7 @@ const networkSettings = (tissue: string) => [
     padding: var(--space-6) 61px var(--space-12);
   }
 
-  .screen-note {
-    font: var(--type-caption);
-    color: var(--text-secondary);
-  }
 
-  .graph-area {
-    position: relative;
-    block-size: 403px;
-  }
 
   .graph-label {
     position: absolute;
@@ -554,34 +546,9 @@ const networkSettings = (tissue: string) => [
     color: var(--text-secondary);
   }
 
-  .graph-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-6);
-    align-items: end;
-    justify-content: space-between;
-  }
 
-  .result-line {
-    font: var(--type-label-sm);
-    color: var(--text-default);
-  }
 
-  .filters {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 346px));
-    gap: var(--space-8);
-  }
 
-  .companion-search {
-    display: flex;
-    gap: var(--space-2);
-    align-items: center;
-  }
-
-  .companion-search :global(.search-field) {
-    flex: 1;
-  }
 
   .drawer-specimen {
     max-inline-size: 480px;

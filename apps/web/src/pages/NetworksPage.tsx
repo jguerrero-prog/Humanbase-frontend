@@ -1,20 +1,36 @@
-import { NetworkQuery } from '@humanbase/data';
-import { EmptyState } from '@humanbase/ui';
-import { useSearchParams } from 'react-router';
+import { NetworkQuery, NetworkView } from '@humanbase/data';
+import { EmptyNetworkQuery, NetworkExplorer } from '@humanbase/hb';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 
-// Placeholder until the Networks screens are built; it already reads its request from the URL.
+export interface NetworksLocationState {
+  fromSearch?: boolean;
+}
+
 export function NetworksPage() {
-  const [search] = useSearchParams();
+  const [search, setSearch] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const query = NetworkQuery.fromSearch(search);
+  const view = NetworkView.fromSearch(search);
+  const fromSearch = (location.state as NetworksLocationState | null)?.fromSearch ?? false;
+
   return (
     <section className="page-section">
-      <title>Networks · Humanbase</title>
-      <h1>Networks</h1>
-      <EmptyState
-        icon="gene-network"
-        title={query.isEmpty ? 'No genes chosen yet' : `${query.entrez.length === 1 ? '1 gene' : `${query.entrez.length} genes`} in the ${query.tissue ?? 'global'} network, ${query.versionName}`}
-        text="The network view is being built. Search a gene on the homepage to choose genes."
-      />
+      <title>{query.isEmpty ? 'Networks · Humanbase' : `Networks · ${query.entrez.length} ${query.entrez.length === 1 ? 'gene' : 'genes'} · Humanbase`}</title>
+      {query.isEmpty ? (
+        <>
+          <h1>Networks</h1>
+          <EmptyNetworkQuery />
+        </>
+      ) : (
+        <NetworkExplorer
+          query={query}
+          view={view}
+          fromSearch={fromSearch}
+          onQueryChange={(next) => void navigate(next.href)}
+          onViewChange={(next) => setSearch(next.applyTo(search), { replace: true })}
+        />
+      )}
     </section>
   );
 }

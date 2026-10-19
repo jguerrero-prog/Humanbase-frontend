@@ -8,7 +8,7 @@ export { Humanbase } from './Humanbase';
 export { Gene, type DataVersion, type GeneRecord } from './genes/Gene';
 export { GeneService } from './genes/GeneService';
 export { HumanbaseProvider, useHumanbase } from './react/HumanbaseProvider';
-export { useGene } from './react/useGene';
+export { useGene, useGenes } from './react/useGene';
 export { GenomeLocation, assemblyNames, type Assembly } from './genome/GenomeLocation';
 export { VariantFileCheck, type FileCheckResult, type FileProblem, type InputKind, type VariantModel } from './jobs/VariantFileCheck';
 export { JobHistory, type JobEntry, type JobState } from './jobs/JobHistory';

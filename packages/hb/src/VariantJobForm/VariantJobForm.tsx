@@ -1,5 +1,5 @@
 import { VariantFileCheck, type FileCheckResult, type InputKind, type VariantModel } from '@humanbase/data';
-import { Accordion, AccordionItem, Button, Field, FileDrop, SegmentedControl, Select, TextInput, type ChosenFile } from '@humanbase/ui';
+import { Accordion, AccordionItem, Button, Field, FileDrop, SegmentedControl, saveFile, Select, TextInput, type ChosenFile } from '@humanbase/ui';
 import { useId, useMemo, useState } from 'react';
 import './VariantJobForm.css';
 
@@ -28,11 +28,7 @@ function rulesFor(kind: InputKind, model: VariantModel): string {
 
 function downloadProblems(result: FileCheckResult) {
   const text = ['line\tproblem', ...result.problems.map(({ line, rule }) => `${line}\t${rule}`)].join('\n');
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(new Blob([text], { type: 'text/tab-separated-values' }));
-  link.download = 'problems.tsv';
-  link.click();
-  URL.revokeObjectURL(link.href);
+  saveFile(text, 'problems.tsv', 'text/tab-separated-values');
 }
 
 export function VariantJobForm({ model: initialModel, examples, onRun }: VariantJobFormProps) {

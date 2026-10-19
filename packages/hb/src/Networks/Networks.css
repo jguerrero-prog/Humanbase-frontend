@@ -1,0 +1,88 @@
+.graph-area .network-graph {
+  block-size: 100%;
+}
+
+.graph-loading {
+  display: grid;
+  gap: var(--space-2);
+  place-content: center;
+  justify-items: center;
+  block-size: 100%;
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.graph-loading-title {
+  font: var(--type-h4);
+  color: var(--text-default);
+}
+
+.graph-loading-inline {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  font: var(--type-body-sm);
+}
+
+.companion-heading {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  font: var(--type-label);
+  color: var(--text-default);
+}
+
+.companion-count {
+  padding: var(--space-0-5) var(--space-2);
+  font: var(--type-label-sm);
+  color: var(--color-emerald-700);
+  background: var(--color-emerald-50);
+  border-radius: var(--radius-xs);
+}
+
+.result-gene-button {
+  padding: 0;
+  font: inherit;
+  text-align: start;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.result-gene-button:hover strong {
+  text-decoration: underline;
+}
+
+.table tbody tr[data-selected] > .table-cell {
+  background: var(--action-ghost-selected);
+}
+
+.data-types-panel[popover] {
+  position: fixed;
+  inset: auto;
+  inset-block-start: anchor(bottom);
+  inset-inline-start: anchor(left);
+  min-inline-size: 260px;
+  margin: var(--space-1) 0;
+  padding: var(--space-2) var(--space-3);
+  position-try-fallbacks: flip-block;
+}
+
+.data-types-panel fieldset {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.data-types-panel:not(:popover-open) {
+  display: none;
+}
+
+.related-genes-table .table-scroll {
+  max-block-size: 520px;
+  overflow: auto;
+}

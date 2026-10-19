@@ -16,14 +16,14 @@ export interface NetworkGraphProps {
   onSelectNode?: (id: string) => void;
   onSelectLink?: (source: string, target: string) => void;
   /** Swap in another renderer, such as the live site's. Defaults to the plain force-directed one. */
-  renderer?: GraphRendererFactory;
+  renderer?: GraphRendererFactory | undefined;
   className?: string;
   ref?: Ref<NetworkGraphHandle>;
 }
 
 const defaultRenderer: GraphRendererFactory = () => new ForceGraphRenderer();
 
-export function NetworkGraph({ data, label, selection = null, onSelectNode, onSelectLink, renderer = defaultRenderer, className, ref }: NetworkGraphProps) {
+export function NetworkGraph({ data, label, selection = null, onSelectNode, onSelectLink, renderer, className, ref }: NetworkGraphProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GraphRenderer | null>(null);
   const events = useRef({ onSelectNode, onSelectLink });
@@ -33,7 +33,7 @@ export function NetworkGraph({ data, label, selection = null, onSelectNode, onSe
 
   useEffect(() => {
     if (!container.current) return;
-    const graph = renderer();
+    const graph = (renderer ?? defaultRenderer)();
     graph.mount(container.current, {
       label,
       onSelectNode: (id) => events.current.onSelectNode?.(id),

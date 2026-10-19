@@ -17,7 +17,7 @@ export function HomePage() {
           <h1 id="home-title">Predictions of gene function, regulation and interactions in human</h1>
           <p className="home-hero-lead">Tissue and cell-type networks built from 7,463 genome-scale datasets, and models that predict the effects of variants.</p>
           <HomeSearch
-            onShowNetwork={(query) => void navigate(query.href)}
+            onShowNetwork={(query) => void navigate(query.href, { state: { fromSearch: true } })}
             onChooseAnalysis={(analysis) => void navigate(`/${analysis}/`)}
             onExampleSet={() => void navigate('/modules/?example=autism')}
             afterExamples={

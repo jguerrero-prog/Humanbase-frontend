@@ -359,6 +359,9 @@ importers:
       '@humanbase/data':
         specifier: workspace:*
         version: link:../data
+      '@humanbase/graph':
+        specifier: workspace:*
+        version: link:../graph
       '@humanbase/ui':
         specifier: workspace:*
         version: link:../ui

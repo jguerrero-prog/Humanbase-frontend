@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { Icon } from '../Icon/Icon';
 import { useDismiss } from '../List/useDismiss';
+import { anchorSupported, placeUnder } from './placement';
 import './Toggletip.css';
 
 export interface ToggletipProps {
@@ -11,15 +12,6 @@ export interface ToggletipProps {
   size?: 'header' | 'default';
   open?: boolean | undefined;
   className?: string | undefined;
-}
-
-const anchorSupported = typeof CSS !== 'undefined' && CSS.supports('anchor-name: --toggletip');
-
-// Without CSS anchor positioning, the panel is placed under its button once, when it opens.
-function placeUnder(panel: HTMLElement, button: HTMLElement) {
-  const box = button.getBoundingClientRect();
-  panel.style.insetBlockStart = `${box.bottom + 8}px`;
-  panel.style.insetInlineStart = `${Math.max(8, box.right - panel.offsetWidth)}px`;
 }
 
 export function Toggletip({ term, title = term, body, link, size = 'default', open: openProp, className }: ToggletipProps) {
