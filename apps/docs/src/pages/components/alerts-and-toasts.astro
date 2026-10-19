@@ -54,7 +54,7 @@ const placement = [
 ];
 
 const toastTiming = [
-  ['Success or info, no action', '6 seconds, plus 1 second for every 20 words. Pauses while hovered or focused.'],
+  ['Success, info or warning, no action', '6 seconds, plus 1 second for every 20 words. Pauses while hovered or focused.'],
   ['With an action, like View job or Undo', 'Until dismissed, or until people leave the page. People may need longer than 6 seconds to reach it.'],
   ['Error', 'Until dismissed. It also appears in job history, so it can be found later.'],
   ['Loading', 'Until the task ends, then turns into a success or error toast in place.'],
@@ -101,6 +101,7 @@ const specs = [
   ['toast.surface', 'white, 1px border.subtle, elevation 3, radius.md 12px'],
   ['toast.height', '52px minimum; message wraps to two lines at most'],
   ['toast.position', 'bottom left, 24px from the edges; max 3; z.toast 500'],
+  ['toast / banner message', 'Lato 16/25 ink'],
   ['toast.action', 'Lato Bold 15 emerald 600, underlined'],
   ['banner.height', '52px minimum, full width, under the top bar'],
   ['banner.border', '1px status border on the bottom edge only'],
