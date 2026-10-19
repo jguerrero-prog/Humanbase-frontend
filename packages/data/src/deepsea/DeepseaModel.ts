@@ -32,6 +32,8 @@ export interface DeepseaModel {
   /** ExPecto runs as a Beluga job with expecto turned on; it has no Model choice of its own. */
   basedOn?: VariantModel;
   expecto?: boolean;
+  /** In silico mutagenesis also runs as a Beluga job, with insilico turned on and sequences as input. */
+  insilico?: boolean;
 }
 
 const zBins: EffectBins = { strong: 5, moderate: 3, weak: 2 };
@@ -107,6 +109,26 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     docsHref: '/docs/expecto/',
     basedOn: 'beluga',
     expecto: true,
+  },
+  insilico: {
+    id: 'insilico',
+    apiName: 'Beluga',
+    tool: 'In silico mutagenesis',
+    option: 'Beluga (DNA, 2019)',
+    kind: 'Beluga (DNA)',
+    summary: 'Mutate every base of a sequence and see which changes move each of Beluga’s 2,002 chromatin features.',
+    about:
+      'Perform in silico saturated mutagenesis to discover informative regulatory features within any sequence: it predicts the regulatory effect of mutating every base of the sequence, for each chromatin feature.',
+    otherModels: 'In silico mutagenesis runs on Beluga.',
+    featureNoun: 'chromatin feature',
+    featurePlural: 'chromatin features',
+    verb: '',
+    strand: false,
+    threshold: 0.5,
+    bins: { strong: 0.5, moderate: 0.25, weak: 0.1 },
+    docsHref: '/docs/ism/',
+    basedOn: 'beluga',
+    insilico: true,
   },
 };
 

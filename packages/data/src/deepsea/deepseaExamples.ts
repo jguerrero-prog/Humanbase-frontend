@@ -1,4 +1,5 @@
 import type { InputKind, VariantModel } from '../jobs/VariantFileCheck';
+import { insilicoExample } from './insilicoExample';
 
 const rows = (lines: readonly (readonly (string | number)[])[]) => lines.map((line) => line.join('\t')).join('\n');
 
@@ -32,10 +33,11 @@ const rnaVariants = rows([
   ['chr19', 59070227, 'UBE2M', 'C', 'A', '+'],
 ]);
 
-/** Each tool's example input, by kind. Regions and sequences have no recorded example yet. */
+/** Each tool's example input, by kind. Regions have no recorded example yet. */
 export const deepseaExamples: Record<VariantModel, Partial<Record<InputKind, string>>> = {
   sei: { vcf: dnaVariants },
   beluga: { vcf: dnaVariants },
   seqweaver: { vcf: rnaVariants },
   expecto: { vcf: dnaVariants },
+  insilico: { fasta: insilicoExample },
 };

@@ -1,0 +1,73 @@
+{
+  "note": "Hand-built, not recorded: submitting an in silico mutagenesis job needs approval and the shared DeepSEA upload field is unconfirmed. Shaped like the real example job 0576e894, with an ID that is clearly not a real job.",
+  "status": 200,
+  "body": {
+    "created": "2026-10-17T22:37:12",
+    "ds_model": "Beluga",
+    "email": "",
+    "expecto": false,
+    "input_type": "fasta",
+    "insilico": true,
+    "job_id": "00000000-0000-4000-8000-000000000151",
+    "output_format": "tsv",
+    "sequence_names": [
+      "known_CEBP_binding_increase-GtoT__chr1_109816591_109818590",
+      "known_FOXA2_binding_decrease-ReferenceAllele__chr10_23507364_23509363",
+      "known_GATA1_binding_increase-TtoC__chr16_208710_210709",
+      "known_FOXA1_binding_increase-CtoT_chr16_52598189_52600188"
+    ],
+    "title": "",
+    "genome_assembly": "hg19",
+    "status": "running",
+    "files": {
+      "sequence_known_CEBP_binding_increase-GtoT__chr1_109816591_109818590": {
+        "logits": {
+          "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/known_CEBP_binding_increase-GtoT__chr1_109816591_109818590_logits.tsv",
+          "name": "known_CEBP_binding_increase-GtoT__chr1_109816591_109818590_logits"
+        },
+        "diffs": {
+          "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/known_CEBP_binding_increase-GtoT__chr1_109816591_109818590_diffs.tsv",
+          "name": "known_CEBP_binding_increase-GtoT__chr1_109816591_109818590_diffs"
+        }
+      },
+      "sequence_known_FOXA2_binding_decrease-ReferenceAllele__chr10_23507364_23509363": {
+        "logits": {
+          "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/known_FOXA2_binding_decrease-ReferenceAllele__chr10_23507364_23509363_logits.tsv",
+          "name": "known_FOXA2_binding_decrease-ReferenceAllele__chr10_23507364_23509363_logits"
+        },
+        "diffs": {
+          "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/known_FOXA2_binding_decrease-ReferenceAllele__chr10_23507364_23509363_diffs.tsv",
+          "name": "known_FOXA2_binding_decrease-ReferenceAllele__chr10_23507364_23509363_diffs"
+        }
+      },
+      "sequence_known_GATA1_binding_increase-TtoC__chr16_208710_210709": {
+        "logits": {
+          "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/known_GATA1_binding_increase-TtoC__chr16_208710_210709_logits.tsv",
+          "name": "known_GATA1_binding_increase-TtoC__chr16_208710_210709_logits"
+        },
+        "diffs": {
+          "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/known_GATA1_binding_increase-TtoC__chr16_208710_210709_diffs.tsv",
+          "name": "known_GATA1_binding_increase-TtoC__chr16_208710_210709_diffs"
+        }
+      },
+      "sequence_known_FOXA1_binding_increase-CtoT_chr16_52598189_52600188": {
+        "logits": {
+          "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/known_FOXA1_binding_increase-CtoT_chr16_52598189_52600188_logits.tsv",
+          "name": "known_FOXA1_binding_increase-CtoT_chr16_52598189_52600188_logits"
+        },
+        "diffs": {
+          "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/known_FOXA1_binding_increase-CtoT_chr16_52598189_52600188_diffs.tsv",
+          "name": "known_FOXA1_binding_increase-CtoT_chr16_52598189_52600188_diffs"
+        }
+      },
+      "uploaded_query": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/0576e894-a2c5-48bb-9bdf-227962495d5f_textarea.fasta",
+        "name": "Uploaded query"
+      },
+      "gz_file": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/0576e894-a2c5-48bb-9bdf-227962495d5f.tar.gz",
+        "name": "Archive of results"
+      }
+    }
+  }
+}

@@ -348,7 +348,8 @@
           "deepsea/jobs@post-f4c79f7c",
           "deepsea/jobs@post-d5d72e89",
           "deepsea/jobs@post-c312bddc",
-          "deepsea/jobs@post-3d67f823"
+          "deepsea/jobs@post-3d67f823",
+          "deepsea/jobs@post-930ed3e5"
         ]
       }
     },
@@ -356,16 +357,17 @@
       "method": "GET",
       "path": "/api/deepsea/jobs/{job_id}/",
       "documented": true,
-      "$note": "The Seqweaver example job 76aea8fe-8ec7-4698-a193-a186c7665edb, written on the Figma job screens and checked in the Seqweaver API note on October 18, 2026.",
+      "$note": "The Seqweaver example job 76aea8fe-8ec7-4698-a193-a186c7665edb, written on the Figma job screens and checked in the Seqweaver API note on October 18, 2026. The in silico mutagenesis example job 0576e894-a2c5-48bb-9bdf-227962495d5f, written on the Figma job screens, read on October 20, 2026.",
       "samples": [
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/",
+        "/api/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/",
         "/api/deepsea/jobs/00000000-0000-4000-8000-000000000000/"
       ],
       "usedBy": [
         "DeepseaService.get"
       ],
       "handBuiltSamples": {
-        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
+        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note. The in silico mutagenesis running job (…151) is hand-built the same way, shaped like the real example job 0576e894.",
         "files": [
           "deepsea/jobs/00000000-0000-4000-8000-000000000101",
           "deepsea/jobs/00000000-0000-4000-8000-000000000102",
@@ -374,7 +376,8 @@
           "deepsea/jobs/00000000-0000-4000-8000-000000000113",
           "deepsea/jobs/00000000-0000-4000-8000-000000000121",
           "deepsea/jobs/00000000-0000-4000-8000-000000000131",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000141"
+          "deepsea/jobs/00000000-0000-4000-8000-000000000141",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000151"
         ]
       }
     },
@@ -449,6 +452,26 @@
           "deepsea/jobs/00000000-0000-4000-8000-000000000141/feature_predictions@chr_variant=5%3A134871851&score_type=expecto"
         ]
       }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/jobs/{job_id}/in_silico_mutagenesis/",
+      "documented": true,
+      "example": "/api/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/in_silico_mutagenesis/?sequence_name=known_CEBP_binding_increase-GtoT__chr1_109816591_109818590&feature_name=297",
+      "$note": "feature_name is the feature’s index in GET /api/deepsea/Beluga/features/ (297 is HepG2 / CEBPB). The body is { positions: [\"position,ref,alt,value\", ...], percentile: [...] }, three substitutions per base. Samples cover two of the example job’s four sequences for HepG2 / CEBPB, about 120 KB each, written compactly; other choices explain that the sample doesn’t include them.",
+      "samples": [
+        {
+          "path": "/api/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/in_silico_mutagenesis/?sequence_name=known_CEBP_binding_increase-GtoT__chr1_109816591_109818590&feature_name=297",
+          "digits": 3
+        },
+        {
+          "path": "/api/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/in_silico_mutagenesis/?sequence_name=known_FOXA2_binding_decrease-ReferenceAllele__chr10_23507364_23509363&feature_name=297",
+          "digits": 3
+        }
+      ],
+      "usedBy": [
+        "DeepseaService.insilico"
+      ]
     },
     {
       "method": "GET",

@@ -3,6 +3,7 @@ import type { InputKind, VariantModel } from '../jobs/VariantFileCheck';
 import { DeepseaJob, type DeepseaJobRecord } from './DeepseaJob';
 import { deepseaModels } from './DeepseaModel';
 import type { FeaturePredictionRecord, FeaturesRecord, ScoreType, VariantScoresRecord } from './DeepseaResult';
+import { InsilicoResult, type InsilicoRecord } from './InsilicoResult';
 
 export interface DeepseaRequest {
   model: VariantModel;
@@ -31,6 +32,7 @@ export class DeepseaService {
     const form = new FormData();
     form.append('ds_model', deepseaModels[model].apiName);
     if (deepseaModels[model].expecto) form.append('expecto', 'true');
+    if (deepseaModels[model].insilico) form.append('insilico', 'true');
     form.append('input_type', kind);
     form.append('genome_assembly', genome);
     if (title?.trim()) form.append('title', title.trim());
@@ -58,6 +60,11 @@ export class DeepseaService {
   async featurePredictions(id: string, scoreType: string, chrVariant: string): Promise<FeaturePredictionRecord | null> {
     const rows = await this.client.get<FeaturePredictionRecord[]>(`deepsea/jobs/${id}/feature_predictions/`, { score_type: scoreType, chr_variant: chrVariant });
     return rows[0] ?? null;
+  }
+
+  /** One sequence's mutagenesis for one feature, named by its index in the model's feature list. */
+  async insilico(id: string, sequenceName: string, featureIndex: number): Promise<InsilicoResult> {
+    return new InsilicoResult(await this.client.get<InsilicoRecord>(`deepsea/jobs/${id}/in_silico_mutagenesis/`, { sequence_name: sequenceName, feature_name: featureIndex }));
   }
 
   features(model: VariantModel): Promise<FeaturesRecord> {
