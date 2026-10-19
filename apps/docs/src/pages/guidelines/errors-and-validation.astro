@@ -1,5 +1,5 @@
 ---
-import { Button, ErrorSummary, FileField, SearchField, TextInput } from '@humanbase/ui';
+import { Button, ErrorSummary, FileDrop, SearchField, TextInput } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
@@ -134,7 +134,7 @@ const accessibility = [
           ]}
         />
         <div class="file-group">
-          <FileField id="netwas-file" label="GWAS file" accept=".txt,.tsv" error="Add a GWAS file to run NetWAS: tab-separated, with gene and p columns." />
+          <FileDrop id="netwas-file" label="GWAS file" accept=".txt,.tsv" prompt="Drop a GWAS file here, or" hint="Tab-separated, with gene and p columns." error="Add a GWAS file to run NetWAS." />
           <a class="format-link" href="#netwas-file">See the format, or use the example BMI file</a>
         </div>
         <TextInput id="netwas-threshold" label="p-value threshold" defaultValue="5" error="Use a value between 0 and 1, such as 0.01." />

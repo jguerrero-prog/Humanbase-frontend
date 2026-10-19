@@ -38,7 +38,7 @@
   box-shadow: var(--shadow-focus-ring);
 }
 
-.file-drop[data-file-state="problems"] {
+.file-drop:has(input[aria-invalid="true"]) {
   border: 1.5px solid var(--border-error);
 }
 
