@@ -33,6 +33,7 @@ export { Logo } from './Logo/Logo';
 export { MenuDivider, MenuGroupLabel, MenuItem, MenuPanel, type MenuItemProps } from './Menu/Menu';
 export { RadioGroup, type RadioGroupProps, type RadioOption } from './RadioGroup/RadioGroup';
 export { SegmentedControl, type Segment, type SegmentedControlProps } from './SegmentedControl/SegmentedControl';
+export { SearchExamples, type SearchExample, type SearchExamplesProps } from './SearchExamples/SearchExamples';
 export { SearchField, SuggestionsEmpty, SuggestionsLoading, type SearchFieldProps, type SearchFieldSize, type SearchSuggestion } from './SearchField/SearchField';
 export { Select, type SelectOption, type SelectProps } from './Select/Select';
 export { Spinner } from './Spinner/Spinner';
@@ -115,3 +116,4 @@ export { byGenomePosition, variantLabel, variantLocation, type Variant, type Var
 export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFocus';
 export { VariantScorePlot, type PlotBy, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
 export { VariantsTable, type VariantsTableProps } from './VariantEffects/VariantsTable';
+export { useDebounced } from './hooks/useDebounced';

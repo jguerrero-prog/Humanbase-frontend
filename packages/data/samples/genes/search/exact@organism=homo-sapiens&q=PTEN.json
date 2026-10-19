@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 5728,
+      "standard_name": "PTEN",
+      "aliases": "MHAM|MMAC1|PTEN1|PTENbeta|DEC|10q23del|BZS|TEP1|CWS1|GLM2",
+      "xrefs": "ENSG00000171862|5728|601728|HGNC:9588",
+      "description": "phosphatase and tensin homolog",
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 3553,
+      "standard_name": "IL1B",
+      "aliases": "IL1F2|IL1beta|IL-1|IL1-BETA",
+      "xrefs": "147720|HGNC:5992|ENSG00000125538|3553",
+      "description": "interleukin 1 beta",
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}

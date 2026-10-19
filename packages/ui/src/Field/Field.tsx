@@ -18,6 +18,7 @@ export interface FieldProps {
   size?: FieldSize;
   disabled?: boolean | undefined;
   count?: string | undefined;
+  hideLabel?: boolean | undefined;
   children: (control: ControlProps) => ReactNode;
 }
 
@@ -32,7 +33,7 @@ export function FieldError({ id, children }: { id: string | undefined; children:
   );
 }
 
-export function Field({ label, id: givenId, hint, error, size = 'medium', disabled = false, count, children }: FieldProps) {
+export function Field({ label, id: givenId, hint, error, size = 'medium', disabled = false, count, hideLabel = false, children }: FieldProps) {
   const generatedId = useId();
   const id = givenId ?? generatedId;
   const messageId = error || hint ? `${id}-message` : undefined;
@@ -41,7 +42,7 @@ export function Field({ label, id: givenId, hint, error, size = 'medium', disabl
 
   return (
     <div className={`field field-${size}`} data-disabled={disabled || undefined}>
-      <label className="field-label" htmlFor={id}>
+      <label className={hideLabel ? 'visually-hidden' : 'field-label'} htmlFor={id}>
         {label}
       </label>
       {children({ id, 'aria-describedby': describedBy, 'aria-invalid': error ? true : undefined })}
