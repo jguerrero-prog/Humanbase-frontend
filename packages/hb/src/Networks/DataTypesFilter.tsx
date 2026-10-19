@@ -7,9 +7,10 @@ export interface DataTypesFilterProps {
   /** Chosen slugs; empty means every type. */
   value: readonly string[];
   onChange: (slugs: string[]) => void;
+  size?: 'small' | 'medium';
 }
 
-export function DataTypesFilter({ types, value, onChange }: DataTypesFilterProps) {
+export function DataTypesFilter({ types, value, onChange, size = 'small' }: DataTypesFilterProps) {
   const id = useId();
   const panelId = `${id}-types`;
   const anchor = `--types-${id.replace(/[^\w-]/g, '')}`;
@@ -26,9 +27,9 @@ export function DataTypesFilter({ types, value, onChange }: DataTypesFilterProps
   };
 
   return (
-    <Field label="Data types" size="small">
+    <Field label="Data types" size={size}>
       {(control) => (
-        <div className="select select-small data-types">
+        <div className={`select select-${size} data-types`}>
           <button
             {...control}
             ref={button}

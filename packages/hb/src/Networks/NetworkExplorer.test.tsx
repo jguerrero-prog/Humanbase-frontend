@@ -159,4 +159,30 @@ describe('NetworkExplorer', () => {
     renderExplorer(new NetworkQuery([3553, 7124], undefined, 'v1', [], 'acute-inflammatory-response'), { view: new NetworkView().with({ tab: 'process' }) });
     expect(await screen.findByRole('table', { name: /Genes functionally related to IL1B and TNF in the acute inflammatory response network/ })).toBeInTheDocument();
   });
+
+  it('adds a network to compare from the Compare dialog', async () => {
+    const { onQueryChange } = renderExplorer(new NetworkQuery([3553, 7124]));
+    await userEvent.click(await screen.findByRole('button', { name: 'Compare' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Add a network to compare' });
+    expect(within(dialog).getByRole('button', { name: 'Add network' })).toBeDisabled();
+    await userEvent.click(within(dialog).getByRole('combobox', { name: 'Tissue' }));
+    await userEvent.click(await within(dialog).findByRole('option', { name: 'mononuclear phagocyte' }));
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Add network' }));
+    expect(onQueryChange.mock.lastCall?.[0].compare).toEqual({ tissue: 'mononuclear-phagocyte', dataTypes: [] });
+  });
+
+  it('draws both networks side by side and lets the genes panel follow either', async () => {
+    const query = new NetworkQuery([3553, 7124], undefined, 'v1', [], undefined, { tissue: 'mononuclear-phagocyte', dataTypes: [] });
+    const { onQueryChange, onViewChange } = renderExplorer(query);
+    const compared = await screen.findByRole('region', { name: 'mononuclear phagocyte network' });
+    expect(screen.getByRole('region', { name: 'global network' })).toBeInTheDocument();
+    expect(await within(compared).findByText(/connections at 0\.51 or more/)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Compare' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('radio', { name: 'Mononuclear phagocyte' }));
+    expect(onViewChange.mock.lastCall?.[0].focus).toBe('compare');
+    await userEvent.click(within(compared).getByRole('button', { name: 'Remove the mononuclear phagocyte network' }));
+    expect(onQueryChange.mock.lastCall?.[0].compare).toBeUndefined();
+    await userEvent.click(screen.getByRole('button', { name: 'Remove the global network' }));
+    expect(onQueryChange.mock.lastCall?.[0].tissue).toBe('mononuclear-phagocyte');
+  });
 });
