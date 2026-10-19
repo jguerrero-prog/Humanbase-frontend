@@ -1,13 +1,13 @@
 ---
 import { VariantJobForm } from '@humanbase/hb';
-import { Accordion, AccordionItem, Breadcrumbs, Button, FileDrop, Icon, RemoveButton, SegmentedControl, Select, TextInput, TopBar } from '@humanbase/ui';
+import { Accordion, AccordionItem, Breadcrumbs, Button, FileDrop, Icon, RemoveButton, SegmentedControl, Select, TextInput } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
-import { productJobs, productSections } from '../../data/product-navigation';
+import ProductScreen from '../../components/docs/ProductScreen.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const inputTypes = [
@@ -118,8 +118,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
   </Intro>
 
   <DocSection title="The variant form" lead="Seqweaver with a VCF that passed its check. Fields run top to bottom in the order people decide them: what model, what kind of input, which genome, then the file.">
-    <figure class="screen" inert>
-      <TopBar sections={productSections} current="Sequence analysis" jobs={productJobs} scrolled={false} />
+    <ProductScreen label="Seqweaver job form" current="Sequence analysis" padded={false}>
       <div class="screen-body">
         <Breadcrumbs items={[{ label: 'Sequence analysis', href: '/sequence-analysis/' }, { label: 'Seqweaver' }]} />
         <div class="screen-title">
@@ -166,7 +165,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
           </aside>
         </div>
       </div>
-    </figure>
+    </ProductScreen>
   </DocSection>
 
   <DocSection title="Checking the file" lead="The file is read in the browser as soon as it’s dropped or pasted. The run button stays off until every line passes, and each problem names its line and the rule it breaks.">
@@ -273,17 +272,6 @@ ACGTTGCAGGTCCATGACTTGCAATCGGATCCTAGGCTTACGATCGATTGCCAGTACGGTTAACCGTAGCTAGGCATTCG
 </DocsLayout>
 
 <style>
-  .screen {
-    margin: 0;
-    overflow: hidden;
-    border: var(--border-width-1) solid var(--border-subtle);
-    border-radius: var(--radius-md);
-  }
-
-  .screen :global(.top-bar) {
-    position: relative;
-  }
-
   .screen-body {
     display: grid;
     gap: var(--space-6);

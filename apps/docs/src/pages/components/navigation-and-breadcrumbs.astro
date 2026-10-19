@@ -9,6 +9,7 @@ import NetworkSketch from '../../components/docs/NetworkSketch.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
+import ProductScreen from '../../components/docs/ProductScreen.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import { productJobs as jobs, productSections as sections } from '../../data/product-navigation';
 
@@ -372,8 +373,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
   </DocSection>
 
   <DocSection title="Result page header" lead="Where the pieces come together. Breadcrumbs say where the page is, the title says what it shows, settings change it in place, and tabs switch views.">
-    <figure class="screen">
-      <TopBar sections={sections} current="Network analysis" jobs={jobs} scrolled={false} />
+    <ProductScreen label="A result page header built from the top bar, breadcrumbs, title, selects and tabs" current="Network analysis" padded={false} inert={false}>
       <div class="result-header">
         <Breadcrumbs items={networksCrumbs} />
         <div class="result-title-row">
@@ -387,8 +387,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
         <Tabs label="IL1B in blood vessel views" tabs={resultTabs} defaultValue="network" />
       </div>
       <div class="result-body"><NetworkSketch /></div>
-      <figcaption class="visually-hidden">A result page header built from the top bar, breadcrumbs, title, selects and tabs.</figcaption>
-    </figure>
+    </ProductScreen>
     <ul class="points">{headerNotes.map((note) => <li>{note}</li>)}</ul>
   </DocSection>
 
@@ -655,14 +654,12 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
   }
 
   .stage,
-  .screen,
   .tablet {
     position: relative;
     margin: 0;
   }
 
   .stage :global(.top-bar),
-  .screen :global(.top-bar),
   .tablet :global(.top-bar),
   .phone :global(.top-bar) {
     position: relative;
@@ -822,12 +819,6 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
   .crumb-variants p {
     font: var(--type-body-sm);
     color: var(--text-secondary);
-  }
-
-  .screen {
-    overflow: hidden;
-    border: var(--border-width-1) solid var(--border-subtle);
-    border-radius: var(--radius-md);
   }
 
   .result-header {

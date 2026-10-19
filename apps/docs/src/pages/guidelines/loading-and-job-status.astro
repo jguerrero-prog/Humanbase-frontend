@@ -1,13 +1,13 @@
 ---
-import { Breadcrumbs, Button, ContextLabel, HeaderCell, JobSteps, Skeleton, Spinner, StatusBadge, Table, TableSkeleton, Tabs, TopBar, type JobStep } from '@humanbase/ui';
+import { Breadcrumbs, Button, ContextLabel, HeaderCell, JobSteps, Skeleton, Spinner, StatusBadge, Table, TableSkeleton, Tabs, type JobStep } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
+import ProductScreen from '../../components/docs/ProductScreen.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import { productJobs as jobs, productSections as sections } from '../../data/product-navigation';
 
 const today = [
   [
@@ -162,8 +162,7 @@ const writing = [
     title="A page loading"
     lead="The IL1B page at 400ms. Everything known from the link is real; only the graph and table wait. Skeletons are still grey blocks, never a shimmer."
   >
-    <div class="screen">
-      <TopBar sections={sections} current="Network analysis" jobs={jobs} scrolled={false} />
+    <ProductScreen label="The IL1B page while its network and table load" current="Network analysis" padded={false} inert={false}>
       <div class="screen-header">
         <Breadcrumbs items={[{ label: 'Networks', href: '#a-page-loading' }, { label: 'IL1B in blood vessel' }]} />
         <p class="screen-title">IL1B in blood vessel</p>
@@ -194,7 +193,7 @@ const writing = [
           </tbody>
         </Table>
       </div>
-    </div>
+    </ProductScreen>
     <ul class="points">{pageNotes.map((note) => <li>{note}</li>)}</ul>
   </DocSection>
 
@@ -337,12 +336,6 @@ const writing = [
   .timeline p {
     font: var(--type-body-sm);
     color: var(--text-secondary);
-  }
-
-  .screen {
-    overflow: hidden;
-    border: var(--border-width-1) solid var(--border-subtle);
-    border-radius: var(--radius-md);
   }
 
   .screen-header {
