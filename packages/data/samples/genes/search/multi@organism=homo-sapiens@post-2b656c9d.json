@@ -1,0 +1,5142 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "query": "ADNP",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23394,
+          "standard_name": "ADNP",
+          "aliases": "HVDAS|MRD28|ADNP1",
+          "description": "activity dependent neuroprotector homeobox",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ARID1B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57492,
+          "standard_name": "ARID1B",
+          "aliases": "BRIGHT|CSS1|MRD12|DAN15|6A3-5|P250R|ELD/OSA1|BAF250B|OSA2|SMARCF2",
+          "description": "AT-rich interaction domain 1B",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DYRK1A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1859,
+          "standard_name": "DYRK1A",
+          "aliases": "MRD7|MNBH|MNB|DYRK|DYRK1|HP86",
+          "description": "dual specificity tyrosine phosphorylation regulated kinase 1A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ASH1L",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 55870,
+          "standard_name": "ASH1L",
+          "aliases": "MRD52|ASH1|ASH1L1|KMT2H",
+          "description": "ASH1 like histone lysine methyltransferase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ASXL3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 80816,
+          "standard_name": "ASXL3",
+          "aliases": "KIAA1713|BRPS",
+          "description": "ASXL transcriptional regulator 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CHD8",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57680,
+          "standard_name": "CHD8",
+          "aliases": "AUTS18|HELSNF1",
+          "description": "chromodomain helicase DNA binding protein 8",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ANK2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 287,
+          "standard_name": "ANK2",
+          "aliases": "CFAP87|ANK-2|LQT4|FAP87|brank-2",
+          "description": "ankyrin 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CUL3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8452,
+          "standard_name": "CUL3",
+          "aliases": "PHA2E|CUL-3|NEDAUS",
+          "description": "cullin 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DSCAM",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1826,
+          "standard_name": "DSCAM",
+          "aliases": "CHD2-52|CHD2-42|CHD2",
+          "description": "DS cell adhesion molecule",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MYT1L",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23040,
+          "standard_name": "MYT1L",
+          "aliases": "ZC2H2C2|MRD39|NZF1|ZC2HC4B|myT1-L",
+          "description": "myelin transcription factor 1 like",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KMT5B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 51111,
+          "standard_name": "KMT5B",
+          "aliases": "CGI-85|MRD51|SUV420H1|CGI85",
+          "description": "lysine methyltransferase 5B",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NAA15",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 80155,
+          "standard_name": "NAA15",
+          "aliases": "TBDN|NARG1|TBDN100|MRD50|Ga19|NAT1P|NATH",
+          "description": "N-alpha-acetyltransferase 15, NatA auxiliary subunit",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KMT2A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4297,
+          "standard_name": "KMT2A",
+          "aliases": "ALL1|CXXC7|MLL1A|WDSTS|MLL1|HTRX|ALL-1|TRX1|HRX|MLL|HTRX1",
+          "description": "lysine methyltransferase 2A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "GRIN2B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2904,
+          "standard_name": "GRIN2B",
+          "aliases": "hNR3|DEE27|NR3|MRD6|NR2B|EIEE27|GluN2B|NMDAR2B",
+          "description": "glutamate ionotropic receptor NMDA type subunit 2B",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KATNAL2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 83473,
+          "standard_name": "KATNAL2",
+          "aliases": "",
+          "description": "katanin catalytic subunit A1 like 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PTEN",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5728,
+          "standard_name": "PTEN",
+          "aliases": "MHAM|MMAC1|PTEN1|PTENbeta|DEC|10q23del|BZS|TEP1|CWS1|GLM2",
+          "description": "phosphatase and tensin homolog",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "RELN",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5649,
+          "standard_name": "RELN",
+          "aliases": "LIS2|ETL7|PRO1598|RL",
+          "description": "reelin",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SCN2A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6326,
+          "standard_name": "SCN2A",
+          "aliases": "EIEE11|HBA|HBSCII|BFIC3|BFNIS|HBSCI|EA9|Nav1.2|SCN2A1|NAC2|Na(v)1.2|SCN2A2|BFIS3|DEE11",
+          "description": "sodium voltage-gated channel alpha subunit 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SYNGAP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8831,
+          "standard_name": "SYNGAP1",
+          "aliases": "RASA1|RASA5|MRD5|SYNGAP",
+          "description": "synaptic Ras GTPase activating protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SETD5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 55209,
+          "standard_name": "SETD5",
+          "aliases": "MRD23|SETD5A",
+          "description": "SET domain containing 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SHANK3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 85358,
+          "standard_name": "SHANK3",
+          "aliases": "SPANK-2|PSAP2|PROSAP2|SCZD15|DEL22q13.3",
+          "description": "SH3 and multiple ankyrin repeat domains 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TBR1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10716,
+          "standard_name": "TBR1",
+          "aliases": "TBR-1|TES-56|IDDAS",
+          "description": "T-box brain transcription factor 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TRIP12",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9320,
+          "standard_name": "TRIP12",
+          "aliases": "MRD49|ULF|TRIP-12|TRIPC",
+          "description": "thyroid hormone receptor interactor 12",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CNTN4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 152330,
+          "standard_name": "CNTN4",
+          "aliases": "AXCAM|BIG-2",
+          "description": "contactin 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "BCKDK",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10295,
+          "standard_name": "BCKDK",
+          "aliases": "BDK|BCKDKD",
+          "description": "branched chain keto acid dehydrogenase kinase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CACNA1H",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8912,
+          "standard_name": "CACNA1H",
+          "aliases": "EIG6|HALD4|ECA6|CACNA1HB|Cav3.2",
+          "description": "calcium voltage-gated channel subunit alpha1 H",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ANKRD11",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 29123,
+          "standard_name": "ANKRD11",
+          "aliases": "T13|LZ16|ANCO-1|ANCO1",
+          "description": "ankyrin repeat domain containing 11",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DEAF1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10522,
+          "standard_name": "DEAF1",
+          "aliases": "ZMYND5|NEDHELS|SPN|VSVS|NUDR|MRD24",
+          "description": "DEAF1 transcription factor",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DDX3X",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1654,
+          "standard_name": "DDX3X",
+          "aliases": "HLP2|DDX14|CAP-Rf|MRXSSB|DBX|MRX102|DDX3",
+          "description": "DEAD-box helicase 3 X-linked",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "BCL11A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 53335,
+          "standard_name": "BCL11A",
+          "aliases": "CTIP1|DILOS|SMARCM1|HBFQTL5|EVI9|ZNF856",
+          "description": "BAF chromatin remodeling complex subunit BCL11A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CIC",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23152,
+          "standard_name": "CIC",
+          "aliases": "MRD45",
+          "description": "capicua transcriptional repressor",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CNTNAP2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 26047,
+          "standard_name": "CNTNAP2",
+          "aliases": "CDFE|NRXN4|AUTS15|CASPR2|PTHSL1",
+          "description": "contactin associated protein 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "BAZ2B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 29994,
+          "standard_name": "BAZ2B",
+          "aliases": "WALp4",
+          "description": "bromodomain adjacent to zinc finger domain 2B",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CACNA1D",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 776,
+          "standard_name": "CACNA1D",
+          "aliases": "CACN4|PASNA|Cav1.3|CCHL1A2|CACH3|SANDD|CACNL1A2",
+          "description": "calcium voltage-gated channel subunit alpha1 D",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CACNA2D3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 55799,
+          "standard_name": "CACNA2D3",
+          "aliases": "HSA272268",
+          "description": "calcium voltage-gated channel auxiliary subunit alpha2delta 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CTNND2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1501,
+          "standard_name": "CTNND2",
+          "aliases": "GT24|NPRAP",
+          "description": "catenin delta 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CUX1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1523,
+          "standard_name": "CUX1",
+          "aliases": "CDP|p200|CUX|CDP/Cut|GOLIM6|CDP1|Clox|p100|p110|CASP|Nbla10317|p75|COY1|GDDI|Cux/CDP|CUTL1",
+          "description": "cut like homeobox 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DIP2C",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 22982,
+          "standard_name": "DIP2C",
+          "aliases": "KIAA0934",
+          "description": "disco interacting protein 2 homolog C",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ERBIN",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 55914,
+          "standard_name": "ERBIN",
+          "aliases": "HEL-S-78|LAP2|ERBB2IP",
+          "description": "erbb2 interacting protein",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MBOAT7",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 79143,
+          "standard_name": "MBOAT7",
+          "aliases": "MBOA7|LRC4|BB1|OACT7|MRT57|LENG4|hMBOA-7|LPLAT|LPIAT",
+          "description": "membrane bound O-acyltransferase domain containing 7",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MECP2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4204,
+          "standard_name": "MECP2",
+          "aliases": "RTS|RTT|RS|AUTSX3|PPMX|MRX79|MRXSL|MRXS13|MRX16",
+          "description": "methyl-CpG binding protein 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "FOXP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 27086,
+          "standard_name": "FOXP1",
+          "aliases": "QRF1|MFH|12CC4|hFKH1B|HSPC215",
+          "description": "forkhead box P1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NRXN1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9378,
+          "standard_name": "NRXN1",
+          "aliases": "Hs.22998|SCZD17|PTHSL2",
+          "description": "neurexin 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MAGEL2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 54551,
+          "standard_name": "MAGEL2",
+          "aliases": "NDNL1|nM15|PWLS|SHFYNG",
+          "description": "MAGE family member L2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MED13",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9969,
+          "standard_name": "MED13",
+          "aliases": "TRAP240|ARC250|DRIP250|THRAP1|MRD61|HSPC221",
+          "description": "mediator complex subunit 13",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MED13L",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23389,
+          "standard_name": "MED13L",
+          "aliases": "THRAP2|PROSIT240|MRFACD|TRAP240L",
+          "description": "mediator complex subunit 13L",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "GABRB3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2562,
+          "standard_name": "GABRB3",
+          "aliases": "ECA5|DEE43|EIEE43",
+          "description": "gamma-aminobutyric acid type A receptor subunit beta3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KDM5B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10765,
+          "standard_name": "KDM5B",
+          "aliases": "CT31|PLU-1|MRT65|RBP2-H1|PPP1R98|PUT1|RBBP2H1A|PLU1|JARID1B",
+          "description": "lysine demethylase 5B",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KMT2C",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 58508,
+          "standard_name": "KMT2C",
+          "aliases": "MLL3|KLEFS2|HALR",
+          "description": "lysine methyltransferase 2C",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "GIGYF2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 26058,
+          "standard_name": "GIGYF2",
+          "aliases": "PARK11|PERQ2|GYF2|PERQ3|TNRC15",
+          "description": "GRB10 interacting GYF protein 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "GRIA1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2890,
+          "standard_name": "GRIA1",
+          "aliases": "GluA1|GLUH1|GLURA|HBGR1|GLUR1",
+          "description": "glutamate ionotropic receptor AMPA type subunit 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ILF2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3608,
+          "standard_name": "ILF2",
+          "aliases": "NF45|PRO3063",
+          "description": "interleukin enhancer binding factor 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "INTS6",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 26512,
+          "standard_name": "INTS6",
+          "aliases": "INT6|HDB|DDX26|DBI-1|Notchl2|DICE1|DDX26A",
+          "description": "integrator complex subunit 6",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "IRF2BPL",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 64207,
+          "standard_name": "IRF2BPL",
+          "aliases": "C14orf4|EAP1|NEDAMSS",
+          "description": "interferon regulatory factor 2 binding protein like",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KAT2B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8850,
+          "standard_name": "KAT2B",
+          "aliases": "PCAF|P/CAF|CAF",
+          "description": "lysine acetyltransferase 2B",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KDM6A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7403,
+          "standard_name": "KDM6A",
+          "aliases": "UTX|KABUK2|bA386N14.2",
+          "description": "lysine demethylase 6A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "LEO1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 123169,
+          "standard_name": "LEO1",
+          "aliases": "RDL",
+          "description": "LEO1 homolog, Paf1/RNA polymerase II complex component",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NCKAP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10787,
+          "standard_name": "NCKAP1",
+          "aliases": "p125Nap1|NAP125|NAP1|HEM2",
+          "description": "NCK associated protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NLGN3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 54413,
+          "standard_name": "NLGN3",
+          "aliases": "HNL3",
+          "description": "neuroligin 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SHANK2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 22941,
+          "standard_name": "SHANK2",
+          "aliases": "CTTNBP1|SPANK-3|ProSAP1|AUTS17|CORTBP1|SHANK",
+          "description": "SH3 and multiple ankyrin repeat domains 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SMARCC2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6601,
+          "standard_name": "SMARCC2",
+          "aliases": "CSS8|Rsc8|BAF170|CRACC2",
+          "description": "SWI/SNF related, matrix associated, actin dependent regulator of chromatin subfamily c member 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PTCHD1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 139411,
+          "standard_name": "PTCHD1",
+          "aliases": "AUTSX4",
+          "description": "patched domain containing 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SCN9A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6335,
+          "standard_name": "SCN9A",
+          "aliases": "GEFSP7|SFNP|ETHA|PN1|NE-NA|NENA|FEB3B|HSAN2D|Nav1.7",
+          "description": "sodium voltage-gated channel alpha subunit 9",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SLC6A1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6529,
+          "standard_name": "SLC6A1",
+          "aliases": "GABATR|GABATHG|MAE|GAT1",
+          "description": "solute carrier family 6 member 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PHF3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23469,
+          "standard_name": "PHF3",
+          "aliases": "",
+          "description": "PHD finger protein 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "RANBP17",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 64901,
+          "standard_name": "RANBP17",
+          "aliases": "",
+          "description": "RAN binding protein 17",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "RIMS1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 22999,
+          "standard_name": "RIMS1",
+          "aliases": "RAB3IP2|RIM|CORD7|RIM1",
+          "description": "regulating synaptic membrane exocytosis 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SPAST",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6683,
+          "standard_name": "SPAST",
+          "aliases": "SPG4|FSP2|ADPSP",
+          "description": "spastin",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SRCAP",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10847,
+          "standard_name": "SRCAP",
+          "aliases": "DEHMBA|FLHS|EAF1|DOMO1|SWR1",
+          "description": "Snf2 related CREBBP activator protein",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SRSF11",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9295,
+          "standard_name": "SRSF11",
+          "aliases": "p54|dJ677H15.2|SFRS11|NET2",
+          "description": "serine and arginine rich splicing factor 11",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TAOK2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9344,
+          "standard_name": "TAOK2",
+          "aliases": "TAO1|Tao2beta|PSK|PSK1-BETA|TAO2|MAP3K17|PSK1",
+          "description": "TAO kinase 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TBL1XR1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 79718,
+          "standard_name": "TBL1XR1",
+          "aliases": "IRA1|TBLR1|MRD41|C21|DC42",
+          "description": "TBL1X/Y related 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TCF20",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6942,
+          "standard_name": "TCF20",
+          "aliases": "AR1|DDVIBA|TCF-20|SPBP",
+          "description": "transcription factor 20",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "USP7",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7874,
+          "standard_name": "USP7",
+          "aliases": "HAFOUS|TEF1|HAUSP",
+          "description": "ubiquitin specific peptidase 7",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "WDFY3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23001,
+          "standard_name": "WDFY3",
+          "aliases": "ZFYVE25|ALFY|MCPH18|BCHS",
+          "description": "WD repeat and FYVE domain containing 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TRIO",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7204,
+          "standard_name": "TRIO",
+          "aliases": "MEBAS|ARHGEF23|MRD44|tgat|MRD63",
+          "description": "trio Rho guanine nucleotide exchange factor",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "UPF3B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 65109,
+          "standard_name": "UPF3B",
+          "aliases": "MRXS14|RENT3B|MRX62|MRX82|Upf3p-X|HUPF3B|UPF3BP3|UPF3BP2|UPF3X|UPF3BP1",
+          "description": "UPF3B regulator of nonsense mediated mRNA decay",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "WAC",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 51322,
+          "standard_name": "WAC",
+          "aliases": "BM-016|Wwp4|PRO1741|DESSH",
+          "description": "WW domain containing adaptor with coiled-coil",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TNRC6B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23112,
+          "standard_name": "TNRC6B",
+          "aliases": "GDSBA",
+          "description": "trinucleotide repeat containing adaptor 6B",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "UBN2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 254048,
+          "standard_name": "UBN2",
+          "aliases": "",
+          "description": "ubinuclein 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "USP15",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9958,
+          "standard_name": "USP15",
+          "aliases": "UNPH4|UNPH-2",
+          "description": "ubiquitin specific peptidase 15",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ANK3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 288,
+          "standard_name": "ANK3",
+          "aliases": "ANKYRIN-G|MRT37",
+          "description": "ankyrin 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CELF4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 56853,
+          "standard_name": "CELF4",
+          "aliases": "BRUNOL4|CELF-4",
+          "description": "CUGBP Elav-like family member 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CNOT3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4849,
+          "standard_name": "CNOT3",
+          "aliases": "NOT3H|IDDSADF|NOT3|LENG2",
+          "description": "CCR4-NOT transcription complex subunit 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CTCF",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10664,
+          "standard_name": "CTCF",
+          "aliases": "FAP108|MRD21|CFAP108",
+          "description": "CCCTC-binding factor",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CTNNB1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1499,
+          "standard_name": "CTNNB1",
+          "aliases": "EVR7|NEDSDV|armadillo|CTNNB|MRD19",
+          "description": "catenin beta 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CTTNBP2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 83992,
+          "standard_name": "CTTNBP2",
+          "aliases": "Orf4|C7orf8|CORTBP2",
+          "description": "cortactin binding protein 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DISC1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 27185,
+          "standard_name": "DISC1",
+          "aliases": "SCZD9|C1orf136",
+          "description": "DISC1 scaffold protein",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AVPR1A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 552,
+          "standard_name": "AVPR1A",
+          "aliases": "V1aR|AVPR1|AVPR V1a",
+          "description": "arginine vasopressin receptor 1A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CNTN5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 53942,
+          "standard_name": "CNTN5",
+          "aliases": "NB-2|HNB-2s",
+          "description": "contactin 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CNTN6",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 27255,
+          "standard_name": "CNTN6",
+          "aliases": "NB3",
+          "description": "contactin 6",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ASTN2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23245,
+          "standard_name": "ASTN2",
+          "aliases": "bA67K19.1",
+          "description": "astrotactin 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DYNC1H1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1778,
+          "standard_name": "DYNC1H1",
+          "aliases": "p22|DHC1a|DHC1|Dnchc1|DNCL|DNCH1|DNECL|HL-3|CMT2O|SMALED1|DYHC",
+          "description": "dynein cytoplasmic 1 heavy chain 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "BTAF1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9044,
+          "standard_name": "BTAF1",
+          "aliases": "TAF(II)170|TAF172|TAFII170|MOT1",
+          "description": "B-TFIID TATA-box binding protein associated factor 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CC2D1A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 54862,
+          "standard_name": "CC2D1A",
+          "aliases": "Freud-1/Aki1|FREUD-1|MRT3|Lgd2|TAPE|Aki-1",
+          "description": "coiled-coil and C2 domain containing 1A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CYFIP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23191,
+          "standard_name": "CYFIP1",
+          "aliases": "P140SRA-1|SRA1|SRA-1|SHYC",
+          "description": "cytoplasmic FMR1 interacting protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "EHMT1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 79813,
+          "standard_name": "EHMT1",
+          "aliases": "KLEFS1|KMT1D|Eu-HMTase1|GLP1|GLP|EUHMTASE1|EHMT1-IT1|FP13812",
+          "description": "euchromatic histone lysine methyltransferase 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CACNB2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 783,
+          "standard_name": "CACNB2",
+          "aliases": "CACNLB2|CAB2|CAVB2|MYSB",
+          "description": "calcium voltage-gated channel auxiliary subunit beta 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ACHE",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 43,
+          "standard_name": "ACHE",
+          "aliases": "ARACHE|N-ACHE|YT|ACEE",
+          "description": "acetylcholinesterase (Cartwright blood group)",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ADA",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 100,
+          "standard_name": "ADA",
+          "aliases": "ADA1",
+          "description": "adenosine deaminase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CNKSR2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 22866,
+          "standard_name": "CNKSR2",
+          "aliases": "MRXSHG|CNK2|KSR2|MAGUIN",
+          "description": "connector enhancer of kinase suppressor of Ras 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ELP4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 26610,
+          "standard_name": "ELP4",
+          "aliases": "PAX6NEB|dJ68P15A.1|C11orf19|AN2|PAXNEB|hELP4|AN",
+          "description": "elongator acetyltransferase complex subunit 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AGAP2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 116986,
+          "standard_name": "AGAP2",
+          "aliases": "PIKE|GGAP2|CENTG1",
+          "description": "ArfGAP with GTPase domain, ankyrin repeat and PH domain 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AHDC1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 27245,
+          "standard_name": "AHDC1",
+          "aliases": "XIGIS|MRD25",
+          "description": "AT-hook DNA binding motif containing 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AKAP9",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10142,
+          "standard_name": "AKAP9",
+          "aliases": "YOTIAO|AKAP350|AKAP450|AKAP-9|MU-RMS-40.16A|PRKA9|PPP1R45|LQT11|HYPERION|CG-NAP",
+          "description": "A-kinase anchoring protein 9",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AUTS2",
+      "num_matches": 2,
+      "matches": [
+        {
+          "entrez": 26053,
+          "standard_name": "AUTS2",
+          "aliases": "MRD26|FBRSL2",
+          "description": "activator of transcription and developmental regulator AUTS2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        },
+        {
+          "entrez": 282553,
+          "standard_name": "AUTS8",
+          "aliases": "AUTS2",
+          "description": "Autism, susceptibility to, 8",
+          "organism": "homo-sapiens",
+          "versions_available": []
+        }
+      ]
+    },
+    {
+      "query": "CNTNAP4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 85445,
+          "standard_name": "CNTNAP4",
+          "aliases": "CASPR4",
+          "description": "contactin associated protein family member 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AMPD1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 270,
+          "standard_name": "AMPD1",
+          "aliases": "MAD|MADA|MMDD",
+          "description": "adenosine monophosphate deaminase 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AMT",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 275,
+          "standard_name": "AMT",
+          "aliases": "GCE|NKH|GCVT|GCST",
+          "description": "aminomethyltransferase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ANXA1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 301,
+          "standard_name": "ANXA1",
+          "aliases": "ANX1|LPC1",
+          "description": "annexin A1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "APBB1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 322,
+          "standard_name": "APBB1",
+          "aliases": "RIR|MGC:9072|FE65",
+          "description": "amyloid beta precursor protein binding family B member 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "APH1A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 51107,
+          "standard_name": "APH1A",
+          "aliases": "APH-1A|CGI-78|APH-1|6530402N02Rik",
+          "description": "aph-1 homolog A, gamma-secretase subunit",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ASPM",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 259266,
+          "standard_name": "ASPM",
+          "aliases": "ASP|Calmbp1|MCPH5",
+          "description": "assembly factor for spindle microtubules",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ATP10A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57194,
+          "standard_name": "ATP10A",
+          "aliases": "ATPVC|ATP10C|ATPVA",
+          "description": "ATPase phospholipid transporting 10A (putative)",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CACNA1E",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 777,
+          "standard_name": "CACNA1E",
+          "aliases": "BII|Cav2.3|CACH6|EIEE69|CACNL1A6|gm139|DEE69",
+          "description": "calcium voltage-gated channel subunit alpha1 E",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CAPRIN1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4076,
+          "standard_name": "CAPRIN1",
+          "aliases": "p137GPI|M11S1|RNG105|GRIP137|GPIP137|GPIAP1",
+          "description": "cell cycle associated protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CCT4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10575,
+          "standard_name": "CCT4",
+          "aliases": "CCT-DELTA|Cctd|SRB",
+          "description": "chaperonin containing TCP1 subunit 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CDC42BPB",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9578,
+          "standard_name": "CDC42BPB",
+          "aliases": "MRCKB|CHOCNS",
+          "description": "CDC42 binding protein kinase beta",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CEP135",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9662,
+          "standard_name": "CEP135",
+          "aliases": "KIAA0635|MCPH8|CEP4",
+          "description": "centrosomal protein 135",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CEP41",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 95681,
+          "standard_name": "CEP41",
+          "aliases": "JBTS15|TSGA14",
+          "description": "centrosomal protein 41",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CGNL1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 84952,
+          "standard_name": "CGNL1",
+          "aliases": "PCING|JACOP",
+          "description": "cingulin like 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CHMP1A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5119,
+          "standard_name": "CHMP1A",
+          "aliases": "VPS46-1|VPS46A|PCH8|CHMP1|PCOLN3|PRSM1",
+          "description": "charged multivesicular body protein 1A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CIB2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10518,
+          "standard_name": "CIB2",
+          "aliases": "KIP2|DFNB48|USH1J",
+          "description": "calcium and integrin binding family member 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CLASP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23332,
+          "standard_name": "CLASP1",
+          "aliases": "MAST1",
+          "description": "cytoplasmic linker associated protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CUL7",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9820,
+          "standard_name": "CUL7",
+          "aliases": "KIAA0076|CUL-7|dJ20C7.5|3M1",
+          "description": "cullin 7",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DAPP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 27071,
+          "standard_name": "DAPP1",
+          "aliases": "BAM32",
+          "description": "dual adaptor of phosphotyrosine and 3-phosphoinositides 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DENR",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8562,
+          "standard_name": "DENR",
+          "aliases": "DRP|SMAP-3|DRP1",
+          "description": "density regulated re-initiation and release factor",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DIP2A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23181,
+          "standard_name": "DIP2A",
+          "aliases": "DIP2|C21orf106",
+          "description": "disco interacting protein 2 homolog A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DLGAP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9229,
+          "standard_name": "DLGAP1",
+          "aliases": "DAP-1-BETA|DAP-1|DAP1|DLGAP1A|GKAP|DAP-1-ALPHA|SAPAP1|DLGAP1B",
+          "description": "DLG associated protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DNMT3A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1788,
+          "standard_name": "DNMT3A",
+          "aliases": "DNMT3A2|M.HsaIIIA|TBRS|HESJAS",
+          "description": "DNA methyltransferase 3 alpha",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DOCK8",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 81704,
+          "standard_name": "DOCK8",
+          "aliases": "HEL-205|ZIR8|MRD2",
+          "description": "dedicator of cytokinesis 8",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DPP10",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57628,
+          "standard_name": "DPP10",
+          "aliases": "DPPY|DPRP-3|DPL2|DPRP3",
+          "description": "dipeptidyl peptidase like 10",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DPYSL2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1808,
+          "standard_name": "DPYSL2",
+          "aliases": "CRMP2|DRP2|CRMP-2|N2A3|DRP-2|DHPRP2|ULIP-2|ULIP2",
+          "description": "dihydropyrimidinase like 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "EFR3A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23167,
+          "standard_name": "EFR3A",
+          "aliases": "",
+          "description": "EFR3 homolog A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ELAVL3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1995,
+          "standard_name": "ELAVL3",
+          "aliases": "HUCL|HUC|PLE21",
+          "description": "ELAV like RNA binding protein 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "EP400",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57634,
+          "standard_name": "EP400",
+          "aliases": "P400|CAGH32|TNRC12",
+          "description": "E1A binding protein p400",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "EMSY",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 56946,
+          "standard_name": "EMSY",
+          "aliases": "GL002|C11orf30",
+          "description": "EMSY transcriptional repressor, BRCA2 interacting",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ETFB",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2109,
+          "standard_name": "ETFB",
+          "aliases": "FP585|MADD",
+          "description": "electron transfer flavoprotein subunit beta",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KCNQ2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3785,
+          "standard_name": "KCNQ2",
+          "aliases": "ENB1|KV7.2|EBN|HNSPC|BFNC|EBN1|KCNA11|DEE7",
+          "description": "potassium voltage-gated channel subfamily Q member 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MACROD2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 140733,
+          "standard_name": "MACROD2",
+          "aliases": "C2orf133|C20orf133",
+          "description": "mono-ADP ribosylhydrolase 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "FBN1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2200,
+          "standard_name": "FBN1",
+          "aliases": "SSKS|FBN|WMS|OCTD|MFS1|ACMICD|MFLS|SGS|WMS2|ECTOL1|MASS|GPHYSD2",
+          "description": "fibrillin 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ITGB3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3690,
+          "standard_name": "ITGB3",
+          "aliases": "GT2|GP3A|GT|GPIIIa|BDPLT16|CD61|BDPLT2|BDPLT24",
+          "description": "integrin subunit beta 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KCNQ3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3786,
+          "standard_name": "KCNQ3",
+          "aliases": "BFNC2|EBN2|KV7.3",
+          "description": "potassium voltage-gated channel subfamily Q member 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MBD5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 55777,
+          "standard_name": "MBD5",
+          "aliases": "MRD1",
+          "description": "methyl-CpG binding domain protein 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NLGN4X",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57502,
+          "standard_name": "NLGN4X",
+          "aliases": "ASPGX2|HLNX|AUTSX2|HNL4X|NLGN4",
+          "description": "neuroligin 4 X-linked",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "FOXP2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 93986,
+          "standard_name": "FOXP2",
+          "aliases": "SPCH1|TNRC10|CAGH44",
+          "description": "forkhead box P2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NRXN3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9369,
+          "standard_name": "NRXN3",
+          "aliases": "C14orf60",
+          "description": "neurexin 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "GPHN",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10243,
+          "standard_name": "GPHN",
+          "aliases": "MOCODC|GPHRYN|GPH|GEPH|HKPX1",
+          "description": "gephyrin",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KAT6A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7994,
+          "standard_name": "KAT6A",
+          "aliases": "MYST3|ARTHS|ZNF220|ZC2HC6A|MYST-3|MOZ|MRD32|RUNXBP2",
+          "description": "lysine acetyltransferase 6A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KDM6B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23135,
+          "standard_name": "KDM6B",
+          "aliases": "NEDCFSA|JMJD3",
+          "description": "lysine demethylase 6B",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MTOR",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2475,
+          "standard_name": "MTOR",
+          "aliases": "FRAP2|SKS|RAFT1|RAPT1|FRAP|FRAP1",
+          "description": "mechanistic target of rapamycin kinase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NLGN1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 22871,
+          "standard_name": "NLGN1",
+          "aliases": "NL1",
+          "description": "neuroligin 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "JARID2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3720,
+          "standard_name": "JARID2",
+          "aliases": "JMJ",
+          "description": "jumonji and AT-rich interaction domain containing 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NEXMIF",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 340533,
+          "standard_name": "NEXMIF",
+          "aliases": "MRX98|KIAA2022|XPN|XLID98|KIDLIA",
+          "description": "neurite extension and migration factor",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "HECW2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57520,
+          "standard_name": "HECW2",
+          "aliases": "NEDL2|NDHSAL",
+          "description": "HECT, C2 and WW domain containing E3 ubiquitin protein ligase 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KCNJ10",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3766,
+          "standard_name": "KCNJ10",
+          "aliases": "SESAME|KIR4.1|KIR1.2|KCNJ13-PEN|BIRK-10",
+          "description": "potassium inwardly rectifying channel subfamily J member 10",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KDM5C",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8242,
+          "standard_name": "KDM5C",
+          "aliases": "SMCX|MRXSCJ|DXS1272E|MRXJ|XE169|JARID1C|MRX13|MRXSJ",
+          "description": "lysine demethylase 5C",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "FAM92B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 339145,
+          "standard_name": "CIBAR2",
+          "aliases": "FAM92B",
+          "description": "CBY1 interacting BAR domain containing 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "GGNBP2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 79893,
+          "standard_name": "GGNBP2",
+          "aliases": "LZK1|ZFP403|DIF-3|LCRG1|DIF3|ZNF403",
+          "description": "gametogenetin binding protein 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "GIGYF1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 64599,
+          "standard_name": "GIGYF1",
+          "aliases": "GYF1|PERQ1",
+          "description": "GRB10 interacting GYF protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "GPC4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2239,
+          "standard_name": "GPC4",
+          "aliases": "K-glypican|KPTS",
+          "description": "glypican 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "GRID1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2894,
+          "standard_name": "GRID1",
+          "aliases": "GluD1|GluD1-b",
+          "description": "glutamate ionotropic receptor delta type subunit 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "GRIK5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2901,
+          "standard_name": "GRIK5",
+          "aliases": "GluK5|EAA2|KA2|GRIK2",
+          "description": "glutamate ionotropic receptor kainate type subunit 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "HECTD4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 283450,
+          "standard_name": "HECTD4",
+          "aliases": "C12ord51|POTAGE|HEEL|C12orf51",
+          "description": "HECT domain E3 ubiquitin protein ligase 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "HIVEP3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 59269,
+          "standard_name": "HIVEP3",
+          "aliases": "KBP-1|ZAS3|ZNF40C|KBP1|SHN3|KRC|Schnurri-3",
+          "description": "HIVEP zinc finger 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "HMGN1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3150,
+          "standard_name": "HMGN1",
+          "aliases": "HMG14",
+          "description": "high mobility group nucleosome binding domain 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KIAA1586",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57691,
+          "standard_name": "KIAA1586",
+          "aliases": "",
+          "description": "KIAA1586",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KIRREL3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 84623,
+          "standard_name": "KIRREL3",
+          "aliases": "PRO4502|MRD4|KIRRE|NEPH2",
+          "description": "kirre like nephrin family adhesion molecule 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "KMT2E",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 55904,
+          "standard_name": "KMT2E",
+          "aliases": "HDCMC04P|NKp44L|SETD5B|MLL5|ODLURO",
+          "description": "lysine methyltransferase 2E (inactive)",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "LAMB1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3912,
+          "standard_name": "LAMB1",
+          "aliases": "LIS5|CLM",
+          "description": "laminin subunit beta 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "LMX1B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4010,
+          "standard_name": "LMX1B",
+          "aliases": "FSGS10|LMX1.2|NPS1",
+          "description": "LIM homeobox transcription factor 1 beta",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "LZTR1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8216,
+          "standard_name": "LZTR1",
+          "aliases": "SWNTS2|NS2|NS10|LZTR-1|BTBD29",
+          "description": "leucine zipper like transcription regulator 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MFRP",
+      "num_matches": 2,
+      "matches": [
+        {
+          "entrez": 83552,
+          "standard_name": "MFRP",
+          "aliases": "CTRP5|RD6|NNO2|MCOP5",
+          "description": "membrane frizzled-related protein",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        },
+        {
+          "entrez": 114902,
+          "standard_name": "C1QTNF5",
+          "aliases": "CTRP5|MFRP",
+          "description": "C1q and TNF related 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MYO5A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4644,
+          "standard_name": "MYO5A",
+          "aliases": "GS1|MYO5|MYH12|MYR12",
+          "description": "myosin VA",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MYO9B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4650,
+          "standard_name": "MYO9B",
+          "aliases": "MYR5|CELIAC4",
+          "description": "myosin IXB",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NAV2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 89797,
+          "standard_name": "NAV2",
+          "aliases": "HELAD1|POMFIL2|STEERIN2|RAINB1|UNC53H2",
+          "description": "neuron navigator 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NINL",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 22981,
+          "standard_name": "NINL",
+          "aliases": "NLP",
+          "description": "ninein like",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NR3C2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4306,
+          "standard_name": "NR3C2",
+          "aliases": "MLR|NR3C2VIT|MCR|MR",
+          "description": "nuclear receptor subfamily 3 group C member 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "OPHN1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4983,
+          "standard_name": "OPHN1",
+          "aliases": "OPN1|ARHGAP41|MRX60|MRXSBL",
+          "description": "oligophrenin 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SBF1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6305,
+          "standard_name": "SBF1",
+          "aliases": "CMT4B3|MTMR5|DENND7A",
+          "description": "SET binding factor 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "OXTR",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5021,
+          "standard_name": "OXTR",
+          "aliases": "OT-R|OTR",
+          "description": "oxytocin receptor",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SCN1A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6323,
+          "standard_name": "SCN1A",
+          "aliases": "EIEE6|DRVT|FHM3|DEE6A|SMEI|FEB3|DEE6B|FEB3A|Nav1.1|NAC1|HBSCI|SCN1|GEFSP2|DEE6",
+          "description": "sodium voltage-gated channel alpha subunit 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SCN8A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6334,
+          "standard_name": "SCN8A",
+          "aliases": "MED|BFIS5|DEE13|NaCh6|CIAT|CERIII|MYOCL2|EIEE13|Nav1.6|PN4",
+          "description": "sodium voltage-gated channel alpha subunit 8",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SETBP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 26040,
+          "standard_name": "SETBP1",
+          "aliases": "MRD29|SEB",
+          "description": "SET binding protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SLC12A5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57468,
+          "standard_name": "SLC12A5",
+          "aliases": "EIG14|hKCC2|EIEE34|KCC2|DEE34",
+          "description": "solute carrier family 12 member 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PRKN",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5071,
+          "standard_name": "PRKN",
+          "aliases": "PDJ|PARK2|AR-JP|LPRS2",
+          "description": "parkin RBR E3 ubiquitin protein ligase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SEMA5A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9037,
+          "standard_name": "SEMA5A",
+          "aliases": "SEMAF|semF",
+          "description": "semaphorin 5A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "STXBP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6812,
+          "standard_name": "STXBP1",
+          "aliases": "MUNC18-1|unc-18A|P67|NSEC1|unc18-1|N-Sec1|DEE4|UNC18|RBSEC1",
+          "description": "syntaxin binding protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SMARCA4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6597,
+          "standard_name": "SMARCA4",
+          "aliases": "hSNF2b|BAF190A|RTPS2|SNF2|SNF2L4|SNF2-beta|SNF2LB|CSS4|BRG1|BAF190|SWI2|MRD16",
+          "description": "SWI/SNF related, matrix associated, actin dependent regulator of chromatin, subfamily a, member 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PAH",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5053,
+          "standard_name": "PAH",
+          "aliases": "PKU|PKU1|PH",
+          "description": "phenylalanine hydroxylase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PLCB1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23236,
+          "standard_name": "PLCB1",
+          "aliases": "PLCB1A|PLCB1B|PLC-I|EIEE12|PLC-beta-1|PLC154|DEE12|PLC-154|PI-PLC",
+          "description": "phospholipase C beta 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PRICKLE1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 144165,
+          "standard_name": "PRICKLE1",
+          "aliases": "RILP|EPM1B",
+          "description": "prickle planar cell polarity protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "RBFOX1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 54715,
+          "standard_name": "RBFOX1",
+          "aliases": "A2BP1|2BP1|HRNBP1|FOX1|FOX-1",
+          "description": "RNA binding fox-1 homolog 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TANC2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 26115,
+          "standard_name": "TANC2",
+          "aliases": "IDDALDS|ROLSA|rols",
+          "description": "tetratricopeptide repeat, ankyrin repeat and coiled-coil containing 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SETD2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 29072,
+          "standard_name": "SETD2",
+          "aliases": "p231HBP|KMT3A|SET2|LLS|HSPC069|HIP-1|HYPB|HBP231|HIF-1",
+          "description": "SET domain containing 2, histone lysine methyltransferase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PHIP",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 55023,
+          "standard_name": "PHIP",
+          "aliases": "DCAF14|WDR11|CHUJANS|ndrp|BRWD2|DIDOD",
+          "description": "pleckstrin homology domain interacting protein",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PRICKLE2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 166336,
+          "standard_name": "PRICKLE2",
+          "aliases": "EPM5",
+          "description": "prickle planar cell polarity protein 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PRODH",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5625,
+          "standard_name": "PRODH",
+          "aliases": "HSPOX2|PRODH2|PIG6|PRODH1|TP53I6|POX",
+          "description": "proline dehydrogenase 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ROBO2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6092,
+          "standard_name": "ROBO2",
+          "aliases": "SAX3",
+          "description": "roundabout guidance receptor 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "NUAK1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9891,
+          "standard_name": "NUAK1",
+          "aliases": "ARK5",
+          "description": "NUAK family kinase 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "OR52M1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 119772,
+          "standard_name": "OR52M1",
+          "aliases": "OR52M1P|OR52M3P|OR11-11",
+          "description": "olfactory receptor family 52 subfamily M member 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "OTUD7A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 161725,
+          "standard_name": "OTUD7A",
+          "aliases": "CEZANNE2|C15orf16|C16ORF15|OTUD7",
+          "description": "OTU deubiquitinase 7A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "P2RX5",
+      "num_matches": 2,
+      "matches": [
+        {
+          "entrez": 5026,
+          "standard_name": "P2RX5",
+          "aliases": "P2X5R|LRH-1|P2X5",
+          "description": "purinergic receptor P2X 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        },
+        {
+          "entrez": 100533970,
+          "standard_name": "P2RX5-TAX1BP3",
+          "aliases": "P2RX5|P2X5",
+          "description": "P2RX5-TAX1BP3 readthrough (NMD candidate)",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "P4HA2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8974,
+          "standard_name": "P4HA2",
+          "aliases": "MYP25|lncRNA-PE",
+          "description": "prolyl 4-hydroxylase subunit alpha 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PARD3B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 117583,
+          "standard_name": "PARD3B",
+          "aliases": "PAR3L|PAR3beta|ALS2CR19|PAR3B",
+          "description": "par-3 family cell polarity regulator beta",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PAX5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5079,
+          "standard_name": "PAX5",
+          "aliases": "ALL3|PAX-5|BSAP",
+          "description": "paired box 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PER2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8864,
+          "standard_name": "PER2",
+          "aliases": "FASPS1|FASPS",
+          "description": "period circadian regulator 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PHB",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5245,
+          "standard_name": "PHB1",
+          "aliases": "PHB|HEL-S-54e|HEL-215",
+          "description": "prohibitin 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PHRF1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57661,
+          "standard_name": "PHRF1",
+          "aliases": "RNF221|PPP1R125",
+          "description": "PHD and ring finger domains 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PLXNA4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 91584,
+          "standard_name": "PLXNA4",
+          "aliases": "PLEXA4|FAYV2820|PLXNA4B|PRO34003|PLXNA4A",
+          "description": "plexin A4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PLXNB1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5364,
+          "standard_name": "PLXNB1",
+          "aliases": "SEP|PLXN5|PLEXIN-B1",
+          "description": "plexin B1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PON1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5444,
+          "standard_name": "PON1",
+          "aliases": "PON|MVCD5|ESA",
+          "description": "paraoxonase 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PREX1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57580,
+          "standard_name": "PREX1",
+          "aliases": "P-REX1",
+          "description": "phosphatidylinositol-3,4,5-trisphosphate dependent Rac exchange factor 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PRKCB",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5579,
+          "standard_name": "PRKCB",
+          "aliases": "PKC-beta|PKCB|PRKCB2|PRKCB1|PKCI(2)|PKCbeta",
+          "description": "protein kinase C beta",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PTK7",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5754,
+          "standard_name": "PTK7",
+          "aliases": "CCK-4|CCK4",
+          "description": "protein tyrosine kinase 7 (inactive)",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PYHIN1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 149628,
+          "standard_name": "PYHIN1",
+          "aliases": "IFIX",
+          "description": "pyrin and HIN domain family member 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "RAB2A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5862,
+          "standard_name": "RAB2A",
+          "aliases": "LHX|RAB2",
+          "description": "RAB2A, member RAS oncogene family",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "RAB43",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 339122,
+          "standard_name": "RAB43",
+          "aliases": "RAB11B|RAB41",
+          "description": "RAB43, member RAS oncogene family",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "RBM27",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 54439,
+          "standard_name": "RBM27",
+          "aliases": "Psc1|ZC3H20|ARRS1|ZC3H18",
+          "description": "RNA binding motif protein 27",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SAE1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10055,
+          "standard_name": "SAE1",
+          "aliases": "HSPC140|UBLE1A|AOS1|SUA1",
+          "description": "SUMO1 activating enzyme subunit 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SHANK1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 50944,
+          "standard_name": "SHANK1",
+          "aliases": "SPANK-1|synamon|SSTRIP",
+          "description": "SH3 and multiple ankyrin repeat domains 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SHOX",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6473,
+          "standard_name": "SHOX",
+          "aliases": "PHOG|GCFX|SS|SHOXY",
+          "description": "short stature homeobox",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SLC35B1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10237,
+          "standard_name": "SLC35B1",
+          "aliases": "UGTREL1|AXER",
+          "description": "solute carrier family 35 member B1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SLC38A10",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 124565,
+          "standard_name": "SLC38A10",
+          "aliases": "PP1744",
+          "description": "solute carrier family 38 member 10",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SLC6A3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6531,
+          "standard_name": "SLC6A3",
+          "aliases": "PKDYS|PKDYS1|DAT|DAT1",
+          "description": "solute carrier family 6 member 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SLC7A3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 84889,
+          "standard_name": "SLC7A3",
+          "aliases": "ATRC3|CAT-3|CAT3",
+          "description": "solute carrier family 7 member 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SLC7A5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8140,
+          "standard_name": "SLC7A5",
+          "aliases": "E16|LAT1|MPE16|4F2LC|CD98|D16S469E",
+          "description": "solute carrier family 7 member 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SMAD4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4089,
+          "standard_name": "SMAD4",
+          "aliases": "DPC4|MYHRS|JIP|MADH4",
+          "description": "SMAD family member 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SPARCL1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8404,
+          "standard_name": "SPARCL1",
+          "aliases": "SC1|PIG33|MAST9|MAST 9",
+          "description": "SPARC like 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "STXBP5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 134957,
+          "standard_name": "STXBP5",
+          "aliases": "Nbla04300|LLGL3|LGL3",
+          "description": "syntaxin binding protein 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TAF6",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6878,
+          "standard_name": "TAF6",
+          "aliases": "TAFII70|MGC:8964|TAFII-70|TAF(II)80|TAFII85|ALYUS|TAF2E|TAFII80|TAFII-80|TAF(II)70",
+          "description": "TATA-box binding protein associated factor 6",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TRAPPC9",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 83696,
+          "standard_name": "TRAPPC9",
+          "aliases": "MRT13|IBP|TRS120|NIBP|T1|IKBKBBP",
+          "description": "trafficking protein particle complex subunit 9",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TSC2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7249,
+          "standard_name": "TSC2",
+          "aliases": "TSC4|LAM|PPP1R160",
+          "description": "TSC complex subunit 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ZMYND11",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10771,
+          "standard_name": "ZMYND11",
+          "aliases": "BRAM1|BS69|MRD30",
+          "description": "zinc finger MYND-type containing 11",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TMLHE",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 55217,
+          "standard_name": "TMLHE",
+          "aliases": "XAP130|BBOX2|TMLD|AUTSX6|TMLHED|TMLH",
+          "description": "trimethyllysine hydroxylase, epsilon",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "UBE3A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7337,
+          "standard_name": "UBE3A",
+          "aliases": "AS|E6-AP|EPVE6AP|HPVE6A|ANCR",
+          "description": "ubiquitin protein ligase E3A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TBC1D31",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 93594,
+          "standard_name": "TBC1D31",
+          "aliases": "WDR67|Gm85",
+          "description": "TBC1 domain family member 31",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TCF7L2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6934,
+          "standard_name": "TCF7L2",
+          "aliases": "TCF4|TCF-4",
+          "description": "transcription factor 7 like 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "WWOX",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 51741,
+          "standard_name": "WWOX",
+          "aliases": "HHCMA56|WOX1|EIEE28|FRA16D|DEE28|PRO0128|SCAR12|SDR41C1|FOR|D16S432E",
+          "description": "WW domain containing oxidoreductase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ZBTB20",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 26137,
+          "standard_name": "ZBTB20",
+          "aliases": "ODA-8S|HOF|ZNF288|PRIMS|DPZF",
+          "description": "zinc finger and BTB domain containing 20",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ZNF804A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 91752,
+          "standard_name": "ZNF804A",
+          "aliases": "C2orf10",
+          "description": "zinc finger protein 804A",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TERF2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7014,
+          "standard_name": "TERF2",
+          "aliases": "TRF2|TRBF2",
+          "description": "telomeric repeat binding factor 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TET2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 54790,
+          "standard_name": "TET2",
+          "aliases": "KIAA1546|IMD75|MDS",
+          "description": "tet methylcytosine dioxygenase 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TRPC6",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7225,
+          "standard_name": "TRPC6",
+          "aliases": "FSGS2|TRP6",
+          "description": "transient receptor potential cation channel subfamily C member 6",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TRPM1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4308,
+          "standard_name": "TRPM1",
+          "aliases": "CSNB1C|LTRPC1|MLSN1",
+          "description": "transient receptor potential cation channel subfamily M member 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "UBE3C",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9690,
+          "standard_name": "UBE3C",
+          "aliases": "RAUL|HECTH2",
+          "description": "ubiquitin protein ligase E3C",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "UBR5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 51366,
+          "standard_name": "UBR5",
+          "aliases": "HYD|EDD1|DD5|EDD",
+          "description": "ubiquitin protein ligase E3 component n-recognin 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "UNC79",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57578,
+          "standard_name": "UNC79",
+          "aliases": "KIAA1409",
+          "description": "unc-79 homolog, NALCN channel complex subunit",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "USP45",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 85015,
+          "standard_name": "USP45",
+          "aliases": "LCA19",
+          "description": "ubiquitin specific peptidase 45",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "VIL1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7429,
+          "standard_name": "VIL1",
+          "aliases": "VIL|D2S1471",
+          "description": "villin 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ZC3H4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23211,
+          "standard_name": "ZC3H4",
+          "aliases": "C19orf7",
+          "description": "zinc finger CCCH-type containing 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ARNT2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9915,
+          "standard_name": "ARNT2",
+          "aliases": "bHLHe1|WEDAS",
+          "description": "aryl hydrocarbon receptor nuclear translocator 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ATP1A3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 478,
+          "standard_name": "ATP1A3",
+          "aliases": "DYT12|DEE99|CAPOS|RDP|AHC2|ATP1A1",
+          "description": "ATPase Na+/K+ transporting subunit alpha 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ATRX",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 546,
+          "standard_name": "ATRX",
+          "aliases": "RAD54L|JMS|XH2|XNP|ZNF-HX|MRX52|RAD54",
+          "description": "ATRX chromatin remodeler",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CADPS2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 93664,
+          "standard_name": "CADPS2",
+          "aliases": "CAPS2",
+          "description": "calcium dependent secretion activator 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CAMK2A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 815,
+          "standard_name": "CAMK2A",
+          "aliases": "CaMKIIalpha|MRD53|CaMKIINalpha|MRT63|CAMKA",
+          "description": "calcium/calmodulin dependent protein kinase II alpha",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CUX2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23316,
+          "standard_name": "CUX2",
+          "aliases": "CUTL2|DEE67|EIEE67|CDP2",
+          "description": "cut like homeobox 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ADORA2A",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 135,
+          "standard_name": "ADORA2A",
+          "aliases": "A2aR|ADORA2|RDC8",
+          "description": "adenosine A2a receptor",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ARHGEF9",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23229,
+          "standard_name": "ARHGEF9",
+          "aliases": "COLLYBISTIN|DEE8|EIEE8|HPEM-2|PEM2|PEM-2",
+          "description": "Cdc42 guanine nucleotide exchange factor 9",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CSMD1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 64478,
+          "standard_name": "CSMD1",
+          "aliases": "PPP1R24",
+          "description": "CUB and Sushi multiple domains 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CYP11B1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1584,
+          "standard_name": "CYP11B1",
+          "aliases": "FHI|CYP11B|P450C11|CPN1",
+          "description": "cytochrome P450 family 11 subfamily B member 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DIXDC1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 85458,
+          "standard_name": "DIXDC1",
+          "aliases": "CCD1",
+          "description": "DIX domain containing 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ARHGAP32",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9743,
+          "standard_name": "ARHGAP32",
+          "aliases": "PX-RICS|GRIT|RICS|p200RhoGAP|p250GAP|GC-GAP",
+          "description": "Rho GTPase activating protein 32",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ASMT",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 438,
+          "standard_name": "ASMT",
+          "aliases": "HIOMT|ASMTY|HIOMTY",
+          "description": "acetylserotonin O-methyltransferase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CADM1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23705,
+          "standard_name": "CADM1",
+          "aliases": "sgIGSF|TSLC1|NECL2|IGSF4|Necl-2|ST17|RA175|BL2|sTSLC-1|IGSF4A|SYNCAM|synCAM1",
+          "description": "cell adhesion molecule 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CD38",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 952,
+          "standard_name": "CD38",
+          "aliases": "ADPRC 1|ADPRC1",
+          "description": "CD38 molecule",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "EXT1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2131,
+          "standard_name": "EXT1",
+          "aliases": "TTV|EXT|TRPS2|LGCR|LGS",
+          "description": "exostosin glycosyltransferase 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ADCY5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 111,
+          "standard_name": "ADCY5",
+          "aliases": "FDFM|AC5|DSKOD",
+          "description": "adenylate cyclase 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AFF2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2334,
+          "standard_name": "AFF2",
+          "aliases": "OX19|FRAXE|XLID109|FMR2|FMR2P|MRX2",
+          "description": "AF4/FMR2 family member 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CTNNA3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 29119,
+          "standard_name": "CTNNA3",
+          "aliases": "VR22|ARVD13",
+          "description": "catenin alpha 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DDX53",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 168400,
+          "standard_name": "DDX53",
+          "aliases": "CAGE|CT26",
+          "description": "DEAD-box helicase 53",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "EP300",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2033,
+          "standard_name": "EP300",
+          "aliases": "RSTS2|KAT3B|p300|MKHK2",
+          "description": "E1A binding protein p300",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "FABP5",
+      "num_matches": 2,
+      "matches": [
+        {
+          "entrez": 2171,
+          "standard_name": "FABP5",
+          "aliases": "KFABP|E-FABP|EFABP|PA-FABP|PAFABP",
+          "description": "fatty acid binding protein 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        },
+        {
+          "entrez": 387934,
+          "standard_name": "FABP5P1",
+          "aliases": "FABP5L1|FABP5",
+          "description": "fatty acid binding protein 5 pseudogene 1",
+          "organism": "homo-sapiens",
+          "versions_available": []
+        }
+      ]
+    },
+    {
+      "query": "AGBL4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 84871,
+          "standard_name": "AGBL4",
+          "aliases": "CCP6",
+          "description": "AGBL carboxypeptidase 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "BRCA2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 675,
+          "standard_name": "BRCA2",
+          "aliases": "PNCA2|FACD|FAD|GLM3|FANCD1|XRCC11|FAD1|BRCC2|BROVCA2|FANCD",
+          "description": "BRCA2 DNA repair associated",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "BRD4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 23476,
+          "standard_name": "BRD4",
+          "aliases": "MCAP|CAP|HUNKI|HUNK1",
+          "description": "bromodomain containing 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CDH11",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1009,
+          "standard_name": "CDH11",
+          "aliases": "ESWS|CDHOB|OB|TBHS2|OSF-4|CAD11",
+          "description": "cadherin 11",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CMIP",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 80790,
+          "standard_name": "CMIP",
+          "aliases": "TCMIP",
+          "description": "c-Maf inducing protein",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DPP6",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1804,
+          "standard_name": "DPP6",
+          "aliases": "VF2|MRD33|DPL1|DPPX",
+          "description": "dipeptidyl peptidase like 6",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ESR2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2100,
+          "standard_name": "ESR2",
+          "aliases": "ESR-BETA|NR3A2|ESTRB|ESRB|ER-BETA|ODG8|Erb",
+          "description": "estrogen receptor 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CASK",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8573,
+          "standard_name": "CASK",
+          "aliases": "hCASK|LIN2|TNRC8|FGS4|CMG|MICPCH|CAGH39|CAMGUK|MRXSNA",
+          "description": "calcium/calmodulin dependent serine protein kinase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CHD1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1105,
+          "standard_name": "CHD1",
+          "aliases": "CHD-1|PILBOS",
+          "description": "chromodomain helicase DNA binding protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ABAT",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 18,
+          "standard_name": "ABAT",
+          "aliases": "NPD009|GABA-AT|GABAT",
+          "description": "4-aminobutyrate aminotransferase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ABCA10",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10349,
+          "standard_name": "ABCA10",
+          "aliases": "EST698739",
+          "description": "ATP binding cassette subfamily A member 10",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ABCA13",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 154664,
+          "standard_name": "ABCA13",
+          "aliases": "",
+          "description": "ATP binding cassette subfamily A member 13",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ABCA7",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 10347,
+          "standard_name": "ABCA7",
+          "aliases": "AD9|ABCX|ABCA-SSN",
+          "description": "ATP binding cassette subfamily A member 7",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ACE",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1636,
+          "standard_name": "ACE",
+          "aliases": "ACE1|DCP|CD143|DCP1",
+          "description": "angiotensin I converting enzyme",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ADK",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 132,
+          "standard_name": "ADK",
+          "aliases": "AK",
+          "description": "adenosine kinase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DRD3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1814,
+          "standard_name": "DRD3",
+          "aliases": "FET1|ETM1|D3DR",
+          "description": "dopamine receptor D3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ADORA3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 140,
+          "standard_name": "ADORA3",
+          "aliases": "A3AR",
+          "description": "adenosine A3 receptor",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ADRB2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 154,
+          "standard_name": "ADRB2",
+          "aliases": "ADRBR|ADRB2R|BAR|BETA2AR|B2AR",
+          "description": "adrenoceptor beta 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AGAP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 116987,
+          "standard_name": "AGAP1",
+          "aliases": "cnt-g2|AGAP-1|GGAP1|CENTG2",
+          "description": "ArfGAP with GTPase domain, ankyrin repeat and PH domain 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AGMO",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 392636,
+          "standard_name": "AGMO",
+          "aliases": "TMEM195",
+          "description": "alkylglycerol monooxygenase",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AGO1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 26523,
+          "standard_name": "AGO1",
+          "aliases": "hAgo1|Q99|EIF2C|EIF2C1|GERP95",
+          "description": "argonaute RISC component 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "AGTR2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 186,
+          "standard_name": "AGTR2",
+          "aliases": "MRX88|AT2|ATGR2",
+          "description": "angiotensin II receptor type 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "BBS4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 585,
+          "standard_name": "BBS4",
+          "aliases": "",
+          "description": "Bardet-Biedl syndrome 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "APBA2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 321,
+          "standard_name": "APBA2",
+          "aliases": "MGC:14091|D15S1518E|MINT2|X11-BETA|X11L|HsT16821|LIN-10",
+          "description": "amyloid beta precursor protein binding family A member 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ARHGAP5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 394,
+          "standard_name": "ARHGAP5",
+          "aliases": "p190-B|p190BRhoGAP|RhoGAP5|GFI2",
+          "description": "Rho GTPase activating protein 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ARHGEF10",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9639,
+          "standard_name": "ARHGEF10",
+          "aliases": "SNCV|GEF10",
+          "description": "Rho guanine nucleotide exchange factor 10",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CNTNAP5",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 129684,
+          "standard_name": "CNTNAP5",
+          "aliases": "caspr5",
+          "description": "contactin associated protein family member 5",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    }
+  ]
+}

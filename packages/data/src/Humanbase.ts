@@ -6,6 +6,7 @@ import { GeneFunctionService } from './functions/GeneFunctionService';
 import { TermService } from './functions/TermService';
 import { GeneService } from './genes/GeneService';
 import { IntegrationService } from './networks/IntegrationService';
+import { ModuleService } from './modules/ModuleService';
 import { NetworkService } from './networks/NetworkService';
 import { SampleClient } from './sample/SampleClient';
 import { GeneSearchService } from './search/GeneSearchService';
@@ -18,6 +19,7 @@ export class Humanbase {
   readonly functions: GeneFunctionService;
   readonly terms: TermService;
   readonly connections: ConnectionService;
+  readonly modules: ModuleService;
 
   constructor(
     readonly client: DataClient,
@@ -30,6 +32,7 @@ export class Humanbase {
     this.functions = new GeneFunctionService(client);
     this.terms = new TermService(client);
     this.connections = new ConnectionService(client);
+    this.modules = new ModuleService(client);
   }
 
   static fromConfig(config: AppConfig): Humanbase {

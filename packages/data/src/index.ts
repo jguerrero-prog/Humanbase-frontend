@@ -34,3 +34,7 @@ export { TermService, type TermDatabase } from './functions/TermService';
 export { ConnectionEvidence, ConnectionInNetwork, type DatasetEvidence, type EvidenceRecord } from './connections/Connection';
 export { ConnectionService } from './connections/ConnectionService';
 export { useAnnotatedTerms, useConnectionEvidence, useConnectionInAllNetworks, useGeneFunctions, useGenesFunctions, type GenesFunctions } from './react/useNetworkDetail';
+export { ModuleResult, type CommunityRecord, type Module, type ModuleFilter, type ModuleTerm } from './modules/ModuleResult';
+export { ModuleService, type ModuleRequest } from './modules/ModuleService';
+export { useModuleResult } from './react/useModuleResult';
+export { moduleExamples, type ModuleExample } from './modules/moduleExamples';
