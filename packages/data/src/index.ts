@@ -24,6 +24,7 @@ export { Network, NetworkGene, type NetworkEdge, type NetworkEdgeRecord, type Ne
 export { NetworkService } from './networks/NetworkService';
 export { NetworkView, networkTabs, type NetworkDisplay, type NetworkSelection, type NetworkTab } from './networks/NetworkView';
 export { useGeneSuggestions } from './react/useGeneSuggestions';
+export { useGeneListMatches } from './react/useGeneListMatches';
 export { useIntegrations } from './react/useIntegrations';
 export { useDataTypes, useNetwork } from './react/useNetwork';
 export { GeneFunction, type AnnotationRecord, type FunctionEvidence, type PredictionRecord, type PublicationRecord, type TermRecord } from './functions/GeneFunction';

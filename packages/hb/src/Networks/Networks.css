@@ -116,3 +116,25 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.edit-genes {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.edit-genes-status {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  min-block-size: 22px;
+  font: var(--type-body-sm);
+  color: var(--text-default);
+}
+
+.edit-genes-status[data-tone="success"] .icon {
+  color: var(--status-success-fg);
+}
+
+.edit-genes-status[data-tone="error"] {
+  color: var(--text-error);
+}

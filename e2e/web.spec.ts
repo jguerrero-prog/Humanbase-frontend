@@ -136,3 +136,20 @@ test('choosing a process keeps the Process network tab and draws that network', 
   await expect(page).toHaveURL(/tab=process/);
   await expect(page.getByRole('table', { name: /in the acute inflammatory response network/ })).toBeVisible();
 });
+
+test('Edit genes adds a gene without starting over and has no WCAG 2.2 AA violations', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1`);
+  await page.getByRole('button', { name: 'Edit genes' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Edit genes' });
+  await expect(dialog.getByText('2 matched: IL1B, TNF')).toBeVisible();
+  const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
+  expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  await dialog.getByRole('textbox', { name: 'Genes' }).fill('IL1B\nTNF\nICAM1');
+  await expect(dialog.getByText('3 matched: IL1B, TNF, ICAM1')).toBeVisible();
+  await page.getByRole('button', { name: 'Show network for 3 genes' }).click();
+  await expect(page).toHaveURL(/entrez=3383/);
+  await expect(page).toHaveURL(/version=v1/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/ICAM1/);
+  expect(apiRequests).toEqual([]);
+});

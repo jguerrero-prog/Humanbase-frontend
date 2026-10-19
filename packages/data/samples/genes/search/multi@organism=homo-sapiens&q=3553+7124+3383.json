@@ -1,0 +1,59 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "query": "3553",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3553,
+          "standard_name": "IL1B",
+          "aliases": "IL1F2|IL1beta|IL-1|IL1-BETA",
+          "xrefs": "147720|HGNC:5992|ENSG00000125538|3553",
+          "description": "interleukin 1 beta",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "7124",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7124,
+          "standard_name": "TNF",
+          "aliases": "TNF-alpha|DIF|TNFSF2|TNLG1F|TNFA",
+          "xrefs": "HGNC:11892|7124|ENSG00000232810|191160",
+          "description": "tumor necrosis factor",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "3383",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3383,
+          "standard_name": "ICAM1",
+          "aliases": "BB2|P3.58|CD54",
+          "xrefs": "147840|ENSG00000090339|3383|HGNC:5344",
+          "description": "intercellular adhesion molecule 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    }
+  ]
+}
