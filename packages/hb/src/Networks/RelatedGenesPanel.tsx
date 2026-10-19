@@ -27,9 +27,6 @@ export function RelatedGenesPanel({ genes, caption, fileName, selected, onSelect
 
   return (
     <>
-      <h2 className="companion-heading">
-        Genes {genes && <span className="companion-count">{genes.length}</span>}
-      </h2>
       <div className="companion-search">
         <SearchField label="Filter genes" placeholder="Filter genes" size="medium" value={filter} onChange={(event) => setFilter(event.target.value)} onClear={() => setFilter('')} disabled={!genes} />
         <IconButton label="Download genes" icon="download" onClick={download} disabled={!genes} />

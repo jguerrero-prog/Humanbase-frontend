@@ -5,3 +5,4 @@ export { analysisColumns, analysisIcons, analysisOptions, productFooter, product
 export { jobsMenuSummary } from './Jobs/jobsMenuSummary';
 export { HomeSearch, type HomeSearchProps } from './HomeSearch/HomeSearch';
 export { EmptyNetworkQuery, NetworkExplorer, type NetworkDetailContext, type NetworkExplorerProps } from './Networks/NetworkExplorer';
+export { NetworkDetail } from './Networks/NetworkDetail';

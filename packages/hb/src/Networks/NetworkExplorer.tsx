@@ -1,16 +1,24 @@
-import { ApiError, Network, useDataTypes, useGenes, useIntegrations, useNetwork, type NetworkGene, type NetworkQuery, type NetworkSelection, type NetworkView } from '@humanbase/data';
+import { ApiError, Network, useDataTypes, useGenes, useIntegrations, useNetwork, type DataVersion, type NetworkGene, type NetworkQuery, type NetworkSelection, type NetworkView } from '@humanbase/data';
 import type { GraphRendererFactory, GraphSelection } from '@humanbase/graph';
 import { Alert, ResultHeader, ResultLayout } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { DataTypesFilter } from './DataTypesFilter';
 import { GraphLoading, GraphPanel } from './GraphPanel';
-import { RelatedGenesPanel } from './RelatedGenesPanel';
+import { NetworkCompanion } from './NetworkCompanion';
+import { NetworkDetail } from './NetworkDetail';
 import { TissueSelect } from './TissueSelect';
 import './Networks.css';
 
 export interface NetworkDetailContext {
   network: Network;
   selection: NetworkSelection;
+  /** The integration on screen, such as global or a tissue. */
+  slug: string;
+  version: DataVersion;
+  networkTitle: string;
+  /** Query gene symbols joined for reading, such as "IL1B and TNF". */
+  queryNames: string;
+  addGene: (gene: NetworkGene) => void;
   close: () => void;
 }
 
@@ -23,7 +31,7 @@ export interface NetworkExplorerProps {
   onViewChange: (view: NetworkView) => void;
   /** True when the page was opened from a search, which shows the fuller "Retrieving the network" state. */
   fromSearch?: boolean;
-  /** Draws the gene or connection detail for the current selection, such as a drawer. */
+  /** Draws the gene or connection detail for the current selection; defaults to the gene and connection drawers. */
   detail?: (context: NetworkDetailContext) => ReactNode;
   renderer?: GraphRendererFactory | undefined;
 }
@@ -31,7 +39,7 @@ export interface NetworkExplorerProps {
 const listJoin = (items: readonly string[]) => (items.length < 2 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
 
 
-export function NetworkExplorer({ query, view, onQueryChange, onViewChange, fromSearch = false, detail, renderer }: NetworkExplorerProps) {
+export function NetworkExplorer({ query, view, onQueryChange, onViewChange, fromSearch = false, detail = (context) => <NetworkDetail {...context} />, renderer }: NetworkExplorerProps) {
   const { data: network, error, isFetching, refetch } = useNetwork(query);
   const { data: integrations = [] } = useIntegrations();
   const { data: dataTypes = [] } = useDataTypes(query.version);
@@ -124,19 +132,23 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
             renderer={renderer}
           />
         }
-        companionLabel="Related genes"
+        companionLabel="Genes, processes and tissues"
         companion={
-          <RelatedGenesPanel
-            genes={isFetching && !network ? undefined : related}
-            caption={`Genes functionally related to ${listJoin(symbols)} in the ${tissueTitle} network`}
-            fileName={`${fileName}_genes`}
+          <NetworkCompanion
+            network={network}
+            shown={isFetching && !network ? undefined : subset?.genes}
+            queryNames={listJoin(symbols)}
+            networkTitle={tissueTitle}
+            fileName={fileName}
             selected={view.selection?.kind === 'gene' ? view.selection.entrez : undefined}
             onSelectGene={(entrez) => select({ kind: 'gene', entrez })}
             onAddGene={addGene}
           />
         }
       />
-      {network && view.selection && detail?.({ network, selection: view.selection, close: () => select(undefined) })}
+      {network &&
+        view.selection &&
+        detail({ network, selection: view.selection, slug: query.slug, version: query.version, networkTitle: tissueTitle, queryNames: listJoin(found), addGene, close: () => select(undefined) })}
     </>
   );
 }
