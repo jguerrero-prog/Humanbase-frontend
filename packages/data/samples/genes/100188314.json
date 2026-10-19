@@ -1,0 +1,28 @@
+{
+  "status": 200,
+  "body": {
+    "url": "http://hb.flatironinstitute.org/api/genes/100188314/",
+    "entrez": 100188314,
+    "systematic_name": "AUTS12",
+    "standard_name": "AUTS12",
+    "description": "autism, susceptibility to, 12",
+    "xrefs": [
+      {
+        "xrid": "100188314",
+        "crossrefdb": {
+          "name": "Entrez",
+          "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+        }
+      },
+      {
+        "xrid": "610838",
+        "crossrefdb": {
+          "name": "MIM",
+          "url": "http://www.omim.org/entry/_REPL_"
+        }
+      }
+    ],
+    "aliases": [],
+    "versions_available": []
+  }
+}
