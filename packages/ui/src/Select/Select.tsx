@@ -24,7 +24,7 @@ export interface SelectProps {
   onChange?: (value: string) => void;
   placeholder?: string;
   hint?: string;
-  error?: string;
+  error?: string | undefined;
   size?: FieldSize;
   disabled?: boolean;
   searchable?: boolean;

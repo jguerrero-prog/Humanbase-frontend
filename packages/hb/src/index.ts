@@ -9,3 +9,4 @@ export { NetworkDetail } from './Networks/NetworkDetail';
 export { tissueConfidenceScale } from './Networks/tabs/scales';
 export { ModuleSearch, type ModuleSearchProps } from './ModuleSearch/ModuleSearch';
 export { ModuleExplorer, type ModuleDraft, type ModuleExplorerProps } from './Modules/ModuleExplorer';
+export { NetwasForm, type NetwasDraft, type NetwasFormProps } from './Netwas/NetwasForm';

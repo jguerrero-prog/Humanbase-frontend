@@ -1,12 +1,15 @@
 import type { Page } from '@playwright/test';
 
-/** Runs the web app with the API switched off and returns the API requests it makes, which should be none. */
+/** Runs the web app with the API switched off and returns the requests it makes for Humanbase data, which should be none. */
 export async function apiOff(page: Page): Promise<string[]> {
   const apiRequests: string[] = [];
   await page.route('**/config.json', (route) => route.fulfill({ json: { api: false, apiBase: '/api' } }));
-  await page.route('**/api/**', (route) => {
-    apiRequests.push(route.request().url());
-    return route.abort();
-  });
+  // The API, and the files it links to on S3, such as example and result files.
+  for (const pattern of ['**/api/**', 'https://s3-us-west-2.amazonaws.com/humanbase/**']) {
+    await page.route(pattern, (route) => {
+      apiRequests.push(route.request().url());
+      return route.abort();
+    });
+  }
   return apiRequests;
 }

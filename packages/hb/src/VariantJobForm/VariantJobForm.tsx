@@ -1,6 +1,7 @@
 import { VariantFileCheck, type FileCheckResult, type InputKind, type VariantModel } from '@humanbase/data';
 import { Accordion, AccordionItem, Button, Field, FileDrop, SegmentedControl, saveFile, Select, TextInput, type ChosenFile } from '@humanbase/ui';
 import { useId, useMemo, useState } from 'react';
+import '../Jobs/JobForm.css';
 import './VariantJobForm.css';
 
 type Source = 'upload' | 'paste' | 'example';
