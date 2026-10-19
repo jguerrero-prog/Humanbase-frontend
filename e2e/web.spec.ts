@@ -92,3 +92,17 @@ test('the Processes panel and both drawers have no WCAG 2.2 AA violations with t
   await scan();
   expect(apiRequests).toEqual([]);
 });
+
+test('View as table and Expand have no WCAG 2.2 AA violations and survive a refresh', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1`);
+  await page.getByRole('button', { name: 'View as table' }).click();
+  await page.getByRole('button', { name: 'Expand' }).click();
+  await expect(page).toHaveURL(/display=table.*expand=1/);
+  await page.reload();
+  await expect(page.getByRole('table', { name: /Connections between the genes/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Expand' })).toHaveAttribute('aria-pressed', 'true');
+  const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
+  expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});

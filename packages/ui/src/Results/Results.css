@@ -77,6 +77,10 @@
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 }
 
+.result-layout-body[data-companion][data-expanded] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .result-main {
   display: grid;
   gap: var(--space-4);

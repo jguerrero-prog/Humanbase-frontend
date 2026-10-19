@@ -105,4 +105,24 @@ describe('NetworkExplorer', () => {
     await userEvent.click(within(drawer).getByRole('radio', { name: 'All networks' }));
     expect(await within(drawer).findByRole('table', { name: /Connection weight in each network/ })).toBeInTheDocument();
   });
+
+  it('lists the connections as a table and switches back to the graph', async () => {
+    const { onViewChange } = renderExplorer(new NetworkQuery([3553, 7124]), { view: new NetworkView().with({ display: 'table' }) });
+    const table = await screen.findByRole('table', { name: /Connections between the genes in the global network graph/ });
+    expect(within(table).getAllByRole('row')).toHaveLength(9);
+    expect(screen.getByText(/Showing 8 of \d+ connections/)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: /^Show 25 more connections/ }));
+    expect(within(table).getAllByRole('row')).toHaveLength(34);
+    await userEvent.click(within(table).getAllByRole('button', { name: /connection details/ })[0] as HTMLElement);
+    expect(onViewChange.mock.lastCall?.[0].selection).toMatchObject({ kind: 'connection' });
+    await userEvent.click(screen.getByRole('button', { name: 'View as graph' }));
+    expect(onViewChange.mock.lastCall?.[0].display).toBe('graph');
+  });
+
+  it('expands the graph to the full width', async () => {
+    const { onViewChange } = renderExplorer(new NetworkQuery([3553, 7124]));
+    await screen.findByRole('table', { name: /Genes functionally related/ });
+    await userEvent.click(screen.getByRole('button', { name: 'Expand' }));
+    expect(onViewChange.mock.lastCall?.[0].expanded).toBe(true);
+  });
 });

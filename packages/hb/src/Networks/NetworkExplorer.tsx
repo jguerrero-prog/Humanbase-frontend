@@ -116,6 +116,7 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
           </>
         }
         mainLabel={`${listJoin(symbols)} network`}
+        expanded={view.expanded}
         main={
           <GraphPanel
             subset={subset}
@@ -123,6 +124,7 @@ export function NetworkExplorer({ query, view, onQueryChange, onViewChange, from
             view={view}
             minConfidence={minConfidence}
             label={`Network of ${listJoin(symbols)} and ${related?.length ?? 0} related genes. The genes table lists the same genes.`}
+            tableCaption={`Connections between the genes in the ${tissueTitle} network graph, strongest first`}
             fileName={fileName}
             selection={graphSelection}
             loading={loading}

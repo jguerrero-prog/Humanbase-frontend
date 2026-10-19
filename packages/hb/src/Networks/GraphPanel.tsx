@@ -2,6 +2,7 @@ import type { NetworkSubset, NetworkView } from '@humanbase/data';
 import { edgeBands, NetworkGraph, type GraphData, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
 import { Checkbox, GraphToolbar, KeyLegend, saveFile, Slider, Spinner, type GraphAction } from '@humanbase/ui';
 import { useMemo, useRef, type ReactNode } from 'react';
+import { ConnectionsTable } from './ConnectionsTable';
 
 const legendItems = [...edgeBands].reverse().map(({ label, color, width }) => ({ label, color, width }));
 const zoomStep = 1.3;
@@ -13,6 +14,8 @@ export interface GraphPanelProps {
   view: NetworkView;
   minConfidence: number;
   label: string;
+  /** Names the connections table that replaces the graph in View as table. */
+  tableCaption: string;
   fileName: string;
   selection: GraphSelection;
   loading: ReactNode;
@@ -22,7 +25,7 @@ export interface GraphPanelProps {
   renderer?: GraphRendererFactory | undefined;
 }
 
-export function GraphPanel({ subset, relatedTotal, view, minConfidence, label, fileName, selection, loading, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
+export function GraphPanel({ subset, relatedTotal, view, minConfidence, label, tableCaption, fileName, selection, loading, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
   const graph = useRef<NetworkGraphHandle>(null);
   const data = useMemo<GraphData | undefined>(
     () =>
@@ -34,18 +37,37 @@ export function GraphPanel({ subset, relatedTotal, view, minConfidence, label, f
   );
   const shownRelated = subset ? subset.genes.filter((gene) => !gene.isQuery).length : 0;
 
-  const toolbar: GraphAction[][] = [
-    [
-      { label: 'Zoom in', icon: 'zoom-in', onSelect: () => graph.current?.zoomBy(zoomStep) },
-      { label: 'Zoom out', icon: 'zoom-out', onSelect: () => graph.current?.zoomBy(1 / zoomStep) },
-      { label: 'Fit to screen', icon: 'fit', onSelect: () => graph.current?.fit() },
-    ],
-    [{ label: 'Download the graph as SVG', icon: 'download', onSelect: () => graph.current && saveFile(graph.current.exportSvg(), `${fileName}.svg`) }],
-  ];
+  const asTable = view.display === 'table';
+  const expand: GraphAction = { label: 'Expand', icon: 'maximize', pressed: view.expanded, onSelect: () => onViewChange(view.with({ expanded: !view.expanded })) };
+  const downloadConnections = () => {
+    if (!subset) return;
+    const lines = ['gene\tconnected_to\tweight', ...subset.edges.map((edge) => `${edge.source.symbol}\t${edge.target.symbol}\t${edge.weight.toFixed(3)}`)];
+    saveFile(lines.join('\n'), `${fileName}_connections.tsv`, 'text/tab-separated-values');
+  };
+  // Zoom and fit only apply to the drawing, so the table keeps just Expand and its own download.
+  const toolbar: GraphAction[][] = asTable
+    ? [[expand], [{ label: 'Download the connections', icon: 'download', onSelect: downloadConnections }]]
+    : [
+        [
+          { label: 'Zoom in', icon: 'zoom-in', onSelect: () => graph.current?.zoomBy(zoomStep) },
+          { label: 'Zoom out', icon: 'zoom-out', onSelect: () => graph.current?.zoomBy(1 / zoomStep) },
+          { label: 'Fit to screen', icon: 'fit', onSelect: () => graph.current?.fit() },
+          expand,
+        ],
+        [{ label: 'Download the graph as SVG', icon: 'download', onSelect: () => graph.current && saveFile(graph.current.exportSvg(), `${fileName}.svg`) }],
+      ];
 
   return (
     <>
-      <GraphToolbar label="Graph controls" groups={toolbar} />
+      <GraphToolbar label="Graph controls" groups={toolbar} tableLabel={asTable ? 'View as graph' : 'View as table'} onViewTable={() => onViewChange(view.with({ display: asTable ? 'graph' : 'table' }))} />
+      {asTable && subset ? (
+        <ConnectionsTable
+          edges={subset.edges}
+          caption={tableCaption}
+          selected={selection?.kind === 'link' ? { source: Number(selection.source), target: Number(selection.target) } : undefined}
+          onSelectConnection={onSelectConnection}
+        />
+      ) : (
       <div className="graph-area" aria-busy={!data || undefined}>
         {data ? (
           <NetworkGraph
@@ -61,6 +83,7 @@ export function GraphPanel({ subset, relatedTotal, view, minConfidence, label, f
           loading
         )}
       </div>
+      )}
       <div className="graph-meta">
         <KeyLegend title="Connection" mark="line" items={legendItems} />
         {subset && (
