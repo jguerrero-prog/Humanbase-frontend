@@ -1,0 +1,50 @@
+{
+  "status": 200,
+  "body": {
+    "url": "http://hb.flatironinstitute.org/api/genes/3553/",
+    "entrez": 3553,
+    "systematic_name": "IL1B",
+    "standard_name": "IL1B",
+    "description": "interleukin 1 beta",
+    "xrefs": [
+      {
+        "xrid": "147720",
+        "crossrefdb": {
+          "name": "MIM",
+          "url": "http://www.omim.org/entry/_REPL_"
+        }
+      },
+      {
+        "xrid": "HGNC:5992",
+        "crossrefdb": {
+          "name": "HGNC",
+          "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+        }
+      },
+      {
+        "xrid": "ENSG00000125538",
+        "crossrefdb": {
+          "name": "Ensembl",
+          "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+        }
+      },
+      {
+        "xrid": "3553",
+        "crossrefdb": {
+          "name": "Entrez",
+          "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+        }
+      }
+    ],
+    "aliases": [
+      "IL1F2",
+      "IL1beta",
+      "IL-1",
+      "IL1-BETA"
+    ],
+    "versions_available": [
+      "v1",
+      "v3"
+    ]
+  }
+}

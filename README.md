@@ -33,6 +33,7 @@ pnpm dev:docs   # the design system site
 | `pnpm tokens` | Regenerates `tokens.css` after the token files change. |
 | `pnpm api:generate` | Regenerates the API types from an API's `/api/schema/`. |
 | `pnpm api:verify` | Calls every endpoint the front end uses and reports which ones work. |
+| `pnpm samples:record` | Saves the sample data shown when the API is off. Read requests only. |
 
 ## Connecting your own Humanbase API
 
@@ -43,6 +44,20 @@ The front end always calls a relative `/api` path, so the API never needs extra 
 3. **Check the connection:** run `pnpm api:verify https://humanbase.io` and `pnpm api:generate https://humanbase.io`. A type error after generating points to exactly where your API differs.
 
 `apps/web/public/config.json` is read when the page loads, so the API path can change without rebuilding.
+
+## Turning the API off
+
+`apps/web/public/config.json` has one switch:
+
+```json
+{ "api": false, "apiBase": "/api" }
+```
+
+With `"api": false` the front end never calls an API. Every screen shows sample data bundled in `packages/data/samples`, so you get the whole interface and design system with nothing behind it. Set it back to `true` to use the API at `apiBase`. The file is read when the page loads, so no rebuild is needed.
+
+The sample data is real Humanbase API responses. `packages/data/endpoints.json` lists, for each endpoint, the requests the screens make, including not-found cases. `pnpm samples:record` fetches them from the public API, or from the origin you pass, and saves one file per request. It only sends read requests; it never submits a job.
+
+To connect your own engine instead of the Humanbase API, write a class that implements `DataClient` (`get` and `post`) and pass it to `new HumanBase(yourClient)` in `apps/web/src/main.tsx`. Services and screens don't change.
 
 ## Using the design system
 

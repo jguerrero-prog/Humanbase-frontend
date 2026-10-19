@@ -1,4 +1,7 @@
-export { ApiClient, type Query } from './ApiClient';
+export { ApiClient } from './ApiClient';
+export type { DataClient, Query, QueryValue } from './DataClient';
+export { SampleClient, type RecordedResponse, type SampleLoaders } from './sample/SampleClient';
+export { sampleKey, type SampleMethod } from './sample/sampleKey';
 export { ApiError } from './ApiError';
 export { loadAppConfig, type AppConfig } from './AppConfig';
 export { HumanBase } from './HumanBase';

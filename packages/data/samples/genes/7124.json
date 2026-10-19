@@ -1,0 +1,51 @@
+{
+  "status": 200,
+  "body": {
+    "url": "http://hb.flatironinstitute.org/api/genes/7124/",
+    "entrez": 7124,
+    "systematic_name": "TNF",
+    "standard_name": "TNF",
+    "description": "tumor necrosis factor",
+    "xrefs": [
+      {
+        "xrid": "HGNC:11892",
+        "crossrefdb": {
+          "name": "HGNC",
+          "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+        }
+      },
+      {
+        "xrid": "7124",
+        "crossrefdb": {
+          "name": "Entrez",
+          "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+        }
+      },
+      {
+        "xrid": "ENSG00000232810",
+        "crossrefdb": {
+          "name": "Ensembl",
+          "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+        }
+      },
+      {
+        "xrid": "191160",
+        "crossrefdb": {
+          "name": "MIM",
+          "url": "http://www.omim.org/entry/_REPL_"
+        }
+      }
+    ],
+    "aliases": [
+      "TNF-alpha",
+      "DIF",
+      "TNFSF2",
+      "TNLG1F",
+      "TNFA"
+    ],
+    "versions_available": [
+      "v1",
+      "v3"
+    ]
+  }
+}

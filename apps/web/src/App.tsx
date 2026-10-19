@@ -5,7 +5,7 @@ export function App() {
   return (
     <main className="app">
       <h1>HumanBase</h1>
-      <p>The redesigned front end is being built. This page checks that it can reach the HumanBase API.</p>
+      <p>The redesigned front end is being built. This page checks where its data comes from.</p>
       <ApiStatus />
     </main>
   );

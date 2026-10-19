@@ -1,11 +1,12 @@
 {
-  "$description": "Every HumanBase API endpoint this front end calls. pnpm api:verify checks each GET example against a target API.",
+  "$description": "Every Humanbase API endpoint this front end calls. pnpm api:verify checks each GET example against a target API. pnpm samples:record saves each listed sample as the data shown when the API is off.",
   "endpoints": [
     {
       "method": "GET",
       "path": "/api/genes/{entrez}/",
       "documented": true,
       "example": "/api/genes/3553/",
+      "samples": ["/api/genes/3553/", "/api/genes/7124/", "/api/genes/0/"],
       "usedBy": ["GeneService.get"]
     }
   ]

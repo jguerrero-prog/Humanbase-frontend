@@ -1,3 +1,4 @@
 {
+  "api": true,
   "apiBase": "/api"
 }
