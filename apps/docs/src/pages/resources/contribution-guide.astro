@@ -1,0 +1,59 @@
+---
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const repo = 'https://github.com/jguerrero-prog/Humanbase-frontend';
+
+const steps = [
+  ['1. Open an issue', 'Say what should change and why. Label it: feature, bug, enhancement, accessibility, code quality, documentation or api.'],
+  ['2. Branch from development', 'Name the branch after the issue, such as feature/42-legend-titles.'],
+  ['3. Open a pull request', 'Target development, write “Closes #42” in the description and fill in the checklist from the template.'],
+  ['4. Pass CI', 'Typecheck, lint, unit tests, the build and the accessibility scan must all pass.'],
+  ['5. Squash-merge', 'One commit per change on development, named like the pull request.'],
+  ['6. Promote', 'development reaches master through its own pull request, once a set of changes is ready.'],
+];
+
+const additions = [
+  ['A token', 'Edit the files in packages/tokens/src, run pnpm tokens to rebuild tokens.css, and add the matching Figma variable.'],
+  ['A component', 'Add it to packages/ui with its tests and every state controlled by props, then export it from packages/ui/src/index.ts. A component that fetches data goes in packages/hb instead.'],
+  ['A docs page', 'Add it under apps/docs/src/pages, link it in apps/docs/src/navigation.ts and add its route to the accessibility scan.'],
+  ['A design change', 'Start in Figma. Update the frame or component there first, then change the code to match.'],
+];
+---
+
+<DocsLayout title="Contribution guide" description="How to propose a change to the HumanBase design system, from issue to merge.">
+  <Intro
+    lead="Every change to the design system, from a new token to a new page, follows the same path: an issue, a branch, a pull request and a passing build. The history stays easy to follow, and nothing reaches master without a review."
+    status="Resources · Applies to people and coding agents alike"
+  />
+
+  <DocSection title="Proposing a change" lead="Six steps, the same for every change.">
+    <DocTable caption="Steps to propose a change" columns={['Step', 'What to do']} widths={['300px']}>
+      {steps.map(([step, detail]) => <tr><th scope="row">{step}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Code standards" lead="The full rules live in the repository. In short:">
+    <ul class="points">
+      <li>Semantic, accessible HTML, using native elements before ARIA. Every page passes WCAG 2.2 AA.</li>
+      <li>No raw HTML strings such as innerHTML; the linter blocks them.</li>
+      <li>Styles use tokens from the root stylesheet, never raw colors or sizes.</li>
+      <li>Comments only where the code can’t explain itself, two lines at most.</li>
+      <li>Shared behavior is built once and reused; data comes in through props.</li>
+    </ul>
+    <NoteCard title="Read before you start">
+      <p>
+        <a href={`${repo}/blob/development/AGENTS.md`}>AGENTS.md</a> holds the full standards and where each kind of code goes. The <a href={`${repo}/blob/development/.github/pull_request_template.md`}>pull request template</a> holds the checklist every pull request answers.
+      </p>
+    </NoteCard>
+  </DocSection>
+
+  <DocSection title="Adding to the system" lead="Where each kind of addition goes.">
+    <DocTable caption="Where additions go" columns={['Adding', 'How']} widths={['300px']}>
+      {additions.map(([what, how]) => <tr><th scope="row">{what}</th><td>{how}</td></tr>)}
+    </DocTable>
+  </DocSection>
+</DocsLayout>

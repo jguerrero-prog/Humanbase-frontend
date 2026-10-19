@@ -47,6 +47,10 @@ const pages = [
   'http://localhost:4322/ui-library/netwas-results/',
   'http://localhost:4322/ui-library/variant-effect-results/',
   'http://localhost:4322/ui-library/asd-browser/',
+  'http://localhost:4322/resources/figma-library/',
+  'http://localhost:4322/resources/changelog/',
+  'http://localhost:4322/resources/contribution-guide/',
+  'http://localhost:4322/resources/contact-the-team/',
 ];
 
 for (const url of pages) {
