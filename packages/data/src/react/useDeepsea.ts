@@ -2,6 +2,7 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 import type { DeepseaJob } from '../deepsea/DeepseaJob';
 import { chrVariant, featureEffects, variantRows, type VariantRow, type VariantScoresRecord } from '../deepsea/DeepseaResult';
 import { DeepseaService } from '../deepsea/DeepseaService';
+import type { VariantModel } from '../jobs/VariantFileCheck';
 import { useHumanbase } from './HumanbaseProvider';
 
 /** Reads a Sei, Beluga or Seqweaver job every 10 seconds until it finishes or fails. */
@@ -46,4 +47,22 @@ export function useFeatureEffects(job: DeepseaJob | undefined, scoreType: string
   const effects = features.data && prediction.data ? featureEffects(prediction.data, features.data) : undefined;
   const failed = [features, prediction].filter((query) => query.isError);
   return { effects, isPending: features.isPending || prediction.isPending, error: failed[0]?.error, refetch: () => failed.forEach((query) => void query.refetch()) };
+}
+
+/** A model's features, such as Beluga's 2,002 chromatin features; they never change, so they load once. */
+export function useDeepseaFeatures(model: VariantModel | undefined) {
+  const api = useHumanbase();
+  return useQuery({ queryKey: ['deepsea-features', model], queryFn: () => api.deepsea.features(model as VariantModel), enabled: Boolean(model), staleTime: Infinity });
+}
+
+/** One sequence's in silico mutagenesis for one feature; each choice is one request, kept once loaded. */
+export function useInsilico(job: DeepseaJob | undefined, sequenceName: string | undefined, featureIndex: number | undefined) {
+  const api = useHumanbase();
+  const id = job?.status === 'finished' ? job.id : '';
+  return useQuery({
+    queryKey: ['deepsea-insilico', id, sequenceName, featureIndex],
+    queryFn: () => api.deepsea.insilico(id, sequenceName as string, featureIndex as number),
+    enabled: Boolean(id && sequenceName && featureIndex !== undefined),
+    staleTime: Infinity,
+  });
 }

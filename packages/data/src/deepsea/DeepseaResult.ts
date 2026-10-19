@@ -95,9 +95,16 @@ export function variantRows(sets: readonly VariantScoresRecord[]): VariantRow[] 
   return [...rows.values()];
 }
 
+/** A feature's name as results show it: cell type, then what was measured, then the sample when it says something. */
+export function featureLabel(feature: ModelFeature): string {
+  const treatment = treatmentOf(feature);
+  return `${feature.cell_type.name} / ${feature.chromatin_feature_type.name}${treatment ? ` (${treatment})` : ''}`;
+}
+
 /** The selected variant’s score for every feature, named from the model’s feature list. */
 export function featureEffects(prediction: FeaturePredictionRecord, features: FeaturesRecord): FeatureEffect[] {
-  if (features.expecto_features) return tissueEffects(prediction, features.expecto_features);
+  // DNA_Binding and RNA_Binding send an empty expecto_features list, so only a filled one means tissues.
+  if (features.expecto_features?.length) return tissueEffects(prediction, features.expecto_features);
   const byIndex = new Map((features.model_features ?? []).map((feature) => [feature.idx, feature]));
   return prediction.feature_predictions.flatMap((value, index) => {
     const feature = byIndex.get(index);
@@ -107,7 +114,7 @@ export function featureEffects(prediction: FeaturePredictionRecord, features: Fe
     const treatment = treatmentOf(feature);
     const replicate = /rep\.?(\d+)/i.exec(treatment)?.[1];
     const context = replicate ? `${cell} rep ${replicate}` : cell;
-    return [{ feature: name, cell, context, label: `${cell} / ${name}${treatment ? ` (${treatment})` : ''}`, value }];
+    return [{ feature: name, cell, context, label: featureLabel(feature), value }];
   });
 }
 

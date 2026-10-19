@@ -6,7 +6,7 @@ import { sampleKey } from '../packages/data/src/sample/sampleKey.ts';
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice('--only='.length);
 const target = (args.find((arg) => !arg.startsWith('--')) ?? process.env.HB_API_PROXY_TARGET ?? 'https://hb.flatironinstitute.org').replace(/\/$/, '');
-const { endpoints } = JSON.parse(readFileSync(new URL('../packages/data/endpoints.json', import.meta.url), 'utf8'));
+const { endpoints, geneLookups } = JSON.parse(readFileSync(new URL('../packages/data/endpoints.json', import.meta.url), 'utf8'));
 const samplesDir = fileURLToPath(new URL('../packages/data/samples/', import.meta.url));
 
 // Drops long text the screens never show, such as term descriptions, wherever it appears in a response.
@@ -56,7 +56,20 @@ async function record(endpoint, sample) {
   return { sample: key, result: String(response.status) };
 }
 
+// Gene lookups read static files on S3, not the API; a gene that isn't found gets no file, which reads as not found.
+async function recordGene(name) {
+  const { S3GeneLocator } = await import('../packages/data/src/genome/S3GeneLocator.ts');
+  const key = `genome/genes/${name.toLowerCase()}`;
+  const span = await new S3GeneLocator(geneLookups.tracks).locate(name);
+  if (!span) return { sample: key, result: 'not found, no file' };
+  const file = join(samplesDir, `${key}.json`);
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, `${JSON.stringify({ status: 200, body: span }, null, 2)}\n`);
+  return { sample: key, result: `${span.chrom}:${span.start}-${span.end}` };
+}
+
 const pathOf = (sample) => (typeof sample === 'string' ? sample : sample.path);
-const jobs = endpoints.flatMap((endpoint) => (endpoint.samples ?? []).filter((sample) => !only || pathOf(sample).startsWith(only)).map((sample) => record(endpoint, sample)));
+const genes = (geneLookups?.genes ?? []).filter((name) => !only || `genome/genes/${name.toLowerCase()}`.startsWith(only)).map(recordGene);
+const jobs = [...endpoints.flatMap((endpoint) => (endpoint.samples ?? []).filter((sample) => !only || pathOf(sample).startsWith(only)).map((sample) => record(endpoint, sample))), ...genes];
 console.log(`Recording ${jobs.length} samples from ${target}\n`);
 console.table(await Promise.all(jobs));

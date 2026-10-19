@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router';
 import { AppLayout } from './layout/AppLayout';
+import { AsdPage } from './pages/asd/AsdPage';
 import { HomePage } from './pages/HomePage';
 import { ModulesPage } from './pages/ModulesPage';
 import { NetworksPage } from './pages/NetworksPage';
@@ -27,6 +28,8 @@ export const router = createBrowserRouter([
       { path: 'sei', element: <DeepseaPage model="sei" /> },
       { path: 'beluga', element: <DeepseaPage model="beluga" /> },
       { path: 'seqweaver', element: <DeepseaPage model="seqweaver" /> },
+      { path: 'ism', element: <DeepseaPage model="insilico" /> },
+      { path: 'asd', element: <AsdPage /> },
       { path: 'deepsea/jobs/:id', element: <DeepseaJobPage /> },
       { path: 'expecto', element: <ExpectoPage tab="gene" /> },
       { path: 'expecto/variants', element: <ExpectoPage tab="variants" /> },

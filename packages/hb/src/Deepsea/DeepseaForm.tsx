@@ -1,4 +1,4 @@
-import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, type VariantModel } from '@humanbase/data';
+import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type VariantModel } from '@humanbase/data';
 import { Alert, saveFile } from '@humanbase/ui';
 import { useState } from 'react';
 import { JobAbout } from '../Jobs/JobAbout';
@@ -17,9 +17,10 @@ type Failure = 'busy' | 'off' | 'refused' | 'failed';
 
 const number = new Intl.NumberFormat('en-US');
 
-/** Where a model's job form is: ExPecto's sits on its Submit variants tab. */
+/** Where a model's job form is: ExPecto's sits on its Submit variants tab, in silico mutagenesis has its own path. */
 export function deepseaFormLink(model: VariantModel): string {
-  return model === 'expecto' ? '/expecto/variants/' : `/${model}/`;
+  if (model === 'expecto') return '/expecto/variants/';
+  return model === 'insilico' ? '/ism/' : `/${model}/`;
 }
 
 export function deepseaJobLink(id: string): string {
@@ -71,11 +72,11 @@ export function DeepseaAbout({ model }: { model: VariantModel }) {
   const info = deepseaModels[model];
   return (
     <JobAbout
-      tool={info.tool}
+      tool={info.inSentence ?? info.tool}
       docsHref={info.docsHref}
       examples={Object.entries(deepseaExamples[model]).map(([kind, text]) => ({
         name: `example.${kind}`,
-        detail: info.strand ? 'Variants with strand, for Seqweaver' : 'Variants, 5 columns',
+        detail: kind === 'fasta' ? `Sequences, ${VariantFileCheck.sequenceLength[model].toLocaleString('en-US')} bp for ${deepseaModels[info.basedOn ?? model].tool}` : info.strand ? 'Variants with strand, for Seqweaver' : 'Variants, 5 columns',
         onDownload: () => saveFile(text, `example.${kind}`, 'text/plain'),
       }))}
     >

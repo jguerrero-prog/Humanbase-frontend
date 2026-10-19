@@ -28,11 +28,13 @@ export interface GenomeBrowserToolbarProps {
   onTracks?: () => void;
   onExport?: () => void;
   moreItems?: readonly ActionMenuItem[];
+  /** False leaves out Tracks and Export, for a browser whose tracks are fixed. */
+  trackActions?: boolean | undefined;
   className?: string;
 }
 
 export function GenomeBrowserToolbar({
-  location, assembly, widthHelp, locationError, zoomStop, onLocation, onZoomStop, onZoom, onPreviousVariant, onNextVariant, onTracks, onExport, moreItems = [], className,
+  location, assembly, widthHelp, locationError, zoomStop, onLocation, onZoomStop, onZoom, onPreviousVariant, onNextVariant, onTracks, onExport, moreItems = [], trackActions = true, className,
 }: GenomeBrowserToolbarProps) {
   const helpId = useId();
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -67,15 +69,21 @@ export function GenomeBrowserToolbar({
         />
         <IconButton label="Zoom in" icon="zoom-in" shortcut={keys.zoomIn} onClick={() => onZoom?.('in')} />
       </div>
-      <div className="genome-actions">
-        <Button variant="secondary" size="small" icon="genome-track" aria-keyshortcuts={keys.openTracks} onClick={onTracks}>
-          Tracks
-        </Button>
-        <Button variant="ghost" size="small" icon="download" aria-keyshortcuts={keys.openExport} onClick={onExport}>
-          Export
-        </Button>
-        {moreItems.length > 0 && <ActionMenu label="More browser options" items={moreItems} />}
-      </div>
+      {(trackActions || moreItems.length > 0) && (
+        <div className="genome-actions">
+          {trackActions && (
+            <>
+              <Button variant="secondary" size="small" icon="genome-track" aria-keyshortcuts={keys.openTracks} onClick={onTracks}>
+                Tracks
+              </Button>
+              <Button variant="ghost" size="small" icon="download" aria-keyshortcuts={keys.openExport} onClick={onExport}>
+                Export
+              </Button>
+            </>
+          )}
+          {moreItems.length > 0 && <ActionMenu label="More browser options" items={moreItems} />}
+        </div>
+      )}
       <Button variant="ghost" size="small" className="genome-next" aria-keyshortcuts={keys.nextVariant} onClick={onNextVariant}>
         Next variant
       </Button>
@@ -87,18 +95,19 @@ export interface TrackHeaderProps {
   name: string;
   source: string;
   scale?: string | undefined;
-  menuItems: readonly ActionMenuItem[];
+  /** Track options; the header has no menu without them. */
+  menuItems?: readonly ActionMenuItem[] | undefined;
 }
 
 // Sits in the fixed column beside its track, so labels never cover the data.
-export function TrackHeader({ name, source, scale, menuItems }: TrackHeaderProps) {
+export function TrackHeader({ name, source, scale, menuItems = [] }: TrackHeaderProps) {
   return (
     <div className="track-header">
       <div className="track-header-text">
         <span className="track-header-name">{name}</span>
         <span className="track-header-meta">{scale ? `${source}, ${scale}` : source}</span>
       </div>
-      <ActionMenu label={`${name} track options`} items={menuItems} size="small" />
+      {menuItems.length > 0 && <ActionMenu label={`${name} track options`} items={menuItems} size="small" />}
     </div>
   );
 }

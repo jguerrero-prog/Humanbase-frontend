@@ -1,0 +1,285 @@
+{
+  "status": 200,
+  "body": {
+    "count": 11,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "rsid": "",
+        "chromosome": "chr16",
+        "gene": null,
+        "position": 53137937,
+        "ref_allele": "T",
+        "alt_allele": "C",
+        "features": {
+          "asd": {
+            "Ref": "T",
+            "Alt": "C",
+            "Proband": "TRUE",
+            "Individual ID": "12115-p1",
+            "DNA Disease impact score": "0.422436505",
+            "DNA gene symbol (nearest representative TSS-based)": "CHD9",
+            "Distance to representative TSS": "49034",
+            "RNA Disease impact score": "-0.069370541",
+            "RNA gene symbol": "CHD9",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr16",
+        "gene": null,
+        "position": 53152670,
+        "ref_allele": "A",
+        "alt_allele": "G",
+        "features": {
+          "asd": {
+            "Ref": "A",
+            "Alt": "G",
+            "Proband": "TRUE",
+            "Individual ID": "14229-p1",
+            "DNA Disease impact score": "-0.6187504",
+            "DNA gene symbol (nearest representative TSS-based)": "CHD9",
+            "Distance to representative TSS": "63767",
+            "RNA Disease impact score": "-0.309542358",
+            "RNA gene symbol": "CHD9",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr16",
+        "gene": null,
+        "position": 53174829,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {
+          "asd": {
+            "Ref": "G",
+            "Alt": "A",
+            "Proband": "TRUE",
+            "Individual ID": "13644-p1",
+            "DNA Disease impact score": "-0.558216288",
+            "DNA gene symbol (nearest representative TSS-based)": "CHD9",
+            "Distance to representative TSS": "85926",
+            "RNA Disease impact score": "-0.244150244",
+            "RNA gene symbol": "CHD9",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr16",
+        "gene": null,
+        "position": 53247223,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {
+          "asd": {
+            "Ref": "G",
+            "Alt": "A",
+            "Proband": "FALSE",
+            "Individual ID": "11219-s1",
+            "DNA Disease impact score": "-0.489224902",
+            "DNA gene symbol (nearest representative TSS-based)": "CHD9",
+            "Distance to representative TSS": "158320",
+            "RNA Disease impact score": "-0.885598169",
+            "RNA gene symbol": "CHD9",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr16",
+        "gene": null,
+        "position": 53247521,
+        "ref_allele": "G",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "G",
+            "Alt": "T",
+            "Proband": "TRUE",
+            "Individual ID": "12875-p1",
+            "DNA Disease impact score": "-0.700779839",
+            "DNA gene symbol (nearest representative TSS-based)": "CHD9",
+            "Distance to representative TSS": "158618",
+            "RNA Disease impact score": "-0.652207425",
+            "RNA gene symbol": "CHD9",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr16",
+        "gene": null,
+        "position": 53249422,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {
+          "asd": {
+            "Ref": "G",
+            "Alt": "A",
+            "Proband": "TRUE",
+            "Individual ID": "11572-p1",
+            "DNA Disease impact score": "-0.629154883",
+            "DNA gene symbol (nearest representative TSS-based)": "CHD9",
+            "Distance to representative TSS": "160519",
+            "RNA Disease impact score": "-0.623757949",
+            "RNA gene symbol": "CHD9",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr16",
+        "gene": null,
+        "position": 53250650,
+        "ref_allele": "C",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "C",
+            "Alt": "T",
+            "Proband": "TRUE",
+            "Individual ID": "12922-p1",
+            "DNA Disease impact score": "-0.723098022",
+            "DNA gene symbol (nearest representative TSS-based)": "CHD9",
+            "Distance to representative TSS": "161747",
+            "RNA Disease impact score": "-1.131779496",
+            "RNA gene symbol": "CHD9",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr16",
+        "gene": null,
+        "position": 53278470,
+        "ref_allele": "A",
+        "alt_allele": "G",
+        "features": {
+          "asd": {
+            "Ref": "A",
+            "Alt": "G",
+            "Proband": "FALSE",
+            "Individual ID": "12335-s1",
+            "DNA Disease impact score": "-0.631286965",
+            "DNA gene symbol (nearest representative TSS-based)": "CHD9",
+            "Distance to representative TSS": "189567",
+            "RNA Disease impact score": "-0.342204023",
+            "RNA gene symbol": "CHD9",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr16",
+        "gene": null,
+        "position": 53297662,
+        "ref_allele": "G",
+        "alt_allele": "T",
+        "features": {
+          "asd": {
+            "Ref": "G",
+            "Alt": "T",
+            "Proband": "TRUE",
+            "Individual ID": "12955-p1",
+            "DNA Disease impact score": "-0.743432495",
+            "DNA gene symbol (nearest representative TSS-based)": "RBL2",
+            "Distance to representative TSS": "170732",
+            "RNA Disease impact score": "-0.423620625",
+            "RNA gene symbol": "CHD9",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr16",
+        "gene": null,
+        "position": 53305739,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {
+          "asd": {
+            "Ref": "G",
+            "Alt": "A",
+            "Proband": "TRUE",
+            "Individual ID": "12115-p1",
+            "DNA Disease impact score": "-0.737778115",
+            "DNA gene symbol (nearest representative TSS-based)": "RBL2",
+            "Distance to representative TSS": "162655",
+            "RNA Disease impact score": "-0.722364232",
+            "RNA gene symbol": "CHD9",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      },
+      {
+        "rsid": "",
+        "chromosome": "chr16",
+        "gene": null,
+        "position": 53347551,
+        "ref_allele": "A",
+        "alt_allele": "G",
+        "features": {
+          "asd": {
+            "Ref": "A",
+            "Alt": "G",
+            "Proband": "TRUE",
+            "Individual ID": "14240-p1",
+            "DNA Disease impact score": "-0.057694686",
+            "DNA gene symbol (nearest representative TSS-based)": "RBL2",
+            "Distance to representative TSS": "120843",
+            "RNA Disease impact score": "-0.672198504",
+            "RNA gene symbol": "CHD9",
+            "Exon junction proximal 200bp": "FALSE",
+            "Exon junction proximal 400bp": "FALSE",
+            "AS  junction proximal 200bp": "FALSE",
+            "AS  junction proximal 400bp": "FALSE"
+          }
+        }
+      }
+    ]
+  }
+}

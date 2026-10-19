@@ -46,6 +46,8 @@ const densities = [
 ];
 
 export interface EffectsControlsProps {
+  /** The first choice's label: Score, or Features where the choice is a feature set. */
+  scoreLabel?: string | undefined;
   scores: readonly SelectOption[];
   score: string;
   onScore?: ((score: string) => void) | undefined;
@@ -68,10 +70,10 @@ export interface EffectsControlsProps {
 }
 
 export function EffectsControls(props: EffectsControlsProps) {
-  const { scores, score, onScore, threshold, thresholdSteps = [2, 3, 5], onThreshold, cellTypes, search, onSearch, groupByFeature, onGroupByFeature, featureNoun = 'protein', density, onDensity, lowestFirst, onLowestFirst } = props;
+  const { scoreLabel = 'Score', scores, score, onScore, threshold, thresholdSteps = [2, 3, 5], onThreshold, cellTypes, search, onSearch, groupByFeature, onGroupByFeature, featureNoun = 'protein', density, onDensity, lowestFirst, onLowestFirst } = props;
   return (
     <div className="effects-controls">
-      <Select label="Score" size="small" options={scores} value={score} {...(onScore && { onChange: onScore })} className="effects-score" />
+      <Select label={scoreLabel} size="small" options={scores} value={score} {...(onScore && { onChange: onScore })} className="effects-score" />
       {threshold !== undefined && (
         <SegmentedControl
           label="Show effects of"

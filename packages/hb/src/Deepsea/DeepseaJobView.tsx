@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { elapsed, jobDateTime, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
 import { deepseaFormLink, deepseaJobLink } from './DeepseaForm';
 import { DeepseaResultView } from './DeepseaResultView';
+import { InsilicoResultView } from './InsilicoResultView';
 import './Deepsea.css';
 
 export interface DeepseaJobViewProps {
@@ -24,7 +25,7 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
   const linkHref = useLinkHref();
   const job = useDeepseaJob(id);
   const data = job.data;
-  const { title, rename } = useJobTitle(data && { id: data.id, tool: data.model.tool, title: data.title });
+  const { title, rename } = useJobTitle(data && { id: data.id, tool: data.model.inSentence ?? data.model.tool, title: data.title });
   const { copyButton, renameButton, overlays } = useJobActions(title, rename);
   // When the job was last read; elapsed times move on with each poll.
   const now = job.dataUpdatedAt;
@@ -71,13 +72,19 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
     return (
       <>
         <title>{`Finished · ${title} · Humanbase`}</title>
-        <DeepseaResultView job={data} title={title} tools={tools} variant={variant} onVariantChange={onVariantChange} />
+        {data.model.insilico ? (
+          <InsilicoResultView job={data} title={title} tools={tools} />
+        ) : (
+          <DeepseaResultView job={data} title={title} tools={tools} variant={variant} onVariantChange={onVariantChange} />
+        )}
         {overlays}
       </>
     );
   }
 
   const tool = data.model.tool;
+  const named = data.model.inSentence ?? tool;
+  const sequences = data.sequenceNames.length;
   const badge = data.status === 'queued' ? 'Queued' : data.status === 'running' ? `Running for ${elapsed(data.created, now)}` : `Failed${data.failure ? `: ${data.failure}` : ''}`;
   return (
     <>
@@ -95,7 +102,7 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
         actions={
           data.status === 'failed' && (
             <a className="button button-secondary button-medium" href={linkHref(deepseaFormLink(data.model.id))}>
-              Run {tool} again
+              Run {named} again
             </a>
           )
         }
@@ -104,7 +111,7 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
           <>
             <ContextLabel name="Tool" value={tool} />
             <ContextLabel name="Genome" value={data.genome} />
-            <ContextLabel name="Input" value={data.kind.toUpperCase()} />
+            <ContextLabel name="Input" value={sequences ? `${sequences} ${sequences === 1 ? 'sequence' : 'sequences'}, FASTA` : data.kind.toUpperCase()} />
           </>
         }
         tools={tools}

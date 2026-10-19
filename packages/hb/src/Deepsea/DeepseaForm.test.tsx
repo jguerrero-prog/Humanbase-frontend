@@ -38,4 +38,14 @@ describe('DeepseaForm', () => {
     expect(screen.queryByRole('radio', { name: 'Use the example' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Download example\.vcf/ })).toBeInTheDocument();
   });
+
+  it('runs in silico mutagenesis on the example sequences, with FASTA as its only input', async () => {
+    const { onStarted } = renderForm('insilico');
+    expect(screen.queryByRole('radiogroup', { name: 'What are you submitting?' })).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'About in silico mutagenesis' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('radio', { name: 'Use the example' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Run in silico mutagenesis on 4 sequences' }));
+    await waitFor(() => expect(onStarted).toHaveBeenCalledWith('/deepsea/jobs/00000000-0000-4000-8000-000000000151/'));
+    expect(new JobHistory().list()[0]).toMatchObject({ tool: 'In silico mutagenesis', detail: 'In silico mutagenesis, 4 sequences' });
+  });
 });

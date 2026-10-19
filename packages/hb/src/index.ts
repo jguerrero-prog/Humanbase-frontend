@@ -1,6 +1,8 @@
 export { VariantJobForm, type VariantJob, type VariantJobFormProps } from './VariantJobForm/VariantJobForm';
 export { NetwasGenes, type NetwasGenesProps } from './NetwasGenes/NetwasGenes';
 export { AsdBrowser, type AsdBrowserProps, type AsdView } from './AsdBrowser/AsdBrowser';
+export { AsdExplorer, type AsdExplorerProps, type AsdState } from './AsdBrowser/AsdExplorer';
+export { AsdHeader, AsdVariantTable, type AsdHeaderProps, type AsdVariantTableProps } from './AsdBrowser/AsdParts';
 export { analysisColumns, analysisIcons, analysisOptions, productFooter, productSections } from './content/product';
 export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
 export { JobAbout, type JobAboutProps, type JobExample } from './Jobs/JobAbout';
@@ -11,6 +13,7 @@ export { expectoGeneScale, expectoScGeneScale, geneExpressionTools, type GeneExp
 export { VariantSearch, type VariantSearchProps } from './Expecto/VariantSearch';
 export { DeepseaJobView, type DeepseaJobViewProps } from './Deepsea/DeepseaJobView';
 export { DeepseaResultView, type DeepseaResultViewProps } from './Deepsea/DeepseaResultView';
+export { InsilicoResultView, type InsilicoResultViewProps } from './Deepsea/InsilicoResultView';
 export { HomeSearch, type HomeSearchProps } from './HomeSearch/HomeSearch';
 export { EmptyNetworkQuery, NetworkExplorer, type NetworkDetailContext, type NetworkExplorerProps } from './Networks/NetworkExplorer';
 export { NetworkDetail } from './Networks/NetworkDetail';

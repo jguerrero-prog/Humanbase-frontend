@@ -4,8 +4,8 @@ import type { Page } from '@playwright/test';
 export async function apiOff(page: Page): Promise<string[]> {
   const apiRequests: string[] = [];
   await page.route('**/config.json', (route) => route.fulfill({ json: { api: false, apiBase: '/api' } }));
-  // The API, and the files it links to on S3, such as example and result files.
-  for (const pattern of ['**/api/**', 'https://s3-us-west-2.amazonaws.com/humanbase/**']) {
+  // The API, the files it links to on S3, such as example and result files, and the gene index the genome browser reads.
+  for (const pattern of ['**/api/**', 'https://s3-us-west-2.amazonaws.com/humanbase/**', 'https://humanbase.s3.amazonaws.com/**']) {
     await page.route(pattern, (route) => {
       apiRequests.push(route.request().url());
       return route.abort();
