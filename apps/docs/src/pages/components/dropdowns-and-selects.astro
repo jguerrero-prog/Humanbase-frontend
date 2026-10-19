@@ -392,7 +392,7 @@ const usage = `import { ActionMenu, SearchField, Select } from '@humanbase/ui';
     <ul>
       <li><code>Select</code> is a select-only combobox: a button with <code>role="combobox"</code> that opens a listbox. It supports <code>size</code>, <code>hint</code>, <code>error</code>, option <code>description</code>, <code>icon</code> and <code>group</code>, a <code>footer</code>, <code>searchable</code> lists and <code>columns</code> of groups. Give it <code>name</code> to submit with a form.</li>
       <li><code>SearchField</code> becomes an editable combobox when it gets <code>suggestions</code>; <code>onSuggestionSelect</code> runs on click or Enter, and <code>suggestionsLoading</code> shows the searching state.</li>
-      <li><code>ActionMenu</code> follows the menu button pattern. Each item has a <code>label</code>, optional <code>icon</code>, <code>destructive</code> and <code>dividerBefore</code>, and an <code>onSelect</code> command.</li>
+      <li><code>ActionMenu</code> follows the menu button pattern. Each item has a <code>label</code>, optional <code>icon</code>, <code>destructive</code> and <code>dividerBefore</code>, and an <code>onSelect</code> command. Pass <code>trigger="text"</code> to show the label on a ghost button instead of the more icon, as the ASD Browser does for Columns.</li>
     </ul>
     <Code code={usage} lang="tsx" theme="css-variables" />
   </NoteCard>

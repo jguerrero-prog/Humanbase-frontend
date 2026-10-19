@@ -36,9 +36,9 @@ const examples = [
 ];
 
 const checks = [
-  ['VCF', 'Tab-separated, at least 5 columns: chromosome, position, ID, REF, ALT. A header, if present, starts with #CHROM POS ID REF ALT. Position is within the chromosome’s length on the chosen assembly. The ID can be empty. REF and ALT are upper-case A, C, G, T, up to 100 characters.'],
+  ['VCF', 'Tab-separated, at least 5 columns: chromosome, position, ID, REF, ALT. Meta lines starting with ## are skipped. A header, if present, starts with #CHROM POS ID REF ALT. Position is within the chromosome’s length on the chosen assembly. The ID can be empty. REF and ALT are upper-case A, C, G, T, up to 100 characters.'],
   ['VCF for Seqweaver', 'A sixth column, strand: + or -.'],
-  ['BED', 'Tab-separated, at least 3 columns: chromosome, start, end. Start and end are non-negative and within the chromosome. Each interval is scored at its center; for an even length, the left center (chr1 100 106 is scored at 103).'],
+  ['BED', 'Tab-separated, at least 3 columns: chromosome, start, end. Start and end are non-negative and within the chromosome, and end is greater than start. Each interval is scored at its center; for an even length, the left center (chr1 100 106 is scored at 103).'],
   ['FASTA', 'Each sequence starts with >. Only A, C, G, T; lower case becomes upper case. Length set by the model: Sei 4,096 bp, Beluga 2,000 bp, Seqweaver 1,000 bp.'],
   ['Size', 'Up to 20,000 variants, 10,000 or fewer recommended. ExPecto’s docs say 10,000; the limit is on the facts to confirm.'],
 ];
@@ -74,7 +74,7 @@ const behavior = [
   ['Nothing uploads early', 'The file is checked in the browser. Only Run sends it.'],
   ['Changing a setting re-checks', 'Switching model, input type or assembly checks the file again, because the rules depend on them (strand for Seqweaver, FASTA length, chromosome length).'],
   ['Paste and example', 'Paste uses the same check as a file. Use the example fills the form with the tool’s example and says so above the file.'],
-  ['The button counts', 'It names the tool and what will run, such as Run Seqweaver on 1,284 variants, and stays off until every line passes.'],
+  ['The button counts', 'It names the tool and what will run, such as Run Seqweaver on 1,284 variants, and looks off until every line passes, but stays focusable.'],
   ['After Run', 'The job page opens straight away. The job, its title and its link are saved in this browser; email is optional and only sends the link.'],
   ['Leaving early', 'Leaving with a checked file asks once whether to leave without starting the job.'],
   ['Model choice', 'Sei, Beluga and Seqweaver share one form; changing the model keeps the file and title and changes the URL, so each tool keeps its own link.'],
@@ -168,7 +168,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
     </ProductScreen>
   </DocSection>
 
-  <DocSection title="Checking the file" lead="The file is read in the browser as soon as it’s dropped or pasted. The run button stays off until every line passes, and each problem names its line and the rule it breaks.">
+  <DocSection title="Checking the file" lead="The file is read in the browser as soon as it’s dropped or pasted. The run button looks off until every line passes, but stays focusable so it can say why, and each problem names its line and the rule it breaks.">
     <div class="check-states" inert>
       <figure>
         <figcaption>Before a file</figcaption>

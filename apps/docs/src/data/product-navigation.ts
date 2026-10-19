@@ -1,4 +1,4 @@
-import type { NavSection } from '@humanbase/ui';
+import type { JobsMenuSummary, NavSection } from '@humanbase/ui';
 
 // The proposed HumanBase top bar, shared by every page that draws a product screen.
 export const productSections: NavSection[] = [
@@ -56,4 +56,11 @@ export const productSections: NavSection[] = [
   { label: 'About', href: '/about/' },
 ];
 
-export const productJobs = { href: '/jobs/', running: 1 };
+export const productJobs: JobsMenuSummary = {
+  jobs: [
+    { title: 'IL1B region variants', detail: 'Seqweaver, for 4 minutes', status: 'running', href: '/jobs/il1b/' },
+    { title: 'Untitled Seqweaver job', detail: 'Seqweaver, finished Oct 16, 8:02 PM', status: 'finished', href: '/jobs/example/' },
+  ],
+  total: 6,
+  allHref: '/jobs/',
+};

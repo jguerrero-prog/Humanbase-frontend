@@ -44,4 +44,13 @@ describe('ActionMenu', () => {
     await userEvent.keyboard('{Escape}');
     expect(button).toHaveFocus();
   });
+
+  it('shows its label as text when the trigger is text', async () => {
+    render(<ActionMenu label="Columns (4 hidden)" trigger="text" size="small" items={[{ label: 'Show AS 200bp' }]} />);
+    const button = screen.getByRole('button', { name: 'Columns (4 hidden)' });
+    expect(button).toHaveTextContent('Columns (4 hidden)');
+    expect(button).toHaveClass('button-ghost', 'button-small');
+    await userEvent.click(button);
+    expect(screen.getByRole('menuitem', { name: 'Show AS 200bp' })).toHaveFocus();
+  });
 });

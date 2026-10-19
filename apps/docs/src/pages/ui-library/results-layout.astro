@@ -147,7 +147,7 @@ const queryGenes = new GeneMatchList([{ id: 'IL1B', typed: ['IL1B'], status: 'ma
 
 const notes = {
   regions: [
-    'Gene, connection and module detail opens in the Large drawer over the page, with a backdrop, because annotation and evidence lists are long. The result underneath stays unchanged and comes back when the drawer closes.',
+    'Gene, connection and module detail opens in the Medium drawer over the page because annotation and evidence lists are long. The result underneath stays unchanged and comes back when the drawer closes.',
     'The header scrolls away; the top bar stays. Tabs in the header become sticky under the top bar once the header leaves the screen.',
     'Below 1280px the companion table moves under the main view; below 960px everything stacks and the drawer becomes a bottom sheet.',
   ],
@@ -183,7 +183,7 @@ const notes = {
     'The full design, with a New candidates filter and a score explanation, is on the NetWAS results page of the UI library.',
   ],
   screens: [
-    '1280px and up: main view 8 columns, companion 4; gene, connection and module detail opens in the Large drawer over the page.',
+    '1280px and up: main view 8 columns, companion 4; gene, connection and module detail opens in the Medium drawer over the page.',
     '960 to 1279px: the companion table moves under the main view; the drawer covers the right side of the main view.',
     'Below 960px: tissue, data types and Compare move behind one “Network settings” button that opens a bottom sheet; the context labels keep showing the current values.',
     'On phones the drawer becomes the bottom sheet from Modals and drawers.',
@@ -214,7 +214,7 @@ const specs = [
   ['graph toolbar', '36px icon buttons, 8px apart, in three groups split by dividers: view (zoom, fit, expand), layout (layout, pause, starred sets), output (download). Each has a tooltip and an accessible name.'],
   ['companion', '4 columns (421px at 1440); table or summary'],
   ['companion tabs', 'Genes, Processes, Tissues, each with a count; search and download sit above the table'],
-  ['drawer', '460px, from the top of the body to the bottom of the window; covers the companion'],
+  ['drawer', '480px (Medium), from the top of the body to the bottom of the window; covers the companion'],
   ['vertical rhythm', '24px between header and body; 40px bottom padding before the footer'],
   ['breakpoints', '1280px and up side by side; 960 to 1279px stacked; below 960px phone layout'],
 ];
@@ -245,8 +245,8 @@ const networkSettings = (tissue: string) => [
       <div class="region region-header"><strong>Result header</strong><span>Breadcrumbs, title, context labels, settings, tabs</span></div>
       <div class="region region-main"><strong>Main view: 8 columns</strong><span>Network, heatmap or track, with its toolbar, legend and filters</span></div>
       <div class="region region-companion"><strong>Companion table: 4 columns</strong><span>Genes or terms behind the view, sortable</span></div>
-      <div class="region region-drawer"><strong>Drawer: 640px (Large)</strong><span>Opens over the page with a backdrop, below the top bar</span></div>
-      <figcaption class="visually-hidden">The result page regions: top bar, result header, an 8-column main view, a 4-column companion table, and a Large drawer over the page.</figcaption>
+      <div class="region region-drawer"><strong>Drawer: 480px (Medium)</strong><span>Opens over the page, below the top bar</span></div>
+      <figcaption class="visually-hidden">The result page regions: top bar, result header, an 8-column main view, a 4-column companion table, and a Medium drawer over the page.</figcaption>
     </figure>
     <ul class="points">{notes.regions.map((note) => <li>{note}</li>)}</ul>
   </DocSection>
@@ -306,9 +306,9 @@ const networkSettings = (tissue: string) => [
     </figure>
   </DocSection>
 
-  <DocSection title="A gene selected" lead="Clicking IL1R1 opens the gene drawer over the page, below the top bar, with a backdrop. The URL gains ?gene=IL1R1, but no breadcrumb step or tab is added.">
+  <DocSection title="A gene selected" lead="Clicking IL1R1 opens the gene drawer over the page, below the top bar. The URL gains ?gene=IL1R1, but no breadcrumb step or tab is added.">
     <div class="drawer-specimen">
-      <Drawer inline size="large" title="IL1R1" subtitle="interleukin 1 receptor type 1">
+      <Drawer inline title="IL1R1" subtitle="interleukin 1 receptor type 1">
         <Fragment slot="footer">
           <Button>Add to query</Button>
           <Button variant="ghost">Open gene page</Button>
@@ -584,7 +584,7 @@ const networkSettings = (tissue: string) => [
   }
 
   .drawer-specimen {
-    max-inline-size: 640px;
+    max-inline-size: 480px;
   }
 
   .drawers {

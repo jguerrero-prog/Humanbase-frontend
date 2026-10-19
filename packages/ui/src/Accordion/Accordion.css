@@ -88,7 +88,7 @@
 .until-found {
   overflow: clip;
   transition:
-    block-size var(--motion-duration-moderate) var(--motion-easing-enter),
+    block-size var(--motion-resize, var(--motion-duration-moderate)) var(--motion-easing-enter),
     opacity var(--motion-duration-moderate) var(--motion-easing-enter),
     content-visibility var(--motion-duration-moderate) var(--motion-easing-enter) allow-discrete;
   interpolate-size: allow-keywords;
@@ -99,6 +99,6 @@
   content-visibility: hidden;
   block-size: 0;
   opacity: 0;
-  transition-duration: var(--motion-duration-base);
+  transition-duration: var(--motion-resize, var(--motion-duration-base)), var(--motion-duration-base), var(--motion-duration-base);
   transition-timing-function: var(--motion-easing-exit);
 }

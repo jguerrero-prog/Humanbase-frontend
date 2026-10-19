@@ -107,6 +107,7 @@ svg {
     --motion-distance-sm: 0;
     --motion-distance-md: 0;
     --motion-scale-dialog: 1;
+    --motion-resize: 0s;
     --motion-duration-moderate: var(--motion-duration-base);
     --motion-duration-slow: var(--motion-duration-base);
   }
@@ -117,6 +118,7 @@ svg {
   --motion-distance-sm: 0;
   --motion-distance-md: 0;
   --motion-scale-dialog: 1;
+  --motion-resize: 0s;
   --motion-duration-moderate: var(--motion-duration-base);
   --motion-duration-slow: var(--motion-duration-base);
 }

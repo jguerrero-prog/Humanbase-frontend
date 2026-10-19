@@ -45,7 +45,7 @@ const effectSteps = ['Strong decrease', 'Decrease', 'Slight decrease', 'No chang
 const aroundRenderer: [string, string, { text: string; href: string }?][] = [
   ['Toolbar above the graph', 'Icon buttons with tooltips and accessible names (Tooltips page): download, layout, lock, zoom, fit.'],
   ['Legend', 'The Legend components beside the graph, with numbers at both ends and a title, such as “Connection confidence”.'],
-  ['Filters and sliders', 'Minimum confidence and number of genes, in a filter group or drawer (Accordions page). A Slider component is still to be designed.', { text: 'Slider component', href: '/components/sliders/' }],
+  ['Filters and sliders', 'Minimum confidence and number of genes, in a filter group or drawer (Accordions page). Uses the Slider component.', { text: 'Slider component', href: '/components/sliders/' }],
   ['Hover and focus', 'The Data tooltip for nodes and edges, with the score and datasets.'],
   ['Clicking a gene or edge', 'Opens the drawer beside the graph (Modals and drawers page), not a new page or tab level.'],
   ['Module list', 'The table beside the module graph uses the Table and Badge components, with the module name in words next to its color.'],
@@ -146,7 +146,7 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
   </DocSection>
 
   <DocSection
-    title="Network graphs (2D) requires D3.JS for 3D visualization"
+    title="Network graphs (2D; 3D views need D3.js)"
     lead="The tissue network and functional module discovery views keep their current renderer. The design system doesn’t redraw them; it covers everything around them, and asks for a few configuration changes."
   >
     <section class="renderer-note" aria-labelledby="renderer-today">
