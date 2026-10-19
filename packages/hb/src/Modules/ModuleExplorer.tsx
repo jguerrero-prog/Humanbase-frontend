@@ -115,7 +115,7 @@ export function ModuleExplorer({ bodyTag, view, onViewChange, onEditGenes, onSta
           setDraftTitle(shownTitle);
           setRenaming(true);
         }}
-        onEditGenes={() => onEditGenes({ entrez: data.entrez, title: shownTitle, tissue: data.integration, version: data.version })}
+        onEditGenes={() => onEditGenes({ entrez: data.entrez, title: title || data.title, tissue: data.integration, version: data.version })}
         onTissueChange={(tissue) => void changeTissue(tissue)}
       />
       <Dialog

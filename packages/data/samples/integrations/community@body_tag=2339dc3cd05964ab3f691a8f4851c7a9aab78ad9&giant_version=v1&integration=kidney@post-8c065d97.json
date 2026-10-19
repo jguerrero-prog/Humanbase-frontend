@@ -1,0 +1,7 @@
+{
+  "note": "Hand-built: what submitting the renal disease panel example answers with while the API is off. Whether the live API answers a cached example with the result straight away or with processing has not been observed; the result itself is the recorded poll sample beside this file.",
+  "status": 202,
+  "body": {
+    "status": "processing"
+  }
+}

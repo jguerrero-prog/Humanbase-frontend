@@ -32,7 +32,7 @@ describe('ModuleSearch', () => {
     const run = await screen.findByRole('button', { name: 'Find modules in 504 genes' }, { timeout: 3000 });
     await screen.findByRole('combobox', { name: 'Tissue' });
     await userEvent.click(run);
-    await vi.waitFor(() => expect(onStarted).toHaveBeenCalledWith('/modules/?body_tag=faa09d1786f0998dbd03d7323f544f5457d98936'));
+    await vi.waitFor(() => expect(onStarted).toHaveBeenCalledWith('/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9'));
     expect(new JobHistory().list()[0]).toMatchObject({ tool: 'Modules', status: 'running', title: 'Renal disease panel' });
   });
 

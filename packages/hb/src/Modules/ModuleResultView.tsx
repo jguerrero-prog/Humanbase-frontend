@@ -1,4 +1,4 @@
-import { dataVersionNames, termDatabaseNames, useModuleGenes, type GeneHit, type Integration, type ModuleResult, type ModuleView } from '@humanbase/data';
+import { dataVersionNames, useModuleGenes, type GeneHit, type Integration, type ModuleResult, type ModuleView } from '@humanbase/data';
 import { NetworkGraph, type GraphData, type GraphRendererFactory, type NetworkGraphHandle } from '@humanbase/graph';
 import { Button, Cell, Checkbox, GraphToolbar, HeaderCell, KeyLegend, ResultHeader, ResultLayout, saveFile, SearchField, Select, Table, TextInput, type GraphAction } from '@humanbase/ui';
 import { useMemo, useRef, useState } from 'react';
@@ -207,7 +207,7 @@ export function ModuleResultView({ result, title, view, tissues, starting, onVie
       <>
         <Select
           label="Terms from"
-          options={result.databases.map((slug) => ({ value: slug, label: termDatabaseNames[slug] ?? slug }))}
+          options={result.databases.map((slug) => ({ value: slug, label: result.databaseName(slug) }))}
           value={database}
           onChange={(slug) => onViewChange(view.with({ database: slug }))}
         />
