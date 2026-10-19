@@ -1,0 +1,785 @@
+---
+import {
+  Button,
+  Cell,
+  Checkbox,
+  Drawer,
+  DrawerSection,
+  EditGenesDialog,
+  EvidenceTable,
+  GeneDetail,
+  GeneIdsMenu,
+  GeneMatchList,
+  GraphToolbar,
+  HeaderCell,
+  IconButton,
+  KeyLegend,
+  NetworkWeightTable,
+  RankedAnnotationTable,
+  ResultHeader,
+  ResultLayout,
+  ScoreCell,
+  ScoreMeter,
+  SearchField,
+  SegmentedControl,
+  Select,
+  Slider,
+  Table,
+  Tabs,
+  TopBar,
+  WeightHistogram,
+  type GraphAction,
+  type RankedAnnotation,
+} from '@humanbase/ui';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NetworkSketch from '../../components/docs/NetworkSketch.astro';
+import { productJobs, productSections } from '../../data/product-navigation';
+import { edgeBands } from '../../data/viz-examples';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const crumbs = [{ label: 'Networks', href: '#network-result' }, { label: 'IL1B' }];
+const context = [
+  { name: 'Data version', value: 'GIANT' },
+  { name: 'Genes shown', value: '15 of 50' },
+];
+const geneTabs = ['Tissue network', 'Tissue expression', 'Process network', 'Biological processes', 'Diseases'].map((label) => ({ value: label, label }));
+const tissues = ['Blood vessel', 'Leukocyte', 'Liver', 'Brain'].map((tissue) => ({ value: tissue, label: tissue }));
+const dataTypes = [{ value: 'all', label: 'All 5 types' }];
+const edgeItems = [...edgeBands].reverse().map(({ label, color, width }) => ({ label, color, width }));
+
+const toolbar: GraphAction[][] = [
+  [
+    { label: 'Zoom in', icon: 'zoom-in' },
+    { label: 'Zoom out', icon: 'zoom-out' },
+    { label: 'Fit to screen', icon: 'fit' },
+    { label: 'Expand', icon: 'maximize' },
+  ],
+  [
+    { label: 'Layout: query genes in the center', icon: 'query-gene' },
+    { label: 'Pause layout', icon: 'pause' },
+    { label: 'Starred sets', icon: 'bookmark' },
+  ],
+  [{ label: 'Download', icon: 'download' }],
+];
+
+const related = [
+  ['IL1R1', 'interleukin 1 receptor type 1', 1],
+  ['PLAUR', 'plasminogen activator, urokinase receptor', 0.97],
+  ['PTGS2', 'prostaglandin-endoperoxide synthase 2', 0.96],
+  ['TNFAIP6', 'TNF alpha induced protein 6', 0.96],
+  ['ICAM1', 'intercellular adhesion molecule 1', 0.94],
+  ['IL6', 'interleukin 6', 0.94],
+  ['CXCL1', 'C-X-C motif chemokine ligand 1', 0.94],
+  ['CCL2', 'C-C motif chemokine ligand 2', 0.94],
+] as const;
+const companionTabs = [
+  { value: 'genes', label: 'Genes', count: 50 },
+  { value: 'processes', label: 'Processes', count: 48 },
+  { value: 'tissues', label: 'Tissues', count: 23 },
+];
+
+const il1r1Ids = [
+  { source: 'MIM', id: '147810', href: 'https://omim.org/entry/147810', site: 'OMIM' },
+  { source: 'Ensembl', id: 'ENSG00000115594', href: 'https://www.ensembl.org/id/ENSG00000115594', site: 'Ensembl' },
+  { source: 'HGNC', id: '5993', href: 'https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/HGNC:5993', site: 'HGNC' },
+  { source: 'Entrez', id: '3554', href: 'https://www.ncbi.nlm.nih.gov/gene/3554', site: 'NCBI Gene' },
+];
+const il1bIds = [
+  { source: 'MIM', id: '147720', href: 'https://omim.org/entry/147720', site: 'OMIM' },
+  { source: 'HGNC', id: '5992', href: 'https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/HGNC:5992', site: 'HGNC' },
+  { source: 'Ensembl', id: 'ENSG00000125538', href: 'https://www.ensembl.org/id/ENSG00000125538', site: 'Ensembl' },
+  { source: 'Entrez', id: '3553', href: 'https://www.ncbi.nlm.nih.gov/gene/3553', site: 'NCBI Gene' },
+];
+
+const evidence = [
+  { dataset: 'MSigDB CGP', dataType: 'GSEA perturbations', contribution: 0.2 },
+  { dataset: 'Skeletal muscle response to insulin infusion', dataType: 'Co-expression', contribution: 0.004 },
+  { dataset: 'Follicular lymphomas and response to rituximab', dataType: 'Co-expression', contribution: 0.003 },
+  { dataset: 'Chronic obstructive pulmonary disease', dataType: 'Co-expression', contribution: 0.002 },
+];
+const histogram = [150, 120, 70, 40, 24, 14, 9, 6, 8, 4];
+const networks = [
+  { network: 'cell chemotaxis', weight: 1 },
+  { network: 'T cell proliferation', weight: 1 },
+  { network: 'Blood vessel', weight: 0.85 },
+];
+
+const systems = ['Alimentary canal', 'Cardiovascular system', 'Connective tissue', 'Embryonic structure', 'Endocrine gland', 'Excretory gland', 'Hematopoietic system', 'Integument', 'Nervous system', 'Reproductive system', 'Respiratory system', 'Sense organ', 'Skeletal system', 'Urinary system'];
+const expression = [
+  ['mononuclear phagocyte', 0.93],
+  ['monocyte', 0.93],
+  ['macrophage', 0.91],
+  ['leukocyte', 0.91],
+  ['granulocyte', 0.89],
+  ['blood', 0.88],
+  ['lymphocyte', 0.82],
+  ['dendritic cell', 0.8],
+] as const;
+
+const goa = (code: string, meaning: string) => ({ source: 'UniProt-GOA', code, meaning });
+const processes: RankedAnnotation[] = [
+  { name: 'mitotic nuclear division', identifier: 'GO:0140014', confidence: 1, sources: 1 },
+  { name: 'regulation of protein serine/threonine kinase activity', identifier: 'GO:0071900', confidence: 1, sources: 2 },
+  { name: 'activation of MAPK activity', identifier: 'GO:0000187', confidence: 1, sources: 1 },
+  {
+    name: 'drug metabolic process',
+    identifier: 'GO:0017144',
+    confidence: 1,
+    evidence: [
+      { ...goa('IDA', 'Inferred from direct assay'), publication: { title: 'Evidence for auto/paracrine actions of vitamin D in bone: 1alpha-hydroxylase expression and activity in human bone cells.', authors: 'van Driel M, Koedam M, Buurman CJ, Hewison M, Chiba H, Uitterlinden AG, Pols HA, van Leeuwen JP', journal: 'FASEB J, November 2006' } },
+      { ...goa('IDA', 'Inferred from direct assay'), publication: { title: 'Nitric oxide mediates cytokine-induced inhibition of insulin secretion by human islets of Langerhans.', authors: 'Corbett JA, Sweetland MA, Wang JL, Lancaster JR Jr, McDaniel ML', journal: 'Proc Natl Acad Sci U S A, March 1993' } },
+      { ...goa('IDA', 'Inferred from direct assay'), publication: { title: 'Cycling and early pregnant endometrium as a site of regulated expression of the vitamin D system.', authors: 'Viganò P, Lattuada D, Mangioni S, Ermellino L, Vignali M, Caporizzo E, Panina-Bordignon P, Besozzi M, Di Blasio AM', journal: 'J Mol Endocrinol, June 2006' } },
+    ],
+  },
+  { name: 'organelle fission', identifier: 'GO:0048285', confidence: 1, sources: 1 },
+  { name: 'glycosaminoglycan metabolic process', identifier: 'GO:0030203', confidence: 1, sources: 1 },
+];
+const diseases: RankedAnnotation[] = [
+  { name: 'stomach cancer', identifier: 'DOID:10534', confidence: 1, sources: 1 },
+  { name: 'cervical cancer', identifier: 'DOID:4362', confidence: 0.92 },
+  { name: 'cervix carcinoma', identifier: 'DOID:2893', confidence: 0.91 },
+];
+
+const queryGenes = new GeneMatchList([{ id: 'IL1B', typed: ['IL1B'], status: 'matched', candidates: [{ entrez: '3553', symbol: 'IL1B', name: 'interleukin 1 beta', aliases: ['IL1F2', 'IL1beta', 'IL-1', 'IL1-BETA'] }] }]);
+
+const notes = {
+  regions: [
+    'Gene, connection and module detail opens in the Large drawer over the page, with a backdrop, because annotation and evidence lists are long. The result underneath stays unchanged and comes back when the drawer closes.',
+    'The header scrolls away; the top bar stays. Tabs in the header become sticky under the top bar once the header leaves the screen.',
+    'Below 1280px the companion table moves under the main view; below 960px everything stacks and the drawer becomes a bottom sheet.',
+  ],
+  drawer: [
+    'The drawer replaces the companion table while it’s open; closing it brings the table back where it was.',
+    'Clicking another gene updates the drawer instead of opening a second one.',
+    'Escape or the close button returns focus to IL1R1 in the graph or table.',
+    'The selected gene is marked with the ink ring from Data visualization; the rest of the graph fades to 35%.',
+  ],
+  edge: [
+    'The selected line thickens and the rest of the graph fades, the same as a selected gene.',
+    'Data types follow the Data types filter in the header; a type that is filtered out doesn’t appear here.',
+    'Weights and contributions are shown exactly as computed. GIANT shows a contribution per dataset; MAGE gives each connection one score, so its drawer shows that score without the dataset table.',
+    'All networks lists every network that contains this pair, so a researcher can see where else the connection holds.',
+  ],
+  compare: [
+    'A new network starts with all five data types selected. The live form starts at none, which returns an empty network.',
+    'Each column loads on its own and shows the loading pattern from Loading and job status; the other column stays usable.',
+    'Remove closes that column. The last network can’t be removed, so its Remove button is hidden.',
+    'The Genes, Processes and Tissues panel moves below the columns and follows the network that last had focus.',
+  ],
+  views: [
+    'Process network works like Tissue network, with a Biological process select in place of Tissue.',
+    'Experimental rows open to show the source, the evidence code with its plain meaning, and each publication with a link.',
+    'Confidence is shown as HumanBase computes it; experimental associations show 1.00, as they do today.',
+    'The tissue system filter replaces the live site’s color-coded list: 14 systems are more than the categorical palette can tell apart.',
+    'Each tab keeps its own filter and sort while you move between tabs. Download exports the full table, not only the rows in view.',
+  ],
+  job: [
+    'The job’s inputs become context labels, so the result explains itself months later.',
+    'The same columns as today’s emailed file, in the same order: the download is identical to the file.',
+    'Training labels are shown as the docs describe them: 1 nominally significant, −1 not significant (used as negatives), 0 not used in training.',
+    'The full design, with a New candidates filter and a score explanation, is on the NetWAS results page of the UI library.',
+  ],
+  screens: [
+    '1280px and up: main view 8 columns, companion 4; gene, connection and module detail opens in the Large drawer over the page.',
+    '960 to 1279px: the companion table moves under the main view; the drawer covers the right side of the main view.',
+    'Below 960px: tissue, data types and Compare move behind one “Network settings” button that opens a bottom sheet; the context labels keep showing the current values.',
+    'On phones the drawer becomes the bottom sheet from Modals and drawers.',
+    'Graphs keep a minimum height of 260px on phones, so they stay usable. Pinch zooms, so the phone toolbar keeps only fit, layout and download; “View as table” is always one tap away.',
+    'Tabs scroll sideways on phones, and the selected tab scrolls into view.',
+    'Compared networks sit side by side from 1280px and stack one above the other below that.',
+  ],
+};
+
+const behavior = [
+  ['The URL is the result', 'Genes, tissue, data types, tab, layout, filters, compared networks and the selected gene or connection are all in the URL, so any view can be shared or bookmarked exactly.'],
+  ['Changing tissue or data types', 'Updates the result in place. Whether Back steps through tissues is the open question in the research record on the Navigation page; the current leaning is that it should.'],
+  ['Comparing', 'Compare adds a column for the same genes with its own tissue and data types. A new column starts with all five data types (Comparing networks).'],
+  ['Layout', 'Layout options place the query genes in the center or around the edge. Pause layout stops the graph moving and starts on when the system asks for reduced motion (Motion).'],
+  ['Starred sets', 'Starring a process or tissue in the panel highlights its genes in the graph and adds it to Starred sets. The button stays disabled until something is starred.'],
+  ['Uniqueness', 'Prioritize by uniqueness to the query genes works and computes exactly as it does today; the graph, table and result line update together when it changes.'],
+  ['Sticky parts', 'The top bar always; the tabs once the header scrolls away. Settings stay in the header.'],
+  ['Loading', 'The header, tabs and table headers appear at once; the view and table show still skeletons (Loading and job status).'],
+  ['Nothing to show', 'The empty state sits inside the view or table it belongs to (Empty states).'],
+  ['Downloads', 'Each view and table has its own download that includes every row matching the settings. The network offers an image, the visible connections as text, or every connection as text. Files are named after the result, such as IL1B_blood-vessel_GIANT_genes.tsv.'],
+  ['Citing', 'A “How to cite” link on every result, pointing to the paper for that tool and data version.'],
+];
+
+const specs = [
+  ['grid', '1440px: 64px margins, 12 columns of 87px, 24px gutters'],
+  ['result header', '24px below the top bar; title Cabin Medium 36; 14px between rows; tabs at the bottom'],
+  ['main view', '8 columns (866px at 1440), white, 1px border.subtle, radius.md 12px, 20px padding'],
+  ['graph toolbar', '36px icon buttons, 8px apart, in three groups split by dividers: view (zoom, fit, expand), layout (layout, pause, starred sets), output (download). Each has a tooltip and an accessible name.'],
+  ['companion', '4 columns (421px at 1440); table or summary'],
+  ['companion tabs', 'Genes, Processes, Tissues, each with a count; search and download sit above the table'],
+  ['drawer', '460px, from the top of the body to the bottom of the window; covers the companion'],
+  ['vertical rhythm', '24px between header and body; 40px bottom padding before the footer'],
+  ['breakpoints', '1280px and up side by side; 960 to 1279px stacked; below 960px phone layout'],
+];
+
+const networkSettings = (tissue: string) => [
+  { kind: 'tissue', label: 'Tissue', value: tissue },
+  { kind: 'types', label: 'Data types', value: 'all' },
+];
+---
+
+<DocsLayout title="Results layout" description="One layout for every HumanBase result: a header that names it, a main view, a companion table and a drawer for details.">
+  <Intro
+    lead="Every HumanBase result, from a gene’s network to a finished NetWAS job, uses one layout: a header that says what the result is and how it was computed, a main view, a companion table, and a drawer for details. People learn it once and find their way in every tool."
+    status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+  >
+    <KeyRules
+      rules={[
+        { title: 'The result names itself', text: 'Title in words, settings as context labels, so a screenshot or shared link says exactly what it shows.' },
+        { title: 'View and table together', text: 'The visualization and its table sit side by side on wide screens, so people can read numbers while they look.' },
+        { title: 'Details beside, not deeper', text: 'A clicked gene or edge opens the drawer. It never adds a page, a tab level or a breadcrumb step.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Regions on the grid" lead="1440px: 64px margins, 12 columns, 24px gutters. The main view takes 8 columns and the companion table 4.">
+    <figure class="region-map" data-illustration>
+      <div class="region region-bar"><strong>Top bar</strong><span>Sticky, 64px</span></div>
+      <div class="region region-header"><strong>Result header</strong><span>Breadcrumbs, title, context labels, settings, tabs</span></div>
+      <div class="region region-main"><strong>Main view: 8 columns</strong><span>Network, heatmap or track, with its toolbar, legend and filters</span></div>
+      <div class="region region-companion"><strong>Companion table: 4 columns</strong><span>Genes or terms behind the view, sortable</span></div>
+      <div class="region region-drawer"><strong>Drawer: 640px (Large)</strong><span>Opens over the page with a backdrop, below the top bar</span></div>
+      <figcaption class="visually-hidden">The result page regions: top bar, result header, an 8-column main view, a 4-column companion table, and a Large drawer over the page.</figcaption>
+    </figure>
+    <ul class="points">{notes.regions.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="A network result" lead="IL1B in blood vessel, Tissue network tab. Every part is a system component; the graph area is a diagram standing in for the existing renderer.">
+    <figure class="screen" id="network-result">
+      <TopBar sections={productSections} current="Network analysis" jobs={productJobs} scrolled={false} />
+      <div class="screen-body">
+        <ResultLayout mainLabel="IL1B tissue network" companionLabel="Genes, processes and tissues">
+          <ResultHeader slot="header" headingLevel={3} crumbs={crumbs} title="IL1B" subtitle="interleukin 1 beta" context={context} tabs={geneTabs} tabsLabel="IL1B views">
+            <Fragment slot="actions">
+              <GeneIdsMenu gene="IL1B" links={il1bIds} />
+              <Button variant="ghost" size="small">Edit genes</Button>
+            </Fragment>
+            <Fragment slot="settings">
+              <Select label="Tissue" size="small" options={tissues} defaultValue="Blood vessel" />
+              <Select label="Data types" size="small" options={dataTypes} defaultValue="all" />
+              <Button variant="secondary" size="small">Compare</Button>
+            </Fragment>
+          </ResultHeader>
+          <Fragment slot="main">
+            <GraphToolbar label="Graph controls" groups={toolbar} tableHref="#network-result" />
+            <div class="graph-area"><NetworkSketch /><p class="graph-label">Existing renderer, shown as a diagram</p></div>
+            <div class="graph-meta">
+              <KeyLegend title="Connection" mark="line" items={edgeItems} />
+              <p class="result-line">Showing 15 of 50 genes, 108 connections at 0.84 or more</p>
+            </div>
+            <div class="filters">
+              <Slider label="Minimum confidence" min={0} max={1} step={0.01} defaultValue={0.84} />
+              <Slider label="Genes shown" min={5} max={50} step={5} defaultValue={15} />
+            </div>
+            <Checkbox label="Prioritize by uniqueness to the query genes" />
+          </Fragment>
+          <Fragment slot="companion">
+            <Tabs label="IL1B result tables" tabs={companionTabs} />
+            <div class="companion-search">
+              <SearchField label="Filter genes" placeholder="Filter genes" size="medium" />
+              <IconButton label="Download genes" icon="download" />
+            </div>
+            <Table caption="Genes functionally related to IL1B in blood vessel" density="compact" columnWidths={['auto', '112px', '68px']}>
+              <thead><tr><HeaderCell>Gene</HeaderCell><HeaderCell align="end" sort="descending">Score</HeaderCell><HeaderCell><span class="visually-hidden">Add to query</span></HeaderCell></tr></thead>
+              <tbody>
+                {related.map(([symbol, name, score]) => (
+                  <tr>
+                    <Cell rowHeader type="gene"><span class="result-gene"><strong>{symbol}</strong><span>{name}</span></span></Cell>
+                    <ScoreCell value={score} />
+                    <Cell><IconButton label={`Add ${symbol} to the query`} icon="plus" /></Cell>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <p class="screen-note">Score is the average weight of a gene’s connections to the query genes. 50 genes; the first 15 are drawn in the graph, and the table scrolls inside its panel.</p>
+          </Fragment>
+        </ResultLayout>
+      </div>
+      <figcaption class="visually-hidden">A network result for IL1B in blood vessel, with the graph, its filters and the genes table.</figcaption>
+    </figure>
+  </DocSection>
+
+  <DocSection title="A gene selected" lead="Clicking IL1R1 opens the gene drawer over the page, below the top bar, with a backdrop. The URL gains ?gene=IL1R1, but no breadcrumb step or tab is added.">
+    <div class="drawer-specimen">
+      <Drawer inline size="large" title="IL1R1" subtitle="interleukin 1 receptor type 1">
+        <Fragment slot="footer">
+          <Button>Add to query</Button>
+          <Button variant="ghost">Open gene page</Button>
+        </Fragment>
+        <GeneDetail
+          score={{ label: 'Connection to IL1B', value: 1, text: 'Average weight of IL1R1’s connections to the query genes in the blood vessel network.' }}
+          aliases={['D2S1473', 'IL-1R-alpha', 'IL1RA', 'P80', 'IL1R', 'CD121A']}
+          ids={il1r1Ids}
+          annotations={{ label: 'Annotations', sources: [{ value: 'go', label: 'Gene Ontology (BP)', terms: ['interleukin-1-mediated signaling pathway', 'inflammatory response', 'cytokine-mediated signaling pathway'] }, { value: 'do', label: 'Disease Ontology', terms: [] }] }}
+        />
+      </Drawer>
+    </div>
+    <ul class="points">{notes.drawer.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="A connection selected" lead="Clicking a line between two genes opens the same drawer with the evidence behind that connection. It has two views: this network, and the same pair across every network.">
+    <div class="drawers">
+      <Drawer inline title="CCL4 and BCL2A1" subtitle="Connection in the blood vessel network">
+        <SegmentedControl label="Connection view" hideLabel size="small" segments={[{ value: 'this', label: 'Blood vessel' }, { value: 'all', label: 'All networks' }]} defaultValue="this" />
+        <ScoreMeter label="Connection weight" value={0.85} text="Probability that CCL4 and BCL2A1 share a functional relationship in blood vessel." />
+        <EvidenceTable rows={evidence} note="Each contribution is measured on its own: the chance of a relationship given only that dataset, minus the prior. They don’t add up to the weight, so they are never shown as shares of a whole." />
+      </Drawer>
+      <Drawer inline title="CCL4 and BCL2A1" subtitle="Connection across all networks">
+        <SegmentedControl label="Connection view, all networks" hideLabel size="small" segments={[{ value: 'this', label: 'Blood vessel' }, { value: 'all', label: 'All networks' }]} defaultValue="all" />
+        <DrawerSection label="Connection weight in each network">
+          <WeightHistogram counts={histogram} current={0.85} caption="Number of networks at each weight. The dark bar holds the network you are viewing: Blood vessel, 0.85." />
+        </DrawerSection>
+        <DrawerSection label="Networks, strongest first">
+          <SearchField label="Filter networks" placeholder="Filter networks" size="medium" />
+          <NetworkWeightTable rows={networks} />
+        </DrawerSection>
+      </Drawer>
+    </div>
+    <ul class="points">{notes.edge.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Comparing networks" lead="Compare adds another network for the same genes beside the first. Each column has its own tissue, data types, view controls and filters, so differences between tissues are easy to see.">
+    <div class="compare">
+      {['Blood vessel', 'Leukocyte'].map((tissue) => (
+        <section class="compare-column" aria-label={`IL1B in ${tissue}`}>
+          <div class="compare-settings">
+            {networkSettings(tissue).map((setting) => <Select label={setting.label} size="small" options={setting.kind === 'tissue' ? tissues : dataTypes} defaultValue={setting.value} />)}
+            <Button variant="ghost" size="small">Remove</Button>
+          </div>
+          <GraphToolbar label={`Graph controls, ${tissue}`} groups={toolbar} tableHref="#comparing-networks" />
+          <div class="graph-area"><NetworkSketch /></div>
+          <KeyLegend title="Connection" mark="line" items={edgeItems} />
+          <p class="result-line">Showing 15 of 50 genes, 108 connections at 0.84 or more</p>
+          <Slider label="Minimum confidence" min={0} max={1} step={0.01} defaultValue={0.84} />
+        </section>
+      ))}
+    </div>
+    <ul class="points">{notes.compare.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Other views of a gene" lead="The tabs under the gene name switch between five views of the same gene. The two network tabs share the network layout; Tissue expression and the two association tabs use the ranked table below.">
+    <div class="expression">
+      <fieldset class="systems">
+        <legend>Tissue system</legend>
+        <p>Show tissues from the systems you check.</p>
+        {systems.map((system) => <Checkbox label={system} defaultChecked />)}
+        <Button variant="ghost" size="small">Clear all</Button>
+      </fieldset>
+      <div class="expression-table">
+        <h3>Where IL1B is expressed</h3>
+        <p class="screen-note">Experimentally validated and computationally predicted expression in tissues and cell types. The table scrolls inside its panel.</p>
+        <Table caption="Where IL1B is expressed" density="compact" columnWidths={['auto', '220px']}>
+          <thead><tr><HeaderCell>Tissue or cell type</HeaderCell><HeaderCell align="end" sort="descending">IL1B confidence</HeaderCell></tr></thead>
+          <tbody>{expression.map(([tissue, score]) => <tr><Cell rowHeader>{tissue}</Cell><ScoreCell value={score} /></tr>)}</tbody>
+        </Table>
+        <p class="screen-note">With several query genes, each gene gets its own confidence column and the table becomes the sequential heatmap from Heatmaps and score legends.</p>
+      </div>
+    </div>
+    <h3 class="sub-heading">Biological processes linked to IL1B</h3>
+    <p class="screen-note">Experimentally associated and computationally predicted processes. Open a row to see the evidence and publications behind it.</p>
+    <RankedAnnotationTable caption="Biological processes linked to IL1B" termLabel="Process" scoreLabel="IL1B confidence" rows={processes} defaultExpanded={['drug metabolic process']} />
+    <h3 class="sub-heading">Diseases: experimental and predicted rows together</h3>
+    <p class="screen-note">The Diseases tab uses the same table. Predicted associations have no publications to open, so they have no chevron and say Predicted instead of a source count.</p>
+    <RankedAnnotationTable caption="Diseases linked to IL1B" termLabel="Disease" scoreLabel="IL1B confidence" rows={diseases} />
+    <ul class="points">{notes.views.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Gene IDs and editing genes" lead="Two actions sit beside the gene name. Gene IDs opens links to the gene in outside databases. Edit genes opens the query, where genes can be added or removed without starting over.">
+    <div class="actions-examples">
+      <div>
+        <h3 class="example-label">Gene IDs menu</h3>
+        <GeneIdsMenu gene="IL1B" links={il1bIds} open />
+      </div>
+      <div>
+        <h3 class="example-label">Edit genes dialog</h3>
+        <EditGenesDialog inline list={queryGenes} />
+      </div>
+    </div>
+  </DocSection>
+
+  <DocSection title="A table-first result" lead="A finished NetWAS job. NetWAS has no results page today; the same layout holds its table, with a summary in the companion column. Values below are illustrative.">
+    <div class="job-result">
+      <div class="job-main">
+        <div class="job-title"><h3>Genes ranked by NetWAS score</h3><Button variant="ghost" size="small" icon="download">Download result file</Button></div>
+        <Table caption="Genes ranked by NetWAS score" density="compact" columnWidths={['72px', '120px', 'auto', '140px', '140px']}>
+          <thead><tr><HeaderCell align="end">Rank</HeaderCell><HeaderCell>Gene</HeaderCell><HeaderCell>Name</HeaderCell><HeaderCell align="end">Training label</HeaderCell><HeaderCell align="end">NetWAS score</HeaderCell></tr></thead>
+          <tbody>
+            <tr><Cell type="number">1</Cell><Cell type="gene">KRT6B</Cell><Cell>keratin 6B</Cell><Cell type="number">−1</Cell><Cell type="number">0.561</Cell></tr>
+            <tr><Cell type="number">2</Cell><Cell type="gene">EMP1</Cell><Cell>epithelial membrane protein 1</Cell><Cell type="number">−1</Cell><Cell type="number">0.541</Cell></tr>
+          </tbody>
+        </Table>
+        <p class="screen-note">First rows of the example result file in the NetWAS docs. Pages follow the Pagination rules.</p>
+      </div>
+      <aside class="job-summary" aria-label="About this result">
+        <h3>About this result</h3>
+        <p>NetWAS reranked the genes from your GWAS using the adipose tissue network. A positive score means the network places a gene with the GWAS hits; it is a distance from the classifier’s boundary, not a p-value.</p>
+        <dl>
+          <dt>Training label 1</dt><dd>below the p-value threshold</dd>
+          <dt>Training label −1</dt><dd>used as negatives</dd>
+          <dt>Training label 0</dt><dd>not used in training</dd>
+        </dl>
+        <a href="/ui-library/netwas-results/">How NetWAS scores genes</a>
+        <a href="/ui-library/netwas-results/">How to cite NetWAS</a>
+      </aside>
+    </div>
+    <ul class="points">{notes.job.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Smaller screens" lead="The same parts, stacked. Breakpoints follow the Navigation page’s measured top bar.">
+    <div class="small-screens">
+      <figure class="mini-screen mini-tablet" data-illustration>
+        <figcaption>960 to 1279px: companion moves under the main view</figcaption>
+        <div class="mini-header"></div>
+        <div class="mini-main"></div>
+        <div class="mini-companion"></div>
+      </figure>
+      <figure class="mini-screen mini-phone" data-illustration>
+        <figcaption>Below 960px</figcaption>
+        <div class="mini-header"></div>
+        <div class="mini-button">Network settings</div>
+        <div class="mini-main"></div>
+        <div class="mini-companion"></div>
+      </figure>
+      <ul class="points">{notes.screens.map((note) => <li>{note}</li>)}</ul>
+    </div>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="What every result page does the same way.">
+    <DocTable caption="Result page behavior" columns={['Rule', 'Detail']} widths={['300px']}>
+      {behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Specs" lead="Hard-coded for now. They will become Figma variables once the first product pages are designed.">
+    <DocTable caption="Results layout specs" columns={['Part', 'Value']} widths={['300px']}>
+      {specs.map(([part, value]) => <tr><th scope="row"><code>{part}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .points {
+    margin-block-start: var(--space-6);
+  }
+
+  .region-map {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 64px auto 320px 120px;
+    gap: var(--space-3);
+    margin: 0;
+    padding: var(--space-6);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .region {
+    display: grid;
+    gap: var(--space-1);
+    align-content: start;
+    padding: var(--space-4);
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-default);
+    border-radius: var(--radius-sm);
+  }
+
+  .region strong {
+    font: var(--type-label-sm);
+    color: var(--text-default);
+  }
+
+  .region-bar,
+  .region-header {
+    grid-column: 1 / -1;
+  }
+
+  .region-bar {
+    color: var(--text-on-brand);
+    background: var(--action-primary);
+    border-color: var(--action-primary);
+  }
+
+  .region-bar strong {
+    color: var(--text-on-brand);
+  }
+
+  .region-main {
+    grid-row: 3 / 5;
+  }
+
+  .region-drawer {
+    grid-column: 2;
+    border-style: dashed;
+  }
+
+  .screen {
+    margin: 0;
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .screen :global(.top-bar) {
+    position: relative;
+  }
+
+  .screen-body {
+    padding: var(--space-6) 61px var(--space-12);
+  }
+
+  .screen-note {
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .graph-area {
+    position: relative;
+    block-size: 403px;
+  }
+
+  .graph-label {
+    position: absolute;
+    inset-block-start: var(--space-3);
+    inset-inline-start: var(--space-4);
+    font: var(--type-caption);
+    color: var(--text-secondary);
+  }
+
+  .graph-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    align-items: end;
+    justify-content: space-between;
+  }
+
+  .result-line {
+    font: var(--type-label-sm);
+    color: var(--text-default);
+  }
+
+  .filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 346px));
+    gap: var(--space-8);
+  }
+
+  .companion-search {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .companion-search :global(.search-field) {
+    flex: 1;
+  }
+
+  .drawer-specimen {
+    max-inline-size: 640px;
+  }
+
+  .drawers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 480px));
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  .compare {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+
+  .compare-column {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .compare-settings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: end;
+  }
+
+  .compare .graph-area {
+    block-size: 300px;
+  }
+
+  .expression {
+    display: grid;
+    grid-template-columns: 284px minmax(0, 1fr);
+    gap: var(--space-6);
+    margin-block-end: var(--space-8);
+  }
+
+  .systems {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .systems legend {
+    font: var(--type-label);
+  }
+
+  .systems :global(.button) {
+    justify-self: start;
+  }
+
+  .systems p {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .expression-table {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .expression-table h3,
+  .sub-heading {
+    font: var(--type-h4);
+  }
+
+  .sub-heading {
+    margin-block: var(--space-8) var(--space-2);
+  }
+
+  .actions-examples {
+    display: grid;
+    grid-template-columns: 307px minmax(0, 692px);
+    gap: var(--space-12);
+    align-items: start;
+    min-block-size: 460px;
+  }
+
+  .example-label {
+    margin-block-end: var(--space-2);
+    font: var(--type-label-sm);
+    color: var(--text-secondary);
+  }
+
+  .job-result {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .job-main {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .job-title {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .job-title h3,
+  .job-summary h3 {
+    font: var(--type-h4);
+  }
+
+  .job-summary {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+    background: var(--surface-subtle);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .job-summary dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--space-2) var(--space-4);
+  }
+
+  .job-summary dt {
+    font: var(--type-label-sm);
+    color: var(--text-default);
+  }
+
+  .job-summary a {
+    font: var(--type-label-sm);
+    color: var(--text-link);
+  }
+
+  .small-screens {
+    display: grid;
+    grid-template-columns: 635px 233px minmax(0, 1fr);
+    gap: var(--space-10);
+    align-items: start;
+  }
+
+  .small-screens .points {
+    margin: 0;
+  }
+
+  .mini-screen {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: var(--space-3);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .mini-screen figcaption {
+    font: var(--type-label-sm);
+    color: var(--text-default);
+  }
+
+  .mini-header,
+  .mini-main,
+  .mini-companion,
+  .mini-button {
+    background: var(--surface-sunken);
+    border-radius: var(--radius-sm);
+  }
+
+  .mini-header {
+    block-size: 72px;
+  }
+
+  .mini-main {
+    block-size: 300px;
+  }
+
+  .mini-companion {
+    block-size: 120px;
+  }
+
+  .mini-phone .mini-main {
+    block-size: 260px;
+  }
+
+  .mini-button {
+    padding: var(--space-2);
+    font: var(--type-label-sm);
+    color: var(--text-default);
+    text-align: center;
+  }
+</style>

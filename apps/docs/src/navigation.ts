@@ -77,7 +77,7 @@ export const navigation: NavSection[] = [
     heading: 'UI library',
     items: [
       { label: 'What exists today', href: '/ui-library/what-exists-today/' },
-      { label: 'Results layout' },
+      { label: 'Results layout', href: '/ui-library/results-layout/' },
       { label: 'Gene search and matching', href: '/ui-library/gene-search-and-matching/' },
       { label: 'Job submission', href: '/ui-library/job-submission/' },
       { label: 'Job status and queue', href: '/ui-library/job-status-and-queue/' },
