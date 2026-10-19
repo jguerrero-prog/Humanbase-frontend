@@ -43,4 +43,11 @@ describe('JobsMenu', () => {
     expect(button).toHaveAttribute('aria-expanded', 'false');
     expect(button).toHaveFocus();
   });
+
+  it('says where jobs will appear when this browser has none', async () => {
+    render(<JobsMenu jobs={[]} total={0} allHref="/jobs/" />);
+    await userEvent.click(screen.getByRole('button', { name: 'Jobs' }));
+    expect(screen.getByText('Jobs you start in this browser appear here.')).toBeVisible();
+    expect(screen.queryByRole('link', { name: /See all/ })).not.toBeInTheDocument();
+  });
 });

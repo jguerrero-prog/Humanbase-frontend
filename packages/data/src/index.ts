@@ -14,3 +14,4 @@ export { VariantFileCheck, type FileCheckResult, type FileProblem, type InputKin
 export { JobHistory, type JobEntry, type JobState } from './jobs/JobHistory';
 export { NetwasResult, type NetwasFilter, type NetwasGene, type TrainingLabel } from './jobs/NetwasResult';
 export { AsdVariant, type AsdVariantRow } from './asd/AsdVariant';
+export { NetworkQuery, dataVersionNames } from './networks/NetworkQuery';

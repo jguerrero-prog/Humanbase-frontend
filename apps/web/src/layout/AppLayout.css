@@ -1,0 +1,32 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100vh;
+  background: var(--surface-page);
+}
+
+.app-layout > main {
+  flex: 1;
+}
+
+.app-layout > main:focus {
+  outline: none;
+}
+
+.page-section {
+  inline-size: min(100%, var(--layout-content-max));
+  margin-inline: auto;
+  padding: var(--space-16) var(--layout-margin-desktop);
+}
+
+@media (width < 64rem) {
+  .page-section {
+    padding: var(--space-12) var(--layout-margin-tablet);
+  }
+}
+
+@media (width < 40rem) {
+  .page-section {
+    padding: var(--space-8) var(--layout-margin-mobile);
+  }
+}

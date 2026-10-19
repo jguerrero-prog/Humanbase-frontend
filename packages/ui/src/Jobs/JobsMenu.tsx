@@ -58,7 +58,8 @@ export function JobsMenu({ jobs, total, allHref, open, onOpenChange, shown = 5 }
         <p id={`${id}-heading`} className="jobs-menu-heading">
           Jobs in this browser
         </p>
-        <ul className="jobs-menu-list" aria-labelledby={`${id}-heading`}>
+        {jobs.length === 0 && <p className="jobs-menu-empty">Jobs you start in this browser appear here.</p>}
+        <ul className="jobs-menu-list" aria-labelledby={`${id}-heading`} hidden={jobs.length === 0}>
           {jobs.slice(0, shown).map((job) => (
             <li key={job.href}>
               <a className="jobs-menu-job" href={job.href} onKeyDown={closeOnEscape}>
@@ -71,7 +72,7 @@ export function JobsMenu({ jobs, total, allHref, open, onOpenChange, shown = 5 }
             </li>
           ))}
         </ul>
-        <p className="jobs-menu-footer">
+        <p className="jobs-menu-footer" hidden={total === 0}>
           <a className="button button-ghost button-small" href={allHref} onKeyDown={closeOnEscape}>
             See all {total} jobs
           </a>
