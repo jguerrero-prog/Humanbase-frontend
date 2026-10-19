@@ -15,9 +15,11 @@ export interface GraphToolbarProps {
   groups: readonly (readonly GraphAction[])[];
   tableHref?: string;
   onViewTable?: () => void;
+  /** The view switch's text; "View as graph" while the table is showing. */
+  tableLabel?: string;
 }
 
-export function GraphToolbar({ label, groups, tableHref, onViewTable }: GraphToolbarProps) {
+export function GraphToolbar({ label, groups, tableHref, onViewTable, tableLabel = 'View as table' }: GraphToolbarProps) {
   return (
     <div className="graph-toolbar" role="toolbar" aria-label={label}>
       {groups.map((group, index) => (
@@ -30,12 +32,12 @@ export function GraphToolbar({ label, groups, tableHref, onViewTable }: GraphToo
       ))}
       {tableHref ? (
         <a className="graph-toolbar-table" href={tableHref}>
-          View as table
+          {tableLabel}
         </a>
       ) : (
         onViewTable && (
           <button type="button" className="graph-toolbar-table" onClick={onViewTable}>
-            View as table
+            {tableLabel}
           </button>
         )
       )}

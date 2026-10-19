@@ -29,6 +29,29 @@ export class JobHistory {
 
   constructor(private readonly storage: KeyValueStore | null = browserStorage()) {}
 
+  /** Fired on this page whenever the list changes; other tabs hear the storage event instead. */
+  static readonly changeEvent = 'humanbase:jobs-changed';
+
+  /** Calls back when this browser's job list changes, in this tab or another. Returns the unsubscribe. */
+  static subscribe(onChange: () => void): () => void {
+    const onStorage = (event: StorageEvent) => event.key === JobHistory.storageKey && onChange();
+    globalThis.addEventListener?.(JobHistory.changeEvent, onChange);
+    globalThis.addEventListener?.('storage', onStorage);
+    return () => {
+      globalThis.removeEventListener?.(JobHistory.changeEvent, onChange);
+      globalThis.removeEventListener?.('storage', onStorage);
+    };
+  }
+
+  /** The stored list as text: it changes exactly when the list does, so React can tell when to read it again. */
+  static snapshot(storage: KeyValueStore | null = browserStorage()): string {
+    try {
+      return storage?.getItem(JobHistory.storageKey) ?? '';
+    } catch {
+      return '';
+    }
+  }
+
   static idFromLink(text: string): string | undefined {
     return jobIdPattern.exec(text)?.[0].toLowerCase();
   }
@@ -69,6 +92,7 @@ export class JobHistory {
   private write(jobs: JobEntry[]): void {
     try {
       this.storage?.setItem(JobHistory.storageKey, JSON.stringify(jobs));
+      globalThis.dispatchEvent?.(new Event(JobHistory.changeEvent));
     } catch {
       // Storage can be full or blocked; the list then lasts only for this page.
     }

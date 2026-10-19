@@ -42,6 +42,15 @@ describe('Slider', () => {
   });
 });
 
+describe('Slider keys', () => {
+  it('moves on the first arrow press when the value sits between steps', () => {
+    const onChange = vi.fn<(value: number) => void>();
+    render(<Slider label="Minimum confidence" min={0} max={1} step={0.01} value={0.4769} onChange={onChange} />);
+    fireEvent.keyDown(screen.getByRole('slider', { name: 'Minimum confidence' }), { key: 'ArrowRight' });
+    expect(onChange).toHaveBeenLastCalledWith(0.49);
+  });
+});
+
 describe('RangeSlider', () => {
   it('names each thumb and never lets them cross', () => {
     render(<RangeSlider label="Score" min={0} max={1} step={0.01} defaultValue={[0.5, 1]} />);

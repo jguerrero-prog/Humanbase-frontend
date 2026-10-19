@@ -5,7 +5,7 @@ import './TextInput.css';
 export interface TextInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label: string;
   hint?: string;
-  error?: string;
+  error?: string | undefined;
   size?: FieldSize;
 }
 

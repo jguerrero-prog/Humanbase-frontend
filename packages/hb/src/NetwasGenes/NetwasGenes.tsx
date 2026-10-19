@@ -1,15 +1,17 @@
 import { NetwasResult, type NetwasFilter } from '@humanbase/data';
-import { NetwasGeneTable, SearchField, SegmentedControl } from '@humanbase/ui';
-import { useMemo, useState } from 'react';
+import { Button, NetwasGeneTable, SearchField, SegmentedControl } from '@humanbase/ui';
+import { useEffect, useMemo, useState } from 'react';
 import './NetwasGenes.css';
 
 export interface NetwasGenesProps {
   file: string;
   names?: Readonly<Record<string, string>>;
-  /** Link to the gene in Networks; `{gene}` is replaced by the symbol. */
-  networkHref: string;
+  /** Link to the gene in Networks; `{gene}` is replaced by the symbol. null says the gene isn't in Humanbase; undefined leaves the cell empty while a lookup runs. */
+  networkHref: string | ((symbol: string) => string | null | undefined);
   defaultFilter?: NetwasFilter;
   note?: string;
+  /** Called with the symbols on screen, so their names and links can be looked up a page at a time. */
+  onShownChange?: (symbols: readonly string[]) => void;
 }
 
 const filters = [
@@ -30,28 +32,69 @@ const emptyTitles: Record<NetwasFilter, string> = {
   hits: 'No GWAS hits in this result',
 };
 
-export function NetwasGenes({ file, names = {}, networkHref, defaultFilter = 'all', note }: NetwasGenesProps) {
+const firstRows = 25;
+const step = 25;
+const count = new Intl.NumberFormat('en-US');
+
+export function NetwasGenes({ file, names = {}, networkHref, defaultFilter = 'all', note, onShownChange }: NetwasGenesProps) {
   const result = useMemo(() => NetwasResult.parse(file), [file]);
   const [filter, setFilter] = useState<NetwasFilter>(defaultFilter);
   const [query, setQuery] = useState('');
+  const [visible, setVisible] = useState(firstRows);
 
   const needle = query.trim().toLowerCase();
-  const rows = result
-    .filter(filter)
-    .filter((gene) => !needle || gene.symbol.toLowerCase().includes(needle) || names[gene.symbol]?.toLowerCase().includes(needle))
-    .map((gene) => ({ ...gene, name: names[gene.symbol], gwas: NetwasResult.labelText(gene.label), href: networkHref.replace('{gene}', encodeURIComponent(gene.symbol)) }));
+  const matching = result.filter(filter).filter((gene) => !needle || gene.symbol.toLowerCase().includes(needle) || names[gene.symbol]?.toLowerCase().includes(needle));
+  const shown = matching.slice(0, visible);
+  const hrefOf = (symbol: string) => (typeof networkHref === 'string' ? networkHref.replace('{gene}', encodeURIComponent(symbol)) : networkHref(symbol));
+  const rows = shown.map((gene) => ({ ...gene, name: names[gene.symbol], gwas: NetwasResult.labelText(gene.label), href: hrefOf(gene.symbol) }));
+  const more = Math.min(step, matching.length - visible);
   const empty = needle ? { title: `No genes match “${query.trim()}”`, text: 'Check the symbol, or clear the search.' } : { title: emptyTitles[filter] };
+  const shownKey = shown.map((gene) => gene.symbol).join(' ');
+
+  useEffect(() => {
+    onShownChange?.(shownKey ? shownKey.split(' ') : []);
+  }, [shownKey, onShownChange]);
 
   return (
     <div className="netwas-genes">
       <div className="netwas-genes-controls">
-        <SegmentedControl label="Show" hideLabel size="small" segments={filters} value={filter} onChange={(value) => setFilter(value as NetwasFilter)} />
-        <SearchField label="Find a gene" placeholder="Find a gene" size="medium" value={query} onChange={(event) => setQuery(event.target.value)} onClear={() => setQuery('')} />
+        <SegmentedControl
+          label="Show"
+          hideLabel
+          size="small"
+          segments={filters}
+          value={filter}
+          onChange={(value) => {
+            setFilter(value as NetwasFilter);
+            setVisible(firstRows);
+          }}
+        />
+        <SearchField
+          label="Find a gene"
+          placeholder="Find a gene"
+          size="medium"
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setVisible(firstRows);
+          }}
+          onClear={() => setQuery('')}
+        />
       </div>
       <p className="netwas-genes-note" aria-live="polite">
         {filterNotes[filter]}
       </p>
       <NetwasGeneTable caption="Genes ranked by NetWAS score" rows={rows} empty={empty} />
+      {more > 0 && (
+        <Button variant="ghost" size="small" icon="chevron-down" className="netwas-genes-more" onClick={() => setVisible(visible + step)}>
+          {`Show ${more} more ${more === 1 ? 'gene' : 'genes'}`}
+        </Button>
+      )}
+      {matching.length > firstRows && (
+        <p className="netwas-genes-note" role="status">
+          Showing {count.format(shown.length)} of {count.format(matching.length)} genes
+        </p>
+      )}
       {note && <p className="netwas-genes-note">{note}</p>}
     </div>
   );

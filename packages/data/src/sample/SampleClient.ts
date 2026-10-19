@@ -27,6 +27,10 @@ export class SampleClient implements DataClient {
     return this.answer<T>('POST', path, query, body);
   }
 
+  text(url: string): Promise<string> {
+    return this.answer<string>('GET', url);
+  }
+
   has(method: SampleMethod, path: string, query?: Query, body?: unknown): boolean {
     return sampleKey(method, path, query, body) in this.loaders;
   }
@@ -39,7 +43,7 @@ export class SampleClient implements DataClient {
       throw new ApiError(404, `sample:${key}`);
     }
     const recorded = (await load()) as RecordedResponse;
-    if (recorded.status >= 400) throw new ApiError(recorded.status, `sample:${key}`);
+    if (recorded.status >= 400) throw new ApiError(recorded.status, `sample:${key}`, recorded.body ?? undefined);
     return recorded.body as T;
   }
 }

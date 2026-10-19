@@ -1,0 +1,65 @@
+.module-button {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.module-swatch {
+  flex: none;
+  inline-size: 12px;
+  block-size: 12px;
+  border-radius: 50%;
+}
+
+.module-terms {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.module-muted {
+  display: block;
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.module-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-8);
+  align-items: end;
+}
+
+.module-filters .field {
+  inline-size: 176px;
+}
+
+.modules-table .table-cell,
+.module-drawer-table .table-cell {
+  padding-block: var(--space-3);
+  vertical-align: top;
+}
+
+.modules-table .module-terms li {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modules-table .table-cell-number .module-muted {
+  white-space: nowrap;
+}
+
+.module-drawer-table .table-cell-text {
+  white-space: normal;
+}
+
+.module-drawer-table .table-cell-number {
+  white-space: nowrap;
+}
+
+.module-genes-table .table-cell {
+  padding-block: var(--space-2);
+}

@@ -1,0 +1,197 @@
+.graph-area .network-graph {
+  block-size: 100%;
+}
+
+.graph-loading {
+  display: grid;
+  gap: var(--space-2);
+  place-content: center;
+  justify-items: center;
+  block-size: 100%;
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.graph-loading-title {
+  font: var(--type-h4);
+  color: var(--text-default);
+}
+
+.graph-loading-inline {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  font: var(--type-body-sm);
+}
+
+.result-gene-button {
+  padding: 0;
+  font: inherit;
+  text-align: start;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.result-gene-button:hover strong {
+  text-decoration: underline;
+}
+
+.table tbody tr[data-selected] > .table-cell {
+  background: var(--action-ghost-selected);
+}
+
+.data-types-panel[popover] {
+  position: fixed;
+  inset: auto;
+  inset-block-start: anchor(bottom);
+  inset-inline-start: anchor(left);
+  min-inline-size: 260px;
+  margin: var(--space-1) 0;
+  padding: var(--space-2) var(--space-3);
+  position-try-fallbacks: flip-block;
+}
+
+.data-types-panel fieldset {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.data-types-panel:not(:popover-open) {
+  display: none;
+}
+
+.related-genes-table .table-scroll {
+  max-block-size: 520px;
+  overflow: auto;
+}
+
+.tab-heading {
+  font: var(--type-h4);
+  color: var(--text-default);
+}
+
+.tissue-expression {
+  display: grid;
+  grid-template-columns: 284px minmax(0, 1fr);
+  gap: var(--space-6);
+}
+
+.tissue-systems {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.tissue-systems legend {
+  font: var(--type-label);
+}
+
+.tissue-systems p {
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+.tissue-systems .button {
+  justify-self: start;
+}
+
+.tissue-expression-results,
+.gene-associations {
+  display: grid;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+@media (width < 60rem) {
+  .tissue-expression {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.edit-genes {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.edit-genes-status {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  min-block-size: 22px;
+  font: var(--type-body-sm);
+  color: var(--text-default);
+}
+
+.edit-genes-status[data-tone="success"] .icon {
+  color: var(--status-success-fg);
+}
+
+.edit-genes-status[data-tone="error"] {
+  color: var(--text-error);
+}
+
+.network-comparing .result-main {
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+.network-compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.compare-pane {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  min-inline-size: 0;
+  padding: var(--space-5);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.compare-pane-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.compare-pane-head > .button {
+  margin-inline-start: auto;
+}
+
+.network-compare-focus {
+  justify-self: end;
+}
+
+.compare-form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.compare-form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+@media (width < 60rem) {
+  .network-compare,
+  .compare-form-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

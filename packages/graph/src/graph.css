@@ -1,0 +1,102 @@
+.force-graph {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  cursor: grab;
+  animation: force-graph-in var(--motion-duration-moderate) var(--motion-easing-enter);
+}
+
+.force-graph:active {
+  cursor: grabbing;
+}
+
+.force-graph-links line {
+  stroke: var(--edge-color);
+  stroke-width: var(--edge-width);
+  stroke-linecap: round;
+}
+
+.force-graph-hit {
+  stroke: transparent;
+  stroke-width: 10px;
+  cursor: pointer;
+}
+
+.force-graph-node {
+  cursor: pointer;
+  outline: none;
+}
+
+.force-graph-dot {
+  fill: var(--surface-page);
+  stroke: var(--text-secondary);
+  stroke-width: 1.5px;
+}
+
+.is-query .force-graph-dot {
+  fill: var(--text-default);
+  stroke: var(--text-default);
+}
+
+.force-graph-ring {
+  fill: none;
+  stroke: none;
+}
+
+.force-graph-node.is-selected .force-graph-ring,
+.force-graph-node:focus-visible .force-graph-ring {
+  stroke: var(--text-default);
+  stroke-width: 2px;
+}
+
+.force-graph-node text {
+  font: 700 12px Lato, sans-serif;
+  fill: var(--text-default);
+  paint-order: stroke;
+  stroke: var(--surface-page);
+  stroke-width: 3px;
+  pointer-events: none;
+}
+
+.is-query text {
+  font-size: 14px;
+}
+
+.force-graph .is-faded {
+  opacity: 0.35;
+}
+
+.force-graph-links line.is-selected {
+  --edge-color: var(--text-default);
+}
+
+@keyframes force-graph-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.is-member .force-graph-dot {
+  fill: var(--node-color);
+  stroke: var(--surface-page);
+  stroke-width: 1px;
+}
+
+.force-graph-group {
+  cursor: pointer;
+  outline: none;
+}
+
+.force-graph-group text {
+  font: 700 13px Lato, sans-serif;
+  fill: var(--text-default);
+  paint-order: stroke;
+  stroke: var(--surface-page);
+  stroke-width: 3px;
+}
+
+.force-graph-group.is-selected text,
+.force-graph-group:focus-visible text {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

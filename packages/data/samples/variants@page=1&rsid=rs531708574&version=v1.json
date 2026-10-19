@@ -1,0 +1,58 @@
+{
+  "status": 200,
+  "body": {
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "rsid": "rs531708574",
+        "chromosome": "chr17",
+        "gene": {
+          "url": "http://hb.flatironinstitute.org/api/genes/2826/",
+          "entrez": 2826,
+          "systematic_name": "CCR10",
+          "standard_name": "CCR10",
+          "description": "C-C motif chemokine receptor 10",
+          "xrefs": [
+            {
+              "xrid": "2826",
+              "crossrefdb": {
+                "name": "Entrez",
+                "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+              }
+            },
+            {
+              "xrid": "ENSG00000184451",
+              "crossrefdb": {
+                "name": "Ensembl",
+                "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+              }
+            },
+            {
+              "xrid": "HGNC:4474",
+              "crossrefdb": {
+                "name": "HGNC",
+                "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+              }
+            },
+            {
+              "xrid": "600240",
+              "crossrefdb": {
+                "name": "MIM",
+                "url": "http://www.omim.org/entry/_REPL_"
+              }
+            }
+          ],
+          "aliases": [
+            "GPR2"
+          ]
+        },
+        "position": 40833381,
+        "ref_allele": "G",
+        "alt_allele": "A",
+        "features": {}
+      }
+    ]
+  }
+}

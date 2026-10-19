@@ -1,3 +1,5 @@
+import { zEffects, type EffectScale } from './EffectScale';
+
 export interface EffectExperiment {
   /** The feature, such as the RNA-binding protein LIN28A. */
   feature: string;
@@ -27,14 +29,14 @@ export interface StrengthCounts {
   lowered: number;
 }
 
-const strong = 5;
-const moderate = 3;
-const weak = 2;
-
 export class EffectGroups {
-  constructor(readonly experiments: readonly EffectExperiment[]) {}
+  constructor(
+    readonly experiments: readonly EffectExperiment[],
+    readonly scale: EffectScale = zEffects,
+  ) {}
 
-  static strength(value: number): keyof StrengthCounts | null {
+  strength(value: number): keyof StrengthCounts | null {
+    const { strong, moderate, weak } = this.scale.bins;
     if (value <= -weak) return 'lowered';
     if (value >= strong) return 'strong';
     if (value >= moderate) return 'moderate';
@@ -45,7 +47,7 @@ export class EffectGroups {
   counts(): StrengthCounts {
     const counts: StrengthCounts = { strong: 0, moderate: 0, weak: 0, lowered: 0 };
     for (const { value } of this.experiments) {
-      const bin = EffectGroups.strength(value);
+      const bin = this.strength(value);
       if (bin) counts[bin] += 1;
     }
     return counts;
@@ -54,7 +56,7 @@ export class EffectGroups {
   /** Experiments at or beyond the threshold in either direction; null keeps every one. */
   atLeast(threshold: number | null): EffectGroups {
     if (threshold === null) return this;
-    return new EffectGroups(this.experiments.filter(({ value }) => Math.abs(value) >= threshold));
+    return new EffectGroups(this.experiments.filter(({ value }) => Math.abs(value) >= threshold), this.scale);
   }
 
   /** Experiments of one feature fold into one group, strongest group first. */

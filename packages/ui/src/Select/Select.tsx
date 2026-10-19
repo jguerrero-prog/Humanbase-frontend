@@ -24,7 +24,7 @@ export interface SelectProps {
   onChange?: (value: string) => void;
   placeholder?: string;
   hint?: string;
-  error?: string;
+  error?: string | undefined;
   size?: FieldSize;
   disabled?: boolean;
   searchable?: boolean;
@@ -37,6 +37,8 @@ export interface SelectProps {
   defaultQuery?: string;
   name?: string;
   className?: string;
+  hideLabel?: boolean;
+  triggerIcon?: IconName | undefined;
   'data-state'?: 'hover' | 'focus' | 'open';
 }
 
@@ -56,7 +58,7 @@ function groupOptions(options: readonly SelectOption[]): Group[] {
 
 export function Select({
   label, options, value, defaultValue, onChange, placeholder, hint, error, size = 'medium', disabled = false,
-  searchable = false, filterLabel = 'Filter', columns, footer, open: openProp, onOpenChange, defaultHighlight = -1, defaultQuery = '', name, className, 'data-state': dataState,
+  searchable = false, filterLabel = 'Filter', columns, footer, open: openProp, onOpenChange, defaultHighlight = -1, defaultQuery = '', name, className, hideLabel = false, triggerIcon, 'data-state': dataState,
 }: SelectProps) {
   const id = useId();
   const listboxId = `${id}-listbox`;
@@ -158,7 +160,7 @@ export function Select({
   const activeId = open && highlight >= 0 ? optionId(highlight) : undefined;
 
   return (
-    <Field label={label} hint={hint} error={error} size={size} disabled={disabled}>
+    <Field label={label} hint={hint} error={error} size={size} disabled={disabled} hideLabel={hideLabel}>
       {(control) => (
         <div ref={wrapper} className={['select', `select-${size}`, className].filter(Boolean).join(' ')}>
           <button
@@ -176,6 +178,7 @@ export function Select({
             onClick={() => (open ? close() : openList())}
             onKeyDown={handleKeys}
           >
+            {triggerIcon && <Icon name={triggerIcon} size={24} className="select-trigger-icon" />}
             <span className={selected ? 'select-value' : 'select-placeholder'}>{selected?.label ?? placeholder}</span>
             <Icon name={looksOpen ? 'chevron-up' : 'chevron-down'} size={size === 'small' ? 16 : 20} />
           </button>

@@ -24,3 +24,12 @@ export function placeNearPoint(point: { x: number; y: number }, size: Size, boun
   const y = point.y + offset + size.height > bounds.height ? point.y - offset - size.height : point.y + offset;
   return { x: Math.max(0, x), y: Math.max(0, y) };
 }
+
+export const anchorSupported = typeof CSS !== 'undefined' && CSS.supports('anchor-name: --anchor');
+
+// Without CSS anchor positioning, a popover is placed under its button once, when it opens.
+export function placeUnder(panel: HTMLElement, button: HTMLElement, align: 'start' | 'end' = 'end') {
+  const box = button.getBoundingClientRect();
+  panel.style.insetBlockStart = `${box.bottom + 8}px`;
+  panel.style.insetInlineStart = `${Math.max(8, align === 'end' ? box.right - panel.offsetWidth : box.left)}px`;
+}

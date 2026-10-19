@@ -1,0 +1,13 @@
+.netwas-file {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+}
+
+.netwas-file > :first-child {
+  inline-size: 100%;
+}
+
+.netwas-file-help {
+  font: var(--type-label-sm);
+}

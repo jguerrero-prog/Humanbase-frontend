@@ -1,0 +1,26 @@
+{
+  "note": "Hand-built, not recorded: submitting a Sei or Beluga job to record one was blocked by the permission checker. Values come from the Figma result screens; the ID is clearly not a real job. Replace with a recorded job once one is submitted. The score names are a guess at Sei's; the live API's are unknown.",
+  "status": 200,
+  "body": [
+    {
+      "name": "Max sequence class score",
+      "level": "VARIANT",
+      "short_name": "max_seqclass"
+    },
+    {
+      "name": "Mean -log e-value",
+      "level": "VARIANT",
+      "short_name": "mean-evalue"
+    },
+    {
+      "name": "Sequence class scores",
+      "level": "FEATURE",
+      "short_name": "seqclass",
+      "range": [
+        -2,
+        0,
+        2
+      ]
+    }
+  ]
+}

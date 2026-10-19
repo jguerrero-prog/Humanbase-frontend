@@ -1,0 +1,61 @@
+.gene-expression-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+}
+
+.gene-expression {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  padding: var(--space-6);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.gene-expression-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gene-expression-head h2 {
+  font: var(--type-label);
+  font-size: 18px;
+  color: var(--text-default);
+}
+
+.gene-expression-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: end;
+}
+
+.gene-expression-filters .select {
+  inline-size: 200px;
+}
+
+.gene-expression-filters .search-field-group {
+  inline-size: min(100%, 320px);
+}
+
+.gene-finder,
+.variant-search {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+}
+
+.variant-search-lead,
+.variant-search-count {
+  font: var(--type-label);
+  color: var(--text-default);
+}
+
+.variant-search > .button {
+  justify-self: start;
+}

@@ -1,0 +1,159 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "term": {
+        "title": "lower respiratory tract disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0050161",
+        "annotation_count": 21
+      },
+      "database": {
+        "name": "OMIM",
+        "slug": "omim",
+        "term_version": "",
+        "annotation_version": "2018-05-17"
+      },
+      "pub": null,
+      "evidence": ""
+    },
+    {
+      "term": {
+        "title": "respiratory system disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1579",
+        "annotation_count": 21
+      },
+      "database": {
+        "name": "OMIM",
+        "slug": "omim",
+        "term_version": "",
+        "annotation_version": "2018-05-17"
+      },
+      "pub": null,
+      "evidence": ""
+    },
+    {
+      "term": {
+        "title": "central nervous system disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:331",
+        "annotation_count": 289
+      },
+      "database": {
+        "name": "OMIM",
+        "slug": "omim",
+        "term_version": "",
+        "annotation_version": "2018-05-17"
+      },
+      "pub": null,
+      "evidence": ""
+    },
+    {
+      "term": {
+        "title": "brain disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:936",
+        "annotation_count": 119
+      },
+      "database": {
+        "name": "OMIM",
+        "slug": "omim",
+        "term_version": "",
+        "annotation_version": "2018-05-17"
+      },
+      "pub": null,
+      "evidence": ""
+    },
+    {
+      "term": {
+        "title": "migraine",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:6364",
+        "annotation_count": 7
+      },
+      "database": {
+        "name": "OMIM",
+        "slug": "omim",
+        "term_version": "",
+        "annotation_version": "2018-05-17"
+      },
+      "pub": null,
+      "evidence": ""
+    },
+    {
+      "term": {
+        "title": "bronchial disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1176",
+        "annotation_count": 13
+      },
+      "database": {
+        "name": "OMIM",
+        "slug": "omim",
+        "term_version": "",
+        "annotation_version": "2018-05-17"
+      },
+      "pub": null,
+      "evidence": ""
+    },
+    {
+      "term": {
+        "title": "asthma",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:2841",
+        "annotation_count": 9
+      },
+      "database": {
+        "name": "OMIM",
+        "slug": "omim",
+        "term_version": "",
+        "annotation_version": "2018-05-17"
+      },
+      "pub": null,
+      "evidence": ""
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "term": {
+        "title": "gastrointestinal system cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:3119",
+        "annotation_count": 52
+      },
+      "database": {
+        "name": "OMIM",
+        "slug": "omim",
+        "term_version": "",
+        "annotation_version": "2018-05-17"
+      },
+      "pub": null,
+      "evidence": ""
+    },
+    {
+      "term": {
+        "title": "cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:162",
+        "annotation_count": 180
+      },
+      "database": {
+        "name": "OMIM",
+        "slug": "omim",
+        "term_version": "",
+        "annotation_version": "2018-05-17"
+      },
+      "pub": null,
+      "evidence": ""
+    },
+    {
+      "term": {
+        "title": "stomach cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:10534",
+        "annotation_count": 12
+      },
+      "database": {
+        "name": "OMIM",
+        "slug": "omim",
+        "term_version": "",
+        "annotation_version": "2018-05-17"
+      },
+      "pub": null,
+      "evidence": ""
+    }
+  ]
+}

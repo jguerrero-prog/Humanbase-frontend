@@ -1,0 +1,27 @@
+import { NetworkView } from './NetworkView';
+
+describe('NetworkView', () => {
+  it('keeps the table view and the expanded layout in the URL', () => {
+    const view = new NetworkView().with({ display: 'table', expanded: true, shown: 20 });
+    const search = view.applyTo(new URLSearchParams('entrez=3553&version=v1'));
+    expect(search.toString()).toBe('entrez=3553&version=v1&shown=20&display=table&expand=1');
+    expect(NetworkView.fromSearch(search)).toMatchObject({ display: 'table', expanded: true, shown: 20 });
+  });
+
+  it('starts on the graph at its usual width', () => {
+    expect(NetworkView.fromSearch(new URLSearchParams('display=chart&expand=yes'))).toMatchObject({ display: 'graph', expanded: false });
+  });
+
+  it('keeps the compared graph’s filters apart and shares the selection and focus', () => {
+    const search = new URLSearchParams('shown=20&compare_shown=30&compare_display=table&gene=3383&focus=compare');
+    const main = NetworkView.fromSearch(search);
+    const compared = NetworkView.fromSearch(search, 'compare');
+    expect([main.shown, main.display, compared.shown, compared.display]).toEqual([20, 'graph', 30, 'table']);
+    expect(compared.selection).toEqual({ kind: 'gene', entrez: 3383 });
+    expect(compared.focus).toBe('compare');
+    const next = compared.with({ minConfidence: 0.6, focus: 'main' }).applyTo(search, 'compare');
+    expect(next.get('compare_confidence')).toBe('0.6');
+    expect(next.get('shown')).toBe('20');
+    expect(next.has('focus')).toBe(false);
+  });
+});

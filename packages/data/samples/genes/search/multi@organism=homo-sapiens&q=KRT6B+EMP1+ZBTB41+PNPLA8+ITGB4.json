@@ -1,0 +1,95 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "query": "KRT6B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3854,
+          "standard_name": "KRT6B",
+          "aliases": "K6B|PC2|KRTL1|CK-6B|PC4|CK6B",
+          "xrefs": "148042|3854|ENSG00000185479|HGNC:6444",
+          "description": "keratin 6B",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "EMP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2012,
+          "standard_name": "EMP1",
+          "aliases": "TMP|EMP-1|CL-20",
+          "xrefs": "ENSG00000134531|2012|602333|HGNC:3333",
+          "description": "epithelial membrane protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ZBTB41",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 360023,
+          "standard_name": "ZBTB41",
+          "aliases": "FRBZ1|ZNF924",
+          "xrefs": "360023|HGNC:24819|ENSG00000177888",
+          "description": "zinc finger and BTB domain containing 41",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PNPLA8",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 50640,
+          "standard_name": "PNPLA8",
+          "aliases": "IPLA2G|iPLA2gamma|IPLA2-2|PNPLA-gamma|MMLA",
+          "xrefs": "50640|612123|ENSG00000135241|HGNC:28900",
+          "description": "patatin like phospholipase domain containing 8",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ITGB4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3691,
+          "standard_name": "ITGB4",
+          "aliases": "CD104|GP150|JEB5A|JEB5B",
+          "xrefs": "HGNC:6158|ENSG00000132470|147557|3691",
+          "description": "integrin subunit beta 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    }
+  ]
+}

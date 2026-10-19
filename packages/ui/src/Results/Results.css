@@ -1,5 +1,6 @@
 .result-header {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
 }
 
@@ -64,11 +65,13 @@
 
 .result-layout {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
 }
 
 .result-layout-body {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
   align-items: start;
 }
@@ -77,8 +80,13 @@
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 }
 
+.result-layout-body[data-companion][data-expanded] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .result-main {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   padding: var(--space-5);
   background: var(--surface-page);
@@ -88,6 +96,7 @@
 
 .result-companion {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
   min-inline-size: 0;
 }
@@ -372,6 +381,11 @@
   color: var(--text-secondary);
 }
 
+.netwas-no-network {
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
 .netwas-guide {
   display: grid;
   gap: var(--space-4);
@@ -444,4 +458,65 @@
 .netwas-guide-subheading,
 .netwas-guide p {
   margin: 0;
+}
+
+.graph-area {
+  position: relative;
+  block-size: 403px;
+  overflow: hidden;
+  background: var(--surface-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.graph-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  align-items: end;
+  justify-content: space-between;
+}
+
+.result-line {
+  font: var(--type-label-sm);
+  color: var(--text-default);
+}
+
+.graph-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 346px));
+  gap: var(--space-8);
+  padding-block-start: var(--space-4);
+  border-block-start: var(--border-width-1) solid var(--border-subtle);
+}
+
+.companion-search {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.companion-search .search-field {
+  flex: 1;
+}
+
+.result-note {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+@media (width < 48rem) {
+  .graph-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.result-file-name {
+  display: block;
+  font: var(--type-label-sm);
+}
+
+.result-file-about {
+  display: block;
+  font: var(--type-caption);
+  color: var(--text-secondary);
 }

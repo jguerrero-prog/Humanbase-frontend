@@ -18,6 +18,11 @@ export class SliderScale {
     return Number(this.clamp(this.min + steps * this.step).toFixed(this.decimals));
   }
 
+  /** The value a key press reaches, counted from the value as shown, so a value between steps never seems stuck. */
+  next(value: number, direction: 1 | -1, steps = 1): number {
+    return this.snap(this.snap(value) + direction * steps * this.step);
+  }
+
   percent(value: number): number {
     return ((value - this.min) / (this.max - this.min)) * 100;
   }

@@ -1,0 +1,515 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "score": 0.99999999989,
+      "term": {
+        "title": "congenital bile acid synthesis defect",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0050674",
+        "annotation_count": 5
+      }
+    },
+    {
+      "score": 0.999982877811,
+      "term": {
+        "title": "congenital adrenal hyperplasia",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0050811",
+        "annotation_count": 5
+      }
+    },
+    {
+      "score": 0.999882474518,
+      "term": {
+        "title": "steroid inherited metabolic disorder",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1701",
+        "annotation_count": 10
+      }
+    },
+    {
+      "score": 0.626106695468,
+      "term": {
+        "title": "lipid metabolism disorder",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:3146",
+        "annotation_count": 36
+      }
+    },
+    {
+      "score": 0.593219830809,
+      "term": {
+        "title": "stomach cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:10534",
+        "annotation_count": 12
+      }
+    },
+    {
+      "score": 0.519880496437,
+      "term": {
+        "title": "hypersensitivity reaction disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0060056",
+        "annotation_count": 28
+      }
+    },
+    {
+      "score": 0.457414140459,
+      "term": {
+        "title": "stomach carcinoma",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:5517",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.451727899967,
+      "term": {
+        "title": "hypersensitivity reaction type II disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:417",
+        "annotation_count": 20
+      }
+    },
+    {
+      "score": 0.397274049534,
+      "term": {
+        "title": "gastrointestinal system cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:3119",
+        "annotation_count": 52
+      }
+    },
+    {
+      "score": 0.360572893068805,
+      "term": {
+        "title": "autism spectrum disorder",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0060041",
+        "annotation_count": 10
+      }
+    },
+    {
+      "score": 0.342726554601,
+      "term": {
+        "title": "head and neck cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:11934",
+        "annotation_count": 3
+      }
+    },
+    {
+      "score": 0.28494292953,
+      "term": {
+        "title": "cell type cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0050687",
+        "annotation_count": 11
+      }
+    },
+    {
+      "score": 0.262562213168,
+      "term": {
+        "title": "carcinoma",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:305",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.233018022682,
+      "term": {
+        "title": "respiratory system cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0050615",
+        "annotation_count": 16
+      }
+    },
+    {
+      "score": 0.233015603418,
+      "term": {
+        "title": "lung cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1324",
+        "annotation_count": 16
+      }
+    },
+    {
+      "score": 0.231279267427,
+      "term": {
+        "title": "systemic lupus erythematosus",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:9074",
+        "annotation_count": 13
+      }
+    },
+    {
+      "score": 0.197791015032,
+      "term": {
+        "title": "primary immunodeficiency disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:612",
+        "annotation_count": 58
+      }
+    },
+    {
+      "score": 0.192696089081,
+      "term": {
+        "title": "head and neck squamous cell carcinoma",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:5520",
+        "annotation_count": 3
+      }
+    },
+    {
+      "score": 0.192693511037,
+      "term": {
+        "title": "head and neck carcinoma",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1542",
+        "annotation_count": 3
+      }
+    },
+    {
+      "score": 0.177726286622,
+      "term": {
+        "title": "arteriosclerosis",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:2349",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.174023043161,
+      "term": {
+        "title": "arteriosclerotic cardiovascular disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:2348",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.174022447645,
+      "term": {
+        "title": "atherosclerosis",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1936",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.157774156055,
+      "term": {
+        "title": "squamous cell carcinoma",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1749",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.157771752293,
+      "term": {
+        "title": "tongue squamous cell carcinoma",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0050865",
+        "annotation_count": 0
+      }
+    },
+    {
+      "score": 0.155888655968,
+      "term": {
+        "title": "hematologic cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:2531",
+        "annotation_count": 45
+      }
+    },
+    {
+      "score": 0.15401562418,
+      "term": {
+        "title": "immune system cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:0060083",
+        "annotation_count": 45
+      }
+    },
+    {
+      "score": 0.1538530195,
+      "term": {
+        "title": "reproductive organ cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:193",
+        "annotation_count": 23
+      }
+    },
+    {
+      "score": 0.134892667479,
+      "term": {
+        "title": "respiratory system disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:1579",
+        "annotation_count": 21
+      }
+    },
+    {
+      "score": 0.130260423843,
+      "term": {
+        "title": "bacterial infectious disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:104",
+        "annotation_count": 4
+      }
+    },
+    {
+      "score": 0.114555155274,
+      "term": {
+        "title": "hepatobiliary disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:3118",
+        "annotation_count": 7
+      }
+    },
+    {
+      "score": 0.108194102115,
+      "term": {
+        "title": "lupus erythematosus",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:8857",
+        "annotation_count": 13
+      }
+    },
+    {
+      "score": 0.10781945909,
+      "term": {
+        "title": "esophageal cancer",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:5041",
+        "annotation_count": 5
+      }
+    },
+    {
+      "score": 0.104719537981,
+      "term": {
+        "title": "viral infectious disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:934",
+        "annotation_count": 13
+      }
+    },
+    {
+      "score": 0.104462713515,
+      "term": {
+        "title": "reproductive system disease",
+        "database": {
+          "name": "Disease Ontology",
+          "slug": "disease-ontology",
+          "term_version": "releases/2017-06-13",
+          "annotation_version": ""
+        },
+        "slim_terms": [],
+        "identifier": "DOID:15",
+        "annotation_count": 20
+      }
+    }
+  ]
+}

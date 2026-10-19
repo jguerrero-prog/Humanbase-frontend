@@ -1,14 +1,7 @@
 ---
 import { ActionMenu, MenuItem, MenuPanel, SearchField, Select, SuggestionsEmpty, SuggestionsLoading, type SelectOption } from '@humanbase/ui';
+import { analysisOptions } from '@humanbase/hb';
 import { Code } from 'astro:components';
-import expectoLogo from '../../assets/original-icons/expecto_fa-magic.svg?url';
-import expectoScLogo from '../../assets/original-icons/expecto-sc_dendritic_cell.png?url';
-import netwasLogo from '../../assets/original-icons/gwas-netwas_fa-list-ol.svg?url';
-import ismLogo from '../../assets/original-icons/in-silico-mutagenesis_fa-th.svg?url';
-import modulesLogo from '../../assets/original-icons/modules_fa-certificate.svg?url';
-import networksLogo from '../../assets/original-icons/networks_fa-connectdevelop.svg?url';
-import deepseaLogo from '../../assets/original-icons/sei-and-beluga_deepsea_logo.svg?url';
-import seqweaverLogo from '../../assets/original-icons/seqweaver_seqweaver-icon.svg?url';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
@@ -66,18 +59,7 @@ const jobActions = [
   { label: 'Delete job', icon: 'trash' as const, destructive: true, dividerBefore: true },
 ];
 
-const analyses: SelectOption[] = [
-  { value: 'networks', label: 'Networks', description: 'Tissue-specific gene networks, MAGE and GIANT', image: networksLogo, group: 'Network analysis' },
-  { value: 'modules', label: 'Modules', description: 'Functional modules in large gene lists', image: modulesLogo, group: 'Network analysis' },
-  { value: 'netwas', label: 'NetWAS', description: 'Reprioritize GWAS results with networks', image: netwasLogo, group: 'Network analysis' },
-  { value: 'sei', label: 'Sei', description: 'Regulatory and chromatin effects', image: deepseaLogo, group: 'Variant effects' },
-  { value: 'beluga', label: 'Beluga', description: 'Chromatin effects (2019 model)', image: deepseaLogo, group: 'Variant effects' },
-  { value: 'seqweaver', label: 'Seqweaver', description: 'Post-transcriptional effects', image: seqweaverLogo, group: 'Variant effects' },
-  { value: 'expecto', label: 'ExPecto', description: 'Tissue-specific expression effects', image: expectoLogo, group: 'Variant effects' },
-  { value: 'expecto-sc', label: 'ExPecto SC', description: 'Cell-type-specific expression effects', image: expectoScLogo, group: 'Variant effects' },
-  { value: 'ism', label: 'In silico mutagenesis', description: 'Regulatory features of a sequence', image: ismLogo, group: 'Sequences' },
-  { value: 'asd', label: 'ASD Browser', description: 'Predicted effects of ASD proband mutations', group: 'Browsers' },
-];
+const analyses = analysisOptions;
 
 const anatomyNotes = [
   { n: 1, text: 'Label', side: 'start', top: 56 },

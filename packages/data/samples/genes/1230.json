@@ -1,0 +1,53 @@
+{
+  "status": 200,
+  "body": {
+    "url": "http://hb.flatironinstitute.org/api/genes/1230/",
+    "entrez": 1230,
+    "systematic_name": "CCR1",
+    "standard_name": "CCR1",
+    "description": "C-C motif chemokine receptor 1",
+    "xrefs": [
+      {
+        "xrid": "ENSG00000163823",
+        "crossrefdb": {
+          "name": "Ensembl",
+          "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+        }
+      },
+      {
+        "xrid": "1230",
+        "crossrefdb": {
+          "name": "Entrez",
+          "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+        }
+      },
+      {
+        "xrid": "HGNC:1602",
+        "crossrefdb": {
+          "name": "HGNC",
+          "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+        }
+      },
+      {
+        "xrid": "601159",
+        "crossrefdb": {
+          "name": "MIM",
+          "url": "http://www.omim.org/entry/_REPL_"
+        }
+      }
+    ],
+    "aliases": [
+      "CKR1",
+      "HM145",
+      "CKR-1",
+      "CD191",
+      "CMKBR1",
+      "SCYAR1",
+      "MIP1aR"
+    ],
+    "versions_available": [
+      "v1",
+      "v3"
+    ]
+  }
+}

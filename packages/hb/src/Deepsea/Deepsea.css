@@ -1,0 +1,37 @@
+.deepsea-result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+}
+
+.deepsea-plot,
+.deepsea-variants {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.deepsea-plot-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  align-items: end;
+}
+
+.deepsea-plot-controls .select {
+  inline-size: 240px;
+}
+
+.deepsea-files {
+  display: grid;
+  gap: var(--space-3);
+  inline-size: 100%;
+}
+
+.deepsea-files h2 {
+  font: var(--type-label);
+}
+
+.deepsea-note {
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}

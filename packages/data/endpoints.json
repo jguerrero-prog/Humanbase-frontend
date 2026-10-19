@@ -6,8 +6,519 @@
       "path": "/api/genes/{entrez}/",
       "documented": true,
       "example": "/api/genes/3553/",
-      "samples": ["/api/genes/3553/", "/api/genes/7124/", "/api/genes/0/"],
-      "usedBy": ["GeneService.get"]
+      "samples": [
+        "/api/genes/3553/",
+        "/api/genes/7124/",
+        "/api/genes/0/",
+        "/api/genes/100188314/",
+        "/api/genes/3383/",
+        "/api/genes/345611/",
+        "/api/genes/5728/",
+        "/api/genes/1230/"
+      ],
+      "usedBy": [
+        "GeneService.get"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/genes/search/partial/",
+      "documented": false,
+      "example": "/api/genes/search/partial/?organism=homo-sapiens&q=IL1",
+      "samples": [
+        "/api/genes/search/partial/?organism=homo-sapiens&q=IL1",
+        "/api/genes/search/partial/?organism=homo-sapiens&q=IL1B",
+        "/api/genes/search/partial/?organism=homo-sapiens&q=NOTAGENE123"
+      ],
+      "usedBy": [
+        "GeneSearchService.suggest"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/genes/search/exact/",
+      "documented": false,
+      "example": "/api/genes/search/exact/?organism=homo-sapiens&q=il1b",
+      "samples": [
+        "/api/genes/search/exact/?organism=homo-sapiens&q=IL1B",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=BRCA1",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=PTEN",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=IRGM",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=CCR1"
+      ],
+      "usedBy": [
+        "GeneSearchService.exact"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/integrations/",
+      "documented": true,
+      "example": "/api/integrations/",
+      "samples": [
+        "/api/integrations/"
+      ],
+      "usedBy": [
+        "IntegrationService.list"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/genes/search/multi/",
+      "documented": false,
+      "example": "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF",
+      "samples": [
+        "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF+AUTS12+NOTAGENE123+p53",
+        "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF",
+        "/api/genes/search/multi/?organism=homo-sapiens&q=AUTS12+IL1B+TNF",
+        "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF+ICAM1",
+        "/api/genes/search/multi/?organism=homo-sapiens&q=3553+7124+3383",
+        "/api/genes/search/multi/?organism=homo-sapiens&q=3553+7124",
+        "/api/genes/search/multi/?organism=homo-sapiens&q=KRT6B+EMP1+ZBTB41+PNPLA8+ITGB4"
+      ],
+      "usedBy": [
+        "GeneSearchService.list"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/genes/search/multi/",
+      "documented": false,
+      "readOnly": true,
+      "usedBy": [
+        "GeneSearchService.list (lists too long for a URL, such as the Modules example sets)",
+        "ModuleService gene names for a result (by Entrez ID)"
+      ],
+      "samples": [
+        {
+          "path": "/api/genes/search/multi/?organism=homo-sapiens",
+          "body": {
+            "q": "ADNP+ARID1B+DYRK1A+ASH1L+ASXL3+CHD8+ANK2+CUL3+DSCAM+MYT1L+KMT5B+NAA15+KMT2A+GRIN2B+KATNAL2+PTEN+RELN+SCN2A+SYNGAP1+SETD5+SHANK3+TBR1+TRIP12+CNTN4+BCKDK+CACNA1H+ANKRD11+DEAF1+DDX3X+BCL11A+CIC+CNTNAP2+BAZ2B+CACNA1D+CACNA2D3+CTNND2+CUX1+DIP2C+ERBIN+MBOAT7+MECP2+FOXP1+NRXN1+MAGEL2+MED13+MED13L+GABRB3+KDM5B+KMT2C+GIGYF2+GRIA1+ILF2+INTS6+IRF2BPL+KAT2B+KDM6A+LEO1+NCKAP1+NLGN3+SHANK2+SMARCC2+PTCHD1+SCN9A+SLC6A1+PHF3+RANBP17+RIMS1+SPAST+SRCAP+SRSF11+TAOK2+TBL1XR1+TCF20+USP7+WDFY3+TRIO+UPF3B+WAC+TNRC6B+UBN2+USP15+ANK3+CELF4+CNOT3+CTCF+CTNNB1+CTTNBP2+DISC1+AVPR1A+CNTN5+CNTN6+ASTN2+DYNC1H1+BTAF1+CC2D1A+CYFIP1+EHMT1+CACNB2+ACHE+ADA+CNKSR2+ELP4+AGAP2+AHDC1+AKAP9+AUTS2+CNTNAP4+AMPD1+AMT+ANXA1+APBB1+APH1A+ASPM+ATP10A+CACNA1E+CAPRIN1+CCT4+CDC42BPB+CEP135+CEP41+CGNL1+CHMP1A+CIB2+CLASP1+CUL7+DAPP1+DENR+DIP2A+DLGAP1+DNMT3A+DOCK8+DPP10+DPYSL2+EFR3A+ELAVL3+EP400+EMSY+ETFB+KCNQ2+MACROD2+FBN1+ITGB3+KCNQ3+MBD5+NLGN4X+FOXP2+NRXN3+GPHN+KAT6A+KDM6B+MTOR+NLGN1+JARID2+NEXMIF+HECW2+KCNJ10+KDM5C+FAM92B+GGNBP2+GIGYF1+GPC4+GRID1+GRIK5+HECTD4+HIVEP3+HMGN1+KIAA1586+KIRREL3+KMT2E+LAMB1+LMX1B+LZTR1+MFRP+MYO5A+MYO9B+NAV2+NINL+NR3C2+OPHN1+SBF1+OXTR+SCN1A+SCN8A+SETBP1+SLC12A5+PRKN+SEMA5A+STXBP1+SMARCA4+PAH+PLCB1+PRICKLE1+RBFOX1+TANC2+SETD2+PHIP+PRICKLE2+PRODH+ROBO2+NUAK1+OR52M1+OTUD7A+P2RX5+P4HA2+PARD3B+PAX5+PER2+PHB+PHRF1+PLXNA4+PLXNB1+PON1+PREX1+PRKCB+PTK7+PYHIN1+RAB2A+RAB43+RBM27+SAE1+SHANK1+SHOX+SLC35B1+SLC38A10+SLC6A3+SLC7A3+SLC7A5+SMAD4+SPARCL1+STXBP5+TAF6+TRAPPC9+TSC2+ZMYND11+TMLHE+UBE3A+TBC1D31+TCF7L2+WWOX+ZBTB20+ZNF804A+TERF2+TET2+TRPC6+TRPM1+UBE3C+UBR5+UNC79+USP45+VIL1+ZC3H4+ARNT2+ATP1A3+ATRX+CADPS2+CAMK2A+CUX2+ADORA2A+ARHGEF9+CSMD1+CYP11B1+DIXDC1+ARHGAP32+ASMT+CADM1+CD38+EXT1+ADCY5+AFF2+CTNNA3+DDX53+EP300+FABP5+AGBL4+BRCA2+BRD4+CDH11+CMIP+DPP6+ESR2+CASK+CHD1+ABAT+ABCA10+ABCA13+ABCA7+ACE+ADK+DRD3+ADORA3+ADRB2+AGAP1+AGMO+AGO1+AGTR2+BBS4+APBA2+ARHGAP5+ARHGEF10+CNTNAP5"
+          }
+        },
+        {
+          "path": "/api/genes/search/multi/?organism=homo-sapiens",
+          "body": {
+            "q": "ABCB11+ABCB4+ABCC2+ACE+ACP5+ACTG2+ACTN4+ACVR2B+AGPS+AGT+AGTR1+AGXT+AHI1+AIPL1+AKR1D1+ALDOB+ALG8+ALG9+ALPL+AMER1+ANKH+ANKS6+ANLN+ANO5+ANOS1+AP2S1+ARHGAP31+ARHGDIA+ARL13B+ARL3+ARL6+ARMC5+ARMC9+ARSL+ATP6V0A4+ATP6V1B1+ATP8B1+ATR+AVPR2+B9D1+B9D2+BAAT+BBS1+BBS10+BBS12+BBS2+BBS4+BBS5+BBS7+BBS9+BCS1L+BICC1+BMP1+BMP4+BMPR1B+BNC2+BSND+C2CD3+CA2+CABP4+CANT1+CASP10+CASR+CC2D2A+CCDC103+CCDC28B+CCDC39+CCDC40+CCDC65+CCN6+CCNO+CD2AP+CDKN1C+CENPF+CENPJ+CEP120+CEP152+CEP164+CEP290+CEP41+CEP55+CEP83+CFAP298+CFAP418+CFAP53+CFTR+CHD1L+CHD7+CHRNA3+CHST3+CHSY1+CILK1+CLCN5+CLCNKA+CLCNKB+CLDN16+CLDN19+COL10A1+COL4A1+COL4A3+COL4A4+COL4A5+COL9A3+COMP+COQ2+COQ6+COQ8B+COQ9+CPLANE1+CRB1+CRB2+CRELD1+CRTAP+CRX+CSPP1+CTNS+CTU2+CUBN+CUL3+CWC27+CYP7B1+DCDC2+DDR2+DDX59+DGKE+DGUOK+DHCR7+DICER1+DLL3+DMP1+DNAAF1+DNAAF11+DNAAF2+DNAAF3+DNAAF4+DNAAF5+DNAH11+DNAH5+DNAI1+DNAI2+DNAJB11+DNAL1+DRC1+DSTYK+DUSP6+DYM+DYNC2H1+DYNC2I1+DYNC2I2+DYNC2LI1+DZIP1L+EBP+EIF2AK3+EMP2+ENPP1+ESCO2+EVC+EVC2+EXT1+EXT2+EYA1+FAH+FAM20C+FAN1+FAS+FASLG+FAT4+FEZF1+FGF17+FGF23+FGF8+FGFR1+FGFR2+FKBP10+FLNB+FLRT3+FN1+FOXP1+FRAS1+FREM1+FREM2+FSHB+FXYD2+GANAB+GATA3+GDF1+GDF5+GFM1+GHR+GLA+GLI2+GLI3+GLIS2+GLIS3+GNA11+GNAS+GNPAT+GNRH1+GNRHR+GPC3+GPC6+GREB1L+GRIP1+GUCY2D+HAAO+HAMP+HESX1+HEXA+HFE+HNF1B+HNF4A+HOXA13+HOXD13+HPSE2+HS6ST1+HSD11B2+HSD3B7+HSPG2+HYDIN+HYLS1+IFITM5+IFT122+IFT140+IFT172+IFT27+IFT43+IFT80+IFT81+IHH+IL17RD+IMPDH1+INF2+INPP5E+INPPL1+INVS+IQCB1+ITGA3+ITGA8+JAG1+KANK2+KCNJ1+KCNJ10+KCNJ13+KCNJ5+KDM6A+KIAA0586+KIF14+KIF22+KIF7+KISS1+KISS1R+KLHL3+KMT2D+KYNU+LAGE3+LAMB2+LBR+LCA5+LCAT+LCT+LEP+LEPR+LHB+LHX3+LHX4+LIFR+LMF1+LMX1B+LRAT+LRIG2+LRP4+LRP5+LZTFL1+MAFB+MAGI2+MAPKBP1+MATN3+MCEE+MERTK+MESP2+MGP+MKKS+MKS1+MMAA+MMAB+MMADHC+MMP13+MMP21+MMP9+MMUT+MPV17+MUC1+MYH9+MYO1E+MYO5B+MYO7A+MYOCD+NADSYN1+NBAS+NEK1+NEK8+NEUROG3+NIPBL+NKX2-5+NKX3-2+NME8+NMNAT1+NODAL+NOG+NOTCH2+NPC1+NPC2+NPHP1+NPHP3+NPHP4+NPHS1+NPHS2+NPR2+NR0B1+NR0B2+NR1H4+NR3C2+NSDHL+NSMF+NUP107+NUP93+OBSL1+OCRL+ODAD1+ODAD2+ODAD3+OFD1+OSGEP+OTX2+P3H1+PAPSS2+PAX2+PBX1+PCSK1+PDE4D+PDE6D+PDSS2+PEX1+PEX10+PEX12+PEX2+PEX26+PEX5+PEX6+PEX7+PHEX+PHF6+PIBF1+PKD1+PKD1L1+PKD2+PKHD1+PLCE1+PLOD2+PMM2+PNPLA6+POLG+POLR3B+POMC+POU1F1+PPARG+PPIB+PRKAR1A+PRKCSH+PROK2+PROKR2+PROM1+PROP1+PRPH2+PTH1R+PTHLH+PTPRO+RBBP8+RD3+RDH12+RDH5+REN+RET+RHO+RLBP1+RMND1+RNF216+ROBO1+ROBO2+ROR2+RPE65+RPGRIP1+RPGRIP1L+RRM2B+RSPH1+RSPH4A+RSPH9+RUNX2+SALL1+SALL4+SBDS+SCARB2+SCNN1A+SCNN1B+SCNN1G+SDCCAG8+SEC61A1+SEC63+SEMA3A+SERPINA1+SERPINF1+SERPINH1+SGPL1+SH3PXD2B+SIX1+SIX2+SIX5+SLC12A1+SLC12A3+SLC25A13+SLC25A15+SLC26A2+SLC26A3+SLC2A2+SLC34A1+SLC34A3+SLC35D1+SLC4A1+SLC4A4+SLCO1B1+SLCO1B3+SLIT2+SMARCAL1+SMPD1+SOX10+SOX11+SOX17+SOX2+SOX3+SOX9+SPAG1+SPATA7+SPINT2+SPRY4+STRA6+SUFU+TAC3+TACR3+TBC1D1+TBX15+TBX18+TBX3+TBX5+TCTN1+TCTN2+TCTN3+TFR2+TJP2+TMEM107+TMEM138+TMEM216+TMEM231+TMEM237+TMEM67+TNFRSF11B+TP53RK+TPRKB+TRAF3IP1+TRAP1+TRIM32+TRIP11+TRMU+TRPC6+TRPS1+TRPV4+TSC1+TSC2+TTC21B+TTC37+TTC8+TULP1+TXNDC15+UGT1A1+UMOD+UPK3A+VHL+VIPAS39+VPS33B+WDR11+WDR19+WDR35+WDR4+WDR73+WNK1+WNK4+WNT4+WNT5A+WNT7A+WT1+XPNPEP3+XYLT1+ZIC3+ZMYND10+ZNF423"
+          }
+        },
+        {
+          "path": "/api/genes/search/multi/?organism=homo-sapiens",
+          "body": {
+            "q": "CDK5+ERC1+NCS1+CNR1+MARCKSL1+P2RY1+P2RY2+ADORA1+P2RY4+P2RX1+P2RX2+KCNH1+SV2B+ERC2+NPY1R+NPY+OSBPL2+CBARP+RYR2+ATP2B3+CALB1+CALB2+TSPOAP1+CACNA1A+CACNA1B+HTR1B+CACNA1D+CACNA1E+CACNB2+CACNB4+RIMBP2+KCNJ9+CASR+GRIK1+GRIK3+GRIK4+GRIK5+HTR3A+GLRA1+GRIA1+GRIA2+GRIA3+GRIA4+GABRA1+GABRA3+GABRA2+GABRA5+GABRB2+GABRB1+GRIN2B+GRIN2A+GRIN1+GRIN2D+GRIN3B+KCNMA1+GRIK2+GABRR1+KCNA4+KCNC2+KCNC1+KCNC4+KCNA1+KCNA2+KCNQ5+KCNJ3+KCNJ6+SCN2A+SCN10A+SCN1A+KCNMB4+KCNJ8+KCNJ11+GABBR1+KCTD12+KCTD8+KCTD16+HCN1+ARFGAP3+NECAP1+AAK1+CALM2+CALM1+CALM3+NSF+STXBP5+SYN1+SYN2+SYN3+ATG7+BSN+CDK5R1+PRKAR1B+DNAJC5+NRXN1+PLD1+SNAP29+ARHGDIA+RAB3B+PLS3+RAPGEF4+LPAR1+PPP3R1+SCRN1+PSEN1+BLOC1S6+BLOC1S1+VPS18+C9ORF72+CASP3+PCLO+DOCK1+CTNNB1+ABI1+ABI2+CTBP1+RAB35+TBC1D24+RAB11A+RAB7A+CTSD+AP3D1+AP1S2+AP1G1+BTBD8+VAMP4+STX6+STX12+VTI1A+STX7+SNAP25+VAMP2+UNC13C+UNC13A+UNC13B+STX1A+STX1B+PPFIA3+STX3+MCTP2+MCTP1+OTOF+VAMP7+RELN+DOC2A+DOC2B+SYT7+SYT1+SYT2+SYT9+PRRT2+RIMS1+RIMS2+SNAPIN+PRKCG+PRKCA+PRKCB+CASK+FBXL20+PPFIA2+SV2C+STXBP5L+HTR1D+GIT1+GIT2+CSPG5+DTNBP1+WNT7A+DVL1+FBXO45+TPRG1L+GPR151+SLC4A8+CTBP2+CAMK2A+SEPTIN5+RAB3A+VAMP1+CPLX1+CPLX2+CPLX3+NAPA+STXBP1+SV2A+CADPS+CADPS2+RPH3A+EFR3A+NAPB+SYP+SYNGR3+BRSK1+SLC18A2+SLC17A7+SLC17A8+SLC17A6+SLC32A1+SLC18A3+SLC17A5+SLC10A4+GAPDH+TMEM163+SLC30A3+CLCN3+ATP6V0E2+ATP6V1A+ATP6V1B2+ATP6V1C1+ATP6V1D+ATP6V1E1+ATP6V1F+ATP6V0D1+ATP6AP1+ATP6AP2+ATP6V1G2+ATP6V1G1+ATP6V0C+ATP6V0A1+ATP6V1H+ATP6V0A4+ATP6V1B1+ATP6V0B+DMXL2+SLC9A6+RAB27B+CANX+ARF6+CLTC+SH3GL2+DNM1+DNM3+SNAP91+PICALM+AMPH+PACSIN1+AP2M1+RAB5A+EPS15+EPS15L1+EPN1+ITSN1+EHD1+DNM2+BIN1+STON2+DNM1L+SNCA+SNCB+AP2B1+SCRIB+DIAPH1+AP2S1+FCHO2+PIK3C3+CAPN2+AP3B2+AP3M2+SGIP1+AP2A1+AP2A2+CLTA+CLTB+SYNJ2+ATP8A1+DENND1A+CACFD1+PPP3CC+SCAMP5+ACTB+PIP5K1C+ACTG1+PPP3CB+LRRK2+DGKQ+VPS35+SYT11+OPHN1+PRKN+VPS29+SNX9+KCNC3+BCL2L1+MYLK+PARK7+CXADR+RAC1+ARPC3+COPS4+TRPM7+SLC2A4+SYNJ1+HSPA8+DNAJC6+SYT10+RAB10+RAB5B+RAB5C+EHBP1+P2RX7+PTPN23+PRKCE+EVI5+EVI5L+TBC1D2+TBC1D2B+RAB11B+SLC6A5+SLC6A9+SLC6A11+SLC1A6+SLC1A7+SLC6A3+SLC6A1+SLC6A4+SLC6A2+SLC1A2+FLOT1+ARL6IP5+DRD3+DRD2+SGTA+SIPA1L2+SYNPO+MYO5A+WNT5A+FZD9+GRID2IP+RYR3+STIM2+STIM1+ATP2B2+SLC8A1+SLC8A2+SLC8A3+ITPR1+GRM1+CHRM1+NR3C2+RGS7+RGS7BP+NOS1+ANO6+DPP6+KCNT1+KCNIP1+KCNIP3+KCNIP2+ADRB1+CHRNA1+CHRNE+CHRNB1+CHRNG+CHRND+CHRNB2+CHRNB4+CHRNA3+CHRNA4+CHRNA7+CHRNA9+CHRNA10+GLRA2+GLRB+GABRB3+GABRA4+GABRA6+GABRG2+GABRG3+GABRD+GABRE+GABRR2+GRIN2C+GRIN3A+GLRA3+KCND2+KCNK1+KCND3+HOMER1+HOMER3+BEGAIN+AKAP9+NPTX1+NPTX2+DLGAP2+SRC+NPTXR+SHISA9+CNIH2+SHISA7+SHISA6+CACNG5+CACNG4+NETO1+NETO2+NRXN2+CHRNA5+CACNG7+LRP8+NOTCH1+MAPK8IP1+GPR39+PRKCI+EFNB2+FLOT2+NRXN3+EPS8+CTNND1+ERBIN+FRRS1L+PORCN+CPT1C+CACNG2+DRD4+DRD5+YWHAE+DLG3+CACNG8+CLPTM1+CTNND2+ZDHHC5+STX4+AGAP3+RAP2A+SST+RALBP1+SNX27+SNX6+TFRC+HSP90AA1+PPFIA1+CNTNAP2+SYT3+SHROOM4+GRID1+CAMK2G+ATG5+GRID2+INPP4A+NSG2+IGSF11+PDLIM4+KIF21B+ALS2+CSNK2A1+PHLDB2+C22ORF39+NINJ1+GPHN+ADAM22+LGI1+DLG2+DLG1+DLG4+CNIH3+CACNG3+LHFPL4+RAPSN+C1QL2+C1QL3+ERBB2+ERBB4+GNAI1+GPSM2+VWC2+OLFM2+PRKCZ+IQSEC2+MAP2K1+DAG1+MAGI2+TNIK+GSK3B+ADAM10+RAP1A+HRAS+KALRN+PAK1+PAK2+PAK3+GHSR+GPC6+GPC4+NBEA+OGT+CYLD+EXOC4+CACNA2D2+OLFM1+EPB41L3+GABARAP+TRAF6+TMEM108+KIF2C+VPS26B+SNAP23+SNAP47+SACM1L+EPB41L1+SLC12A5+ITGB3+ITGB1+RDX+MMP9+ZDHHC2+MYO6+CALY+SH3GLB2+AP3M1+RAB11FIP5+TMUB1+HUWE1+AKAP5+IQSEC1+HAP1+NEDD4+HPCA+SYNE1+GSG1L+NRG1+SIRT2+ARC+ATAD1+PICK1+USP46+NUMB+RNF216+HIP1+RALA+TSPAN7+VAC14+RABEP1+TAMALIN+LRP1+MDM2+RNF220+SYT17+SUSD4+NEDD4L+MIB2+CBLB+USP6+RNF34+NCDN+PIKFYVE+SYT6+SYT4+ARRB2+NF1+CAMK4+CRTC1+ANKS1B+RNF10+STAT3+NSMF+HTT+KPNA1+CABP1+KPNA2+PRR7+RELA+JAK2+WNT3A+WLS+PTPRS+PTPRD+FGF22+DAGLA+FABP5+PLCB1+ABHD6+MGLL+CNR2+FAAH+CNRIP1+ALK+GUCY1A1+IL1RAPL1+IL1RAP+TENM2+CADM1+FARP1+NPTN+EFNB3+PLAT+PLG+BDNF+NTRK2+SLITRK5+SORCS2+CBLN2+CBLN4+NEO1+CBLN1+IGSF21+ADCY8+PRKAR2A+PRKAR2B+ADCY1+BAIAP2+BAIAP3+AKAP12+PLCG1+PLCB4+PDE4A+HNRNPK+PPP1R9A+TUBB2B+EPHB1+FYN+MYO5B+PLPPR4+GRM5+CDH2+STAU1+AKAP7+P2RX3+CDH11+SLC6A6+PCDH8+TNR+LRRC4+ABR+BCR+LRRC4C+NTNG1+NTNG2+DGKB+DGKE+L1CAM+LRFN2+NCAM1+PTPRA+NCAN+NRG3+GPER1+RGS14+PACSIN2+PTN+ROR2+VGF+MAPK3+CFL1+CPEB1+CDKL5+CNTNAP4+SYNGAP1+SHANK1+SHANK3+DLGAP1+DLGAP3+EPHA7+CAMKV+PFN1+PFN2+CHMP2B+ARHGAP44+UBE3A+WNK1+BTBD9+KCNN2+PAFAH1B1+RPS6KB1+TRIO+MAPK8+MAPK9+SYNPR+RTN4+IGSF8+NXPH1+NXPH4+SYNGR1+GNAI2+NLGN4X+TRPC1+UBE2I+CYP46A1+LYPD6+CYTH1+APBA1+APBA2+ADORA2A+ADRB2+ADRA2A+ADRA1A+ADORA2B+ADORA3+HTR2A+HTR7+GIPC1+BACE1+HTR1A+CHRNB3+CHRNA6+CHRM2+DGKI+GRM4+GRM7+GRM8+DRD1+YWHAH+NRN1+SYT12+GRM2+NGFR+OPRM1+LAMP5+ABCC8+EEA1+KCNK2+INSYN1+INSYN2A+PPP3CA+DCC+NRGN+GHRL+SORCS3+PRKACA+INA+NEFL+NEFH+IGF1+IGF1R+PTK2B+TENT2+NGDN+SLC1A1+GRM3+SNX14+GNAO1+CLMP+RASGRF1+RASGRF2+BRAF+PENK+NPY5R+NPY2R+CCK+NPPA+FLNA+ADGRL3+APBB1+ADGRL2+CD2AP+NFASC+NLGN1+CACNA2D3+IQSEC3+SPTBN2+SEPTIN7+NRP1+CNKSR2+ARHGAP39+STK38+STK38L+DLG5+HIP1R+WASF2+ACTR3+WASL+LAMA5+ITGA3+CD44+CHMP4B+NRP2+SEMA3F+RHEB+ARHGAP22+SHANK2+PTPRF+TANC1+TSC2+ABHD17B+ABHD17A+ABHD17C+NRCAM+VHL+ARF4+ASAP1+DACT1+PSEN2+TAOK2+DISC1+CDC42+AKT1+MARK2+RBMX+HNRNPM+TIAM1+RPS6KA5+MINK1+MYO9A+AFDN+FILIP1+RAP1B+CTTN+DLGAP4+SARM1+EGLN1+RHOA+RHOB+AGAP1+ANK3+PDXP+STRN4+STRN+PHACTR1+MRTFA+MRTFB+RAPGEF2+SNX17+ZNF804A+WASF3+WASF1+CTNNA2+ITPKA+SPTB+DIXDC1+CAP1+ABI3+CTTNBP2+CYFIP1+MARCKS+MYH10+PTK2+DIP2A+PRMT8+CAP2+LIMK1+AMOT+KIF5B+ZDHHC17+RIMS3+RIMS4+NCKAP1+VCP+AGRN+MECP2+CSNK2B+CAMK1+SEPTIN11+SPARC+TUBA1A+TUBB+APOE+SEMA3A+SPARCL1+CDH8+GPM6A+NECTIN1+PTPRO+PTPRT+SLITRK4+SLITRK1+SLITRK2+MAP1A+ACTN1+CAMK2B+DBNL+ACTN2+ACTN4+MPP2+TANC2+LAMB2+CDH9+EPHA3+PCDH17+IGSF9B+EFNA5+FLRT3+LRFN3+LRFN4+LRFN5+LRRC4B+SLITRK3+CDH10+CDH6+TENM3+TENM4+ELFN2+ELFN1+CADM2+CADM3+CADM4+ADAM11+MAPK14+MDGA1+MDGA2+YWHAZ+PLXND1+SYDE1+SYDE2+ADD2+EFNB1+SDCBP+CNTN5+PPFIA4+RAPH1+FZD5+EPHB2+LRRTM4+PPFIBP2+NTN1+NRG2+SRCIN1+ELAVL2+CHD4+ICAM5+EXOC7+SDC2+SRGAP2+PODXL+SRGAP2C+SRGAP2B+CRTAC1+RTN4R+VLDLR+SRPX2+SEMA4D+LRRTM1+LRRTM3+IL1RAPL2+NTRK3+APP+NLGN2+FZD1+CLSTN3+ATG9A+PSD+ARHGEF15+LZTS1+LZTS3+NUMBL+PUM2+LRP4+ARHGAP12+IQGAP1+NECTIN3+FAM107A+NEURL1+CPEB3+TRIM47+PALM+ZDHHC8+ARHGAP33+NCKIPSD+DPYSL2+SENP1+CRMP1+CC2D1A+PDLIM5+SAMD4A+SYNDIG1+DCLK1+DCX+PPP1R9B+ELMO1+RHOG+DOCK10+DOCK4+MARK1+SIGMAR1+NEDD8+UBE2M+NAE1+CARMIL3+SRGAP3+RAC3+SEMA4C+FLRT2+USP9X+PCDH7+S1PR2+MAP1B+ASIC2+ASIC1+PTPN1+CYFIP2+UBE3B+HTR4+GNA13+NDFIP1+NTF3+TOR1A+UCHL1+ELMO2+TRPC6+ORAI1+CRKL+NLGN3+DOCK7+CRK+ARHGEF9+GAP43+ABL1+EEF1A1+EEF1A2+CSMD2+FAM81A+LRRTM2+SIPA1L1+LRFN1+CRIPT+PRICKLE2+PRICKLE1+CASKIN1+FGFR1+LATS1+APH1B+EPHA4+NGEF+ADGRB3+PLXNC1+SKP1+C1QL1+VANGL2+CD47+RAI14+TRIOBP+BCAN+ABL2+ROBO2+SLIT2+VEZT+LNX1+EXOC2+CLSTN1+ROCK1+ROCK2+CNTNAP1+DAB1+AGO2+FGF7+SEMA7A+IGSF9+GRN+PLXNA4+SORT1+APPL1+TENM1+DGKZ+CLASP2+ARHGEF7+DAAM1+TLN2+ENAH+ARF1+ADGRB1+DBN1+NOS1AP+FRMPD4+CPNE6+EZR+SLC6A17+SLC6A8+SLC6A7+PGK1+RNF19A+CDH1+USP8+FBXO2+DDHD2+MTOR+CPEB2+FMR1+EIF4E+EIF4A3+EIF2B2+EIF3A+EIF4A1+EIF4G1+PABPC1+EIF3C+EIF3E+EIF3F+EIF3H+EIF3I+EIF3K+EIF3M+EIF3B+EIF3D+EIF1+EIF1AX+EIF1AY+EIF2A+EIF2S3+EIF2B1+EIF2B3+EIF2B4+EIF2B5+EIF2S1+EIF2S2+EIF4EBP1+ACHE+COMT+SEPTIN3+PSMA1+PSMA2+PSMA3+PSMA4+PSMA5+PSMA6+PSMA7+PSMA8+PSMB1+PSMB2+PSMB3+PSMB4+PSMB5+PSMB6+PSMB7+PSMB8+PSMB9+PSMB10+PSMC1+PSMC2+PSMC3+PSMC4+PSMC5+PSMC6+PSMD1+PSMD2+PSMD3+PSMD4+PSMD5+PSMD6+PSMD7+PSMD8+PSMD9+PSMD10+PSMD11+PSMD12+PSMD13+PSMD14+SEM1+ADRM1+PSME1+PSME2+PSME3+PSME4+PSMF1+ANAPC1+ANAPC2+CDC27+ANAPC4+ANAPC5+CDC16+ANAPC7+CDC23+ANAPC10+ANAPC11+CDC26+ANAPC13+ANAPC15+ANAPC16+FZR1+CDC20+RAB26+PLEKHG5+USP5+CAPN1+TRIM3+PIN1+KLHL17+CUL3+UBE2N+UBE2V1+PLK2+GAD1+GAD2+RPL22+RPL9+RPL10+RPL10A+RPL11+RPL12+RPL13+RPL13A+RPL14+RPL17+RPL15+RPL18+RPL23+RPL23A+RPL26+RPL24+RPL27+RPL27A+RPL28+RPL29+RPL32+RPL34+RPL35+RPL35A+RPL36+RPL36A+RPL37+RPL37A+RPL38+RPL4+RPL5+RPL6+RPL7+RPL7A+RPL8+RPLP0+RPLP2+UBA52+RPS10+RPS11+RPS12+RPS14+RPS15A+RPS16+RPS24+RPS26+RPS27A+RPS28+RPS5+RPS13+RPS27+RPSA+RPS2+RPS3+RPS3A+RPS4X+RPS4Y1+RPS4Y2+RPS6+RPS7+RPS8+RPS9+RPS15+RPS17+RPS18+RPS19+RPS20+RPS21+RPS23+RPS25+RPS27L+RPS29+FAU+RPLP1+RPL3+RPL3L+RPL7L1+RPL10L+RPL18A+RPL19+RPL21+RPL22L1+RPL26L1+RPL30+RPL31+RPL36AL+RPL39+RPL39L+RPL41+EEF2+ELAVL4+EEF2K+ATG16L1+TMEM230+RAB21+KIF2A+KIF21A+FEZ1+TERF2+RABGEF1+RAB17+KIF1A+KIF3A+KIF5A+KIF17+SEPTIN9+KIF3B+KIFAP3+PURA+HNRNPU+SFPQ+STAU2+KIF5C+MADD+ARL8A+ARL8B+GRIPAP1+RAB4A+MKLN1+RAB8A+MAPK10+GRIP1+GRIP2+NSG1"
+          }
+        },
+        {
+          "path": "/api/genes/search/multi/?organism=homo-sapiens",
+          "body": {
+            "q": "8647+5244+1244+1636+54+72+81+93+8540+183+185+189+54806+23746+6718+229+79053+79796+249+139285+56172+203286+54443+203859+3730+1175+57514+396+200894+403+84100+79798+80210+415+50617+525+5205+545+554+27077+80776+570+582+79738+166379+583+585+129880+55212+27241+617+80114+649+652+658+54796+7809+26005+760+57010+124583+843+846+57545+388389+79140+339829+55036+85478+8838+10309+23607+1028+1063+55835+153241+22995+22897+80184+95681+55165+51134+56683+157657+220136+1080+9557+55636+1136+9469+22856+22858+1184+1187+1188+10686+149461+1300+1282+1285+1286+1287+1299+1311+27235+51004+79934+57017+65250+23418+286204+78987+10491+1406+79848+1497+348180+8029+8452+10283+9420+51473+4921+83479+8526+1716+1717+23405+10683+1758+123872+23639+55172+352909+161582+54919+8701+1767+27019+64446+51726+83544+92749+25778+1848+54808+79659+55112+89891+51626+199221+10682+9451+2013+5167+157570+2121+132884+2131+2132+2138+2184+56975+22909+355+356+79633+389549+8822+8074+2253+2260+2263+60681+2317+23767+2335+27086+80144+158326+341640+2488+486+23193+2625+2657+8200+85476+2690+2717+2736+2737+84662+169792+2767+2778+8443+2796+2798+2719+10082+80000+23426+3000+23498+57817+8820+3073+3077+6928+3172+3209+3239+60495+9394+3291+80270+3339+54768+219844+387733+55764+9742+26160+11020+112752+57560+28981+3549+54756+3614+64423+56623+3636+27130+9657+3675+8516+182+25959+3758+3766+3769+3762+7403+9786+9928+3835+374654+3814+84634+26249+8085+8942+8270+3913+3930+167691+3931+3938+3952+3953+3972+8022+89884+3977+64788+4010+9227+9860+4038+4041+54585+9935+9863+23005+4148+84693+10461+145873+4256+8195+54903+166785+326625+27249+4322+118856+4318+4594+4358+4582+4627+4643+4645+4647+93649+55191+51594+4750+284086+50674+25836+1482+579+51314+64802+4838+9241+4853+4864+10577+4867+27031+261734+4868+7827+4882+190+8431+9971+4306+50814+26012+57122+9688+23363+4952+93233+55130+115948+8481+55644+5015+64175+9060+5076+5087+5122+5144+5147+57107+5189+5192+5193+5828+55670+5830+5190+5191+5251+84295+10464+5310+168507+5311+5314+51196+5352+5373+10908+5428+55703+5443+5449+5468+5479+5573+5589+60675+128674+8842+5626+5961+5745+5744+5800+5932+343035+145226+5959+5972+5979+6010+6017+55005+54476+6091+6092+4920+6121+57096+23322+50484+89765+345895+221421+860+6299+57167+51119+950+6337+6338+6340+10806+29927+11231+10371+5265+5176+871+8879+285590+6495+10736+147912+6557+6559+10165+10166+1836+1811+6514+6569+142680+23169+6521+8671+10599+28234+9353+50485+6609+6663+6664+64321+6657+6658+6662+6674+55812+10653+81848+64220+51684+6866+6870+23216+6913+9096+6926+6910+79600+79867+26123+7036+9414+84314+51524+51259+79583+65062+91147+4982+112858+51002+26146+10131+22954+9321+55687+7225+7227+59341+7248+7249+79809+9652+123016+7287+79770+54658+7369+7380+7428+63894+26276+55717+57728+57539+10785+84942+65125+65266+54361+7474+7476+7490+63929+64131+7547+51364+23090"
+          }
+        }
+      ],
+      "omit": [
+        "xrefs"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/integrations/{slug}/network/",
+      "documented": true,
+      "example": "/api/integrations/global/network/?entrez=3553&entrez=7124&giant_version=v1",
+      "samples": [
+        "/api/integrations/global/network/?entrez=3553&entrez=7124&giant_version=v1",
+        "/api/integrations/global/network/?entrez=3553&giant_version=v1",
+        "/api/integrations/global/network/?entrez=3553&entrez=7124&entrez=100188314&giant_version=v1",
+        "/api/integrations/global/network/?entrez=3553&entrez=7124&giant_version=v1&datatypes=co-expression",
+        "/api/integrations/global-v3/network/?entrez=3553&entrez=7124&giant_version=v3",
+        "/api/integrations/mononuclear-phagocyte/network/?entrez=3553&entrez=7124&giant_version=v1",
+        "/api/integrations/global/network/?entrez=100188314&giant_version=v1",
+        "/api/integrations/acute-inflammatory-response/network/?entrez=3553&entrez=7124&giant_version=v1",
+        "/api/integrations/global/network/?entrez=3383&entrez=3553&entrez=7124&giant_version=v1"
+      ],
+      "usedBy": [
+        "NetworkService.get"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/datatypes/",
+      "documented": true,
+      "example": "/api/datatypes/?version=1",
+      "samples": [
+        "/api/datatypes/?version=1",
+        "/api/datatypes/?version=3"
+      ],
+      "usedBy": [
+        "NetworkService.dataTypes"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/terms/annotated/",
+      "documented": true,
+      "example": "/api/terms/annotated/?entrez=3553&entrez=7124&database=gene-ontology-bp",
+      "omit": [
+        "description",
+        "url"
+      ],
+      "samples": [
+        "/api/terms/annotated/?entrez=330&entrez=355&entrez=366&entrez=597&entrez=941&entrez=1230&entrez=1236&entrez=1440&entrez=1536&entrez=2919&entrez=2921&entrez=3055&entrez=3383&entrez=3458&entrez=3552&entrez=3553&entrez=3554&entrez=3557&entrez=3569&entrez=3575&entrez=3576&entrez=3627&entrez=3726&entrez=3937&entrez=4790&entrez=4791&entrez=4792&entrez=5055&entrez=5266&entrez=5329&entrez=5341&entrez=5724&entrez=5743&entrez=5791&entrez=5971&entrez=6347&entrez=6348&entrez=6351&entrez=6352&entrez=6364&entrez=6648&entrez=7124&entrez=7127&entrez=7128&entrez=7133&entrez=7185&entrez=8638&entrez=8843&entrez=8870&entrez=9308&entrez=23645&entrez=80149&database=gene-ontology-bp",
+        "/api/terms/annotated/?entrez=366&entrez=597&entrez=602&entrez=834&entrez=960&entrez=963&entrez=1839&entrez=1848&entrez=2207&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3383&entrez=3553&entrez=3554&entrez=3557&entrez=3569&entrez=3575&entrez=3576&entrez=3627&entrez=4688&entrez=4790&entrez=5054&entrez=5055&entrez=5271&entrez=5329&entrez=5341&entrez=5552&entrez=5743&entrez=5791&entrez=6280&entrez=6347&entrez=6351&entrez=6364&entrez=6515&entrez=6648&entrez=6775&entrez=7097&entrez=7127&entrez=7128&entrez=7130&entrez=8638&entrez=8843&entrez=8870&entrez=8942&entrez=9308&entrez=10135&entrez=22822&entrez=54210&entrez=80149&database=gene-ontology-bp",
+        "/api/terms/annotated/?entrez=330&entrez=355&entrez=366&entrez=597&entrez=941&entrez=1230&entrez=1236&entrez=1440&entrez=1536&entrez=2919&entrez=2921&entrez=3055&entrez=3383&entrez=3458&entrez=3552&entrez=3553&entrez=3554&entrez=3557&entrez=3569&entrez=3575&entrez=3576&entrez=3627&entrez=3726&entrez=3937&entrez=4790&entrez=4791&entrez=4792&entrez=5055&entrez=5266&entrez=5329&entrez=5341&entrez=5724&entrez=5743&entrez=5791&entrez=5971&entrez=6347&entrez=6348&entrez=6351&entrez=6352&entrez=6364&entrez=6648&entrez=7124&entrez=7127&entrez=7128&entrez=7133&entrez=7185&entrez=8638&entrez=8843&entrez=8870&entrez=9308&entrez=23645&entrez=80149&database=brenda-ontology",
+        "/api/terms/annotated/?entrez=366&entrez=597&entrez=602&entrez=834&entrez=960&entrez=963&entrez=1839&entrez=1848&entrez=2207&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3383&entrez=3553&entrez=3554&entrez=3557&entrez=3569&entrez=3575&entrez=3576&entrez=3627&entrez=4688&entrez=4790&entrez=5054&entrez=5055&entrez=5271&entrez=5329&entrez=5341&entrez=5552&entrez=5743&entrez=5791&entrez=6280&entrez=6347&entrez=6351&entrez=6364&entrez=6515&entrez=6648&entrez=6775&entrez=7097&entrez=7127&entrez=7128&entrez=7130&entrez=8638&entrez=8843&entrez=8870&entrez=8942&entrez=9308&entrez=10135&entrez=22822&entrez=54210&entrez=80149&database=brenda-ontology",
+        "/api/terms/annotated/?entrez=205&entrez=272&entrez=356&entrez=597&entrez=713&entrez=969&entrez=1440&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3290&entrez=3383&entrez=3458&entrez=3552&entrez=3553&entrez=3554&entrez=3557&entrez=3569&entrez=3576&entrez=3624&entrez=4049&entrez=4321&entrez=4792&entrez=4916&entrez=5142&entrez=5271&entrez=5329&entrez=5341&entrez=5552&entrez=5743&entrez=6347&entrez=6348&entrez=6351&entrez=6364&entrez=6368&entrez=6648&entrez=7124&entrez=7127&entrez=7128&entrez=7130&entrez=7133&entrez=7980&entrez=8843&entrez=8870&entrez=9103&entrez=23645&entrez=53831&entrez=54210&entrez=80149&entrez=374286&entrez=414062&database=gene-ontology-bp",
+        "/api/terms/annotated/?entrez=205&entrez=272&entrez=356&entrez=597&entrez=713&entrez=969&entrez=1440&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3290&entrez=3383&entrez=3458&entrez=3552&entrez=3553&entrez=3554&entrez=3557&entrez=3569&entrez=3576&entrez=3624&entrez=4049&entrez=4321&entrez=4792&entrez=4916&entrez=5142&entrez=5271&entrez=5329&entrez=5341&entrez=5552&entrez=5743&entrez=6347&entrez=6348&entrez=6351&entrez=6364&entrez=6368&entrez=6648&entrez=7124&entrez=7127&entrez=7128&entrez=7130&entrez=7133&entrez=7980&entrez=8843&entrez=8870&entrez=9103&entrez=23645&entrez=53831&entrez=54210&entrez=80149&entrez=374286&entrez=414062&database=brenda-ontology",
+        "/api/terms/annotated/?entrez=330&entrez=355&entrez=597&entrez=602&entrez=960&entrez=1230&entrez=2207&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3383&entrez=3553&entrez=3557&entrez=3569&entrez=3575&entrez=3576&entrez=3627&entrez=3659&entrez=3726&entrez=3937&entrez=4600&entrez=4688&entrez=4790&entrez=4791&entrez=4792&entrez=4794&entrez=5155&entrez=5328&entrez=5329&entrez=5341&entrez=5743&entrez=5971&entrez=6347&entrez=6348&entrez=6351&entrez=6352&entrez=6364&entrez=6648&entrez=7097&entrez=7124&entrez=7127&entrez=7128&entrez=7130&entrez=7133&entrez=7185&entrez=8638&entrez=8843&entrez=8870&entrez=9308&entrez=22822&entrez=23645&entrez=80149&database=gene-ontology-bp",
+        "/api/terms/annotated/?entrez=330&entrez=355&entrez=597&entrez=602&entrez=960&entrez=1230&entrez=2207&entrez=2919&entrez=2920&entrez=2921&entrez=3055&entrez=3383&entrez=3553&entrez=3557&entrez=3569&entrez=3575&entrez=3576&entrez=3627&entrez=3659&entrez=3726&entrez=3937&entrez=4600&entrez=4688&entrez=4790&entrez=4791&entrez=4792&entrez=4794&entrez=5155&entrez=5328&entrez=5329&entrez=5341&entrez=5743&entrez=5971&entrez=6347&entrez=6348&entrez=6351&entrez=6352&entrez=6364&entrez=6648&entrez=7097&entrez=7124&entrez=7127&entrez=7128&entrez=7130&entrez=7133&entrez=7185&entrez=8638&entrez=8843&entrez=8870&entrez=9308&entrez=22822&entrez=23645&entrez=80149&database=brenda-ontology",
+        "/api/terms/annotated/?entrez=330&entrez=597&entrez=834&entrez=960&entrez=962&entrez=1026&entrez=1520&entrez=2919&entrez=3055&entrez=3108&entrez=3109&entrez=3119&entrez=3134&entrez=3383&entrez=3553&entrez=3557&entrez=3575&entrez=3576&entrez=3659&entrez=3726&entrez=4600&entrez=4688&entrez=4790&entrez=4791&entrez=4792&entrez=5328&entrez=5329&entrez=5341&entrez=5743&entrez=5791&entrez=5880&entrez=5971&entrez=6347&entrez=6348&entrez=6351&entrez=6352&entrez=6648&entrez=7124&entrez=7127&entrez=7128&entrez=7133&entrez=7832&entrez=8638&entrez=8837&entrez=8843&entrez=8870&entrez=9308&entrez=9938&entrez=10221&entrez=10437&entrez=22822&entrez=54440&database=gene-ontology-bp",
+        "/api/terms/annotated/?entrez=330&entrez=597&entrez=834&entrez=960&entrez=962&entrez=1026&entrez=1520&entrez=2919&entrez=3055&entrez=3108&entrez=3109&entrez=3119&entrez=3134&entrez=3383&entrez=3553&entrez=3557&entrez=3575&entrez=3576&entrez=3659&entrez=3726&entrez=4600&entrez=4688&entrez=4790&entrez=4791&entrez=4792&entrez=5328&entrez=5329&entrez=5341&entrez=5743&entrez=5791&entrez=5880&entrez=5971&entrez=6347&entrez=6348&entrez=6351&entrez=6352&entrez=6648&entrez=7124&entrez=7127&entrez=7128&entrez=7133&entrez=7832&entrez=8638&entrez=8837&entrez=8843&entrez=8870&entrez=9308&entrez=9938&entrez=10221&entrez=10437&entrez=22822&entrez=54440&database=brenda-ontology"
+      ],
+      "usedBy": [
+        "TermService.annotated"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/genes/{entrez}/annotations/",
+      "documented": true,
+      "example": "/api/genes/3383/annotations/?database=gene-ontology-bp",
+      "omit": [
+        "description",
+        "url",
+        "mesh_headings"
+      ],
+      "samples": [
+        "/api/genes/3553/annotations/?database=brenda-ontology",
+        "/api/genes/3553/annotations/?database=gene-ontology-bp&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/3553/annotations/?database=disease-ontology&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/7124/annotations/?database=brenda-ontology",
+        "/api/genes/7124/annotations/?database=gene-ontology-bp&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/7124/annotations/?database=disease-ontology&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/3383/annotations/?database=gene-ontology-bp&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/3383/annotations/?database=disease-ontology&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/3383/annotations/?database=brenda-ontology"
+      ],
+      "usedBy": [
+        "GeneFunctionService.get"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/genes/{entrez}/predictions/",
+      "documented": true,
+      "example": "/api/genes/3383/predictions/?database=gene-ontology-bp",
+      "omit": [
+        "description",
+        "url"
+      ],
+      "samples": [
+        "/api/genes/3553/predictions/?database=brenda-ontology",
+        "/api/genes/3553/predictions/?database=gene-ontology-bp&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/3553/predictions/?database=disease-ontology&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/7124/predictions/?database=brenda-ontology",
+        "/api/genes/7124/predictions/?database=gene-ontology-bp&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/7124/predictions/?database=disease-ontology&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/3383/predictions/?database=gene-ontology-bp&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/3383/predictions/?database=disease-ontology&score_cutoff=0.05&max_term_size=300",
+        "/api/genes/3383/predictions/?database=brenda-ontology"
+      ],
+      "usedBy": [
+        "GeneFunctionService.get"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/integrations/{slug}/evidence/",
+      "documented": true,
+      "example": "/api/integrations/global/evidence/?source=6348&target=7185",
+      "omit": [
+        "description",
+        "url",
+        "annotations",
+        "metadata"
+      ],
+      "samples": [
+        "/api/integrations/global/evidence/?source=6348&target=7185",
+        "/api/integrations/global/evidence/?source=3383&target=3553"
+      ],
+      "usedBy": [
+        "ConnectionService.evidence"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/integrations/edges/",
+      "documented": true,
+      "example": "/api/integrations/edges/?source=6348&target=7185",
+      "omit": [
+        "description",
+        "url"
+      ],
+      "samples": [
+        "/api/integrations/edges/?source=6348&target=7185"
+      ],
+      "usedBy": [
+        "ConnectionService.inAllNetworks"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/integrations/community/",
+      "documented": true,
+      "readOnly": false,
+      "usedBy": [
+        "ModuleService.submit",
+        "ModuleService.poll"
+      ],
+      "handBuiltSamples": {
+        "why": "The schema leaves the 200 body undefined and submitting a job to record one needs approval. These two files are hand-built from the Figma renal disease panel screens and say so in their note field; pnpm samples:record never touches them.",
+        "files": [
+          "integrations/community@body_tag=faa09d1786f0998dbd03d7323f544f5457d98936&giant_version=v1&integration=kidney&title=Renal+disease+panel@post-8c065d97",
+          "integrations/community@body_tag=faa09d1786f0998dbd03d7323f544f5457d98936@post-77074ba4"
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/netwas/",
+      "documented": true,
+      "readOnly": false,
+      "usedBy": [
+        "NetwasService.submit"
+      ],
+      "handBuiltSamples": {
+        "why": "Submitting starts a real job, which needs approval, so no submission is recorded. With the API off, submitting the example BMI file to adipose tissue answers with the hand-built running job below; any other submission explains that jobs need the API.",
+        "files": [
+          "netwas@post-ddae0d73"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/netwas/{id}/",
+      "documented": true,
+      "samples": [
+        "/api/netwas/00000000-0000-4000-8000-000000000000/"
+      ],
+      "usedBy": [
+        "NetwasService.get"
+      ],
+      "handBuiltSamples": {
+        "why": "The documented example job (d7732f19, 2017) has expired, so no real job can be read without submitting one. The queued, running, failed and finished jobs are hand-built, shaped like the schema, with IDs that are clearly not real jobs, and say so in their note field. The recorded sample is the not-found answer.",
+        "files": [
+          "netwas/00000000-0000-4000-8000-000000000001",
+          "netwas/00000000-0000-4000-8000-000000000002",
+          "netwas/00000000-0000-4000-8000-000000000003",
+          "netwas/00000000-0000-4000-8000-000000000004"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "https://s3-us-west-2.amazonaws.com/humanbase/netwas/{file}",
+      "documented": true,
+      "text": true,
+      "$note": "Not the API: the example files the API documents and the results_file a finished job links to, read as text.",
+      "samples": [
+        "https://s3-us-west-2.amazonaws.com/humanbase/netwas/examples/bmi-vegas.txt"
+      ],
+      "usedBy": [
+        "NetwasService.exampleFile",
+        "NetwasService.result"
+      ],
+      "handBuiltSamples": {
+        "why": "The result file of the hand-built finished job, made from the five rows the NetWAS docs print; a full result needs a real job.",
+        "files": [
+          "files/s3-us-west-2.amazonaws.com/humanbase/netwas/results/00000000-0000-4000-8000-000000000003.txt"
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/deepsea/jobs/",
+      "documented": true,
+      "readOnly": false,
+      "usedBy": [
+        "DeepseaService.submit"
+      ],
+      "$note": "Multipart upload. The schema does not name the file field; DeepseaService.fileField holds the guess to confirm. On October 20, 2026 the one approved ExPecto example job (ds_model=Beluga, expecto=true, the example VCF as input_file) answered 500 Server Error, so the field name is still unconfirmed and ExPecto’s samples are hand-built too.",
+      "handBuiltSamples": {
+        "why": "Submitting starts a real job. With the API off, submitting a tool’s example answers with a hand-built running job; any other file explains that jobs need the API.",
+        "files": [
+          "deepsea/jobs@post-f4c79f7c",
+          "deepsea/jobs@post-d5d72e89",
+          "deepsea/jobs@post-c312bddc",
+          "deepsea/jobs@post-3d67f823"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/jobs/{job_id}/",
+      "documented": true,
+      "$note": "The Seqweaver example job 76aea8fe-8ec7-4698-a193-a186c7665edb, written on the Figma job screens and checked in the Seqweaver API note on October 18, 2026.",
+      "samples": [
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/",
+        "/api/deepsea/jobs/00000000-0000-4000-8000-000000000000/"
+      ],
+      "usedBy": [
+        "DeepseaService.get"
+      ],
+      "handBuiltSamples": {
+        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
+        "files": [
+          "deepsea/jobs/00000000-0000-4000-8000-000000000101",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000111",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000112",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000113",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000121",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000131",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000141"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/jobs/{job_id}/score_types/",
+      "documented": true,
+      "samples": [
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/score_types/"
+      ],
+      "usedBy": [
+        "DeepseaService.scoreTypes"
+      ],
+      "handBuiltSamples": {
+        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
+        "files": [
+          "deepsea/jobs/00000000-0000-4000-8000-000000000101/score_types",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102/score_types",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000141/score_types"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/jobs/{job_id}/variant_scores/",
+      "documented": true,
+      "samples": [
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/variant_scores/?score_type=dis",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/variant_scores/?score_type=mean-evalue"
+      ],
+      "usedBy": [
+        "DeepseaService.variantScores"
+      ],
+      "handBuiltSamples": {
+        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
+        "files": [
+          "deepsea/jobs/00000000-0000-4000-8000-000000000101/variant_scores@score_type=max_seqclass",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000101/variant_scores@score_type=mean-evalue",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102/variant_scores@score_type=dis",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102/variant_scores@score_type=mean-evalue",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000141/variant_scores@score_type=expecto"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/jobs/{job_id}/feature_predictions/",
+      "documented": true,
+      "samples": [
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=1:109817590",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=10:23508363",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:52599188",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:209709",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:83947129",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:85833314",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=17:76352731",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=19:1854681",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=19:55999138",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=19:59070227",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=evalue&chr_variant=1:109817590",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=diffs&chr_variant=1:109817590"
+      ],
+      "usedBy": [
+        "DeepseaService.featurePredictions"
+      ],
+      "handBuiltSamples": {
+        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
+        "files": [
+          "deepsea/jobs/00000000-0000-4000-8000-000000000101/feature_predictions@chr_variant=7%3A49813589&score_type=seqclass",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000102/feature_predictions@chr_variant=3%3A12598855&score_type=zscore",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000141/feature_predictions@chr_variant=3%3A12598855&score_type=expecto",
+          "deepsea/jobs/00000000-0000-4000-8000-000000000141/feature_predictions@chr_variant=5%3A134871851&score_type=expecto"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/{name}/features/",
+      "documented": true,
+      "omit": [
+        "description",
+        "expecto_features"
+      ],
+      "samples": [
+        "/api/deepsea/SeqWeaver/features/",
+        "/api/deepsea/Beluga/features/",
+        {
+          "path": "/api/deepsea/Beluga/features/?expecto=true",
+          "omit": [
+            "model_features"
+          ]
+        }
+      ],
+      "usedBy": [
+        "DeepseaService.features",
+        "DeepseaService.features (ExPecto)"
+      ],
+      "$note": "Sei answers with 4 MB, too large to bundle; its 40 sequence classes are hand-built below. Seqweaver and Beluga are recorded without descriptions. ExPecto reads the same Beluga list with expecto=true and only needs its 218 expecto_features, so that sample drops model_features.",
+      "handBuiltSamples": {
+        "why": "Sei’s live list is 4 MB of chromatin profiles; the sample holds its 40 sequence classes instead.",
+        "files": [
+          "deepsea/Sei/features"
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/genes/{entrez}/tissue_variants/",
+      "documented": true,
+      "example": "/api/genes/345611/tissue_variants/?database=expecto-tissues&collapse=true",
+      "samples": [
+        {
+          "path": "/api/genes/345611/tissue_variants/?database=expecto-tissues&collapse=true",
+          "digits": 3
+        },
+        {
+          "path": "/api/genes/5728/tissue_variants/?database=clever-tissues&collapse=true",
+          "digits": 2
+        },
+        "/api/genes/100188314/tissue_variants/?database=expecto-tissues&collapse=true",
+        "/api/genes/100188314/tissue_variants/?database=clever-tissues&collapse=true"
+      ],
+      "usedBy": [
+        "ExpectoService.tissueVariants"
+      ],
+      "$note": "ExPecto (expecto-tissues) and ExPecto SC (clever-tissues). collapse=true leaves out the 14 tissues marked redundant. A gene without predictions answers 404. Samples are rounded (3 and 2 decimals, beyond what the heatmaps show) to keep them small; CCR1, the second ExPecto example, is 1.6 MB and is not bundled."
+    },
+    {
+      "method": "GET",
+      "path": "/api/variants/",
+      "documented": false,
+      "example": "/api/variants/?version=v1&gene__standard_name__istartswith=IRGM&page=1",
+      "samples": [
+        "/api/variants/?version=v1&page=1",
+        "/api/variants/?version=v1&gene__standard_name__istartswith=IRGM&page=1",
+        "/api/variants/?version=v1&rsid=rs531708574&page=1",
+        "/api/variants/?version=v1&chromosome=chr1&position__gte=877047&position__lte=877047&page=1",
+        "/api/variants/?version=v1&gene__standard_name__istartswith=NOTAGENE&page=1"
+      ],
+      "usedBy": [
+        "ExpectoService.searchVariants",
+        "ExpectoService.variantTotal"
+      ],
+      "$note": "Not in /api/schema/ (see the issue for Julien beside the ExPecto lane). The gene filter matches the start of the symbol, so ExpectoService keeps the exact gene. position is ignored; position__gte and position__lte work. 20 rows a page."
     }
   ]
 }

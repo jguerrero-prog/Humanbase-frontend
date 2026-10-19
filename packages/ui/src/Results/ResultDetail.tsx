@@ -1,8 +1,9 @@
-import type { CSSProperties, ReactNode } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import { Badge } from '../Badge/Badge';
 import { DrawerSection } from '../Drawer/Drawer';
 import { Icon } from '../Icon/Icon';
 import { SegmentedControl } from '../SegmentedControl/SegmentedControl';
+import { Skeleton } from '../Skeleton/Skeleton';
 import { Cell, HeaderCell, ScoreCell, Table } from '../Table/Table';
 import { ValueFormat } from '../Table/ValueFormat';
 import type { GeneIdLink } from './GeneIdsMenu';
@@ -23,18 +24,27 @@ export function ScoreMeter({ label, value, text }: { label: string; value: numbe
   );
 }
 
+export interface AnnotationSource {
+  value: string;
+  label: string;
+  /** Undefined while the terms load. */
+  terms: readonly string[] | undefined;
+}
+
 export interface GeneDetailProps {
-  score: { label: string; value: number; text: string };
+  /** Left out for a query gene, which has no connection score to itself. */
+  score?: { label: string; value: number; text: string };
   aliases?: readonly string[];
   ids?: readonly GeneIdLink[];
-  annotations?: { label: string; sources: readonly { value: string; label: string; terms: readonly string[] }[] };
+  annotations?: { label: string; sources: readonly AnnotationSource[] };
 }
 
 export function GeneDetail({ score, aliases = [], ids = [], annotations }: GeneDetailProps) {
-  const first = annotations?.sources[0];
+  const [chosen, setChosen] = useState<string>();
+  const source = annotations?.sources.find((item) => item.value === chosen) ?? annotations?.sources[0];
   return (
     <>
-      <ScoreMeter {...score} />
+      {score && <ScoreMeter {...score} />}
       {aliases.length > 0 && (
         <DrawerSection label="Also known as">
           <p className="result-detail-text">{aliases.join(', ')}</p>
@@ -54,14 +64,22 @@ export function GeneDetail({ score, aliases = [], ids = [], annotations }: GeneD
           </ul>
         </DrawerSection>
       )}
-      {annotations && first && (
+      {annotations && source && (
         <DrawerSection label={annotations.label}>
-          <SegmentedControl label="Annotation source" hideLabel size="small" segments={annotations.sources.map(({ value, label }) => ({ value, label }))} defaultValue={first.value} />
-          <ul className="result-detail-rows">
-            {first.terms.map((term) => (
-              <li key={term}>{term}</li>
-            ))}
-          </ul>
+          <SegmentedControl label="Annotation source" hideLabel size="small" segments={annotations.sources.map(({ value, label }) => ({ value, label }))} value={source.value} onChange={setChosen} />
+          {!source.terms ? (
+            <p className="result-detail-text" aria-busy="true">
+              <Skeleton width="80%" />
+            </p>
+          ) : source.terms.length === 0 ? (
+            <p className="result-detail-text">No {source.label} terms for this gene.</p>
+          ) : (
+            <ul className="result-detail-rows">
+              {source.terms.map((term) => (
+                <li key={term}>{term}</li>
+              ))}
+            </ul>
+          )}
         </DrawerSection>
       )}
     </>

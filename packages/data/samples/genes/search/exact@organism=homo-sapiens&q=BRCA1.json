@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 672,
+      "standard_name": "BRCA1",
+      "aliases": "BROVCA1|PPP1R53|PSCP|BRCAI|BRCC1|PNCA4|FANCS|RNF53|IRIS",
+      "xrefs": "672|ENSG00000012048|113705|HGNC:1100",
+      "description": "BRCA1 DNA repair associated",
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}
