@@ -354,6 +354,8 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
                 selected={view.selection?.kind === 'gene' ? view.selection.entrez : undefined}
                 onSelectGene={(entrez) => select({ kind: 'gene', entrez })}
                 onAddGene={addGene}
+                starred={view.starred}
+                onToggleStar={(identifier) => onViewChange(view.toggleStar(identifier))}
               />
               <p className="result-note">
                 The panel follows the network you used last, here {focusTitle}. Selecting a gene or connection in the other network switches it.
@@ -382,6 +384,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
         expanded={view.expanded}
         main={
           <GraphPanel
+            network={network}
             subset={subset}
             relatedTotal={network?.related().length ?? 0}
             view={view}
@@ -408,6 +411,8 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
             selected={view.selection?.kind === 'gene' ? view.selection.entrez : undefined}
             onSelectGene={(entrez) => select({ kind: 'gene', entrez })}
             onAddGene={addGene}
+            starred={view.starred}
+            onToggleStar={(identifier) => onViewChange(view.toggleStar(identifier))}
           />
         }
       />

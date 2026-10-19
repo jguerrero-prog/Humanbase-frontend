@@ -13,6 +13,7 @@ import {
   GeneMatchList,
   GraphToolbar,
   HeaderCell,
+  StarToggle,
   IconButton,
   KeyLegend,
   NetworkWeightTable,
@@ -146,7 +147,20 @@ const diseases: RankedAnnotation[] = [
 
 const queryGenes = new GeneMatchList([{ id: 'IL1B', typed: ['IL1B'], status: 'matched', candidates: [{ entrez: '3553', symbol: 'IL1B', name: 'interleukin 1 beta', aliases: ['IL1F2', 'IL1beta', 'IL-1', 'IL1-BETA'] }] }]);
 
+const starredExample = [
+  { name: 'peripheral blood', genes: 3, color: '--viz-cat-1' },
+  { name: 'dendritic cell', genes: 3, color: '--viz-cat-2' },
+  { name: 'tonsil', genes: 2, color: undefined },
+];
+
 const notes = {
+  star: [
+    'Sets take the categorical colors in the order they were starred: viz.cat.1 first, then .2, and so on. The same color marks the star, the rings in the graph and the swatch in the Starred sets menu.',
+    'A gene in several starred sets gets one ring per set, stacked outward. A light hull of the set’s color sits behind its genes.',
+    'The Starred sets menu in the graph toolbar lists each set with its color and how many of its genes are in the graph. Choosing one removes it; Clear all starred sets removes them all.',
+    'Starred sets live in the URL (?star=…), so a refresh or a shared link keeps them. Compared networks share them, each ringing its own genes.',
+    'Each star is a toggle button with aria-pressed, named “Highlight peripheral blood genes in the network”. The tooltip says “Highlight genes in the network”.',
+  ],
   regions: [
     'Gene, connection and module detail opens in the Medium drawer over the page because annotation and evidence lists are long. The result underneath stays unchanged and comes back when the drawer closes.',
     'The header scrolls away; the top bar stays. Tabs in the header become sticky under the top bar once the header leaves the screen.',
@@ -212,9 +226,10 @@ const specs = [
   ['grid', '1440px: 64px margins, 12 columns of 87px, 24px gutters'],
   ['result header', '24px below the top bar; title Cabin Medium 36; 14px between rows; tabs at the bottom'],
   ['main view', '8 columns (866px at 1440), white, 1px border.subtle, radius.md 12px, 20px padding'],
-  ['graph toolbar', '36px icon buttons, 8px apart, in three groups split by dividers: view (zoom, fit, expand), layout (layout, pause, starred sets), output (download). Each has a tooltip and an accessible name.'],
+  ['graph toolbar', '36px icon buttons, 8px apart, in groups split by dividers: view (zoom, fit, expand), output (download), then the Starred sets menu. Each has a tooltip and an accessible name.'],
   ['companion', '4 columns (421px at 1440); table or summary'],
   ['companion tabs', 'Genes, Processes, Tissues, each with a count; search and download sit above the table'],
+  ['star toggle', '32px button with a 16px star, grey 600; pressed, the star fills with its set’s viz.cat color inside an ink outline; aria-pressed, named “Highlight <term> genes in the network”'],
   ['drawer', '480px (Medium), from the top of the body to the bottom of the window; covers the companion'],
   ['vertical rhythm', '24px between header and body; 40px bottom padding before the footer'],
   ['breakpoints', '1280px and up side by side; 960 to 1279px stacked; below 960px phone layout'],
@@ -344,6 +359,24 @@ const networkSettings = (tissue: string) => [
       </Drawer>
     </div>
     <ul class="points">{notes.edge.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Highlighting a set" lead="Each row of the Processes and Tissues panels starts with a star. Starring a row rings its genes in the graph in that set’s color, so people can see where a process or tissue sits in the network.">
+    <Table caption="Tissues and cell types of the genes in the global network graph" density="compact" columnWidths={['40px', 'auto', '112px']}>
+      <thead>
+        <tr><HeaderCell><span class="visually-hidden">Highlight</span></HeaderCell><HeaderCell>Tissue or cell type</HeaderCell><HeaderCell align="end">Genes</HeaderCell></tr>
+      </thead>
+      <tbody>
+        {starredExample.map((row) => (
+          <tr>
+            <Cell><StarToggle name={row.name} pressed={row.color !== undefined} color={row.color} onToggle={() => undefined} /></Cell>
+            <Cell rowHeader>{row.name}</Cell>
+            <Cell type="number">{row.genes}</Cell>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+    <ul class="points">{notes.star.map((note) => <li>{note}</li>)}</ul>
   </DocSection>
 
   <DocSection title="Comparing networks" lead="Compare adds another network for the same genes beside the first. Each column has its own tissue, data types, view controls and filters, so differences between tissues are easy to see.">

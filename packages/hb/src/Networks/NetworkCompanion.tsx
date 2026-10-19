@@ -14,11 +14,13 @@ export interface NetworkCompanionProps {
   selected: number | undefined;
   onSelectGene: (entrez: number) => void;
   onAddGene: (gene: NetworkGene) => void;
+  starred: readonly string[];
+  onToggleStar: (identifier: string) => void;
 }
 
 type Panel = 'genes' | 'processes' | 'tissues';
 
-export function NetworkCompanion({ network, shown, queryNames, networkTitle, fileName, selected, onSelectGene, onAddGene }: NetworkCompanionProps) {
+export function NetworkCompanion({ network, shown, queryNames, networkTitle, fileName, selected, onSelectGene, onAddGene, starred, onToggleStar }: NetworkCompanionProps) {
   const [panel, setPanel] = useState<Panel>('genes');
   // Terms load once for every gene in the response, then rank against whichever genes the graph shows.
   const allGenes = useMemo(() => network?.genes.map((gene) => gene.entrez), [network]);
@@ -57,6 +59,8 @@ export function NetworkCompanion({ network, shown, queryNames, networkTitle, fil
           onRetry={() => void (panel === 'processes' ? processes : tissues).refetch()}
           caption={panel === 'processes' ? `Biological processes over-represented among the genes in the ${networkTitle} network graph` : `Tissues and cell types of the genes in the ${networkTitle} network graph`}
           fileName={fileName}
+          starred={starred}
+          onToggleStar={onToggleStar}
         />
       )}
     </Tabs>

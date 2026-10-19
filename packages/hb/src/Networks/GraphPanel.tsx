@@ -1,13 +1,16 @@
-import type { NetworkSubset, NetworkView } from '@humanbase/data';
+import type { Network, NetworkSubset, NetworkView } from '@humanbase/data';
 import { edgeBands, NetworkGraph, type GraphData, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
-import { Checkbox, GraphToolbar, KeyLegend, saveFile, Slider, Spinner, type GraphAction } from '@humanbase/ui';
+import { ActionMenu, Checkbox, GraphToolbar, KeyLegend, saveFile, Slider, Spinner, type ActionMenuItem, type GraphAction } from '@humanbase/ui';
 import { useMemo, useRef, type ReactNode } from 'react';
 import { ConnectionsTable } from './ConnectionsTable';
+import { useStarredHighlights } from './starredSets';
 
 const legendItems = [...edgeBands].reverse().map(({ label, color, width }) => ({ label, color, width }));
 const zoomStep = 1.3;
 
 export interface GraphPanelProps {
+  /** The whole response, whose genes the starred sets are looked up for. */
+  network: Network | undefined;
   /** Undefined while the network loads. */
   subset: NetworkSubset | undefined;
   relatedTotal: number;
@@ -27,7 +30,7 @@ export interface GraphPanelProps {
   renderer?: GraphRendererFactory | undefined;
 }
 
-export function GraphPanel({ subset, relatedTotal, view, minConfidence, label, tableCaption, fileName, selection, loading, canExpand = true, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
+export function GraphPanel({ network, subset, relatedTotal, view, minConfidence, label, tableCaption, fileName, selection, loading, canExpand = true, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
   const graph = useRef<NetworkGraphHandle>(null);
   const data = useMemo<GraphData | undefined>(
     () =>
@@ -37,6 +40,18 @@ export function GraphPanel({ subset, relatedTotal, view, minConfidence, label, t
       },
     [subset],
   );
+  const highlights = useStarredHighlights(network, subset?.genes, view.starred);
+  const starredItems: ActionMenuItem[] = highlights.length
+    ? [
+        ...highlights.map((set) => ({
+          label: `Remove ${set.label}`,
+          description: `${set.nodes.length} ${set.nodes.length === 1 ? 'gene' : 'genes'} in the graph`,
+          swatch: set.color,
+          onSelect: () => onViewChange(view.toggleStar(set.id)),
+        })),
+        { label: 'Clear all starred sets', dividerBefore: true, onSelect: () => onViewChange(view.with({ starred: [] })) },
+      ]
+    : [{ label: 'Star a process or tissue to highlight its genes', disabled: true }];
   const shownRelated = subset ? subset.genes.filter((gene) => !gene.isQuery).length : 0;
 
   const asTable = view.display === 'table';
@@ -62,7 +77,9 @@ export function GraphPanel({ subset, relatedTotal, view, minConfidence, label, t
 
   return (
     <>
-      <GraphToolbar label="Graph controls" groups={toolbar} tableLabel={asTable ? 'View as graph' : 'View as table'} onViewTable={() => onViewChange(view.with({ display: asTable ? 'graph' : 'table' }))} />
+      <GraphToolbar label="Graph controls" groups={toolbar} tableLabel={asTable ? 'View as graph' : 'View as table'} onViewTable={() => onViewChange(view.with({ display: asTable ? 'graph' : 'table' }))}>
+        {!asTable && <ActionMenu label={highlights.length ? `Starred sets, ${highlights.length}` : 'Starred sets'} icon="star" items={starredItems} />}
+      </GraphToolbar>
       {asTable && subset ? (
         <ConnectionsTable
           edges={subset.edges}
@@ -78,6 +95,7 @@ export function GraphPanel({ subset, relatedTotal, view, minConfidence, label, t
             data={data}
             label={label}
             selection={selection}
+            highlights={highlights}
             renderer={renderer}
             onSelectNode={(id) => onSelectGene(Number(id))}
             onSelectLink={(source, target) => onSelectConnection(Number(source), Number(target))}

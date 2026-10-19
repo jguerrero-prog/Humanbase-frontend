@@ -179,3 +179,23 @@ test('Compare adds a second network side by side, keeps it in the URL and has no
   await expect(page).not.toHaveURL(/compare=/);
   expect(apiRequests).toEqual([]);
 });
+
+test('starring a tissue rings its genes, keeps the star in the URL and has no WCAG 2.2 AA violations', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&shown=13`);
+  await page.getByRole('tab', { name: /Tissues/ }).click();
+  await page.getByRole('button', { name: 'Highlight peripheral blood genes in the network' }).click();
+  await expect(page).toHaveURL(/star=BTO%3A0000553|star=BTO:0000553/);
+  const ringed = page.locator('.force-graph-node').filter({ has: page.locator('.force-graph-star') });
+  await expect(ringed).toHaveCount(3);
+  expect((await ringed.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('aria-label')?.split(',')[0]))).sort()).toEqual(['CCL20', 'RELB', 'TNFRSF1B']);
+  await page.getByRole('button', { name: 'Starred sets, 1' }).click();
+  await expect(page.getByRole('menuitem', { name: /Remove peripheral blood/ })).toBeVisible();
+  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
+  const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
+  expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  await page.keyboard.press('Escape');
+  await page.reload();
+  await expect(page.locator('.force-graph-node').filter({ has: page.locator('.force-graph-star') })).toHaveCount(3);
+  expect(apiRequests).toEqual([]);
+});

@@ -49,6 +49,7 @@ export function ComparePane({ query, view, title, integrations, queryNames, file
         </Alert>
       ) : (
         <GraphPanel
+          network={network}
           subset={subset}
           relatedTotal={network?.related().length ?? 0}
           view={view}

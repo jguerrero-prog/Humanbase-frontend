@@ -45,6 +45,31 @@ describe('NetworkExplorer', () => {
     expect(within(table).getByText('No genes match “chemokinezzz”')).toBeInTheDocument();
   });
 
+  it('stars a tissue to highlight its genes, and lists starred sets in the graph toolbar', async () => {
+    const { onViewChange } = renderExplorer(new NetworkQuery([3553, 7124]));
+    await screen.findByRole('table', { name: /Genes functionally related/ });
+    await userEvent.click(screen.getByRole('tab', { name: /Tissues/ }));
+    const star = await screen.findByRole('button', { name: 'Highlight peripheral blood genes in the network' });
+    expect(star).toHaveAttribute('aria-pressed', 'false');
+    await userEvent.click(star);
+    expect(onViewChange.mock.calls.at(-1)?.[0].starred).toEqual(['BTO:0000553']);
+  });
+
+  it('rings starred genes and offers to remove them', async () => {
+    const { onViewChange } = renderExplorer(new NetworkQuery([3553, 7124]), { view: new NetworkView().with({ shown: 13, starred: ['BTO:0000553'] }) });
+    await userEvent.click(await screen.findByRole('tab', { name: /Tissues/ }));
+    expect(await screen.findByRole('button', { name: 'Highlight peripheral blood genes in the network' })).toHaveAttribute('aria-pressed', 'true');
+    const ringed = await vi.waitFor(() => {
+      const nodes = [...document.querySelectorAll('.force-graph-node')].filter((node) => node.querySelector('.force-graph-star'));
+      expect(nodes.length).toBeGreaterThan(0);
+      return nodes.map((node) => node.getAttribute('aria-label')?.split(',')[0]).sort();
+    });
+    expect(ringed).toEqual(['CCL20', 'RELB', 'TNFRSF1B']);
+    await userEvent.click(screen.getByRole('button', { name: 'Starred sets, 1' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: /Remove peripheral blood/ }));
+    expect(onViewChange.mock.calls.at(-1)?.[0].starred).toEqual([]);
+  });
+
   it('explains a gene that is in no network', async () => {
     renderExplorer(new NetworkQuery([100188314]));
     expect(await screen.findByText('AUTS12 is not in this network')).toBeInTheDocument();
