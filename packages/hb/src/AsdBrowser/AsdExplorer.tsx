@@ -2,6 +2,7 @@ import {
   ApiError, AsdVariant, featureEffects, featureLabel, GenomeLocation, useAsdColumns, useAsdEffects, useAsdPage, useAsdRange, useHumanbase,
   type AsdFeatureSet, type AsdVariantRow, type FeaturePredictionRecord, type FeaturesRecord,
 } from '@humanbase/data';
+import { defaultGenomeEngine, GenomeEngineView, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
 import { Alert, GenomeBrowserToolbar, Heatmap, ResultLayout, ScoreTracks, Skeleton, zEffects } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 import { EffectsCard } from '../Deepsea/EffectsCard';
@@ -21,6 +22,8 @@ export interface AsdState {
 export interface AsdExplorerProps {
   state: AsdState;
   onStateChange: (next: Partial<AsdState>) => void;
+  /** The genome browser used when the API is on; with the API off the page draws the score tracks itself. */
+  engine?: GenomeBrowserEngineFactory | undefined;
 }
 
 const defaultLocation = new GenomeLocation('chr1', 2_230_000, 2_440_000);
@@ -32,6 +35,12 @@ const featureSets = [
   { value: 'rna', label: 'RNA features' },
 ];
 const sampleHelp = 'With the API off, the sample data covers chr1:2,230,000-2,440,000 and the CHD8, SCN2A and CHD9 examples. Search one of those, or turn the API on.';
+// The live ASD page's two impact tracks and their style.
+const impactStyle = { type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: '#105CC9', HEIGHT: 50, MIN: 0, MAX: 3 } };
+const impactTracks: readonly GenomeDataTrack[] = [
+  { name: 'DNA Disease Impact Score', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw', style: impactStyle },
+  { name: 'RNA Disease Impact Score', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw', style: impactStyle },
+];
 const notice = 'Simons Simplex Collection (and Simons VIP) data may only be used for projects that advance autism and related developmental disorder research. Questions about the data go to collections@sfari.org.';
 
 type SearchBox = 'page' | 'browser';
@@ -54,7 +63,7 @@ function nearestCenter(rows: readonly AsdVariantRow[], location: GenomeLocation)
 }
 
 /** The connected ASD Browser: search, the genome browser view with each variant's molecular effects, and the table. */
-export function AsdExplorer({ state, onStateChange }: AsdExplorerProps) {
+export function AsdExplorer({ state, onStateChange, engine = defaultGenomeEngine }: AsdExplorerProps) {
   const api = useHumanbase();
   const location = useMemo(() => locationOf(state.location), [state.location]);
   const [query, setQuery] = useState('');
@@ -111,7 +120,7 @@ export function AsdExplorer({ state, onStateChange }: AsdExplorerProps) {
       }
       main={
         state.view === 'browser' ? (
-          <BrowserView location={location} state={state} onStateChange={onStateChange} onLocation={(text) => void search(text, 'browser')} locationError={searchError?.from === 'browser' ? searchError.text : undefined} searchedGene={searchedGene} />
+          <BrowserView engine={engine} location={location} state={state} onStateChange={onStateChange} onLocation={(text) => void search(text, 'browser')} locationError={searchError?.from === 'browser' ? searchError.text : undefined} searchedGene={searchedGene} />
         ) : (
           <TableView location={location} rangeOnly={rangeOnly} onRangeOnlyChange={setRangeOnly} onSelect={(row) => onStateChange({ view: 'browser', location: inView(row, location) ? location.format() : new GenomeLocation(row.chromosome, row.position, row.position).withWidth(location.width).format(), variant: keyOf(row) })} />
         )
@@ -121,6 +130,7 @@ export function AsdExplorer({ state, onStateChange }: AsdExplorerProps) {
 }
 
 interface BrowserViewProps {
+  engine: GenomeBrowserEngineFactory;
   location: GenomeLocation;
   state: AsdState;
   onStateChange: (next: Partial<AsdState>) => void;
@@ -129,8 +139,11 @@ interface BrowserViewProps {
   searchedGene: string | undefined;
 }
 
-function BrowserView({ location, state, onStateChange, onLocation, locationError, searchedGene }: BrowserViewProps) {
+function BrowserView({ engine, location, state, onStateChange, onLocation, locationError, searchedGene }: BrowserViewProps) {
   const { showsSamples } = useHumanbase();
+  const [engineStatus, setEngineStatus] = useState<{ status: EngineStatus; error?: Error | undefined }>({ status: 'loading' });
+  const region = useMemo(() => ({ chrom: location.chrom, start: location.start, end: location.end }), [location]);
+  const onRegionChange = (moved: GenomeRegion) => onStateChange({ location: new GenomeLocation(moved.chrom, moved.start, moved.end).format() });
   const range = useAsdRange(location);
   const rows = range.data;
   const selected = rows?.find((row) => keyOf(row) === state.variant) ?? (rows && nearestCenter(rows, location));
@@ -162,7 +175,7 @@ function BrowserView({ location, state, onStateChange, onLocation, locationError
   } else {
     body = (
       <>
-        <ScoreTracks
+        {showsSamples && <ScoreTracks
           label={location.regionLabel(2)}
           start={location.start}
           end={location.end}
@@ -173,9 +186,9 @@ function BrowserView({ location, state, onStateChange, onLocation, locationError
             { name: 'DNA disease impact score', source: 'Model score', scale: '−0.4 to 3', values: rows.map((row) => ({ position: row.position, value: row.dnaScore })) },
             { name: 'RNA disease impact score', source: 'Model score', scale: '−0.4 to 3', values: rows.map((row) => ({ position: row.position, value: row.rnaScore })) },
           ]}
-        />
+        />}
         <p className="asd-browser-note">
-          {count.format(rows.length)} variants in view; the selected one, {labelOf(selected)}, is drawn in ink. Previous variant and Next variant step through them, and the Table view lists them all.
+          {count.format(rows.length)} variants in view; the selected one, {labelOf(selected)}, is {showsSamples ? 'drawn in ink' : 'highlighted in the browser'}. Previous variant and Next variant step through them, and the Table view lists them all.
         </p>
         <VariantEffects key={`${keyOf(selected)}-${state.set}`} location={location} rows={rows} selected={selected} set={state.set} onSetChange={(set) => onStateChange({ set })} />
       </>
@@ -197,6 +210,25 @@ function BrowserView({ location, state, onStateChange, onLocation, locationError
         onNextVariant={() => step(1)}
         trackActions={false}
       />
+      {!showsSamples && (
+        <>
+          {engineStatus.status === 'failed' && (
+            <Alert tone="error" title="The genome browser couldn’t load">
+              {engineStatus.error?.message ?? 'Biodalliance didn’t start.'} The variants and their effects below still work.
+            </Alert>
+          )}
+          <GenomeEngineView
+            engine={engine}
+            label={location.regionLabel(impactTracks.length + 2)}
+            assembly="hg19"
+            region={region}
+            tracks={impactTracks}
+            selected={selected ? { chrom: selected.chromosome, position: selected.position } : undefined}
+            onRegionChange={onRegionChange}
+            onStatusChange={(status, error) => setEngineStatus({ status, error })}
+          />
+        </>
+      )}
       {body}
     </div>
   );

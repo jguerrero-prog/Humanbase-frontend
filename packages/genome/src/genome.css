@@ -1,0 +1,6 @@
+.genome-engine {
+  min-block-size: 240px;
+  overflow-x: auto;
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
