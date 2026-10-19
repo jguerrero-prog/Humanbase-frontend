@@ -7,6 +7,7 @@ import {
   EffectGroups,
   EffectsControls,
   EffectsHeatmap,
+  expressionEffects,
   MolecularEffects,
   ResultHeader,
   ResultLayout,
@@ -21,6 +22,7 @@ import {
   VariantScorePlot,
   VariantsTable,
   zEffects,
+  type EffectScale,
   type EffectsView,
   type PlotBy,
 } from '@humanbase/ui';
@@ -42,6 +44,11 @@ const tableLabels: Record<string, string> = { dis: 'Disease impact', 'mean-evalu
 const shownRows = 9;
 const heatmapRows = 20;
 const number = new Intl.NumberFormat('en-US');
+
+function effectScaleOf(model: DeepseaJob['model']): EffectScale {
+  if (model.id === 'sei') return sequenceClassEffects;
+  return model.expecto ? expressionEffects : zEffects;
+}
 
 const scoreOptions = (types: readonly ScoreType[]) => types.map((type) => ({ value: type.short_name, label: type.name.replace('-log', '−log') }));
 const matches = (variant: VariantRow, text: string) => `${variantLabel(variant)} ${variant.name}`.toLowerCase().includes(text.trim().toLowerCase());
@@ -194,7 +201,7 @@ interface VariantEffectsCardProps {
 /** The selected variant's effect on every feature: Strongest effects, Heatmap and All features. */
 function VariantEffectsCard({ job, variant, featureTypes }: VariantEffectsCardProps) {
   const model = job.model;
-  const scale = model.id === 'sei' ? sequenceClassEffects : zEffects;
+  const scale = effectScaleOf(model);
   const [typeKey, setTypeKey] = useState<string>();
   const type = featureTypes.find((item) => item.short_name === typeKey) ?? featureTypes[0];
   const [view, setView] = useState<EffectsView>('strongest');

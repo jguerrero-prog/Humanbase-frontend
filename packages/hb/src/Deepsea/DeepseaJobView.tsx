@@ -2,7 +2,7 @@ import { ApiError, useDeepseaJob, type DeepseaJob } from '@humanbase/data';
 import { Alert, ContextLabel, EmptyState, ResultFiles, Skeleton, type JobStep } from '@humanbase/ui';
 import { useEffect } from 'react';
 import { elapsed, jobDateTime, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
-import { deepseaJobLink } from './DeepseaForm';
+import { deepseaFormLink, deepseaJobLink } from './DeepseaForm';
 import { DeepseaResultView } from './DeepseaResultView';
 import './Deepsea.css';
 
@@ -93,7 +93,7 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
         }
         actions={
           data.status === 'failed' && (
-            <a className="button button-secondary button-medium" href={`/${data.model.id}/`}>
+            <a className="button button-secondary button-medium" href={deepseaFormLink(data.model.id)}>
               Run {tool} again
             </a>
           )

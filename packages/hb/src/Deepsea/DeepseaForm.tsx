@@ -17,6 +17,11 @@ type Failure = 'busy' | 'off' | 'refused' | 'failed';
 
 const number = new Intl.NumberFormat('en-US');
 
+/** Where a model's job form is: ExPecto's sits on its Submit variants tab. */
+export function deepseaFormLink(model: VariantModel): string {
+  return model === 'expecto' ? '/expecto/variants/' : `/${model}/`;
+}
+
 export function deepseaJobLink(id: string): string {
   return `/deepsea/jobs/${id}/`;
 }
