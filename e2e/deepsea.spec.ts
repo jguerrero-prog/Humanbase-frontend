@@ -67,7 +67,7 @@ test('the Seqweaver example result has no WCAG 2.2 AA violations in each view, w
 
 test('Sei and Beluga results read their own scales, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
-  await page.goto(`${job(101)}?variant=chr7-49813589-G-C`);
+  await page.goto(`${web}/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/?variant=chr7-49813589-G-C`);
   await expect(page.getByText('Raises, 13 sequence classes')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   await page.goto(job(102));

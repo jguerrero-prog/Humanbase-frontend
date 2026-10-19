@@ -1,4 +1,6 @@
 import type { InputKind, VariantModel } from '../jobs/VariantFileCheck';
+import type { FeaturesRecord } from './DeepseaResult';
+import { seiSequenceClasses } from './seiSequenceClasses';
 
 export type Genome = 'hg19' | 'hg38';
 
@@ -35,6 +37,10 @@ export interface DeepseaModel {
   verb: string;
   /** VCF files for this model add a strand column. */
   strand: boolean;
+  /** The variant-level scores a result loads, when not all of them; Sei also sends one per sequence class. */
+  variantScores?: readonly string[];
+  /** Names a feature-level score's predictions when the API's feature list doesn't, as for Sei's sequence classes. */
+  classFeatures?: { scoreType: string; features: FeaturesRecord };
   /** Strongest effects opens at this threshold. */
   threshold: number;
   bins: EffectBins;
@@ -64,6 +70,8 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     featurePlural: 'sequence classes',
     verb: '',
     strand: false,
+    variantScores: ['seqclass'],
+    classFeatures: { scoreType: 'seqclass', features: seiSequenceClasses },
     threshold: 0.5,
     bins: { strong: 2, moderate: 1, weak: 0.5 },
     docsHref: '/docs/sei/',
