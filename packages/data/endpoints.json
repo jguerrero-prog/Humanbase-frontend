@@ -68,7 +68,8 @@
         "/api/genes/search/multi/?organism=homo-sapiens&q=AUTS12+IL1B+TNF",
         "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF+ICAM1",
         "/api/genes/search/multi/?organism=homo-sapiens&q=3553+7124+3383",
-        "/api/genes/search/multi/?organism=homo-sapiens&q=3553+7124"
+        "/api/genes/search/multi/?organism=homo-sapiens&q=3553+7124",
+        "/api/genes/search/multi/?organism=homo-sapiens&q=KRT6B+EMP1+ZBTB41+PNPLA8+ITGB4"
       ],
       "usedBy": [
         "GeneSearchService.list"

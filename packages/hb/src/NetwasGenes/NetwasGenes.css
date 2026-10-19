@@ -1,5 +1,6 @@
 .netwas-genes {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
 }
 
@@ -18,4 +19,8 @@
 .netwas-genes-note {
   font: var(--type-caption);
   color: var(--text-secondary);
+}
+
+.netwas-genes-more {
+  justify-self: start;
 }

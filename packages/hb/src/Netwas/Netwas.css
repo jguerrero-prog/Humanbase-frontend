@@ -80,3 +80,89 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Job status spec: the job on the left, How it went and Details in a panel on the right. */
+.netwas-job-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 848fr) minmax(0, 400fr);
+  gap: var(--space-16);
+  align-items: start;
+}
+
+.netwas-job {
+  display: grid;
+  gap: var(--space-6);
+  justify-items: start;
+}
+
+.netwas-job h1 {
+  font: var(--type-h2);
+  letter-spacing: var(--type-h2-tracking);
+}
+
+.netwas-job-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+.netwas-job-next {
+  display: grid;
+  gap: var(--space-1);
+  inline-size: 100%;
+  padding: var(--space-4);
+  background: var(--surface-subtle);
+  border-radius: var(--radius-md);
+}
+
+.netwas-job-next h2 {
+  font: var(--type-label-sm);
+}
+
+.netwas-job-next p,
+.netwas-job-note {
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+.netwas-job-actions,
+.netwas-job-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.netwas-job-aside {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--surface-subtle);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.netwas-job-aside h2 {
+  font: var(--type-label);
+}
+
+.netwas-job-aside h2 + .netwas-job-details {
+  margin-block-start: calc(var(--space-2) * -1);
+}
+
+.netwas-job-finished {
+  display: inline-flex;
+  gap: var(--space-3);
+  align-items: center;
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+}
+
+@media (width < 64rem) {
+  .netwas-job-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
