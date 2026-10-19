@@ -5,16 +5,18 @@ import { productJobs, productSections } from '../../data/product-navigation';
 interface Props {
   label: string;
   current?: string;
+  /** Lay the slot out with the standard screen padding; off when the page sets its own regions. */
+  padded?: boolean;
+  /** Mockups are inert unless the page wants their controls to work. */
+  inert?: boolean;
 }
 
-const { label, current } = Astro.props;
+const { label, current, padded = true, inert = true } = Astro.props;
 ---
 
-<figure class="product-screen" aria-label={label} inert>
+<figure class="product-screen" aria-label={label} inert={inert}>
   <TopBar sections={productSections} {...(current ? { current } : {})} jobs={productJobs} scrolled={false} />
-  <div class="product-screen-body">
-    <slot />
-  </div>
+  {padded ? <div class="product-screen-body"><slot /></div> : <slot />}
 </figure>
 
 <style>
