@@ -92,6 +92,7 @@ export class VariantFileCheck {
     const [, start = '', end = ''] = columns;
     if (columns.length < 3) return 'Needs 3 tab-separated columns: chromosome, start and end.';
     if (!whole.test(start) || !whole.test(end)) return 'Start and end are whole numbers, 0 or more.';
+    if (Number(end) <= Number(start)) return `End is ${end}. Use a number greater than the start, ${start}.`;
     return undefined;
   }
 
