@@ -47,3 +47,16 @@ export function useFeatureEffects(job: DeepseaJob | undefined, scoreType: string
   const failed = [features, prediction].filter((query) => query.isError);
   return { effects, isPending: features.isPending || prediction.isPending, error: failed[0]?.error, refetch: () => failed.forEach((query) => void query.refetch()) };
 }
+
+/** One sequence's in silico mutagenesis for one feature; each choice is one request, kept once loaded. */
+export function useInsilico(job: DeepseaJob | undefined, sequenceName: string | undefined, featureIndex: number | undefined) {
+  const api = useHumanbase();
+  const id = job?.status === 'finished' ? job.id : '';
+  return useQuery({
+    queryKey: ['deepsea-insilico', id, sequenceName, featureIndex],
+    queryFn: () => api.deepsea.insilico(id, sequenceName as string, featureIndex as number),
+    enabled: Boolean(id && sequenceName && featureIndex !== undefined),
+    staleTime: Infinity,
+    placeholderData: (previous) => previous,
+  });
+}

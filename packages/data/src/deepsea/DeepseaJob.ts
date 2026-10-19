@@ -21,7 +21,8 @@ export interface DeepseaJobRecord {
   insilico?: boolean;
   output_format?: string | null;
   sequence_names?: string[];
-  files?: Record<string, DeepseaFile>;
+  /** In silico mutagenesis jobs nest a logits and a diffs file under each sequence. */
+  files?: Record<string, DeepseaFile | Record<string, DeepseaFile>>;
 }
 
 export interface ResultFile extends DeepseaFile {
@@ -32,6 +33,13 @@ export interface ResultFile extends DeepseaFile {
 }
 
 const genomes: Record<string, string> = { hg19: 'GRCh37/hg19', hg38: 'GRCh38/hg38' };
+
+const isFile = (entry: DeepseaFile | Record<string, DeepseaFile>): entry is DeepseaFile => typeof entry.url === 'string';
+
+const perSequence: Record<string, Pick<ResultFile, 'name' | 'holds' | 'format'>> = {
+  logits: { name: 'Logits', holds: 'One file per sequence: every base, every substitution, all 2,002 features', format: 'TSV' },
+  diffs: { name: 'Diffs', holds: 'One file per sequence: change from the original sequence for every substitution', format: 'TSV' },
+};
 
 function describe(key: string, kind: InputKind): Pick<ResultFile, 'holds' | 'format'> {
   if (key.startsWith('variant_')) return { holds: 'One score per variant, as a genome track', format: 'bigWig (.bw)' };
@@ -54,6 +62,7 @@ export class DeepseaJob {
 
   get model(): DeepseaModel {
     if (this.record.expecto) return deepseaModels.expecto;
+    if (this.record.insilico) return deepseaModels.insilico;
     return modelOf(this.record.ds_model) ?? deepseaModels.sei;
   }
 
@@ -93,12 +102,23 @@ export class DeepseaJob {
 
   /** The files to download, without the tabix indexes, which only genome browsers read. */
   get resultFiles(): ResultFile[] {
-    return Object.entries(this.record.files ?? {})
-      .filter(([key]) => !key.endsWith('_index'))
-      .map(([key, file]) => ({ key, ...file, ...describe(key, this.kind) }));
+    const entries = Object.entries(this.record.files ?? {}).filter(([key]) => !key.endsWith('_index'));
+    const groups = entries.flatMap(([, entry]) => (isFile(entry) ? [] : [entry]));
+    const nested = Object.entries(perSequence).flatMap(([key, about]) => {
+      const first = groups.find((group) => group[key])?.[key];
+      return first ? [{ key, url: first.url, ...about }] : [];
+    });
+    const flat = entries.flatMap(([key, entry]) => (isFile(entry) ? [{ key, ...entry, ...describe(key, this.kind) }] : []));
+    return [...nested, ...flat];
   }
 
   get archive(): DeepseaFile | undefined {
-    return this.record.files?.gz_file;
+    const file = this.record.files?.gz_file;
+    return file && isFile(file) ? file : undefined;
+  }
+
+  /** The sequences an in silico mutagenesis job ran, in the order they were submitted. */
+  get sequenceNames(): readonly string[] {
+    return this.record.sequence_names ?? [];
   }
 }
