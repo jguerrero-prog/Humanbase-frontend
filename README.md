@@ -1,12 +1,12 @@
-# HumanBase front end
+# Humanbase front end
 
-The redesigned front end for [HumanBase](https://hb.flatironinstitute.org) and the design system it is built from. It talks to the HumanBase API without changing it, so any HumanBase deployment can fork this repository and point it at its own API.
+The redesigned front end for [Humanbase](https://hb.flatironinstitute.org) and the design system it is built from. It talks to the Humanbase API without changing it, so any Humanbase deployment can fork this repository and point it at its own API.
 
 ## What is in the repository
 
 | Folder | What it holds | Runs at |
 | --- | --- | --- |
-| `apps/web` | The HumanBase front end (React 19, TypeScript, Vite) | http://localhost:5173 |
+| `apps/web` | The Humanbase front end (React 19, TypeScript, Vite) | http://localhost:5173 |
 | `apps/docs` | The design system site (Astro, MDX, Shiki, Pagefind) | http://localhost:4321 |
 | `packages/tokens` | Design tokens from Figma, in the W3C Design Tokens format, and the generated `tokens.css` | |
 | `packages/ui` | Pure components and `root.css`, the single stylesheet entry point | |
@@ -34,7 +34,7 @@ pnpm dev:docs   # the design system site
 | `pnpm api:generate` | Regenerates the API types from an API's `/api/schema/`. |
 | `pnpm api:verify` | Calls every endpoint the front end uses and reports which ones work. |
 
-## Connecting your own HumanBase API
+## Connecting your own Humanbase API
 
 The front end always calls a relative `/api` path, so the API never needs extra settings.
 
@@ -60,4 +60,4 @@ The code standards are in [AGENTS.md](AGENTS.md). They apply to people and codin
 
 ## License
 
-The front end and design system in this repository are [MIT licensed](LICENSE). The license does not cover the HumanBase API, the data it serves, or any graph renderer added to `packages/graph` under its own license; those belong to their owners.
+The front end and design system in this repository are [MIT licensed](LICENSE). The license does not cover the Humanbase API, the data it serves, or any graph renderer added to `packages/graph` under its own license; those belong to their owners.
