@@ -1,11 +1,12 @@
-import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation, type SimulationLinkDatum, type SimulationNodeDatum } from 'd3-force';
+import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY, type SimulationLinkDatum, type SimulationNodeDatum } from 'd3-force';
 import { select, type Selection } from 'd3-selection';
 import { zoom, zoomIdentity, type ZoomBehavior } from 'd3-zoom';
 import { edgeBand, weakestBand } from './edgeBands';
-import type { GraphData, GraphNode, GraphRenderer, GraphSelection, MountOptions } from './GraphRenderer';
+import type { GraphData, GraphGroup, GraphNode, GraphRenderer, GraphSelection, MountOptions } from './GraphRenderer';
 
 const svgNs = 'http://www.w3.org/2000/svg';
-const radius = { node: 6, query: 10, ring: 4 };
+const radius = { node: 6, query: 10, ring: 4, member: 5 };
+const clusterGap = 190;
 const layoutTicks = 300;
 const padding = 40;
 const maxStretch = 1.8;
@@ -36,6 +37,8 @@ export class ForceGraphRenderer implements GraphRenderer {
   private options: MountOptions | undefined;
   private nodes = new Map<string, SVGGElement>();
   private links: { element: SVGLineElement; source: string; target: string }[] = [];
+  private groupOf = new Map<string, string>();
+  private groupLabels = new Map<string, SVGGElement>();
 
   mount(container: HTMLElement, options: MountOptions): void {
     this.options = options;
@@ -53,11 +56,13 @@ export class ForceGraphRenderer implements GraphRenderer {
   render(data: GraphData): void {
     const { svg, canvas } = this;
     if (!svg || !canvas) return;
-    const placed = this.layout(data);
-    this.stretchToFit(placed.nodes, svg);
+    const placed = data.groups ? this.clusterLayout(data, data.groups) : this.layout(data);
+    if (!data.groups) this.stretchToFit(placed.nodes, svg);
     canvas.replaceChildren();
     this.nodes.clear();
     this.links = [];
+    this.groupOf = new Map(data.nodes.flatMap((node) => (node.group ? [[node.id, node.group]] : [])));
+    this.groupLabels.clear();
 
     const linkLayer = svgElement('g', { class: 'force-graph-links' });
     for (const link of placed.links) {
@@ -71,9 +76,11 @@ export class ForceGraphRenderer implements GraphRenderer {
       this.links.push({ element: line, source: link.source.id, target: link.target.id });
     }
 
+    const groups = new Map((data.groups ?? []).map((group) => [group.id, group]));
     const nodeLayer = svgElement('g', { class: 'force-graph-nodes' });
-    for (const node of placed.nodes) nodeLayer.append(this.drawNode(node));
+    for (const node of placed.nodes) nodeLayer.append(this.drawNode(node, node.group ? groups.get(node.group) : undefined));
     canvas.append(linkLayer, nodeLayer);
+    if (data.groups) canvas.append(this.drawGroupLabels(placed.nodes, data.groups));
 
     const xs = placed.nodes.map((n) => n.x);
     const ys = placed.nodes.map((n) => n.y);
@@ -82,20 +89,19 @@ export class ForceGraphRenderer implements GraphRenderer {
     this.fit();
   }
 
-  private drawNode(node: PlacedNode): SVGGElement {
-    const kind = node.query ? 'query gene' : 'related gene';
-    const group = svgElement('g', { class: node.query ? 'force-graph-node is-query' : 'force-graph-node', tabindex: 0, role: 'button', 'aria-label': `${node.label}, ${kind}`, transform: `translate(${node.x} ${node.y})` });
-    const r = node.query ? radius.query : radius.node;
-    const label = svgElement('text', { x: r + 4, y: 4 });
-    label.textContent = node.label;
-    group.append(svgElement('circle', { class: 'force-graph-ring', r: r + radius.ring }), svgElement('circle', { class: 'force-graph-dot', r }), label);
-    const choose = () => this.options?.onSelectNode?.(node.id);
-    group.addEventListener('click', choose);
-    group.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter' && event.key !== ' ') return;
-      event.preventDefault();
-      choose();
-    });
+  private drawNode(node: PlacedNode, cluster?: GraphGroup): SVGGElement {
+    const kind = cluster ? cluster.label : node.query ? 'query gene' : 'related gene';
+    const classes = ['force-graph-node', node.query && 'is-query', cluster && 'is-member'].filter(Boolean).join(' ');
+    const group = svgElement('g', { class: classes, tabindex: 0, role: 'button', 'aria-label': `${node.label}, ${kind}`, transform: `translate(${node.x} ${node.y})` });
+    if (cluster) group.style.setProperty('--node-color', `var(${cluster.color})`);
+    const r = cluster ? radius.member : node.query ? radius.query : radius.node;
+    group.append(svgElement('circle', { class: 'force-graph-ring', r: r + radius.ring }), svgElement('circle', { class: 'force-graph-dot', r }));
+    if (!cluster) {
+      const label = svgElement('text', { x: r + 4, y: 4 });
+      label.textContent = node.label;
+      group.append(label);
+    }
+    this.whenChosen(group, () => this.options?.onSelectNode?.(node.id));
     this.nodes.set(node.id, group);
     return group;
   }
@@ -118,6 +124,55 @@ export class ForceGraphRenderer implements GraphRenderer {
     return { nodes, links };
   }
 
+  /** Each group gets its own spot on a grid, so modules read as separate clusters. */
+  private clusterLayout(data: GraphData, groups: readonly GraphGroup[]): { nodes: PlacedNode[]; links: PlacedLink[] } {
+    const columns = Math.max(1, Math.ceil(Math.sqrt(groups.length * 1.6)));
+    const centers = new Map(groups.map((group, index) => [group.id, { x: (index % columns) * clusterGap, y: Math.floor(index / columns) * clusterGap }]));
+    const centerOf = (node: GraphNode) => centers.get(node.group ?? '') ?? { x: 0, y: 0 };
+    const nodes: PlacedNode[] = data.nodes.map((node, index) => ({ ...node, x: centerOf(node).x + Math.cos(index) * 20, y: centerOf(node).y + Math.sin(index) * 20 }));
+    const byId = new Map(nodes.map((node) => [node.id, node]));
+    const links = data.links.flatMap((link) => {
+      const source = byId.get(link.source);
+      const target = byId.get(link.target);
+      return source && target ? [{ source, target, weight: link.weight }] : [];
+    });
+    forceSimulation(nodes)
+      .force('x', forceX<PlacedNode>((node) => centerOf(node).x).strength(0.35))
+      .force('y', forceY<PlacedNode>((node) => centerOf(node).y).strength(0.35))
+      .force('charge', forceManyBody().strength(-18))
+      .force('collide', forceCollide<PlacedNode>().radius(radius.member + 3))
+      .stop()
+      .tick(layoutTicks);
+    return { nodes, links };
+  }
+
+  private drawGroupLabels(nodes: PlacedNode[], groups: readonly GraphGroup[]): SVGGElement {
+    const layer = svgElement('g', { class: 'force-graph-groups' });
+    for (const cluster of groups) {
+      const members = nodes.filter((node) => node.group === cluster.id);
+      if (!members.length) continue;
+      const x = members.reduce((sum, node) => sum + node.x, 0) / members.length;
+      const y = Math.min(...members.map((node) => node.y)) - 16;
+      const label = svgElement('g', { class: 'force-graph-group', tabindex: 0, role: 'button', 'aria-label': `${cluster.label}, ${members.length} ${members.length === 1 ? 'gene' : 'genes'}`, transform: `translate(${x} ${y})` });
+      const text = svgElement('text', { 'text-anchor': 'middle' });
+      text.textContent = cluster.label;
+      label.append(text);
+      this.whenChosen(label, () => this.options?.onSelectGroup?.(cluster.id));
+      this.groupLabels.set(cluster.id, label);
+      layer.append(label);
+    }
+    return layer;
+  }
+
+  private whenChosen(element: SVGElement, choose: () => void): void {
+    element.addEventListener('click', choose);
+    element.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      choose();
+    });
+  }
+
   // Force layouts come out roughly round; widen them to use a wide graph area without crowding labels.
   private stretchToFit(nodes: PlacedNode[], svg: SVGSVGElement): void {
     const box = svg.getBoundingClientRect();
@@ -129,20 +184,25 @@ export class ForceGraphRenderer implements GraphRenderer {
     for (const node of nodes) node.x *= stretch;
   }
 
-    select(selection: GraphSelection): void {
+  select(selection: GraphSelection): void {
     const linked = new Set<string>();
     if (selection?.kind === 'node') {
       linked.add(selection.id);
       for (const link of this.links) if (link.source === selection.id || link.target === selection.id) linked.add(link.source).add(link.target);
     }
     if (selection?.kind === 'link') linked.add(selection.source).add(selection.target);
+    if (selection?.kind === 'group') for (const [id, group] of this.groupOf) if (group === selection.id) linked.add(id);
+    for (const [id, label] of this.groupLabels) {
+      label.classList.toggle('is-selected', selection?.kind === 'group' && selection.id === id);
+      label.classList.toggle('is-faded', selection?.kind === 'group' && selection.id !== id);
+    }
     for (const [id, element] of this.nodes) {
       element.classList.toggle('is-selected', selection?.kind === 'node' && selection.id === id);
       element.classList.toggle('is-faded', selection !== null && !linked.has(id));
     }
     for (const { element, source, target } of this.links) {
       const isSelected = selection?.kind === 'link' && ((selection.source === source && selection.target === target) || (selection.source === target && selection.target === source));
-      const touches = selection?.kind === 'node' && (source === selection.id || target === selection.id);
+      const touches = (selection?.kind === 'node' && (source === selection.id || target === selection.id)) || (selection?.kind === 'group' && linked.has(source) && linked.has(target));
       element.classList.toggle('is-selected', isSelected);
       element.classList.toggle('is-faded', selection !== null && !isSelected && !touches);
     }
@@ -175,5 +235,6 @@ export class ForceGraphRenderer implements GraphRenderer {
     this.canvas = undefined;
     this.nodes.clear();
     this.links = [];
+    this.groupLabels.clear();
   }
 }

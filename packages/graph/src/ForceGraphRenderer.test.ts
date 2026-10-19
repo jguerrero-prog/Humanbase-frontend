@@ -78,3 +78,45 @@ describe('ForceGraphRenderer', () => {
     expect(container.childElementCount).toBe(0);
   });
 });
+
+describe('ForceGraphRenderer with groups', () => {
+  const grouped: GraphData = {
+    nodes: [
+      { id: '1', label: 'FGF8', query: false, group: 'm1' },
+      { id: '2', label: 'HNF1B', query: false, group: 'm1' },
+      { id: '3', label: 'CCDC40', query: false, group: 'm3' },
+    ],
+    links: [],
+    groups: [
+      { id: 'm1', label: 'M1', color: '--viz-cat-1' },
+      { id: 'm3', label: 'M3', color: '--viz-cat-6' },
+    ],
+  };
+
+  function mountedGroups() {
+    const container = document.createElement('div');
+    const onSelectGroup = vi.fn();
+    const renderer = new ForceGraphRenderer();
+    renderer.mount(container, { label: 'Modules of Renal disease panel', onSelectGroup });
+    renderer.render(grouped);
+    return { container, renderer, onSelectGroup };
+  }
+
+  it('draws a labeled cluster per group, with genes named by their module', () => {
+    const { container } = mountedGroups();
+    expect([...container.querySelectorAll('.force-graph-group')].map((label) => label.getAttribute('aria-label'))).toEqual(['M1, 2 genes', 'M3, 1 gene']);
+    const fgf8 = container.querySelector('[aria-label="FGF8, M1"]') as SVGGElement;
+    expect(fgf8.style.getPropertyValue('--node-color')).toBe('var(--viz-cat-1)');
+    expect(fgf8.querySelector('text')).toBeNull();
+  });
+
+  it('selects a group from its label and fades the other groups', () => {
+    const { container, renderer, onSelectGroup } = mountedGroups();
+    (container.querySelector('[aria-label="M3, 1 gene"]') as SVGGElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    expect(onSelectGroup).toHaveBeenCalledWith('m3');
+    renderer.select({ kind: 'group', id: 'm3' });
+    expect(container.querySelector('[aria-label="FGF8, M1"]')?.classList.contains('is-faded')).toBe(true);
+    expect(container.querySelector('[aria-label="CCDC40, M3"]')?.classList.contains('is-faded')).toBe(false);
+    expect(container.querySelector('[aria-label="M1, 2 genes"]')?.classList.contains('is-faded')).toBe(true);
+  });
+});
