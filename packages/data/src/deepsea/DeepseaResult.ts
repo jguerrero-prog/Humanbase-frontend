@@ -103,7 +103,8 @@ export function featureLabel(feature: ModelFeature): string {
 
 /** The selected variant’s score for every feature, named from the model’s feature list. */
 export function featureEffects(prediction: FeaturePredictionRecord, features: FeaturesRecord): FeatureEffect[] {
-  if (features.expecto_features) return tissueEffects(prediction, features.expecto_features);
+  // DNA_Binding and RNA_Binding send an empty expecto_features list, so only a filled one means tissues.
+  if (features.expecto_features?.length) return tissueEffects(prediction, features.expecto_features);
   const byIndex = new Map((features.model_features ?? []).map((feature) => [feature.idx, feature]));
   return prediction.feature_predictions.flatMap((value, index) => {
     const feature = byIndex.get(index);

@@ -29,7 +29,7 @@ export { TissueVariants, strongestOf, tissueTitle, type EffectRow, type GenePosi
 export { expectoTissues, type ExpectoTissue } from './expecto/expectoTissues';
 export { useTissueVariants, useVariantSearch, useVariantTotal } from './react/useExpecto';
 export { AsdVariant, type AsdRecord, type AsdVariantRow } from './asd/AsdVariant';
-export { AsdService, type AsdFeatureSet, type AsdPage } from './asd/AsdService';
+export { AsdService, type AsdFeatureSet, type AsdPage, type AsdWhere } from './asd/AsdService';
 export { S3GeneLocator, type GeneLocator, type GeneSpan } from './genome/S3GeneLocator';
 export { SampleGeneLocator } from './genome/SampleGeneLocator';
 export { useAsdColumns, useAsdEffects, useAsdPage, useAsdRange } from './react/useAsd';

@@ -3,6 +3,7 @@ export { Badge, StatusBadge, type BadgeProps, type BadgeSize, type BadgeTone, ty
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from './Button/Button';
 export { IconButton, type IconButtonProps } from './IconButton/IconButton';
 export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
+export { ScoreTracks, type ScoreTrack, type ScoreTracksProps } from './GenomeBrowser/ScoreTracks';
 export {
   BrowserSettingsDialog,
   ExportDialog,

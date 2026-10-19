@@ -18,6 +18,9 @@ export interface AsdPage {
 
 export type AsdFeatureSet = 'dna' | 'rna';
 
+/** Limits the variants to a range, or to a whole chromosome such as chr1. */
+export type AsdWhere = GenomeLocation | string;
+
 const predictionSets: Record<AsdFeatureSet, string> = { dna: 'DNA_Binding', rna: 'RNA_Binding' };
 
 /** The ASD Browser's variants, their columns and their predicted effects, by page or by genome range. */
@@ -32,19 +35,21 @@ export class AsdService {
     private readonly locator: GeneLocator,
   ) {}
 
-  private query(page: number, range?: GenomeLocation): Query {
-    return { labels__name: 'asd', page, ...(range && { chromosome: range.chrom, position__gte: range.start, position__lte: range.end }) };
+  private query(page: number, where?: AsdWhere): Query {
+    const range = where instanceof GenomeLocation ? where : undefined;
+    const chromosome = range?.chrom ?? (typeof where === 'string' ? where : undefined);
+    return { labels__name: 'asd', page, ...(chromosome && { chromosome }), ...(range && { position__gte: range.start, position__lte: range.end }) };
   }
 
   /** One table page of any size, read from the API's pages of 20 that cover it. */
-  async page(page: number, size: number, range?: GenomeLocation): Promise<AsdPage> {
+  async page(page: number, size: number, where?: AsdWhere): Promise<AsdPage> {
     const first = (page - 1) * size;
     const from = Math.floor(first / AsdService.apiPageSize) + 1;
     const to = Math.floor((first + size - 1) / AsdService.apiPageSize) + 1;
-    const head = await this.client.get<AsdPageRecord>('variants/', this.query(from, range));
+    const head = await this.client.get<AsdPageRecord>('variants/', this.query(from, where));
     // A page past the last one is a 404, so only pages the total says exist are read.
     const last = Math.min(to, Math.ceil(head.count / AsdService.apiPageSize));
-    const rest = await Promise.all(Array.from({ length: Math.max(0, last - from) }, (_, index) => this.client.get<AsdPageRecord>('variants/', this.query(from + index + 1, range))));
+    const rest = await Promise.all(Array.from({ length: Math.max(0, last - from) }, (_, index) => this.client.get<AsdPageRecord>('variants/', this.query(from + index + 1, where))));
     const pages = [head, ...rest];
     const rows = pages.flatMap((one) => one.results.map(AsdVariant.fromRecord));
     const skip = first - (from - 1) * AsdService.apiPageSize;
