@@ -30,6 +30,8 @@ pnpm dev:web    # the front end
 pnpm dev:docs   # the design system site
 ```
 
+Before the first `pnpm test:e2e` or `pnpm test:live`, install the browser the tests use: `pnpm exec playwright install chromium`.
+
 | Command | What it does |
 | --- | --- |
 | `pnpm check` | Type checks, lints and runs unit tests. CI runs the same. |
