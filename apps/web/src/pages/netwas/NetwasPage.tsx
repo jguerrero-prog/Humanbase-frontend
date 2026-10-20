@@ -1,3 +1,4 @@
+import { readTheDocs } from '@humanbase/data';
 import { NetwasForm, type NetwasDraft } from '@humanbase/hb';
 import { Breadcrumbs } from '@humanbase/ui';
 import { useLocation, useNavigate } from 'react-router';
@@ -18,7 +19,7 @@ export function NetwasPage() {
         <h1>NetWAS</h1>
         <p>Find disease genes your GWAS may have missed. NetWAS reranks your results using a tissue network. Try the example BMI study.</p>
       </header>
-      <NetwasForm draft={draft} docsHref="https://humanbase.readthedocs.io/en/latest/netwas.html" onStarted={(link) => void navigate(link)} />
+      <NetwasForm draft={draft} docsHref={`${readTheDocs}netwas.html`} onStarted={(link) => void navigate(link)} />
     </section>
   );
 }

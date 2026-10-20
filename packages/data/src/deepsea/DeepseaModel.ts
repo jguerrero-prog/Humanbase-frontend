@@ -52,6 +52,9 @@ export interface DeepseaModel {
   insilico?: boolean;
 }
 
+/** The Humanbase documentation each tool's About panel links to. */
+export const readTheDocs = 'https://humanbase.readthedocs.io/en/latest/';
+
 const zBins: EffectBins = { strong: 5, moderate: 3, weak: 2 };
 
 export const deepseaModels: Record<VariantModel, DeepseaModel> = {
@@ -74,7 +77,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     classFeatures: { scoreType: 'seqclass', features: seiSequenceClasses },
     threshold: 0.5,
     bins: { strong: 2, moderate: 1, weak: 0.5 },
-    docsHref: '/docs/sei/',
+    docsHref: `${readTheDocs}sei.html`,
   },
   beluga: {
     id: 'beluga',
@@ -93,7 +96,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     strand: false,
     threshold: 3,
     bins: zBins,
-    docsHref: '/docs/beluga/',
+    docsHref: `${readTheDocs}beluga.html`,
   },
   seqweaver: {
     id: 'seqweaver',
@@ -112,7 +115,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     strand: true,
     threshold: 2,
     bins: zBins,
-    docsHref: '/docs/seqweaver/',
+    docsHref: `${readTheDocs}seqweaver.html`,
   },
   expecto: {
     id: 'expecto',
@@ -134,7 +137,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     strand: false,
     threshold: 0.1,
     bins: { strong: 0.1, moderate: 0.05, weak: 0.02 },
-    docsHref: '/docs/expecto/',
+    docsHref: `${readTheDocs}expecto.html`,
     basedOn: 'beluga',
     expecto: true,
   },
@@ -157,7 +160,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     strand: false,
     threshold: 0.5,
     bins: { strong: 0.5, moderate: 0.25, weak: 0.1 },
-    docsHref: '/docs/ism/',
+    docsHref: `${readTheDocs}in-silico-mutagenesis.html`,
     basedOn: 'beluga',
     insilico: true,
   },
