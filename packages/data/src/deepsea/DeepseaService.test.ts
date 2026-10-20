@@ -71,6 +71,11 @@ describe('DeepseaService', () => {
     expect(DeepseaService.formOf({ model: 'insilico', kind: 'fasta', text: '>s', fileName: 'x.fasta', genome: 'hg19' }).get('insilico')).toBe('true');
   });
 
+  it('loads only the expecto score for ExPecto, whose jobs also list scores the API can’t serve', () => {
+    const types = ['expecto', 'dis', 'mean-evalue'].map((short_name) => ({ name: short_name, level: 'VARIANT' as const, short_name }));
+    expect(variantScoreTypes(deepseaModels.expecto, types).map((type) => type.short_name)).toEqual(['expecto']);
+  });
+
   it('reads the real Sei example job: its summary score, top classes and sequence class names', async () => {
     const id = '2e18fedf-3de7-4d08-a894-9a937a2b860b';
     const job = await service.get(id);
