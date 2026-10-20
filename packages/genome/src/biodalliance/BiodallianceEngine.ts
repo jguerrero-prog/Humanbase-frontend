@@ -47,12 +47,22 @@ export function loadBiodalliance(baseUrl = biodallianceRelease): Promise<Dallian
 
 let nextId = 0;
 
+/** Biodalliance's images (spinners, toggles) carry no meaning of their own, so they get an empty alt as they appear. */
+export function markImagesDecorative(root: HTMLElement): MutationObserver {
+  const mark = () => root.querySelectorAll('img:not([alt])').forEach((image) => image.setAttribute('alt', ''));
+  mark();
+  const observer = new MutationObserver(mark);
+  observer.observe(root, { childList: true, subtree: true });
+  return observer;
+}
+
 /** Biodalliance with the live Humanbase site's tracks and settings. */
 export class BiodallianceEngine implements GenomeBrowserEngine {
   #browser: DallianceBrowser | undefined;
   #shown: GenomeRegion | undefined;
   #settle: ReturnType<typeof setTimeout> | undefined;
   #holder: HTMLElement | undefined;
+  #images: MutationObserver | undefined;
   #destroyed = false;
 
   constructor(private readonly options: BiodallianceOptions = {}) {}
@@ -71,6 +81,7 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
     container.setAttribute('aria-label', label);
     container.append(holder);
     this.#holder = holder;
+    this.#images = markImagesDecorative(holder);
     this.#shown = region;
     const browser = new Browser({
       pageName: holder.id,
@@ -116,6 +127,7 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
   destroy(): void {
     this.#destroyed = true;
     clearTimeout(this.#settle);
+    this.#images?.disconnect();
     this.#holder?.remove();
     this.#browser = undefined;
   }

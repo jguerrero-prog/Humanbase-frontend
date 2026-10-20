@@ -1,4 +1,4 @@
-import { BiodallianceEngine } from './BiodallianceEngine';
+import { BiodallianceEngine, markImagesDecorative } from './BiodallianceEngine';
 
 class FakeBrowser {
   static last: FakeBrowser;
@@ -79,5 +79,24 @@ describe('BiodallianceEngine', () => {
     engine.highlight({ chrom: 'chr2', position: 166_100_000 });
     engine.highlight(undefined);
     expect(FakeBrowser.last.calls).toEqual(['setLocation chr2 166095911 166248818', 'clear', 'highlight chr2 166100000 166100001', 'clear']);
+  });
+});
+
+describe('markImagesDecorative', () => {
+  it('gives Biodalliance’s images an empty alt, including ones added later', async () => {
+    const root = document.createElement('div');
+    const spinner = document.createElement('img');
+    root.append(spinner);
+    const observer = markImagesDecorative(root);
+    expect(spinner).toHaveAttribute('alt', '');
+    const later = document.createElement('img');
+    root.append(later);
+    await Promise.resolve();
+    expect(later).toHaveAttribute('alt', '');
+    const named = Object.assign(document.createElement('img'), { alt: 'Zoom in' });
+    root.append(named);
+    await Promise.resolve();
+    expect(named).toHaveAttribute('alt', 'Zoom in');
+    observer.disconnect();
   });
 });
