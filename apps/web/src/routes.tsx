@@ -11,6 +11,7 @@ import { DeepseaJobPage } from './pages/deepsea/DeepseaJobPage';
 import { ExpectoPage } from './pages/expecto/ExpectoPage';
 import { ExpectoScPage } from './pages/expecto/ExpectoScPage';
 import { GeneExpressionPage } from './pages/expecto/GeneExpressionPage';
+import { JobsPage } from './pages/JobsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 /** Where the app is served from without the trailing slash: empty locally, /Humanbase-frontend/app on GitHub Pages. */
@@ -37,6 +38,7 @@ export const router = createBrowserRouter([
       { path: 'expecto/genes/:entrez', element: <GeneExpressionPage tool="expecto" /> },
       { path: 'expecto-sc', element: <ExpectoScPage /> },
       { path: 'expecto-sc/genes/:entrez', element: <GeneExpressionPage tool="expecto-sc" /> },
+      { path: 'jobs', element: <JobsPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
