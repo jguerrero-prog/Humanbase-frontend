@@ -70,7 +70,7 @@ test('Sei and Beluga results read their own scales, with the API off', async ({ 
   await page.goto(`${web}/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/?variant=chr7-49813589-G-C`);
   await expect(page.getByText('Raises, 13 sequence classes')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
-  await page.goto(job(102));
+  await page.goto(`${web}/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/`);
   await expect(page.getByRole('heading', { name: 'Molecular effects of chr3:12,598,855 G>A' })).toBeVisible();
   await expect(page.getByText('UBF', { exact: true })).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);

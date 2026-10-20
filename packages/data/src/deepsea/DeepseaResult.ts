@@ -14,9 +14,10 @@ export interface ScoreType {
 export interface VariantSequence {
   chromosome: string;
   position: number;
-  /** Seqweaver names a variant here; Sei names it in id. */
+  /** Seqweaver names a variant here, Sei in id and ExPecto by its gene. */
   name?: string;
   id?: string;
+  gene?: string;
   /** Sei: the sequence class the variant changes most. */
   max_seq_class?: string;
   ref_allele: string;
@@ -90,7 +91,7 @@ export function chrVariant(variant: Pick<VariantRow, 'chromosome' | 'position'>)
 
 /** Every variant once, with the score from each score type it appears in. */
 function newRow(id: string, sequence: VariantSequence): VariantRow {
-  const row: VariantRow = { id, chromosome: sequence.chromosome, position: sequence.position, change: `${sequence.ref_allele}>${sequence.alt_allele}`, name: sequence.name ?? sequence.id ?? '', scores: {} };
+  const row: VariantRow = { id, chromosome: sequence.chromosome, position: sequence.position, change: `${sequence.ref_allele}>${sequence.alt_allele}`, name: sequence.name ?? sequence.id ?? sequence.gene ?? '', scores: {} };
   if (sequence.max_seq_class) row.topClass = sequence.max_seq_class;
   return row;
 }

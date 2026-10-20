@@ -56,12 +56,12 @@ test('each NetWAS job state has no WCAG 2.2 AA violations, with the API off', as
   await expect(page).toHaveURL(`${web}/netwas/`);
   await expect(page.getByRole('textbox', { name: 'Job title (optional)' })).toHaveValue('Height GWAS');
 
-  await page.goto(job(3));
+  await page.goto(`${web}/netwas/c66b3d05-2f49-4522-b910-1605609e4083/`);
   await expect(page.getByRole('link', { name: 'Open in Networks for KRT6B' })).toHaveAttribute('href', '/networks/?entrez=3854&tissue=adipose-tissue&version=v1');
   await expect(page.getByText('keratin 6B')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   await page.getByRole('tab', { name: 'Job details' }).click();
-  await expect(page.getByText('00000000-0000-4000-8000-000000000003')).toBeVisible();
+  await expect(page.getByText('c66b3d05-2f49-4522-b910-1605609e4083')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
 
   await page.goto(`${web}/netwas/00000000-0000-4000-8000-000000000000/`);
@@ -76,7 +76,7 @@ test('the NetWAS job and result pages fit a phone without scrolling sideways', a
   await page.goto(job(1));
   await expect(page.getByRole('status').filter({ hasText: /Running for/ })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
-  await page.goto(job(3));
+  await page.goto(`${web}/netwas/c66b3d05-2f49-4522-b910-1605609e4083/`);
   await expect(page.getByRole('link', { name: 'Open in Networks for KRT6B' })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
 });

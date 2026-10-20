@@ -36,7 +36,7 @@ describe('DeepseaJobView', () => {
   });
 
   it('reads ExPecto effects as tissues, with their resource and system', async () => {
-    renderJob(job(141), 'chr5-134871851-A-G');
+    renderJob('e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1', 'chr5-134871851-A-G');
     expect(await screen.findByRole('heading', { level: 1, name: 'Untitled ExPecto job' }, { timeout: 5000 })).toBeInTheDocument();
     expect(await screen.findByText('Fallopian Tube', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getAllByText('GTEx, reproductive system')[0]).toBeInTheDocument();

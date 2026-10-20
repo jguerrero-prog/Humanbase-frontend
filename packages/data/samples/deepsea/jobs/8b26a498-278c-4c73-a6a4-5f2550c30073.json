@@ -1,0 +1,59 @@
+{
+  "status": 200,
+  "body": {
+    "created": "2026-10-19T20:33:17",
+    "ds_model": "Beluga",
+    "email": "",
+    "files": {
+      "variant_dis": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073_variant_dis.bw",
+        "name": "Disease impact score"
+      },
+      "variant_mean-evalue": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073_variant_mean-evalue.bw",
+        "name": "Mean -log e-value"
+      },
+      "feature_zscore": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073_feature_zscore.tsv.gz",
+        "name": "z-score"
+      },
+      "feature_evalue": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073_feature_evalue.tsv.gz",
+        "name": "e-value"
+      },
+      "feature_diffs": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073_feature_diffs.tsv.gz",
+        "name": "Probability diffs"
+      },
+      "feature_zscore_index": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073_feature_zscore.tsv.gz.tbi",
+        "name": "z-score tabix index"
+      },
+      "feature_evalue_index": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073_feature_evalue.tsv.gz.tbi",
+        "name": "e-value tabix index"
+      },
+      "feature_diffs_index": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073_feature_diffs.tsv.gz.tbi",
+        "name": "Probability diffs tabix index"
+      },
+      "uploaded_query": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073_textarea.vcf",
+        "name": "Uploaded query"
+      },
+      "gz_file": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073.tar.gz",
+        "name": "Archive of results"
+      }
+    },
+    "expecto": false,
+    "input_type": "vcf",
+    "insilico": false,
+    "job_id": "8b26a498-278c-4c73-a6a4-5f2550c30073",
+    "output_format": "tsv",
+    "sequence_names": [],
+    "status": "completed",
+    "title": "",
+    "genome_assembly": "hg19"
+  }
+}

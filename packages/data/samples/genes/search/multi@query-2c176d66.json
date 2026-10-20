@@ -1,0 +1,467 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "query": "KRT6B",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3854,
+          "standard_name": "KRT6B",
+          "aliases": "K6B|PC2|KRTL1|CK-6B|PC4|CK6B",
+          "xrefs": "148042|3854|ENSG00000185479|HGNC:6444",
+          "description": "keratin 6B",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "DEGS1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 8560,
+          "standard_name": "DEGS1",
+          "aliases": "Des-1|MLD|DEGS|DEGS-1|DES1|MIG15|FADS7|HLD18",
+          "xrefs": "HGNC:13709|615843|8560|ENSG00000143753",
+          "description": "delta 4-desaturase, sphingolipid 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "PLSCR1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5359,
+          "standard_name": "PLSCR1",
+          "aliases": "MMTRA1B",
+          "xrefs": "5359|ENSG00000188313|HGNC:9092|604170",
+          "description": "phospholipid scramblase 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "QSOX1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5768,
+          "standard_name": "QSOX1",
+          "aliases": "Q6|QSCN6",
+          "xrefs": "ENSG00000116260|5768|603120|HGNC:9756",
+          "description": "quiescin sulfhydryl oxidase 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "CYP51A1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1595,
+          "standard_name": "CYP51A1",
+          "aliases": "P450-14DM|CP51|P450L1|CYPL1|CYP51|LDM",
+          "xrefs": "HGNC:2649|601637|ENSG00000001630|1595",
+          "description": "cytochrome P450 family 51 subfamily A member 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MYADM",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 91663,
+          "standard_name": "MYADM",
+          "aliases": "SB135",
+          "xrefs": "91663|609959|HGNC:7544|ENSG00000179820",
+          "description": "myeloid associated differentiation marker",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SNX10",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 29887,
+          "standard_name": "SNX10",
+          "aliases": "OPTB8",
+          "xrefs": "HGNC:14974|ENSG00000086300|29887|614780",
+          "description": "sorting nexin 10",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TP53INP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 94241,
+          "standard_name": "TP53INP1",
+          "aliases": "SIP|TP53INP1B|Teap|p53DINP1|TP53DINP1|TP53INP1A",
+          "xrefs": "HGNC:18022|94241|ENSG00000164938|606185",
+          "description": "tumor protein p53 inducible nuclear protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "RANBP6",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 26953,
+          "standard_name": "RANBP6",
+          "aliases": "",
+          "xrefs": "26953|ENSG00000137040|HGNC:9851",
+          "description": "RAN binding protein 6",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "RAC2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 5880,
+          "standard_name": "RAC2",
+          "aliases": "p21-Rac2|Gx|EN-7|IMD73B|HSPC022|IMD73C|IMD73A",
+          "xrefs": "HGNC:9802|ENSG00000128340|602049|5880",
+          "description": "Rac family small GTPase 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ADM",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 133,
+          "standard_name": "ADM",
+          "aliases": "AM|PAMP",
+          "xrefs": "ENSG00000148926|103275|133|HGNC:259",
+          "description": "adrenomedullin",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "SDC4",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6385,
+          "standard_name": "SDC4",
+          "aliases": "SYND4",
+          "xrefs": "600017|HGNC:10661|6385|ENSG00000124145",
+          "description": "syndecan 4",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MTX1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 4580,
+          "standard_name": "MTX1",
+          "aliases": "MTXN|MTX",
+          "xrefs": "4580|ENSG00000173171|600605|HGNC:7504",
+          "description": "metaxin 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ARHGEF10",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 9639,
+          "standard_name": "ARHGEF10",
+          "aliases": "SNCV|GEF10",
+          "xrefs": "9639|ENSG00000104728|608136|HGNC:14103",
+          "description": "Rho guanine nucleotide exchange factor 10",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "IFIT2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 3433,
+          "standard_name": "IFIT2",
+          "aliases": "cig42|ISG-54|ISG-54 K|ISG-54K|GARG-39|IFI-54K|IFI54|G10P2|ISG54|P54|IFI-54|IFIT-2",
+          "xrefs": "HGNC:5409|147040|3433|ENSG00000119922",
+          "description": "interferon induced protein with tetratricopeptide repeats 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ATP6V1B2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 526,
+          "standard_name": "ATP6V1B2",
+          "aliases": "Vma2|ATP6B1B2|VPP3|VATB|ATP6B2|DOOD|ZLS2|HO57",
+          "xrefs": "HGNC:854|526|ENSG00000147416|606939",
+          "description": "ATPase H+ transporting V1 subunit B2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MSMO1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6307,
+          "standard_name": "MSMO1",
+          "aliases": "ERG25|SC4MOL|MCCPD|DESP4",
+          "xrefs": "6307|HGNC:10545|ENSG00000052802|607545",
+          "description": "methylsterol monooxygenase 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MTUS1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 57509,
+          "standard_name": "MTUS1",
+          "aliases": "MTSG1|ATIP3|MP44|ATIP|ICIS|ATBP",
+          "xrefs": "57509|ENSG00000129422|HGNC:29789|609589",
+          "description": "microtubule associated scaffold protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "MXRA7",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 439921,
+          "standard_name": "MXRA7",
+          "aliases": "",
+          "xrefs": "ENSG00000182534|439921|HGNC:7541",
+          "description": "matrix remodeling associated 7",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "COL7A1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 1294,
+          "standard_name": "COL7A1",
+          "aliases": "EBDCT|EBR1|EBD1|NDNC8",
+          "xrefs": "120120|ENSG00000114270|1294|HGNC:2214",
+          "description": "collagen type VII alpha 1 chain",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "ZMYM2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 7750,
+          "standard_name": "ZMYM2",
+          "aliases": "MYM|NECRC|RAMP|ZNF198|SCLL|FIM",
+          "xrefs": "7750|ENSG00000121741|HGNC:12989|602221",
+          "description": "zinc finger MYM-type containing 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "EMP1",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 2012,
+          "standard_name": "EMP1",
+          "aliases": "TMP|EMP-1|CL-20",
+          "xrefs": "ENSG00000134531|2012|602333|HGNC:3333",
+          "description": "epithelial membrane protein 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "TMX3",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 54495,
+          "standard_name": "TMX3",
+          "aliases": "PDIA13|TXNDC10",
+          "xrefs": "HGNC:24718|616102|54495|ENSG00000166479",
+          "description": "thioredoxin related transmembrane protein 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "STAT2",
+      "num_matches": 1,
+      "matches": [
+        {
+          "entrez": 6773,
+          "standard_name": "STAT2",
+          "aliases": "STAT113|P113|PTORCH3|ISGF-3|IMD44",
+          "xrefs": "6773|HGNC:11363|600556|ENSG00000170581",
+          "description": "signal transducer and activator of transcription 2",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "HES1",
+      "num_matches": 2,
+      "matches": [
+        {
+          "entrez": 3280,
+          "standard_name": "HES1",
+          "aliases": "HES-1|bHLHb39|HHL|HRY",
+          "xrefs": "ENSG00000114315|HGNC:5192|139605|3280",
+          "description": "hes family bHLH transcription factor 1",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        },
+        {
+          "entrez": 8209,
+          "standard_name": "GATD3",
+          "aliases": "KNPH|HES1|ES1|GT335|C21orf33|GATD3A|KNPI",
+          "xrefs": "ENSG00000160221|601659|8209|HGNC:1273",
+          "description": "glutamine amidotransferase class 1 domain containing 3",
+          "organism": "homo-sapiens",
+          "versions_available": [
+            "v1",
+            "v3"
+          ]
+        }
+      ]
+    }
+  ]
+}

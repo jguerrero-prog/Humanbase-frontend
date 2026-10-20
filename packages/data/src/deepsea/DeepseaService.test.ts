@@ -71,6 +71,11 @@ describe('DeepseaService', () => {
     expect(DeepseaService.formOf({ model: 'insilico', kind: 'fasta', text: '>s', fileName: 'x.fasta', genome: 'hg19' }).get('insilico')).toBe('true');
   });
 
+  it('names ExPecto variants by their gene, as the real ExPecto job does', async () => {
+    const rows = variantRows([await service.variantScores('e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1', 'expecto')]);
+    expect(rows.find((row) => row.position === 134871851)?.name).toBe('NEUROG1');
+  });
+
   it('loads only the expecto score for ExPecto, whose jobs also list scores the API can’t serve', () => {
     const types = ['expecto', 'dis', 'mean-evalue'].map((short_name) => ({ name: short_name, level: 'VARIANT' as const, short_name }));
     expect(variantScoreTypes(deepseaModels.expecto, types).map((type) => type.short_name)).toEqual(['expecto']);
