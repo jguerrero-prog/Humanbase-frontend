@@ -4,3 +4,8 @@
   border: var(--border-width-1) solid var(--border-subtle);
   border-radius: var(--radius-md);
 }
+
+/* The page sets the tracks, so Biodalliance's per-track remove buttons are hidden, as on the live site. */
+.genome-engine .tier-tab .fa-times {
+  display: none;
+}

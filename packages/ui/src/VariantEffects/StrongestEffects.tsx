@@ -19,8 +19,11 @@ export interface StrongestEffectsProps {
   /** Groups shown before Show more. */
   limit?: number | undefined;
   onShowMore?: (() => void) | undefined;
-  /** The model's nouns, such as proteins and binding. */
+  /** The model's nouns, such as protein, proteins and binding. */
+  noun?: string | undefined;
   plural?: string | undefined;
+  /** The All features tab's label, which the empty state points to. */
+  allLabel?: string | undefined;
   verb?: string | undefined;
 }
 
@@ -50,7 +53,7 @@ class EffectBars {
 const namedCells = 3;
 const cellsInBrief = (cells: readonly string[]) => (cells.length > namedCells ? `${cells.slice(0, namedCells).join(', ')} and ${cells.length - namedCells} more` : cells.join(', '));
 
-export function StrongestEffects({ effects, counts, threshold, expanded = [], onToggle, limit = 14, onShowMore, plural = 'proteins', verb = 'binding' }: StrongestEffectsProps) {
+export function StrongestEffects({ effects, counts, threshold, expanded = [], onToggle, limit = 14, onShowMore, noun = 'protein', plural = 'proteins', allLabel = 'All features', verb = 'binding' }: StrongestEffectsProps) {
   const shown = useMemo(() => effects.atLeast(threshold), [effects, threshold]);
   const tally = counts ?? effects.counts();
   const raises = shown.groups('raises');
@@ -81,8 +84,8 @@ export function StrongestEffects({ effects, counts, threshold, expanded = [], on
           <h4 className="effects-column-title">{['Lowers', verb].filter(Boolean).join(' ')}</h4>
           {lowers.length === 0 ? (
             <EmptyState
-              title={`No feature is lowered by ${lowest || bins.weak} or more`}
-              text="For this variant, the lowest scores sit just below 0 (see All features). Choose All to list them anyway."
+              title={`No ${noun} is lowered by ${lowest || bins.weak} or more`}
+              text={`For this variant, the lowest scores sit just below 0 (see ${allLabel}). Choose All to list them anyway.`}
             />
           ) : (
             <EffectList bars={bars} groups={lowers} expanded={expanded} onToggle={onToggle} />
@@ -135,14 +138,14 @@ function EffectList({ bars, groups, expanded, onToggle }: { bars: EffectBars; gr
     <ol className="effects-list">
       {groups.map((group) => {
         const several = group.experiments.length > 1;
-        const open = several && expanded.includes(group.feature);
+        const open = several && expanded.includes(group.id);
         const value = several ? `${bars.format(group.low)} to ${bars.format(group.high)}` : bars.format(group.peak);
         const detail = several ? `${group.experiments.length} experiments: ${cellsInBrief(group.cells)}` : group.experiments[0]?.context;
         return (
-          <li key={group.feature} className="effect">
+          <li key={group.id} className="effect">
             <div className="effect-row">
               {several ? (
-                <button type="button" className="effect-name effect-toggle" aria-expanded={open} onClick={() => onToggle?.(group.feature)}>
+                <button type="button" className="effect-name effect-toggle" aria-expanded={open} onClick={() => onToggle?.(group.id)}>
                   <Icon name={open ? 'chevron-down' : 'chevron-right'} size={16} />
                   <EffectName feature={group.feature} detail={detail} />
                 </button>

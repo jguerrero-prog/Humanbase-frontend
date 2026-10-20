@@ -63,6 +63,8 @@ export interface EffectsControlsProps {
   onGroupByFeature?: ((group: boolean) => void) | undefined;
   /** The model's noun for its features, such as protein. */
   featureNoun?: string | undefined;
+  /** What the search finds, such as "Find a tissue" for ExPecto. */
+  searchLabel?: string | undefined;
   density?: 'full' | 'compact' | undefined;
   onDensity?: ((density: 'full' | 'compact') => void) | undefined;
   lowestFirst?: boolean | undefined;
@@ -70,7 +72,7 @@ export interface EffectsControlsProps {
 }
 
 export function EffectsControls(props: EffectsControlsProps) {
-  const { scoreLabel = 'Score', scores, score, onScore, threshold, thresholdSteps = [2, 3, 5], onThreshold, cellTypes, search, onSearch, groupByFeature, onGroupByFeature, featureNoun = 'protein', density, onDensity, lowestFirst, onLowestFirst } = props;
+  const { scoreLabel = 'Score', scores, score, onScore, threshold, thresholdSteps = [2, 3, 5], onThreshold, cellTypes, search, onSearch, groupByFeature, onGroupByFeature, featureNoun = 'protein', searchLabel = 'Find a feature or cell type', density, onDensity, lowestFirst, onLowestFirst } = props;
   return (
     <div className="effects-controls">
       <Select label={scoreLabel} size="small" options={scores} value={score} {...(onScore && { onChange: onScore })} className="effects-score" />
@@ -85,7 +87,7 @@ export function EffectsControls(props: EffectsControlsProps) {
       )}
       {cellTypes?.[0] && <Select label="Cell type" size="small" options={cellTypes} defaultValue={cellTypes[0].value} className="effects-cells" />}
       {search !== undefined && (
-        <SearchField label="Find a feature or cell type" placeholder="Find a feature or cell type" size="medium" value={search} onChange={(event) => onSearch?.(event.target.value)} className="effects-search" />
+        <SearchField label={searchLabel} placeholder={searchLabel} size="medium" value={search} onChange={(event) => onSearch?.(event.target.value)} className="effects-search" />
       )}
       {density !== undefined && <SegmentedControl label="Rows" size="small" segments={densities} value={density} onChange={(value) => onDensity?.(value as 'full' | 'compact')} />}
       {groupByFeature !== undefined && (

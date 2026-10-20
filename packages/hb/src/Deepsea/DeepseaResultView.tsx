@@ -213,6 +213,7 @@ function VariantEffectsCard({ job, variant, featureTypes }: VariantEffectsCardPr
       featureNoun={model.featureNoun}
       featurePlural={model.featurePlural}
       verb={model.verb}
+      inCellTypes={!model.expecto}
       choice={{ label: 'Score', options: scoreOptions(featureTypes), value: type.short_name, onChange: setTypeKey, name: type.name }}
     />
   );

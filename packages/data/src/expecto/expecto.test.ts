@@ -110,8 +110,8 @@ describe('ExPecto jobs', () => {
     const features = await offline().deepsea.features('expecto');
     const effects = featureEffects({ chromosome: 'chr5', position: 1, name: 'x', ref_allele: 'A', alt_allele: 'G', feature_predictions: [0.12, -0.03] }, features);
     expect(effects).toEqual([
-      { feature: 'Adipose Subcutaneous', cell: 'GTEx', context: 'GTEx, connective tissue', label: 'Adipose Subcutaneous', value: 0.12 },
-      { feature: 'Adipose Visceral Omentum', cell: 'GTEx', context: 'GTEx, connective tissue', label: 'Adipose Visceral Omentum', value: -0.03 },
+      { feature: 'Adipose Subcutaneous', cell: 'GTEx', context: 'GTEx, connective tissue', label: 'Adipose Subcutaneous', value: 0.12, group: 'Adipose Subcutaneous, GTEx' },
+      { feature: 'Adipose Visceral Omentum', cell: 'GTEx', context: 'GTEx, connective tissue', label: 'Adipose Visceral Omentum', value: -0.03, group: 'Adipose Visceral Omentum, GTEx' },
     ]);
   });
 });
