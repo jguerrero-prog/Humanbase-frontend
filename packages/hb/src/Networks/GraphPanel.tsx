@@ -13,7 +13,6 @@ export interface GraphPanelProps {
   network: Network | undefined;
   /** Undefined while the network loads. */
   subset: NetworkSubset | undefined;
-  relatedTotal: number;
   view: NetworkView;
   minConfidence: number;
   label: string;
@@ -30,7 +29,7 @@ export interface GraphPanelProps {
   renderer?: GraphRendererFactory | undefined;
 }
 
-export function GraphPanel({ network, subset, relatedTotal, view, minConfidence, label, tableCaption, fileName, selection, loading, canExpand = true, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
+export function GraphPanel({ network, subset, view, minConfidence, label, tableCaption, fileName, selection, loading, canExpand = true, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
   const graph = useRef<NetworkGraphHandle>(null);
   const data = useMemo<GraphData | undefined>(
     () =>
@@ -52,7 +51,8 @@ export function GraphPanel({ network, subset, relatedTotal, view, minConfidence,
         { label: 'Clear all starred sets', dividerBefore: true, onSelect: () => onViewChange(view.with({ starred: [] })) },
       ]
     : [{ label: 'Star a process or tissue to highlight its genes', disabled: true }];
-  const shownRelated = subset ? subset.genes.filter((gene) => !gene.isQuery).length : 0;
+  const shown = subset?.genes.length ?? 0;
+  const total = network?.genes.length ?? 0;
 
   const asTable = view.display === 'table';
   const expand: GraphAction[] = canExpand ? [{ label: 'Expand', icon: 'maximize', pressed: view.expanded, onSelect: () => onViewChange(view.with({ expanded: !view.expanded })) }] : [];
@@ -109,7 +109,7 @@ export function GraphPanel({ network, subset, relatedTotal, view, minConfidence,
         <KeyLegend title="Connection" mark="line" items={legendItems} />
         {subset && (
           <p className="result-line" role="status">
-            Showing {shownRelated === relatedTotal ? `all ${shownRelated}` : `${shownRelated} of ${relatedTotal}`} genes, {subset.edges.length} connections at {minConfidence.toFixed(2)} or more
+            Showing {shown === total ? `all ${shown}` : `${shown} of ${total}`} genes, {subset.edges.length} connections at {minConfidence.toFixed(2)} or more
           </p>
         )}
       </div>

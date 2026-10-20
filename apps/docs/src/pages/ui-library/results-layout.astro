@@ -239,6 +239,11 @@ const networkSettings = (tissue: string) => [
   { kind: 'tissue', label: 'Tissue', value: tissue },
   { kind: 'types', label: 'Data types', value: 'all' },
 ];
+const il1r1Terms = [
+  { name: 'interleukin-1-mediated signaling pathway', identifier: 'GO:0070498', confidence: 1, sources: 2, evidence: [] },
+  { name: 'inflammatory response', identifier: 'GO:0006954', confidence: 1, sources: 1, evidence: [] },
+  { name: 'cytokine-mediated signaling pathway', identifier: 'GO:0019221', confidence: 0.94 },
+];
 ---
 
 <DocsLayout title="Results layout" description="One layout for every Humanbase result: a header that names it, a main view, a companion table and a drawer for details.">
@@ -333,7 +338,7 @@ const networkSettings = (tissue: string) => [
           score={{ label: 'Connection to IL1B', value: 1, text: 'Average weight of IL1R1’s connections to the query genes in the blood vessel network.' }}
           aliases={['D2S1473', 'IL-1R-alpha', 'IL1RA', 'P80', 'IL1R', 'CD121A']}
           ids={il1r1Ids}
-          annotations={{ label: 'Annotations', sources: [{ value: 'go', label: 'Gene Ontology (BP)', terms: ['interleukin-1-mediated signaling pathway', 'inflammatory response', 'cytokine-mediated signaling pathway'] }, { value: 'do', label: 'Disease Ontology', terms: [] }] }}
+          annotations={{ label: 'Annotations', sources: [{ value: 'go', label: 'Gene Ontology (BP)', rows: il1r1Terms }, { value: 'do', label: 'Disease Ontology', rows: [] }] }}
         />
       </Drawer>
     </div>

@@ -48,7 +48,7 @@ test('the filters change the network: genes shown, minimum confidence, uniquenes
 
 test('the Processes and Tissues panels list real terms, and a star rings the right genes', async ({ page }) => {
   const problems = watch(page);
-  await page.goto(`${il1bTnf}&version=v1&shown=13`);
+  await page.goto(`${il1bTnf}&version=v1`);
   await page.getByRole('tab', { name: /^Processes/ }).click();
   await expect(page.getByRole('table', { name: /Biological processes over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
   await page.getByRole('tab', { name: /Tissues/ }).click();
@@ -64,7 +64,7 @@ test('the gene drawer shows ICAM1 with its annotations', async ({ page }) => {
   await page.goto(`${il1bTnf}&version=v1&gene=3383`);
   const drawer = page.getByRole('dialog', { name: 'ICAM1' });
   await expect(drawer.getByText('intercellular adhesion molecule 1')).toBeVisible();
-  await expect(drawer.getByRole('region', { name: 'Annotations' }).getByRole('listitem').first()).toBeVisible();
+  await expect(drawer.getByRole('region', { name: 'Annotations' }).getByRole('rowheader').first()).toBeVisible();
   await checkScreen(page, problems);
 });
 

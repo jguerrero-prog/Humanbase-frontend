@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { Fragment, useState, type ReactNode } from 'react';
 import { Button } from '../Button/Button';
 import { ContextLabel, type ContextLabelProps } from '../ContextLabel/ContextLabel';
 import { Drawer } from '../Drawer/Drawer';
@@ -9,9 +9,15 @@ import './Results.css';
 
 export const STACKED_QUERY = '(width < 60rem)';
 
+export interface ResultTitle {
+  title: string;
+  subtitle?: string | undefined;
+}
+
 export interface ResultHeaderProps {
   crumbs: readonly Crumb[];
-  title: string;
+  /** One title, or several, each with its own subtitle, such as each query gene and its name. */
+  title: string | readonly ResultTitle[];
   subtitle?: string;
   actions?: ReactNode;
   context?: readonly ContextLabelProps[];
@@ -28,6 +34,7 @@ export function ResultHeader({ crumbs, title, subtitle, actions, context = [], s
   const stacked = useMediaQuery(STACKED_QUERY);
   const [sheetOpen, setSheetOpen] = useState(false);
   const Heading = `h${headingLevel}` as const;
+  const titles = typeof title === 'string' ? [{ title, subtitle }] : title;
 
   return (
     <header className="result-header">
@@ -36,8 +43,15 @@ export function ResultHeader({ crumbs, title, subtitle, actions, context = [], s
         <div className="result-header-title">
           <div className="result-header-name">
             <Heading className="result-header-heading">
-              {title}
-              {subtitle && <> <span className="result-header-subtitle">{subtitle}</span></>}
+              {titles.map((part, index) => (
+                <Fragment key={part.title}>
+                  {index > 0 && ' '}
+                  <span className="result-header-part">
+                    {part.title}
+                    {part.subtitle && <> <span className="result-header-subtitle">{part.subtitle}</span></>}
+                  </span>
+                </Fragment>
+              ))}
             </Heading>
             {actions && <div className="result-header-actions">{actions}</div>}
           </div>

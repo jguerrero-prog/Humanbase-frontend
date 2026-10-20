@@ -36,7 +36,7 @@ export { useAsdColumns, useAsdEffects, useAsdPage, useAsdRange } from './react/u
 export { NetworkQuery, dataVersionNames, type ComparedNetwork } from './networks/NetworkQuery';
 export { GeneHit, type GeneHitRecord } from './genes/GeneHit';
 export { GeneSearchService, type TermMatches } from './search/GeneSearchService';
-export { Integration, type IntegrationRecord, type NetworkKind } from './networks/Integration';
+export { Integration, sentenceCase, type IntegrationRecord, type NetworkKind } from './networks/Integration';
 export { IntegrationService } from './networks/IntegrationService';
 export { DataType, type DataTypeRecord } from './networks/DataType';
 export { Network, NetworkGene, type NetworkEdge, type NetworkEdgeRecord, type NetworkGeneRecord, type NetworkRecord, type NetworkSubset, type NetworkViewOptions } from './networks/Network';

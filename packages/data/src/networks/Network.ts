@@ -66,7 +66,7 @@ export interface NetworkEdge {
 }
 
 export interface NetworkViewOptions {
-  /** Related genes to show beside the query genes. */
+  /** Genes to draw, counting the query genes, as the live site's "Maximum number of genes" does. */
   shown: number;
   minConfidence: number;
   prioritizeUniqueness: boolean;
@@ -121,7 +121,8 @@ export class Network {
 
   /** The genes and connections drawn for a set of view options. */
   subset({ shown, minConfidence, prioritizeUniqueness }: NetworkViewOptions): NetworkSubset {
-    const genes = [...this.queryGenes, ...this.related(prioritizeUniqueness).slice(0, shown)];
+    const query = this.queryGenes;
+    const genes = [...query, ...this.related(prioritizeUniqueness).slice(0, Math.max(0, shown - query.length))];
     const kept = new Set(genes);
     const edges = this.edges.filter((edge) => edge.weight >= minConfidence && kept.has(edge.source) && kept.has(edge.target));
     return { genes, edges };

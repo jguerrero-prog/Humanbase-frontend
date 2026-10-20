@@ -108,7 +108,7 @@ export { NetwasGeneTable, NetwasScore, type NetwasGeneRow, type NetwasGeneTableP
 export { NetwasGuide, type NetwasGuideProps } from './Results/NetwasGuide';
 export { RankedAnnotationTable, type AnnotationEvidence, type Publication, type RankedAnnotation, type RankedAnnotationTableProps } from './Results/RankedAnnotationTable';
 export { EvidenceTable, GeneDetail, NetworkWeightTable, ScoreMeter, WeightHistogram, type AnnotationSource, type EvidenceRow, type GeneDetailProps, type NetworkWeight } from './Results/ResultDetail';
-export { ResultHeader, STACKED_QUERY, type ResultHeaderProps } from './Results/ResultHeader';
+export { ResultHeader, STACKED_QUERY, type ResultHeaderProps, type ResultTitle } from './Results/ResultHeader';
 export { ResultLayout, type ResultLayoutProps } from './Results/ResultLayout';
 export { ResultFiles, type ResultFile as ResultFileRow, type ResultFilesProps } from './Results/ResultFiles';
 export { AllFeaturesPlot, type AllFeaturesPlotProps } from './VariantEffects/AllFeaturesPlot';
