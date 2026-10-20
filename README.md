@@ -85,7 +85,7 @@ To connect your own engine instead of the Humanbase API, write a class that impl
 
 `pnpm test:live:jobs` also submits one real example job per tool and checks the result page once it finishes. It never retries a failed submission.
 
-Neither runs on pull requests, so a slow or unavailable API never blocks a merge. The **Live API** workflow runs `pnpm test:live` every Monday, and both on demand from the Actions tab.
+Neither runs on pull requests, so a slow or unavailable API never blocks a merge. The **Live API** workflow runs `pnpm test:live` every Monday, and both on demand from the Actions tab. When the Monday run fails, it opens an issue titled "Live API run failed on" the date, listing the failing tests and linking to the run; while that issue is open, later failures add a comment to it instead of a new issue.
 
 ## Using the design system
 
