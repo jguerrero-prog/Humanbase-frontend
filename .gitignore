@@ -16,3 +16,4 @@ blob-report/
 
 # Local coding-agent settings and worktrees
 .claude/
+.wrangler/
