@@ -15,9 +15,12 @@ Object.assign(HTMLDialogElement.prototype, {
   },
 });
 
-// jsdom hides [popover] elements but has no showPopover; this one shows the element inline.
+// jsdom hides [popover] elements but has no showPopover or hidePopover; these show and hide the element inline.
 Object.assign(HTMLElement.prototype, {
   showPopover(this: HTMLElement) {
     this.style.display = 'block';
+  },
+  hidePopover(this: HTMLElement) {
+    this.style.display = 'none';
   },
 });
