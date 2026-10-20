@@ -65,6 +65,15 @@ The front end always calls a relative `/api` path, so the API never needs extra 
 
 The [Deploying page](apps/docs/src/pages/resources/deploying.astro) on the design system site has an example nginx configuration and the checks to run before switching over. The GitHub Pages demo, built by `.github/workflows/pages.yml`, is the API-off example.
 
+### A live-API demo on Cloudflare Pages
+
+When the front end can't sit on the API's domain, Cloudflare Pages can serve it and forward `/api` for it. `functions/api/[[path]].ts` is a Pages Function that sends every `/api/*` request to the Humanbase API, as the dev server's proxy does; set `HB_API_PROXY_TARGET` in the Pages project to use another API. Cloudflare Pages already sends unknown paths to `index.html`.
+
+1. Run `pnpm exec wrangler login` once.
+2. Run `pnpm deploy:cloudflare`. It builds the app with the API on and deploys it, with the function, to the `humanbase-frontend` Pages project on its `master` branch.
+
+`pnpm exec wrangler pages dev apps/web/dist` runs the same setup locally. Anyone with the link can submit real jobs through it, as on the live site.
+
 ## Turning the API off
 
 `apps/web/public/config.json` has one switch:
