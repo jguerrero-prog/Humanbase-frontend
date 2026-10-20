@@ -21,7 +21,7 @@ describe('DeepseaForm', () => {
     const { onStarted } = renderForm('beluga');
     await userEvent.click(screen.getByRole('radio', { name: 'Use the example' }));
     await userEvent.click(screen.getByRole('button', { name: 'Run Beluga on 12 variants' }));
-    await waitFor(() => expect(onStarted).toHaveBeenCalledWith('/deepsea/jobs/00000000-0000-4000-8000-000000000112/'));
+    await waitFor(() => expect(onStarted).toHaveBeenCalledWith('/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/'));
     expect(new JobHistory().list()[0]).toMatchObject({ tool: 'Beluga', detail: 'Beluga, 12 variants', status: 'queued' });
   });
 

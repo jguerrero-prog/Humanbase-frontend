@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "body": {
+    "id": "c66b3d05-2f49-4522-b910-1605609e4083",
+    "created": "2026-10-19T20:33:21",
+    "title": "",
+    "email": "",
+    "status": "completed",
+    "gwas_file": "https://s3-us-west-2.amazonaws.com/humanbase/netwas/uploads/c66b3d05-2f49-4522-b910-1605609e4083/bmi-vegas.txt",
+    "gwas_format": "vegas",
+    "tissue": "adipose-tissue",
+    "p_value": 0.01,
+    "log_file": "https://s3-us-west-2.amazonaws.com/humanbase/netwas/results/c66b3d05-2f49-4522-b910-1605609e4083/log.txt",
+    "results_file": "https://s3-us-west-2.amazonaws.com/humanbase/netwas/results/c66b3d05-2f49-4522-b910-1605609e4083/results.txt",
+    "version": "v1",
+    "mhc": null
+  }
+}

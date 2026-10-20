@@ -34,7 +34,7 @@ describe('NetwasJobView', () => {
   });
 
   it('shows a finished job’s ranked genes with their names and a link into Networks', async () => {
-    renderJob(job(3));
+    renderJob('c66b3d05-2f49-4522-b910-1605609e4083');
     expect(await screen.findByRole('heading', { level: 1, name: 'Untitled NetWAS job' })).toBeInTheDocument();
     expect(await screen.findByText('keratin 6B', {}, { timeout: 3000 })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Open in Networks for KRT6B' })).toHaveAttribute('href', '/networks/?entrez=3854&tissue=adipose-tissue&version=v1');

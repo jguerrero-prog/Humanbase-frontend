@@ -1,140 +1,9 @@
 {
-  "note": "Hand-built, not recorded: submitting a Sei or Beluga job to record one was blocked by the permission checker. Values come from the Figma result screens; the ID is clearly not a real job. Replace with a recorded job once one is submitted.",
   "status": 200,
   "body": {
     "ds_model": "Beluga",
-    "score_type": "dis",
+    "score_type": "mean-evalue",
     "scores": [
-      {
-        "sequence": {
-          "chromosome": "chr5",
-          "position": 134871851,
-          "name": "NEUROG1",
-          "ref_allele": "A",
-          "alt_allele": "G",
-          "strand": "+",
-          "ref_match": "True",
-          "contains_unk": "False"
-        },
-        "value": 3.06
-      },
-      {
-        "sequence": {
-          "chromosome": "chr10",
-          "position": 96305280,
-          "name": "HELLS",
-          "ref_allele": "T",
-          "alt_allele": "C",
-          "strand": "+",
-          "ref_match": "True",
-          "contains_unk": "False"
-        },
-        "value": 3.04
-      },
-      {
-        "sequence": {
-          "chromosome": "chr7",
-          "position": 49813589,
-          "name": "VWC2",
-          "ref_allele": "G",
-          "alt_allele": "C",
-          "strand": "+",
-          "ref_match": "True",
-          "contains_unk": "False"
-        },
-        "value": 2.8
-      },
-      {
-        "sequence": {
-          "chromosome": "chr17",
-          "position": 76352731,
-          "name": "SOCS3",
-          "ref_allele": "G",
-          "alt_allele": "A",
-          "strand": "+",
-          "ref_match": "True",
-          "contains_unk": "False"
-        },
-        "value": 2.6
-      },
-      {
-        "sequence": {
-          "chromosome": "chr8",
-          "position": 74206149,
-          "name": "RDH10",
-          "ref_allele": "C",
-          "alt_allele": "G",
-          "strand": "+",
-          "ref_match": "True",
-          "contains_unk": "False"
-        },
-        "value": 2.4
-      },
-      {
-        "sequence": {
-          "chromosome": "chr19",
-          "position": 59070227,
-          "name": "UBE2M",
-          "ref_allele": "C",
-          "alt_allele": "A",
-          "strand": "+",
-          "ref_match": "True",
-          "contains_unk": "False"
-        },
-        "value": 2.17
-      },
-      {
-        "sequence": {
-          "chromosome": "chr6",
-          "position": 108879283,
-          "name": "FOXO3",
-          "ref_allele": "G",
-          "alt_allele": "A",
-          "strand": "+",
-          "ref_match": "True",
-          "contains_unk": "False"
-        },
-        "value": 1.71
-      },
-      {
-        "sequence": {
-          "chromosome": "chr11",
-          "position": 69593819,
-          "name": "FGF4_a",
-          "ref_allele": "G",
-          "alt_allele": "A",
-          "strand": "+",
-          "ref_match": "True",
-          "contains_unk": "False"
-        },
-        "value": 1.71
-      },
-      {
-        "sequence": {
-          "chromosome": "chr11",
-          "position": 2435681,
-          "name": "TRPM5",
-          "ref_allele": "C",
-          "alt_allele": "T",
-          "strand": "+",
-          "ref_match": "True",
-          "contains_unk": "False"
-        },
-        "value": 1.48
-      },
-      {
-        "sequence": {
-          "chromosome": "chr19",
-          "position": 1854681,
-          "name": "REXO1",
-          "ref_allele": "C",
-          "alt_allele": "G",
-          "strand": "+",
-          "ref_match": "True",
-          "contains_unk": "False"
-        },
-        "value": 1.42
-      },
       {
         "sequence": {
           "chromosome": "chr3",
@@ -146,7 +15,7 @@
           "ref_match": "True",
           "contains_unk": "False"
         },
-        "value": 1.41
+        "value": 0.85192701646702
       },
       {
         "sequence": {
@@ -159,7 +28,137 @@
           "ref_match": "True",
           "contains_unk": "False"
         },
-        "value": 1.19
+        "value": 0.7602147683805202
+      },
+      {
+        "sequence": {
+          "chromosome": "chr5",
+          "position": 134871851,
+          "name": "NEUROG1",
+          "ref_allele": "A",
+          "alt_allele": "G",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.7782685863139123
+      },
+      {
+        "sequence": {
+          "chromosome": "chr6",
+          "position": 108879283,
+          "name": "FOXO3",
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.0265978565989635
+      },
+      {
+        "sequence": {
+          "chromosome": "chr7",
+          "position": 49813589,
+          "name": "VWC2",
+          "ref_allele": "G",
+          "alt_allele": "C",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.5626773309483029
+      },
+      {
+        "sequence": {
+          "chromosome": "chr8",
+          "position": 74206149,
+          "name": "RDH10",
+          "ref_allele": "C",
+          "alt_allele": "G",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.2607065478336186
+      },
+      {
+        "sequence": {
+          "chromosome": "chr10",
+          "position": 96305280,
+          "name": "HELLS",
+          "ref_allele": "T",
+          "alt_allele": "C",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.6137594648385314
+      },
+      {
+        "sequence": {
+          "chromosome": "chr11",
+          "position": 2435681,
+          "name": "TRPM5",
+          "ref_allele": "C",
+          "alt_allele": "T",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 0.8582687036335482
+      },
+      {
+        "sequence": {
+          "chromosome": "chr11",
+          "position": 69593819,
+          "name": "FGF4_a",
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.0836819489751819
+      },
+      {
+        "sequence": {
+          "chromosome": "chr17",
+          "position": 76352731,
+          "name": "SOCS3",
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.5686953080050823
+      },
+      {
+        "sequence": {
+          "chromosome": "chr19",
+          "position": 1854681,
+          "name": "REXO1",
+          "ref_allele": "C",
+          "alt_allele": "G",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 0.9480075555192655
+      },
+      {
+        "sequence": {
+          "chromosome": "chr19",
+          "position": 59070227,
+          "name": "UBE2M",
+          "ref_allele": "C",
+          "alt_allele": "A",
+          "strand": "+",
+          "ref_match": "True",
+          "contains_unk": "False"
+        },
+        "value": 1.073881799495183
       }
     ]
   }

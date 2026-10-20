@@ -1,5 +1,4 @@
 {
-  "note": "Hand-built, not recorded: the one approved ExPecto example job was sent on October 20, 2026 with the input under a guessed field, input_file, and the API answered 500. The live form sends upload_file or upload_textarea, now fixed, but no ExPecto job has been recorded since. Values follow the Figma ExPecto result screens; the ID is clearly not a real job.",
   "status": 200,
   "body": {
     "ds_model": "Beluga",
@@ -9,145 +8,121 @@
         "sequence": {
           "chromosome": "chr3",
           "position": 12598855,
-          "name": "MKRN2",
           "ref_allele": "G",
           "alt_allele": "A",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "MKRN2"
         },
-        "value": 0.04
+        "value": 0.03821861743927002
       },
       {
         "sequence": {
           "chromosome": "chr3",
           "position": 54158012,
-          "name": "CACNA2D3",
           "ref_allele": "T",
           "alt_allele": "C",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "CACNA2D3"
         },
-        "value": 0.05
+        "value": 0.04515182971954346
       },
       {
         "sequence": {
           "chromosome": "chr5",
           "position": 134871851,
-          "name": "NEUROG1",
           "ref_allele": "A",
           "alt_allele": "G",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "NEUROG1"
         },
-        "value": 0.44
+        "value": 0.44415032863616943
       },
       {
         "sequence": {
           "chromosome": "chr6",
           "position": 108879283,
-          "name": "FOXO3",
           "ref_allele": "G",
           "alt_allele": "A",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "FOXO3"
         },
-        "value": -0.01
+        "value": -0.01377713680267334
       },
       {
         "sequence": {
           "chromosome": "chr7",
           "position": 49813589,
-          "name": "VWC2",
           "ref_allele": "G",
           "alt_allele": "C",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "VWC2"
         },
-        "value": 0.22
+        "value": 0.21772074699401855
       },
       {
         "sequence": {
           "chromosome": "chr8",
           "position": 74206149,
-          "name": "RDH10",
           "ref_allele": "C",
           "alt_allele": "G",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "RPL7"
         },
-        "value": 0.06
+        "value": 0.06309676170349121
       },
       {
         "sequence": {
           "chromosome": "chr10",
           "position": 96305280,
-          "name": "HELLS",
           "ref_allele": "T",
           "alt_allele": "C",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "HELLS"
         },
-        "value": 0.09
+        "value": 0.08701038360595703
       },
       {
         "sequence": {
           "chromosome": "chr11",
           "position": 2435681,
-          "name": "TRPM5",
           "ref_allele": "C",
           "alt_allele": "T",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "TRPM5"
         },
-        "value": 0.01
+        "value": 0.00702059268951416
       },
       {
         "sequence": {
           "chromosome": "chr11",
           "position": 69593819,
-          "name": "FGF4_a",
           "ref_allele": "G",
           "alt_allele": "A",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "FGF4"
         },
-        "value": -0.06
+        "value": -0.05554771423339844
       },
       {
         "sequence": {
           "chromosome": "chr17",
           "position": 76352731,
-          "name": "SOCS3",
           "ref_allele": "G",
           "alt_allele": "A",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "SOCS3"
         },
-        "value": -0.13
+        "value": -0.1282716989517212
       },
       {
         "sequence": {
           "chromosome": "chr19",
           "position": 1854681,
-          "name": "REXO1",
           "ref_allele": "C",
           "alt_allele": "G",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "REXO1"
         },
-        "value": 0
+        "value": 0.002535104751586914
       },
       {
         "sequence": {
           "chromosome": "chr19",
           "position": 59070227,
-          "name": "UBE2M",
           "ref_allele": "C",
           "alt_allele": "A",
-          "ref_match": "True",
-          "contains_unk": "False"
+          "gene": "UBE2M"
         },
-        "value": 0.05
+        "value": 0.05393218994140625
       }
     ]
   }

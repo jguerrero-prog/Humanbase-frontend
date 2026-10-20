@@ -120,7 +120,7 @@ describe('NetWAS with the API off', () => {
     const [example] = NetwasService.examples.v1;
     const file = await humanbase.netwas.exampleFile(example as (typeof NetwasService.examples.v1)[number]);
     expect(new GwasFileCheck().check(file).summary).toBe('17,692 genes with p-values, VEGAS format');
-    const finished = await humanbase.netwas.get('00000000-0000-4000-8000-000000000003');
+    const finished = await humanbase.netwas.get('c66b3d05-2f49-4522-b910-1605609e4083');
     const { result } = await humanbase.netwas.result(finished);
     expect(result.genes[0]?.symbol).toBe('KRT6B');
     await expect(humanbase.netwas.get('00000000-0000-4000-8000-000000000000')).rejects.toMatchObject({ status: 404 });
