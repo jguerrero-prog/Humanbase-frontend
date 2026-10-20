@@ -1,10 +1,23 @@
-import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
+import { createRequire } from 'node:module';
 
 const axeTags = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
+// axe-core comes with @axe-core/playwright; reading it from there keeps one copy and one version.
+const axeSource: string = (createRequire(createRequire(import.meta.url).resolve('@axe-core/playwright'))('axe-core') as { source: string }).source;
+
+interface AxeWindow {
+  axe?: { run: (context: unknown, options: unknown) => Promise<{ violations: { id: string; help: string; nodes: { target: string[] }[] }[] }> };
+}
 
 /** WCAG 2.2 AA problems on the page once its animations settle; decorative illustrations are skipped. */
 export async function violationsOf(page: Page): Promise<string[]> {
   await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
-  return (await new AxeBuilder({ page }).exclude('[data-illustration]').withTags(axeTags).analyze()).violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`);
+  if (!(await page.evaluate(() => Boolean((window as AxeWindow).axe)))) await page.addScriptTag({ content: axeSource });
+  // Axe runs in the page and sends back only the violations: on a 23,000-cell heatmap its passing nodes alone exhaust the runner's memory.
+  return page.evaluate(async (tags) => {
+    const axe = (window as AxeWindow).axe;
+    if (!axe) throw new Error('axe-core did not load');
+    const result = await axe.run({ exclude: [['[data-illustration]']] }, { runOnly: { type: 'tag', values: tags } });
+    return result.violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`);
+  }, axeTags);
 }
