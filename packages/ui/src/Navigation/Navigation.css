@@ -1,6 +1,6 @@
 .top-bar {
   position: sticky;
-  z-index: 100;
+  z-index: var(--z-sticky);
   inset-block-start: 0;
   container-type: inline-size;
   background: var(--action-primary);
