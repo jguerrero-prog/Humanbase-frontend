@@ -129,7 +129,7 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
           columns={analysisColumns}
           value="modules"
           triggerIcon="module"
-          className="home-search-analysis"
+          size="large"
           footer={
             <p>
               Not sure which tool? <a href={linkHref('/sequence-tools/')}>Compare them</a>

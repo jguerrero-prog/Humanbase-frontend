@@ -15,6 +15,8 @@ export interface TopBarProps {
   jobs?: JobsMenuSummary;
   homeHref?: string;
   searchAction?: string;
+  /** Leave the search out where the page has its own, such as the homepage hero. */
+  search?: boolean;
   openSection?: string;
   menuOpen?: boolean;
   scrolled?: boolean;
@@ -35,7 +37,7 @@ function useScrolled(forced: boolean | undefined) {
   return forced ?? scrolled;
 }
 
-export function TopBar({ sections, current, jobs, homeHref = '/', searchAction = '/search', openSection, menuOpen, scrolled, className }: TopBarProps) {
+export function TopBar({ sections, current, jobs, homeHref = '/', searchAction = '/search', search = true, openSection, menuOpen, scrolled, className }: TopBarProps) {
   const linkHref = useLinkHref();
   const nav = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(openSection);
@@ -64,13 +66,17 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
             />
           ))}
         </nav>
-        <form className="top-bar-search" role="search" action={searchAction}>
-          <Icon name="search" size={16} />
-          <input type="search" name="q" aria-label="Search" placeholder={searchPlaceholder} />
-        </form>
-        <button type="button" className="top-bar-icon-button top-bar-search-button" aria-label="Search" aria-expanded={searchOpen} onClick={() => setSearchOpen(!searchOpen)}>
-          <Icon name={searchOpen ? 'x' : 'search'} size={20} />
-        </button>
+        {search && (
+          <>
+            <form className="top-bar-search" role="search" action={searchAction}>
+              <Icon name="search" size={16} />
+              <input type="search" name="q" aria-label="Search" placeholder={searchPlaceholder} />
+            </form>
+            <button type="button" className="top-bar-icon-button top-bar-search-button" aria-label="Search" aria-expanded={searchOpen} onClick={() => setSearchOpen(!searchOpen)}>
+              <Icon name={searchOpen ? 'x' : 'search'} size={20} />
+            </button>
+          </>
+        )}
         {jobs && <JobsMenu {...jobs} />}
         <button type="button" className="top-bar-icon-button top-bar-menu-button" aria-label={phoneMenu ? 'Close' : 'Menu'} aria-expanded={phoneMenu} onClick={() => setPhoneMenu(!phoneMenu)}>
           <Icon name={phoneMenu ? 'x' : 'menu'} size={20} />
