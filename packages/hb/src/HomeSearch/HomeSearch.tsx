@@ -126,7 +126,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
           columns={analysisColumns}
           {...(analysis && { value: analysis })}
           triggerIcon={analysis === 'networks' ? 'gene-network' : 'analysis'}
-          className="home-search-analysis"
+          size="large"
           footer={
             <p>
               Not sure which tool? <a href={linkHref('/sequence-tools/')}>Compare them</a>

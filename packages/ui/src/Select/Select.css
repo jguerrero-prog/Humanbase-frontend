@@ -13,6 +13,17 @@
   cursor: pointer;
 }
 
+.select-large .select-trigger {
+  block-size: 56px;
+  padding: 0 var(--space-5);
+  font: var(--type-body-lg);
+  border-radius: var(--radius-md);
+}
+
+.select-large .select-trigger-icon {
+  color: var(--text-default);
+}
+
 .select-small .select-trigger {
   block-size: 36px;
   padding: 0 var(--space-2) 0 var(--space-3);

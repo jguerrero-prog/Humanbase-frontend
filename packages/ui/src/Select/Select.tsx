@@ -16,6 +16,9 @@ export interface SelectOption {
   group?: string;
 }
 
+/** Large is the 56px select beside a hero search field. */
+export type SelectSize = FieldSize | 'large';
+
 export interface SelectProps {
   label: string;
   options: readonly SelectOption[];
@@ -25,7 +28,7 @@ export interface SelectProps {
   placeholder?: string;
   hint?: string;
   error?: string | undefined;
-  size?: FieldSize;
+  size?: SelectSize;
   disabled?: boolean;
   searchable?: boolean;
   filterLabel?: string;
@@ -160,7 +163,7 @@ export function Select({
   const activeId = open && highlight >= 0 ? optionId(highlight) : undefined;
 
   return (
-    <Field label={label} hint={hint} error={error} size={size} disabled={disabled} hideLabel={hideLabel}>
+    <Field label={label} hint={hint} error={error} size={size === 'large' ? 'medium' : size} disabled={disabled} hideLabel={hideLabel}>
       {(control) => (
         <div ref={wrapper} className={['select', `select-${size}`, className].filter(Boolean).join(' ')}>
           <button

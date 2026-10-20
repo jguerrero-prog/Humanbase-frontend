@@ -9,17 +9,6 @@
   gap: var(--space-3);
 }
 
-.home-search-analysis .select-trigger {
-  block-size: 56px;
-  padding: 0 var(--space-5);
-  font: var(--type-body-lg);
-  border-radius: var(--radius-md);
-}
-
-.home-search-analysis .select-trigger-icon {
-  color: var(--text-default);
-}
-
 .home-search-panel {
   display: grid;
   gap: var(--space-8);

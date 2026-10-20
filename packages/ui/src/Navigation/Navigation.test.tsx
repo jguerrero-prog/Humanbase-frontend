@@ -29,6 +29,12 @@ describe('TopBar', () => {
     expect(within(main).getByRole('link', { name: 'Docs' })).toHaveAttribute('href', '/docs/');
   });
 
+  it('leaves the search out when the page has its own', () => {
+    render(<TopBar sections={sections} jobs={jobs} search={false} />);
+    expect(screen.queryByRole('search')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Search' })).not.toBeInTheDocument();
+  });
+
   it('opens the jobs menu from the Jobs button', async () => {
     renderBar();
     const button = screen.getByRole('button', { name: 'Jobs 1 running' });
