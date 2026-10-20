@@ -1,6 +1,7 @@
 import { useId, useMemo, type CSSProperties } from 'react';
 import { ScoreScale, type ScaleSpec } from './ScoreScale';
 import './Heatmap.css';
+import '../Legend/Legend.css';
 
 export interface LegendSteppedProps {
   spec: ScaleSpec;
