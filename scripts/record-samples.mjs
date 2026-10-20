@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sampleKey } from '../packages/data/src/sample/sampleKey.ts';
@@ -8,6 +8,22 @@ const only = args.find((arg) => arg.startsWith('--only='))?.slice('--only='.leng
 const target = (args.find((arg) => !arg.startsWith('--')) ?? process.env.HB_API_PROXY_TARGET ?? 'https://hb.flatironinstitute.org').replace(/\/$/, '');
 const { endpoints, geneLookups } = JSON.parse(readFileSync(new URL('../packages/data/endpoints.json', import.meta.url), 'utf8'));
 const samplesDir = fileURLToPath(new URL('../packages/data/samples/', import.meta.url));
+
+// Samples over 100 KB skip the indentation, which only helps reading small ones.
+const compactOver = 100 * 1024;
+function writeSample(file, recorded) {
+  const indented = JSON.stringify(recorded, null, 2);
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, `${indented.length > compactOver ? JSON.stringify(recorded) : indented}\n`);
+}
+
+// --compact rewrites the samples already recorded by the same rule, without asking the API.
+if (args.includes('--compact')) {
+  const files = readdirSync(samplesDir, { recursive: true }).filter((name) => name.endsWith('.json')).map((name) => join(samplesDir, name));
+  for (const file of files) writeSample(file, JSON.parse(readFileSync(file, 'utf8')));
+  console.log(`Checked ${files.length} samples`);
+  process.exit(0);
+}
 
 // Drops long text the screens never show, such as term descriptions, wherever it appears in a response.
 function without(value, keys) {
@@ -49,10 +65,7 @@ async function record(endpoint, sample) {
   const read = () => (isFile ? response.text() : response.json().then((json) => shrink(without(json, omit ?? endpoint.omit ?? []))));
   const recorded = { status: response.status, body: response.ok ? await read() : null };
   // A plain path keeps the key as written; a file URL would decode %3A into a colon.
-  const file = join(samplesDir, `${key}.json`);
-  mkdirSync(dirname(file), { recursive: true });
-  // Rounded samples are large tables, so they skip the indentation too.
-  writeFileSync(file, `${JSON.stringify(recorded, null, digits === undefined ? 2 : 0)}\n`);
+  writeSample(join(samplesDir, `${key}.json`), recorded);
   return { sample: key, result: String(response.status) };
 }
 
@@ -62,9 +75,7 @@ async function recordGene(name) {
   const key = `genome/genes/${name.toLowerCase()}`;
   const span = await new S3GeneLocator(geneLookups.tracks).locate(name);
   if (!span) return { sample: key, result: 'not found, no file' };
-  const file = join(samplesDir, `${key}.json`);
-  mkdirSync(dirname(file), { recursive: true });
-  writeFileSync(file, `${JSON.stringify({ status: 200, body: span }, null, 2)}\n`);
+  writeSample(join(samplesDir, `${key}.json`), { status: 200, body: span });
   return { sample: key, result: `${span.chrom}:${span.start}-${span.end}` };
 }
 

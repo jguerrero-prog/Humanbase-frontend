@@ -40,7 +40,7 @@ pnpm dev:docs   # the design system site
 | `pnpm tokens` | Regenerates `tokens.css` after the token files change. |
 | `pnpm api:generate` | Regenerates the API types from an API's `/api/schema/`. |
 | `pnpm api:verify` | Calls every endpoint the front end uses and reports which ones work. |
-| `pnpm samples:record` | Saves the sample data shown when the API is off. Read requests only. |
+| `pnpm samples:record` | Saves the sample data shown when the API is off. Read requests only. Samples over 100 KB are saved without indentation; `pnpm samples:record --compact` applies that to the samples already saved, without asking the API. |
 
 ## Connecting your own Humanbase API
 
