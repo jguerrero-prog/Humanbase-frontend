@@ -1,5 +1,5 @@
 import { ApiError, featureLabel, sequenceSpan, useDeepseaFeatures, useHumanbase, useInsilico, type DeepseaJob, type InsilicoResult } from '@humanbase/data';
-import { ActionMenu, Alert, Button, ResultHeader, ResultLayout, saveFile, Select, Skeleton, SubstitutionMap, type ScaleSpec } from '@humanbase/ui';
+import { ActionMenu, Alert, Button, Cell, HeaderCell, ResultHeader, ResultLayout, saveFile, Select, Skeleton, SubstitutionMap, Table, type ScaleSpec } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { jobDateTime } from '../Jobs/JobPage';
 import { deepseaFormLink } from './DeepseaForm';
@@ -14,10 +14,12 @@ export interface InsilicoResultViewProps {
 
 const windowSize = 91;
 const binSize = 10;
+const strongestShown = 10;
 // The result the Figma screens open on: HepG2 / CEBPB, the example's first variant.
 const startFeature = 297;
 const scale: ScaleSpec = { title: 'Log2 fold change', kind: 'diverging', edges: [-0.5, -0.25, -0.1, 0.1, 0.25, 0.5], words: ['Mutation lowers', 'Mutation raises'] };
 const number = new Intl.NumberFormat('en-US');
+const fold = (value: number) => (value < 0 ? `−${Math.abs(value).toFixed(2)}` : value.toFixed(2));
 
 function sequenceOption(name: string) {
   const span = sequenceSpan(name);
@@ -139,19 +141,60 @@ function InsilicoMap({ result, feature, span, start, onStart }: InsilicoMapProps
   const last = Math.max(0, result.length - windowSize);
   const from = Math.min(last, Math.max(0, start ?? strongest - Math.floor(windowSize / 2)));
   const overview = useMemo(() => result.strongestPer(binSize).map((item) => Math.abs(item.value)), [result]);
+  const top = useMemo(() => result.strongestPositions(strongestShown), [result]);
+  const [shown, setShown] = useState<number>();
+  const genome = (position: number) => (span ? `${span.chromosome}:${number.format(span.start + position)}` : undefined);
+  const show = (position: number) => {
+    onStart(position - Math.floor(windowSize / 2));
+    setSelected(position);
+    setShown(position);
+  };
   return (
-    <SubstitutionMap
-      length={result.length}
-      start={from}
-      windowSize={windowSize}
-      onStart={onStart}
-      columns={result.columns(from, windowSize)}
-      overview={overview}
-      selected={selected}
-      onSelect={setSelected}
-      scale={scale}
-      {...(span && { genome: { chromosome: span.chromosome, start: span.start } })}
-      note={`Log2 fold change for ${feature}. Negative: the mutation lowers the predicted signal.`}
-    />
+    <>
+      <SubstitutionMap
+        length={result.length}
+        start={from}
+        windowSize={windowSize}
+        onStart={onStart}
+        columns={result.columns(from, windowSize)}
+        overview={overview}
+        selected={selected}
+        onSelect={setSelected}
+        scale={scale}
+        {...(span && { genome: { chromosome: span.chromosome, start: span.start } })}
+        note={`Log2 fold change for ${feature}. Negative: the mutation lowers the predicted signal.`}
+      />
+      <Table caption={`Strongest changes to ${feature}`} showCaption density="compact">
+        <thead>
+          <tr>
+            <HeaderCell>Position</HeaderCell>
+            {span && <HeaderCell>Genome position</HeaderCell>}
+            <HeaderCell>Strongest change</HeaderCell>
+            <HeaderCell align="end">Log2 fold change</HeaderCell>
+            <HeaderCell>
+              <span className="visually-hidden">Show in the map</span>
+            </HeaderCell>
+          </tr>
+        </thead>
+        <tbody>
+          {top.map((item) => (
+            <tr key={item.position}>
+              <Cell rowHeader type="id">{number.format(item.position)}</Cell>
+              {span && <Cell type="id">{genome(item.position)}</Cell>}
+              <Cell type="id">{`${item.ref}>${item.alt}`}</Cell>
+              <Cell type="number">{fold(item.value)}</Cell>
+              <Cell>
+                <Button variant="ghost" size="small" onClick={() => show(item.position)} aria-label={`Show position ${number.format(item.position)} in the map`}>
+                  Show
+                </Button>
+              </Cell>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+      <p className="visually-hidden" role="status">
+        {shown !== undefined && `Showing position ${number.format(shown)} in the map.`}
+      </p>
+    </>
   );
 }
