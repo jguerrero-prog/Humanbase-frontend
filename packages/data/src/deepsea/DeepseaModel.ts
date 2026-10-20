@@ -126,6 +126,8 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     about:
       'ExPecto leverages deep learning-based sequence models trained on chromatin profiling data, and integrated with spatial transformation and regularized linear models. This framework does not use any variant information, enabling prediction of the expression effect for any variant, even those that are rare or have never been previously observed.',
     otherModels: 'ExPecto builds on Beluga’s chromatin predictions.',
+    // ExPecto jobs also list Beluga's dis and mean-evalue scores, but the API answers 500 for them.
+    variantScores: ['expecto'],
     featureNoun: 'tissue',
     featurePlural: 'tissues',
     verb: 'expression',
