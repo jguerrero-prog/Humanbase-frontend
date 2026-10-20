@@ -30,6 +30,8 @@ pnpm dev:web    # the front end
 pnpm dev:docs   # the design system site
 ```
 
+Before the first `pnpm test:e2e` or `pnpm test:live`, install the browser the tests use: `pnpm exec playwright install chromium`.
+
 | Command | What it does |
 | --- | --- |
 | `pnpm check` | Type checks, lints and runs unit tests. CI runs the same. |
@@ -52,6 +54,17 @@ The front end always calls a relative `/api` path, so the API never needs extra 
 
 `apps/web/public/config.json` is read when the page loads, so the API path can change without rebuilding.
 
+## Deploying
+
+`pnpm --filter @humanbase/web build` writes the whole front end to `apps/web/dist`: static files with no server code. To run it beside the Humanbase API, for example on humanbase.io:
+
+1. Serve `apps/web/dist` from the same origin as the API and send `/api` to the API. The API sends no CORS headers, so it can't be called from another domain.
+2. Send every path that isn't a file to `index.html`, so links such as `/networks/?entrez=3553` open on a refresh.
+3. Cache `assets/` for a year (every name has a content hash), and never cache `index.html` or `config.json`. The vendored genome browser lives in `biodalliance/`.
+4. Set `config.json`: `"api": true` beside the API, `"api": false` for the API-off demo. To serve under a path such as `/app/`, build with `WEB_BASE=/app/`.
+
+The [Deploying page](apps/docs/src/pages/resources/deploying.astro) on the design system site has an example nginx configuration and the checks to run before switching over. The GitHub Pages demo, built by `.github/workflows/pages.yml`, is the API-off example.
+
 ## Turning the API off
 
 `apps/web/public/config.json` has one switch:
@@ -72,7 +85,7 @@ To connect your own engine instead of the Humanbase API, write a class that impl
 
 `pnpm test:live:jobs` also submits one real example job per tool and checks the result page once it finishes. It never retries a failed submission.
 
-Neither runs on pull requests, so a slow or unavailable API never blocks a merge. The **Live API** workflow runs `pnpm test:live` every Monday, and both on demand from the Actions tab.
+Neither runs on pull requests, so a slow or unavailable API never blocks a merge. The **Live API** workflow runs `pnpm test:live` every Monday, and both on demand from the Actions tab. When the Monday run fails, it opens an issue titled "Live API run failed on" the date, listing the failing tests and linking to the run; while that issue is open, later failures add a comment to it instead of a new issue.
 
 ## Using the design system
 

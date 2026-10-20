@@ -4,5 +4,7 @@ export const site = {
   team: 'the Digital Technology team at Simons Foundation',
   contactEmail: 'jguerrero@simonsfoundation.org',
   repoUrl: 'https://github.com/jguerrero-prog/Humanbase-frontend',
+  // The public front end with the API off, published to GitHub Pages from master.
+  demoUrl: 'https://jguerrero-prog.github.io/Humanbase-frontend/app/',
   figmaFile: 'https://www.figma.com/design/qc47Wo9Vj5lYjo9U7zdvWa/?node-id=68-188',
 } as const;

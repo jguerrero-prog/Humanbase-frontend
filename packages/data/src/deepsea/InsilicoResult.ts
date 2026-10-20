@@ -63,6 +63,16 @@ export class InsilicoResult {
     return [...this.substitutions].sort((a, b) => Math.abs(b.value) - Math.abs(a.value)).slice(0, count);
   }
 
+  /** The positions with the largest change, each with its strongest substitution. */
+  strongestPositions(count: number): Substitution[] {
+    const best = new Map<number, Substitution>();
+    for (const item of this.substitutions) {
+      const current = best.get(item.position);
+      if (!current || Math.abs(item.value) > Math.abs(current.value)) best.set(item.position, item);
+    }
+    return [...best.values()].sort((a, b) => Math.abs(b.value) - Math.abs(a.value)).slice(0, count);
+  }
+
   csv(): string {
     return ['position,ref,alt,log2_fold_change', ...this.substitutions.map((item) => `${item.position},${item.ref},${item.alt},${item.value}`)].join('\n');
   }

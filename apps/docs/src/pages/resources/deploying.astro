@@ -1,0 +1,95 @@
+---
+import CodeSample from '../../components/docs/CodeSample.astro';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { site } from '../../data/site';
+
+const output = [
+  ['index.html', 'The page every route serves. Send unknown paths here.', 'No cache'],
+  ['config.json', 'The API switch and API path, read when the page loads.', 'No cache'],
+  ['assets/', 'Scripts, styles, fonts and sample data, with a content hash in every name.', 'One year, immutable'],
+  ['biodalliance/', 'The vendored genome browser, Biodalliance 0.13, loaded only with the API on.', 'One day'],
+  ['favicon.svg', 'The browser tab icon.', 'One day'],
+];
+
+const config = [
+  ['"api": true', 'Every screen reads from the API at apiBase. Use this beside the Humanbase API.'],
+  ['"api": false', 'Nothing calls an API. Screens show the recorded sample data bundled in the build, as the public demo does.'],
+  ['"apiBase"', 'Where the API answers, "/api" by default. Keep it relative so the browser calls the same origin and needs no CORS.'],
+];
+
+const nginx = `server {
+  server_name humanbase.io;
+  root /srv/humanbase/web;
+
+  # The API keeps its own server; the front end reaches it on the same origin.
+  location /api/ { proxy_pass http://127.0.0.1:8000; }
+
+  location /assets/ { add_header Cache-Control "public, max-age=31536000, immutable"; }
+  location /biodalliance/ { add_header Cache-Control "public, max-age=86400"; }
+  location = /config.json { add_header Cache-Control "no-cache"; }
+
+  # Every other path is a page of the app.
+  location / {
+    add_header Cache-Control "no-cache";
+    try_files $uri /index.html;
+  }
+}`;
+
+const build = `corepack enable pnpm
+pnpm install --frozen-lockfile
+pnpm --filter @humanbase/web build      # writes apps/web/dist
+# Serving under a path such as /app/? Build with that base:
+WEB_BASE=/app/ pnpm --filter @humanbase/web build`;
+---
+
+<DocsLayout title="Deploying" description="How to run the Humanbase front end beside the Humanbase API, or with the API off.">
+  <Intro
+    lead="The front end builds to a folder of static files. Serve that folder from the same domain as the Humanbase API and it works with no extra settings: every request goes to a relative /api path."
+    status="Resources · For the team hosting Humanbase"
+  />
+
+  <DocSection title="Build" lead="Node 24 and pnpm, as in the README. The build needs no API.">
+    <CodeSample label="Shell" lang="shell" code={build} />
+  </DocSection>
+
+  <DocSection title="What the build contains" lead="apps/web/dist is the whole site. Cache it by what changes.">
+    <DocTable caption="Build output and caching" columns={['Path', 'What it is', 'Cache']} widths={['220px', '', '200px']}>
+      {output.map(([path, what, cache]) => <tr><th scope="row"><code>{path}</code></th><td>{what}</td><td>{cache}</td></tr>)}
+    </DocTable>
+    <NoteCard title="Why index.html and config.json are never cached">
+      <p>After a deploy, an open tab still asks for the old page files. A fresh index.html points to the new ones, and the app shows “This page needs a refresh” for any page whose old code is gone.</p>
+    </NoteCard>
+  </DocSection>
+
+  <DocSection title="Serving beside the API" lead="One origin for both: the front end at the root, the API under /api.">
+    <CodeSample label="nginx" lang="nginx" code={nginx} />
+    <ul class="points">
+      <li>Send every path that isn’t a file to index.html, so links such as /networks/?entrez=3553 open on a refresh.</li>
+      <li>Proxy /api to the API server, or serve the API on the same host. The API sends no CORS headers, so it can’t be called from another domain.</li>
+      <li>Any static host works the same way; the only rules are the fallback to index.html and /api on the same origin.</li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="The API switch" lead="config.json sits next to index.html and is read when the page loads, so changing it needs no rebuild.">
+    <DocTable caption="config.json settings" columns={['Setting', 'What it does']} widths={['220px']}>
+      {config.map(([setting, what]) => <tr><th scope="row"><code>{setting}</code></th><td>{what}</td></tr>)}
+    </DocTable>
+    <NoteCard title="The API-off example">
+      <p>
+        The public demo at <a href={site.demoUrl}>{site.demoUrl}</a> is this same build with "api": false, published to GitHub Pages by .github/workflows/pages.yml on every merge to master.
+      </p>
+    </NoteCard>
+  </DocSection>
+
+  <DocSection title="Before you switch over" lead="Checks worth running against the server you deploy to.">
+    <ul class="points">
+      <li><code>pnpm api:verify https://your-host</code> calls every endpoint the front end uses and reports which ones answer.</li>
+      <li><code>pnpm test:live</code> opens every screen against the live API and checks for errors, empty data and accessibility problems.</li>
+      <li><code>pnpm test:live:jobs</code> submits one example job per tool and checks each result page. It runs real jobs, so run it once, not on every deploy.</li>
+    </ul>
+  </DocSection>
+</DocsLayout>

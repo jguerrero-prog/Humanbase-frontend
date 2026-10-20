@@ -126,12 +126,14 @@ const substitutionParts = [
   ['5. Reference cell', 'White with a grey outline: a base can\'t be substituted for itself'],
   ['6. Selected position', '2px ink outline around the column; the detail panel follows it'],
   ['7. Detail panel', 'The position, its coordinate and reference base, and each substitution\'s value and bar'],
+  ['8. Strongest changes', 'A compact table under the map: the 10 positions with the largest change, each with its genome position, strongest substitution (T>A) and value, and a Show button'],
 ];
 const substitutionStates = [
   ['Opens', 'On the strongest position for the chosen feature, with the window centered on it'],
   ['Hover a cell', 'Tooltip: position, substitution (T to A) and value, such as −4.63'],
   ['Focus a cell', 'Focus ring on the cell; arrow keys move between cells, Enter selects the position'],
   ['Dragging the window', 'The map updates as the window moves; the window snaps to whole positions'],
+  ['Show in Strongest changes', 'Centers the window on that position and selects it; a status message says "Showing position 999 in the map"'],
   ['Feature without samples', 'With the API off, choices the sample doesn\'t cover say so instead of drawing an empty map'],
 ];
 const substitutionSpecs = [
