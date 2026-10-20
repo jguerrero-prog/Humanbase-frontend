@@ -1,4 +1,4 @@
-import { productFooter, productSections, useJobsMenuSummary } from '@humanbase/hb';
+import { JobWatcher, productFooter, productSections, useJobsMenuSummary } from '@humanbase/hb';
 import { Banner, Footer, SkipLink, TopBar } from '@humanbase/ui';
 import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router';
@@ -31,6 +31,7 @@ export function AppLayout({ current }: { current?: string }) {
       </main>
       <Footer {...productFooter} onDisplaySettings={() => setSettingsOpen(true)} />
       <DisplaySettings open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <JobWatcher />
     </div>
   );
 }

@@ -22,3 +22,5 @@ export { ModuleExplorer, type ModuleDraft, type ModuleExplorerProps } from './Mo
 export { NetwasForm, type NetwasDraft, type NetwasFormProps } from './Netwas/NetwasForm';
 export { NetwasJobView, type NetwasJobViewProps } from './Netwas/NetwasJobView';
 export { elapsed, JobWaiting, jobDateTime, syncJobHistory, useJobActions, useJobTitle, type JobIdentity, type JobWaitingProps } from './Jobs/JobPage';
+export { JobsList, jobLinkFrom, type JobsListProps } from './Jobs/JobsList';
+export { JobWatcher } from './Jobs/JobWatcher';

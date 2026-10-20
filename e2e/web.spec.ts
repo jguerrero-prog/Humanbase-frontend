@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { apiOff } from './apiOff';
 
 const web = 'http://localhost:4173';
-const pages = ['/', '/networks/?entrez=3553&entrez=7124&version=v1', '/not-built-yet/'];
+const pages = ['/', '/networks/?entrez=3553&entrez=7124&version=v1', '/jobs/', '/not-built-yet/'];
 
 for (const path of pages) {
   test(`web ${path} has no WCAG 2.2 AA violations with the API off`, async ({ page }) => {
@@ -18,6 +18,22 @@ for (const path of pages) {
 }
 
 const axeTags = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
+
+test('a running job that finishes is announced on any page and listed on the Jobs page, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('seeded')) return;
+    sessionStorage.setItem('seeded', 'yes');
+    localStorage.setItem('humanbase:jobs', JSON.stringify([{ id: '76aea8fe-8ec7-4698-a193-a186c7665edb', tool: 'Seqweaver', status: 'running', startedAt: '2026-10-20T21:02:00.000Z', link: '/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/', title: 'IL1B region variants', detail: 'Seqweaver, example.vcf' }]));
+  });
+  await page.goto(`${web}/jobs/`);
+  const toast = page.getByRole('region', { name: 'Job notifications' }).getByRole('listitem');
+  await expect(toast).toHaveText(/Seqweaver finished: IL1B region variants/);
+  await expect(page.getByRole('link', { name: 'View results: IL1B region variants' })).toBeVisible();
+  const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
+  expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
 
 test('the Networks result has no WCAG 2.2 AA violations once loaded, with the data types open', async ({ page }) => {
   const apiRequests = await apiOff(page);
