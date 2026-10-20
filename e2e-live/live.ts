@@ -16,6 +16,9 @@ export function watch(page: Page, expected: readonly RegExp[] = []): string[] {
     const url = response.url();
     if (url.includes('/api/') && response.status() >= 400 && !allowed(url)) problems.push(`API ${response.status()}: ${url}`);
   });
+  page.on('request', (request) => {
+    if (new URL(request.url()).hostname.endsWith('biodalliance.org')) problems.push(`request to biodalliance.org: ${request.url()}`);
+  });
   page.on('requestfailed', (request) => {
     const error = request.failure()?.errorText ?? '';
     if (request.url().includes('/api/') && !error.includes('ERR_ABORTED') && !allowed(request.url())) problems.push(`API request failed (${error}): ${request.url()}`);

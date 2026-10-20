@@ -1,6 +1,6 @@
 export default {
   extends: ['stylelint-config-standard'],
-  ignoreFiles: ['**/dist/**', '**/.astro/**', '**/node_modules/**', 'packages/tokens/tokens.css'],
+  ignoreFiles: ['**/dist/**', '**/.astro/**', '**/node_modules/**', 'packages/tokens/tokens.css', 'packages/genome/vendor/**'],
   rules: {
     'color-no-hex': [true, { message: 'Use a token such as var(--text-default) instead of a hex color.' }],
     'color-named': ['never', { message: 'Use a token instead of a named color.' }],

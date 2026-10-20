@@ -23,12 +23,13 @@ export interface BiodallianceOptions {
   readyMs?: number;
 }
 
-export const biodallianceRelease = 'https://www.biodalliance.org/release-0.13/';
+/** The vendored copy the web app serves from its own origin (packages/genome/vendor). */
+export const biodallianceBaseUrl = `${import.meta.env.BASE_URL}biodalliance/`;
 
 let loading: Promise<DallianceConstructor> | undefined;
 
-/** Loads Biodalliance once per page, from its own site or a fork's copy. */
-export function loadBiodalliance(baseUrl = biodallianceRelease): Promise<DallianceConstructor> {
+/** Loads Biodalliance once per page, from our vendored copy or a fork's own. */
+export function loadBiodalliance(baseUrl = biodallianceBaseUrl): Promise<DallianceConstructor> {
   const global = globalThis as unknown as { Browser?: DallianceConstructor };
   if (global.Browser) return Promise.resolve(global.Browser);
   loading ??= new Promise((resolve, reject) => {
@@ -68,7 +69,8 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
   constructor(private readonly options: BiodallianceOptions = {}) {}
 
   async mount(container: HTMLElement, { label, assembly, region, tracks, onRegionChange }: GenomeMountOptions): Promise<void> {
-    const baseUrl = this.options.baseUrl ?? biodallianceRelease;
+    // Biodalliance drops the port from a path-only prefix, so give it an absolute URL.
+    const baseUrl = new URL(this.options.baseUrl ?? biodallianceBaseUrl, document.baseURI).href;
     const Browser = await loadBiodalliance(baseUrl);
     // The page may have moved on while the script loaded.
     if (this.#destroyed) return;
