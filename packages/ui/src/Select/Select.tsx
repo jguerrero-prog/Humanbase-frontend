@@ -74,6 +74,7 @@ export function Select({
   const [query, setQuery] = useState(defaultQuery);
   const [highlight, setHighlight] = useState(defaultHighlight);
   const [above, setAbove] = useState(false);
+  const [shift, setShift] = useState(0);
   const current = value ?? ownValue;
   const open = openProp ?? ownOpen;
   const selected = options.find((option) => option.value === current);
@@ -104,8 +105,12 @@ export function Select({
 
   useLayoutEffect(() => {
     if (!open || !panel.current || !wrapper.current) return;
-    const room = window.innerHeight - wrapper.current.getBoundingClientRect().bottom;
-    setAbove(room < panel.current.offsetHeight + 4 && wrapper.current.getBoundingClientRect().top > room);
+    const box = wrapper.current.getBoundingClientRect();
+    const room = window.innerHeight - box.bottom;
+    setAbove(room < panel.current.offsetHeight + 4 && box.top > room);
+    // A wide menu moves left so it ends 16px inside the window, never past the window's left edge.
+    const overflow = box.left + panel.current.offsetWidth - (document.documentElement.clientWidth - 16);
+    setShift(overflow > 0 ? -Math.min(overflow, Math.max(0, box.left - 16)) : 0);
     if (searchable && openProp === undefined) filterInput.current?.focus();
   }, [open, searchable, openProp]);
 
@@ -187,7 +192,7 @@ export function Select({
           </button>
           {name && <input type="hidden" name={name} value={current ?? ''} />}
           {open && (
-            <MenuPanel ref={panel} className={['select-panel', above && 'select-panel-above', columns && 'select-panel-columns'].filter(Boolean).join(' ')}>
+            <MenuPanel ref={panel} className={['select-panel', above && 'select-panel-above', columns && 'select-panel-columns'].filter(Boolean).join(' ')} style={shift ? { insetInlineStart: shift } : undefined}>
               {searchable && (
                 <div className="select-filter">
                   <Icon name="search" size={16} />

@@ -6,11 +6,35 @@
 }
 
 .home-hero {
+  position: relative;
   color: var(--text-on-brand);
-  background: var(--action-primary-pressed);
+  background: var(--surface-brand-deep);
+}
+
+/* Clips the artwork without clipping the analysis menu, which hangs below the hero. */
+.home-hero-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Tissue cells along the right edge; the artwork is 1440 wide, as in the Figma hero. */
+.home-hero-art {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: max(0px, calc((100% - 1440px) / 2));
+  max-inline-size: none;
+}
+
+@media (width < 64rem) {
+  .home-hero-backdrop {
+    display: none;
+  }
 }
 
 .home-hero-inner {
+  position: relative;
   gap: var(--space-2);
   padding-block: var(--space-16) 56px;
 }

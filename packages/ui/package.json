@@ -8,7 +8,8 @@
   ],
   "exports": {
     ".": "./src/index.ts",
-    "./root.css": "./src/root.css"
+    "./root.css": "./src/root.css",
+    "./illustrations/*": "./src/Illustration/art/*"
   },
   "scripts": {
     "typecheck": "tsc -p ."
