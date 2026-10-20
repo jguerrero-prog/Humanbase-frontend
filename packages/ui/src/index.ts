@@ -38,6 +38,7 @@ export { SegmentedControl, type Segment, type SegmentedControlProps } from './Se
 export { SearchExamples, type SearchExample, type SearchExamplesProps } from './SearchExamples/SearchExamples';
 export { SearchField, SuggestionsEmpty, SuggestionsLoading, type SearchFieldProps, type SearchFieldSize, type SearchSuggestion } from './SearchField/SearchField';
 export { Select, type SelectOption, type SelectProps, type SelectSize } from './Select/Select';
+export { MultiSelect, multiSelectSummary, type MultiSelectOption, type MultiSelectProps } from './Select/MultiSelect';
 export { Spinner } from './Spinner/Spinner';
 export { Tabs, type TabItem, type TabsProps } from './Tabs/Tabs';
 export { RemoveButton, Tag, type TagProps } from './Tag/Tag';

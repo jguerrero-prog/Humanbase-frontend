@@ -145,3 +145,38 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.multi-select-panel[popover] {
+  position: fixed;
+  inset: auto;
+  inset-block-start: anchor(bottom);
+  inset-inline-start: anchor(left);
+  min-inline-size: 260px;
+  margin: var(--space-1) 0;
+  padding: var(--space-2) var(--space-3);
+  position-try-fallbacks: flip-block;
+}
+
+.multi-select-panel[popover]:not(:popover-open) {
+  display: none;
+}
+
+.multi-select-panel.is-static {
+  inline-size: max-content;
+  margin-block-start: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+}
+
+.multi-select-panel fieldset {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.multi-select-note {
+  margin: var(--space-2) 0 0;
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
