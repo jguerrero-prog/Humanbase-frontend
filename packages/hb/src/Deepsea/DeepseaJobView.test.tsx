@@ -1,5 +1,6 @@
 import { Humanbase, HumanbaseProvider, SampleClient } from '@humanbase/data';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { deepseaFormLink } from './DeepseaForm';
 import { DeepseaJobView } from './DeepseaJobView';
 
@@ -75,6 +76,19 @@ describe('DeepseaJobView', () => {
     expect(detail).toHaveTextContent('chr1:109,817,590 · reference T');
     expect(detail).toHaveTextContent('A−4.63C−4.00G−4.24TReference');
     expect(screen.getByRole('slider', { name: 'Window along the sequence' })).toHaveAttribute('aria-valuenow', '954');
+  });
+
+  it('lists the strongest positions under the map and shows one on request', async () => {
+    renderJob('0576e894-a2c5-48bb-9bdf-227962495d5f');
+    const table = await screen.findByRole('table', { name: 'Strongest changes to HepG2 / CEBPB' }, { timeout: 5000 });
+    const [first, next, ...rest] = within(table).getAllByRole('row').slice(1);
+    expect(rest).toHaveLength(8);
+    expect(first).toHaveTextContent('999chr1:109,817,590T>A−4.63');
+    if (!next) throw new Error('No second row');
+    const second = within(next).getByRole('rowheader').textContent ?? '';
+    await userEvent.click(within(next).getByRole('button', { name: `Show position ${second} in the map` }));
+    expect(screen.getByRole('region', { name: `Position ${second}` })).toBeInTheDocument();
+    expect(screen.getByText(`Showing position ${second} in the map.`)).toHaveAttribute('role', 'status');
   });
 
   it('lists an in silico mutagenesis job’s files once per kind while it runs', async () => {

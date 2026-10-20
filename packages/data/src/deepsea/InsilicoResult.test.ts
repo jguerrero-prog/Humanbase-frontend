@@ -39,6 +39,16 @@ describe('in silico mutagenesis', () => {
     expect(result.csv().split('\n')[1]).toBe('0,T,A,-1');
   });
 
+  it('ranks positions by their strongest substitution, one row per position', async () => {
+    const small = new InsilicoResult({ positions: ['0,T,A,-1', '0,T,G,0.5', '1,A,G,2', '1,A,C,-1.5', '2,C,T,0.3'] });
+    expect(small.strongestPositions(2).map((item) => [item.position, item.alt, item.value])).toEqual([[1, 'G', 2], [0, 'A', -1]]);
+    const real = await service.insilico(exampleJob, cebp, hepg2Cebpb);
+    const top = real.strongestPositions(10);
+    expect(top).toHaveLength(10);
+    expect(new Set(top.map((item) => item.position)).size).toBe(10);
+    expect(top[0]).toMatchObject({ position: 999, ref: 'T', alt: 'A', value: -4.63 });
+  });
+
   it('names a sequence by its label and genome span', () => {
     expect(sequenceSpan(cebp)).toEqual({ label: 'known_CEBP_binding_increase G>T', chromosome: 'chr1', start: 109816591, end: 109818590 });
     expect(sequenceSpan('known_FOXA2_binding_decrease-ReferenceAllele__chr10_23507364_23509363')?.label).toBe('known_FOXA2_binding_decrease reference allele');
