@@ -26,6 +26,9 @@ jobs:
     name: Every screen with live data
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: read
+      issues: write
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
@@ -42,6 +45,13 @@ jobs:
           name: live-report
           path: test-results/
           retention-days: 14
+      - name: Open an issue when the weekly run fails
+        if: ${{ failure() && github.event_name == 'schedule' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { openOrComment } = await import('${{ github.workspace }}/.github/scripts/live-run-issue.mjs');
+            core.info(await openOrComment({ github, context, reportPath: 'test-results/live-results.json' }));
 
   example-jobs:
     name: One example job per tool
