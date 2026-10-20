@@ -35,6 +35,7 @@ Read this before changing anything. It applies to people and coding agents alike
 ## Before opening a pull request
 
 - `pnpm check` and `pnpm test:e2e` pass.
+- A change to how a screen reads API data also passes its `pnpm test:live` specs. Sample data shows how a screen renders; only live data shows whether the API lands in it correctly.
 - The branch is named after its issue, and the pull request says `Closes #<issue>`.
 - Pull requests target `development`. Nothing is pushed to `development` or `master` directly.
 
