@@ -441,6 +441,7 @@ a.nav-item,
 
 .footer-top {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-10);
   justify-content: space-between;
 }
@@ -469,8 +470,10 @@ a.nav-item,
 
 .footer-groups {
   display: grid;
-  grid-template-columns: repeat(4, 160px);
+  grid-template-columns: repeat(4, minmax(0, 160px));
   gap: var(--space-10);
+  min-inline-size: 0;
+  max-inline-size: 100%;
 }
 
 .footer-groups section,

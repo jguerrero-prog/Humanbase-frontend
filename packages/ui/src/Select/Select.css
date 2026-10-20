@@ -70,6 +70,7 @@
 .select-panel {
   position: absolute;
   z-index: 200;
+  inline-size: max-content;
   inset-block-start: calc(100% + var(--space-1));
   inset-inline-start: 0;
   animation: menu-open var(--motion-duration-base) var(--motion-easing-enter);
@@ -92,7 +93,7 @@
 }
 
 .select-panel-columns {
-  max-inline-size: none;
+  max-inline-size: calc(100vw - 2 * var(--space-4));
 }
 
 .select-panel-columns .select-listbox {
