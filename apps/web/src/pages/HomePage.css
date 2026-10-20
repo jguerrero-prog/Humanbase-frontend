@@ -19,11 +19,11 @@
   pointer-events: none;
 }
 
-/* Tissue cells along the right edge; the artwork is 1440 wide, as in the Figma hero. */
+/* Tissue cells against the window's right edge at every width, as in the Figma hero. */
 .home-hero-art {
   position: absolute;
   inset-block-start: 0;
-  inset-inline-end: max(0px, calc((100% - 1440px) / 2));
+  inset-inline-end: 0;
   max-inline-size: none;
 }
 
