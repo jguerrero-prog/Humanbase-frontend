@@ -69,9 +69,12 @@ describe('DeepseaJobView', () => {
     renderJob('0576e894-a2c5-48bb-9bdf-227962495d5f');
     expect(await screen.findByRole('heading', { level: 1, name: 'Untitled in silico mutagenesis job' }, { timeout: 5000 })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: 'Effect of every substitution on HepG2 / CEBPB' }, { timeout: 5000 })).toBeInTheDocument();
-    expect(await screen.findByRole('grid', { name: 'Substitutions at positions 984 to 1,013' }, { timeout: 5000 })).toBeInTheDocument();
-    const strongest = screen.getByRole('table', { name: 'Strongest changes to HepG2 / CEBPB' });
-    expect(strongest.querySelector('tbody tr')).toHaveTextContent('999chr1:109,817,590T>A−4.63');
+    // Opens on the strongest position, 999, with the 91-position window centered on it.
+    expect(await screen.findByRole('grid', { name: 'Substitutions at positions 954 to 1,044' }, { timeout: 5000 })).toBeInTheDocument();
+    const detail = screen.getByRole('region', { name: 'Position 999' });
+    expect(detail).toHaveTextContent('chr1:109,817,590 · reference T');
+    expect(detail).toHaveTextContent('A−4.63C−4.00G−4.24TReference');
+    expect(screen.getByRole('slider', { name: 'Window along the sequence' })).toHaveAttribute('aria-valuenow', '954');
   });
 
   it('lists an in silico mutagenesis job’s files once per kind while it runs', async () => {

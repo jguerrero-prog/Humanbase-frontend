@@ -95,6 +95,7 @@ export { Heatmap, type HeatmapAxis, type HeatmapCellDetail, type HeatmapColumn, 
 export { HeatmapCell, type HeatmapCellProps } from './Heatmap/HeatmapCell';
 export { LegendStepped, type LegendSteppedProps } from './Heatmap/LegendStepped';
 export { ScoreScale, type ScaleKind, type ScaleSpec } from './Heatmap/ScoreScale';
+export { SubstitutionMap, type SubstitutionColumn, type SubstitutionMapProps } from './Heatmap/SubstitutionMap';
 export { ErrorSummary, type ErrorSummaryItem, type ErrorSummaryProps } from './ErrorSummary/ErrorSummary';
 export { FileField, type FileFieldProps } from './FileField/FileField';
 export { EmptyState, type EmptyStateProps } from './EmptyState/EmptyState';

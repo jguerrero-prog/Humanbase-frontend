@@ -14,17 +14,8 @@ export interface Substitution {
   value: number;
 }
 
-export interface SubstitutionRow {
-  base: string;
-  /** One value per position in the window; null where the base is the reference. */
-  values: (number | null)[];
-}
-
 /** One sequence's in silico mutagenesis for one chromatin feature. */
 export class InsilicoResult {
-  /** Row order on the result, as the Figma screens draw it. */
-  static readonly bases = ['T', 'G', 'A', 'C'] as const;
-
   readonly substitutions: readonly Substitution[];
   private readonly byPosition = new Map<number, Substitution[]>();
 
@@ -49,10 +40,11 @@ export class InsilicoResult {
     return this.at(position)[0]?.ref;
   }
 
-  /** One row per base over positions start to start + size - 1. */
-  window(start: number, size: number): SubstitutionRow[] {
-    const positions = Array.from({ length: size }, (_, index) => start + index).filter((position) => this.byPosition.has(position));
-    return InsilicoResult.bases.map((base) => ({ base, values: positions.map((position) => this.at(position).find((item) => item.alt === base)?.value ?? null) }));
+  /** Positions start to start + size - 1, each with its reference base and every substitution's value. */
+  columns(start: number, size: number): { position: number; reference: string; values: Record<string, number> }[] {
+    return Array.from({ length: size }, (_, index) => start + index)
+      .filter((position) => this.byPosition.has(position))
+      .map((position) => ({ position, reference: this.reference(position) ?? '', values: Object.fromEntries(this.at(position).map((item) => [item.alt, item.value])) }));
   }
 
   /** The largest change in each run of `size` bases, for the overview of the whole sequence. */

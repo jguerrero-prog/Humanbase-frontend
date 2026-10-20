@@ -86,3 +86,18 @@ const specimenRow = (label: string, row: number): HeatmapRow => ({
   ...(row === positionSpecimenActive[0] && { details: positionSpecimenColumns.map((_, column) => (isOpen(row, column) ? openDetail : undefined)) }),
 });
 export const positionSpecimenRows: HeatmapRow[] = ['Blood', 'Immune', 'Digestive', 'Nervous', 'Liver'].map(specimenRow);
+
+// A substitution map specimen: position 999 is real (example job 0576e894, HepG2 / CEBPB); other values are illustrative.
+export const mutagenesisScale: ScaleSpec = { title: 'Log2 fold change', kind: 'diverging', edges: [-0.5, -0.25, -0.1, 0.1, 0.25, 0.5], words: ['Mutation lowers', 'Mutation raises'] };
+const specimenBases = 'GTCAATACTCGTTGCCCGCTATACCGGGGCTAACTATGTCTTGGCTTTTGCGCAGACGTCAGGTAGACTCACTGAACTCGGCAGCTATTGA';
+export const substitutionColumns = Array.from(specimenBases, (reference, index) => {
+  const position = 954 + index;
+  const values: Record<string, number> = {};
+  ['A', 'C', 'G', 'T'].forEach((base, row) => {
+    if (base === reference) return;
+    const near = Math.max(0, 1 - Math.abs(position - 999) / 12);
+    values[base] = Number((Math.sin(position * 0.7 + row * 2.1) * 0.3 - near * 2.5).toFixed(2));
+  });
+  return { position, reference, values: position === 999 ? { A: -4.63, C: -4, G: -4.24 } : values };
+});
+export const substitutionOverview = Array.from({ length: 200 }, (_, bin) => Number((0.4 + Math.abs(Math.sin(bin * 1.3)) * 0.6 + (bin === 99 ? 4 : bin === 100 || bin === 98 ? 2 : 0)).toFixed(2)));

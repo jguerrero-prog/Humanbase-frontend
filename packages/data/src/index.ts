@@ -22,7 +22,7 @@ export { DeepseaJob, type DeepseaFile, type DeepseaJobRecord, type ResultFile } 
 export { chrVariant, featureEffects, featureLabel, variantIdOf, variantRows, variantScoreTypes, type FeatureEffect, type FeaturePredictionRecord, type FeaturesRecord, type ModelFeature, type ScoreType, type VariantRow, type VariantScoresRecord, type VariantSequence } from './deepsea/DeepseaResult';
 export { DeepseaService, type DeepseaRequest } from './deepsea/DeepseaService';
 export { deepseaExamples } from './deepsea/deepseaExamples';
-export { InsilicoResult, sequenceSpan, type InsilicoRecord, type Substitution, type SubstitutionRow } from './deepsea/InsilicoResult';
+export { InsilicoResult, sequenceSpan, type InsilicoRecord, type Substitution } from './deepsea/InsilicoResult';
 export { useDeepseaFeatures, useDeepseaJob, useDeepseaVariants, useFeatureEffects, useInsilico } from './react/useDeepsea';
 export { ExpectoService, type ScoredVariant, type VariantQuery } from './expecto/ExpectoService';
 export { TissueVariants, strongestOf, tissueTitle, type EffectRow, type GenePosition, type PositionAxis, type TissueDatabase, type TissueEffects, type TissueVariantsRecord } from './expecto/TissueVariants';
