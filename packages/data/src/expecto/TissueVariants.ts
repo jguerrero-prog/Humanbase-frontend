@@ -45,6 +45,8 @@ export interface TissueEffects {
 export interface EffectRow {
   label: string;
   values: readonly (number | null)[];
+  /** For a system or organ row, the tissue behind each value. */
+  sources?: readonly (TissueEffects | null)[];
 }
 
 export interface PositionAxis {
@@ -101,7 +103,11 @@ export class TissueVariants {
   groupRows(): EffectRow[] {
     return this.groups.map((group) => {
       const members = this.tissues.filter((tissue) => tissue.groups.includes(group));
-      return { label: group, values: this.positions.map((_, index) => strongestOf(members.map((tissue) => tissue.values[index] ?? null))) };
+      const sources = this.positions.map((_, index) => {
+        const value = strongestOf(members.map((tissue) => tissue.values[index] ?? null));
+        return value === null ? null : (members.find((tissue) => tissue.values[index] === value) ?? null);
+      });
+      return { label: group, values: sources.map((tissue, index) => tissue?.values[index] ?? null), sources };
     });
   }
 

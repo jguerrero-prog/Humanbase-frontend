@@ -6,7 +6,7 @@ import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
-import { expressionGeneLegend, irgmPositions, irgmRows, irgmSummary, scoreLegends, tissueConfidenceLegend } from '../../data/score-legends';
+import { expressionGeneLegend, irgmPositions, irgmRows, irgmSummary, positionSpecimenActive, positionSpecimenColumns, positionSpecimenRows, scoreLegends, tissueConfidenceLegend } from '../../data/score-legends';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const today = [
@@ -112,6 +112,12 @@ const zScore = { title: 'Variant features, z-score', kind: 'diverging', edges: [
   columnHeader="Position"
   axis={{ title: 'Position on chr5, GRCh37/hg19', offset: 150226000, ticks: [100, 150, 200, 250, 300, 350] }}
 />`;
+const positionSpecs = [
+  ['heatmap.cell.compact', '8px wide, 22px tall, 1px gap; used when positions would not fit at 34px'],
+  ['heatmap.labels.compact', 'position labels every 20 columns; row labels stay full width'],
+  ['tooltip.alleles', 'every allele at the position, reference marked, the strongest one noted; inverse surface'],
+  ['tooltip.system', 'a tissue system cell names the tissue behind its value'],
+];
 ---
 
 <DocsLayout title="Heatmaps and score legends" description="Stepped legends for every Humanbase score, and the rules every heatmap follows: labels, gaps, missing values, hover and a table view.">
@@ -177,6 +183,26 @@ const zScore = { title: 'Variant features, z-score', kind: 'diverging', edges: [
       </figure>
       <p class="caption">Decided: a ruler, with full labels only on hover and selection, as in the specimen above. Tick labels are offsets from 150,226,000, so they stay short and horizontal. Each column links to its tick; close positions (295 to 301) pack side by side. Hovering or selecting a column shows its full position; the tooltip and View as table carry every coordinate. The connector lines are a placeholder; their final drawing and motion are for development to refine.</p>
     </div>
+  </DocSection>
+
+  <DocSection title="Position heatmaps" lead="ExPecto and ExPecto SC show a gene's positions across tissues. A compact density fits a hundred or more positions in the card, and the tooltip lists every allele so nothing is hidden by the cell's single color.">
+    <div class="position-specimen">
+      <Heatmap
+        client:load
+        title="Predicted effect by position, log fold change"
+        summary="An illustrative specimen of 113 positions; the values are made up."
+        scale={expressionGeneLegend}
+        columns={positionSpecimenColumns}
+        rows={positionSpecimenRows}
+        rowHeader="Tissue system"
+        columnHeader="Position"
+        columnWidth="narrow"
+        initialActive={positionSpecimenActive}
+      />
+    </div>
+    <DocTable caption="Position heatmap specs" columns={['Token', 'Value']} widths={['380px']}>
+      {positionSpecs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
   </DocSection>
 
   <DocSection title="Rules for every heatmap" lead="The specimen’s parts, written as rules, plus what happens at the edges of the data.">
@@ -383,5 +409,10 @@ const zScore = { title: 'Variant features, z-score', kind: 'diverging', edges: [
     .anatomy {
       grid-template-columns: minmax(0, 1fr);
     }
+  }
+
+  .position-specimen {
+    margin-block-end: var(--space-6);
+    padding-block-end: var(--space-16);
   }
 </style>

@@ -1,5 +1,5 @@
 import { tissueConfidenceScale } from '@humanbase/hb';
-import type { HeatmapRow, ScaleSpec } from '@humanbase/ui';
+import type { HeatmapCellDetail, HeatmapRow, ScaleSpec } from '@humanbase/ui';
 
 export type LegendStatus = 'Decided' | 'Proposed' | 'To confirm';
 
@@ -69,3 +69,20 @@ export const irgmRows: HeatmapRow[] = [
 ];
 
 export const irgmSummary = 'Predicted effects of 12 variants near IRGM on its expression in 8 tissue systems. The strongest is a decrease of 1.42 at 150,226,299 in the hematopoietic system, past the end of the legend. Values are illustrative.';
+
+// An illustrative compact specimen: 113 positions near 12,598,800, as Figma draws it. Values are made up, not data.
+const specimenStart = 12598795;
+export const positionSpecimenColumns = Array.from({ length: 113 }, (_, index) => ({ label: `chr3:${specimenStart + index}`, position: specimenStart + index }));
+const wave = (row: number, column: number) => {
+  return Number((Math.sin(column * 0.37 + row * 1.7) * Math.cos(column * 0.11 - row) * 0.3).toFixed(2));
+};
+// The open tooltip: every allele at 12,598,855, the reference marked and the strongest noted.
+export const positionSpecimenActive = [0, 60] as const;
+const openDetail: HeatmapCellDetail = { rows: [['A', 'Reference'], ['C', '−0.04'], ['G', '+0.12', 'strongest, shown in the cell'], ['T', '+0.02']], hint: 'Strongest tissue: Spleen, GTEx' };
+const isOpen = (row: number, column: number) => row === positionSpecimenActive[0] && column === positionSpecimenActive[1];
+const specimenRow = (label: string, row: number): HeatmapRow => ({
+  label,
+  values: positionSpecimenColumns.map((_, column) => (isOpen(row, column) ? 0.12 : wave(row, column))),
+  ...(row === positionSpecimenActive[0] && { details: positionSpecimenColumns.map((_, column) => (isOpen(row, column) ? openDetail : undefined)) }),
+});
+export const positionSpecimenRows: HeatmapRow[] = ['Blood', 'Immune', 'Digestive', 'Nervous', 'Liver'].map(specimenRow);

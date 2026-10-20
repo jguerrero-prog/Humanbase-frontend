@@ -40,10 +40,13 @@ describe('TissueVariants', () => {
 
   it('folds tissues into systems by their strongest effect', () => {
     expect(table.groups).toEqual(['hematopoietic system', 'integument']);
-    expect(table.groupRows()).toEqual([
+    const rows = table.groupRows();
+    expect(rows.map(({ label, values }) => ({ label, values }))).toEqual([
       { label: 'hematopoietic system', values: [0.4, -0.601] },
       { label: 'integument', values: [0.4, null] },
     ]);
+    expect(rows[0]?.sources?.map((tissue) => tissue?.title ?? null)).toEqual(['Spleen', 'Whole Blood']);
+    expect(rows[1]?.sources?.map((tissue) => tissue?.title ?? null)).toEqual(['Spleen', null]);
   });
 
   it('filters by system and resource', () => {

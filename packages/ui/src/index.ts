@@ -91,7 +91,7 @@ export { Toggletip, type ToggletipProps } from './Tooltip/Toggletip';
 export { Tooltip, type TooltipProps } from './Tooltip/Tooltip';
 export { TooltipController, tooltips } from './Tooltip/TooltipController';
 export { KeyLegend, ScaleLegend, type KeyLegendProps, type LegendItem, type LegendScale, type ScaleLegendProps } from './Legend/Legend';
-export { Heatmap, type HeatmapAxis, type HeatmapColumn, type HeatmapProps, type HeatmapRow } from './Heatmap/Heatmap';
+export { Heatmap, type HeatmapAxis, type HeatmapCellDetail, type HeatmapColumn, type HeatmapProps, type HeatmapRow } from './Heatmap/Heatmap';
 export { HeatmapCell, type HeatmapCellProps } from './Heatmap/HeatmapCell';
 export { LegendStepped, type LegendSteppedProps } from './Heatmap/LegendStepped';
 export { ScoreScale, type ScaleKind, type ScaleSpec } from './Heatmap/ScoreScale';

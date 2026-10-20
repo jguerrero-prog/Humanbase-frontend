@@ -47,6 +47,16 @@ describe('Heatmap', () => {
     expect(screen.getByRole('tooltip')).toHaveTextContent('0.05');
   });
 
+  it('lists a cell\'s detail rows and hint in its tooltip instead of the single value', () => {
+    const detail = { rows: [['A', 'Reference'], ['C', '−0.04'], ['G', '+0.12', 'strongest, shown in the cell']] as const, hint: 'Strongest tissue: Spleen, GTEx' };
+    render(<Heatmap {...props} rows={[{ label: 'nervous system', values: [-1.42, 0.05], details: [detail, undefined] }, { label: 'integument', values: [null, 0.2] }]} />);
+    fireEvent.focus(screen.getByRole('gridcell', { name: /^nervous system, 150,226,123/ }));
+    const tip = screen.getByRole('tooltip');
+    expect(tip).toHaveTextContent('AReference');
+    expect(tip).toHaveTextContent('G+0.12strongest, shown in the cell');
+    expect(tip).toHaveTextContent('Strongest tissue: Spleen, GTEx');
+  });
+
   it('outlines the cells in a step while that legend step is hovered', () => {
     render(<Heatmap {...props} />);
     fireEvent.pointerEnter(screen.getByText('below −1'));

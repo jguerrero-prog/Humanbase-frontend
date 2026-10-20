@@ -4,7 +4,8 @@ import './DataTooltip.css';
 export interface DataTooltipProps {
   title: string;
   subtitle?: string;
-  rows: readonly (readonly [label: string, value: string])[];
+  /** Label, value and an optional note after the value, such as "strongest". */
+  rows: readonly (readonly [label: string, value: string, note?: string])[];
   hint?: string;
   id?: string;
   position?: { x: number; y: number };
@@ -18,10 +19,13 @@ export function DataTooltip({ title, subtitle, rows, hint, id, position, classNa
       <p className="data-tooltip-title">{title}</p>
       {subtitle && <p className="data-tooltip-subtitle">{subtitle}</p>}
       <dl className="data-tooltip-rows">
-        {rows.map(([label, value]) => (
+        {rows.map(([label, value, note]) => (
           <div key={label}>
             <dt>{label}</dt>
-            <dd>{value}</dd>
+            <dd>
+              {value}
+              {note && <span className="data-tooltip-note">{note}</span>}
+            </dd>
           </div>
         ))}
       </dl>
