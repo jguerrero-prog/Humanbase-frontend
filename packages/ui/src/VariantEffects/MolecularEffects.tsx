@@ -57,6 +57,10 @@ export interface EffectsControlsProps {
   thresholdSteps?: readonly number[] | undefined;
   onThreshold?: ((threshold: number | null) => void) | undefined;
   cellTypes?: readonly SelectOption[] | undefined;
+  /** Narrows the rows to one data resource, such as ExPecto's GTEx, Roadmap and ENCODE tissues. */
+  resources?: readonly SelectOption[] | undefined;
+  resource?: string | undefined;
+  onResource?: ((resource: string) => void) | undefined;
   search?: string | undefined;
   onSearch?: ((text: string) => void) | undefined;
   groupByFeature?: boolean | undefined;
@@ -72,10 +76,11 @@ export interface EffectsControlsProps {
 }
 
 export function EffectsControls(props: EffectsControlsProps) {
-  const { scoreLabel = 'Score', scores, score, onScore, threshold, thresholdSteps = [2, 3, 5], onThreshold, cellTypes, search, onSearch, groupByFeature, onGroupByFeature, featureNoun = 'protein', searchLabel = 'Find a feature or cell type', density, onDensity, lowestFirst, onLowestFirst } = props;
+  const { scoreLabel = 'Score', scores, score, onScore, threshold, thresholdSteps = [2, 3, 5], onThreshold, cellTypes, resources, resource, onResource, search, onSearch, groupByFeature, onGroupByFeature, featureNoun = 'protein', searchLabel = 'Find a feature or cell type', density, onDensity, lowestFirst, onLowestFirst } = props;
   return (
     <div className="effects-controls">
       <Select label={scoreLabel} size="small" options={scores} value={score} {...(onScore && { onChange: onScore })} className="effects-score" />
+      {resources?.[0] && <Select label="Resource" size="small" options={resources} value={resource ?? resources[0].value} {...(onResource && { onChange: onResource })} className="effects-resource" />}
       {threshold !== undefined && (
         <SegmentedControl
           label="Show effects of"
