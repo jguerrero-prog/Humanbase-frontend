@@ -71,6 +71,7 @@ export interface FeatureEffect {
   context: string;
   label: string;
   value: number;
+  group?: string;
 }
 
 // Treatments name the experiment's sample, such as ago_adult_brain.BA4.hg19; "None" and bare IDs add nothing.
@@ -147,6 +148,6 @@ function tissueEffects(prediction: FeaturePredictionRecord, tissues: readonly { 
     const resource = tissue?.resource.replace(', redundant', '') ?? '';
     const context = [resource, tissue?.systems.join(' and ')].filter(Boolean).join(', ');
     const name = tissueTitle(title);
-    return [{ feature: name, cell: resource, context, label: name, value }];
+    return [{ feature: name, cell: resource, context, label: name, value, group: `${name}, ${resource}` }];
   });
 }

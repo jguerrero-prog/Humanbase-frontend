@@ -22,13 +22,15 @@ export interface JobAboutProps {
 export function JobAbout({ tool, children, docsHref, links, examplesTitle = 'Example files', examples }: JobAboutProps) {
   const linkHref = useLinkHref();
   const id = useId();
+  const external = /^https?:/.test(docsHref);
   return (
     <aside className="job-about" aria-labelledby={id}>
       <h2 id={id}>About {tool}</h2>
       <p>{children}</p>
-      <a className="button button-ghost button-small" href={linkHref(docsHref)}>
+      <a className="button button-ghost button-small" href={linkHref(docsHref)} {...(external && { target: '_blank', rel: 'noreferrer' })}>
         <Icon name="book-open" size={16} />
         Read the {tool} documentation
+        {external && <Icon name="external-link" size={16} label="opens Read the Docs in a new tab" />}
       </a>
       {links}
       {examples.length > 0 && (

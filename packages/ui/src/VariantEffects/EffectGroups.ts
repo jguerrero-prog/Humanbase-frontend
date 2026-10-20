@@ -10,9 +10,13 @@ export interface EffectExperiment {
   /** The row label in a heatmap, such as K562 / LARP4 (rep 2). */
   label: string;
   value: number;
+  /** What folds experiments into one row, when it isn't the feature: ExPecto keeps each tissue's resources apart. */
+  group?: string | undefined;
 }
 
 export interface EffectGroup {
+  /** Unique among the groups; the feature unless experiments set their own group. */
+  id: string;
   feature: string;
   experiments: EffectExperiment[];
   /** The strongest value, which sorts the group. */
@@ -62,15 +66,16 @@ export class EffectGroups {
   /** Experiments of one feature fold into one group, strongest group first. */
   groups(direction: 'raises' | 'lowers'): EffectGroup[] {
     const sign = direction === 'raises' ? 1 : -1;
-    const byFeature = new Map<string, EffectExperiment[]>();
+    const byGroup = new Map<string, EffectExperiment[]>();
     for (const experiment of this.experiments) {
       if (Math.sign(experiment.value) !== sign) continue;
-      byFeature.set(experiment.feature, [...(byFeature.get(experiment.feature) ?? []), experiment]);
+      const id = experiment.group ?? experiment.feature;
+      byGroup.set(id, [...(byGroup.get(id) ?? []), experiment]);
     }
-    return [...byFeature].map(([feature, list]) => {
+    return [...byGroup].map(([id, list]) => {
       const sorted = [...list].sort((a, b) => sign * (b.value - a.value));
       const values = sorted.map(({ value }) => value);
-      return { feature, experiments: sorted, peak: values[0] ?? 0, low: Math.min(...values), high: Math.max(...values), cells: [...new Set(sorted.map(({ cell }) => cell))] };
+      return { id, feature: sorted[0]?.feature ?? id, experiments: sorted, peak: values[0] ?? 0, low: Math.min(...values), high: Math.max(...values), cells: [...new Set(sorted.map(({ cell }) => cell))] };
     }).sort((a, b) => sign * (b.peak - a.peak));
   }
 }
