@@ -2,6 +2,7 @@ import { useGeneSuggestions, useHumanbase } from '@humanbase/data';
 import { Alert, SearchExamples, SearchField, useDebounced } from '@humanbase/ui';
 import { useState } from 'react';
 import { suggestionOf } from '../HomeSearch/geneMatches';
+import './Expecto.css';
 
 export interface GeneFinderProps {
   label: string;

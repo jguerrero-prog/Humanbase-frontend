@@ -1,6 +1,7 @@
 import { ExpectoService, useVariantSearch, useVariantTotal } from '@humanbase/data';
 import { Alert, Button, Cell, HeaderCell, SearchExamples, SearchField, Table, TableSkeleton, useDebounced, useLinkHref } from '@humanbase/ui';
 import { useState } from 'react';
+import './Expecto.css';
 
 export interface VariantSearchProps {
   /** What was searched, kept in the page URL. */
