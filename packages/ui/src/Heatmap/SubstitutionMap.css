@@ -1,0 +1,213 @@
+.substitution-map {
+  position: relative;
+  display: grid;
+  min-inline-size: 0;
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.substitution-map-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: end;
+  justify-content: space-between;
+}
+
+.substitution-map-title {
+  font: var(--type-label);
+  color: var(--text-default);
+}
+
+.substitution-overview {
+  display: flex;
+  gap: min(1px, 0.25%);
+  align-items: end;
+  block-size: 44px;
+  padding: var(--space-1);
+  background: var(--surface-subtle);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  touch-action: none;
+}
+
+.substitution-overview-bar {
+  flex: 1;
+  min-inline-size: 0;
+  background: var(--color-grey-300);
+}
+
+/* The window sits over the strip, aligned to it by the same percentages. */
+.substitution-window {
+  position: relative;
+  block-size: 44px;
+  margin-block-start: calc(-44px - var(--space-4));
+  border: var(--border-width-2) solid var(--border-selected);
+  border-inline-width: 4px;
+  border-radius: var(--radius-xs);
+  pointer-events: none;
+}
+
+.substitution-window:focus-visible {
+  outline: var(--border-width-2) solid var(--text-default);
+  outline-offset: 2px;
+}
+
+.substitution-body {
+  display: flex;
+  min-inline-size: 0;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.substitution-plot {
+  --substitution-label: 16px;
+
+  position: relative;
+  flex: 1 1 0;
+  min-inline-size: 0;
+  overflow-x: auto;
+}
+
+.substitution-ruler,
+.substitution-reference {
+  display: grid;
+  grid-template-columns: repeat(var(--substitution-columns), 11px);
+  margin-inline-start: calc(var(--substitution-label) + 1px);
+  font: var(--type-code-sm);
+  color: var(--text-secondary);
+}
+
+.substitution-ruler span {
+  inline-size: 0;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.substitution-reference {
+  font-size: 10px;
+  text-align: center;
+}
+
+.substitution-grid {
+  position: relative;
+  display: grid;
+  gap: 1px;
+  inline-size: max-content;
+}
+
+.substitution-row {
+  display: grid;
+  grid-template-columns: var(--substitution-label) repeat(var(--substitution-columns), 10px);
+  gap: 1px;
+  align-items: center;
+}
+
+.substitution-base {
+  font: var(--type-code-sm);
+  color: var(--text-secondary);
+}
+
+.substitution-map .substitution-cell {
+  inline-size: 10px;
+  block-size: 22px;
+  cursor: pointer;
+}
+
+.substitution-map .substitution-cell.is-reference {
+  background: var(--surface-page);
+  box-shadow: inset 0 0 0 1px var(--border-default);
+}
+
+.substitution-map .substitution-cell:focus-visible,
+.substitution-map .substitution-cell:hover {
+  position: relative;
+  z-index: 1;
+  outline: var(--border-width-2) solid var(--text-default);
+  outline-offset: 1px;
+}
+
+.substitution-selected {
+  position: absolute;
+  inset-block: -2px;
+  inline-size: 14px;
+  margin-inline-start: -2px;
+  border: var(--border-width-2) solid var(--text-default);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.substitution-detail {
+  flex: none;
+  display: grid;
+  gap: var(--space-3);
+  inline-size: 236px;
+  padding: var(--space-4);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.substitution-detail h3 {
+  font: var(--type-label);
+}
+
+.substitution-detail-where,
+.substitution-detail-note {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.substitution-detail dl {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.substitution-detail dl div {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.substitution-detail dt {
+  font: var(--type-code-sm);
+}
+
+.substitution-detail dd {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  margin: 0;
+}
+
+.substitution-detail-bar {
+  block-size: 10px;
+  max-inline-size: 120px;
+  background: var(--cell-color);
+}
+
+.substitution-detail-value {
+  font: var(--type-code-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.substitution-detail-reference {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.substitution-tip {
+  inline-size: 220px;
+}
+
+@media (width < 64rem) {
+  .substitution-body {
+    flex-wrap: wrap;
+  }
+
+  .substitution-plot {
+    flex-basis: 100%;
+  }
+}

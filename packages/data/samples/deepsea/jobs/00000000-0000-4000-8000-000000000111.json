@@ -1,5 +1,5 @@
 {
-  "note": "Hand-built, not recorded: submitting a Sei or Beluga job to record one was blocked by the permission checker. Values come from the Figma result screens; the ID is clearly not a real job. Replace with a recorded job once one is submitted.",
+  "note": "Hand-built, not recorded: a Sei job while it runs, shaped like the real Sei job 2e18fedf, which ran on October 20, 2026; the ID is clearly not a real job.",
   "status": 200,
   "body": {
     "created": "2026-10-17T10:42:00",
@@ -15,13 +15,9 @@
     "title": "",
     "genome_assembly": "hg19",
     "files": {
-      "variant_max_seqclass": {
-        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/00000000-0000-4000-8000-000000000111/00000000-0000-4000-8000-000000000111_variant_max_seqclass.bw",
+      "variant_seqclass": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/00000000-0000-4000-8000-000000000111/00000000-0000-4000-8000-000000000111_variant_seqclass.bw",
         "name": "Max sequence class score"
-      },
-      "variant_mean-evalue": {
-        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/00000000-0000-4000-8000-000000000111/00000000-0000-4000-8000-000000000111_variant_mean-evalue.bw",
-        "name": "Mean -log e-value"
       },
       "feature_seqclass": {
         "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/00000000-0000-4000-8000-000000000111/00000000-0000-4000-8000-000000000111_feature_seqclass.tsv.gz",

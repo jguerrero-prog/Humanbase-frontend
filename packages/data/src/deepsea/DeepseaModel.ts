@@ -1,4 +1,10 @@
 import type { InputKind, VariantModel } from '../jobs/VariantFileCheck';
+import type { FeaturesRecord } from './DeepseaResult';
+import { seiSequenceClasses } from './seiSequenceClasses';
+
+export type Genome = 'hg19' | 'hg38';
+
+export const genomeLabels: Record<Genome, string> = { hg19: 'GRCh37/hg19', hg38: 'GRCh38/hg38' };
 
 /** The z-score bins every DeepSEA feature uses, and Sei's sequence class bins. */
 export interface EffectBins {
@@ -14,6 +20,8 @@ export interface DeepseaModel {
   tool: string;
   /** The tool's name mid-sentence, when it differs, as in Run in silico mutagenesis. */
   inSentence?: string;
+  /** The genomes the API accepts for this tool; the first is the default. */
+  genomes: readonly Genome[];
   /** The inputs the tool takes; the first is where its form opens. */
   inputs: readonly InputKind[];
   option: string;
@@ -29,6 +37,10 @@ export interface DeepseaModel {
   verb: string;
   /** VCF files for this model add a strand column. */
   strand: boolean;
+  /** The variant-level scores a result loads, when not all of them; Sei also sends one per sequence class. */
+  variantScores?: readonly string[];
+  /** Names a feature-level score's predictions when the API's feature list doesn't, as for Sei's sequence classes. */
+  classFeatures?: { scoreType: string; features: FeaturesRecord };
   /** Strongest effects opens at this threshold. */
   threshold: number;
   bins: EffectBins;
@@ -40,6 +52,9 @@ export interface DeepseaModel {
   insilico?: boolean;
 }
 
+/** The Humanbase documentation each tool's About panel links to. */
+export const readTheDocs = 'https://humanbase.readthedocs.io/en/latest/';
+
 const zBins: EffectBins = { strong: 5, moderate: 3, weak: 2 };
 
 export const deepseaModels: Record<VariantModel, DeepseaModel> = {
@@ -47,6 +62,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'sei',
     apiName: 'Sei',
     tool: 'Sei',
+    genomes: ['hg19', 'hg38'],
     inputs: ['vcf', 'bed', 'fasta'],
     option: 'Sei (DNA, 2021)',
     kind: 'Sei (DNA)',
@@ -57,14 +73,17 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     featurePlural: 'sequence classes',
     verb: '',
     strand: false,
+    variantScores: ['seqclass'],
+    classFeatures: { scoreType: 'seqclass', features: seiSequenceClasses },
     threshold: 0.5,
     bins: { strong: 2, moderate: 1, weak: 0.5 },
-    docsHref: '/docs/sei/',
+    docsHref: `${readTheDocs}sei.html`,
   },
   beluga: {
     id: 'beluga',
     apiName: 'Beluga',
     tool: 'Beluga',
+    genomes: ['hg19', 'hg38'],
     inputs: ['vcf', 'bed', 'fasta'],
     option: 'Beluga (DNA, 2019)',
     kind: 'Beluga (DNA)',
@@ -77,12 +96,13 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     strand: false,
     threshold: 3,
     bins: zBins,
-    docsHref: '/docs/beluga/',
+    docsHref: `${readTheDocs}beluga.html`,
   },
   seqweaver: {
     id: 'seqweaver',
     apiName: 'SeqWeaver',
     tool: 'Seqweaver',
+    genomes: ['hg19', 'hg38'],
     inputs: ['vcf', 'bed', 'fasta'],
     option: 'Seqweaver (RNA)',
     kind: 'Seqweaver (RNA)',
@@ -95,12 +115,13 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     strand: true,
     threshold: 2,
     bins: zBins,
-    docsHref: '/docs/seqweaver/',
+    docsHref: `${readTheDocs}seqweaver.html`,
   },
   expecto: {
     id: 'expecto',
     apiName: 'Beluga',
     tool: 'ExPecto',
+    genomes: ['hg19'],
     inputs: ['vcf'],
     option: 'Beluga (DNA, 2019)',
     kind: 'ExPecto (Beluga model)',
@@ -108,13 +129,15 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     about:
       'ExPecto leverages deep learning-based sequence models trained on chromatin profiling data, and integrated with spatial transformation and regularized linear models. This framework does not use any variant information, enabling prediction of the expression effect for any variant, even those that are rare or have never been previously observed.',
     otherModels: 'ExPecto builds on Beluga’s chromatin predictions.',
+    // ExPecto jobs also list Beluga's dis and mean-evalue scores, but the API answers 500 for them.
+    variantScores: ['expecto'],
     featureNoun: 'tissue',
     featurePlural: 'tissues',
     verb: 'expression',
     strand: false,
     threshold: 0.1,
     bins: { strong: 0.1, moderate: 0.05, weak: 0.02 },
-    docsHref: '/docs/expecto/',
+    docsHref: `${readTheDocs}expecto.html`,
     basedOn: 'beluga',
     expecto: true,
   },
@@ -122,6 +145,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     id: 'insilico',
     apiName: 'Beluga',
     tool: 'In silico mutagenesis',
+    genomes: ['hg19', 'hg38'],
     inSentence: 'in silico mutagenesis',
     inputs: ['fasta'],
     option: 'Beluga (DNA, 2019)',
@@ -136,7 +160,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     strand: false,
     threshold: 0.5,
     bins: { strong: 0.5, moderate: 0.25, weak: 0.1 },
-    docsHref: '/docs/ism/',
+    docsHref: `${readTheDocs}in-silico-mutagenesis.html`,
     basedOn: 'beluga',
     insilico: true,
   },

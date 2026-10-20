@@ -1,0 +1,236 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "name": "Sequence class score",
+      "level": "FEATURE",
+      "short_name": "seqclass",
+      "range": [
+        -6,
+        0,
+        6
+      ],
+      "category": "Sequence class prediction",
+      "type": "sequence classes"
+    },
+    {
+      "name": "Max sequence class score",
+      "level": "VARIANT",
+      "short_name": "seqclass"
+    },
+    {
+      "name": "Probability diffs",
+      "level": "FEATURE",
+      "short_name": "diffs",
+      "range": [
+        -0.3,
+        0,
+        0.3
+      ],
+      "non_sig_range": [
+        -0.01,
+        0.01
+      ]
+    },
+    {
+      "name": "CTCF CTCF-Cohesin",
+      "level": "VARIANT",
+      "short_name": "ctcf-ctcf-cohesin"
+    },
+    {
+      "name": "E1 Stem cell",
+      "level": "VARIANT",
+      "short_name": "e1-stem-cell"
+    },
+    {
+      "name": "E10 Brain",
+      "level": "VARIANT",
+      "short_name": "e10-brain"
+    },
+    {
+      "name": "E11 T-cell",
+      "level": "VARIANT",
+      "short_name": "e11-t-cell"
+    },
+    {
+      "name": "E12 Erythroblast-like",
+      "level": "VARIANT",
+      "short_name": "e12-erythroblast-like"
+    },
+    {
+      "name": "E2 Multi-tissue",
+      "level": "VARIANT",
+      "short_name": "e2-multi-tissue"
+    },
+    {
+      "name": "E3 Brain / Melanocyte",
+      "level": "VARIANT",
+      "short_name": "e3-brain-melanocyte"
+    },
+    {
+      "name": "E4 Multi-tissue",
+      "level": "VARIANT",
+      "short_name": "e4-multi-tissue"
+    },
+    {
+      "name": "E5 B-cell-like",
+      "level": "VARIANT",
+      "short_name": "e5-b-cell-like"
+    },
+    {
+      "name": "E6 Weak epithelial",
+      "level": "VARIANT",
+      "short_name": "e6-weak-epithelial"
+    },
+    {
+      "name": "E7 Monocyte / Macrophage",
+      "level": "VARIANT",
+      "short_name": "e7-monocyte-macrophage"
+    },
+    {
+      "name": "E8 Weak multi-tissue",
+      "level": "VARIANT",
+      "short_name": "e8-weak-multi-tissue"
+    },
+    {
+      "name": "E9 Liver / Intestine",
+      "level": "VARIANT",
+      "short_name": "e9-liver-intestine"
+    },
+    {
+      "name": "HET1 Heterochromatin",
+      "level": "VARIANT",
+      "short_name": "het1-heterochromatin"
+    },
+    {
+      "name": "HET2 Heterochromatin",
+      "level": "VARIANT",
+      "short_name": "het2-heterochromatin"
+    },
+    {
+      "name": "HET3 Heterochromatin",
+      "level": "VARIANT",
+      "short_name": "het3-heterochromatin"
+    },
+    {
+      "name": "HET4 Heterochromatin",
+      "level": "VARIANT",
+      "short_name": "het4-heterochromatin"
+    },
+    {
+      "name": "HET5 Centromere",
+      "level": "VARIANT",
+      "short_name": "het5-centromere"
+    },
+    {
+      "name": "HET6 Centromere",
+      "level": "VARIANT",
+      "short_name": "het6-centromere"
+    },
+    {
+      "name": "L1 Low signal",
+      "level": "VARIANT",
+      "short_name": "l1-low-signal"
+    },
+    {
+      "name": "L2 Low signal",
+      "level": "VARIANT",
+      "short_name": "l2-low-signal"
+    },
+    {
+      "name": "L3 Low signal",
+      "level": "VARIANT",
+      "short_name": "l3-low-signal"
+    },
+    {
+      "name": "L4 Low signal",
+      "level": "VARIANT",
+      "short_name": "l4-low-signal"
+    },
+    {
+      "name": "L5 Low signal",
+      "level": "VARIANT",
+      "short_name": "l5-low-signal"
+    },
+    {
+      "name": "L6 Low signal",
+      "level": "VARIANT",
+      "short_name": "l6-low-signal"
+    },
+    {
+      "name": "L7 Low signal",
+      "level": "VARIANT",
+      "short_name": "l7-low-signal"
+    },
+    {
+      "name": "P Promoter",
+      "level": "VARIANT",
+      "short_name": "p-promoter"
+    },
+    {
+      "name": "PC1 Polycomb / Heterochromatin",
+      "level": "VARIANT",
+      "short_name": "pc1-polycomb-heterochromatin"
+    },
+    {
+      "name": "PC2 Weak Polycomb",
+      "level": "VARIANT",
+      "short_name": "pc2-weak-polycomb"
+    },
+    {
+      "name": "PC3 Polycomb",
+      "level": "VARIANT",
+      "short_name": "pc3-polycomb"
+    },
+    {
+      "name": "PC4 Polycomb / Bivalent stem cell Enh",
+      "level": "VARIANT",
+      "short_name": "pc4-polycomb-bivalent-stem-cell-enh"
+    },
+    {
+      "name": "TF1 NANOG / FOXA1",
+      "level": "VARIANT",
+      "short_name": "tf1-nanog-foxa1"
+    },
+    {
+      "name": "TF2 CEBPB",
+      "level": "VARIANT",
+      "short_name": "tf2-cebpb"
+    },
+    {
+      "name": "TF3 FOXA1 / AR / ESR1",
+      "level": "VARIANT",
+      "short_name": "tf3-foxa1-ar-esr1"
+    },
+    {
+      "name": "TF4 OTX2",
+      "level": "VARIANT",
+      "short_name": "tf4-otx2"
+    },
+    {
+      "name": "TF5 AR",
+      "level": "VARIANT",
+      "short_name": "tf5-ar"
+    },
+    {
+      "name": "TN1 Transcription",
+      "level": "VARIANT",
+      "short_name": "tn1-transcription"
+    },
+    {
+      "name": "TN2 Transcription",
+      "level": "VARIANT",
+      "short_name": "tn2-transcription"
+    },
+    {
+      "name": "TN3 Transcription",
+      "level": "VARIANT",
+      "short_name": "tn3-transcription"
+    },
+    {
+      "name": "TN4 Transcription",
+      "level": "VARIANT",
+      "short_name": "tn4-transcription"
+    }
+  ]
+}

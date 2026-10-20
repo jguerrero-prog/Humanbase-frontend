@@ -50,6 +50,7 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
   const [title, setTitle] = useState(preset?.title ?? draft?.title ?? '');
   const [tissue, setTissue] = useState(preset?.tissue ?? draft?.tissue ?? '');
   const [fromExample, setFromExample] = useState(Boolean(preset));
+  const [exampleTitle, setExampleTitle] = useState(preset?.title);
   const [version, setVersion] = useState<DataVersion>(draft?.version ?? 'v1');
   const [submitting, setSubmitting] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -80,6 +81,7 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
   const load = (item: ModuleExample) => {
     type(item.genes.join('\n'));
     setTitle(item.title);
+    setExampleTitle(item.title);
     setTissue(item.tissue);
     setVersion('v1');
     setFromExample(true);
@@ -102,7 +104,9 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
     setSubmitting(true);
     setFailed(false);
     try {
-      const { bodyTag } = await api.modules.submit({ entrez, integration: tissue, version, title });
+      // The live site sends its examples without a title, so the cached result comes back instead of a new job.
+      const requestTitle = fromExample && title === exampleTitle ? '' : title;
+      const { bodyTag } = await api.modules.submit({ entrez, integration: tissue, version, title: requestTitle });
       const link = `/modules/?body_tag=${bodyTag}`;
       const network = tissues.find((item) => item.slug === tissue)?.name ?? tissue;
       new JobHistory().add({ id: bodyTag, tool: 'Modules', status: 'running', startedAt: new Date().toISOString(), link, title: title.trim() || undefined, detail: `Modules, ${network}` });
@@ -125,7 +129,7 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
           columns={analysisColumns}
           value="modules"
           triggerIcon="module"
-          className="home-search-analysis"
+          size="large"
           footer={
             <p>
               Not sure which tool? <a href={linkHref('/sequence-tools/')}>Compare them</a>

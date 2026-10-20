@@ -16,7 +16,7 @@ test('Modules on the homepage checks an example list and starts a job, with the 
   expect(await violationsOf(page)).toEqual([]);
 
   await page.getByRole('button', { name: 'Find modules in 504 genes' }).click();
-  await expect(page).toHaveURL(/\/modules\/\?body_tag=faa09d1786f0998dbd03d7323f544f5457d98936/);
+  await expect(page).toHaveURL(/\/modules\/\?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9/);
   await expect(page.getByRole('heading', { level: 1, name: 'Renal disease panel' })).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   expect(apiRequests).toEqual([]);
@@ -30,12 +30,12 @@ test('a module result that no longer exists says so', async ({ page }) => {
   expect(apiRequests).toEqual([]);
 });
 
-const renal = `${web}/modules/?body_tag=faa09d1786f0998dbd03d7323f544f5457d98936`;
+const renal = `${web}/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9`;
 
 test('the module result has no WCAG 2.2 AA violations in each view, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(renal);
-  await expect(page.getByText('Showing 5 enriched modules of 2 genes or more. Edges hidden.')).toBeVisible();
+  await expect(page.getByText('Showing 14 enriched modules of 2 genes or more. Edges hidden.')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
 
   await page.getByRole('table', { name: 'Modules and their top terms' }).getByRole('button', { name: 'M1' }).click();
@@ -47,7 +47,8 @@ test('the module result has no WCAG 2.2 AA violations in each view, with the API
   await page.getByRole('tab', { name: 'Genes' }).click();
   await expect(page.getByRole('table', { name: 'Genes in each module' }).getByText('ABCB11')).toBeVisible();
   await page.getByRole('button', { name: 'View as table' }).click();
-  await expect(page.getByRole('table', { name: 'Genes in the modules of Renal disease panel' })).toBeVisible();
+  // Opened directly, the result has no name in this browser, and examples are sent without a title.
+  await expect(page.getByRole('table', { name: 'Genes in the modules of Untitled module search' })).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   expect(apiRequests).toEqual([]);
 });
@@ -62,7 +63,7 @@ test('the module result keeps its view in the URL, so a refresh shows the same t
   await expect(page.getByRole('checkbox', { name: 'Hide modules with no enriched terms' })).not.toBeChecked();
   await expect(page).toHaveURL(/edges=1&all=1/);
   await page.reload();
-  await expect(page.getByText('Showing 16 modules of 2 genes or more. Edges shown.')).toBeVisible();
+  await expect(page.getByText('Showing 20 modules of 2 genes or more. Edges shown.')).toBeVisible();
   await expect(page.locator('.force-graph-links line').first()).toBeAttached();
 });
 
@@ -71,7 +72,7 @@ test('Edit genes takes the result’s list back to the search', async ({ page })
   await page.goto(renal);
   await page.getByRole('button', { name: 'Edit genes' }).click();
   await expect(page).toHaveURL(/\/\?analysis=modules$/);
-  await expect(page.getByRole('textbox', { name: 'Title' })).toHaveValue('Renal disease panel');
+  await expect(page.getByRole('textbox', { name: 'Title' })).toHaveValue('');
   await expect(page.getByRole('button', { name: 'Find modules in 504 genes' })).toBeVisible();
   expect(apiRequests).toEqual([]);
 });

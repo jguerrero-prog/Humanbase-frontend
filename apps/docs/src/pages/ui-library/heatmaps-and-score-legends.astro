@@ -1,12 +1,12 @@
 ---
-import { Badge, Heatmap, HeatmapCell, LegendStepped, ScoreScale } from '@humanbase/ui';
+import { Badge, Heatmap, HeatmapCell, LegendStepped, ScoreScale, SubstitutionMap } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
-import { expressionGeneLegend, irgmPositions, irgmRows, irgmSummary, scoreLegends, tissueConfidenceLegend } from '../../data/score-legends';
+import { expressionGeneLegend, irgmPositions, irgmRows, irgmSummary, positionSpecimenActive, positionSpecimenColumns, positionSpecimenRows, mutagenesisScale, scoreLegends, substitutionColumns, substitutionOverview, tissueConfidenceLegend } from '../../data/score-legends';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const today = [
@@ -112,6 +112,37 @@ const zScore = { title: 'Variant features, z-score', kind: 'diverging', edges: [
   columnHeader="Position"
   axis={{ title: 'Position on chr5, GRCh37/hg19', offset: 150226000, ticks: [100, 150, 200, 250, 300, 350] }}
 />`;
+const positionSpecs = [
+  ['heatmap.cell.compact', '8px wide, 22px tall, 1px gap; used when positions would not fit at 34px'],
+  ['heatmap.labels.compact', 'position labels every 20 columns; row labels stay full width'],
+  ['tooltip.alleles', 'every allele at the position, reference marked, the strongest one noted; inverse surface'],
+  ['tooltip.system', 'a tissue system cell names the tissue behind its value'],
+];
+const substitutionParts = [
+  ['1. Header and legend', 'The window\'s positions, and the diverging log2 fold change legend with its edges'],
+  ['2. Overview strip', 'The whole sequence, one bar per 10 bp, height by the strongest absolute change'],
+  ['3. Window', 'Outlined in the selected border color; drag it, or focus it and use Left and Right'],
+  ['4. Map', 'One column per position, rows A, C, G, T; position numbers every 10 and the reference base above'],
+  ['5. Reference cell', 'White with a grey outline: a base can\'t be substituted for itself'],
+  ['6. Selected position', '2px ink outline around the column; the detail panel follows it'],
+  ['7. Detail panel', 'The position, its coordinate and reference base, and each substitution\'s value and bar'],
+];
+const substitutionStates = [
+  ['Opens', 'On the strongest position for the chosen feature, with the window centered on it'],
+  ['Hover a cell', 'Tooltip: position, substitution (T to A) and value, such as −4.63'],
+  ['Focus a cell', 'Focus ring on the cell; arrow keys move between cells, Enter selects the position'],
+  ['Dragging the window', 'The map updates as the window moves; the window snaps to whole positions'],
+  ['Feature without samples', 'With the API off, choices the sample doesn\'t cover say so instead of drawing an empty map'],
+];
+const substitutionSpecs = [
+  ['substitution.cell', '10px wide, 22px tall, 1px white gap; 91 positions in a 1,290px card'],
+  ['substitution.reference', 'surface.page fill, 1px border.default outline'],
+  ['substitution.selected', '2px ink outline, 3px radius, around the whole column'],
+  ['substitution.scale', 'viz.div.-3 to +3 at log2 fold change edges ±0.1, 0.25, 0.5; "Mutation lowers" and "Mutation raises"'],
+  ['overview.bar', 'grey 300, 5px per 10 bp; window: 2px border.selected with 4px handles'],
+  ['detail.panel', '236px, surface.page, border.subtle, radius 12'],
+  ['Data', 'position 999 is real (example job 0576e894: −4.63, −4.24, −4.00); other cells are illustrative'],
+];
 ---
 
 <DocsLayout title="Heatmaps and score legends" description="Stepped legends for every Humanbase score, and the rules every heatmap follows: labels, gaps, missing values, hover and a table view.">
@@ -177,6 +208,53 @@ const zScore = { title: 'Variant features, z-score', kind: 'diverging', edges: [
       </figure>
       <p class="caption">Decided: a ruler, with full labels only on hover and selection, as in the specimen above. Tick labels are offsets from 150,226,000, so they stay short and horizontal. Each column links to its tick; close positions (295 to 301) pack side by side. Hovering or selecting a column shows its full position; the tooltip and View as table carry every coordinate. The connector lines are a placeholder; their final drawing and motion are for development to refine.</p>
     </div>
+  </DocSection>
+
+  <DocSection title="Position heatmaps" lead="ExPecto and ExPecto SC show a gene's positions across tissues. A compact density fits a hundred or more positions in the card, and the tooltip lists every allele so nothing is hidden by the cell's single color.">
+    <div class="position-specimen">
+      <Heatmap
+        client:load
+        title="Predicted effect by position, log fold change"
+        summary="An illustrative specimen of 113 positions; the values are made up."
+        scale={expressionGeneLegend}
+        columns={positionSpecimenColumns}
+        rows={positionSpecimenRows}
+        rowHeader="Tissue system"
+        columnHeader="Position"
+        columnWidth="narrow"
+        initialActive={positionSpecimenActive}
+      />
+    </div>
+    <DocTable caption="Position heatmap specs" columns={['Token', 'Value']} widths={['380px']}>
+      {positionSpecs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Substitution map" lead="For in silico mutagenesis results. Every substitution at every position of a window fits on screen, an overview strip moves the window along the whole sequence, and a panel explains the chosen position.">
+    <div class="substitution-specimen">
+      <SubstitutionMap
+        length={2000}
+        start={954}
+        windowSize={91}
+        onStart={() => undefined}
+        columns={substitutionColumns}
+        overview={substitutionOverview}
+        selected={999}
+        onSelect={() => undefined}
+        scale={mutagenesisScale}
+        genome={{ chromosome: 'chr1', start: 109816591 }}
+        note="Log2 fold change for HepG2 / CEBPB. Negative: the mutation lowers the predicted signal."
+      />
+    </div>
+    <DocTable caption="Parts of the substitution map" columns={['Part', 'What it does']} widths={['380px']}>
+      {substitutionParts.map(([part, text]) => <tr class="doc-table-roomy"><th scope="row">{part}</th><td>{text}</td></tr>)}
+    </DocTable>
+    <DocTable caption="Substitution map states" columns={['State', 'What changes']} widths={['380px']}>
+      {substitutionStates.map(([state, text]) => <tr class="doc-table-roomy"><th scope="row">{state}</th><td>{text}</td></tr>)}
+    </DocTable>
+    <DocTable caption="Substitution map specs" columns={['Token', 'Value']} widths={['380px']}>
+      {substitutionSpecs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
   </DocSection>
 
   <DocSection title="Rules for every heatmap" lead="The specimen’s parts, written as rules, plus what happens at the edges of the data.">
@@ -383,5 +461,18 @@ const zScore = { title: 'Variant features, z-score', kind: 'diverging', edges: [
     .anatomy {
       grid-template-columns: minmax(0, 1fr);
     }
+  }
+
+  .position-specimen {
+    margin-block-end: var(--space-6);
+    padding-block-end: var(--space-16);
+  }
+
+  .substitution-specimen {
+    max-inline-size: 1310px;
+    margin-block-end: var(--space-6);
+    padding: var(--space-4);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
   }
 </style>

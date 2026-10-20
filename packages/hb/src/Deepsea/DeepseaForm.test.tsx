@@ -21,7 +21,7 @@ describe('DeepseaForm', () => {
     const { onStarted } = renderForm('beluga');
     await userEvent.click(screen.getByRole('radio', { name: 'Use the example' }));
     await userEvent.click(screen.getByRole('button', { name: 'Run Beluga on 12 variants' }));
-    await waitFor(() => expect(onStarted).toHaveBeenCalledWith('/deepsea/jobs/00000000-0000-4000-8000-000000000112/'));
+    await waitFor(() => expect(onStarted).toHaveBeenCalledWith('/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/'));
     expect(new JobHistory().list()[0]).toMatchObject({ tool: 'Beluga', detail: 'Beluga, 12 variants', status: 'queued' });
   });
 
@@ -32,11 +32,12 @@ describe('DeepseaForm', () => {
     expect(onModelChange).toHaveBeenCalledWith('sei');
   });
 
-  it('offers only the examples that exist', async () => {
+  it('offers the live example for every input kind', async () => {
     renderForm('sei');
     await userEvent.click(screen.getByRole('radio', { name: 'Sequences (FASTA)' }));
-    expect(screen.queryByRole('radio', { name: 'Use the example' })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Download example\.vcf/ })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('radio', { name: 'Use the example' }));
+    expect(screen.getByRole('button', { name: 'Run Sei on 4 sequences' })).not.toHaveAttribute('aria-disabled');
+    for (const kind of ['vcf', 'bed', 'fasta']) expect(screen.getByRole('button', { name: new RegExp(`Download example\\.${kind}`) })).toBeInTheDocument();
   });
 
   it('runs in silico mutagenesis on the example sequences, with FASTA as its only input', async () => {

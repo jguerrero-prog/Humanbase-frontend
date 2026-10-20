@@ -1,0 +1,44 @@
+import { expect, test, type Page } from '@playwright/test';
+import { checkScreen, watch, web } from './live';
+
+// Each test submits one real job. Jobs can take most of an hour; none is ever resubmitted.
+test.describe.configure({ mode: 'parallel', retries: 0 });
+
+const fiftyMinutes = 50 * 60_000;
+
+async function waitForOutcome(page: Page, result: ReturnType<Page['locator']>) {
+  const failed = page.getByRole('status').filter({ hasText: /^Failed/ });
+  await expect(result.or(failed).first()).toBeVisible({ timeout: fiftyMinutes });
+  if (await failed.isVisible()) throw new Error(`The job failed: ${await failed.innerText()} (${page.url()})`);
+}
+
+for (const [tool, path, run] of [
+  ['Beluga', 'beluga', /^Run Beluga on \d+ variants$/],
+  ['ExPecto', 'expecto/variants', /^Run ExPecto on \d+ variants$/],
+] as const) {
+  test(`a ${tool} example job runs and its result renders`, async ({ page }) => {
+    const problems = watch(page);
+    await page.goto(`${web}/${path}/`);
+    await page.getByRole('radio', { name: 'Use the example' }).click();
+    await page.getByRole('button', { name: run }).click();
+    await expect(page).toHaveURL(/\/deepsea\/jobs\/[0-9a-f-]{36}\//);
+    test.info().annotations.push({ type: 'job', description: `${tool} ${page.url()}` });
+    console.warn(`${tool} job: ${page.url()}`);
+    await waitForOutcome(page, page.getByRole('heading', { name: /effects of chr/ }));
+    await expect(page.locator('.genome-engine')).toBeVisible();
+    await checkScreen(page, problems);
+  });
+}
+
+test('a NetWAS example job runs and its result renders', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/netwas/`);
+  await page.getByRole('radio', { name: 'Use the example' }).click();
+  await expect(page.getByText('17,692 genes with p-values, VEGAS format, ready to run')).toBeVisible();
+  await page.getByRole('button', { name: /^Run NetWAS on 17,692 genes$/ }).click();
+  await expect(page).toHaveURL(/\/netwas\/[0-9a-f-]{36}\//);
+  test.info().annotations.push({ type: 'job', description: `NetWAS ${page.url()}` });
+  console.warn(`NetWAS job: ${page.url()}`);
+  await waitForOutcome(page, page.getByRole('link', { name: /^Open in Networks for / }).first());
+  await checkScreen(page, problems);
+});

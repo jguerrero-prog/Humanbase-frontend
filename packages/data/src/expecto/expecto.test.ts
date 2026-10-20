@@ -40,10 +40,13 @@ describe('TissueVariants', () => {
 
   it('folds tissues into systems by their strongest effect', () => {
     expect(table.groups).toEqual(['hematopoietic system', 'integument']);
-    expect(table.groupRows()).toEqual([
+    const rows = table.groupRows();
+    expect(rows.map(({ label, values }) => ({ label, values }))).toEqual([
       { label: 'hematopoietic system', values: [0.4, -0.601] },
       { label: 'integument', values: [0.4, null] },
     ]);
+    expect(rows[0]?.sources?.map((tissue) => tissue?.title ?? null)).toEqual(['Spleen', 'Whole Blood']);
+    expect(rows[1]?.sources?.map((tissue) => tissue?.title ?? null)).toEqual(['Spleen', null]);
   });
 
   it('filters by system and resource', () => {
@@ -95,7 +98,7 @@ describe('ExPecto variant search', () => {
 describe('ExPecto jobs', () => {
   it('runs on Beluga with expecto turned on, and keeps its own page', () => {
     const form = DeepseaService.formOf({ model: 'expecto', kind: 'vcf', text: 'chr1\t1\t.\tA\tG', fileName: 'example.vcf', genome: 'hg19' });
-    expect(form.get('ds_model')).toBe('Beluga');
+    expect(form.get('ds_model')).toBe('beluga');
     expect(form.get('expecto')).toBe('true');
     expect(variantModels).not.toContain('expecto');
   });
@@ -110,8 +113,8 @@ describe('ExPecto jobs', () => {
     const features = await offline().deepsea.features('expecto');
     const effects = featureEffects({ chromosome: 'chr5', position: 1, name: 'x', ref_allele: 'A', alt_allele: 'G', feature_predictions: [0.12, -0.03] }, features);
     expect(effects).toEqual([
-      { feature: 'Adipose Subcutaneous', cell: 'GTEx', context: 'GTEx, connective tissue', label: 'Adipose Subcutaneous', value: 0.12 },
-      { feature: 'Adipose Visceral Omentum', cell: 'GTEx', context: 'GTEx, connective tissue', label: 'Adipose Visceral Omentum', value: -0.03 },
+      { feature: 'Adipose Subcutaneous', cell: 'GTEx', context: 'GTEx, connective tissue', label: 'Adipose Subcutaneous', value: 0.12, group: 'Adipose Subcutaneous, GTEx' },
+      { feature: 'Adipose Visceral Omentum', cell: 'GTEx', context: 'GTEx, connective tissue', label: 'Adipose Visceral Omentum', value: -0.03, group: 'Adipose Visceral Omentum, GTEx' },
     ]);
   });
 });

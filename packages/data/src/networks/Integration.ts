@@ -12,6 +12,9 @@ export interface IntegrationRecord {
 export type NetworkKind = 'global' | 'tissue' | 'process';
 
 // One Humanbase network: the global one, a tissue or cell type, or a biological process (GIANT only).
+/** Network names start with a capital where they stand alone, such as in a select: "Nervous system". */
+export const sentenceCase = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
 export class Integration {
   constructor(private readonly record: IntegrationRecord) {}
 
@@ -25,8 +28,7 @@ export class Integration {
 
   /** The title in sentence case, as screens show it: "Nervous system". */
   get name(): string {
-    const { title } = this;
-    return title.charAt(0).toUpperCase() + title.slice(1);
+    return sentenceCase(this.title);
   }
 
   get version(): DataVersion {

@@ -11,9 +11,16 @@ export interface HeatmapColumn {
   position?: number;
 }
 
+/** What a cell's tooltip lists instead of its single value, such as every allele at a position. */
+export interface HeatmapCellDetail {
+  rows: readonly (readonly [label: string, value: string, note?: string])[];
+  hint?: string;
+}
+
 export interface HeatmapRow {
   label: string;
   values: readonly (number | null)[];
+  details?: readonly (HeatmapCellDetail | undefined)[];
 }
 
 export interface HeatmapAxis {
@@ -39,32 +46,59 @@ export interface HeatmapProps {
   density?: 'full' | 'compact' | undefined;
   /** Prints the value beside each cell, for a heatmap with a single column. */
   showValues?: boolean | undefined;
+  /** Narrow cells are 8px wide, labelling every 20th position; auto narrows them when the columns wouldn't fit at full width. */
+  columnWidth?: 'full' | 'auto' | 'narrow' | undefined;
 }
 
 type Cell = readonly [number, number];
 
 const counts = new Intl.NumberFormat('en-US');
 const cellWidth = 34;
+const narrowWidth = 8;
+const labelEvery = 20;
 
-export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', showValues = false }: HeatmapProps) {
+export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', showValues = false, columnWidth = 'full' }: HeatmapProps) {
   const id = useId();
   const scale = useMemo(() => new ScoreScale(spec), [spec]);
   const plot = useRef<HTMLDivElement>(null);
+  const figure = useRef<HTMLElement>(null);
   const [active, setActive] = useState<Cell | null>(initialActive ?? null);
   const [focus, setFocus] = useState<Cell>(initialActive ?? [0, 0]);
   const [highlighted, setHighlighted] = useState<number | null>(null);
   const [place, setPlace] = useState<{ x: number; y: number }>();
+  const [fits, setFits] = useState(true);
+  const narrow = columnWidth === 'narrow' || (columnWidth === 'auto' && !fits);
+  const width = narrow ? narrowWidth : cellWidth;
   const format = (value: number) => ScoreScale.number(Number(value.toFixed(decimals)));
   const columnLabel = (column: HeatmapColumn) => (column.position === undefined ? column.label : counts.format(column.position));
   const valueAt = ([row, column]: Cell) => rows[row]?.values[column] ?? null;
 
   useLayoutEffect(() => {
     const box = plot.current;
+    if (columnWidth !== 'auto' || !box) return;
+    const fit = () => {
+      const label = Number.parseFloat(getComputedStyle(box).getPropertyValue('--heatmap-label')) || 0;
+      const room = box.clientWidth - label;
+      setFits(room <= 0 || columns.length * (cellWidth + 1) <= room);
+    };
+    fit();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(fit);
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, [columnWidth, columns.length]);
+
+  useLayoutEffect(() => {
+    const box = figure.current;
     const cell = active && box?.querySelector<HTMLElement>(`[data-cell="${active[0]}-${active[1]}"]`);
     if (!box || !cell) return setPlace(undefined);
-    const point = { x: cell.offsetLeft + cell.offsetWidth, y: cell.offsetTop + cell.offsetHeight };
-    setPlace(placeNearPoint(point, { width: 240, height: 140 }, { width: box.clientWidth, height: Math.max(box.clientHeight, point.y + 160) }, 4));
-  }, [active]);
+    const frame = box.getBoundingClientRect();
+    const rect = cell.getBoundingClientRect();
+    const point = { x: rect.right - frame.left, y: rect.bottom - frame.top };
+    const detail = active ? rows[active[0]]?.details?.[active[1]] : undefined;
+    const size = { width: detail ? 320 : 240, height: 100 + (detail?.rows.length ?? 1) * 24 };
+    setPlace(placeNearPoint(point, size, { width: box.clientWidth, height: Math.max(box.clientHeight, point.y + size.height + 8) }, 4));
+  }, [active, rows]);
 
   const move = (event: KeyboardEvent<HTMLSpanElement>) => {
     const [row, column] = focus;
@@ -88,9 +122,10 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   const activeValue = active ? valueAt(active) : null;
   const activeRow = active ? rows[active[0]] : undefined;
   const activeHeader = activeColumn === undefined ? undefined : columns[activeColumn];
+  const activeDetail = activeColumn === undefined ? undefined : activeRow?.details?.[activeColumn];
 
   return (
-    <figure className={['heatmap', density === 'compact' && 'heatmap-compact', showValues && 'heatmap-with-values'].filter(Boolean).join(' ')} aria-labelledby={`${id}-title`}>
+    <figure ref={figure} className={['heatmap', density === 'compact' && 'heatmap-compact', narrow && 'heatmap-narrow', showValues && 'heatmap-with-values'].filter(Boolean).join(' ')} aria-labelledby={`${id}-title`}>
       <div className="heatmap-head">
         <figcaption>
           <p id={`${id}-title`} className="heatmap-title">
@@ -100,8 +135,15 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
         </figcaption>
         <LegendStepped spec={spec} highlighted={highlighted ?? (activeValue === null ? null : scale.step(activeValue))} onHighlight={setHighlighted} />
       </div>
-      <div className="heatmap-plot" ref={plot} style={{ '--heatmap-columns': columns.length, '--heatmap-cell': `${cellWidth}px` } as CSSProperties}>
-        {!axis && (
+      <div className="heatmap-plot" ref={plot} style={{ '--heatmap-columns': columns.length, '--heatmap-cell': `${width}px` } as CSSProperties}>
+        {narrow && (
+          <div className="heatmap-position-labels" aria-hidden="true">
+            {columns.map((column, index) => (
+              <span key={column.label}>{index % labelEvery === 0 ? columnLabel(column) : ''}</span>
+            ))}
+          </div>
+        )}
+        {!axis && !narrow && (
           <div className="heatmap-column-labels" aria-hidden="true">
             {columns.map((column) => (
               <span key={column.label}>{columnLabel(column)}</span>
@@ -147,17 +189,18 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
             </div>
           ))}
         </div>
-        {axis && <PositionAxis axis={axis} columns={columns} active={activeColumn} />}
-        {active && activeRow && place && (
-          <DataTooltip
-            id={`${id}-tip`}
-            title={activeRow.label}
-            {...(activeHeader && { subtitle: `${columnHeader} ${columnLabel(activeHeader)}` })}
-            rows={[[spec.title, scale.describe(activeValue, format)]]}
-            position={place}
-          />
-        )}
+        {axis && !narrow && <PositionAxis axis={axis} columns={columns} active={activeColumn} />}
       </div>
+      {active && activeRow && place && (
+        <DataTooltip
+          id={`${id}-tip`}
+          title={activeRow.label}
+          {...(activeHeader && { subtitle: `${columnHeader} ${columnLabel(activeHeader)}` })}
+          rows={activeDetail?.rows ?? [[spec.title, scale.describe(activeValue, format)]]}
+          {...(activeDetail?.hint && { hint: activeDetail.hint })}
+          position={place}
+        />
+      )}
       <details className="heatmap-table">
         <summary>View as table</summary>
         {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the table scrolls sideways, so it takes focus for arrow-key scrolling */}

@@ -1,5 +1,6 @@
 import { useGeneFunctions, type GeneFunction, type NetworkGene } from '@humanbase/data';
 import { Button, Drawer, GeneDetail } from '@humanbase/ui';
+import { annotationRows } from './annotationRows';
 import { geneIdLinks } from './geneIds';
 
 export interface GeneDrawerProps {
@@ -13,7 +14,7 @@ export interface GeneDrawerProps {
 
 // The drawer lists a gene's strongest terms; the Biological processes and Diseases tabs hold the full tables.
 const shownTerms = 12;
-const termNames = (functions: readonly GeneFunction[] | undefined) => functions?.slice(0, shownTerms).map((row) => row.name);
+const strongest = (functions: readonly GeneFunction[] | undefined) => functions && annotationRows([functions]).slice(0, shownTerms);
 
 export function GeneDrawer({ gene, queryNames, networkTitle, onAdd, onClose }: GeneDrawerProps) {
   const processes = useGeneFunctions(gene.entrez, 'gene-ontology-bp');
@@ -36,8 +37,8 @@ export function GeneDrawer({ gene, queryNames, networkTitle, onAdd, onClose }: G
         annotations={{
           label: 'Annotations',
           sources: [
-            { value: 'gene-ontology-bp', label: 'Gene Ontology (BP)', terms: processes.isError ? [] : termNames(processes.data) },
-            { value: 'disease-ontology', label: 'Disease Ontology', terms: diseases.isError ? [] : termNames(diseases.data) },
+            { value: 'gene-ontology-bp', label: 'Gene Ontology (BP)', rows: processes.isError ? [] : strongest(processes.data) },
+            { value: 'disease-ontology', label: 'Disease Ontology', rows: diseases.isError ? [] : strongest(diseases.data) },
           ],
         }}
       />

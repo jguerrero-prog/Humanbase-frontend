@@ -28,7 +28,7 @@ describe('DeepseaJobView', () => {
   });
 
   it('reads Sei effects as sequence classes', async () => {
-    renderJob(job(101), 'chr7-49813589-G-C');
+    renderJob('2e18fedf-3de7-4d08-a894-9a937a2b860b', 'chr7-49813589-G-C');
     expect(await screen.findByText('Molecular effects of chr7:49,813,589 G>C', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(await screen.findByText('P Promoter', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByText('Raises, 13 sequence classes')).toBeInTheDocument();
@@ -36,7 +36,7 @@ describe('DeepseaJobView', () => {
   });
 
   it('reads ExPecto effects as tissues, with their resource and system', async () => {
-    renderJob(job(141), 'chr5-134871851-A-G');
+    renderJob('e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1', 'chr5-134871851-A-G');
     expect(await screen.findByRole('heading', { level: 1, name: 'Untitled ExPecto job' }, { timeout: 5000 })).toBeInTheDocument();
     expect(await screen.findByText('Fallopian Tube', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getAllByText('GTEx, reproductive system')[0]).toBeInTheDocument();
@@ -69,9 +69,12 @@ describe('DeepseaJobView', () => {
     renderJob('0576e894-a2c5-48bb-9bdf-227962495d5f');
     expect(await screen.findByRole('heading', { level: 1, name: 'Untitled in silico mutagenesis job' }, { timeout: 5000 })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: 'Effect of every substitution on HepG2 / CEBPB' }, { timeout: 5000 })).toBeInTheDocument();
-    expect(await screen.findByRole('grid', { name: 'Substitutions at positions 984 to 1,013' }, { timeout: 5000 })).toBeInTheDocument();
-    const strongest = screen.getByRole('table', { name: 'Strongest changes to HepG2 / CEBPB' });
-    expect(strongest.querySelector('tbody tr')).toHaveTextContent('999chr1:109,817,590T>A−4.63');
+    // Opens on the strongest position, 999, with the 91-position window centered on it.
+    expect(await screen.findByRole('grid', { name: 'Substitutions at positions 954 to 1,044' }, { timeout: 5000 })).toBeInTheDocument();
+    const detail = screen.getByRole('region', { name: 'Position 999' });
+    expect(detail).toHaveTextContent('chr1:109,817,590 · reference T');
+    expect(detail).toHaveTextContent('A−4.63C−4.00G−4.24TReference');
+    expect(screen.getByRole('slider', { name: 'Window along the sequence' })).toHaveAttribute('aria-valuenow', '954');
   });
 
   it('lists an in silico mutagenesis job’s files once per kind while it runs', async () => {

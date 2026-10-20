@@ -1,3 +1,6 @@
+/** The variant's name, with Sei's top sequence class, such as VWC2 · P Promoter. */
+export const variantName = (variant: Pick<Variant, 'name' | 'topClass'>) => (variant.topClass ? `${variant.name} · ${variant.topClass}` : variant.name);
+
 export interface Variant {
   id: string;
   chromosome: string;
@@ -6,6 +9,8 @@ export interface Variant {
   change: string;
   /** The gene or annotation nearest the variant. */
   name: string;
+  /** Sei: the sequence class the variant changes most, such as P Promoter. */
+  topClass?: string | undefined;
   scores: Readonly<Record<string, number>>;
 }
 

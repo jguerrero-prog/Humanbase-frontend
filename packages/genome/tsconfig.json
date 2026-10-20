@@ -1,0 +1,7 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["vite/client", "vitest/globals", "node"]
+  },
+  "include": ["src", "biodallianceAssets.ts", "../../vitest.setup.ts"]
+}

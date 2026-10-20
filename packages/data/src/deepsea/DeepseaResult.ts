@@ -1,3 +1,4 @@
+import type { DeepseaModel } from './DeepseaModel';
 import { expectoTissues } from '../expecto/expectoTissues';
 import { tissueTitle } from '../expecto/TissueVariants';
 
@@ -13,7 +14,12 @@ export interface ScoreType {
 export interface VariantSequence {
   chromosome: string;
   position: number;
-  name: string;
+  /** Seqweaver names a variant here, Sei in id and ExPecto by its gene. */
+  name?: string;
+  id?: string;
+  gene?: string;
+  /** Sei: the sequence class the variant changes most. */
+  max_seq_class?: string;
   ref_allele: string;
   alt_allele: string;
   strand?: string;
@@ -53,6 +59,8 @@ export interface VariantRow {
   position: number;
   change: string;
   name: string;
+  /** Sei: the sequence class the variant changes most, such as P Promoter. */
+  topClass?: string;
   scores: Record<string, number>;
 }
 
@@ -63,6 +71,7 @@ export interface FeatureEffect {
   context: string;
   label: string;
   value: number;
+  group?: string;
 }
 
 // Treatments name the experiment's sample, such as ago_adult_brain.BA4.hg19; "None" and bare IDs add nothing.
@@ -82,12 +91,23 @@ export function chrVariant(variant: Pick<VariantRow, 'chromosome' | 'position'>)
 }
 
 /** Every variant once, with the score from each score type it appears in. */
+function newRow(id: string, sequence: VariantSequence): VariantRow {
+  const row: VariantRow = { id, chromosome: sequence.chromosome, position: sequence.position, change: `${sequence.ref_allele}>${sequence.alt_allele}`, name: sequence.name ?? sequence.id ?? sequence.gene ?? '', scores: {} };
+  if (sequence.max_seq_class) row.topClass = sequence.max_seq_class;
+  return row;
+}
+
+/** The variant-level scores a result shows: Sei's summary score only, not its 40 per-class scores. */
+export function variantScoreTypes(model: DeepseaModel, types: readonly ScoreType[]): ScoreType[] {
+  return types.filter((type) => type.level === 'VARIANT' && (!model.variantScores || model.variantScores.includes(type.short_name)));
+}
+
 export function variantRows(sets: readonly VariantScoresRecord[]): VariantRow[] {
   const rows = new Map<string, VariantRow>();
   for (const set of sets) {
     for (const { sequence, value } of set.scores) {
       const id = variantIdOf(sequence);
-      const row = rows.get(id) ?? { id, chromosome: sequence.chromosome, position: sequence.position, change: `${sequence.ref_allele}>${sequence.alt_allele}`, name: sequence.name, scores: {} };
+      const row = rows.get(id) ?? newRow(id, sequence);
       row.scores[set.score_type] = value;
       rows.set(id, row);
     }
@@ -128,6 +148,6 @@ function tissueEffects(prediction: FeaturePredictionRecord, tissues: readonly { 
     const resource = tissue?.resource.replace(', redundant', '') ?? '';
     const context = [resource, tissue?.systems.join(' and ')].filter(Boolean).join(', ');
     const name = tissueTitle(title);
-    return [{ feature: name, cell: resource, context, label: name, value }];
+    return [{ feature: name, cell: resource, context, label: name, value, group: `${name}, ${resource}` }];
   });
 }

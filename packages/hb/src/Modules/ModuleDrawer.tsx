@@ -1,4 +1,4 @@
-import { NetworkQuery, termDatabaseNames, type DataVersion, type GeneHit, type Module, type ModuleResult } from '@humanbase/data';
+import { NetworkQuery, type DataVersion, type GeneHit, type Module, type ModuleResult } from '@humanbase/data';
 import { Button, Cell, Drawer, HeaderCell, saveFile, SegmentedControl, Table, ValueFormat, useLinkHref } from '@humanbase/ui';
 import { useState } from 'react';
 
@@ -22,7 +22,7 @@ export function ModuleDrawer({ result, module, database, genes, integration, ver
   const terms = result.terms(module.id, database);
   const symbolOf = (entrez: number) => genes?.get(entrez)?.symbol ?? String(entrez);
   const members = module.genes.map((entrez) => ({ entrez, symbol: symbolOf(entrez), name: genes?.get(entrez)?.name ?? '' })).sort((a, b) => a.symbol.localeCompare(b.symbol));
-  const databaseName = termDatabaseNames[database] ?? database;
+  const databaseName = result.databaseName(database);
   const title = terms[0] ? `${module.label}, ${terms[0].title}` : module.label;
   const termsText = terms.length === 1 ? '1 enriched term' : `${terms.length} enriched terms`;
 

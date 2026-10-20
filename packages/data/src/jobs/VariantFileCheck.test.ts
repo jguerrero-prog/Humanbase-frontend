@@ -29,6 +29,8 @@ describe('VariantFileCheck', () => {
   it('flags BED values and suggests the right input type', () => {
     const result = new VariantFileCheck('vcf', 'sei').check('chr1\t100\t106');
     expect(result.otherKind).toBe('This looks like a BED file. Switch to Regions (BED) to use it.');
+    expect(new VariantFileCheck('vcf', 'sei').check('chr1\t100\t101\t.\t0\t*').otherKind).toBe('This looks like a BED file. Switch to Regions (BED) to use it.');
+    expect(new VariantFileCheck('bed', 'sei').check('chr1\t100\trs1\tA\tG').otherKind).toBe('This looks like a VCF file. Switch to Variants (VCF) to use it.');
     expect(new VariantFileCheck('bed', 'sei').check('chr1\t-1\t5').problems).toEqual([{ line: 1, rule: 'Start and end are whole numbers, 0 or more.' }]);
     expect(new VariantFileCheck('bed', 'sei').check('chr1\t500\t500').problems).toEqual([{ line: 1, rule: 'End is 500. Use a number greater than the start, 500.' }]);
   });

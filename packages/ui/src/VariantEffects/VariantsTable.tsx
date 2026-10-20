@@ -1,6 +1,6 @@
 import { Button } from '../Button/Button';
 import { Cell, HeaderCell, Table } from '../Table/Table';
-import { variantLabel, variantLocation, type Variant, type VariantScore } from './Variant';
+import { variantLabel, variantLocation, variantName, type Variant, type VariantScore } from './Variant';
 import './VariantEffects.css';
 
 export interface VariantsTableProps {
@@ -37,11 +37,11 @@ export function VariantsTable({ variants, scores, sortBy, selected, onSelect, li
             return (
               <tr key={variant.id} className="variants-table-row" data-selected={isSelected || undefined}>
                 <Cell rowHeader>
-                  <button type="button" className="variants-table-pick" aria-pressed={isSelected} aria-label={`${variantLabel(variant)}, ${variant.name}`} onClick={() => onSelect?.(variant.id)}>
+                  <button type="button" className="variants-table-pick" aria-pressed={isSelected} aria-label={`${variantLabel(variant)}, ${variantName(variant)}`} onClick={() => onSelect?.(variant.id)}>
                     <span className="variants-table-location">
                       {variantLocation(variant)} <span className="variants-table-change">{variant.change}</span>
                     </span>
-                    <span className="variants-table-name">{variant.name}</span>
+                    <span className="variants-table-name">{variantName(variant)}</span>
                   </button>
                 </Cell>
                 {scores.map((score) => (

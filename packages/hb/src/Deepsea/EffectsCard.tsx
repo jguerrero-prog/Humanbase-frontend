@@ -4,6 +4,8 @@ import { useMemo, useState, type ReactNode } from 'react';
 import './Deepsea.css';
 
 const heatmapRows = 20;
+const allResources = 'all';
+const resourceOrder = ['GTEx', 'Roadmap', 'ENCODE'];
 const number = new Intl.NumberFormat('en-US');
 
 export interface EffectsCardProps {
@@ -19,14 +21,21 @@ export interface EffectsCardProps {
   featureNoun: string;
   featurePlural: string;
   verb: string;
+  /** Where features aren't measured in cell types, such as ExPecto's tissues, the search says so. */
+  inCellTypes?: boolean;
   /** The score or feature set the effects are for, and its choices. */
   choice: { label: string; options: readonly SelectOption[]; value: string; onChange: (value: string) => void; name: string };
   /** Replaces the one-variant heatmap, such as a heatmap of every variant in a genome browser's range. */
   heatmap?: ReactNode;
 }
 
+const rank = (resource: string) => {
+  const index = resourceOrder.indexOf(resource);
+  return index === -1 ? resourceOrder.length : index;
+};
+
 /** A variant's effect on every feature: Strongest effects, Heatmap and All features. */
-export function EffectsCard({ label, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, choice, heatmap }: EffectsCardProps) {
+export function EffectsCard({ label, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, heatmap }: EffectsCardProps) {
   const [view, setView] = useState<EffectsView>('strongest');
   const [threshold, setThreshold] = useState<number | null>(start);
   const [search, setSearch] = useState('');
@@ -35,10 +44,15 @@ export function EffectsCard({ label, effects, failed, onRetry, scale, threshold:
   const [rows, setRows] = useState(heatmapRows);
   const [density, setDensity] = useState<'full' | 'compact'>('full');
   const [lowestFirst, setLowestFirst] = useState(false);
-  const found = useMemo(() => (effects ?? []).filter((effect) => `${effect.feature} ${effect.context}`.toLowerCase().includes(search.trim().toLowerCase())), [effects, search]);
+  const [resource, setResource] = useState(allResources);
+  // Tissues are labelled by resource rather than cell type, so only those results get the Resource filter.
+  const resources = useMemo(() => (inCellTypes ? [] : [...new Set((effects ?? []).map((effect) => effect.cell).filter(Boolean))].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))), [effects, inCellTypes]);
+  const inResource = useMemo(() => (effects ?? []).filter((effect) => resource === allResources || effect.cell === resource), [effects, resource]);
+  const found = useMemo(() => inResource.filter((effect) => `${effect.feature} ${effect.context}`.toLowerCase().includes(search.trim().toLowerCase())), [inResource, search]);
   const groups = useMemo(() => new EffectGroups(found, scale), [found, scale]);
-  const all = useMemo(() => new EffectGroups(effects ?? [], scale), [effects, scale]);
+  const all = useMemo(() => new EffectGroups(inResource, scale), [inResource, scale]);
   const ownHeatmap = view === 'heatmap' && !heatmap;
+  const allLabel = inCellTypes ? 'All features' : `All ${featurePlural}`;
 
   const content = failed ? (
     <Alert tone="error" title="These effects couldn’t load" action={{ label: 'Try again', onSelect: onRetry }}>
@@ -55,7 +69,9 @@ export function EffectsCard({ label, effects, failed, onRetry, scale, threshold:
       onToggle={(feature) => setExpanded((open) => (open.includes(feature) ? open.filter((item) => item !== feature) : [...open, feature]))}
       limit={limit}
       onShowMore={() => setLimit((shown) => shown + 14)}
+      noun={featureNoun}
       plural={featurePlural}
+      allLabel={allLabel}
       verb={verb}
     />
   ) : view === 'heatmap' ? (
@@ -72,15 +88,15 @@ export function EffectsCard({ label, effects, failed, onRetry, scale, threshold:
     ))
   ) : (
     <AllFeaturesPlot
-      values={effects.map((effect) => effect.value)}
-      labels={[...effects].sort((a, b) => b.value - a.value).slice(0, 5).map((effect) => ({ label: effect.label, value: effect.value }))}
+      values={inResource.map((effect) => effect.value)}
+      labels={[...inResource].sort((a, b) => b.value - a.value).slice(0, 5).map((effect) => ({ label: effect.label, value: effect.value }))}
       scale={scale}
-      summary={`${choice.name} of all ${number.format(effects.length)} ${featurePlural} for ${label}, lowest to highest.`}
+      summary={`${choice.name} of all ${number.format(inResource.length)} ${resource === allResources ? '' : `${resource} `}${featurePlural} for ${label}, lowest to highest.`}
     />
   );
 
   return (
-    <MolecularEffects variant={label} view={view} onViewChange={setView}>
+    <MolecularEffects variant={label} view={view} onViewChange={setView} allLabel={allLabel}>
       <EffectsControls
         scoreLabel={choice.label}
         scores={choice.options}
@@ -88,13 +104,15 @@ export function EffectsCard({ label, effects, failed, onRetry, scale, threshold:
         onScore={choice.onChange}
         {...(view === 'strongest' ? { threshold, onThreshold: setThreshold, thresholdSteps: [scale.bins.weak, scale.bins.moderate, scale.bins.strong] } : {})}
         {...(view !== 'heatmap' || ownHeatmap ? { search, onSearch: setSearch } : {})}
+        {...(resources.length > 1 && (view !== 'heatmap' || ownHeatmap) ? { resources: [{ value: allResources, label: 'All resources' }, ...resources.map((name) => ({ value: name, label: name }))], resource, onResource: setResource } : {})}
         featureNoun={featureNoun}
+        searchLabel={inCellTypes ? `Find a ${featureNoun} or cell type` : `Find a ${featureNoun}`}
         {...(ownHeatmap ? { density, onDensity: setDensity, lowestFirst, onLowestFirst: setLowestFirst } : {})}
       />
       {content}
       {effects && search && found.length === 0 && (
         <p className="deepsea-note" role="status">
-          No features match “{search}” for this variant. Search by cell type or feature, such as {effects[0]?.cell ?? 'K562'}.
+          No {featurePlural} match “{search}” for this variant. {inCellTypes ? `Search by cell type or ${featureNoun}, such as ${effects[0]?.cell ?? 'K562'}.` : `Search by ${featureNoun} or resource, such as ${effects[0]?.feature ?? 'Spleen'}.`}
         </p>
       )}
     </MolecularEffects>

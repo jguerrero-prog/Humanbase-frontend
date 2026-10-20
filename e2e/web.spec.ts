@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { apiOff } from './apiOff';
 
 const web = 'http://localhost:4173';
-const pages = ['/', '/networks/?entrez=3553&entrez=7124&version=v1', '/not-built-yet/'];
+const pages = ['/', '/networks/?entrez=3553&entrez=7124&version=v1', '/jobs/', '/not-built-yet/'];
 
 for (const path of pages) {
   test(`web ${path} has no WCAG 2.2 AA violations with the API off`, async ({ page }) => {
@@ -19,10 +19,28 @@ for (const path of pages) {
 
 const axeTags = ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'];
 
+test('a running job that finishes is announced on any page and listed on the Jobs page, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('seeded')) return;
+    sessionStorage.setItem('seeded', 'yes');
+    localStorage.setItem('humanbase:jobs', JSON.stringify([{ id: '76aea8fe-8ec7-4698-a193-a186c7665edb', tool: 'Seqweaver', status: 'running', startedAt: '2026-10-20T21:02:00.000Z', link: '/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/', title: 'IL1B region variants', detail: 'Seqweaver, example.vcf' }]));
+  });
+  await page.goto(`${web}/jobs/`);
+  const toast = page.getByRole('region', { name: 'Job notifications' }).getByRole('listitem');
+  await expect(toast).toHaveText(/Seqweaver finished: IL1B region variants/);
+  await expect(page.getByRole('link', { name: 'View results: IL1B region variants' })).toBeVisible();
+  // The toast fades in; axe reads colors mid-fade otherwise.
+  await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished)));
+  const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
+  expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
 test('the Networks result has no WCAG 2.2 AA violations once loaded, with the data types open', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&entrez=100188314&version=v1`);
-  await expect(page.getByText(/Showing 15 of 50 genes, \d+ connections at 0\.48 or more/)).toBeVisible();
+  await expect(page.getByText(/Showing 15 of 52 genes, \d+ connections at 0\.48 or more/)).toBeVisible();
   await expect(page.getByText('AUTS12 was left out because it isn’t in any Humanbase network. This network uses IL1B and TNF.')).toBeVisible();
   await page.getByRole('button', { name: 'Data types' }).click();
   await expect(page.getByRole('checkbox', { name: 'Co-expression' })).toBeVisible();
@@ -41,7 +59,7 @@ test('Networks keeps filters and the selected gene in the URL, so a refresh show
   await page.getByRole('textbox', { name: 'Genes shown, exact value' }).press('Enter');
   await expect(page).toHaveURL(/shown=20/);
   await page.reload();
-  await expect(page.getByText(/Showing 20 of 50 genes/)).toBeVisible();
+  await expect(page.getByText(/Showing 20 of 52 genes/)).toBeVisible();
   await expect(page.locator('.force-graph-node.is-selected')).toHaveAttribute('aria-label', 'ICAM1, related gene');
 });
 
@@ -85,7 +103,7 @@ test('the Processes panel and both drawers have no WCAG 2.2 AA violations with t
   await expect(page.getByRole('table', { name: /Biological processes over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
   await scan();
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&gene=3383`);
-  await expect(page.getByRole('dialog', { name: 'ICAM1' }).getByRole('region', { name: 'Annotations' }).getByRole('listitem').first()).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'ICAM1' }).getByRole('region', { name: 'Annotations' }).getByRole('rowheader').first()).toBeVisible();
   await scan();
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&connection=6348-7185`);
   await expect(page.getByRole('dialog', { name: 'CCL3 and TRAF1' }).getByText('MSigDB CGP')).toBeVisible();
@@ -160,7 +178,7 @@ test('Compare adds a second network side by side, keeps it in the URL and has no
   await page.getByRole('button', { name: 'Compare' }).click();
   const dialog = page.getByRole('dialog', { name: 'Add a network to compare' });
   await dialog.getByRole('combobox', { name: 'Tissue' }).click();
-  await dialog.getByRole('option', { name: 'mononuclear phagocyte' }).click();
+  await dialog.getByRole('option', { name: 'Mononuclear phagocyte' }).click();
   let scan = await new AxeBuilder({ page }).withTags(axeTags).analyze();
   expect(scan.violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
   await dialog.getByRole('button', { name: 'Add network' }).click();
@@ -173,9 +191,29 @@ test('Compare adds a second network side by side, keeps it in the URL and has no
   await compared.getByRole('slider', { name: 'Genes shown', exact: true }).press('ArrowRight');
   await expect(page).toHaveURL(/compare_shown=16/);
   await page.reload();
-  await expect(page.getByRole('region', { name: 'mononuclear phagocyte network', exact: true }).getByText(/Showing 16 of 50 genes/)).toBeVisible();
+  await expect(page.getByRole('region', { name: 'mononuclear phagocyte network', exact: true }).getByText(/Showing 16 of 52 genes/)).toBeVisible();
   await page.getByRole('button', { name: 'Remove the global network' }).click();
   await expect(page).toHaveURL(/tissue=mononuclear-phagocyte/);
   await expect(page).not.toHaveURL(/compare=/);
+  expect(apiRequests).toEqual([]);
+});
+
+test('starring a tissue rings its genes, keeps the star in the URL and has no WCAG 2.2 AA violations', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1`);
+  await page.getByRole('tab', { name: /Tissues/ }).click();
+  await page.getByRole('button', { name: 'Highlight peripheral blood genes in the network' }).click();
+  await expect(page).toHaveURL(/star=BTO%3A0000553|star=BTO:0000553/);
+  const ringed = page.locator('.force-graph-node').filter({ has: page.locator('.force-graph-star') });
+  await expect(ringed).toHaveCount(3);
+  expect((await ringed.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('aria-label')?.split(',')[0]))).sort()).toEqual(['CCL20', 'RELB', 'TNFRSF1B']);
+  await page.getByRole('button', { name: 'Starred sets, 1' }).click();
+  await expect(page.getByRole('menuitem', { name: /Remove peripheral blood/ })).toBeVisible();
+  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
+  const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
+  expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  await page.keyboard.press('Escape');
+  await page.reload();
+  await expect(page.locator('.force-graph-node').filter({ has: page.locator('.force-graph-star') })).toHaveCount(3);
   expect(apiRequests).toEqual([]);
 });

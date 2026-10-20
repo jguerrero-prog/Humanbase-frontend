@@ -49,8 +49,8 @@ export function ComparePane({ query, view, title, integrations, queryNames, file
         </Alert>
       ) : (
         <GraphPanel
+          network={network}
           subset={subset}
-          relatedTotal={network?.related().length ?? 0}
           view={view}
           minConfidence={minConfidence}
           label={`Network of ${queryNames} and ${subset ? subset.genes.filter((gene) => !gene.isQuery).length : 0} related genes in the ${title} network. The genes table lists the same genes.`}

@@ -5,7 +5,6 @@ export { AsdExplorer, type AsdExplorerProps, type AsdState } from './AsdBrowser/
 export { AsdHeader, AsdVariantTable, type AsdHeaderProps, type AsdVariantTableProps } from './AsdBrowser/AsdParts';
 export { analysisColumns, analysisIcons, analysisOptions, productFooter, productSections } from './content/product';
 export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
-export { JobAbout, type JobAboutProps, type JobExample } from './Jobs/JobAbout';
 export { DeepseaAbout, DeepseaForm, deepseaFormLink, deepseaJobLink, type DeepseaFormProps } from './Deepsea/DeepseaForm';
 export { GeneFinder, type GeneFinderProps } from './Expecto/GeneFinder';
 export { GeneExpression, type GeneExpressionProps, type GeneExpressionState, type GeneExpressionView } from './Expecto/GeneExpression';
@@ -23,3 +22,5 @@ export { ModuleExplorer, type ModuleDraft, type ModuleExplorerProps } from './Mo
 export { NetwasForm, type NetwasDraft, type NetwasFormProps } from './Netwas/NetwasForm';
 export { NetwasJobView, type NetwasJobViewProps } from './Netwas/NetwasJobView';
 export { elapsed, JobWaiting, jobDateTime, syncJobHistory, useJobActions, useJobTitle, type JobIdentity, type JobWaitingProps } from './Jobs/JobPage';
+export { JobsList, jobLinkFrom, type JobsListProps } from './Jobs/JobsList';
+export { JobWatcher } from './Jobs/JobWatcher';

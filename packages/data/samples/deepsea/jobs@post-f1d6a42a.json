@@ -1,0 +1,18 @@
+{
+  "note": "Recorded October 20, 2026: submitting the Beluga example from the form created job 8b26a498. The body is that job as the API returned it, set back to queued as a fresh submission answers; the status is the usual 201, not captured.",
+  "status": 201,
+  "body": {
+    "created": "2026-10-19T20:33:17",
+    "ds_model": "Beluga",
+    "email": "",
+    "expecto": false,
+    "input_type": "vcf",
+    "insilico": false,
+    "job_id": "8b26a498-278c-4c73-a6a4-5f2550c30073",
+    "output_format": "tsv",
+    "sequence_names": [],
+    "status": "queued",
+    "title": "",
+    "genome_assembly": "hg19"
+  }
+}

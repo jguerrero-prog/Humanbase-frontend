@@ -107,6 +107,7 @@
 }
 
 .heatmap {
+  position: relative;
   display: grid;
   gap: var(--space-4);
   margin: 0;
@@ -141,6 +142,21 @@
   position: relative;
   display: grid;
   overflow-x: auto;
+}
+
+.heatmap-position-labels {
+  display: grid;
+  grid-template-columns: repeat(var(--heatmap-columns), calc(var(--heatmap-cell) + 1px));
+  margin-inline-start: var(--heatmap-label);
+  block-size: 20px;
+  font: var(--type-code-sm);
+  color: var(--text-secondary);
+}
+
+.heatmap-position-labels span {
+  inline-size: 0;
+  overflow: visible;
+  white-space: nowrap;
 }
 
 .heatmap-column-labels {
@@ -293,3 +309,9 @@
   block-size: 1px;
   overflow: hidden;
 }
+
+.heatmap-narrow .heatmap-cell {
+  inline-size: var(--heatmap-cell);
+  block-size: 22px;
+}
+

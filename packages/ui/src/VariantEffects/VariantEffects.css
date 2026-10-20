@@ -166,6 +166,7 @@
 }
 
 .effects-score,
+.effects-resource,
 .effects-cells {
   inline-size: 200px;
 }

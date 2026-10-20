@@ -74,7 +74,7 @@
         "/api/genes/search/multi/?organism=homo-sapiens&q=IL1B+TNF+ICAM1",
         "/api/genes/search/multi/?organism=homo-sapiens&q=3553+7124+3383",
         "/api/genes/search/multi/?organism=homo-sapiens&q=3553+7124",
-        "/api/genes/search/multi/?organism=homo-sapiens&q=KRT6B+EMP1+ZBTB41+PNPLA8+ITGB4"
+        "/api/genes/search/multi/?organism=homo-sapiens&q=KRT6B+DEGS1+PLSCR1+QSOX1+CYP51A1+MYADM+SNX10+TP53INP1+RANBP6+RAC2+ADM+SDC4+MTX1+ARHGEF10+IFIT2+ATP6V1B2+MSMO1+MTUS1+MXRA7+COL7A1+ZMYM2+EMP1+TMX3+STAT2+HES1"
       ],
       "usedBy": [
         "GeneSearchService.list"
@@ -111,7 +111,7 @@
         {
           "path": "/api/genes/search/multi/?organism=homo-sapiens",
           "body": {
-            "q": "8647+5244+1244+1636+54+72+81+93+8540+183+185+189+54806+23746+6718+229+79053+79796+249+139285+56172+203286+54443+203859+3730+1175+57514+396+200894+403+84100+79798+80210+415+50617+525+5205+545+554+27077+80776+570+582+79738+166379+583+585+129880+55212+27241+617+80114+649+652+658+54796+7809+26005+760+57010+124583+843+846+57545+388389+79140+339829+55036+85478+8838+10309+23607+1028+1063+55835+153241+22995+22897+80184+95681+55165+51134+56683+157657+220136+1080+9557+55636+1136+9469+22856+22858+1184+1187+1188+10686+149461+1300+1282+1285+1286+1287+1299+1311+27235+51004+79934+57017+65250+23418+286204+78987+10491+1406+79848+1497+348180+8029+8452+10283+9420+51473+4921+83479+8526+1716+1717+23405+10683+1758+123872+23639+55172+352909+161582+54919+8701+1767+27019+64446+51726+83544+92749+25778+1848+54808+79659+55112+89891+51626+199221+10682+9451+2013+5167+157570+2121+132884+2131+2132+2138+2184+56975+22909+355+356+79633+389549+8822+8074+2253+2260+2263+60681+2317+23767+2335+27086+80144+158326+341640+2488+486+23193+2625+2657+8200+85476+2690+2717+2736+2737+84662+169792+2767+2778+8443+2796+2798+2719+10082+80000+23426+3000+23498+57817+8820+3073+3077+6928+3172+3209+3239+60495+9394+3291+80270+3339+54768+219844+387733+55764+9742+26160+11020+112752+57560+28981+3549+54756+3614+64423+56623+3636+27130+9657+3675+8516+182+25959+3758+3766+3769+3762+7403+9786+9928+3835+374654+3814+84634+26249+8085+8942+8270+3913+3930+167691+3931+3938+3952+3953+3972+8022+89884+3977+64788+4010+9227+9860+4038+4041+54585+9935+9863+23005+4148+84693+10461+145873+4256+8195+54903+166785+326625+27249+4322+118856+4318+4594+4358+4582+4627+4643+4645+4647+93649+55191+51594+4750+284086+50674+25836+1482+579+51314+64802+4838+9241+4853+4864+10577+4867+27031+261734+4868+7827+4882+190+8431+9971+4306+50814+26012+57122+9688+23363+4952+93233+55130+115948+8481+55644+5015+64175+9060+5076+5087+5122+5144+5147+57107+5189+5192+5193+5828+55670+5830+5190+5191+5251+84295+10464+5310+168507+5311+5314+51196+5352+5373+10908+5428+55703+5443+5449+5468+5479+5573+5589+60675+128674+8842+5626+5961+5745+5744+5800+5932+343035+145226+5959+5972+5979+6010+6017+55005+54476+6091+6092+4920+6121+57096+23322+50484+89765+345895+221421+860+6299+57167+51119+950+6337+6338+6340+10806+29927+11231+10371+5265+5176+871+8879+285590+6495+10736+147912+6557+6559+10165+10166+1836+1811+6514+6569+142680+23169+6521+8671+10599+28234+9353+50485+6609+6663+6664+64321+6657+6658+6662+6674+55812+10653+81848+64220+51684+6866+6870+23216+6913+9096+6926+6910+79600+79867+26123+7036+9414+84314+51524+51259+79583+65062+91147+4982+112858+51002+26146+10131+22954+9321+55687+7225+7227+59341+7248+7249+79809+9652+123016+7287+79770+54658+7369+7380+7428+63894+26276+55717+57728+57539+10785+84942+65125+65266+54361+7474+7476+7490+63929+64131+7547+51364+23090"
+            "q": "10082+10131+10165+10166+1028+10283+10309+10371+10461+10464+10491+10577+10599+1063+10653+10682+10683+10686+10736+10785+1080+10806+10908+11020+11231+112752+112858+1136+115948+1175+1184+1187+1188+118856+123016+123872+1244+124583+1282+1285+1286+128674+1287+129880+1299+1300+1311+132884+139285+1406+142680+145226+145873+147912+1482+149461+1497+153241+157570+157657+158326+161582+1636+166379+166785+167691+168507+169792+1716+1717+1758+1767+1811+182+183+1836+1848+185+189+190+199221+200894+2013+203286+203859+2121+2131+2132+2138+2184+219844+220136+221421+2253+2260+2263+22856+22858+22897+229+22909+22954+22995+23005+23090+23169+2317+23193+23216+23322+2335+23363+23405+23418+23426+23498+23607+23639+23746+23767+2488+249+25778+25836+25959+26005+26012+26123+26146+26160+261734+26249+2625+26276+2657+2690+27019+27031+27077+27086+27130+2717+2719+27235+27241+27249+2736+2737+2767+2778+2796+2798+28234+284086+285590+286204+28981+29927+3000+3073+3077+3172+3209+3239+326625+3291+3339+339829+341640+343035+345895+348180+352909+3549+355+356+3614+3636+3675+3730+374654+3758+3762+3766+3769+3814+3835+387733+388389+389549+3913+3930+3931+3938+3952+3953+396+3972+3977+4010+403+4038+4041+4148+415+4256+4306+4318+4322+4358+4582+4594+4627+4643+4645+4647+4750+4838+4853+486+4864+4867+4868+4882+4920+4921+4952+4982+5015+50484+50485+50617+50674+5076+50814+5087+51002+51004+51119+51134+51196+5122+51259+51314+51364+5144+5147+51473+51524+51594+51626+5167+51684+51726+5176+5189+5190+5191+5192+5193+5205+5244+525+5251+5265+5310+5311+5314+5352+5373+54+5428+54361+5443+54443+54476+5449+545+54585+54658+5468+54756+54768+5479+54796+54806+54808+54903+54919+55005+55036+55112+55130+55165+55172+55191+55212+554+55636+55644+55670+55687+55703+55717+5573+55764+55812+55835+5589+56172+5626+56623+56683+56975+570+57010+57017+57096+57107+57122+57167+5744+5745+57514+57539+57545+57560+57728+57817+579+5800+582+5828+583+5830+585+5932+59341+5959+5961+5972+5979+6010+6017+60495+60675+60681+6091+6092+6121+617+6299+6337+6338+6340+63894+63929+64131+64175+64220+64321+64423+64446+64788+64802+649+6495+65062+65125+6514+652+6521+65250+65266+6557+6559+6569+658+6609+6657+6658+6662+6663+6664+6674+6718+6866+6870+6910+6913+6926+6928+7036+72+7225+7227+7248+7249+7287+7369+7380+7403+7428+7474+7476+7490+7547+760+7809+7827+78987+79053+79140+79583+79600+79633+79659+79738+79770+79796+79798+79809+79848+79867+79934+80000+80114+80144+80184+80210+8022+80270+8029+8074+80776+8085+81+81848+8195+8200+8270+83479+83544+84100+84295+843+8431+84314+8443+8452+846+84634+84662+84693+8481+84942+8516+8526+8540+85476+85478+860+8647+8671+8701+871+8820+8822+8838+8842+8879+8942+89765+89884+89891+9060+9096+91147+9227+9241+92749+93+9321+93233+9353+93649+9394+9414+9420+9451+9469+950+9557+95681+9652+9657+9688+9742+9786+9860+9863+9928+9935+9971"
           }
         }
       ],
@@ -271,10 +271,15 @@
         "ModuleService.poll"
       ],
       "handBuiltSamples": {
-        "why": "The schema leaves the 200 body undefined and submitting a job to record one needs approval. These two files are hand-built from the Figma renal disease panel screens and say so in their note field; pnpm samples:record never touches them.",
+        "why": "Submitting starts a job, so the submit answer is hand-built and says so in its note field.",
         "files": [
-          "integrations/community@body_tag=faa09d1786f0998dbd03d7323f544f5457d98936&giant_version=v1&integration=kidney&title=Renal+disease+panel@post-8c065d97",
-          "integrations/community@body_tag=faa09d1786f0998dbd03d7323f544f5457d98936@post-77074ba4"
+          "integrations/community@body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&giant_version=v1&integration=kidney@post-8c065d97"
+        ]
+      },
+      "recordedByHandSamples": {
+        "why": "Polling is a POST, which pnpm samples:record only sends to read-only endpoints. This poll of the live cache was recorded once on October 20, 2026 and trimmed; the note in the file says how.",
+        "files": [
+          "integrations/community@body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9@post-77074ba4"
         ]
       }
     },
@@ -298,17 +303,17 @@
       "path": "/api/netwas/{id}/",
       "documented": true,
       "samples": [
-        "/api/netwas/00000000-0000-4000-8000-000000000000/"
+        "/api/netwas/00000000-0000-4000-8000-000000000000/",
+        "/api/netwas/c66b3d05-2f49-4522-b910-1605609e4083/"
       ],
       "usedBy": [
         "NetwasService.get"
       ],
       "handBuiltSamples": {
-        "why": "The documented example job (d7732f19, 2017) has expired, so no real job can be read without submitting one. The queued, running, failed and finished jobs are hand-built, shaped like the schema, with IDs that are clearly not real jobs, and say so in their note field. The recorded sample is the not-found answer.",
+        "why": "Real NetWAS job c66b3d05 (the documented example, recorded October 20, 2026) is the finished job. The queued, running and failed jobs are still hand-built, shaped like the schema, with IDs that are clearly not real jobs, and say so in their note field. The recorded 404 is the not-found answer.",
         "files": [
           "netwas/00000000-0000-4000-8000-000000000001",
           "netwas/00000000-0000-4000-8000-000000000002",
-          "netwas/00000000-0000-4000-8000-000000000003",
           "netwas/00000000-0000-4000-8000-000000000004"
         ]
       }
@@ -327,9 +332,9 @@
         "NetwasService.result"
       ],
       "handBuiltSamples": {
-        "why": "The result file of the hand-built finished job, made from the five rows the NetWAS docs print; a full result needs a real job.",
+        "why": "The result file of real NetWAS job c66b3d05, trimmed to its first 200 ranked genes with the full header; the file says so in its note.",
         "files": [
-          "files/s3-us-west-2.amazonaws.com/humanbase/netwas/results/00000000-0000-4000-8000-000000000003.txt"
+          "files/s3-us-west-2.amazonaws.com/humanbase/netwas/results/c66b3d05-2f49-4522-b910-1605609e4083/results.txt"
         ]
       }
     },
@@ -341,15 +346,15 @@
       "usedBy": [
         "DeepseaService.submit"
       ],
-      "$note": "Multipart upload. The schema does not name the file field; DeepseaService.fileField holds the guess to confirm. On October 20, 2026 the one approved ExPecto example job (ds_model=Beluga, expecto=true, the example VCF as input_file) answered 500 Server Error, so the field name is still unconfirmed and ExPecto’s samples are hand-built too.",
+      "$note": "Multipart form, read from the live site’s form on October 20, 2026: title, email, input_type (vcf, bed or fasta), ds_model in lower case (sei, beluga or seqweaver; ExPecto and in silico mutagenesis send beluga with expecto or insilico set to true), signup, expecto, insilico and genome_assembly (hg19, or hg38 except for ExPecto). The input goes as upload_file for an uploaded file or upload_textarea for pasted text and examples.",
       "handBuiltSamples": {
         "why": "Submitting starts a real job. With the API off, submitting a tool’s example answers with a hand-built running job; any other file explains that jobs need the API.",
         "files": [
-          "deepsea/jobs@post-f4c79f7c",
-          "deepsea/jobs@post-d5d72e89",
-          "deepsea/jobs@post-c312bddc",
-          "deepsea/jobs@post-3d67f823",
-          "deepsea/jobs@post-930ed3e5"
+          "deepsea/jobs@post-3c7b32f3",
+          "deepsea/jobs@post-f1d6a42a",
+          "deepsea/jobs@post-274f113b",
+          "deepsea/jobs@post-f48d59f5",
+          "deepsea/jobs@post-e0a6d2f5"
         ]
       }
     },
@@ -361,22 +366,22 @@
       "samples": [
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/",
         "/api/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/",
-        "/api/deepsea/jobs/00000000-0000-4000-8000-000000000000/"
+        "/api/deepsea/jobs/00000000-0000-4000-8000-000000000000/",
+        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/",
+        "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/",
+        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/"
       ],
       "usedBy": [
         "DeepseaService.get"
       ],
       "handBuiltSamples": {
-        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note. The in silico mutagenesis running job (…151) is hand-built the same way, shaped like the real example job 0576e894.",
+        "why": "Real jobs are recorded for every model (Sei 2e18fedf, Beluga 8b26a498, ExPecto e504e3cc, Seqweaver 76aea8fe, in silico mutagenesis 0576e894). The queued, running and failed states are still hand-built from the Figma screens, with IDs that are clearly not real jobs, and say so in their note.",
         "files": [
-          "deepsea/jobs/00000000-0000-4000-8000-000000000101",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000102",
           "deepsea/jobs/00000000-0000-4000-8000-000000000111",
           "deepsea/jobs/00000000-0000-4000-8000-000000000112",
           "deepsea/jobs/00000000-0000-4000-8000-000000000113",
           "deepsea/jobs/00000000-0000-4000-8000-000000000121",
           "deepsea/jobs/00000000-0000-4000-8000-000000000131",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000141",
           "deepsea/jobs/00000000-0000-4000-8000-000000000151"
         ]
       }
@@ -386,19 +391,14 @@
       "path": "/api/deepsea/jobs/{job_id}/score_types/",
       "documented": true,
       "samples": [
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/score_types/"
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/score_types/",
+        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/score_types/",
+        "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/score_types/",
+        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/score_types/"
       ],
       "usedBy": [
         "DeepseaService.scoreTypes"
-      ],
-      "handBuiltSamples": {
-        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
-        "files": [
-          "deepsea/jobs/00000000-0000-4000-8000-000000000101/score_types",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000102/score_types",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000141/score_types"
-        ]
-      }
+      ]
     },
     {
       "method": "GET",
@@ -406,21 +406,15 @@
       "documented": true,
       "samples": [
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/variant_scores/?score_type=dis",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/variant_scores/?score_type=mean-evalue"
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/variant_scores/?score_type=mean-evalue",
+        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/variant_scores/?score_type=seqclass",
+        "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/variant_scores/?score_type=dis",
+        "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/variant_scores/?score_type=mean-evalue",
+        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/variant_scores/?score_type=expecto"
       ],
       "usedBy": [
         "DeepseaService.variantScores"
-      ],
-      "handBuiltSamples": {
-        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
-        "files": [
-          "deepsea/jobs/00000000-0000-4000-8000-000000000101/variant_scores@score_type=max_seqclass",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000101/variant_scores@score_type=mean-evalue",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000102/variant_scores@score_type=dis",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000102/variant_scores@score_type=mean-evalue",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000141/variant_scores@score_type=expecto"
-        ]
-      }
+      ]
     },
     {
       "method": "GET",
@@ -438,20 +432,16 @@
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=19:55999138",
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=19:59070227",
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=evalue&chr_variant=1:109817590",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=diffs&chr_variant=1:109817590"
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=diffs&chr_variant=1:109817590",
+        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/feature_predictions/?score_type=seqclass&chr_variant=3:12598855",
+        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/feature_predictions/?score_type=seqclass&chr_variant=7:49813589",
+        "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/feature_predictions/?score_type=zscore&chr_variant=3:12598855",
+        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/feature_predictions/?score_type=expecto&chr_variant=3:12598855",
+        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/feature_predictions/?score_type=expecto&chr_variant=5:134871851"
       ],
       "usedBy": [
         "DeepseaService.featurePredictions"
-      ],
-      "handBuiltSamples": {
-        "why": "Submitting a Sei or Beluga job to record a real one was blocked by the permission checker, so these are hand-built from the Figma result screens, shaped like the recorded Seqweaver job, with IDs that are clearly not real jobs. Each file says so in its note.",
-        "files": [
-          "deepsea/jobs/00000000-0000-4000-8000-000000000101/feature_predictions@chr_variant=7%3A49813589&score_type=seqclass",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000102/feature_predictions@chr_variant=3%3A12598855&score_type=zscore",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000141/feature_predictions@chr_variant=3%3A12598855&score_type=expecto",
-          "deepsea/jobs/00000000-0000-4000-8000-000000000141/feature_predictions@chr_variant=5%3A134871851&score_type=expecto"
-        ]
-      }
+      ]
     },
     {
       "method": "GET",
@@ -510,13 +500,7 @@
         "DeepseaService.features (ExPecto)",
         "AsdService.features"
       ],
-      "$note": "Sei answers with 4 MB, too large to bundle; its 40 sequence classes are hand-built below. Seqweaver and Beluga are recorded without descriptions. ExPecto reads the same Beluga list with expecto=true and only needs its 218 expecto_features, so that sample drops model_features.",
-      "handBuiltSamples": {
-        "why": "Sei’s live list is 4 MB of chromatin profiles; the sample holds its 40 sequence classes instead.",
-        "files": [
-          "deepsea/Sei/features"
-        ]
-      }
+      "$note": "Sei answers with 4 MB, too large to bundle; its 40 sequence classes are hand-built below. Seqweaver and Beluga are recorded without descriptions. ExPecto reads the same Beluga list with expecto=true and only needs its 218 expecto_features, so that sample drops model_features."
     },
     {
       "method": "GET",

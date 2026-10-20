@@ -1,7 +1,6 @@
-import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type VariantModel } from '@humanbase/data';
-import { Alert, saveFile } from '@humanbase/ui';
+import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type InputKind, type VariantModel } from '@humanbase/data';
+import { AboutPanel, Alert, saveFile } from '@humanbase/ui';
 import { useState } from 'react';
-import { JobAbout } from '../Jobs/JobAbout';
 import '../Jobs/JobForm.css';
 import { VariantJobForm, type VariantJob } from '../VariantJobForm/VariantJobForm';
 
@@ -39,7 +38,7 @@ export function DeepseaForm({ model, onModelChange, onStarted }: DeepseaFormProp
     setFailure(undefined);
     setRunning(true);
     try {
-      const started = await api.deepsea.submit({ ...job, genome: 'hg19' });
+      const started = await api.deepsea.submit(job);
       const link = deepseaJobLink(started.id);
       const detail = `${info.tool}, ${number.format(job.count)} ${job.kind === 'fasta' ? 'sequences' : job.kind === 'bed' ? 'regions' : 'variants'}`;
       new JobHistory().add({ id: started.id, tool: info.tool, status: started.status, startedAt: started.created.toISOString(), link, title: job.title.trim() || undefined, detail });
@@ -71,18 +70,25 @@ export function DeepseaForm({ model, onModelChange, onStarted }: DeepseaFormProp
 export function DeepseaAbout({ model }: { model: VariantModel }) {
   const info = deepseaModels[model];
   return (
-    <JobAbout
+    <AboutPanel
       tool={info.inSentence ?? info.tool}
       docsHref={info.docsHref}
-      examples={Object.entries(deepseaExamples[model]).map(([kind, text]) => ({
+      examples={Object.entries(deepseaExamples[model].hg19).map(([kind, text]) => ({
         name: `example.${kind}`,
-        detail: kind === 'fasta' ? `Sequences, ${VariantFileCheck.sequenceLength[model].toLocaleString('en-US')} bp for ${deepseaModels[info.basedOn ?? model].tool}` : info.strand ? 'Variants with strand, for Seqweaver' : 'Variants, 5 columns',
+        detail: exampleDetail(kind as InputKind, model),
         onDownload: () => saveFile(text, `example.${kind}`, 'text/plain'),
       }))}
     >
       {info.about}
-    </JobAbout>
+    </AboutPanel>
   );
+}
+
+function exampleDetail(kind: InputKind, model: VariantModel): string {
+  const info = deepseaModels[model];
+  if (kind === 'fasta') return `Sequences, ${VariantFileCheck.sequenceLength[model].toLocaleString('en-US')} bp for ${deepseaModels[info.basedOn ?? model].tool}`;
+  const noun = kind === 'bed' ? 'Regions' : 'Variants';
+  return info.strand ? `${noun} with strand, GRCh37/hg19` : `${noun}, GRCh37/hg19`;
 }
 
 const titles: Record<Failure, (tool: string) => string> = {

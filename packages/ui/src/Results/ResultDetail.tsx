@@ -7,6 +7,7 @@ import { Skeleton } from '../Skeleton/Skeleton';
 import { Cell, HeaderCell, ScoreCell, Table } from '../Table/Table';
 import { ValueFormat } from '../Table/ValueFormat';
 import type { GeneIdLink } from './GeneIdsMenu';
+import { RankedAnnotationTable, type RankedAnnotation } from './RankedAnnotationTable';
 import './Results.css';
 
 const format = new ValueFormat();
@@ -28,7 +29,7 @@ export interface AnnotationSource {
   value: string;
   label: string;
   /** Undefined while the terms load. */
-  terms: readonly string[] | undefined;
+  rows: readonly RankedAnnotation[] | undefined;
 }
 
 export interface GeneDetailProps {
@@ -67,18 +68,14 @@ export function GeneDetail({ score, aliases = [], ids = [], annotations }: GeneD
       {annotations && source && (
         <DrawerSection label={annotations.label}>
           <SegmentedControl label="Annotation source" hideLabel size="small" segments={annotations.sources.map(({ value, label }) => ({ value, label }))} value={source.value} onChange={setChosen} />
-          {!source.terms ? (
+          {!source.rows ? (
             <p className="result-detail-text" aria-busy="true">
               <Skeleton width="80%" />
             </p>
-          ) : source.terms.length === 0 ? (
+          ) : source.rows.length === 0 ? (
             <p className="result-detail-text">No {source.label} terms for this gene.</p>
           ) : (
-            <ul className="result-detail-rows">
-              {source.terms.map((term) => (
-                <li key={term}>{term}</li>
-              ))}
-            </ul>
+            <RankedAnnotationTable narrow caption={`${source.label} terms`} termLabel="Term" scoreLabel="Confidence" rows={source.rows} />
           )}
         </DrawerSection>
       )}

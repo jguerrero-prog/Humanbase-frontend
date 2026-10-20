@@ -1,5 +1,5 @@
 import { tissueConfidenceScale } from '@humanbase/hb';
-import type { HeatmapRow, ScaleSpec } from '@humanbase/ui';
+import type { HeatmapCellDetail, HeatmapRow, ScaleSpec } from '@humanbase/ui';
 
 export type LegendStatus = 'Decided' | 'Proposed' | 'To confirm';
 
@@ -69,3 +69,35 @@ export const irgmRows: HeatmapRow[] = [
 ];
 
 export const irgmSummary = 'Predicted effects of 12 variants near IRGM on its expression in 8 tissue systems. The strongest is a decrease of 1.42 at 150,226,299 in the hematopoietic system, past the end of the legend. Values are illustrative.';
+
+// An illustrative compact specimen: 113 positions near 12,598,800, as Figma draws it. Values are made up, not data.
+const specimenStart = 12598795;
+export const positionSpecimenColumns = Array.from({ length: 113 }, (_, index) => ({ label: `chr3:${specimenStart + index}`, position: specimenStart + index }));
+const wave = (row: number, column: number) => {
+  return Number((Math.sin(column * 0.37 + row * 1.7) * Math.cos(column * 0.11 - row) * 0.3).toFixed(2));
+};
+// The open tooltip: every allele at 12,598,855, the reference marked and the strongest noted.
+export const positionSpecimenActive = [0, 60] as const;
+const openDetail: HeatmapCellDetail = { rows: [['A', 'Reference'], ['C', '−0.04'], ['G', '+0.12', 'strongest, shown in the cell'], ['T', '+0.02']], hint: 'Strongest tissue: Spleen, GTEx' };
+const isOpen = (row: number, column: number) => row === positionSpecimenActive[0] && column === positionSpecimenActive[1];
+const specimenRow = (label: string, row: number): HeatmapRow => ({
+  label,
+  values: positionSpecimenColumns.map((_, column) => (isOpen(row, column) ? 0.12 : wave(row, column))),
+  ...(row === positionSpecimenActive[0] && { details: positionSpecimenColumns.map((_, column) => (isOpen(row, column) ? openDetail : undefined)) }),
+});
+export const positionSpecimenRows: HeatmapRow[] = ['Blood', 'Immune', 'Digestive', 'Nervous', 'Liver'].map(specimenRow);
+
+// A substitution map specimen: position 999 is real (example job 0576e894, HepG2 / CEBPB); other values are illustrative.
+export const mutagenesisScale: ScaleSpec = { title: 'Log2 fold change', kind: 'diverging', edges: [-0.5, -0.25, -0.1, 0.1, 0.25, 0.5], words: ['Mutation lowers', 'Mutation raises'] };
+const specimenBases = 'GTCAATACTCGTTGCCCGCTATACCGGGGCTAACTATGTCTTGGCTTTTGCGCAGACGTCAGGTAGACTCACTGAACTCGGCAGCTATTGA';
+export const substitutionColumns = Array.from(specimenBases, (reference, index) => {
+  const position = 954 + index;
+  const values: Record<string, number> = {};
+  ['A', 'C', 'G', 'T'].forEach((base, row) => {
+    if (base === reference) return;
+    const near = Math.max(0, 1 - Math.abs(position - 999) / 12);
+    values[base] = Number((Math.sin(position * 0.7 + row * 2.1) * 0.3 - near * 2.5).toFixed(2));
+  });
+  return { position, reference, values: position === 999 ? { A: -4.63, C: -4, G: -4.24 } : values };
+});
+export const substitutionOverview = Array.from({ length: 200 }, (_, bin) => Number((0.4 + Math.abs(Math.sin(bin * 1.3)) * 0.6 + (bin === 99 ? 4 : bin === 100 || bin === 98 ? 2 : 0)).toFixed(2)));

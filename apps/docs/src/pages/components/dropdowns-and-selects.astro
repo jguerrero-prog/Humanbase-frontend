@@ -1,5 +1,5 @@
 ---
-import { ActionMenu, MenuItem, MenuPanel, SearchField, Select, SuggestionsEmpty, SuggestionsLoading, type SelectOption } from '@humanbase/ui';
+import { ActionMenu, MenuItem, MenuPanel, MultiSelect, SearchField, Select, SuggestionsEmpty, SuggestionsLoading, type SelectOption } from '@humanbase/ui';
 import { analysisOptions } from '@humanbase/hb';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
@@ -139,6 +139,20 @@ const usage = `import { ActionMenu, SearchField, Select } from '@humanbase/ui';
 <Select label="Tissue network" options={tissues} searchable filterLabel="Filter tissues" />
 <SearchField label="Search genes" suggestions={matches} onSuggestionSelect={openGene} />
 <ActionMenu label="Actions for BMI GWAS, adipose tissue" items={jobActions} />`;
+const dataTypes = [
+  { value: 'coexp', label: 'Co-expression' },
+  { value: 'interaction', label: 'Interaction' },
+  { value: 'tf-binding', label: 'TF binding' },
+  { value: 'gsea-microrna', label: 'GSEA microRNA targets' },
+  { value: 'gsea-perturbations', label: 'GSEA perturbations' },
+];
+
+const multiSelectRules = [
+  ['Summary', '"All 5 types" when all are chosen, the type\'s name when one is, otherwise "3 of 5 types"'],
+  ['Applying', 'When the menu closes, by Escape, clicking outside or Tab; one request for the whole change'],
+  ['Keyboard', 'Enter or Space opens; Tab moves through the checkboxes and Space toggles; Escape closes and applies'],
+  ['Use instead', 'A segmented control for 2 or 3 options always on screen; Checkboxes for long lists in a form'],
+];
 ---
 
 <DocsLayout title="Dropdowns and selects" description="Select, searchable select, search suggestions and action menus: states, patterns, behavior and keyboard support.">
@@ -318,6 +332,16 @@ const usage = `import { ActionMenu, SearchField, Select } from '@humanbase/ui';
     <p class="doc-note">Logos as on the live site: Font Awesome 4.7 glyphs by Dave Gandy (SIL Open Font License 1.1), the Seqweaver icon by Stephen Plaster from the Noun Project (CC BY 3.0), the DeepSEA logo by Humanbase, and the ExPecto SC cell created with BioRender.com. Sources are on the Iconography page.</p>
     <DocTable caption="Rules for the multi-column grouped select" columns={['Rule', 'Detail']} widths={['304px']}>
       {tables.grouped.map(([rule, detail]) => <tr class="doc-table-roomy"><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Multi-select" lead="For choosing several options from a short list, such as the network's data types. The trigger stays one line, and the choice applies when the menu closes.">
+    <div class="multi-select-specimens">
+      <MultiSelect label="Data types" noun="types" options={dataTypes} value={[]} onChange={() => undefined} size="medium" />
+      <MultiSelect label="Data types" noun="types" options={dataTypes} value={['coexp', 'interaction', 'tf-binding']} onChange={() => undefined} size="medium" open />
+    </div>
+    <DocTable caption="Rules for the multi-select" columns={['Rule', 'Detail']} widths={['304px']}>
+      {multiSelectRules.map(([rule, detail]) => <tr class="doc-table-roomy"><th scope="row">{rule}</th><td>{detail}</td></tr>)}
     </DocTable>
   </DocSection>
 
@@ -643,6 +667,18 @@ const usage = `import { ActionMenu, SearchField, Select } from '@humanbase/ui';
   .job-row-meta {
     font: var(--type-body-sm);
     color: var(--text-secondary);
+  }
+
+  .multi-select-specimens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    align-items: start;
+    margin-block-end: var(--space-6);
+  }
+
+  .multi-select-specimens > :global(*) {
+    inline-size: 320px;
   }
 
   .grouped-specimen {

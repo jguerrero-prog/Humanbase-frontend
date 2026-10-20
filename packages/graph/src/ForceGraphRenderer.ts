@@ -1,11 +1,12 @@
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY, type SimulationLinkDatum, type SimulationNodeDatum } from 'd3-force';
+import { polygonHull } from 'd3-polygon';
 import { select, type Selection } from 'd3-selection';
 import { zoom, zoomIdentity, type ZoomBehavior } from 'd3-zoom';
 import { edgeBand, weakestBand } from './edgeBands';
-import type { GraphData, GraphGroup, GraphNode, GraphRenderer, GraphSelection, MountOptions } from './GraphRenderer';
+import type { GraphData, GraphGroup, GraphHighlight, GraphNode, GraphRenderer, GraphSelection, MountOptions } from './GraphRenderer';
 
 const svgNs = 'http://www.w3.org/2000/svg';
-const radius = { node: 6, query: 10, ring: 4, member: 5 };
+const radius = { node: 6, query: 10, ring: 4, member: 5, star: 3.5 };
 const clusterGap = 190;
 const layoutTicks = 300;
 const padding = 40;
@@ -39,6 +40,9 @@ export class ForceGraphRenderer implements GraphRenderer {
   private links: { element: SVGLineElement; source: string; target: string }[] = [];
   private groupOf = new Map<string, string>();
   private groupLabels = new Map<string, SVGGElement>();
+  private placed = new Map<string, { x: number; y: number; r: number }>();
+  private hullLayer: SVGGElement | undefined;
+  private highlights: readonly GraphHighlight[] = [];
 
   mount(container: HTMLElement, options: MountOptions): void {
     this.options = options;
@@ -63,6 +67,8 @@ export class ForceGraphRenderer implements GraphRenderer {
     this.links = [];
     this.groupOf = new Map(data.nodes.flatMap((node) => (node.group ? [[node.id, node.group]] : [])));
     this.groupLabels.clear();
+    this.placed.clear();
+    this.hullLayer = svgElement('g', { class: 'force-graph-hulls', 'aria-hidden': 'true' });
 
     const linkLayer = svgElement('g', { class: 'force-graph-links' });
     for (const link of placed.links) {
@@ -79,12 +85,13 @@ export class ForceGraphRenderer implements GraphRenderer {
     const groups = new Map((data.groups ?? []).map((group) => [group.id, group]));
     const nodeLayer = svgElement('g', { class: 'force-graph-nodes' });
     for (const node of placed.nodes) nodeLayer.append(this.drawNode(node, node.group ? groups.get(node.group) : undefined));
-    canvas.append(linkLayer, nodeLayer);
+    canvas.append(this.hullLayer, linkLayer, nodeLayer);
     if (data.groups) canvas.append(this.drawGroupLabels(placed.nodes, data.groups));
 
     const xs = placed.nodes.map((n) => n.x);
     const ys = placed.nodes.map((n) => n.y);
     const [minX, maxX, minY, maxY] = xs.length ? [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)] : [0, 0, 0, 0];
+    this.highlight(this.highlights);
     svg.setAttribute('viewBox', `${minX - padding} ${minY - padding} ${maxX - minX + padding * 2 + 60} ${maxY - minY + padding * 2}`);
     this.fit();
   }
@@ -95,6 +102,7 @@ export class ForceGraphRenderer implements GraphRenderer {
     const group = svgElement('g', { class: classes, tabindex: 0, role: 'button', 'aria-label': `${node.label}, ${kind}`, transform: `translate(${node.x} ${node.y})` });
     if (cluster) group.style.setProperty('--node-color', `var(${cluster.color})`);
     const r = cluster ? radius.member : node.query ? radius.query : radius.node;
+    this.placed.set(node.id, { x: node.x, y: node.y, r });
     group.append(svgElement('circle', { class: 'force-graph-ring', r: r + radius.ring }), svgElement('circle', { class: 'force-graph-dot', r }));
     if (!cluster) {
       const label = svgElement('text', { x: r + 4, y: 4 });
@@ -208,6 +216,37 @@ export class ForceGraphRenderer implements GraphRenderer {
     }
   }
 
+  highlight(sets: readonly GraphHighlight[]): void {
+    this.highlights = sets;
+    for (const element of this.nodes.values()) element.querySelector('.force-graph-stars')?.remove();
+    this.hullLayer?.replaceChildren();
+    sets.forEach((set) => {
+      const points = set.nodes.flatMap((id) => {
+        const at = this.placed.get(id);
+        return at ? [[at.x, at.y] as [number, number]] : [];
+      });
+      if (!points.length || !this.hullLayer) return;
+      const outline = (points.length > 2 ? polygonHull(points) : null) ?? points;
+      const hull = svgElement('path', { class: 'force-graph-hull', d: `M${outline.map(([x, y]) => `${x} ${y}`).join('L')}Z` });
+      hull.style.setProperty('--set-color', `var(${set.color})`);
+      this.hullLayer.append(hull);
+    });
+    // Rings stack outward in starring order, with an ink edge outside the last one so light colors still read on white.
+    for (const [id, element] of this.nodes) {
+      const colors = sets.filter((set) => set.nodes.includes(id)).map((set) => set.color);
+      const at = this.placed.get(id);
+      if (!colors.length || !at) continue;
+      const rings = svgElement('g', { class: 'force-graph-stars' });
+      colors.forEach((color, index) => {
+        const ring = svgElement('circle', { class: 'force-graph-star', r: at.r + radius.star * (index + 1) });
+        ring.style.setProperty('--set-color', `var(${color})`);
+        rings.append(ring);
+      });
+      rings.append(svgElement('circle', { class: 'force-graph-star-edge', r: at.r + radius.star * colors.length + 2 }));
+      element.prepend(rings);
+    }
+  }
+
   zoomBy(factor: number): void {
     if (this.svgSelection && this.zoomBehavior) this.svgSelection.call(this.zoomBehavior.scaleBy, factor);
   }
@@ -223,7 +262,7 @@ export class ForceGraphRenderer implements GraphRenderer {
     const originals = this.svg.querySelectorAll<SVGElement>('*');
     copy.querySelectorAll<SVGElement>('*').forEach((element, index) => {
       const style = getComputedStyle(originals[index] as SVGElement);
-      for (const property of ['fill', 'stroke', 'stroke-width', 'opacity', 'font', 'paint-order']) element.style.setProperty(property, style.getPropertyValue(property));
+      for (const property of ['fill', 'stroke', 'stroke-width', 'stroke-linejoin', 'opacity', 'font', 'paint-order']) element.style.setProperty(property, style.getPropertyValue(property));
     });
     return new Blob([new XMLSerializer().serializeToString(copy)], { type: 'image/svg+xml' });
   }
@@ -236,5 +275,7 @@ export class ForceGraphRenderer implements GraphRenderer {
     this.nodes.clear();
     this.links = [];
     this.groupLabels.clear();
+    this.placed.clear();
+    this.hullLayer = undefined;
   }
 }

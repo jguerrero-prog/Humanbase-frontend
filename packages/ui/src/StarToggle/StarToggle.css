@@ -1,0 +1,27 @@
+.star-toggle {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  padding: 0;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--motion-duration-fast) var(--motion-easing-linear);
+}
+
+.star-toggle:hover {
+  color: var(--text-default);
+  background: var(--surface-sunken);
+}
+
+.star-toggle[aria-pressed="true"] {
+  color: var(--text-default);
+}
+
+/* The set's color fills the star; its ink outline keeps light colors visible on white. */
+.star-toggle[aria-pressed="true"] .icon {
+  fill: var(--star-color, var(--text-default));
+}

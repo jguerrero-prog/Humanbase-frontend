@@ -7,7 +7,7 @@ function renderDialog() {
   const onApply = vi.fn<(entrez: number[]) => void>();
   render(
     <HumanbaseProvider api={new Humanbase(SampleClient.bundled())}>
-      <EditGenesDialog open symbols={['IL1B', 'TNF']} onClose={() => undefined} onApply={onApply} />
+      <EditGenesDialog open symbols={['IL1B', 'TNF']} version="v1" onClose={() => undefined} onApply={onApply} />
     </HumanbaseProvider>,
   );
   return onApply;
@@ -32,5 +32,6 @@ describe('EditGenesDialog', () => {
     await userEvent.type(genes, 'IL1B TNF AUTS12 NOTAGENE123 p53');
     expect(await screen.findByRole('table', { name: 'How your genes matched' }, { timeout: 2000 })).toBeInTheDocument();
     expect(screen.getByText(/1 not found, left out/, { selector: '.edit-genes-status' })).toBeInTheDocument();
+    expect(screen.getByText(/AUTS12 is a recognized gene, but it is not part of any Humanbase network/)).toBeInTheDocument();
   });
 });

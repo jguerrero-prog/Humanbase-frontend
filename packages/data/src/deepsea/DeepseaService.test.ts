@@ -2,7 +2,8 @@ import { SampleClient } from '../sample/SampleClient';
 import { VariantFileCheck } from '../jobs/VariantFileCheck';
 import { deepseaExamples } from './deepseaExamples';
 import { DeepseaJob } from './DeepseaJob';
-import { featureEffects, variantRows } from './DeepseaResult';
+import { deepseaModels } from './DeepseaModel';
+import { featureEffects, variantRows, variantScoreTypes } from './DeepseaResult';
 import { DeepseaService } from './DeepseaService';
 
 const exampleJob = '76aea8fe-8ec7-4698-a193-a186c7665edb';
@@ -38,9 +39,62 @@ describe('DeepseaService', () => {
   });
 
   it('answers the example submission with a queued job when the API is off', async () => {
-    const job = await service.submit({ model: 'beluga', kind: 'vcf', text: deepseaExamples.beluga.vcf ?? '', fileName: 'example.vcf', genome: 'hg19' });
+    const job = await service.submit({ model: 'beluga', kind: 'vcf', text: deepseaExamples.beluga.hg19.vcf ?? '', fileName: 'example.vcf', genome: 'hg19' });
     expect(job.model.tool).toBe('Beluga');
     expect(job.status).toBe('queued');
+  });
+
+  it('sends the fields the live form sends, with pasted or example text as upload_textarea', () => {
+    const form = DeepseaService.formOf({ model: 'seqweaver', kind: 'vcf', text: 'chr1\t1\t.\tA\tG\t+', fileName: 'example.vcf', genome: 'hg38', title: ' RNA check ' });
+    expect([...form.entries()]).toEqual([
+      ['title', 'RNA check'],
+      ['email', ''],
+      ['input_type', 'vcf'],
+      ['ds_model', 'seqweaver'],
+      ['signup', 'false'],
+      ['expecto', 'false'],
+      ['upload_textarea', 'chr1\t1\t.\tA\tG\t+'],
+      ['insilico', 'false'],
+      ['genome_assembly', 'hg38'],
+    ]);
+  });
+
+  it('sends an uploaded file as upload_file and marks ExPecto and in silico jobs', async () => {
+    const expecto = DeepseaService.formOf({ model: 'expecto', kind: 'vcf', text: 'chr1\t1\t.\tA\tG', fileName: 'mine.vcf', uploaded: true, genome: 'hg19' });
+    expect(expecto.get('ds_model')).toBe('beluga');
+    expect(expecto.get('expecto')).toBe('true');
+    expect(expecto.get('upload_textarea')).toBe('');
+    const file = expecto.get('upload_file');
+    expect(file).toBeInstanceOf(File);
+    expect((file as File).name).toBe('mine.vcf');
+    expect(await (file as File).text()).toBe('chr1\t1\t.\tA\tG');
+    expect(DeepseaService.formOf({ model: 'insilico', kind: 'fasta', text: '>s', fileName: 'x.fasta', genome: 'hg19' }).get('insilico')).toBe('true');
+  });
+
+  it('names ExPecto variants by their gene, as the real ExPecto job does', async () => {
+    const rows = variantRows([await service.variantScores('e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1', 'expecto')]);
+    expect(rows.find((row) => row.position === 134871851)?.name).toBe('NEUROG1');
+  });
+
+  it('loads only the expecto score for ExPecto, whose jobs also list scores the API can’t serve', () => {
+    const types = ['expecto', 'dis', 'mean-evalue'].map((short_name) => ({ name: short_name, level: 'VARIANT' as const, short_name }));
+    expect(variantScoreTypes(deepseaModels.expecto, types).map((type) => type.short_name)).toEqual(['expecto']);
+  });
+
+  it('reads the real Sei example job: its summary score, top classes and sequence class names', async () => {
+    const id = '2e18fedf-3de7-4d08-a894-9a937a2b860b';
+    const job = await service.get(id);
+    expect(job.model.tool).toBe('Sei');
+    const types = await service.scoreTypes(id);
+    expect(types.filter((type) => type.level === 'VARIANT')).toHaveLength(41);
+    expect(variantScoreTypes(job.model, types).map((type) => type.short_name)).toEqual(['seqclass']);
+    const rows = variantRows([await service.variantScores(id, 'seqclass')]);
+    expect(rows.find((row) => row.position === 49813589)).toMatchObject({ name: 'VWC2', topClass: 'P Promoter' });
+    const prediction = await service.featurePredictions(id, 'seqclass', '7:49813589');
+    if (!prediction) throw new Error('No prediction recorded');
+    const effects = featureEffects(prediction, await service.features('sei', 'seqclass'));
+    expect(effects).toHaveLength(40);
+    expect([...effects].sort((a, b) => b.value - a.value)[0]).toMatchObject({ feature: 'P Promoter', cell: 'Promoter' });
   });
 
   it('reads a failed job’s reason', () => {
@@ -51,9 +105,16 @@ describe('DeepseaService', () => {
 });
 
 describe('deepseaExamples', () => {
-  it.each(['sei', 'beluga', 'seqweaver'] as const)('passes the %s file check', (model) => {
-    const result = new VariantFileCheck('vcf', model).check(deepseaExamples[model].vcf ?? '');
+  const cases = (['sei', 'beluga', 'seqweaver', 'expecto', 'insilico'] as const).flatMap((model) =>
+    deepseaModels[model].genomes.flatMap((genome) => deepseaModels[model].inputs.map((kind) => [model, genome, kind] as const)),
+  );
+
+  it.each(cases)('the %s example for %s %s passes the file check', (model, genome, kind) => {
+    const example = deepseaExamples[model][genome][kind];
+    if (!example) throw new Error(`No ${kind} example for ${model} on ${genome}`);
+    const result = new VariantFileCheck(kind, model).check(example);
     expect(result.problems).toEqual([]);
-    expect(result.count).toBe(model === 'seqweaver' ? 10 : 12);
+    expect(result.otherKind).toBeUndefined();
+    expect(result.count).toBeGreaterThan(0);
   });
 });

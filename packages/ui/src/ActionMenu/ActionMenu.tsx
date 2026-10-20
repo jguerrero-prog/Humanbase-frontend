@@ -10,6 +10,8 @@ export interface ActionMenuItem {
   label: string;
   description?: string;
   icon?: IconName;
+  /** A color token, such as `--viz-cat-1`, shown as a dot in place of an icon. */
+  swatch?: string;
   destructive?: boolean;
   disabled?: boolean;
   dividerBefore?: boolean;
@@ -24,10 +26,12 @@ export interface ActionMenuProps {
   size?: 'medium' | 'small';
   /** `text` shows the label on a ghost button instead of the more icon. */
   trigger?: 'icon' | 'text';
+  /** The icon trigger's icon; the more icon by default. */
+  icon?: IconName;
   className?: string;
 }
 
-export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1, size = 'medium', trigger = 'icon', className }: ActionMenuProps) {
+export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1, size = 'medium', trigger = 'icon', icon = 'more-horizontal', className }: ActionMenuProps) {
   const id = useId();
   const wrapper = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
@@ -110,7 +114,7 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
         </Button>
       ) : (
         <button ref={button} type="button" className="action-menu-button" aria-label={label} {...buttonProps}>
-          <Icon name="more-horizontal" size={size === 'small' ? 16 : 20} />
+          <Icon name={icon} size={size === 'small' ? 16 : 20} />
         </button>
       )}
       {open && (
@@ -128,6 +132,7 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
                   label={item.label}
                   description={item.description}
                   icon={item.icon}
+                  swatch={item.swatch}
                   disabled={item.disabled}
                   destructive={item.destructive}
                   highlighted={index === focused}

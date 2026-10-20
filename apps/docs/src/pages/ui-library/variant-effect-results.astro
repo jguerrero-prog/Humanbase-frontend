@@ -108,9 +108,9 @@ const words = [
   ['Focus line', 'Selected variant: chr1:109,817,590 G>T, disease impact score 1.00'],
   ['Plot caption', '10 variants. Chromosomes alternate dark and light grey.'],
   ['Heatmap count', 'Showing the top 20 of 232 features for this variant.'],
-  ['Search, nothing found', 'No features match “LIN28B” for this variant. Search by cell type or feature, such as K562 or PUM2.'],
+  ['Search, nothing found', 'No proteins match “LIN28B” for this variant. Search by cell type or protein, such as K562.'],
   ['Genome range filter', 'Only variants in the genome browser’s range: 1 of 10.'],
-  ['Model nouns', 'Search reads “Find a feature or cell type” on every tab and every model. Group and column labels use the model’s own noun: proteins for Seqweaver, chromatin features for Beluga, sequence classes for Sei, as in “Group experiments by protein”. The third tab names what it plots and follows the chosen score: All features for chromatin, RBP and sequence-class scores; All tissues for ExPecto’s expression effect, switching to All features when a DeepSEA score is chosen.'],
+  ['Model nouns', 'Search, group, column and empty-state labels use the model’s own noun: proteins for Seqweaver, chromatin features for Beluga, sequence classes for Sei, as in “Find a protein or cell type” and “Group experiments by protein”. ExPecto’s tissues aren’t measured in cell types, so its search reads “Find a tissue”, and a tissue measured in two resources, such as Spleen in GTEx and Roadmap, stays as two rows. The third tab names what it plots and follows the chosen score: All features for chromatin, RBP and sequence-class scores; All tissues for ExPecto’s expression effect, switching to All features when a DeepSEA score is chosen.'],
 ];
 
 const behavior = [
@@ -128,7 +128,12 @@ const specs = [
   ['focus line', 'Atkinson Hyperlegible Mono 24 for the variant, Lato 15 grey for its name and score'],
   ['heatmap', 'viz.div scale, 34 by 26px cells with 1px gaps; labels Lato 12 right-aligned; Legend / Diverging beside it'],
   ['all features', 'Points 6px on the diverging scale with a 0.5px grey 600 outline'],
+  ['resource filter', 'Select, small, 200px, after Score; ExPecto only: All resources, GTEx, Roadmap, ENCODE'],
+  ['resource scope', 'Narrows Strongest effects, its counts and All tissues to one resource; the search still finds a tissue by name'],
 ];
+
+const expectoScores = [{ value: 'expecto', label: 'ExPecto expression effect' }];
+const expectoResources = ['All resources', 'GTEx', 'Roadmap', 'ENCODE'].map((label, index) => ({ value: index === 0 ? 'all' : label, label }));
 
 const usage = `import { EffectGroups, MolecularEffects, StrongestEffects, VariantScorePlot, VariantsTable } from '@humanbase/ui';
 
@@ -203,6 +208,11 @@ const effects = new EffectGroups(experiments); // feature, cell, context, label,
         <StrongestEffects effects={effects} counts={strengthCounts} threshold={2} expanded={['LARP4']} limit={10} />
       </MolecularEffects>
     </ProductScreen>
+    <div class="resource-filter">
+      <h3>ExPecto adds a Resource filter</h3>
+      <p>ExPecto's tissues come from GTEx, Roadmap and ENCODE. The Resource select narrows Strongest effects to one of them, and the words follow the model: "Find a tissue", "No tissue is lowered".</p>
+      <EffectsControls scores={expectoScores} score="expecto" resources={expectoResources} resource="all" search="" searchLabel="Find a tissue" density="full" lowestFirst={false} />
+    </div>
   </DocSection>
 
   <DocSection title="Heatmap view" lead="The second tab of the same card: one row per experiment, one column per variant in the genome browser’s range, the value beside each cell, and Show 20 more. With two or more variants in range it opens on this tab, since comparing variants is what a heatmap is for.">
@@ -323,6 +333,21 @@ const effects = new EffectGroups(experiments); // feature, cell, context, label,
     gap: var(--space-3);
     max-inline-size: 720px;
     font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .resource-filter {
+    display: grid;
+    gap: var(--space-3);
+    margin-block-start: var(--space-8);
+  }
+
+  .resource-filter h3 {
+    font: var(--type-h4);
+  }
+
+  .resource-filter p {
+    max-inline-size: 920px;
     color: var(--text-secondary);
   }
 </style>

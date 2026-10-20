@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { StatusBadge, type JobStatus } from '../Badge/Badge';
 import { Cell } from '../Table/Table';
 import '../Button/Button.css';
@@ -16,9 +17,11 @@ export interface JobRowProps {
   statusDetail: string;
   started: string;
   action: JobLink;
+  /** More actions beside the main one, such as Copy link and Remove from this list. */
+  menu?: ReactNode;
 }
 
-export function JobRow({ title, detail, status, statusDetail, started, action }: JobRowProps) {
+export function JobRow({ title, detail, status, statusDetail, started, action, menu }: JobRowProps) {
   const linkHref = useLinkHref();
   return (
     <tr className="job-row">
@@ -34,9 +37,12 @@ export function JobRow({ title, detail, status, statusDetail, started, action }:
       </Cell>
       <Cell>{started}</Cell>
       <Cell>
-        <a className="button button-ghost button-small" href={linkHref(action.href)} aria-label={`${action.label}: ${title}`}>
-          {action.label}
-        </a>
+        <span className="job-row-actions">
+          <a className="button button-ghost button-small" href={linkHref(action.href)} aria-label={`${action.label}: ${title}`}>
+            {action.label}
+          </a>
+          {menu}
+        </span>
       </Cell>
     </tr>
   );

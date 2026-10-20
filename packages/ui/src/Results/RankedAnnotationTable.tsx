@@ -39,12 +39,14 @@ export interface RankedAnnotationTableProps {
   scoreLabels?: readonly string[];
   rows: readonly RankedAnnotation[];
   defaultExpanded?: readonly string[];
+  /** For drawers: the identifier sits under the term instead of in its own column. */
+  narrow?: boolean;
 }
 
 const sourceCount = (count: number) => `${count} ${count === 1 ? 'source' : 'sources'}`;
 
-export function RankedAnnotationTable({ caption, termLabel, scoreLabel, scoreLabels = [scoreLabel], rows, defaultExpanded = [] }: RankedAnnotationTableProps) {
-  const columns = scoreLabels.length + 3;
+export function RankedAnnotationTable({ caption, termLabel, scoreLabel, scoreLabels = [scoreLabel], rows, defaultExpanded = [], narrow = false }: RankedAnnotationTableProps) {
+  const columns = scoreLabels.length + (narrow ? 2 : 3);
   const id = useId();
   const [expanded, setExpanded] = useState(() => new Set(defaultExpanded));
   const toggle = (name: string) =>
@@ -55,11 +57,11 @@ export function RankedAnnotationTable({ caption, termLabel, scoreLabel, scoreLab
     });
 
   return (
-    <Table caption={caption} density="compact" columnWidths={['auto', '180px', ...scoreLabels.map(() => '200px'), '200px']}>
+    <Table caption={caption} density="compact" {...(narrow && { className: 'annotation-table-narrow' })} columnWidths={narrow ? ['auto', ...scoreLabels.map(() => '128px'), '120px'] : ['auto', '180px', ...scoreLabels.map(() => '200px'), '200px']}>
       <thead>
         <tr>
           <HeaderCell>{termLabel}</HeaderCell>
-          <HeaderCell>Identifier</HeaderCell>
+          {!narrow && <HeaderCell>Identifier</HeaderCell>}
           {scoreLabels.map((label) => (
             <HeaderCell key={label} align="end">
               {label}
@@ -86,8 +88,9 @@ export function RankedAnnotationTable({ caption, termLabel, scoreLabel, scoreLab
                   ) : (
                     <span className="annotation-name">{row.name}</span>
                   )}
+                  {narrow && <span className="annotation-identifier">{row.identifier}</span>}
                 </Cell>
-                <Cell type="id">{row.identifier}</Cell>
+                {!narrow && <Cell type="id">{row.identifier}</Cell>}
                 {(row.confidences ?? [row.confidence]).map((value, column) => (
                   <ScoreCell key={column} value={value} />
                 ))}

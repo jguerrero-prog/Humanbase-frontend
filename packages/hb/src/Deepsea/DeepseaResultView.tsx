@@ -1,4 +1,4 @@
-import { useDeepseaVariants, useFeatureEffects, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
+import { useDeepseaVariants, useFeatureEffects, variantScoreTypes, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
 import {
   ActionMenu,
   Alert,
@@ -13,6 +13,7 @@ import {
   Skeleton,
   VariantFocus,
   variantLabel,
+  variantName,
   VariantScorePlot,
   VariantsTable,
   zEffects,
@@ -23,6 +24,7 @@ import { useMemo, useState, type ReactNode } from 'react';
 import { jobDateTime } from '../Jobs/JobPage';
 import { deepseaFormLink } from './DeepseaForm';
 import { EffectsCard } from './EffectsCard';
+import { VariantGenomeBrowser } from './VariantGenomeBrowser';
 import './Deepsea.css';
 
 export interface DeepseaResultViewProps {
@@ -35,7 +37,7 @@ export interface DeepseaResultViewProps {
   onVariantChange?: ((id: string) => void) | undefined;
 }
 
-const tableLabels: Record<string, string> = { dis: 'Disease impact', 'mean-evalue': 'Mean −log e', max_seqclass: 'Max class score' };
+const tableLabels: Record<string, string> = { dis: 'Disease impact', 'mean-evalue': 'Mean −log e', seqclass: 'Max class score' };
 const shownRows = 9;
 const number = new Intl.NumberFormat('en-US');
 
@@ -45,13 +47,13 @@ function effectScaleOf(model: DeepseaJob['model']): EffectScale {
 }
 
 const scoreOptions = (types: readonly ScoreType[]) => types.map((type) => ({ value: type.short_name, label: type.name.replace('-log', '−log') }));
-const matches = (variant: VariantRow, text: string) => `${variantLabel(variant)} ${variant.name}`.toLowerCase().includes(text.trim().toLowerCase());
+const matches = (variant: VariantRow, text: string) => `${variantLabel(variant)} ${variantName(variant)}`.toLowerCase().includes(text.trim().toLowerCase());
 
 /** A finished Sei, Beluga or Seqweaver job: variant scores as a plot and table, then the selected variant's molecular effects. */
 export function DeepseaResultView({ job, title, tools, variant: chosen, onVariantChange }: DeepseaResultViewProps) {
   const model = job.model;
   const { scoreTypes, variants, error, refetch } = useDeepseaVariants(job);
-  const variantTypes = (scoreTypes ?? []).filter((type) => type.level === 'VARIANT');
+  const variantTypes = variantScoreTypes(model, scoreTypes ?? []);
   const featureTypes = (scoreTypes ?? []).filter((type) => type.level === 'FEATURE');
   const [scoreKey, setScoreKey] = useState<string>();
   const [plotBy, setPlotBy] = useState<PlotBy>('genome');
@@ -173,12 +175,13 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
         <>
           <VariantFocus
             label={variantLabel(selected)}
-            detail={`${selected.name}, ${score.name.toLowerCase()} ${(selected.scores[score.short_name] ?? 0).toFixed(2)}`}
+            detail={`${variantName(selected)}, ${score.name.toLowerCase()} ${(selected.scores[score.short_name] ?? 0).toFixed(2)}`}
             hasPrevious={index > 0}
             hasNext={index < ordered.length - 1}
             onPrevious={() => step(-1)}
             onNext={() => step(1)}
           />
+          <VariantGenomeBrowser assembly={job.assembly} chromosome={selected.chromosome} position={selected.position} label={variantLabel(selected)} />
           <VariantEffectsCard key={selected.id} job={job} variant={selected} featureTypes={featureTypes} />
         </>
       )}
@@ -210,6 +213,7 @@ function VariantEffectsCard({ job, variant, featureTypes }: VariantEffectsCardPr
       featureNoun={model.featureNoun}
       featurePlural={model.featurePlural}
       verb={model.verb}
+      inCellTypes={!model.expecto}
       choice={{ label: 'Score', options: scoreOptions(featureTypes), value: type.short_name, onChange: setTypeKey, name: type.name }}
     />
   );

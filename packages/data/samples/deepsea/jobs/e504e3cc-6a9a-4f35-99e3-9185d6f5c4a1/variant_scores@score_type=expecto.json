@@ -1,0 +1,129 @@
+{
+  "status": 200,
+  "body": {
+    "ds_model": "Beluga",
+    "score_type": "expecto",
+    "scores": [
+      {
+        "sequence": {
+          "chromosome": "chr3",
+          "position": 12598855,
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "gene": "MKRN2"
+        },
+        "value": 0.03821861743927002
+      },
+      {
+        "sequence": {
+          "chromosome": "chr3",
+          "position": 54158012,
+          "ref_allele": "T",
+          "alt_allele": "C",
+          "gene": "CACNA2D3"
+        },
+        "value": 0.04515182971954346
+      },
+      {
+        "sequence": {
+          "chromosome": "chr5",
+          "position": 134871851,
+          "ref_allele": "A",
+          "alt_allele": "G",
+          "gene": "NEUROG1"
+        },
+        "value": 0.44415032863616943
+      },
+      {
+        "sequence": {
+          "chromosome": "chr6",
+          "position": 108879283,
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "gene": "FOXO3"
+        },
+        "value": -0.01377713680267334
+      },
+      {
+        "sequence": {
+          "chromosome": "chr7",
+          "position": 49813589,
+          "ref_allele": "G",
+          "alt_allele": "C",
+          "gene": "VWC2"
+        },
+        "value": 0.21772074699401855
+      },
+      {
+        "sequence": {
+          "chromosome": "chr8",
+          "position": 74206149,
+          "ref_allele": "C",
+          "alt_allele": "G",
+          "gene": "RPL7"
+        },
+        "value": 0.06309676170349121
+      },
+      {
+        "sequence": {
+          "chromosome": "chr10",
+          "position": 96305280,
+          "ref_allele": "T",
+          "alt_allele": "C",
+          "gene": "HELLS"
+        },
+        "value": 0.08701038360595703
+      },
+      {
+        "sequence": {
+          "chromosome": "chr11",
+          "position": 2435681,
+          "ref_allele": "C",
+          "alt_allele": "T",
+          "gene": "TRPM5"
+        },
+        "value": 0.00702059268951416
+      },
+      {
+        "sequence": {
+          "chromosome": "chr11",
+          "position": 69593819,
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "gene": "FGF4"
+        },
+        "value": -0.05554771423339844
+      },
+      {
+        "sequence": {
+          "chromosome": "chr17",
+          "position": 76352731,
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "gene": "SOCS3"
+        },
+        "value": -0.1282716989517212
+      },
+      {
+        "sequence": {
+          "chromosome": "chr19",
+          "position": 1854681,
+          "ref_allele": "C",
+          "alt_allele": "G",
+          "gene": "REXO1"
+        },
+        "value": 0.002535104751586914
+      },
+      {
+        "sequence": {
+          "chromosome": "chr19",
+          "position": 59070227,
+          "ref_allele": "C",
+          "alt_allele": "A",
+          "gene": "UBE2M"
+        },
+        "value": 0.05393218994140625
+      }
+    ]
+  }
+}

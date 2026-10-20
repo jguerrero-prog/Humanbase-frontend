@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { ModuleExplorer, type ModuleDraft } from './ModuleExplorer';
 
-const renal = 'faa09d1786f0998dbd03d7323f544f5457d98936';
+const renal = '2339dc3cd05964ab3f691a8f4851c7a9aab78ad9';
 
 function Explorer({ bodyTag, onEditGenes }: { bodyTag: string; onEditGenes: (draft: ModuleDraft) => void }) {
   const [view, setView] = useState(new ModuleView());
@@ -24,14 +24,21 @@ function renderExplorer(bodyTag = renal) {
 describe('ModuleExplorer', () => {
   beforeEach(() => localStorage.clear());
 
-  it('shows the enriched modules with their top terms', async () => {
+  it('shows the enriched modules with their top terms, under the name kept in this browser', async () => {
+    // Examples are sent without a title, as on the live site; the example's name is kept in the job list.
+    new JobHistory().add({ id: renal, tool: 'Modules', status: 'running', startedAt: '2026-10-19T00:00:00Z', link: `/modules/?body_tag=${renal}`, title: 'Renal disease panel' });
     renderExplorer();
     expect(await screen.findByRole('heading', { level: 1, name: 'Renal disease panel' })).toBeInTheDocument();
-    expect(screen.getByText('5 enriched')).toBeInTheDocument();
+    expect(screen.getByText('14 enriched')).toBeInTheDocument();
     const table = screen.getByRole('table', { name: 'Modules and their top terms' });
     expect(within(table).getAllByRole('button').map((button) => button.textContent)).toEqual(['M1', 'M3', 'M4', 'M5', 'M6']);
     expect(within(table).getByText('renal system development')).toBeInTheDocument();
-    expect(screen.getByText('Showing 5 enriched modules of 2 genes or more. Edges hidden.')).toBeInTheDocument();
+    expect(screen.getByText('Showing 14 enriched modules of 2 genes or more. Edges hidden.')).toBeInTheDocument();
+  });
+
+  it('names a result without a title', async () => {
+    renderExplorer();
+    expect(await screen.findByRole('heading', { level: 1, name: 'Untitled module search' })).toBeInTheDocument();
   });
 
   it('opens a module with its terms and genes', async () => {
@@ -39,8 +46,8 @@ describe('ModuleExplorer', () => {
     const table = await screen.findByRole('table', { name: 'Modules and their top terms' });
     await userEvent.click(within(table).getByRole('button', { name: 'M1' }));
     const drawer = await screen.findByRole('dialog', { name: 'M1, renal system development' });
-    expect(within(drawer).getByText('64 genes, 6 enriched terms in Gene Ontology (BP)')).toBeInTheDocument();
-    expect(await within(drawer).findByText('NPHS1, NPHS2')).toBeInTheDocument();
+    expect(within(drawer).getByText('64 genes, 10 enriched terms in Gene Ontology (BP)')).toBeInTheDocument();
+    expect(await within(drawer).findByText('NPHS2, NPHS1')).toBeInTheDocument();
     expect(within(drawer).getByRole('link', { name: 'Open M1 genes in Networks' })).toHaveAttribute('href', expect.stringMatching(/^\/networks\/\?entrez=.*&tissue=kidney/));
     await userEvent.click(within(drawer).getByRole('radio', { name: 'Genes' }));
     expect(within(drawer).getByRole('table', { name: 'Genes in M1' })).toHaveTextContent('ABCB11');
@@ -52,9 +59,10 @@ describe('ModuleExplorer', () => {
     const genes = screen.getByRole('table', { name: 'Genes in each module' });
     expect(await within(genes).findByText('ABCB11')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('checkbox', { name: 'Hide modules with no enriched terms' }));
-    expect(screen.getByText('Showing 16 modules of 2 genes or more. Edges hidden.')).toBeInTheDocument();
+    expect(screen.getByText('Showing 20 modules of 2 genes or more. Edges hidden.')).toBeInTheDocument();
   });
 
+  // The real renal result lays out 369 genes, which takes over 5 seconds when the whole suite runs at once.
   it('renames the result in this browser and hands its list to Edit genes', async () => {
     new JobHistory().add({ id: renal, tool: 'Modules', status: 'running', startedAt: '2026-10-19T00:00:00Z', link: `/modules/?body_tag=${renal}`, title: 'Renal disease panel' });
     const { onEditGenes } = renderExplorer();
@@ -68,7 +76,7 @@ describe('ModuleExplorer', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Edit genes' }));
     expect(onEditGenes).toHaveBeenCalledWith(expect.objectContaining({ title: 'Kidney panel', tissue: 'kidney', version: 'v1' }));
     expect(onEditGenes.mock.calls[0]?.[0].entrez).toHaveLength(504);
-  });
+  }, 15_000);
 
   it('explains a result that no longer exists', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);

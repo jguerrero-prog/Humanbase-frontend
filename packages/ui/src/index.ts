@@ -2,6 +2,7 @@ export { ActionMenu, type ActionMenuItem, type ActionMenuProps } from './ActionM
 export { Badge, StatusBadge, type BadgeProps, type BadgeSize, type BadgeTone, type JobStatus, type StatusBadgeProps } from './Badge/Badge';
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from './Button/Button';
 export { IconButton, type IconButtonProps } from './IconButton/IconButton';
+export { StarToggle, type StarToggleProps } from './StarToggle/StarToggle';
 export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
 export { ScoreTracks, type ScoreTrack, type ScoreTracksProps } from './GenomeBrowser/ScoreTracks';
 export {
@@ -36,7 +37,9 @@ export { RadioGroup, type RadioGroupProps, type RadioOption } from './RadioGroup
 export { SegmentedControl, type Segment, type SegmentedControlProps } from './SegmentedControl/SegmentedControl';
 export { SearchExamples, type SearchExample, type SearchExamplesProps } from './SearchExamples/SearchExamples';
 export { SearchField, SuggestionsEmpty, SuggestionsLoading, type SearchFieldProps, type SearchFieldSize, type SearchSuggestion } from './SearchField/SearchField';
-export { Select, type SelectOption, type SelectProps } from './Select/Select';
+export { Select, type SelectOption, type SelectProps, type SelectSize } from './Select/Select';
+export { AboutPanel, type AboutPanelProps, type ExampleFile } from './Jobs/AboutPanel';
+export { MultiSelect, multiSelectSummary, type MultiSelectOption, type MultiSelectProps } from './Select/MultiSelect';
 export { Spinner } from './Spinner/Spinner';
 export { Tabs, type TabItem, type TabsProps } from './Tabs/Tabs';
 export { RemoveButton, Tag, type TagProps } from './Tag/Tag';
@@ -88,10 +91,11 @@ export { Toggletip, type ToggletipProps } from './Tooltip/Toggletip';
 export { Tooltip, type TooltipProps } from './Tooltip/Tooltip';
 export { TooltipController, tooltips } from './Tooltip/TooltipController';
 export { KeyLegend, ScaleLegend, type KeyLegendProps, type LegendItem, type LegendScale, type ScaleLegendProps } from './Legend/Legend';
-export { Heatmap, type HeatmapAxis, type HeatmapColumn, type HeatmapProps, type HeatmapRow } from './Heatmap/Heatmap';
+export { Heatmap, type HeatmapAxis, type HeatmapCellDetail, type HeatmapColumn, type HeatmapProps, type HeatmapRow } from './Heatmap/Heatmap';
 export { HeatmapCell, type HeatmapCellProps } from './Heatmap/HeatmapCell';
 export { LegendStepped, type LegendSteppedProps } from './Heatmap/LegendStepped';
 export { ScoreScale, type ScaleKind, type ScaleSpec } from './Heatmap/ScoreScale';
+export { SubstitutionMap, type SubstitutionColumn, type SubstitutionMapProps } from './Heatmap/SubstitutionMap';
 export { ErrorSummary, type ErrorSummaryItem, type ErrorSummaryProps } from './ErrorSummary/ErrorSummary';
 export { FileField, type FileFieldProps } from './FileField/FileField';
 export { EmptyState, type EmptyStateProps } from './EmptyState/EmptyState';
@@ -107,7 +111,7 @@ export { NetwasGeneTable, NetwasScore, type NetwasGeneRow, type NetwasGeneTableP
 export { NetwasGuide, type NetwasGuideProps } from './Results/NetwasGuide';
 export { RankedAnnotationTable, type AnnotationEvidence, type Publication, type RankedAnnotation, type RankedAnnotationTableProps } from './Results/RankedAnnotationTable';
 export { EvidenceTable, GeneDetail, NetworkWeightTable, ScoreMeter, WeightHistogram, type AnnotationSource, type EvidenceRow, type GeneDetailProps, type NetworkWeight } from './Results/ResultDetail';
-export { ResultHeader, STACKED_QUERY, type ResultHeaderProps } from './Results/ResultHeader';
+export { ResultHeader, STACKED_QUERY, type ResultHeaderProps, type ResultTitle } from './Results/ResultHeader';
 export { ResultLayout, type ResultLayoutProps } from './Results/ResultLayout';
 export { ResultFiles, type ResultFile as ResultFileRow, type ResultFilesProps } from './Results/ResultFiles';
 export { AllFeaturesPlot, type AllFeaturesPlotProps } from './VariantEffects/AllFeaturesPlot';
@@ -116,7 +120,7 @@ export { expressionEffects, sequenceClassEffects, zEffects, type EffectScale } f
 export { EffectsHeatmap, type EffectsHeatmapProps } from './VariantEffects/EffectsHeatmap';
 export { EffectsControls, MolecularEffects, effectZScale, type EffectsControlsProps, type EffectsView, type MolecularEffectsProps } from './VariantEffects/MolecularEffects';
 export { StrongestEffects, type StrongestEffectsProps } from './VariantEffects/StrongestEffects';
-export { byGenomePosition, variantLabel, variantLocation, type Variant, type VariantScore } from './VariantEffects/Variant';
+export { byGenomePosition, variantLabel, variantLocation, variantName, type Variant, type VariantScore } from './VariantEffects/Variant';
 export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFocus';
 export { VariantScorePlot, type PlotBy, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
 export { VariantsTable, type VariantsTableProps } from './VariantEffects/VariantsTable';

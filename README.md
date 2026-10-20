@@ -12,7 +12,8 @@ The redesigned front end for [Humanbase](https://hb.flatironinstitute.org) and t
 | `packages/ui` | Pure components and `root.css`, the single stylesheet entry point | |
 | `packages/data` | The only code that talks to the API: `ApiClient`, models, services, React provider and hooks | |
 | `packages/hb` | Connected components: a pure component plus a data hook | |
-| `packages/graph` | The network and module graph renderer (empty until its license is confirmed) | |
+| `packages/graph` | The network and module graph renderer, swappable through `GraphRenderer` | |
+| `packages/genome` | The genome browser engine, swappable through `GenomeBrowserEngine`; Biodalliance when the API is on | |
 
 ## Live preview
 
@@ -33,11 +34,13 @@ pnpm dev:docs   # the design system site
 | --- | --- |
 | `pnpm check` | Type checks, lints and runs unit tests. CI runs the same. |
 | `pnpm build` | Builds both apps. The docs build also indexes search. |
-| `pnpm test:e2e` | Builds both apps and scans every page for WCAG 2.2 AA issues. |
+| `pnpm test:e2e` | Builds both apps and scans every page for WCAG 2.2 AA issues, with the API off. |
+| `pnpm test:live` | Runs every screen against the live Humanbase API. See below. |
+| `pnpm test:live:jobs` | Submits one example job per tool through the forms and checks each result. |
 | `pnpm tokens` | Regenerates `tokens.css` after the token files change. |
 | `pnpm api:generate` | Regenerates the API types from an API's `/api/schema/`. |
 | `pnpm api:verify` | Calls every endpoint the front end uses and reports which ones work. |
-| `pnpm samples:record` | Saves the sample data shown when the API is off. Read requests only. |
+| `pnpm samples:record` | Saves the sample data shown when the API is off. Read requests only. Samples over 100 KB are saved without indentation; `pnpm samples:record --compact` applies that to the samples already saved, without asking the API. |
 
 ## Connecting your own Humanbase API
 
@@ -63,6 +66,14 @@ The sample data is real Humanbase API responses, plus files the API links to, su
 
 To connect your own engine instead of the Humanbase API, write a class that implements `DataClient` (`get`, `post`, and `text` for files the API links to, such as job results) and pass it to `new Humanbase(yourClient)` in `apps/web/src/main.tsx`. Services and screens don't change.
 
+## Testing against the live API
+
+`pnpm test:e2e` uses the bundled sample data, so it shows how the screens render but not whether real API data lands in them. `pnpm test:live` runs the app with the API on, against the public Humanbase API or `HB_API_PROXY_TARGET`, and opens every screen with real data. Each screen must show real values, log no console errors, get no failed API responses, fit 1440 and 390 pixel widths without sideways scrolling, and pass a WCAG 2.2 AA scan.
+
+`pnpm test:live:jobs` also submits one real example job per tool and checks the result page once it finishes. It never retries a failed submission.
+
+Neither runs on pull requests, so a slow or unavailable API never blocks a merge. The **Live API** workflow runs `pnpm test:live` every Monday, and both on demand from the Actions tab.
+
 ## Using the design system
 
 Import `@humanbase/ui/root.css` once. It loads the fonts, the tokens and the base element styles. In your CSS, use semantic tokens such as `var(--action-primary)` and `var(--text-default)`, never hex colors; Stylelint enforces this.
@@ -79,4 +90,4 @@ The code standards are in [AGENTS.md](AGENTS.md). They apply to people and codin
 
 ## License
 
-The front end and design system in this repository are [MIT licensed](LICENSE). The license does not cover the Humanbase API, the data it serves, or any graph renderer added to `packages/graph` under its own license; those belong to their owners.
+The front end and design system in this repository are [MIT licensed](LICENSE). The license does not cover the Humanbase API, the data it serves, or any graph renderer added to `packages/graph` under its own license; those belong to their owners. Vendored third-party code keeps its own licenses: Biodalliance 0.13 and the Bootstrap and Font Awesome files it bundles, listed in `packages/genome/vendor/biodalliance-0.13/`.

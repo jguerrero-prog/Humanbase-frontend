@@ -54,3 +54,13 @@
   font: var(--type-caption);
   color: var(--color-grey-400);
 }
+
+.data-tooltip-note {
+  margin-inline-start: var(--space-2);
+  font: var(--type-caption);
+  color: var(--color-grey-300);
+}
+
+.data-tooltip-wide {
+  inline-size: 320px;
+}

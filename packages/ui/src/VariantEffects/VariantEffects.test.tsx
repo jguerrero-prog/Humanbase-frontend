@@ -49,7 +49,7 @@ describe('StrongestEffects', () => {
     render(<StrongestEffects effects={effects} threshold={2} onToggle={onToggle} limit={2} />);
     expect(screen.getByText('2 experiments: K562, HepG2')).toBeInTheDocument();
     expect(screen.getByText('2.8 to 4.4')).toBeInTheDocument();
-    expect(screen.getByText('No feature is lowered by 2 or more')).toBeInTheDocument();
+    expect(screen.getByText('No protein is lowered by 2 or more')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Show 1 more proteins' })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: /LARP4/ }));
     expect(onToggle).toHaveBeenCalledWith('LARP4');

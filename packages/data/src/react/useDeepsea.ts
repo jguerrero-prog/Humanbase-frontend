@@ -1,6 +1,7 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 import type { DeepseaJob } from '../deepsea/DeepseaJob';
-import { chrVariant, featureEffects, variantRows, type VariantRow, type VariantScoresRecord } from '../deepsea/DeepseaResult';
+import { chrVariant, featureEffects, variantRows, variantScoreTypes, type VariantRow, type VariantScoresRecord } from '../deepsea/DeepseaResult';
+import { deepseaModels } from '../deepsea/DeepseaModel';
 import { DeepseaService } from '../deepsea/DeepseaService';
 import type { VariantModel } from '../jobs/VariantFileCheck';
 import { useHumanbase } from './HumanbaseProvider';
@@ -22,7 +23,7 @@ export function useDeepseaVariants(job: DeepseaJob | undefined) {
   const api = useHumanbase();
   const id = job?.status === 'finished' ? job.id : '';
   const types = useQuery({ queryKey: ['deepsea-score-types', id], queryFn: () => api.deepsea.scoreTypes(id), enabled: Boolean(id), staleTime: Infinity });
-  const variantTypes = (types.data ?? []).filter((type) => type.level === 'VARIANT');
+  const variantTypes = job ? variantScoreTypes(job.model, types.data ?? []) : [];
   const sets = useQueries({
     queries: variantTypes.map((type) => ({ queryKey: ['deepsea-variant-scores', id, type.short_name], queryFn: () => api.deepsea.variantScores(id, type.short_name), staleTime: Infinity })),
   });
@@ -37,7 +38,8 @@ export function useFeatureEffects(job: DeepseaJob | undefined, scoreType: string
   const api = useHumanbase();
   const where = variant ? chrVariant(variant) : '';
   const model = job?.model.id;
-  const features = useQuery({ queryKey: ['deepsea-features', model], queryFn: () => api.deepsea.features(model ?? 'sei'), enabled: Boolean(model && variant), staleTime: Infinity });
+  const named = model && deepseaModels[model].classFeatures?.scoreType === scoreType ? scoreType : undefined;
+  const features = useQuery({ queryKey: ['deepsea-features', model, named], queryFn: () => api.deepsea.features(model ?? 'sei', named), enabled: Boolean(model && variant), staleTime: Infinity });
   const prediction = useQuery({
     queryKey: ['deepsea-predictions', job?.id, scoreType, where],
     queryFn: () => api.deepsea.featurePredictions(job?.id ?? '', scoreType ?? '', where),

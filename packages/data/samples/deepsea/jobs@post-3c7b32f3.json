@@ -1,0 +1,19 @@
+{
+  "note": "Recorded October 20, 2026: the API’s answer to submitting the Sei example from the form (job 2e18fedf). The answer body is real; the status is the usual 201 for a created job, not captured.",
+  "status": 201,
+  "body": {
+    "created": "2026-10-19T16:47:26.498143",
+    "ds_model": "Sei",
+    "email": "",
+    "files": {},
+    "expecto": false,
+    "input_type": "vcf",
+    "insilico": false,
+    "job_id": "2e18fedf-3de7-4d08-a894-9a937a2b860b",
+    "output_format": "tsv",
+    "sequence_names": [],
+    "status": "queued",
+    "title": "",
+    "genome_assembly": "hg19"
+  }
+}

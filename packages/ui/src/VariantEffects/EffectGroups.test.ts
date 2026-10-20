@@ -23,6 +23,17 @@ describe('EffectGroups', () => {
     expect(second?.cells).toEqual(['K562', 'HepG2']);
   });
 
+  it('keeps experiments apart when they name their own group', () => {
+    const tissues = new EffectGroups([
+      { feature: 'Spleen', cell: 'GTEx', context: 'GTEx', label: 'Spleen', value: 0.4, group: 'Spleen, GTEx' },
+      { feature: 'Spleen', cell: 'Roadmap', context: 'Roadmap', label: 'Spleen', value: 0.3, group: 'Spleen, Roadmap' },
+    ]);
+    expect(tissues.groups('raises').map((group) => [group.id, group.feature, group.experiments.length])).toEqual([
+      ['Spleen, GTEx', 'Spleen', 1],
+      ['Spleen, Roadmap', 'Spleen', 1],
+    ]);
+  });
+
   it('keeps lowers apart from raises and filters by threshold', () => {
     expect(effects.groups('lowers').map((group) => group.feature)).toEqual(['PUM2']);
     expect(effects.atLeast(3).groups('raises').map((group) => group.feature)).toEqual(['LIN28A', 'LARP4', 'QKI']);

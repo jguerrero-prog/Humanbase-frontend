@@ -32,6 +32,8 @@ export class NetworkView {
     readonly tab: NetworkTab = 'network',
     /** Which network the genes panel and detail follow when two are compared. */
     readonly focus: NetworkPane = 'main',
+    /** Starred process and tissue identifiers, in the order they were starred, which sets their colors. */
+    readonly starred: readonly string[] = [],
   ) {}
 
   static fromSearch(search: URLSearchParams, pane: NetworkPane = 'main'): NetworkView {
@@ -47,6 +49,7 @@ export class NetworkView {
       search.get('expand') === '1',
       networkTabs.find((tab) => tab === search.get('tab')) ?? 'network',
       search.get('focus') === 'compare' ? 'compare' : 'main',
+      [...new Set((search.get('star') ?? '').split(',').filter(Boolean))],
     );
   }
 
@@ -62,12 +65,17 @@ export class NetworkView {
     return { shown: this.shown, minConfidence: this.minConfidence ?? suggestedConfidence, prioritizeUniqueness: this.prioritizeUniqueness };
   }
 
-  with(changes: Partial<Pick<NetworkView, 'shown' | 'minConfidence' | 'prioritizeUniqueness' | 'selection' | 'display' | 'expanded' | 'tab' | 'focus'>>): NetworkView {
-    const next = { ...this, ...changes };
-    return new NetworkView(next.shown, next.minConfidence, next.prioritizeUniqueness, next.selection, next.display, next.expanded, next.tab, next.focus);
+  /** Stars a term, or unstars it if it is already starred. */
+  toggleStar(identifier: string): NetworkView {
+    return this.with({ starred: this.starred.includes(identifier) ? this.starred.filter((id) => id !== identifier) : [...this.starred, identifier] });
   }
 
-  /** Writes the view into a copy of the page's search parameters. The compared graph's filters go under compare_ keys; selection, tab and focus are shared. */
+  with(changes: Partial<Pick<NetworkView, 'shown' | 'minConfidence' | 'prioritizeUniqueness' | 'selection' | 'display' | 'expanded' | 'tab' | 'focus' | 'starred'>>): NetworkView {
+    const next = { ...this, ...changes };
+    return new NetworkView(next.shown, next.minConfidence, next.prioritizeUniqueness, next.selection, next.display, next.expanded, next.tab, next.focus, next.starred);
+  }
+
+  /** Writes the view into a copy of the page's search parameters. The compared graph's filters go under compare_ keys; selection, tab, focus and starred sets are shared. */
   applyTo(search: URLSearchParams, pane: NetworkPane = 'main'): URLSearchParams {
     const next = new URLSearchParams(search);
     for (const key of paneKeys) next.delete(keyFor(key, pane));
@@ -75,12 +83,13 @@ export class NetworkView {
     if (this.minConfidence !== undefined) next.set(keyFor('confidence', pane), String(this.minConfidence));
     if (this.prioritizeUniqueness) next.set(keyFor('unique', pane), '1');
     if (this.display === 'table') next.set(keyFor('display', pane), 'table');
-    for (const key of ['gene', 'connection', 'expand', 'tab', 'focus']) next.delete(key);
+    for (const key of ['gene', 'connection', 'expand', 'tab', 'focus', 'star']) next.delete(key);
     if (this.selection?.kind === 'gene') next.set('gene', String(this.selection.entrez));
     if (this.selection?.kind === 'connection') next.set('connection', `${this.selection.source}-${this.selection.target}`);
     if (this.expanded) next.set('expand', '1');
     if (this.tab !== 'network') next.set('tab', this.tab);
     if (this.focus === 'compare') next.set('focus', 'compare');
+    if (this.starred.length) next.set('star', this.starred.join(','));
     return next;
   }
 }

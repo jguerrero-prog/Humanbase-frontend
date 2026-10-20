@@ -1,5 +1,6 @@
 ---
-import { GeneList, Icon, SearchField, TextInput } from '@humanbase/ui';
+import { analysisColumns, analysisOptions } from '@humanbase/hb';
+import { GeneList, SearchExamples, SearchField, Select, TextInput } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -37,8 +38,7 @@ const searchStates = [
   { title: 'Loading', text: 'A spinner replaces the clear button while matches load.', props: { defaultValue: 'IL1B', loading: true } },
   { title: 'Disabled', text: 'Only while the page is loading data it depends on.', props: { disabled: true } },
 ];
-const examples = ['IL1B', 'BRCA1', 'PTEN', 'Autism gene set'];
-const analyses = ['Networks', 'Modules', 'Sei', 'Beluga', 'Seqweaver', 'ExPecto', 'ExPecto SC', 'In silico mutagenesis', 'NetWAS', 'ASD Browser'];
+const examples = ['IL1B', 'BRCA1', 'PTEN', 'Autism gene set'].map((label) => ({ label, onSelect: () => undefined }));
 
 const errors = [
   ['Gene not recognized', 'No gene matches “NOTAGENE123”. Check the spelling, or search by Entrez ID, for example 3553.', 'Search field, gene list'],
@@ -125,22 +125,11 @@ const usage = `import { GeneList, SearchField, TextInput } from '@humanbase/ui';
     <section class="search-panel search-panel-brand" aria-labelledby="search-on-green">
       <h3 id="search-on-green">On the green header</h3>
       <div class="search-row">
-        <div class="analysis-select">
-          <Icon name="analysis" />
-          <label class="visually-hidden" for="analysis-select">Analysis</label>
-          <select id="analysis-select" tabindex="-1">
-            <option>Select an analysis</option>
-            {analyses.map((name) => <option>{name}</option>)}
-          </select>
-          <Icon name="chevron-down" size={20} />
-        </div>
+        <Select label="Analysis" hideLabel placeholder="Select an analysis" options={analysisOptions} columns={analysisColumns} triggerIcon="analysis" size="large" />
         <SearchField {...search} />
       </div>
-      <p class="search-examples">
-        <span>Try</span>
-        {examples.map((example) => <button type="button" tabindex="-1">{example}</button>)}
-      </p>
-      <p class="search-panel-note">Select an analysis chooses which tool the search runs in, using the same tool names as the menus. Example searches choose it for you and run straight away instead of filling the field, fixing a problem found in the audit. Pressing Enter opens the best match.</p>
+      <SearchExamples examples={examples} surface="brand" />
+      <p class="search-panel-note">Select an analysis chooses which tool the search runs in, using the same tool names as the menus. A gene example adds that gene to the list and switches the analysis to Networks; the gene set example opens it in Modules. Pressing Enter opens the best match.</p>
     </section>
 
     <section class="search-panel search-panel-light" aria-labelledby="search-on-light">
@@ -148,10 +137,7 @@ const usage = `import { GeneList, SearchField, TextInput } from '@humanbase/ui';
       <div class="search-row search-row-single">
         <SearchField {...search} />
       </div>
-      <p class="search-examples">
-        <span>Try</span>
-        {examples.map((example) => <button type="button" tabindex="-1">{example}</button>)}
-      </p>
+      <SearchExamples examples={examples} surface="light" />
       <p class="search-panel-note">For white or light grey pages, such as results pages, the docs and the 404 page. The search field is unchanged; example chips switch to emerald text on an 8% emerald tint, and “Try” uses grey 500. Chip text measures 5.1:1 and “Try” 5.0:1, both passing AA.</p>
     </section>
   </DocSection>
@@ -323,79 +309,13 @@ const usage = `import { GeneList, SearchField, TextInput } from '@humanbase/ui';
     grid-template-columns: 720px;
   }
 
-  .analysis-select {
-    position: relative;
-    display: flex;
-    align-items: center;
-    color: var(--text-muted);
-  }
-
-  .analysis-select > :global(.icon:first-child) {
-    position: absolute;
-    inset-inline-start: var(--space-5);
-    pointer-events: none;
-  }
-
-  .analysis-select > :global(.icon:last-child) {
-    position: absolute;
-    inset-inline-end: var(--space-5);
-    pointer-events: none;
-  }
-
-  .analysis-select select {
-    inline-size: 100%;
-    block-size: 56px;
-    padding: 0 var(--space-12) 0 56px;
-    font: 400 18px/1.55 Lato, sans-serif;
-    color: var(--text-muted);
-    background: var(--surface-page);
-    border: var(--border-width-1) solid var(--border-strong);
-    border-radius: var(--radius-md);
-    appearance: none;
-  }
-
-  .search-examples {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    align-items: center;
-  }
-
-  .search-examples span {
-    font: var(--docs-small);
-    line-height: 1.4;
-  }
-
-  .search-examples button {
-    padding: 6px var(--space-3);
-    font: var(--type-label-sm);
-    border: 0;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-  }
-
-  .search-panel-brand .search-examples span,
-  .search-panel-brand .search-panel-note {
-    color: var(--color-mint-100);
-  }
-
-  .search-panel-brand .search-examples button {
-    color: var(--text-on-brand);
-    background: var(--overlay-on-brand-hover);
-  }
-
-  .search-panel-light .search-examples span {
-    color: var(--text-muted);
-  }
-
-  .search-panel-light .search-examples button {
-    color: var(--text-link);
-    background: var(--action-ghost-hover);
-  }
-
   .search-panel-note {
     font: var(--docs-small);
     color: var(--text-secondary);
+  }
+
+  .search-panel-brand .search-panel-note {
+    color: var(--color-mint-100);
   }
 
   .error-message {

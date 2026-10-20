@@ -1,0 +1,66 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "name": "ExPecto expression effect",
+      "level": "FEATURE",
+      "short_name": "expecto",
+      "range": [
+        -0.1,
+        0,
+        0.1
+      ],
+      "category": "Transcriptional effects prediction",
+      "type": "tissues"
+    },
+    {
+      "name": "Max ExPecto expression effect",
+      "level": "VARIANT",
+      "short_name": "expecto"
+    },
+    {
+      "name": "Disease impact score",
+      "level": "VARIANT",
+      "short_name": "dis"
+    },
+    {
+      "name": "Mean -log e-value",
+      "level": "VARIANT",
+      "short_name": "mean-evalue"
+    },
+    {
+      "name": "z-score",
+      "level": "FEATURE",
+      "short_name": "zscore",
+      "range": [
+        -2,
+        0,
+        2
+      ]
+    },
+    {
+      "name": "e-value",
+      "level": "FEATURE",
+      "short_name": "evalue",
+      "range": [
+        0,
+        0.05
+      ],
+      "reverse_order": true
+    },
+    {
+      "name": "Probability diffs",
+      "level": "FEATURE",
+      "short_name": "diffs",
+      "range": [
+        -0.3,
+        0,
+        0.3
+      ],
+      "non_sig_range": [
+        -0.01,
+        0.01
+      ]
+    }
+  ]
+}

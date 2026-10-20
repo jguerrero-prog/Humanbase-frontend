@@ -1,7 +1,7 @@
 import type { DataClient } from '../DataClient';
 import type { InputKind, VariantModel } from '../jobs/VariantFileCheck';
 import { DeepseaJob, type DeepseaJobRecord } from './DeepseaJob';
-import { deepseaModels } from './DeepseaModel';
+import { deepseaModels, type Genome } from './DeepseaModel';
 import type { FeaturePredictionRecord, FeaturesRecord, ScoreType, VariantScoresRecord } from './DeepseaResult';
 import { InsilicoResult, type InsilicoRecord } from './InsilicoResult';
 
@@ -11,7 +11,9 @@ export interface DeepseaRequest {
   /** The file's text, whether it was uploaded, pasted or the example. */
   text: string;
   fileName: string;
-  genome: string;
+  /** True when the text came from an uploaded file; pasted text and examples are sent as text. */
+  uploaded?: boolean | undefined;
+  genome: Genome;
   title?: string | undefined;
   email?: string | undefined;
 }
@@ -19,8 +21,6 @@ export interface DeepseaRequest {
 /** Sei, Beluga, Seqweaver and ExPecto run as jobs on the same endpoints; only ds_model, expecto and the features change. */
 export class DeepseaService {
   static readonly pollEvery = 10_000;
-  // The schema doesn't name the upload field; confirm with the API team before relying on it.
-  static readonly fileField = 'input_file';
 
   constructor(private readonly client: DataClient) {}
 
@@ -28,16 +28,20 @@ export class DeepseaService {
     return job.isDone ? false : DeepseaService.pollEvery;
   }
 
-  static formOf({ model, kind, text, fileName, genome, title, email }: DeepseaRequest): FormData {
+  /** The fields the live site's form sends, in its order: the input goes as upload_file or upload_textarea. */
+  static formOf({ model, kind, text, fileName, uploaded, genome, title, email }: DeepseaRequest): FormData {
+    const info = deepseaModels[model];
     const form = new FormData();
-    form.append('ds_model', deepseaModels[model].apiName);
-    if (deepseaModels[model].expecto) form.append('expecto', 'true');
-    if (deepseaModels[model].insilico) form.append('insilico', 'true');
+    form.append('title', title?.trim() ?? '');
+    form.append('email', email?.trim() ?? '');
     form.append('input_type', kind);
+    form.append('ds_model', info.apiName.toLowerCase());
+    form.append('signup', 'false');
+    form.append('expecto', String(Boolean(info.expecto)));
+    form.append('upload_textarea', uploaded ? '' : text);
+    if (uploaded) form.append('upload_file', new File([text], fileName, { type: 'text/plain' }));
+    form.append('insilico', String(Boolean(info.insilico)));
     form.append('genome_assembly', genome);
-    if (title?.trim()) form.append('title', title.trim());
-    if (email?.trim()) form.append('email', email.trim());
-    form.append(DeepseaService.fileField, new File([text], fileName, { type: 'text/plain' }));
     return form;
   }
 
@@ -67,8 +71,10 @@ export class DeepseaService {
     return new InsilicoResult(await this.client.get<InsilicoRecord>(`deepsea/jobs/${id}/in_silico_mutagenesis/`, { sequence_name: sequenceName, feature_name: featureIndex }));
   }
 
-  features(model: VariantModel): Promise<FeaturesRecord> {
+  /** A model's features; a score type the API's list doesn't name, such as Sei's sequence classes, uses the bundled names. */
+  features(model: VariantModel, scoreType?: string): Promise<FeaturesRecord> {
     const info = deepseaModels[model];
+    if (scoreType && info.classFeatures?.scoreType === scoreType) return Promise.resolve(info.classFeatures.features);
     return this.client.get<FeaturesRecord>(`deepsea/${info.apiName}/features/`, info.expecto ? { expecto: true } : {});
   }
 }
