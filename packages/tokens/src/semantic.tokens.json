@@ -46,6 +46,11 @@
     "inverse": {
       "$type": "color",
       "$value": "{color.grey.900}"
+    },
+    "brand-deep": {
+      "$type": "color",
+      "$value": "{color.emerald.900}",
+      "$description": "Deepest brand band, such as the homepage hero behind its illustration"
     }
   },
   "border": {

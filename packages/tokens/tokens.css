@@ -131,6 +131,7 @@
   --surface-subtle: var(--color-grey-50);
   --surface-sunken: var(--color-grey-100);
   --surface-inverse: var(--color-grey-900);
+  --surface-brand-deep: var(--color-emerald-900);
   --border-subtle: var(--color-grey-200);
   --border-default: var(--color-grey-300);
   --border-strong: var(--color-grey-500);
