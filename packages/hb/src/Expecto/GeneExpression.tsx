@@ -1,5 +1,5 @@
-import { ApiError, useGene, useHumanbase, useTissueVariants, type EffectRow, type TissueDatabase, type TissueVariants } from '@humanbase/data';
-import { Alert, Button, EmptyState, Heatmap, ResultHeader, saveFile, SearchField, SegmentedControl, Select, Skeleton, type ScaleSpec, useLinkHref } from '@humanbase/ui';
+import { ApiError, useGene, useHumanbase, useTissueVariants, type EffectRow, type GenePosition, type TissueDatabase, type TissueEffects, type TissueVariants } from '@humanbase/data';
+import { Alert, Button, EmptyState, Heatmap, ResultHeader, saveFile, ScoreScale, SearchField, SegmentedControl, Select, Skeleton, type HeatmapCellDetail, type ScaleSpec, useLinkHref } from '@humanbase/ui';
 import { useMemo } from 'react';
 import { useCopyLink } from '../Jobs/useCopyLink';
 import { geneExpressionTools, type GeneExpressionTool } from './geneExpressionTools';
@@ -25,7 +25,26 @@ export interface GeneExpressionProps {
 const counts = new Intl.NumberFormat('en-US');
 const article = (noun: string) => (/^[aeiou]/i.test(noun) ? 'an' : 'a');
 
-function matching(rows: readonly EffectRow[], find: string | undefined): EffectRow[] {
+type DetailedRow = EffectRow & { details?: readonly (HeatmapCellDetail | undefined)[] };
+
+const bases = ['A', 'C', 'G', 'T'];
+
+/** Every allele at a position, the reference marked and the strongest noted, as the heatmap tooltip lists them. */
+function allelesAt(tissue: TissueEffects, index: number, position: GenePosition | undefined, decimals: number): HeatmapCellDetail['rows'] {
+  const alleles = tissue.alleles[index] ?? {};
+  const strongest = tissue.values[index];
+  return bases.flatMap((base): HeatmapCellDetail['rows'] => {
+    const value = alleles[base];
+    // ExPecto SC lists one entry per variant, so its scored allele can share the position's ref letter.
+    if (value === undefined) return base === position?.ref ? [[base, 'Reference']] : [];
+    const shown = ScoreScale.number(Number(value.toFixed(decimals)));
+    return [value === strongest ? [base, value > 0 ? `+${shown}` : shown, 'strongest, shown in the cell'] : [base, value > 0 ? `+${shown}` : shown]];
+  });
+}
+
+const nameOf = (tissue: TissueEffects, withResource: boolean) => (withResource ? `${tissue.title}, ${tissue.resource}` : tissue.title);
+
+function matching<T extends EffectRow>(rows: readonly T[], find: string | undefined): T[] {
   const term = find?.trim().toLowerCase();
   return term ? rows.filter((row) => row.label.toLowerCase().includes(term)) : [...rows];
 }
@@ -48,8 +67,23 @@ export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: G
   const symbol = gene.data?.symbol ?? '…';
   const change = (next: Partial<GeneExpressionState>) => onStateChange({ ...state, ...next });
 
-  const members = useMemo(() => table?.tissuesIn(state.group, state.resource).map((tissue) => ({ label: tool.resourceFilter ? `${tissue.title}, ${tissue.resource}` : tissue.title, values: tissue.values })) ?? [], [table, state.group, state.resource, tool.resourceFilter]);
-  const groupRows = useMemo(() => table?.groupRows() ?? [], [table]);
+  const members = useMemo<DetailedRow[]>(
+    () =>
+      table?.tissuesIn(state.group, state.resource).map((tissue) => ({
+        label: nameOf(tissue, tool.resourceFilter),
+        values: tissue.values,
+        details: tissue.values.map((_, index) => ({ rows: allelesAt(tissue, index, table.positions[index], tool.decimals) })),
+      })) ?? [],
+    [table, state.group, state.resource, tool.resourceFilter, tool.decimals],
+  );
+  const groupRows = useMemo<DetailedRow[]>(
+    () =>
+      table?.groupRows().map((row) => ({
+        ...row,
+        details: (row.sources ?? []).map((tissue, index) => (tissue ? { rows: allelesAt(tissue, index, table.positions[index], tool.decimals), hint: `Strongest ${tool.members.singular}: ${nameOf(tissue, tool.resourceFilter)}` } : undefined)),
+      })) ?? [],
+    [table, tool.decimals, tool.members.singular, tool.resourceFilter],
+  );
   const rows = matching(state.view === 'groups' ? groupRows : members, state.find);
   const fileName = `${symbol}_${toolId}_${state.view === 'groups' ? tool.groups.plural : tool.members.plural}.tsv`.toLowerCase().replaceAll(' ', '_');
 
@@ -154,6 +188,7 @@ export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: G
             columnHeader="Position"
             axis={{ title: `Position on ${axis.chromosome}, GRCh37/hg19`, offset: axis.offset, ticks: axis.ticks }}
             decimals={tool.decimals}
+            columnWidth="auto"
           />
         )}
       </section>
