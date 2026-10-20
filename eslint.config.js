@@ -7,7 +7,7 @@ import tseslint from 'typescript-eslint';
 const unsafeHtml = 'Build DOM with React or createElement and textContent; raw HTML strings are not allowed.';
 
 export default tseslint.config(
-  { ignores: ['**/dist/', '**/.astro/', '**/node_modules/', 'packages/data/src/schema.d.ts', 'playwright-report/', 'packages/genome/vendor/'] },
+  { ignores: ['**/dist/', '**/.astro/', '**/node_modules/', 'packages/data/src/schema.d.ts', 'playwright-report/', 'packages/genome/vendor/', '.claude/'] },
   js.configs.recommended,
   ...tseslint.configs.strict,
   jsxA11y.flatConfigs.strict,
