@@ -16,6 +16,7 @@ import {
 import { useMemo, useState, type ClipboardEvent, type KeyboardEvent, type ReactNode } from 'react';
 import { analysisColumns, analysisOptions } from '../content/product';
 import { matchOf, suggestionOf } from './geneMatches';
+import { genesWord, OutsideVersionAlert } from './OutsideVersionAlert';
 import './HomeSearch.css';
 
 export interface HomeSearchProps {
@@ -28,8 +29,6 @@ export interface HomeSearchProps {
 
 const exampleGenes = ['IL1B', 'BRCA1', 'PTEN'];
 const versionOptions = (Object.keys(dataVersionNames) as DataVersion[]).map((version) => ({ value: version, label: dataVersionNames[version] }));
-const genesWord = (count: number) => (count === 1 ? '1 gene' : `${count} genes`);
-const listText = (items: readonly string[]) => (items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
 
 export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afterExamples }: HomeSearchProps) {
   const linkHref = useLinkHref();
@@ -103,11 +102,6 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
   const outside = resolved.filter((match) => geneOf(match)?.isInVersion(version) === false);
   const runnable = resolved.filter((match) => !outside.includes(match)).flatMap((match) => list.gene(match)?.entrez ?? []).map(Number);
 
-  const outsideReason = (gene: GeneHit) =>
-    gene.isInAnyNetwork
-      ? `${gene.symbol} is not in ${dataVersionNames[version]} networks, so it will not be included in this query. Switch to ${dataVersionNames[version === 'v1' ? 'v3' : 'v1']} to include it.`
-      : `${gene.symbol} is a recognized gene, but it is not part of any Humanbase network, so it will not be included in this query.`;
-  const outsideSymbols = outside.flatMap((match) => geneOf(match)?.symbol ?? []);
 
   const remove = (ids: readonly string[]) => setList(list.remove(ids));
   const chooseVersion = (next: string) => {
@@ -166,7 +160,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
             <Select
               label="Tissue"
               placeholder={networks.isPending ? 'Loading tissues…' : 'Choose a tissue'}
-              options={tissues.map((network) => ({ value: network.slug, label: network.title }))}
+              options={tissues.map((network) => ({ value: network.slug, label: network.name }))}
               value={tissue}
               searchable
               filterLabel="Filter tissues"
@@ -180,18 +174,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
             </Button>
           </div>
           <GeneMatchSummary list={list} level={2} />
-          {outside.length > 0 && (
-            <Alert
-              tone="warning"
-              title={`${genesWord(runnable.length)} will be analyzed in ${dataVersionNames[version]}`}
-              action={{ label: `Remove ${listText(outsideSymbols)} from the list`, onSelect: () => remove(outside.map((match) => match.id)) }}
-            >
-              {outside.map((match) => {
-                const gene = geneOf(match);
-                return gene && <p key={match.id}>{outsideReason(gene)}</p>;
-              })}
-            </Alert>
-          )}
+          <OutsideVersionAlert outside={outside.flatMap((match) => geneOf(match) ?? [])} version={version} runnable={runnable.length} onRemove={() => remove(outside.map((match) => match.id))} />
           <GeneMatchTable list={list} caption="How your genes matched" onRemove={remove} onChoose={(id, entrez) => setList(list.choose(id, entrez))} />
         </section>
       )}

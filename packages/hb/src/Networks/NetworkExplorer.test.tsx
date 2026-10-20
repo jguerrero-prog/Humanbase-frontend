@@ -19,10 +19,10 @@ describe('NetworkExplorer', () => {
     renderExplorer(new NetworkQuery([3553, 7124, 100188314]));
     const table = await screen.findByRole('table', { name: /Genes functionally related to IL1B, TNF and AUTS12/ });
     expect(await within(table).findByRole('button', { name: /^ICAM1/ })).toBeInTheDocument();
-    expect(within(table).getAllByRole('row')).toHaveLength(16);
+    expect(within(table).getAllByRole('row')).toHaveLength(14);
     expect(await screen.findByText('AUTS12 was left out because it isn’t in any Humanbase network. This network uses IL1B and TNF.')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('IL1B, TNF');
-    expect(screen.getByText(/Showing 15 of 50 genes, \d+ connections at 0\.48 or more/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('IL1B interleukin 1 beta TNF tumor necrosis factor');
+    expect(screen.getByText(/Showing 15 of 52 genes, \d+ connections at 0\.48 or more/)).toBeInTheDocument();
   });
 
   it('selects a gene from the table and adds a gene to the query', async () => {
@@ -56,7 +56,7 @@ describe('NetworkExplorer', () => {
   });
 
   it('rings starred genes and offers to remove them', async () => {
-    const { onViewChange } = renderExplorer(new NetworkQuery([3553, 7124]), { view: new NetworkView().with({ shown: 13, starred: ['BTO:0000553'] }) });
+    const { onViewChange } = renderExplorer(new NetworkQuery([3553, 7124]), { view: new NetworkView().with({ starred: ['BTO:0000553'] }) });
     await userEvent.click(await screen.findByRole('tab', { name: /Tissues/ }));
     expect(await screen.findByRole('button', { name: 'Highlight peripheral blood genes in the network' })).toHaveAttribute('aria-pressed', 'true');
     const ringed = await vi.waitFor(() => {
@@ -114,7 +114,7 @@ describe('NetworkExplorer', () => {
     expect(within(drawer).getByText('BB2, P3.58, CD54')).toBeInTheDocument();
     expect(within(drawer).getByRole('link', { name: /Entrez 3383/ })).toHaveAttribute('href', 'https://www.ncbi.nlm.nih.gov/gene/3383');
     const annotations = within(drawer).getByRole('region', { name: 'Annotations' });
-    expect((await within(annotations).findAllByRole('listitem')).length).toBeGreaterThan(0);
+    expect((await within(annotations).findAllByRole('rowheader')).length).toBeGreaterThan(0);
     expect(within(drawer).getByRole('button', { name: 'Add to query' })).toBeInTheDocument();
   });
 
@@ -176,7 +176,7 @@ describe('NetworkExplorer', () => {
     const { onQueryChange } = renderExplorer(new NetworkQuery([3553, 7124]), { view: new NetworkView().with({ tab: 'process' }) });
     expect(await screen.findByText('Choose a biological process to see its network')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Choose a process' }));
-    await userEvent.click(await screen.findByRole('option', { name: 'acute inflammatory response' }));
+    await userEvent.click(await screen.findByRole('option', { name: 'Acute inflammatory response' }));
     expect(onQueryChange.mock.lastCall?.[0].process).toBe('acute-inflammatory-response');
   });
 
@@ -191,7 +191,7 @@ describe('NetworkExplorer', () => {
     const dialog = await screen.findByRole('dialog', { name: 'Add a network to compare' });
     expect(within(dialog).getByRole('button', { name: 'Add network' })).toBeDisabled();
     await userEvent.click(within(dialog).getByRole('combobox', { name: 'Tissue' }));
-    await userEvent.click(await within(dialog).findByRole('option', { name: 'mononuclear phagocyte' }));
+    await userEvent.click(await within(dialog).findByRole('option', { name: 'Mononuclear phagocyte' }));
     await userEvent.click(within(dialog).getByRole('button', { name: 'Add network' }));
     expect(onQueryChange.mock.lastCall?.[0].compare).toEqual({ tissue: 'mononuclear-phagocyte', dataTypes: [] });
   });

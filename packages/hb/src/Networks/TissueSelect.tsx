@@ -16,7 +16,7 @@ export function TissueSelect({ networks, version, value, onChange, size = 'small
   const group = 'All tissues and cell types';
   const options = [
     { value: globalValue, label: 'Global', group },
-    ...IntegrationService.pick(networks, 'tissue', version).map((network) => ({ value: network.slug, label: network.title, group })),
+    ...IntegrationService.pick(networks, 'tissue', version).map((network) => ({ value: network.slug, label: network.name, group })),
   ];
   return (
     <Select

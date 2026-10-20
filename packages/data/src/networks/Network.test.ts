@@ -35,8 +35,8 @@ describe('Network', () => {
     expect(network.related(true).map((g) => g.symbol)).toEqual(['C', 'D', 'E']);
   });
 
-  it('shows the query genes plus the chosen number of related genes, above the cutoff', () => {
-    const { genes, edges } = network.subset({ shown: 1, minConfidence: 0.65, prioritizeUniqueness: false });
+  it('shows the chosen number of genes, query genes first, with connections above the cutoff', () => {
+    const { genes, edges } = network.subset({ shown: 3, minConfidence: 0.65, prioritizeUniqueness: false });
     expect(genes.map((g) => g.symbol)).toEqual(['A', 'B', 'D']);
     expect(edges.map((e) => `${e.source.symbol}-${e.target.symbol}`)).toEqual(['A-D']);
   });

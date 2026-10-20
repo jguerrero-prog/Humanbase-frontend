@@ -1,4 +1,4 @@
-import { useConnectionEvidence, useConnectionInAllNetworks, type DataVersion, type NetworkGene } from '@humanbase/data';
+import { sentenceCase, useConnectionEvidence, useConnectionInAllNetworks, type DataVersion, type NetworkGene } from '@humanbase/data';
 import { Alert, Button, Drawer, DrawerSection, EvidenceTable, NetworkWeightTable, ScoreMeter, SearchField, SegmentedControl, Skeleton, WeightHistogram } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 
@@ -23,7 +23,7 @@ export function ConnectionDrawer({ source, target, weight, slug, version, networ
   const pair = `${source.symbol} and ${target.symbol}`;
   const evidence = useConnectionEvidence(slug, source.entrez, target.entrez);
   const elsewhere = useConnectionInAllNetworks(source.entrez, target.entrez, view === 'all');
-  const networkName = networkTitle.charAt(0).toUpperCase() + networkTitle.slice(1);
+  const networkName = sentenceCase(networkTitle);
 
   const networks = useMemo(() => (elsewhere.data ?? []).filter((item) => item.network.version === version), [elsewhere.data, version]);
   const histogram = useMemo(() => {
@@ -35,7 +35,7 @@ export function ConnectionDrawer({ source, target, weight, slug, version, networ
     return counts;
   }, [networks]);
   const term = filter.trim().toLowerCase();
-  const rows = networks.filter((item) => !term || item.network.title.toLowerCase().includes(term)).map((item) => ({ network: item.network.title, weight: item.weight }));
+  const rows = networks.filter((item) => !term || item.network.title.toLowerCase().includes(term)).map((item) => ({ network: item.network.name, weight: item.weight }));
   const datasets = evidence.data?.datasets ?? [];
 
   return (

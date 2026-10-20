@@ -1,6 +1,7 @@
 import {
   ApiError,
   Network,
+  sentenceCase,
   useDataTypes,
   useGenes,
   useGenesFunctions,
@@ -60,7 +61,6 @@ export interface NetworkExplorerProps {
   renderer?: GraphRendererFactory | undefined;
 }
 
-const capitalized = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 const listJoin = (items: readonly string[]) => (items.length < 2 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
 
 const tabs: { value: NetworkTab; label: string }[] = [
@@ -157,6 +157,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
     <EditGenesDialog
       open={editingGenes}
       symbols={symbols}
+      version={activeQuery.version}
       onClose={() => setEditingGenes(false)}
       onApply={(entrez) => {
         setEditingGenes(false);
@@ -165,18 +166,18 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
     />
   );
 
-  const single = shownIds.length === 1 ? names.get(shownIds[0] as number) : undefined;
+  // Names fit beside up to three genes; longer lists show symbols only.
+  const titles = shownIds.length <= 3 ? shownIds.map((id) => ({ title: symbolOf(id), subtitle: names.get(id)?.name })) : found.join(', ');
   const header = (
     <>
       <ResultHeader
         crumbs={[{ label: 'Networks', href: '/' }, { label: found.join(', ') }]}
-        title={single ? single.symbol : found.join(', ')}
-        {...(single ? { subtitle: single.name } : {})}
+        title={titles}
         context={
           showsNetwork || onProcessTab
             ? [
                 { name: 'Data version', value: activeQuery.versionName },
-                ...(showsNetwork && related && network ? [{ name: 'Genes shown', value: `${related.length} of ${network.related().length}` }] : []),
+                ...(showsNetwork && related && network ? [{ name: 'Genes shown', value: `${subset?.genes.length ?? 0} of ${network.genes.length}` }] : []),
               ]
             : []
         }
@@ -339,8 +340,8 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
                 label="The genes panel follows"
                 size="small"
                 segments={[
-                  { value: 'main', label: capitalized(networkTitle) },
-                  { value: 'compare', label: capitalized(compareTitle) },
+                  { value: 'main', label: sentenceCase(networkTitle) },
+                  { value: 'compare', label: sentenceCase(compareTitle) },
                 ]}
                 value={view.focus}
                 onChange={(focus) => onViewChange(view.with({ focus: focus as NetworkPane }))}
@@ -386,7 +387,6 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
           <GraphPanel
             network={network}
             subset={subset}
-            relatedTotal={network?.related().length ?? 0}
             view={view}
             minConfidence={minConfidence}
             label={`Network of ${listJoin(symbols)} and ${related?.length ?? 0} related genes. The genes table lists the same genes.`}

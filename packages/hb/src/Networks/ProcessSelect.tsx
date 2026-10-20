@@ -12,7 +12,7 @@ export interface ProcessSelectProps {
 // Process networks exist for GIANT only, so the list always comes from version 1.
 export function ProcessSelect({ networks, value, onChange, open, onOpenChange }: ProcessSelectProps) {
   const group = 'Biological process networks';
-  const options = IntegrationService.pick(networks, 'process', 'v1').map((network) => ({ value: network.slug, label: network.title, group }));
+  const options = IntegrationService.pick(networks, 'process', 'v1').map((network) => ({ value: network.slug, label: network.name, group }));
   return (
     <Select
       label="Biological process"
