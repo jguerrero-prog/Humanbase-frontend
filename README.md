@@ -52,6 +52,17 @@ The front end always calls a relative `/api` path, so the API never needs extra 
 
 `apps/web/public/config.json` is read when the page loads, so the API path can change without rebuilding.
 
+## Deploying
+
+`pnpm --filter @humanbase/web build` writes the whole front end to `apps/web/dist`: static files with no server code. To run it beside the Humanbase API, for example on humanbase.io:
+
+1. Serve `apps/web/dist` from the same origin as the API and send `/api` to the API. The API sends no CORS headers, so it can't be called from another domain.
+2. Send every path that isn't a file to `index.html`, so links such as `/networks/?entrez=3553` open on a refresh.
+3. Cache `assets/` for a year (every name has a content hash), and never cache `index.html` or `config.json`. The vendored genome browser lives in `biodalliance/`.
+4. Set `config.json`: `"api": true` beside the API, `"api": false` for the API-off demo. To serve under a path such as `/app/`, build with `WEB_BASE=/app/`.
+
+The [Deploying page](apps/docs/src/pages/resources/deploying.astro) on the design system site has an example nginx configuration and the checks to run before switching over. The GitHub Pages demo, built by `.github/workflows/pages.yml`, is the API-off example.
+
 ## Turning the API off
 
 `apps/web/public/config.json` has one switch:
