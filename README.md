@@ -34,7 +34,9 @@ pnpm dev:docs   # the design system site
 | --- | --- |
 | `pnpm check` | Type checks, lints and runs unit tests. CI runs the same. |
 | `pnpm build` | Builds both apps. The docs build also indexes search. |
-| `pnpm test:e2e` | Builds both apps and scans every page for WCAG 2.2 AA issues. |
+| `pnpm test:e2e` | Builds both apps and scans every page for WCAG 2.2 AA issues, with the API off. |
+| `pnpm test:live` | Runs every screen against the live Humanbase API. See below. |
+| `pnpm test:live:jobs` | Submits one example job per tool through the forms and checks each result. |
 | `pnpm tokens` | Regenerates `tokens.css` after the token files change. |
 | `pnpm api:generate` | Regenerates the API types from an API's `/api/schema/`. |
 | `pnpm api:verify` | Calls every endpoint the front end uses and reports which ones work. |
@@ -63,6 +65,14 @@ With `"api": false` the front end never calls an API. Every screen shows sample 
 The sample data is real Humanbase API responses, plus files the API links to, such as the NetWAS example GWAS files. Where a response can only come from submitting a job, the sample is hand-built in the same shape and says so in its `note`. `packages/data/endpoints.json` lists, for each endpoint, the requests the screens make, including not-found cases. `pnpm samples:record` fetches them from the public API, or from the origin you pass, and saves one file per request. It only sends read requests; it never submits a job. Gene lookups in the ASD Browser read static files on S3 instead of the API; the genes listed under `geneLookups` are recorded the same way, so those stay off too. Add `--only=/api/terms` to record only the samples whose path starts with that prefix. An endpoint can list `omit`, field names dropped from its samples wherever they appear, such as long term descriptions the screens never show.
 
 To connect your own engine instead of the Humanbase API, write a class that implements `DataClient` (`get`, `post`, and `text` for files the API links to, such as job results) and pass it to `new Humanbase(yourClient)` in `apps/web/src/main.tsx`. Services and screens don't change.
+
+## Testing against the live API
+
+`pnpm test:e2e` uses the bundled sample data, so it shows how the screens render but not whether real API data lands in them. `pnpm test:live` runs the app with the API on, against the public Humanbase API or `HB_API_PROXY_TARGET`, and opens every screen with real data. Each screen must show real values, log no console errors, get no failed API responses, fit 1440 and 390 pixel widths without sideways scrolling, and pass a WCAG 2.2 AA scan.
+
+`pnpm test:live:jobs` also submits one real example job per tool and checks the result page once it finishes. It never retries a failed submission.
+
+Neither runs on pull requests, so a slow or unavailable API never blocks a merge. The **Live API** workflow runs `pnpm test:live` every Monday, and both on demand from the Actions tab.
 
 ## Using the design system
 

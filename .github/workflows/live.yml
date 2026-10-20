@@ -1,0 +1,60 @@
+name: Live API
+
+# Runs the front end against the live Humanbase API. Manual and weekly only, so a slow or unavailable API never blocks a merge.
+on:
+  workflow_dispatch:
+    inputs:
+      jobs:
+        description: Also submit one example job per tool and check the results
+        type: boolean
+        default: false
+  schedule:
+    - cron: '0 9 * * 1'
+
+env:
+  ASTRO_TELEMETRY_DISABLED: 1
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-api
+  cancel-in-progress: false
+
+jobs:
+  screens:
+    name: Every screen with live data
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:live
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-report
+          path: test-results/
+          retention-days: 14
+
+  example-jobs:
+    name: One example job per tool
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.jobs }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:live:jobs

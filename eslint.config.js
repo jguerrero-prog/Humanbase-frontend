@@ -26,7 +26,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.test.{ts,tsx}', 'e2e/**'],
+    files: ['**/*.test.{ts,tsx}', 'e2e/**', 'e2e-live/**'],
     languageOptions: { globals: globals.vitest },
   },
   {
