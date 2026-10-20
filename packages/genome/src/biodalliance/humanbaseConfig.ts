@@ -82,6 +82,6 @@ export const humanbaseBrowserOptions: Record<string, unknown> = {
   noExport: true,
   noOptions: true,
   noClearHighlightsButton: true,
-  // Browsers only run workers from the page's own origin, and the library loads from biodalliance.org.
+  // Tracks load on the main thread; this is the setup the live checks cover.
   useFetchWorkers: false,
 };
