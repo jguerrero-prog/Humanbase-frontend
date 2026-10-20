@@ -29,15 +29,13 @@ describe('in silico mutagenesis', () => {
     expect(result.strongest(1)[0]).toMatchObject({ position: 999, alt: 'A' });
   });
 
-  it('lays a window out one row per base, empty where the base is the reference', () => {
+  it('lays a window out one column per position, with its reference and each substitution', () => {
     const result = new InsilicoResult({ positions: ['0,T,A,-1', '0,T,G,0.5', '0,T,C,0.2', '1,A,G,2', '1,A,C,0', '1,A,T,-0.1'] });
-    expect(result.window(0, 2)).toEqual([
-      { base: 'T', values: [null, -0.1] },
-      { base: 'G', values: [0.5, 2] },
-      { base: 'A', values: [-1, null] },
-      { base: 'C', values: [0.2, 0] },
-    ]);
     expect(result.strongestPer(1).map((item) => item.value)).toEqual([-1, 2]);
+    expect(result.columns(0, 2)).toEqual([
+      { position: 0, reference: 'T', values: { A: -1, G: 0.5, C: 0.2 } },
+      { position: 1, reference: 'A', values: { G: 2, C: 0, T: -0.1 } },
+    ]);
     expect(result.csv().split('\n')[1]).toBe('0,T,A,-1');
   });
 

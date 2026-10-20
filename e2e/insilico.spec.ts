@@ -21,10 +21,13 @@ test('the in silico mutagenesis form runs its example into the job page, with th
 test('the in silico mutagenesis result moves its window and explains choices the samples lack, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(example);
-  await expect(page.getByRole('grid', { name: 'Substitutions at positions 984 to 1,013' })).toBeVisible();
+  await expect(page.getByRole('grid', { name: 'Substitutions at positions 954 to 1,044' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Position 999' })).toContainText('−4.63');
   expect(await violationsOf(page)).toEqual([]);
-  await page.getByRole('row', { name: /^1,005 .*A>T/ }).getByRole('button', { name: 'Show position 1,005 in the map' }).click();
-  await expect(page.getByRole('grid', { name: 'Substitutions at positions 990 to 1,019' })).toBeVisible();
+  await page.getByRole('slider', { name: 'Window along the sequence' }).press('ArrowRight');
+  await expect(page.getByRole('grid', { name: 'Substitutions at positions 955 to 1,045' })).toBeVisible();
+  await page.getByRole('gridcell', { name: /^Position 1,005, \w to \w:/ }).first().click();
+  await expect(page.getByRole('region', { name: 'Position 1,005' })).toBeVisible();
   await page.getByRole('combobox', { name: /^Sequence/ }).click();
   await page.getByRole('option', { name: /known_GATA1_binding_increase/ }).click();
   await expect(page.getByText('The sample data doesn’t include this choice')).toBeVisible();

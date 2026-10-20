@@ -1,5 +1,5 @@
-import { ApiError, featureLabel, InsilicoResult, sequenceSpan, useDeepseaFeatures, useHumanbase, useInsilico, type DeepseaJob, type Substitution } from '@humanbase/data';
-import { ActionMenu, Alert, Button, Cell, HeaderCell, Heatmap, ResultHeader, ResultLayout, saveFile, Select, Skeleton, Slider, Table, type ScaleSpec } from '@humanbase/ui';
+import { ApiError, featureLabel, sequenceSpan, useDeepseaFeatures, useHumanbase, useInsilico, type DeepseaJob, type InsilicoResult } from '@humanbase/data';
+import { ActionMenu, Alert, Button, ResultHeader, ResultLayout, saveFile, Select, Skeleton, SubstitutionMap, type ScaleSpec } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { jobDateTime } from '../Jobs/JobPage';
 import { deepseaFormLink } from './DeepseaForm';
@@ -12,13 +12,12 @@ export interface InsilicoResultViewProps {
   tools: ReactNode;
 }
 
-const windowSize = 30;
-const strongestShown = 10;
+const windowSize = 91;
+const binSize = 10;
 // The result the Figma screens open on: HepG2 / CEBPB, the example's first variant.
 const startFeature = 297;
 const scale: ScaleSpec = { title: 'Log2 fold change', kind: 'diverging', edges: [-0.5, -0.25, -0.1, 0.1, 0.25, 0.5], words: ['Mutation lowers', 'Mutation raises'] };
 const number = new Intl.NumberFormat('en-US');
-const fold = (value: number) => (value < 0 ? `−${Math.abs(value).toFixed(2)}` : value.toFixed(2));
 
 function sequenceOption(name: string) {
   const span = sequenceSpan(name);
@@ -105,7 +104,7 @@ export function InsilicoResultView({ job, title, tools }: InsilicoResultViewProp
   } else if (!result.data) {
     body = <Skeleton width="100%" height="320px" />;
   } else {
-    body = <SubstitutionMap result={result.data} feature={feature} span={span} start={start} onStart={setStart} />;
+    body = <InsilicoMap key={`${sequence}-${featureIndex}`} result={result.data} feature={feature} span={span} start={start} onStart={setStart} />;
   }
 
   return (
@@ -125,7 +124,7 @@ export function InsilicoResultView({ job, title, tools }: InsilicoResultViewProp
   );
 }
 
-interface SubstitutionMapProps {
+interface InsilicoMapProps {
   result: InsilicoResult;
   feature: string;
   span: ReturnType<typeof sequenceSpan>;
@@ -133,61 +132,26 @@ interface SubstitutionMapProps {
   onStart: (start: number) => void;
 }
 
-function SubstitutionMap({ result, feature, span, start, onStart }: SubstitutionMapProps) {
-  const center = Math.floor(result.length / 2) - 1;
+function InsilicoMap({ result, feature, span, start, onStart }: InsilicoMapProps) {
+  // Opens on the strongest position for the chosen feature, with the window centered on it.
+  const strongest = useMemo(() => result.strongest(1)[0]?.position ?? Math.floor(result.length / 2), [result]);
+  const [selected, setSelected] = useState(strongest);
   const last = Math.max(0, result.length - windowSize);
-  const from = Math.min(last, Math.max(0, start ?? center - Math.floor(windowSize / 2)));
-  const to = Math.min(result.length, from + windowSize) - 1;
-  const genome = (position: number) => (span ? `${span.chromosome}:${number.format(span.start + position)}` : undefined);
-  const centerNote = span ? ` ${number.format(center)} is ${genome(center)}, the variant at its center.` : '';
-  const show = (item: Substitution) => onStart(item.position - Math.floor(windowSize / 2));
-  const columns = Array.from({ length: to - from + 1 }, (_, index) => ({ label: number.format(from + index) }));
-
+  const from = Math.min(last, Math.max(0, start ?? strongest - Math.floor(windowSize / 2)));
+  const overview = useMemo(() => result.strongestPer(binSize).map((item) => Math.abs(item.value)), [result]);
   return (
-    <>
-      <Heatmap
-        title={`Substitutions at positions ${number.format(from)} to ${number.format(to)}`}
-        summary={`Each cell mutates the base at that position to the row’s base; blank cells are the original base.${centerNote}`}
-        scale={scale}
-        columns={columns}
-        rows={result.window(from, windowSize).map((row) => ({ label: row.base, values: row.values }))}
-        rowHeader="Mutated to"
-        columnHeader="Position"
-      />
-      <div className="insilico-window">
-        <Slider label="Window" min={0} max={last} value={from} onChange={onStart} />
-        <p className="insilico-note">
-          Positions {number.format(from)} to {number.format(to)} of the {number.format(result.length)} bp sequence. Move the window along it, or jump to a strong change below.
-        </p>
-      </div>
-      <Table caption={`Strongest changes to ${feature}`} density="compact">
-        <thead>
-          <tr>
-            <HeaderCell>Position</HeaderCell>
-            {span && <HeaderCell>Genome position</HeaderCell>}
-            <HeaderCell>Change</HeaderCell>
-            <HeaderCell align="end">Log2 fold change</HeaderCell>
-            <HeaderCell>
-              <span className="visually-hidden">Show</span>
-            </HeaderCell>
-          </tr>
-        </thead>
-        <tbody>
-          {result.strongest(strongestShown).map((item) => (
-            <tr key={`${item.position}-${item.alt}`}>
-              <Cell rowHeader type="id">{number.format(item.position)}</Cell>
-              {span && <Cell type="id">{genome(item.position)}</Cell>}
-              <Cell type="id">{`${item.ref}>${item.alt}`}</Cell>
-              <Cell type="number">{fold(item.value)}</Cell>
-              <Cell>
-                <Button variant="ghost" size="small" onClick={() => show(item)} aria-label={`Show position ${number.format(item.position)} in the map`}>
-                  Show
-                </Button>
-              </Cell>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </>
+    <SubstitutionMap
+      length={result.length}
+      start={from}
+      windowSize={windowSize}
+      onStart={onStart}
+      columns={result.columns(from, windowSize)}
+      overview={overview}
+      selected={selected}
+      onSelect={setSelected}
+      scale={scale}
+      {...(span && { genome: { chromosome: span.chromosome, start: span.start } })}
+      note={`Log2 fold change for ${feature}. Negative: the mutation lowers the predicted signal.`}
+    />
   );
 }

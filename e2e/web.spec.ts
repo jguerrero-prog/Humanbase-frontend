@@ -30,6 +30,8 @@ test('a running job that finishes is announced on any page and listed on the Job
   const toast = page.getByRole('region', { name: 'Job notifications' }).getByRole('listitem');
   await expect(toast).toHaveText(/Seqweaver finished: IL1B region variants/);
   await expect(page.getByRole('link', { name: 'View results: IL1B region variants' })).toBeVisible();
+  // The toast fades in; axe reads colors mid-fade otherwise.
+  await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished)));
   const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
   expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
   expect(apiRequests).toEqual([]);
