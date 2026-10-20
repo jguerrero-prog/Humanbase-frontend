@@ -12,9 +12,8 @@ import {
   type Mhc,
   type NetwasExample,
 } from '@humanbase/data';
-import { Accordion, AccordionItem, Alert, Button, ErrorSummary, FileDrop, saveFile, SegmentedControl, Select, TextInput, type ChosenFile, type ErrorSummaryItem } from '@humanbase/ui';
+import { AboutPanel, Accordion, AccordionItem, Alert, Button, ErrorSummary, FileDrop, saveFile, SegmentedControl, Select, TextInput, type ChosenFile, type ErrorSummaryItem } from '@humanbase/ui';
 import { useId, useMemo, useState, type FormEvent } from 'react';
-import { JobAbout } from '../Jobs/JobAbout';
 import '../Jobs/JobForm.css';
 import './Netwas.css';
 
@@ -301,7 +300,7 @@ export function NetwasForm({ draft, docsHref, onStarted }: NetwasFormProps) {
           <p className="job-form-help">Starts a job; you can leave this page.</p>
         </div>
       </form>
-      <JobAbout
+      <AboutPanel
         tool="NetWAS"
         docsHref={docsHref}
         examplesTitle={version === 'v3' ? 'Example files: an Alzheimer’s GWAS subset of 1,008 genes, for trying MAGE-WAS, not for results' : 'Example files: the same BMI GWAS (Randall 2013)'}
@@ -309,7 +308,7 @@ export function NetwasForm({ draft, docsHref, onStarted }: NetwasFormProps) {
       >
         NetWAS reprioritizes your GWAS using a tissue-specific functional network and a support vector machine to surface disease genes that a standard p-value cutoff would miss.
         {version === 'v3' && ' With MAGE, it runs as MAGE-WAS on MAGE networks.'}
-      </JobAbout>
+      </AboutPanel>
     </div>
   );
 }

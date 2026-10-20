@@ -1,7 +1,7 @@
 ---
-import { deepseaExamples } from '@humanbase/data';
+import { deepseaExamples, deepseaModels, readTheDocs } from '@humanbase/data';
 import { VariantJobForm } from '@humanbase/hb';
-import { Accordion, AccordionItem, Breadcrumbs, Button, FileDrop, Icon, RemoveButton, SegmentedControl, Select, TextInput } from '@humanbase/ui';
+import { AboutPanel, Accordion, AccordionItem, Breadcrumbs, Button, FileDrop, Icon, RemoveButton, SegmentedControl, Select, TextInput } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -81,6 +81,21 @@ const behavior = [
   ['Model choice', 'Sei, Beluga and Seqweaver share one form; changing the model keeps the file and title and changes the URL, so each tool keeps its own link.'],
 ];
 
+const aboutSpecs = [
+  ['layout', '848px form and 400px panel side by side in the 1,310px column, top aligned'],
+  ['panel', 'grey 50 (surface.subtle), radius 12, 24px padding, 16px between parts'],
+  ['title', 'the tool\'s name: "About NetWAS", "About Sei"'],
+  ['documentation link', 'Button / Small, ghost, book icon; hidden when a tool has no page yet'],
+  ['example files', 'Example file row: name, what it is, and Use the example or Download; heading names the source'],
+  ['component', 'AboutPanel with tool, children, docsHref, examplesTitle and examples; examples offer onUse, onDownload or both'],
+];
+
+const netwasExamples = [
+  ['bmi-vegas.txt', 'VEGAS format'],
+  ['bmi-magma.genes.out', 'MAGMA format'],
+  ['bmi-2column.tsv', '2-column format'],
+];
+
 const specs = [
   ['form column', 'Form 848px and About panel 400px at 1440, 64px apart; fields 24px apart; About panel grey 50, 1px border, 12px radius'],
   ['file drop', '640px minimum; empty and drag over 28px padding, 1.5px dashed border, solid 2px green on drag over, no tinted fill'],
@@ -142,26 +157,29 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
               <p>Starts a job; you can leave this page.</p>
             </div>
           </div>
-          <aside class="about">
-            <h4>About Seqweaver</h4>
-            <p>A deep learning framework for predicting RNA-binding protein target site dysregulation and RNA sequence variant effects.</p>
-            <Button variant="ghost" size="small">Read the Seqweaver documentation</Button>
-            <Button variant="ghost" size="small">Explore Seqweaver effects of gnomAD variants</Button>
-            <h5>Example files</h5>
-            <ul class="examples">
-              {
-                examples.map(([name, text]) => (
-                  <li>
-                    <span><strong>{name}</strong>{text}</span>
-                    <Button variant="ghost" size="small" icon="download">Download</Button>
-                  </li>
-                ))
-              }
-            </ul>
-          </aside>
+          <AboutPanel tool="Seqweaver" docsHref={deepseaModels.seqweaver.docsHref} headingLevel={4} examples={examples.map(([name, detail]) => ({ name: name ?? '', detail: detail ?? '', onDownload: () => undefined }))}>
+            A deep learning framework for predicting RNA-binding protein target site dysregulation and RNA sequence variant effects.
+          </AboutPanel>
         </div>
       </div>
     </ProductScreen>
+  </DocSection>
+
+  <DocSection title="About panel" lead="Every tool form has the same panel on its right: what the tool does, a link to its documentation, and example files people can try. It is one component, so each tool only fills in its words and files.">
+    <div class="about-specimen">
+      <AboutPanel
+        tool="NetWAS"
+        docsHref={`${readTheDocs}netwas.html`}
+        headingLevel={3}
+        examplesTitle="Example files: the same BMI GWAS (Randall 2013)"
+        examples={netwasExamples.map(([name, detail]) => ({ name: name ?? '', detail: detail ?? '', onDownload: () => undefined }))}
+      >
+        NetWAS reprioritizes your GWAS using a tissue-specific functional network and a support vector machine to surface disease genes that a standard p-value cutoff would miss.
+      </AboutPanel>
+    </div>
+    <DocTable caption="About panel specs" columns={['Token', 'Value']} widths={['380px']}>
+      {aboutSpecs.map(([token, value]) => <tr><th scope="row"><code>{token}</code></th><td><code>{value}</code></td></tr>)}
+    </DocTable>
   </DocSection>
 
   <DocSection title="Checking the file" lead="The file is read in the browser as soon as it’s dropped or pasted. The run button looks off until every line passes, but stays focusable so it can say why, and each problem names its line and the rule it breaks.">
@@ -315,61 +333,24 @@ ACGTTGCAGGTCCATGACTTGCAATCGGATCCTAGGCTTACGATCGATTGCCAGTACGGTTAACCGTAGCTAGGCATTCG
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   }
 
+  .about-specimen {
+    inline-size: 400px;
+    margin-block-end: var(--space-6);
+  }
+
   .run {
     display: flex;
     gap: var(--space-4);
     align-items: center;
   }
 
-  .about {
-    display: grid;
-    gap: var(--space-4);
-    justify-items: start;
-    padding: var(--space-6);
-    background: var(--surface-subtle);
-    border: var(--border-width-1) solid var(--border-subtle);
-    border-radius: var(--radius-md);
-  }
 
-  .about h4 {
-    font: 700 17px/1.4 Lato, sans-serif;
-  }
 
-  .about h5 {
-    font: var(--type-label-sm);
-  }
 
-  .about > p {
-    font: var(--type-body-sm);
-    color: var(--text-secondary);
-  }
 
-  .examples {
-    display: grid;
-    gap: var(--space-2);
-    inline-size: 100%;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
 
-  .examples li {
-    display: flex;
-    gap: var(--space-2);
-    align-items: center;
-    justify-content: space-between;
-  }
 
-  .examples span {
-    display: grid;
-    font: var(--type-caption);
-    color: var(--text-secondary);
-  }
 
-  .examples strong {
-    font: 700 13px/1.4 Lato, sans-serif;
-    color: var(--text-default);
-  }
 
   .check-states {
     display: grid;

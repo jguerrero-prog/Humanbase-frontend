@@ -5,7 +5,6 @@ export { AsdExplorer, type AsdExplorerProps, type AsdState } from './AsdBrowser/
 export { AsdHeader, AsdVariantTable, type AsdHeaderProps, type AsdVariantTableProps } from './AsdBrowser/AsdParts';
 export { analysisColumns, analysisIcons, analysisOptions, productFooter, productSections } from './content/product';
 export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
-export { JobAbout, type JobAboutProps, type JobExample } from './Jobs/JobAbout';
 export { DeepseaAbout, DeepseaForm, deepseaFormLink, deepseaJobLink, type DeepseaFormProps } from './Deepsea/DeepseaForm';
 export { GeneFinder, type GeneFinderProps } from './Expecto/GeneFinder';
 export { GeneExpression, type GeneExpressionProps, type GeneExpressionState, type GeneExpressionView } from './Expecto/GeneExpression';

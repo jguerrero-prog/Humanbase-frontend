@@ -1,7 +1,6 @@
 import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type InputKind, type VariantModel } from '@humanbase/data';
-import { Alert, saveFile } from '@humanbase/ui';
+import { AboutPanel, Alert, saveFile } from '@humanbase/ui';
 import { useState } from 'react';
-import { JobAbout } from '../Jobs/JobAbout';
 import '../Jobs/JobForm.css';
 import { VariantJobForm, type VariantJob } from '../VariantJobForm/VariantJobForm';
 
@@ -71,7 +70,7 @@ export function DeepseaForm({ model, onModelChange, onStarted }: DeepseaFormProp
 export function DeepseaAbout({ model }: { model: VariantModel }) {
   const info = deepseaModels[model];
   return (
-    <JobAbout
+    <AboutPanel
       tool={info.inSentence ?? info.tool}
       docsHref={info.docsHref}
       examples={Object.entries(deepseaExamples[model].hg19).map(([kind, text]) => ({
@@ -81,7 +80,7 @@ export function DeepseaAbout({ model }: { model: VariantModel }) {
       }))}
     >
       {info.about}
-    </JobAbout>
+    </AboutPanel>
   );
 }
 
