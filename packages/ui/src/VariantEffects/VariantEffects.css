@@ -35,6 +35,12 @@
   fill: var(--color-grey-400);
 }
 
+.variant-plot-point-colored {
+  fill: var(--point-color);
+  stroke: var(--text-secondary);
+  stroke-width: 1;
+}
+
 .variant-plot-selected circle {
   fill: none;
   stroke: var(--text-default);

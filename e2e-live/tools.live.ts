@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
+import { downloadFrom } from '../e2e/downloads';
 import { checkScreen, watch, web } from './live';
 
 test('the Modules renal panel result shows real modules, a module drawer and the Genes tab', async ({ page }) => {
@@ -15,11 +17,47 @@ test('the Modules renal panel result shows real modules, a module drawer and the
   await checkScreen(page, problems);
 });
 
+test('a Modules gene shows its live terms and neighbors, and chains to a neighbor', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&module=1&gene=6928`);
+  const gene = page.getByRole('dialog', { name: 'HNF1B' });
+  await expect(gene.getByText('HNF1 homeobox B, in M1 renal system development')).toBeVisible();
+  await expect(gene.getByRole('table', { name: 'Enriched terms of M1 that include HNF1B' }).getByRole('row')).toHaveCount(10);
+  await checkScreen(page, problems);
+  await gene.getByRole('radio', { name: 'Gene neighbors' }).click();
+  const neighbors = gene.getByRole('table', { name: 'Genes connected to HNF1B' });
+  await expect(neighbors.getByRole('row')).toHaveText([/Gene/, /^HNF4A.*M1.*0\.13$/, /^KCNJ1.*M1.*0\.10$/]);
+  await checkScreen(page, problems);
+  await neighbors.getByRole('button', { name: 'HNF4A' }).click();
+  await expect(page.getByRole('dialog', { name: 'HNF4A' }).getByRole('table', { name: 'Genes connected to HNF4A' })).toContainText('HNF1B');
+  await page.getByRole('button', { name: 'Back to M1' }).click();
+  await expect(page.getByRole('dialog', { name: /^M1, / })).toBeVisible();
+  await checkScreen(page, problems);
+});
+
 test('the Modules search matches the renal disease panel', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/modules/`);
   await page.getByRole('button', { name: 'renal disease panel' }).click();
   await expect(page.getByText(/^\d+ matched$/)).toBeVisible();
+  await checkScreen(page, problems);
+});
+
+test('the Modules Download menu saves the real result as TSV, PDF and ZIP', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9`);
+  await expect(page.getByText(/Showing \d+ enriched modules/)).toBeVisible();
+  const tsv = await downloadFrom(page, 'Download', 'Download as TSV');
+  expect(tsv.name).toMatch(/^kidney_gene-ontology-bp_\d+\.tsv$/);
+  const rows = tsv.bytes.toString().split('\n');
+  expect(rows[0]).toMatch(/^GO_VERSION\t\S+/);
+  const terms = rows.indexOf('CLUSTER_NAME\tTERM_NAME\tGO_ID\tTERM_Q_VALUE\tGENE_COUNT\tTERM_GENES');
+  expect(rows[terms + 1]).toMatch(/^M\d+\t.+\tGO:\d{7}\t[\d.e-]+\t\d+\t[\w-]+(,[\w-]+)*$/);
+  expect(rows).toContain('SOURCE\tTARGET\tWEIGHT\t\t\t');
+  const pdf = await downloadFrom(page, 'Download', 'Download as PDF');
+  expect(pdf.bytes.subarray(0, 4).toString()).toBe('%PDF');
+  const zip = await downloadFrom(page, 'Download', 'Download as ZIP');
+  expect(zip.bytes.subarray(0, 2).toString()).toBe('PK');
   await checkScreen(page, problems);
 });
 
@@ -66,12 +104,52 @@ for (const [tool, id, heading] of [
       await checkScreen(page, problems);
     }
     const before = page.url();
-    await page.getByRole('button', { name: 'Next' }).click();
+    await page.getByRole('button', { name: 'Next', exact: true }).click();
     await expect(page).not.toHaveURL(before);
     await expect(page.getByRole('heading', { name: /^Molecular effects of chr/ })).toBeVisible();
     await checkScreen(page, problems);
   });
 }
+
+test('the real Seqweaver result shows and hides genome tracks from the real files and exports the view', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);
+  const headers = page.locator('.genome-engine .track-header-name');
+  await expect(headers).toHaveText(['Sequence', 'Genes']);
+  await expect(page.locator('.genome-engine').getByText('CELSR2 →')).toBeVisible();
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Tracks' });
+  await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
+  await drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' }).check();
+  await drawer.getByRole('checkbox', { name: 'Sequence' }).uncheck();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(headers).toHaveText(['Conservation', 'GM12878 ChromHMM', 'Genes']);
+  await expect(page.locator('.genome-engine .genome-tracks-bar')).not.toHaveCount(0);
+  // chr1:109,792,590-109,842,590 holds 39 segments in gm12878.ChromHMM.bb, the first PromP and the one under the variant ReprW.
+  const segments = page.locator('.genome-engine .genome-tracks-segment');
+  await expect(segments).toHaveCount(39);
+  await expect(segments.first()).toHaveAttribute('fill', '#CF0BC6');
+  await segments.nth(11).hover();
+  await expect(page.getByRole('tooltip')).toHaveText(/^QuiesGM12878 ChromHMMStart109,806,801Length9,600 bp$/);
+  await page.getByText('View as table').click();
+  const table = page.getByRole('table', { name: 'GM12878 ChromHMM segments in chr1:109,792,590-109,842,590, GRCh37/hg19' });
+  await expect(table.getByRole('row')).toHaveCount(40);
+  await expect(table.getByRole('row').filter({ hasText: '109,816,601' })).toHaveText(/^ReprW\s*109,816,601\s*109,818,400\s*1,800 bp$/);
+  await checkScreen(page, problems);
+  await page.getByRole('button', { name: 'Export' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Export the view' });
+  const [download] = await Promise.all([page.waitForEvent('download'), dialog.getByRole('button', { name: 'Export' }).click()]);
+  expect(download.suggestedFilename()).toMatch(/^chr1_\d+-\d+_hg19\.svg$/);
+  const svg = await readFile(await download.path(), 'utf8');
+  expect(svg).toContain('Conservation');
+  expect(svg).toContain('CELSR2 →');
+  expect(svg).toContain('genome-tracks-bar');
+  expect(svg.match(/class="genome-tracks-segment"/g)).toHaveLength(39);
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(headers).toHaveText(['Sequence', 'Genes']);
+});
 
 test('the real Beluga result shows its variants and molecular effects', async ({ page }) => {
   const problems = watch(page);
@@ -151,6 +229,18 @@ test('the ASD Browser draws the real track files, finds SCN2A and pages the tabl
   await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Genes']);
   await expect(browser.getByText('← PEX10')).toBeVisible();
   await expect(browser.locator('.genome-tracks-bar.is-selected')).toHaveCount(2);
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Tracks' });
+  await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
+  await drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' }).check();
+  await drawer.getByRole('checkbox', { name: 'RNA disease impact score' }).uncheck();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'Conservation', 'GM12878 ChromHMM', 'Genes']);
+  await expect(browser.locator('.genome-tracks-segment')).toHaveCount(108);
+  await expect(browser.locator('.genome-tracks-bar.is-selected')).toHaveCount(2);
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
+  await drawer.getByRole('button', { name: 'Done' }).click();
   const coveredBar = await page.evaluate(async () => {
     const bar = document.querySelector('.top-bar');
     const frame = document.querySelector('.genome-engine-frame');

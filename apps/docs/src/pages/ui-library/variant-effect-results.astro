@@ -16,6 +16,7 @@ import {
   StrongestEffects,
   VariantFocus,
   VariantScorePlot,
+  chromosomeColor,
   VariantsTable,
   variantLabel,
 } from '@humanbase/ui';
@@ -106,7 +107,7 @@ const models = [
 
 const words = [
   ['Focus line', 'Selected variant: chr1:109,817,590 G>T, disease impact score 1.00'],
-  ['Plot caption', '10 variants. Chromosomes alternate dark and light grey.'],
+  ['Plot caption', '10 variants, colored by chromosome; position also carries the chromosome.'],
   ['Heatmap count', 'Showing the top 20 of 232 features for this variant.'],
   ['Search, nothing found', 'No proteins match “LIN28B” for this variant. Search by cell type or protein, such as K562.'],
   ['Genome range filter', 'Only variants in the genome browser’s range: 1 of 10.'],
@@ -117,7 +118,10 @@ const behavior = [
   ['Selection drives the page', 'Clicking a variant in the plot or table, or Previous and Next, moves the genome browser and both effect views. On load the first variant by genome position is selected, as today (chr1:109,817,590 in the example).'],
   ['Plot and table', 'Hovering one highlights the other; sorting the table never changes the plot.'],
   ['Score switches', 'Changing the variant score redraws the plot and re-sorts the table; changing the heatmap score keeps the selected rows in view.'],
-  ['Effects views', 'Strongest effects opens first with one variant in range; Heatmap opens first with two or more. Score, threshold, cell type and search apply to all three tabs; grouping by protein applies to Strongest effects. Heatmap rows can be Full or Compact.'],
+  ['Score type documentation', 'A documentation link (Button / Small, ghost, book icon) sits beside the plot’s Score and the effects’ Score, as humanbase.io’s book icon does. It opens the model’s page at #output: sei.html, beluga.html, seqweaver.html or expecto.html. In silico mutagenesis links in-silico-mutagenesis.html#output as Log-fold change score documentation.'],
+  ['Color style (Sei)', 'Every result colors its points by chromosome in humanbase.io’s 24 colors (viz.chromosome). Sei results add Color style: Chromosome, or Sequence class, which colors each variant by the group of the class it changes most, in humanbase.io’s eight colors (viz.seqclass), with Legend / Categorical above the plot. Beluga and Seqweaver have no classes, so no Color style.'],
+  ['Effects views', 'Strongest effects opens first with one variant in range; Heatmap opens first with two or more. Score, threshold, cell type and search apply to all three tabs; grouping by protein applies to Strongest effects. The heatmap’s View is Full or Compact, as on humanbase.io: Compact keeps one variant per 15px of its width, the center one or else the higher variant score.'],
+  ['Heatmap columns', 'One per variant in the genome browser’s view, opened with 50 kb either side of the selected variant, as on humanbase.io. Clicking a column’s line selects that variant and centers the browser on it; dragging the cells moves the browser. Moving the browser makes the variant nearest its center the selected one.'],
   ['Downloads', 'Download results lists the files from the job page; the plot’s download gives an image of the plot as shown.'],
   ['URL', 'Selected variant, scores, plot style and heatmap settings are in the URL.'],
 ];
@@ -183,7 +187,7 @@ const effects = new EffectGroups(experiments); // feature, cell, context, label,
             <SegmentedControl label="Plot by" size="small" segments={plotBy} value="genome" />
             <IconButton icon="download" label="Download the plot" />
           </div>
-          <VariantScorePlot variants={exampleVariants} score={{ key: 'impact', label: 'Disease impact score' }} selected={selectedVariant} summary="The 9 of the example’s 10 variants that Figma records. Chromosomes alternate dark and light grey; position carries the chromosome, so color doesn’t have to." />
+          <VariantScorePlot variants={exampleVariants} score={{ key: 'impact', label: 'Disease impact score' }} selected={selectedVariant} pointColor={(variant) => chromosomeColor(variant.chromosome)} summary="The 9 of the example’s 10 variants that Figma records, colored by chromosome; position also carries the chromosome." />
         </Fragment>
         <Fragment slot="companion">
           <SearchField label="Filter by name or position" placeholder="Filter by name or position" size="medium" />

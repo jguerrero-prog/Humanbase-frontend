@@ -1,56 +1,23 @@
 import type { GeneModel, GenomeTracks, ScorePoint, SequenceSpan } from '@humanbase/data';
-import { GenomeTrackView, type GeneShape, type TrackOf, type TrackState } from '@humanbase/ui';
-import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { withChr, type Assembly, type GenomeDataTrack, type GenomeRegion } from '../GenomeBrowserEngine';
-import type { TrackEngine } from './TrackEngine';
+import { GenomeTrackView, type GeneShape, type TrackOf } from '@humanbase/ui';
+import { useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { isSegmentTrack, withChr, type Assembly, type GenomeDataTrack, type GenomeRegion, type GenomeScoreTrack } from '../GenomeBrowserEngine';
+import { builtInTracks, genesTrack, sequenceTrack } from '../genomeTrackList';
+import type { DrawnTracks, TrackEngine } from './TrackEngine';
+import { readLimit, useSegmentTracks, useTrackData } from './useTrackData';
 
 interface TrackPanelProps {
   engine: TrackEngine;
   files: GenomeTracks;
   assembly: Assembly;
-  assemblyName: string;
   tracks: readonly GenomeDataTrack[];
   onRegionChange: (region: GenomeRegion) => void;
 }
 
-interface Loaded<T> {
-  state: TrackState;
-  data?: T | undefined;
-}
-
-const geneSets: Record<Assembly, string> = { hg19: 'GENCODE 19', hg38: 'GENCODE 21' };
-// Gene models are read up to this width; past it the track asks for a closer view.
-const geneLimit = 5_000_000;
 const readableBase = 7;
-const settle = 150;
 const count = new Intl.NumberFormat('en-US');
 
 const shapeOf = (gene: GeneModel): GeneShape => ({ ...gene, muted: gene.type.includes('pseudogene') });
-
-/** Keeps the last data while new data loads, so a move never blanks a track. */
-function useTrackData<T>(read: (() => Promise<T>) | undefined, key: string): Loaded<T> {
-  const [loaded, setLoaded] = useState<Loaded<T>>({ state: 'loading' });
-  const reader = useRef(read);
-  useLayoutEffect(() => {
-    reader.current = read;
-  });
-  useEffect(() => {
-    const current = reader.current;
-    if (!current) return;
-    let live = true;
-    const timer = window.setTimeout(() => {
-      current().then(
-        (data) => live && setLoaded({ state: 'ready', data }),
-        () => live && setLoaded({ state: 'failed' }),
-      );
-    }, settle);
-    return () => {
-      live = false;
-      window.clearTimeout(timer);
-    };
-  }, [key]);
-  return loaded;
-}
 
 /** Measures the drawing area beside the header column. */
 function useAreaWidth() {
@@ -68,24 +35,33 @@ function useAreaWidth() {
   return { element, width };
 }
 
-export function TrackPanel({ engine, files, assembly, assemblyName, tracks, onRegionChange }: TrackPanelProps) {
-  const { region, highlight } = useSyncExternalStore(engine.subscribe, engine.snapshot);
+export function TrackPanel({ engine, files, assembly, tracks: allTracks, onRegionChange }: TrackPanelProps) {
+  const { region, highlight, hidden } = useSyncExternalStore(engine.subscribe, engine.snapshot);
+  const shownTracks = allTracks.filter((track) => !hidden.includes(track.name));
+  const tracks = shownTracks.filter((track): track is GenomeScoreTrack => !isSegmentTrack(track));
+  const [showSequence, showGenes] = [!hidden.includes(sequenceTrack), !hidden.includes(genesTrack)];
+  const named = builtInTracks(assembly);
   const { element, width } = useAreaWidth();
   const [shift, setShift] = useState(0);
   const chrom = withChr(region.chrom);
   const span = { chrom, start: Math.round(region.start), end: Math.round(region.end) };
   const bases = span.end - span.start + 1;
   const bins = Math.max(1, Math.round(width));
-  const readable = width > 0 && width / bases >= readableBase;
+  const readable = showSequence && width > 0 && width / bases >= readableBase;
   const where = `${chrom}:${span.start}-${span.end}`;
 
   const sequence = useTrackData<SequenceSpan | undefined>(readable ? () => files.sequence(assembly, span) : undefined, readable ? where : 'none');
-  const genes = useTrackData<GeneModel[]>(bases <= geneLimit ? () => files.genes(assembly, span) : undefined, bases <= geneLimit ? where : 'far');
+  const nearGenes = showGenes && bases <= readLimit;
+  const genes = useTrackData<GeneModel[]>(nearGenes ? () => files.genes(assembly, span) : undefined, nearGenes ? where : 'far');
   const urls = tracks.map((track) => track.bigWigUrl).join(' ');
-  const scores = useTrackData<ScorePoint[][]>(width > 0 ? () => Promise.all(tracks.map((track) => files.scores(track.bigWigUrl, span, bins))) : undefined, `${where} ${bins} ${urls}`);
+  const scores = useTrackData<Record<string, ScorePoint[]>>(
+    width > 0 && tracks.length > 0 ? async () => Object.fromEntries(await Promise.all(tracks.map(async (track) => [track.bigWigUrl, await files.scores(track.bigWigUrl, span, bins)] as const))) : undefined,
+    `${where} ${bins} ${urls}`,
+  );
 
-  const geneTrack: TrackOf<readonly GeneShape[]> =
-    bases > geneLimit ? { name: 'Genes', meta: geneSets[assembly], state: 'ready', data: [] } : { name: 'Genes', meta: geneSets[assembly], state: genes.state, data: genes.data?.map(shapeOf) };
+  const segments = useSegmentTracks(files, shownTracks, span);
+
+  const geneTrack: TrackOf<readonly GeneShape[]> = { name: named.genes.name, meta: named.genes.meta, ...(bases > readLimit ? { state: 'ready', data: [] } : { state: genes.state, data: genes.data?.map(shapeOf) }) };
 
   const pan = (pixels: number, done: boolean) => {
     if (!done) {
@@ -99,24 +75,27 @@ export function TrackPanel({ engine, files, assembly, assemblyName, tracks, onRe
     onRegionChange({ chrom, start, end: start + bases - 1 });
   };
 
+  const drawn: DrawnTracks = {
+    start: span.start,
+    end: span.end,
+    width,
+    sequence: showSequence ? { name: named.sequence.name, meta: named.sequence.meta, state: readable ? sequence.state : 'ready', data: readable ? sequence.data : undefined } : undefined,
+    scores: tracks.map((track) => {
+      // A track just turned on has no data until its first read lands.
+      const values = scores.data?.[track.bigWigUrl];
+      return { name: track.name, meta: track.meta ?? '', state: values || scores.state === 'failed' ? scores.state : 'loading', data: values && { min: track.range?.[0] ?? 0, max: track.range?.[1] ?? 1, values } };
+    }),
+    segments,
+    genes: showGenes ? geneTrack : undefined,
+    selected: highlight && withChr(highlight.chrom) === chrom ? { position: highlight.position, label: `${chrom}:${count.format(highlight.position)}` } : undefined,
+  };
+  useLayoutEffect(() => {
+    engine.remember(drawn);
+  });
+
   return (
     <div ref={element} className="track-engine">
-      <GenomeTrackView
-        start={span.start}
-        end={span.end}
-        width={width}
-        sequence={{ name: 'Sequence', meta: assemblyName, state: readable ? sequence.state : 'ready', data: readable ? sequence.data : undefined }}
-        scores={tracks.map((track, index) => ({
-          name: track.name,
-          meta: track.meta ?? '',
-          state: scores.state,
-          data: scores.data?.[index] && { min: track.range?.[0] ?? 0, max: track.range?.[1] ?? 1, values: scores.data[index] },
-        }))}
-        genes={geneTrack}
-        selected={highlight && withChr(highlight.chrom) === chrom ? { position: highlight.position, label: `${chrom}:${count.format(highlight.position)}` } : undefined}
-        onPan={pan}
-        shift={shift}
-      />
+      <GenomeTrackView {...drawn} onPan={pan} shift={shift} />
     </div>
   );
 }

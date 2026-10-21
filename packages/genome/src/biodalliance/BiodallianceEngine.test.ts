@@ -1,4 +1,6 @@
+import { suggestedTracks } from '../genomeTrackList';
 import { BiodallianceEngine, markImagesDecorative, resolveTokens } from './BiodallianceEngine';
+import { chromHmm } from './humanbaseConfig';
 
 class FakeBrowser {
   static last: FakeBrowser;
@@ -24,6 +26,16 @@ class FakeBrowser {
   }
   resizeViewer() {
     this.calls.push('resize');
+  }
+  addTier(source: { name: string }) {
+    this.calls.push(`add ${source.name}`);
+  }
+  removeTier(source: { name: string }) {
+    this.calls.push(`remove ${source.name}`);
+  }
+  makeSVG(options: Record<string, unknown>) {
+    this.calls.push(`svg ${JSON.stringify(options)}`);
+    return new Blob(['<svg/>'], { type: 'image/svg+xml' });
   }
 }
 
@@ -58,7 +70,7 @@ describe('BiodallianceEngine', () => {
     const { options } = FakeBrowser.last;
     expect(options).toMatchObject({ chr: 'chr1', viewStart: 2_230_000, viewEnd: 2_440_000, prefix: 'https://example.org/dalliance/', noLocationField: true, useFetchWorkers: false, cookieKey: 'human-grc_hg19' });
     const names = (options.sources as { name: string }[]).map((source) => source.name);
-    expect(names).toEqual(['Genome', 'GENCODE 19', 'Conservation', 'GM12878 ChromHMM', 'DNA Disease Impact Score']);
+    expect(names).toEqual(['Genome', 'GENCODE 19', 'DNA Disease Impact Score']);
     expect(container).toHaveAttribute('aria-label', 'Genome browser');
     expect(document.getElementById(options.pageName as string)).not.toBeNull();
     expect(options).toMatchObject({ noSourceCSS: true, noTrackEditor: true, rulerLocation: 'none' });
@@ -95,6 +107,27 @@ describe('BiodallianceEngine', () => {
     engine.highlight({ chrom: 'chr2', position: 166_100_000 });
     engine.highlight(undefined);
     expect(FakeBrowser.last.calls).toEqual(['setLocation chr2 166095911 166248818', 'clear', 'highlight chr2 166100000 166100001', 'clear']);
+  });
+
+  it('starts hidden tracks disabled, shows and hides tracks by id, and exports its view', async () => {
+    const engine = new BiodallianceEngine();
+    await engine.mount(document.createElement('div'), { label: 'Genome browser', assembly: 'hg19', region, tracks: [dna], hidden: ['DNA Disease Impact Score'] });
+    const sources = FakeBrowser.last.options.sources as { name: string; disabled?: boolean }[];
+    expect(sources.find((source) => source.name === 'DNA Disease Impact Score')?.disabled).toBe(true);
+    engine.showTracks(['genes']);
+    engine.showTracks(['genes']);
+    engine.showTracks([]);
+    await engine.exportSvg({ width: 900, highlights: false, guideline: true, title: 'chr1:2,230,000-2,440,000' });
+    expect(FakeBrowser.last.calls).toEqual(['remove GENCODE 19', 'add DNA Disease Impact Score', 'add GENCODE 19', 'svg {"highlights":false,"ruler":"center","width":900,"banner":false,"region":true}']);
+  });
+
+  it('draws GM12878 ChromHMM with the live site’s style, off until turned on', async () => {
+    const engine = new BiodallianceEngine();
+    await engine.mount(document.createElement('div'), { label: 'Genome browser', assembly: 'hg19', region, tracks: suggestedTracks.hg19, hidden: ['Conservation', 'GM12878 ChromHMM'] });
+    const sources = FakeBrowser.last.options.sources as Record<string, unknown>[];
+    expect(sources.find((source) => source.name === 'GM12878 ChromHMM')).toEqual({ name: 'GM12878 ChromHMM', bwgURI: 'https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb', pinned: true, style: chromHmm.style, disabled: true });
+    engine.showTracks(['Conservation']);
+    expect(FakeBrowser.last.calls).toEqual(['add GM12878 ChromHMM']);
   });
 
   it('keeps the region it shows when the page resizes', async () => {

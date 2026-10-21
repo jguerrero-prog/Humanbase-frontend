@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { downloadFrom } from '../e2e/downloads';
 import { checkScreen, watch, web } from './live';
 
 const il1bTnf = `${web}/networks/?entrez=3553&entrez=7124`;
@@ -88,6 +89,28 @@ test('View as table and Expand show the real connections', async ({ page }) => {
   const table = page.getByRole('table', { name: /Connections between the genes/ });
   await expect(table.getByRole('row').nth(1)).toBeVisible();
   await expect(table).toContainText(/0\.\d\d/);
+  await checkScreen(page, problems);
+});
+
+test('the Download menu saves the real network: the visible part and every pair the API sent', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${il1bTnf}&version=v1`);
+  const summary = page.getByText(/Showing \d+ of (\d+) genes, (\d+) connections/);
+  await expect(summary).toBeVisible();
+  const [, total, shown] = (await summary.textContent())?.match(/of (\d+) genes, (\d+) connections/) ?? [];
+  const lines = async (item: string) => {
+    const file = await downloadFrom(page, 'Download network', item);
+    expect(file.name).toBe('global.txt');
+    return file.bytes.toString().trim().split('\n');
+  };
+  const visible = await lines('Download visible network as text');
+  const entire = await lines('Download entire network as text');
+  expect(visible[0]).toBe('GENE1,GENE2,WEIGHT');
+  expect(visible.length - 1).toBe(Number(shown));
+  // The API sends every pair of its genes.
+  expect(entire.length - 1).toBe((Number(total) * (Number(total) - 1)) / 2);
+  const png = await downloadFrom(page, 'Download network', 'Download as PNG');
+  expect([png.name, png.bytes.subarray(1, 4).toString()]).toEqual(['global.png', 'PNG']);
   await checkScreen(page, problems);
 });
 

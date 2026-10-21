@@ -274,9 +274,9 @@
     {
       "area": "Download data and notice",
       "existing": "Download data fetches dis_asd.tsv from S3; the data-use notice is plain text.",
-      "proposed": "Download data opens the Downloads page; the notice is a dismissible alert remembered in this browser.",
+      "proposed": "Download data opens the same dis_asd.tsv in a new tab; the notice is a dismissible alert remembered in this browser.",
       "status": "Changed",
-      "evidence": "Existing link href; AsdExplorer.tsx:119, AsdParts.tsx:54-58"
+      "evidence": "Both link to s3-us-west-2.amazonaws.com/humanbase/variants/dis_asd.tsv; AsdExplorer.tsx:119, AsdParts.tsx:54-58"
     }
   ]
 }

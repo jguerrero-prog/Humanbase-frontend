@@ -276,9 +276,9 @@
     {
       "area": "Downloads",
       "existing": "Menu: save network as image, as text (visible), as text (entire).",
-      "proposed": "Download the graph as SVG; in table view, download the visible connections as TSV.",
-      "status": "Missing",
-      "evidence": "Existing download menu items; GraphPanel.tsx. No 'entire network as text' export in proposed."
+      "proposed": "Download network menu: PNG, SVG, visible network as text, entire network as text. Same file names and text format.",
+      "status": "Same function",
+      "evidence": "Downloaded each file on both sites for IL1B and TNF; the two text files match line for line. GraphPanel.tsx, networkExport.ts"
     },
     {
       "area": "Layout buttons",

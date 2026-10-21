@@ -1,5 +1,6 @@
 import { useId, type ReactNode } from 'react';
 import { Checkbox } from '../Checkbox/Checkbox';
+import { DocsLink } from '../Jobs/DocsLink';
 import { SearchField } from '../SearchField/SearchField';
 import { SegmentedControl } from '../SegmentedControl/SegmentedControl';
 import { Select, type SelectOption } from '../Select/Select';
@@ -51,6 +52,8 @@ export interface EffectsControlsProps {
   scores: readonly SelectOption[];
   score: string;
   onScore?: ((score: string) => void) | undefined;
+  /** The score's documentation, linked beside the score, such as Score type documentation. */
+  scoreDocs?: { label: string; href: string } | undefined;
   /** Shown when present: the threshold, cell types, search, grouping, rows and order. */
   threshold?: number | null | undefined;
   /** The threshold choices, weakest first; z-scores use 2, 3 and 5. */
@@ -76,10 +79,11 @@ export interface EffectsControlsProps {
 }
 
 export function EffectsControls(props: EffectsControlsProps) {
-  const { scoreLabel = 'Score', scores, score, onScore, threshold, thresholdSteps = [2, 3, 5], onThreshold, cellTypes, resources, resource, onResource, search, onSearch, groupByFeature, onGroupByFeature, featureNoun = 'protein', searchLabel = 'Find a feature or cell type', density, onDensity, lowestFirst, onLowestFirst } = props;
+  const { scoreLabel = 'Score', scores, score, onScore, scoreDocs, threshold, thresholdSteps = [2, 3, 5], onThreshold, cellTypes, resources, resource, onResource, search, onSearch, groupByFeature, onGroupByFeature, featureNoun = 'protein', searchLabel = 'Find a feature or cell type', density, onDensity, lowestFirst, onLowestFirst } = props;
   return (
     <div className="effects-controls">
       <Select label={scoreLabel} size="small" options={scores} value={score} {...(onScore && { onChange: onScore })} className="effects-score" />
+      {scoreDocs && <DocsLink href={scoreDocs.href}>{scoreDocs.label}</DocsLink>}
       {resources?.[0] && <Select label="Resource" size="small" options={resources} value={resource ?? resources[0].value} {...(onResource && { onChange: onResource })} className="effects-resource" />}
       {threshold !== undefined && (
         <SegmentedControl
@@ -94,7 +98,7 @@ export function EffectsControls(props: EffectsControlsProps) {
       {search !== undefined && (
         <SearchField label={searchLabel} placeholder={searchLabel} size="medium" value={search} onChange={(event) => onSearch?.(event.target.value)} className="effects-search" />
       )}
-      {density !== undefined && <SegmentedControl label="Rows" size="small" segments={densities} value={density} onChange={(value) => onDensity?.(value as 'full' | 'compact')} />}
+      {density !== undefined && <SegmentedControl label="View" size="small" segments={densities} value={density} onChange={(value) => onDensity?.(value as 'full' | 'compact')} />}
       {groupByFeature !== undefined && (
         <Checkbox label={`Group experiments by ${featureNoun}`} checked={groupByFeature} onChange={(event) => onGroupByFeature?.(event.target.checked)} />
       )}

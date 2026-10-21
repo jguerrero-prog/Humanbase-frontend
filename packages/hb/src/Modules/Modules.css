@@ -63,3 +63,11 @@
 .module-genes-table .table-cell {
   padding-block: var(--space-2);
 }
+
+.module-gene-table .table-cell {
+  vertical-align: top;
+}
+
+.module-gene-table .table-cell-text {
+  white-space: normal;
+}

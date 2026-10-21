@@ -1,6 +1,7 @@
 ---
-import { GenomeLocation } from '@humanbase/data';
-import { ActionMenu, BrowserSettingsDialog, ExportDialog, GenomeBrowserToolbar, Heatmap, TrackHeader, TrackSettingsDialog, TracksDrawer, genomeBrowserKeyHelp, type ActionMenuItem } from '@humanbase/ui';
+import { GenomeLocation, SampleClient, SampleGenomeTracks } from '@humanbase/data';
+import { isSegmentTrack, suggestedTracks } from '@humanbase/genome';
+import { ActionMenu, BrowserSettingsDialog, DataTooltip, ExportDialog, GenomeBrowserToolbar, GenomeTrackFigure, Heatmap, SegmentTable, TrackHeader, TrackSettingsDialog, TracksDrawer, genomeBrowserKeyHelp, type ActionMenuItem } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -11,7 +12,7 @@ import NoteCard from '../../components/docs/NoteCard.astro';
 import { scoreLegends } from '../../data/score-legends';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
-const view = new GenomeLocation('chr1', 109_792_590, 109_842_590);
+const view = new GenomeLocation('chr1', 109_767_590, 109_867_590);
 const trackCount = 3;
 const variant = { position: 109_817_590, label: 'chr1:109,817,590 G>T', scores: [1, 0.9] };
 const genes = [
@@ -40,7 +41,7 @@ const suggested = [
   { id: 'genes', label: 'Genes', source: 'GENCODE 19', shown: true },
   { id: 'sequence', label: 'Genome sequence', source: 'Bases appear from about 200 bp', shown: true },
   { id: 'conservation', label: 'Conservation', source: 'Suggested track, as today', shown: false },
-  { id: 'chromhmm', label: 'GM12878 ChromHMM', source: 'Chromatin states in GM12878 cells', shown: false },
+  { id: 'chromhmm', label: 'GM12878 ChromHMM', source: 'Genome segmentation', shown: false },
 ];
 const trackSettings = { name: 'Disease impact score', style: 'bars' as const, min: '0', max: '3', height: '50 px', thresholdLeap: 'Off', pinned: true };
 const browserSettings = { reverseTrackpad: false, reverseButtons: false, highlightLocation: false, guideline: 'left' };
@@ -64,6 +65,9 @@ const heatmapNotes = [
   'The center variant’s column is outlined in ink and its line is darker; its bars in the score tracks are ink.',
   'DNA features and RNA features stay a select above the heatmap, as today; the stepped z-score legend sits beside it.',
   'Hovering a cell shows the data tooltip; hovering a column highlights its line and its bars in the browser.',
+  'Clicking a column’s line selects that variant and centers the browser on it at the same width, as humanbase.io’s column labels do. Each line is a button named “Center on” and the variant.',
+  'Dragging the cells moves the browser by the same share of its width as the drag is of the heatmap’s width, as on humanbase.io; a single move over 100px is ignored.',
+  'View: Full keeps every variant in view. Compact keeps one variant per 15px of the heatmap’s width, as humanbase.io does: the center variant, or else the one with the higher variant score.',
 ];
 const heatmapColumns = [2_232_996, 2_234_187, 2_235_106, 2_235_168, 2_235_624, 2_247_509, 2_250_950, 2_254_905, 2_255_213, 2_259_317];
 const zLegend = scoreLegends[0]!.spec;
@@ -84,7 +88,7 @@ const integration = [
   ['Hide the built-in toolbar and panels', 'The system toolbar, Tracks drawer and dialogs replace them; Biodalliance already drives location, zoom, tracks and export through its API.'],
   ['Track header column', 'Names, sources and scales move out of the data area into a fixed column, so labels never sit on top of bars.'],
   ['Track colors from the system', 'Score tracks use viz.seq step 6 (#1F5FAE); the selected variant is ink. Gene exons stay grey 600.'],
-  ['Location in words', 'Show chr1:109,792,590-109,842,590 with commas and the assembly beside it; accept today’s 1:109,767,590..109,867,590 format too.'],
+  ['Location in words', 'Show chr1:109,767,590-109,867,590 with commas and the assembly beside it; accept today’s 1:109,767,590..109,867,590 format too.'],
   ['Linked heatmap', 'Column positions and the center variant come from the browser’s view, as today; the connectors read the same positions.'],
   ['Remember choices', 'Tracks and settings are kept in this browser, like other preferences (no accounts).'],
 ];
@@ -117,11 +121,29 @@ const specs = [
   ['linked heatmap', '16px columns in genomic order; 0.75px grey connectors to the ruler; center column 2px ink outline'],
 ];
 
+// The ChromHMM drawing reads the recorded sample of gm12878.ChromHMM.bb, the same segments the browser draws.
+const chromHmm = suggestedTracks.hg19.find(isSegmentTrack)!;
+const sampleFiles = new SampleGenomeTracks(SampleClient.bundled());
+const chromSpan = { chrom: view.chrom, start: view.start, end: view.end };
+const chromSegments = await sampleFiles.segments(chromHmm.bigBedUrl, chromSpan);
+const chromGenes = await sampleFiles.genes('hg19', chromSpan);
+const chromTrack = { name: chromHmm.name, meta: chromHmm.meta ?? '', state: 'ready' as const, data: chromSegments };
+const hovered = chromSegments.find((segment) => segment.start <= variant.position && segment.end >= variant.position)!;
+const count = new Intl.NumberFormat('en-US');
+const chromRules = [
+  ['Same as humanbase.io', 'Each segment is an 8px box filled with the file’s color for that segment and a 1px black outline, with no labels and no stacking, as humanbase.io’s browser config draws it.'],
+  ['State names', 'Shown as the file’s state codes, such as Tss, EnhW, Ctcf, ReprW and Quies, as on humanbase.io. Plain-language names, a legend or any regrouping would change how the output reads, so they need a research ticket for subject-matter experts first.'],
+  ['Hover', 'The Data tooltip gives the state code, the source, the start and the length of the segment.'],
+  ['Never color alone', 'The state code is in the tooltip and in View as table, which lists each segment’s code, start, end and length.'],
+  ['Where it appears', 'Suggested tracks on hg19 results and the ASD Browser, off until turned on, as on humanbase.io. Not listed on hg38. Source: humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb.'],
+  ['Export', 'Included in the SVG export at the export width.'],
+];
+
 const usage = `import { GenomeLocation } from '@humanbase/data';
 import { GenomeBrowserToolbar, TrackHeader, TracksDrawer, genomeCommand } from '@humanbase/ui';
 
 const view = GenomeLocation.parse('1:109,767,590..109,867,590');
-<GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="50 kb shown. A gene name works too."
+<GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="100 kb shown. A gene name works too."
   zoomStop={view.width} onZoom={(direction) => engine.zoomTo(view.zoom(direction))} />
 
 // One place maps keys to commands; the Biodalliance adapter carries them out.
@@ -148,9 +170,9 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
     </DocTable>
   </DocSection>
 
-  <DocSection title="The browser" lead="On a variant result, centered on the selected variant at 50 kb. The toolbar, track headers and tracks are system components; the tracks follow the specs below. Gene positions in this drawing are approximate.">
+  <DocSection title="The browser" lead="On a variant result, centered on the selected variant with 50 kb either side (100 kb), as on humanbase.io. The toolbar, track headers and tracks are system components; the tracks follow the specs below. Gene positions in this drawing are approximate.">
     <section class="browser" aria-label={view.regionLabel(trackCount)}>
-      <GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="50 kb shown. A gene name works too." zoomStop={50000} moreItems={moreMenu} />
+      <GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="100 kb shown. A gene name works too." moreItems={moreMenu} />
       <div class="browser-tracks">
         <div class="track-column">
           <div class="track-column-ruler">Position</div>
@@ -228,6 +250,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
       <ul>
         <li>Pages talk to one interface, <code>GenomeBrowserEngine</code> in <code>@humanbase/genome</code>: mount, show a region, mark the selected variant, and report when a drag or zoom settles.</li>
         <li>The default engine, <code>TrackEngine</code>, draws <code>GenomeTrackView</code> from <code>@humanbase/ui</code>: the ruler, the sequence (letters once a base is 7px wide), the score tracks as <code>viz-seq-6</code> bars, GENCODE genes with names and strand arrows, and the selected variant as a 50% ink line with its value and a mono pill. Drag the tracks to move along the genome.</li>
+        <li>Segment tracks, such as GM12878 ChromHMM, read a bigBed file through <code>GenomeTracks.segments</code> and draw each segment as an 8px box in the file’s own color; <code>SegmentTable</code> lists them under View as table, under either engine.</li>
         <li>It reads the same files as the live site through <code>GenomeTracks</code> in <code>@humanbase/data</code>: the hg19 genome, GENCODE 19 genes and the DNA and RNA impact tracks from Humanbase's files on S3, in byte ranges. With the API off it reads recorded windows of those files from the sample data and makes no request.</li>
         <li>Biodalliance is vendored in the repository with its licenses and takes this page's look when chosen: its own toolbar, labels, Bootstrap and Font Awesome are off and its options take tokens. Its ruler, gene labels and grid are drawn on its canvas and keep its look. The package README lists every setting.</li>
         <li>To use another Biodalliance setup, edit <code>humanbaseConfig.ts</code> or pass your own options and <code>baseUrl</code>. To use Biodalliance or another engine, return it from <code>defaultGenomeEngine</code>, or pass <code>engine</code> to the page. The package README has the details.</li>
@@ -244,6 +267,25 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
   <DocSection title="Behavior" lead="What every genome browser in Humanbase does the same way.">
     <DocTable caption="Genome browser behavior" columns={['Rule', 'Detail']} widths={['240px']}>
       {behavior.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="GM12878 ChromHMM track" lead={`A suggested track on hg19, drawn the way humanbase.io draws it: each segment from gm12878.ChromHMM.bb, ENCODE’s combined GM12878 segmentation with 25 state codes, as a box in the file’s own color. Shown with the file’s ${chromSegments.length} segments around the in silico mutagenesis example, ${view.format()}.`}>
+    <figure class="chromhmm">
+      <GenomeTrackFigure
+        start={view.start}
+        end={view.end}
+        width={1000}
+        segments={[chromTrack]}
+        genes={{ name: 'Genes', meta: 'GENCODE 19', state: 'ready', data: chromGenes.map((gene) => ({ ...gene, muted: gene.type.includes('pseudogene') })) }}
+        selected={{ position: variant.position, label: variant.label.split(' ')[0]! }}
+      />
+      <figcaption>The track as the browser draws it, from the recorded sample of the file, with the selected variant. Hovering a segment shows the Data tooltip:</figcaption>
+      <DataTooltip className="chromhmm-tooltip" title={hovered.name} subtitle={chromHmm.name} rows={[['Start', count.format(hovered.start)], ['Length', `${count.format(hovered.end - hovered.start + 1)} bp`]]} />
+    </figure>
+    <SegmentTable track={chromTrack} where={`${view.format()}, ${view.assemblyName}`} />
+    <DocTable caption="GM12878 ChromHMM track rules" columns={['Rule', 'Detail']} widths={['240px']}>
+      {chromRules.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
     </DocTable>
   </DocSection>
 
@@ -291,6 +333,24 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
   }
 
   .browser-help {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .chromhmm {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .chromhmm :global(.genome-figure) {
+    inline-size: 100%;
+    block-size: auto;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .chromhmm figcaption {
     font: var(--type-body-sm);
     color: var(--text-secondary);
   }

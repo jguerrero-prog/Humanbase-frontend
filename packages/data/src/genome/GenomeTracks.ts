@@ -27,17 +27,28 @@ export interface ScorePoint {
   value: number;
 }
 
+/** One stretch of a segmentation, such as a chromatin state: the file's name for it and its own color. */
+export interface Segment {
+  start: number;
+  end: number;
+  name: string;
+  /** The file's itemRgb, such as #FF6969. */
+  color: string;
+}
+
 /** A stretch of the reference sequence. */
 export interface SequenceSpan {
   start: number;
   bases: string;
 }
 
-/** Reads what a genome browser draws: gene models, scores from bigWig files and the reference sequence. */
+/** Reads what a genome browser draws: gene models, scores from bigWig files, segments from bigBed files and the reference sequence. */
 export interface GenomeTracks {
   genes(assembly: Assembly, span: GenomeSpan): Promise<GeneModel[]>;
   /** Scores in the span; with bins, nearby values are summarised to about that many. */
   scores(bigWigUrl: string, span: GenomeSpan, bins?: number): Promise<ScorePoint[]>;
+  /** The segments in a bigBed file that overlap the span, in order. */
+  segments(bigBedUrl: string, span: GenomeSpan): Promise<Segment[]>;
   /** The bases in the span, or undefined where none are available. */
   sequence(assembly: Assembly, span: GenomeSpan): Promise<SequenceSpan | undefined>;
 }
@@ -102,4 +113,13 @@ export function transcriptOf(feature: { start: number; end: number; rest?: strin
     type,
     blocks: offsets.length ? offsets.map((offset, index) => [start + offset, start + offset + (lengths[index] ?? 0) - 1]) : [[start, feature.end]],
   };
+}
+
+const hex = (channel: string) => Math.max(0, Math.min(255, Number(channel) || 0)).toString(16).padStart(2, '0').toUpperCase();
+
+/** Reads one bed9 line, such as a ChromHMM segment: name, score, strand, thickStart, thickEnd, then itemRgb; 1-based. */
+export function segmentOf(feature: { start: number; end: number; rest?: string }): Segment {
+  const [name = '', , , , , rgb = ''] = (feature.rest ?? '').split('\t');
+  const [red = '0', green = '0', blue = '0'] = rgb.split(',');
+  return { start: feature.start + 1, end: feature.end, name, color: `#${hex(red)}${hex(green)}${hex(blue)}` };
 }

@@ -1,12 +1,14 @@
-import type { Network, NetworkSubset, NetworkView } from '@humanbase/data';
+import type { Network, NetworkEdge, NetworkSubset, NetworkView } from '@humanbase/data';
 import { edgeBands, NetworkGraph, type GraphData, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
-import { ActionMenu, Checkbox, GraphToolbar, KeyLegend, saveFile, Slider, Spinner, type ActionMenuItem, type GraphAction } from '@humanbase/ui';
+import { ActionMenu, Checkbox, GraphToolbar, KeyLegend, Slider, Spinner, useExportMenu, useImageFormats, type ActionMenuItem, type GraphAction } from '@humanbase/ui';
 import { useMemo, useRef, type ReactNode } from 'react';
 import { ConnectionsTable } from './ConnectionsTable';
+import { networkFileName, networkText } from './networkExport';
 import { useStarredHighlights } from './starredSets';
 
 const legendItems = [...edgeBands].reverse().map(({ label, color, width }) => ({ label, color, width }));
 const zoomStep = 1.3;
+const pngWidth = 1080;
 
 export interface GraphPanelProps {
   /** The whole response, whose genes the starred sets are looked up for. */
@@ -18,7 +20,8 @@ export interface GraphPanelProps {
   label: string;
   /** Names the connections table that replaces the graph in View as table. */
   tableCaption: string;
-  fileName: string;
+  /** Names the downloads, as the live site does: "global", "adipose_tissue". */
+  networkTitle: string;
   selection: GraphSelection;
   loading: ReactNode;
   /** Off when two networks are compared, since neither can take the full width. */
@@ -29,7 +32,7 @@ export interface GraphPanelProps {
   renderer?: GraphRendererFactory | undefined;
 }
 
-export function GraphPanel({ network, subset, view, minConfidence, label, tableCaption, fileName, selection, loading, canExpand = true, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
+export function GraphPanel({ network, subset, view, minConfidence, label, tableCaption, networkTitle, selection, loading, canExpand = true, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
   const graph = useRef<NetworkGraphHandle>(null);
   const data = useMemo<GraphData | undefined>(
     () =>
@@ -56,14 +59,19 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
 
   const asTable = view.display === 'table';
   const expand: GraphAction[] = canExpand ? [{ label: 'Expand', icon: 'maximize', pressed: view.expanded, onSelect: () => onViewChange(view.with({ expanded: !view.expanded })) }] : [];
-  const downloadConnections = () => {
-    if (!subset) return;
-    const lines = ['gene\tconnected_to\tweight', ...subset.edges.map((edge) => `${edge.source.symbol}\t${edge.target.symbol}\t${edge.weight.toFixed(3)}`)];
-    saveFile(lines.join('\n'), `${fileName}_connections.tsv`, 'text/tab-separated-values');
-  };
-  // Zoom and fit only apply to the drawing, so the table keeps just Expand and its own download.
+  const images = useImageFormats(asTable ? undefined : graph, pngWidth);
+  const text = (edges: readonly NetworkEdge[] | undefined) => ({ extension: 'txt', type: 'text/plain', disabled: !edges, make: () => networkText(edges ?? []) });
+  const downloads = useExportMenu(
+    () => networkFileName(networkTitle),
+    [
+      ...images,
+      { label: 'Download visible network as text', ...text(subset?.edges) },
+      { label: 'Download entire network as text', ...text(network?.edges) },
+    ],
+  );
+  // Zoom and fit only apply to the drawing, so the table keeps just Expand.
   const groups: GraphAction[][] = asTable
-    ? [expand, [{ label: 'Download the connections', icon: 'download', onSelect: downloadConnections }]]
+    ? [expand]
     : [
         [
           { label: 'Zoom in', icon: 'zoom-in', onSelect: () => graph.current?.zoomBy(zoomStep) },
@@ -71,13 +79,13 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
           { label: 'Fit to screen', icon: 'fit', onSelect: () => graph.current?.fit() },
           ...expand,
         ],
-        [{ label: 'Download the graph as SVG', icon: 'download', onSelect: () => graph.current && saveFile(graph.current.exportSvg(), `${fileName}.svg`) }],
       ];
   const toolbar = groups.filter((group) => group.length > 0);
 
   return (
     <>
       <GraphToolbar label="Graph controls" groups={toolbar} tableLabel={asTable ? 'View as graph' : 'View as table'} onViewTable={() => onViewChange(view.with({ display: asTable ? 'graph' : 'table' }))}>
+        <ActionMenu label="Download network" icon="download" items={downloads} />
         {!asTable && <ActionMenu label={highlights.length ? `Starred sets, ${highlights.length}` : 'Starred sets'} icon="star" items={starredItems} />}
       </GraphToolbar>
       {asTable && subset ? (

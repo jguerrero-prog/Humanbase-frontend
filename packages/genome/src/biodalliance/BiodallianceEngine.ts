@@ -1,4 +1,5 @@
-import { withChr, type GenomeBrowserEngine, type GenomeMountOptions, type GenomeRegion, type GenomeTrackLayout } from '../GenomeBrowserEngine';
+import { isSegmentTrack, trackFile, withChr, type GenomeBrowserEngine, type GenomeExportOptions, type GenomeMountOptions, type GenomeRegion, type GenomeTrackLayout } from '../GenomeBrowserEngine';
+import { genesTrack, sequenceTrack } from '../genomeTrackList';
 import { humanbaseAssemblies, humanbaseBrowserOptions, type BiodallianceAssembly } from './humanbaseConfig';
 
 /** The parts of Biodalliance's Browser this engine calls. */
@@ -10,6 +11,9 @@ interface DallianceBrowser {
   addInitListener(listener: () => void): void;
   addTierListener(listener: () => void): void;
   resizeViewer(): void;
+  addTier(source: Record<string, unknown>): void;
+  removeTier(source: Record<string, unknown>): void;
+  makeSVG(options: { highlights: boolean; ruler: string; width: number; banner: boolean; region: boolean }): Blob;
   tiers: readonly { row: HTMLElement; dasSource: { name?: string; title?: string; desc?: string } }[];
 }
 
@@ -87,11 +91,14 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
   #images: MutationObserver | undefined;
   #layout: ResizeObserver | undefined;
   #resize: ResizeObserver | undefined;
+  /** The sources a page can show or hide, by track id, and the ids shown now. */
+  readonly #toggled = new Map<string, Record<string, unknown>>();
+  readonly #shownTracks = new Set<string>();
   #destroyed = false;
 
   constructor(private readonly options: BiodallianceOptions = {}) {}
 
-  async mount(container: HTMLElement, { label, assembly, region, tracks, onRegionChange, onTrackLayout }: GenomeMountOptions): Promise<void> {
+  async mount(container: HTMLElement, { label, assembly, region, tracks, hidden = [], onRegionChange, onTrackLayout }: GenomeMountOptions): Promise<void> {
     // Biodalliance drops the port from a path-only prefix, so give it an absolute URL.
     const baseUrl = new URL(this.options.baseUrl ?? biodallianceBaseUrl, document.baseURI).href;
     const Browser = await loadBiodalliance(baseUrl);
@@ -119,7 +126,7 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
       viewStart: region.start,
       viewEnd: region.end,
       coordSystem: setup.coordSystem,
-      sources: resolveTokens([...setup.sources, ...tracks.map((track) => ({ name: track.name, bwgURI: track.bigWigUrl, pinned: true, zeroLine: 'var(--border-subtle)', ...(track.style ? { style: [track.style] } : {}) }))], container),
+      sources: this.#sources(setup, tracks, hidden, container),
     });
     this.#browser = browser;
     await new Promise<void>((resolve, reject) => {
@@ -174,6 +181,49 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
     browser.tiers.forEach((tier) => this.#layout?.observe(tier.row));
     browser.addTierListener(measure);
     measure();
+  }
+
+  /** Biodalliance's sources, with the ones a page can toggle remembered by id; hidden ones start disabled. */
+  #sources(setup: BiodallianceAssembly, tracks: GenomeMountOptions['tracks'], hidden: readonly string[], container: HTMLElement): Record<string, unknown>[] {
+    const data = tracks.map((track) => ({
+      name: track.name,
+      bwgURI: trackFile(track),
+      pinned: true,
+      ...(!isSegmentTrack(track) && { zeroLine: 'var(--border-subtle)' }),
+      ...(track.style && { style: Array.isArray(track.style) ? track.style : [track.style] }),
+    }));
+    const idOf = (source: Record<string, unknown>) =>
+      source.twoBitURI ? sequenceTrack : source.title === 'Genes' && !source.disabled ? genesTrack : tracks.some((track) => track.name === source.name) ? String(source.name) : undefined;
+    return resolveTokens([...setup.sources, ...data], container).map((source) => {
+      const id = idOf(source);
+      if (!id) return source;
+      const shown = !hidden.includes(id);
+      this.#toggled.set(id, source);
+      if (shown) this.#shownTracks.add(id);
+      return shown ? source : { ...source, disabled: true };
+    });
+  }
+
+  showTracks(hidden: readonly string[]): void {
+    const browser = this.#browser;
+    if (!browser) return;
+    for (const [id, source] of this.#toggled) {
+      const shown = !hidden.includes(id);
+      if (shown === this.#shownTracks.has(id)) continue;
+      if (shown) {
+        browser.addTier(source);
+        this.#shownTracks.add(id);
+      } else {
+        browser.removeTier(source);
+        this.#shownTracks.delete(id);
+      }
+    }
+  }
+
+  exportSvg({ width, highlights, guideline, title }: GenomeExportOptions): Promise<Blob> {
+    if (!this.#browser) return Promise.reject(new Error('Biodalliance hasn’t started yet.'));
+    // Biodalliance writes its own location line, so a title only turns that line on.
+    return Promise.resolve(this.#browser.makeSVG({ highlights, ruler: guideline ? 'center' : 'none', width, banner: false, region: Boolean(title) }));
   }
 
   showRegion(region: GenomeRegion): void {

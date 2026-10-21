@@ -1,11 +1,12 @@
 import {
-  ApiError, AsdVariant, featureEffects, featureLabel, GenomeLocation, useAsdColumns, useAsdEffects, useAsdPage, useAsdRange, useHumanbase,
-  type AsdFeatureSet, type AsdVariantRow, type FeaturePredictionRecord, type FeaturesRecord,
+  ApiError, AsdVariant, featureEffects, GenomeLocation, useAsdColumns, useAsdEffects, useAsdPage, readTheDocs, useAsdRange, useHumanbase,
+  type AsdFeatureSet, type AsdVariantRow, type FeaturePredictionRecord,
 } from '@humanbase/data';
 import { defaultGenomeEngine, GenomeEngineView, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
-import { Alert, GenomeBrowserToolbar, Heatmap, ResultLayout, Skeleton, asdEffects, type EffectScale, type EffectsView } from '@humanbase/ui';
+import { Alert, GenomeBrowserToolbar, ResultLayout, Skeleton, asdEffects, type EffectsView } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 import { EffectsCard } from '../Deepsea/EffectsCard';
+import { useGenomeBrowserTools } from '../GenomeBrowser/useGenomeBrowserTools';
 import { AsdHeader, AsdVariantTable, type AsdView } from './AsdParts';
 import './AsdBrowser.css';
 
@@ -28,7 +29,6 @@ export interface AsdExplorerProps {
 
 const defaultLocation = new GenomeLocation('chr1', 2_230_000, 2_440_000);
 const assembly = 'GRCh37/hg19';
-const heatmapRows = 20;
 const count = new Intl.NumberFormat('en-US');
 const featureSets = [
   { value: 'dna', label: 'DNA features' },
@@ -53,14 +53,6 @@ const isMissingSample = (error: unknown, showsSamples: boolean) => showsSamples 
 function locationOf(text: string | undefined): GenomeLocation {
   const parsed = text ? GenomeLocation.parse(text) : undefined;
   return parsed instanceof GenomeLocation ? parsed : defaultLocation;
-}
-
-// A row inside the browser's range keeps the range; any other row centers the browser on it.
-const inView = (row: AsdVariantRow, location: GenomeLocation) => row.chromosome === location.chrom && row.position >= location.start && row.position <= location.end;
-
-/** The variant nearest the middle of the view, where the browser opens. */
-function nearestCenter(rows: readonly AsdVariantRow[], location: GenomeLocation): AsdVariantRow | undefined {
-  return [...rows].sort((a, b) => Math.abs(a.position - location.center) - Math.abs(b.position - location.center))[0];
 }
 
 /** The connected ASD Browser: search, the genome browser view with each variant's molecular effects, and the table. */
@@ -116,14 +108,14 @@ export function AsdExplorer({ state, onStateChange, engine = defaultGenomeEngine
           searchError={searchError?.from === 'page' ? searchError.text : undefined}
           examples={['CHD8', 'SCN2A', defaultLocation.format()]}
           notice={notice}
-          downloadHref="/downloads/"
+          downloadHref="https://s3-us-west-2.amazonaws.com/humanbase/variants/dis_asd.tsv"
         />
       }
       main={
         state.view === 'browser' ? (
           <BrowserView engine={engine} location={location} state={state} onStateChange={onStateChange} onLocation={(text) => void search(text, 'browser')} locationError={searchError?.from === 'browser' ? searchError.text : undefined} searchedGene={searchedGene} />
         ) : (
-          <TableView location={location} rangeOnly={rangeOnly} onRangeOnlyChange={setRangeOnly} onSelect={(row) => onStateChange({ view: 'browser', location: inView(row, location) ? location.format() : new GenomeLocation(row.chromosome, row.position, row.position).withWidth(location.width).format(), variant: keyOf(row) })} />
+          <TableView location={location} rangeOnly={rangeOnly} onRangeOnlyChange={setRangeOnly} onSelect={(row) => onStateChange({ view: 'browser', location: location.includes(row.chromosome, row.position) ? location.format() : new GenomeLocation(row.chromosome, row.position, row.position).withWidth(location.width).format(), variant: keyOf(row) })} />
         )
       }
     />
@@ -149,14 +141,20 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
   const onRegionChange = (moved: GenomeRegion) => onStateChange({ location: new GenomeLocation(moved.chrom, moved.start, moved.end).format() });
   const range = useAsdRange(location);
   const rows = range.data;
-  const selected = rows?.find((row) => keyOf(row) === state.variant) ?? (rows && nearestCenter(rows, location));
+  const selected = rows?.find((row) => keyOf(row) === state.variant) ?? (rows && location.nearest(rows));
   const index = selected && rows ? rows.indexOf(selected) : -1;
   const move = (to: GenomeLocation) => onStateChange({ location: to.format(), variant: undefined });
   const step = (by: number) => {
     const next = rows?.[index + by];
     if (next) onStateChange({ variant: keyOf(next) });
   };
+  // As on humanbase.io, clicking a heatmap column selects that variant and centers the browser on it at the same width.
+  const center = (key: string) => {
+    const row = rows?.find((one) => keyOf(one) === key);
+    if (row) onStateChange({ variant: key, location: new GenomeLocation(row.chromosome, row.position, row.position).withWidth(location.width).format() });
+  };
   const zoomStop = (GenomeLocation.zoomStops as readonly number[]).includes(location.width) ? location.width : undefined;
+  const { attach, ...tools } = useGenomeBrowserTools({ browser: 'asd', assembly: 'hg19', tracks: impactTracks, location });
 
   let body;
   if (range.isError) {
@@ -181,7 +179,7 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
         <p className="asd-browser-note">
           {count.format(rows.length)} variants in view; the selected one, {labelOf(selected)}, is drawn in ink. Previous variant and Next variant step through them, and the Table view lists them all.
         </p>
-        <VariantEffects key={`${keyOf(selected)}-${state.set}`} location={location} rows={rows} selected={selected} set={state.set} onSetChange={(set) => onStateChange({ set })} view={effectsView} onViewChange={setEffectsView} />
+        <VariantEffects key={`${keyOf(selected)}-${state.set}`} location={location} rows={rows} selected={selected} set={state.set} onSetChange={(set) => onStateChange({ set })} view={effectsView} onViewChange={setEffectsView} onSelect={center} onMove={(bases) => move(location.move(bases / location.width))} />
       </>
     );
   }
@@ -199,24 +197,28 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
         onZoomStop={(bases) => move(location.withWidth(bases))}
         onPreviousVariant={() => step(-1)}
         onNextVariant={() => step(1)}
-        trackActions={false}
+        {...tools.toolbar}
       />
+      {tools.panels}
       {engineStatus.status === 'failed' && (
         <Alert tone="error" title="The genome browser couldn’t load">
           {engineStatus.error?.message ?? 'The genome browser didn’t start.'} The variants and their effects below still work.
         </Alert>
       )}
       <GenomeEngineView
+        ref={attach}
         engine={engine}
         files={genomeTracks}
-        label={location.regionLabel(impactTracks.length + 2)}
+        label={location.regionLabel(tools.shownCount)}
         assembly="hg19"
         region={region}
-        tracks={impactTracks}
+        tracks={tools.tracks}
+        hidden={tools.hidden}
         selected={selected ? { chrom: selected.chromosome, position: selected.position } : undefined}
         onRegionChange={onRegionChange}
         onStatusChange={(status, error) => setEngineStatus({ status, error })}
         onCommand={(command) => {
+          if (tools.onCommand(command)) return;
           if (command === 'moveLeft' || command === 'moveRight') move(location.move(command === 'moveLeft' ? -0.1 : 0.1));
           else if (command === 'zoomIn' || command === 'zoomOut') move(location.zoom(command === 'zoomIn' ? 'in' : 'out'));
           else if (command === 'previousVariant' || command === 'nextVariant') step(command === 'previousVariant' ? -1 : 1);
@@ -235,16 +237,27 @@ interface VariantEffectsProps {
   onSetChange: (set: AsdFeatureSet) => void;
   view: EffectsView;
   onViewChange: (view: EffectsView) => void;
+  onSelect: (key: string) => void;
+  onMove: (bases: number) => void;
 }
 
 const positionKey = (record: Pick<FeaturePredictionRecord, 'chromosome' | 'position'>) => `${record.chromosome.startsWith('chr') ? record.chromosome : `chr${record.chromosome}`}:${record.position}`;
 
-function VariantEffects({ location, rows, selected, set, onSetChange, view, onViewChange }: VariantEffectsProps) {
+function VariantEffects({ location, rows, selected, set, onSetChange, view, onViewChange, onSelect, onMove }: VariantEffectsProps) {
   const { showsSamples } = useHumanbase();
   const { features, predictions } = useAsdEffects(location, set);
   const byPosition = useMemo(() => new Map((predictions.data ?? []).map((record) => [positionKey(record), record])), [predictions.data]);
   const prediction = byPosition.get(keyOf(selected));
-  const effects = useMemo(() => (prediction && features.data ? featureEffects(prediction, features.data) : undefined), [prediction, features.data]);
+  const variants = useMemo(
+    () =>
+      rows.map((row) => {
+        const record = byPosition.get(keyOf(row));
+        return { key: keyOf(row), name: labelOf(row), position: row.position, href: GenomeLocation.at(row.chromosome, row.position).ucscUrl, effects: record && features.data ? featureEffects(record, features.data) : undefined };
+      }),
+    [rows, byPosition, features.data],
+  );
+  const index = rows.indexOf(selected);
+  const effects = variants[index]?.effects;
   const noun = set === 'dna' ? 'DNA feature' : 'RNA feature';
   const scale = asdEffects(set === 'dna' ? 'DNA' : 'RNA');
   const failed = predictions.isError || features.isError;
@@ -271,44 +284,10 @@ function VariantEffects({ location, rows, selected, set, onSetChange, view, onVi
       featurePlural={`${noun}s`}
       verb=""
       choice={{ label: 'Features', options: featureSets, value: set, onChange: (value) => onSetChange(value as AsdFeatureSet), name: 'Score' }}
+      scoreDocs={{ label: 'Score type documentation', href: `${readTheDocs}asdbrowser.html#output` }}
       view={view}
       onViewChange={onViewChange}
-      heatmap={features.data && <RangeHeatmap location={location} rows={rows} selected={selected} byPosition={byPosition} features={features.data} scale={scale} />}
-    />
-  );
-}
-
-interface RangeHeatmapProps {
-  location: GenomeLocation;
-  rows: readonly AsdVariantRow[];
-  selected: AsdVariantRow;
-  byPosition: ReadonlyMap<string, FeaturePredictionRecord>;
-  features: FeaturesRecord;
-  scale: EffectScale;
-}
-
-const tickSteps = [1_000, 2_000, 5_000, 10_000, 20_000, 50_000, 100_000, 200_000, 500_000];
-
-/** Every variant in view, one column each in genome order, for the features the selected variant moves most. */
-function RangeHeatmap({ location, rows, selected, byPosition, features, scale }: RangeHeatmapProps) {
-  const named = features.model_features ?? [];
-  const chosen = byPosition.get(keyOf(selected))?.feature_predictions ?? [];
-  const top = named.filter((feature) => chosen[feature.idx] !== undefined).sort((a, b) => (chosen[b.idx] ?? 0) - (chosen[a.idx] ?? 0)).slice(0, heatmapRows);
-  const step = tickSteps.find((size) => location.width / size <= 5) ?? location.width / 4;
-  const ticks = Array.from({ length: Math.floor(location.width / step) + 1 }, (_, index) => index * step);
-
-  return (
-    <Heatmap
-      title={`${scale.legend.title.replace(/s$/, '')} scores. Showing the top ${top.length} of ${count.format(named.length)} features, sorted by ${labelOf(selected)}.`}
-      summary="One column per variant in the browser’s view, in genomic order; rows sorted by the selected variant."
-      scale={scale.legend}
-      columns={rows.map((row) => ({ label: count.format(row.position), position: row.position, name: labelOf(row), href: GenomeLocation.at(row.chromosome, row.position).ucscUrl }))}
-      rows={top.map((feature) => ({ label: featureLabel(feature), values: rows.map((row) => byPosition.get(keyOf(row))?.feature_predictions[feature.idx] ?? null) }))}
-      rowHeader="Feature"
-      columnHeader="Variant"
-      valueLabel="Score"
-      axis={{ title: `Position on ${location.chrom}, ${assembly}`, offset: location.start, ticks }}
-      decimals={scale.digits}
+      inView={{ location, variants, selected: index, onSelect, onMove }}
     />
   );
 }

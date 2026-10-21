@@ -1,15 +1,20 @@
-import { GenomeLocation, useDeepseaVariants, useFeatureEffects, variantScoreTypes, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
+import { featureEffects, GenomeLocation, useDeepseaVariants, useHumanbase, useViewPredictions, variantIdOf, variantScoreTypes, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
 import {
   ActionMenu,
   Alert,
   byGenomePosition,
+  chromosomeColor,
+  DocsLink,
   expressionEffects,
+  KeyLegend,
   ResultHeader,
   ResultLayout,
   SearchField,
   SegmentedControl,
   Select,
+  sequenceClassColor,
   sequenceClassEffects,
+  sequenceClassLegend,
   Skeleton,
   VariantFocus,
   variantLabel,
@@ -40,6 +45,14 @@ export interface DeepseaResultViewProps {
 
 const tableLabels: Record<string, string> = { dis: 'Disease impact', 'mean-evalue': 'Mean −log e', seqclass: 'Max class score' };
 const shownRows = 9;
+// As on humanbase.io, the browser opens on the selected variant with 50 kb either side.
+const startWidth = 100_000;
+const scoreDocsLabel = 'Score type documentation';
+type ColorStyle = 'chr' | 'seqclass';
+const colorStyles = [
+  { value: 'chr', label: 'Chromosome' },
+  { value: 'seqclass', label: 'Sequence class' },
+];
 const number = new Intl.NumberFormat('en-US');
 
 function effectScaleOf(model: DeepseaJob['model']): EffectScale {
@@ -53,11 +66,13 @@ const matches = (variant: VariantRow, text: string) => `${variantLabel(variant)}
 /** A finished Sei, Beluga or Seqweaver job: variant scores as a plot and table, then the selected variant's molecular effects. */
 export function DeepseaResultView({ job, title, tools, variant: chosen, onVariantChange }: DeepseaResultViewProps) {
   const model = job.model;
+  const { showsSamples } = useHumanbase();
   const { scoreTypes, variants, error, refetch } = useDeepseaVariants(job);
   const variantTypes = variantScoreTypes(model, scoreTypes ?? []);
   const featureTypes = (scoreTypes ?? []).filter((type) => type.level === 'FEATURE');
   const [scoreKey, setScoreKey] = useState<string>();
   const [plotBy, setPlotBy] = useState<PlotBy>('genome');
+  const [colorStyle, setColorStyle] = useState<ColorStyle>('chr');
   const [effectsView, setEffectsView] = useState<EffectsView>('strongest');
   const [filter, setFilter] = useState('');
   const [showAll, setShowAll] = useState(false);
@@ -69,6 +84,21 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
     setPicked(id);
     onVariantChange?.(id);
   };
+  // Selecting another variant centers the browser on it at the current zoom.
+  const [view, setView] = useState<{ variant: string; location: GenomeLocation }>();
+  const centered = selected && (view?.variant === selected.id ? view : { variant: selected.id, location: GenomeLocation.at(selected.chromosome, selected.position, job.assembly).withWidth(view?.location.width ?? startWidth) });
+  if (centered && centered !== view) setView(centered);
+  const location = centered?.location;
+  // As on humanbase.io, moving the browser makes the variant nearest its center the selected one.
+  const browse = (to: GenomeLocation) => {
+    const nearest = to.nearest(ordered);
+    const center = nearest && selected && nearest.chromosome === selected.chromosome && nearest.position === selected.position ? selected : nearest;
+    setView({ variant: center?.id ?? selected?.id ?? '', location: to });
+    if (center && center.id !== selected?.id) select(center.id);
+  };
+  const [featureKey, setFeatureKey] = useState<string>();
+  const featureType = featureTypes.find((type) => type.short_name === featureKey) ?? featureTypes[0];
+  const predictions = useViewPredictions(job, featureType?.short_name, location);
 
   const files = job.resultFiles;
   const header = (
@@ -121,6 +151,9 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
 
   const tableScores = variantTypes.map((type) => ({ key: type.short_name, label: tableLabels[type.short_name] ?? type.name }));
   const filtered = ordered.filter((row) => matches(row, filter));
+  // Sei variants name the sequence class they change most, so only Sei offers Color style.
+  const hasClasses = ordered.some((row) => row.topClass);
+  const byClass = hasClasses && colorStyle === 'seqclass';
   const byScore = [...filtered].sort((a, b) => (b.scores[score.short_name] ?? 0) - (a.scores[score.short_name] ?? 0));
   const index = selected ? ordered.indexOf(selected) : -1;
   const step = (by: number) => {
@@ -137,6 +170,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
           <div className="deepsea-plot">
             <div className="deepsea-plot-controls">
               <Select label="Score" size="small" options={scoreOptions(variantTypes)} value={score.short_name} onChange={setScoreKey} />
+              <DocsLink href={`${model.docsHref}#output`}>{scoreDocsLabel}</DocsLink>
               <SegmentedControl
                 label="Plot by"
                 size="small"
@@ -147,14 +181,21 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
                   { value: 'rank', label: 'Rank' },
                 ]}
               />
+              {hasClasses && <Select label="Color style" size="small" options={colorStyles} value={colorStyle} onChange={(value) => setColorStyle(value as ColorStyle)} />}
             </div>
+            {byClass && <KeyLegend title="Sequence class" items={sequenceClassLegend} />}
             <VariantScorePlot
               variants={ordered}
               score={{ key: score.short_name, label: score.name.replace('-log', '−log') }}
               by={plotBy}
               selected={selected?.id}
               onSelect={select}
-              summary={`${number.format(ordered.length)} variants. Chromosomes alternate dark and light grey; position carries the chromosome, so color doesn’t have to.`}
+              pointColor={(row) => (byClass ? sequenceClassColor(row.topClass) : chromosomeColor(row.chromosome))}
+              summary={
+                byClass
+                  ? `${number.format(ordered.length)} variants, colored by the sequence class each changes most; the class is also in the table.`
+                  : `${number.format(ordered.length)} variants, colored by chromosome; position also carries the chromosome.`
+              }
             />
           </div>
         }
@@ -183,15 +224,36 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
             onPrevious={() => step(-1)}
             onNext={() => step(1)}
           />
-          <VariantGenomeBrowser
-            assembly={job.assembly}
-            chromosome={selected.chromosome}
-            position={selected.position}
-            label={variantLabel(selected)}
-            {...(index > 0 && { onPreviousVariant: () => step(-1) })}
-            {...(index < ordered.length - 1 && { onNextVariant: () => step(1) })}
-          />
-          <VariantEffectsCard key={selected.id} job={job} variant={selected} featureTypes={featureTypes} view={effectsView} onViewChange={setEffectsView} />
+          {location && (
+            <VariantGenomeBrowser
+              assembly={job.assembly}
+              chromosome={selected.chromosome}
+              position={selected.position}
+              label={variantLabel(selected)}
+              location={location}
+              onLocationChange={browse}
+              {...(index > 0 && { onPreviousVariant: () => step(-1) })}
+              {...(index < ordered.length - 1 && { onNextVariant: () => step(1) })}
+            />
+          )}
+          {location && featureType && (
+            <VariantEffectsCard
+              key={selected.id}
+              job={job}
+              variant={selected}
+              variants={ordered}
+              location={location}
+              predictions={predictions}
+              featureTypes={featureTypes}
+              type={featureType}
+              onTypeChange={setFeatureKey}
+              scoreKey={score.short_name}
+              onSelect={select}
+              {...(!showsSamples && { onMove: (bases: number) => browse(location.move(bases / location.width)) })}
+              view={effectsView}
+              onViewChange={setEffectsView}
+            />
+          )}
         </>
       )}
     </div>
@@ -201,25 +263,52 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
 interface VariantEffectsCardProps {
   job: DeepseaJob;
   variant: VariantRow;
+  /** Every variant of the job, which names the ones in view. */
+  variants: readonly VariantRow[];
+  location: GenomeLocation;
+  predictions: ReturnType<typeof useViewPredictions>;
   featureTypes: readonly ScoreType[];
+  type: ScoreType;
+  onTypeChange: (key: string) => void;
+  /** The page's variant score, which picks the variant a Compact heatmap column keeps. */
+  scoreKey: string;
+  onSelect: (id: string) => void;
+  /** Moves the genome browser; left out when no browser is shown. */
+  onMove?: ((bases: number) => void) | undefined;
   view: EffectsView;
   onViewChange: (view: EffectsView) => void;
 }
 
-/** The selected variant's effect on every feature, for the chosen feature-level score. */
-function VariantEffectsCard({ job, variant, featureTypes, view, onViewChange }: VariantEffectsCardProps) {
+/** The selected variant's effect on every feature, and every variant in the genome browser's view on the Heatmap tab, for the chosen feature-level score. */
+function VariantEffectsCard({ job, variant, variants, location, predictions: { features, predictions, error, refetch }, featureTypes, type, onTypeChange, scoreKey, onSelect, onMove, view, onViewChange }: VariantEffectsCardProps) {
   const model = job.model;
-  const [typeKey, setTypeKey] = useState<string>();
-  const type = featureTypes.find((item) => item.short_name === typeKey) ?? featureTypes[0];
-  const { effects, error, refetch } = useFeatureEffects(job, type?.short_name, variant);
-  if (!type) return null;
+  const label = variantLabel(variant);
+  const byId = useMemo(() => new Map(variants.map((row) => [row.id, row])), [variants]);
+  const inView = useMemo(
+    () =>
+      (predictions ?? []).flatMap((record) => {
+        const row = byId.get(variantIdOf(record));
+        if (!row) return [];
+        return [{ key: row.id, name: variantLabel(row), position: row.position, href: GenomeLocation.at(row.chromosome, row.position, job.assembly).ucscUrl, effects: features ? featureEffects(record, features) : undefined, score: row.scores[scoreKey] }];
+      }),
+    [predictions, features, byId, job.assembly, scoreKey],
+  );
+  const selected = inView.findIndex((item) => item.key === variant.id);
+  if (predictions && selected === -1) {
+    return (
+      <Alert tone="info" title={inView.length ? `No ${model.featureNoun} predictions for ${label}` : 'No variants in this range'}>
+        Previous variant and Next variant jump to the nearest ones.
+      </Alert>
+    );
+  }
   return (
     <EffectsCard
-      label={variantLabel(variant)}
+      label={label}
       view={view}
       onViewChange={onViewChange}
-      href={GenomeLocation.at(variant.chromosome, variant.position, job.assembly).ucscUrl}
-      effects={effects}
+      inView={{ location, variants: inView, selected, onSelect, onMove }}
+      reverseOrder={type.reverse_order}
+      effects={inView[selected]?.effects}
       failed={Boolean(error)}
       onRetry={refetch}
       scale={effectScaleOf(model)}
@@ -228,7 +317,8 @@ function VariantEffectsCard({ job, variant, featureTypes, view, onViewChange }: 
       featurePlural={model.featurePlural}
       verb={model.verb}
       inCellTypes={!model.expecto}
-      choice={{ label: 'Score', options: scoreOptions(featureTypes), value: type.short_name, onChange: setTypeKey, name: type.name }}
+      choice={{ label: 'Score', options: scoreOptions(featureTypes), value: type.short_name, onChange: onTypeChange, name: type.name }}
+      scoreDocs={{ label: scoreDocsLabel, href: `${model.docsHref}#output` }}
     />
   );
 }

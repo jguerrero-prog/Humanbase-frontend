@@ -37,4 +37,26 @@ describe('GenomeLocation', () => {
     expect(message).toBe('chr1 ends at 249,250,621 on GRCh37/hg19. Showing up to the end.');
     expect(GenomeLocation.geneNotFound('ILB1')).toBe('No gene named “ILB1” on GRCh37/hg19. Check the spelling, or enter a position such as chr2:113,594,867.');
   });
+
+  it('names a range as the chr_and_variant_range parameter and finds the variant nearest its center', () => {
+    const view = new GenomeLocation('chr1', 2_230_000, 2_440_000);
+    expect(view.variantRange).toBe('1:2230000:2440000');
+    expect(view.includes('1', 2_337_101)).toBe(true);
+    expect(view.includes('chr2', 2_337_101)).toBe(false);
+    const variants = [{ chromosome: 'chr1', position: 2_250_000 }, { chromosome: 'chr1', position: 2_330_000 }, { chromosome: 'chr1', position: 2_500_000 }];
+    expect(view.nearest(variants)).toBe(variants[1]);
+    expect(new GenomeLocation('chr1', 2_480_000, 2_490_000).nearest(variants)).toBeUndefined();
+  });
+
+  // The requests humanbase.io sent on job 76aea8fe as its browser moved, October 21, 2026.
+  it('reads predictions for the view as humanbase.io does', () => {
+    const read = new GenomeLocation('chr1', 109_767_590, 109_867_590);
+    const inside = new GenomeLocation('chr1', 109_781_044, 109_858_955);
+    expect(new GenomeLocation('chr1', 109_767_590, 109_867_590).readRange(undefined).variantRange).toBe('1:109767590:109867590');
+    expect(inside.readRange(read)).toBe(read);
+    expect(new GenomeLocation('chr1', 109_765_632, 109_874_367).readRange(read).variantRange).toBe('1:109765632:109874367');
+    expect(new GenomeLocation('chr1', 109_800_000, 109_900_000).readRange(read).variantRange).toBe('1:109767590:109950000');
+    expect(new GenomeLocation('chr1', 109_740_000, 109_840_000).readRange(read).variantRange).toBe('1:109690000:109867590');
+    expect(new GenomeLocation('chr10', 23_480_451, 23_536_275).readRange(read).variantRange).toBe('10:23480451:23536275');
+  });
 });

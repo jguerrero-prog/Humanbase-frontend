@@ -277,7 +277,7 @@
         ]
       },
       "recordedByHandSamples": {
-        "why": "Polling is a POST, which pnpm samples:record only sends to read-only endpoints. This poll of the live cache was recorded once on October 20, 2026 and trimmed; the note in the file says how.",
+        "why": "Polling is a POST, which pnpm samples:record only sends to read-only endpoints. This poll of the live cache was recorded on October 21, 2026 with every term, so offline term counts match live; only the per-term edge lists are left out, as the note in the file says.",
         "files": [
           "integrations/community@body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9@post-77074ba4"
         ]
@@ -420,24 +420,25 @@
       "method": "GET",
       "path": "/api/deepsea/jobs/{job_id}/feature_predictions/",
       "documented": true,
+      "$note": "The job page reads every variant in the genome browser’s view, as humanbase.io does. Samples cover each example variant’s opening view, 50 kb either side of it, as humanbase.io opens.",
       "samples": [
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=1:109817590",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=10:23508363",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:52599188",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:209709",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:83947129",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=16:85833314",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=17:76352731",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=19:1854681",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=19:55999138",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_variant=19:59070227",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=evalue&chr_variant=1:109817590",
-        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=diffs&chr_variant=1:109817590",
-        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/feature_predictions/?score_type=seqclass&chr_variant=3:12598855",
-        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/feature_predictions/?score_type=seqclass&chr_variant=7:49813589",
-        "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/feature_predictions/?score_type=zscore&chr_variant=3:12598855",
-        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/feature_predictions/?score_type=expecto&chr_variant=3:12598855",
-        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/feature_predictions/?score_type=expecto&chr_variant=5:134871851"
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_and_variant_range=1:109767590:109867590",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_and_variant_range=10:23458363:23558363",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_and_variant_range=16:52549188:52649188",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_and_variant_range=16:159709:259709",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_and_variant_range=16:83897129:83997129",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_and_variant_range=16:85783314:85883314",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_and_variant_range=17:76302731:76402731",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_and_variant_range=19:1804681:1904681",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_and_variant_range=19:55949138:56049138",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=zscore&chr_and_variant_range=19:59020227:59120227",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=evalue&chr_and_variant_range=1:109767590:109867590",
+        "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/feature_predictions/?score_type=diffs&chr_and_variant_range=1:109767590:109867590",
+        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/feature_predictions/?score_type=seqclass&chr_and_variant_range=3:12548855:12648855",
+        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/feature_predictions/?score_type=seqclass&chr_and_variant_range=7:49763589:49863589",
+        "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/feature_predictions/?score_type=zscore&chr_and_variant_range=3:12548855:12648855",
+        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/feature_predictions/?score_type=expecto&chr_and_variant_range=3:12548855:12648855",
+        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/feature_predictions/?score_type=expecto&chr_and_variant_range=5:134821851:134921851"
       ],
       "usedBy": [
         "DeepseaService.featurePredictions"
@@ -603,13 +604,14 @@
     ]
   },
   "genomeTracks": {
-    "$note": "Not the API: the genome browser reads gene models, scores and sequence from the static track files on S3. pnpm samples:record saves each window padded by its own width on both sides, the listed score files over it, and 2 kb of sequence around its center, into genome/tracks.json.",
+    "$note": "Not the API: the genome browser reads gene models, scores, segments and sequence from the static track files on S3. pnpm samples:record saves each window padded by its own width on both sides, the listed score files over it (a file with bins, such as per-base conservation, summarised to about that many values), the listed segment files (bigBed, such as GM12878 ChromHMM) over it, and 2 kb of sequence around its center, into genome/tracks.json.",
     "tracks": "https://humanbase.s3.amazonaws.com/tracks/",
     "windows": [
-      { "assembly": "hg19", "region": "chr1:2230000-2440000", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] },
-      { "assembly": "hg19", "region": "chr14:21853352-21905457", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] },
-      { "assembly": "hg19", "region": "chr2:166095911-166248818", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] },
-      { "assembly": "hg19", "region": "chr16:53088944-53361413", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] }
+      { "assembly": "hg19", "region": "chr1:2230000-2440000", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
+      { "assembly": "hg19", "region": "chr14:21853352-21905457", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
+      { "assembly": "hg19", "region": "chr2:166095911-166248818", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
+      { "assembly": "hg19", "region": "chr16:53088944-53361413", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
+      { "assembly": "hg19", "region": "chr1:109792590-109842590", "scores": [], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] }
     ]
   }
 }

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { apiOff } from './apiOff';
+import { downloadFrom } from './downloads';
 import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
@@ -67,6 +68,45 @@ test('the module result keeps its view in the URL, so a refresh shows the same t
   await expect(page.locator('.force-graph-links line').first()).toBeAttached();
 });
 
+test('a gene opens in the module drawer, chains to its neighbors and goes back, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${renal}&module=1`);
+  const module = page.getByRole('dialog', { name: 'M1, renal system development' });
+  await module.getByRole('radio', { name: 'Genes' }).click();
+  await expect(module.getByRole('button', { name: 'Show all 64 genes' })).toBeVisible();
+  await module.getByRole('searchbox', { name: 'Filter M1 genes' }).fill('HNF1B');
+  await module.getByRole('row', { name: /HNF1B/ }).hover();
+  await expect(page.locator('.force-graph-node.is-hovered')).toHaveAttribute('aria-label', 'HNF1B, M1');
+  await module.getByRole('button', { name: 'HNF1B' }).click();
+
+  const gene = page.getByRole('dialog', { name: 'HNF1B' });
+  await expect(page).toHaveURL(/module=1&gene=6928/);
+  await expect(gene.getByRole('heading', { level: 2, name: 'HNF1B' })).toBeFocused();
+  await expect(gene.getByRole('table', { name: 'Enriched terms of M1 that include HNF1B' }).getByRole('row')).toHaveCount(10);
+  await expect(page.locator('.force-graph-node.is-selected')).toHaveAttribute('aria-label', 'HNF1B, M1');
+  await expect(page.locator('.force-graph-focus-links line')).toHaveCount(2);
+  expect(await violationsOf(page)).toEqual([]);
+
+  await gene.getByRole('radio', { name: 'Gene neighbors' }).click();
+  const neighbors = gene.getByRole('table', { name: 'Genes connected to HNF1B' });
+  await expect(neighbors.getByRole('row')).toHaveText([/Gene/, /^HNF4A.*0\.13$/, /^KCNJ1.*0\.10$/]);
+  expect(await violationsOf(page)).toEqual([]);
+
+  await page.locator('.force-graph-node[aria-label="KCNJ1, M1"]').hover({ force: true });
+  await expect(page.getByRole('tooltip')).toContainText('KCNJ1');
+
+  await neighbors.getByRole('button', { name: 'HNF4A' }).click();
+  await expect(page.getByRole('dialog', { name: 'HNF4A' })).toBeVisible();
+  await expect(page).toHaveURL(/module=1&gene=3172/);
+  await page.reload();
+  await page.getByRole('button', { name: 'Back to M1' }).click();
+  await expect(page.getByRole('dialog', { name: 'M1, renal system development' })).toBeVisible();
+  await expect(page).not.toHaveURL(/gene=/);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  expect(apiRequests).toEqual([]);
+});
+
 test('Edit genes takes the result’s list back to the search', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(renal);
@@ -74,5 +114,26 @@ test('Edit genes takes the result’s list back to the search', async ({ page })
   await expect(page).toHaveURL(/\/\?analysis=modules$/);
   await expect(page.getByRole('textbox', { name: 'Title' })).toHaveValue('');
   await expect(page.getByRole('button', { name: 'Find modules in 504 genes' })).toBeVisible();
+  expect(apiRequests).toEqual([]);
+});
+
+test('the module Download menu saves the live site’s TSV, PNG, SVG, PDF and ZIP, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(renal);
+  await expect(page.getByText('Showing 14 enriched modules of 2 genes or more. Edges hidden.')).toBeVisible();
+  const name = /^kidney_gene-ontology-bp_\d+\.(tsv|png|svg|pdf|zip)$/;
+  const tsv = await downloadFrom(page, 'Download', 'Download as TSV');
+  expect(tsv.name).toMatch(name);
+  const rows = tsv.bytes.toString().split('\n');
+  expect(rows.slice(0, 3)).toEqual(['GO_VERSION\treleases/2018-05-14\t\t\t\t', 'NETWORK_NAME\tkidney\t\t\t\t', 'NETWORK_VERSION\t1\t\t\t\t']);
+  expect(rows).toEqual(expect.arrayContaining(['RESULTING GENE COUNT\t351\t\t\t\t', 'CLUSTER_NAME\tTERM_NAME\tGO_ID\tTERM_Q_VALUE\tGENE_COUNT\tTERM_GENES', 'SOURCE\tTARGET\tWEIGHT\t\t\t']));
+  for (const [format, magic] of [['PNG', '\x89PNG'], ['SVG', '<svg'], ['PDF', '%PDF']] as const) {
+    const file = await downloadFrom(page, 'Download', `Download as ${format}`);
+    expect(file.name).toMatch(name);
+    expect(file.bytes.subarray(0, magic.length).toString('latin1')).toBe(magic);
+  }
+  const zip = await downloadFrom(page, 'Download', 'Download as ZIP');
+  const base = zip.name.replace(/\.zip$/, '');
+  for (const extension of ['tsv', 'png', 'svg', 'pdf']) expect(zip.bytes.toString('latin1')).toContain(`${base}.${extension}`);
   expect(apiRequests).toEqual([]);
 });

@@ -1,3 +1,4 @@
+import { GenomeLocation } from '../genome/GenomeLocation';
 import { SampleClient } from '../sample/SampleClient';
 import { VariantFileCheck } from '../jobs/VariantFileCheck';
 import { deepseaExamples } from './deepseaExamples';
@@ -30,8 +31,12 @@ describe('DeepseaService', () => {
   });
 
   it('names every feature effect from the model’s feature list', async () => {
-    const prediction = await service.featurePredictions(exampleJob, 'zscore', '1:109817590');
+    const view = GenomeLocation.at('chr1', 109817590).withWidth(100_000);
+    expect(view.variantRange).toBe('1:109767590:109867590');
+    const [prediction, ...others] = await service.featurePredictions(exampleJob, 'zscore', view);
     if (!prediction) throw new Error('No prediction recorded');
+    expect(others).toEqual([]);
+    expect(prediction).toMatchObject({ chromosome: 'chr1', position: 109817590, ref_allele: 'G', alt_allele: 'T' });
     const effects = featureEffects(prediction, await service.features('seqweaver'));
     expect(effects).toHaveLength(232);
     const top = [...effects].sort((a, b) => b.value - a.value)[0];
@@ -90,7 +95,7 @@ describe('DeepseaService', () => {
     expect(variantScoreTypes(job.model, types).map((type) => type.short_name)).toEqual(['seqclass']);
     const rows = variantRows([await service.variantScores(id, 'seqclass')]);
     expect(rows.find((row) => row.position === 49813589)).toMatchObject({ name: 'VWC2', topClass: 'P Promoter' });
-    const prediction = await service.featurePredictions(id, 'seqclass', '7:49813589');
+    const [prediction] = await service.featurePredictions(id, 'seqclass', GenomeLocation.at('chr7', 49813589).withWidth(100_000));
     if (!prediction) throw new Error('No prediction recorded');
     const effects = featureEffects(prediction, await service.features('sei', 'seqclass'));
     expect(effects).toHaveLength(40);

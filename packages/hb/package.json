@@ -16,7 +16,8 @@
     "@humanbase/data": "workspace:*",
     "@humanbase/genome": "workspace:*",
     "@humanbase/graph": "workspace:*",
-    "@humanbase/ui": "workspace:*"
+    "@humanbase/ui": "workspace:*",
+    "jspdf": "4.2.1"
   },
   "peerDependencies": {
     "react": "^19.3.0"

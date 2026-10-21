@@ -18,7 +18,8 @@
     "@fontsource/atkinson-hyperlegible-mono": "5.3.0",
     "@fontsource/cabin": "5.3.0",
     "@fontsource/lato": "5.3.0",
-    "@humanbase/tokens": "workspace:*"
+    "@humanbase/tokens": "workspace:*",
+    "fflate": "0.8.3"
   },
   "peerDependencies": {
     "react": "^19.3.0"

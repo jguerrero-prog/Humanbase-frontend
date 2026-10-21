@@ -308,7 +308,6 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
                 title={networkTitle}
                 integrations={integrations}
                 queryNames={listJoin(found)}
-                fileName={paneFile(query)}
                 selection={graphSelection}
                 onQueryChange={(next) => onQueryChange(next.with({ compare: query.compare }))}
                 onViewChange={(next) => onViewChange(next)}
@@ -322,7 +321,6 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
                 title={compareTitle}
                 integrations={integrations}
                 queryNames={listJoin(found)}
-                fileName={paneFile(query.compared)}
                 selection={graphSelection}
                 onQueryChange={(next) => onQueryChange(query.with({ compare: { tissue: next.tissue, dataTypes: next.dataTypes } }))}
                 onViewChange={(next) => onViewChange(next, 'compare')}
@@ -391,7 +389,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
             minConfidence={minConfidence}
             label={`Network of ${listJoin(symbols)} and ${related?.length ?? 0} related genes. The genes table lists the same genes.`}
             tableCaption={`Connections between the genes in the ${networkTitle} network graph, strongest first`}
-            fileName={fileName}
+            networkTitle={networkTitle}
             selection={graphSelection}
             loading={loading}
             onViewChange={onViewChange}

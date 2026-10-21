@@ -37,6 +37,7 @@ import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
+import ModuleGeneDrawer from '../../components/docs/ModuleGeneDrawer.astro';
 import NetworkSketch from '../../components/docs/NetworkSketch.astro';
 import { productJobs, productSections } from '../../data/product-navigation';
 import { edgeBands } from '../../data/viz-examples';
@@ -177,6 +178,14 @@ const notes = {
     'Data types follow the Data types filter in the header; a type that is filtered out doesn’t appear here.',
     'Weights and contributions are shown exactly as computed. GIANT shows a contribution per dataset; MAGE gives each connection one score, so its drawer shows that score without the dataset table.',
     'All networks lists every network that contains this pair, so a researcher can see where else the connection holds.',
+  ],
+  moduleGene: [
+    'Clicking a gene in the module drawer’s Genes list or in the graph opens this view in the same drawer. Back to M1 returns to the module, and the URL keeps ?module=1&gene=6928.',
+    'Gene terms are the enriched terms of the gene’s module, in the database chosen in Terms from, that include the gene. Other M1 genes names the rest of each term’s genes.',
+    'Gene neighbors are every gene it links to in the result, in any module, scored by edge weight. Clicking a neighbor moves the selection to it.',
+    'In the graph the gene gets the ink ring and its edges show even when Show edges is off; its neighbors stay at full strength and the rest fade.',
+    'Hovering a gene in the graph shows its edges and the data tooltip; hovering a row in the drawer rings that gene.',
+    'The module drawer’s Genes view lists the module’s genes alphabetically with a Filter M1 genes field, the first 8 rows and Show all 64 genes.',
   ],
   compare: [
     'A new network starts with all five data types selected. The live form starts at none, which returns an empty network.',
@@ -364,6 +373,14 @@ const il1r1Terms = [
       </Drawer>
     </div>
     <ul class="points">{notes.edge.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="A gene in a module" lead="In a module result, a gene opens one level deeper in the module drawer, with Back to M1 above its name. Gene terms and Gene neighbors are a segmented control, as in the module drawer.">
+    <div class="drawers">
+      <ModuleGeneDrawer view="terms" />
+      <ModuleGeneDrawer view="neighbors" />
+    </div>
+    <ul class="points">{notes.moduleGene.map((note) => <li>{note}</li>)}</ul>
   </DocSection>
 
   <DocSection title="Highlighting a set" lead="Each row of the Processes and Tissues panels starts with a star. Starring a row rings its genes in the graph in that set’s color, so people can see where a process or tissue sits in the network.">
