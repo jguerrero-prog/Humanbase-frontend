@@ -143,11 +143,16 @@ test('ExPecto SC shows PTEN by organ', async ({ page }) => {
   await checkScreen(page, problems);
 });
 
-test('the ASD Browser loads Biodalliance, finds SCN2A and pages the table', async ({ page }) => {
+test('the ASD Browser loads Biodalliance in the design system, finds SCN2A and pages the table', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/asd/`);
   await expect(page.getByRole('heading', { name: /^Molecular effects of chr1:/ })).toBeVisible();
   await expect(page.locator('.genome-engine')).toBeVisible();
+  await expect(page.locator('.genome-engine-header')).toHaveText(['Position', /^DNA disease impact score/, /^RNA disease impact score/, /^GenesGENCODE 19/]);
+  await expect(page.locator('.genome-engine .dalliance > .toolbar')).toBeHidden();
+  await page.locator('.genome-engine').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page).toHaveURL(/location=chr1/);
   await expect(page.getByText(/Raises, \d+ DNA features/)).toBeVisible();
   await checkScreen(page, problems);
   const find = page.getByLabel('Find a gene, region or position');

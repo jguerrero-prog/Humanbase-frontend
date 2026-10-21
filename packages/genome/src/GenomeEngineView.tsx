@@ -1,5 +1,6 @@
+import { genomeCommand, TrackHeader, type GenomeCommand } from '@humanbase/ui';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { sameRegion, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from './GenomeBrowserEngine';
+import { sameRegion, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion, type GenomeTrackLayout } from './GenomeBrowserEngine';
 import './genome.css';
 
 export type EngineStatus = 'loading' | 'ready' | 'failed';
@@ -14,13 +15,16 @@ export interface GenomeEngineViewProps {
   selected?: { chrom: string; position: number } | undefined;
   onRegionChange?: (region: GenomeRegion) => void;
   onStatusChange?: (status: EngineStatus, error?: Error) => void;
+  /** Keyboard commands from the genome browser's key map; with it, the tracks take focus and keys. */
+  onCommand?: ((command: GenomeCommand) => void) | undefined;
 }
 
 /** Mounts a genome browser engine and keeps it on the page's region and selection. */
-export function GenomeEngineView({ engine, label, assembly, region, tracks, selected, onRegionChange, onStatusChange }: GenomeEngineViewProps) {
+export function GenomeEngineView({ engine, label, assembly, region, tracks, selected, onRegionChange, onStatusChange, onCommand }: GenomeEngineViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GenomeBrowserEngine | null>(null);
   const [ready, setReady] = useState(false);
+  const [layout, setLayout] = useState<readonly GenomeTrackLayout[]>([]);
   const shown = useRef(region);
   const events = useRef({ onRegionChange, onStatusChange });
   useLayoutEffect(() => {
@@ -46,6 +50,9 @@ export function GenomeEngineView({ engine, label, assembly, region, tracks, sele
           shown.current = moved;
           events.current.onRegionChange?.(moved);
         },
+        onTrackLayout: (tracks) => {
+          if (live) setLayout(tracks);
+        },
       })
       .then(() => {
         if (!live) return;
@@ -60,6 +67,7 @@ export function GenomeEngineView({ engine, label, assembly, region, tracks, sele
       live = false;
       browser.destroy();
       instance.current = null;
+      setLayout([]);
       element.replaceChildren();
     };
   }, [engine, assembly, tracks]);
@@ -77,5 +85,39 @@ export function GenomeEngineView({ engine, label, assembly, region, tracks, sele
     instance.current?.highlight(mark ? { chrom, position: Number(position) } : undefined);
   }, [ready, mark]);
 
-  return <div ref={container} className="genome-engine" aria-busy={!ready || undefined} />;
+  // An engine that reports its tracks gets the design system's headers beside them; others keep their own labels.
+  const headed = layout.length > 0;
+  const surface = { ref: container, className: 'genome-engine', 'aria-label': label, 'aria-busy': !ready || undefined };
+  return (
+    <div className={headed ? 'genome-engine-frame is-headed' : 'genome-engine-frame'}>
+      {headed && (
+        <div className="genome-engine-headers">
+          {layout.map((track) => (
+            <div key={track.name} className="genome-engine-header" style={{ insetBlockStart: track.top, blockSize: track.height }}>
+              <TrackHeader name={track.name} source={track.meta ?? ''} />
+            </div>
+          ))}
+        </div>
+      )}
+      {onCommand ? (
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- the tracks pan and zoom with keys, as in the design system's Keyboard spec
+        <div
+          {...surface}
+          role="application"
+          aria-roledescription="genome browser"
+          aria-keyshortcuts="ArrowLeft ArrowRight + - Control+ArrowLeft Control+ArrowRight"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          tabIndex={0}
+          onKeyDown={(event) => {
+            const command = genomeCommand(event);
+            if (!command) return;
+            event.preventDefault();
+            onCommand(command);
+          }}
+        />
+      ) : (
+        <div {...surface} role="region" />
+      )}
+    </div>
+  );
 }

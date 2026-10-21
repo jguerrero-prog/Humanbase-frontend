@@ -36,10 +36,11 @@ const featureSets = [
 ];
 const sampleHelp = 'With the API off, the sample data covers chr1:2,230,000-2,440,000 and the CHD8, SCN2A and CHD9 examples. Search one of those, or turn the API on.';
 // The live ASD page's two impact tracks and their style.
-const impactStyle = { type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: '#105CC9', HEIGHT: 50, MIN: 0, MAX: 3 } };
+// Same bars, range and words as the API-off score tracks; 50px tall, per the genome browser docs.
+const impactStyle = { type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 50, MIN: -0.4, MAX: 3 } };
 const impactTracks: readonly GenomeDataTrack[] = [
-  { name: 'DNA Disease Impact Score', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw', style: impactStyle },
-  { name: 'RNA Disease Impact Score', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw', style: impactStyle },
+  { name: 'DNA disease impact score', meta: 'Model score, −0.4 to 3', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw', style: impactStyle },
+  { name: 'RNA disease impact score', meta: 'Model score, −0.4 to 3', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw', style: impactStyle },
 ];
 const notice = 'Simons Simplex Collection (and Simons VIP) data may only be used for projects that advance autism and related developmental disorder research. Questions about the data go to collections@sfari.org.';
 
@@ -226,6 +227,11 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
             selected={selected ? { chrom: selected.chromosome, position: selected.position } : undefined}
             onRegionChange={onRegionChange}
             onStatusChange={(status, error) => setEngineStatus({ status, error })}
+            onCommand={(command) => {
+              if (command === 'moveLeft' || command === 'moveRight') move(location.move(command === 'moveLeft' ? -0.1 : 0.1));
+              else if (command === 'zoomIn' || command === 'zoomOut') move(location.zoom(command === 'zoomIn' ? 'in' : 'out'));
+              else if (command === 'previousVariant' || command === 'nextVariant') step(command === 'previousVariant' ? -1 : 1);
+            }}
           />
         </>
       )}

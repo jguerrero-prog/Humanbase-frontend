@@ -229,6 +229,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
         <li>Pages talk to one interface, <code>GenomeBrowserEngine</code> in <code>@humanbase/genome</code>: mount, show a region, mark the selected variant, and report when a drag or zoom settles.</li>
         <li>With the API on, the ASD Browser uses Biodalliance, set up like the live site: the hg19 genome, GENCODE 19 genes and the DNA and RNA impact tracks from Humanbase's files on S3. Biodalliance is vendored in the repository with its licenses and loads from the app’s own site the first time a page needs it.</li>
         <li>With the API off, the page draws the score tracks itself from the sample data and loads nothing.</li>
+        <li>Biodalliance takes this page's look: its own toolbar, labels, Bootstrap and Font Awesome are off, the track headers are the system's, and its options take tokens such as <code>var(--viz-seq-6)</code>, read from the page when it mounts. Keys work through the system toolbar. Its ruler, gene labels and the score tracks' faint grid are drawn on its canvas and keep its look. The package README's Theming section lists every setting.</li>
         <li>To use another Biodalliance setup, edit <code>humanbaseConfig.ts</code> or pass your own options and <code>baseUrl</code>. To use another engine, implement the interface and change <code>defaultGenomeEngine</code>. The package README has the details.</li>
       </ul>
     </NoteCard>
