@@ -143,17 +143,36 @@ test('ExPecto SC shows PTEN by organ', async ({ page }) => {
   await checkScreen(page, problems);
 });
 
-test('the ASD Browser loads Biodalliance, finds SCN2A and pages the table', async ({ page }) => {
+test('the ASD Browser draws the real track files, finds SCN2A and pages the table', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/asd/`);
   await expect(page.getByRole('heading', { name: /^Molecular effects of chr1:/ })).toBeVisible();
-  await expect(page.locator('.genome-engine')).toBeVisible();
+  const browser = page.locator('.genome-engine');
+  await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Genes']);
+  await expect(browser.getByText('← PEX10')).toBeVisible();
+  await expect(browser.locator('.genome-tracks-bar.is-selected')).toHaveCount(2);
+  const coveredBar = await page.evaluate(async () => {
+    const bar = document.querySelector('.top-bar');
+    const frame = document.querySelector('.genome-engine-frame');
+    if (!bar || !frame) return ['missing top bar or genome browser'];
+    scrollBy(0, frame.getBoundingClientRect().top - bar.clientHeight + 200);
+    await new Promise((settled) => setTimeout(settled, 300));
+    const { top, bottom } = bar.getBoundingClientRect();
+    const covered: number[][] = [];
+    for (let x = 8; x < innerWidth; x += 16) for (let y = top + 2; y < bottom; y += 6) if (!bar.contains(document.elementFromPoint(x, y))) covered.push([x, y]);
+    return covered;
+  });
+  expect(coveredBar, 'the genome browser draws over the top bar').toEqual([]);
+  await page.locator('.genome-engine').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page).toHaveURL(/location=chr1/);
   await expect(page.getByText(/Raises, \d+ DNA features/)).toBeVisible();
   await checkScreen(page, problems);
   const find = page.getByLabel('Find a gene, region or position');
   await find.fill('SCN2A');
   await find.press('Enter');
   await expect(page).toHaveURL(/chr2/);
+  await expect(browser.getByText('SCN2A →')).toBeVisible();
   await checkScreen(page, problems);
   await page.goto(`${web}/asd/?view=table`);
   await expect(page.getByText('127,133 variants', { exact: true })).toBeVisible();

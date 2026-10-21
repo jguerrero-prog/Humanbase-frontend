@@ -1,5 +1,5 @@
 import type { GenomeBrowserEngineFactory } from './GenomeBrowserEngine';
-import { BiodallianceEngine } from './biodalliance/BiodallianceEngine';
+import { TrackEngine } from './tracks/TrackEngine';
 
-/** The engine pages use when the API is on. A fork with its own Biodalliance setup changes this line. */
-export const defaultGenomeEngine: GenomeBrowserEngineFactory = () => new BiodallianceEngine();
+/** The engine pages use: the design system's own tracks. A fork can return new BiodallianceEngine() here instead. */
+export const defaultGenomeEngine: GenomeBrowserEngineFactory = (files) => new TrackEngine(files);

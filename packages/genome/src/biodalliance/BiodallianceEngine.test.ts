@@ -1,4 +1,4 @@
-import { BiodallianceEngine, markImagesDecorative } from './BiodallianceEngine';
+import { BiodallianceEngine, markImagesDecorative, resolveTokens } from './BiodallianceEngine';
 
 class FakeBrowser {
   static last: FakeBrowser;
@@ -22,6 +22,18 @@ class FakeBrowser {
   clearHighlights() {
     this.calls.push('clear');
   }
+  resizeViewer() {
+    this.calls.push('resize');
+  }
+}
+
+class FakeResizeObserver {
+  static last: FakeResizeObserver;
+  constructor(readonly resized: () => void) {
+    FakeResizeObserver.last = this;
+  }
+  observe() {}
+  disconnect() {}
 }
 
 const region = { chrom: 'chr1', start: 2_230_000, end: 2_440_000 };
@@ -30,10 +42,12 @@ const dna = { name: 'DNA Disease Impact Score', bigWigUrl: 'https://example.org/
 describe('BiodallianceEngine', () => {
   beforeEach(() => {
     (globalThis as unknown as { Browser: unknown }).Browser = FakeBrowser;
+    vi.stubGlobal('ResizeObserver', FakeResizeObserver);
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
   });
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllGlobals();
     delete (globalThis as unknown as { Browser?: unknown }).Browser;
   });
 
@@ -47,6 +61,8 @@ describe('BiodallianceEngine', () => {
     expect(names).toEqual(['Genome', 'GENCODE 19', 'Conservation', 'GM12878 ChromHMM', 'DNA Disease Impact Score']);
     expect(container).toHaveAttribute('aria-label', 'Genome browser');
     expect(document.getElementById(options.pageName as string)).not.toBeNull();
+    expect(options).toMatchObject({ noSourceCSS: true, noTrackEditor: true, rulerLocation: 'none' });
+    expect(document.querySelectorAll('link[href="https://example.org/dalliance/css/dalliance-scoped.css"]')).toHaveLength(1);
   });
 
   it('reports a drag once it settles, and not the region the page just set', async () => {
@@ -79,6 +95,24 @@ describe('BiodallianceEngine', () => {
     engine.highlight({ chrom: 'chr2', position: 166_100_000 });
     engine.highlight(undefined);
     expect(FakeBrowser.last.calls).toEqual(['setLocation chr2 166095911 166248818', 'clear', 'highlight chr2 166100000 166100001', 'clear']);
+  });
+
+  it('keeps the region it shows when the page resizes', async () => {
+    const engine = new BiodallianceEngine();
+    await engine.mount(document.createElement('div'), { label: 'Genome browser', assembly: 'hg19', region, tracks: [] });
+    engine.showRegion(region);
+    FakeResizeObserver.last.resized();
+    expect(FakeBrowser.last.calls.slice(-2)).toEqual(['resize', 'setLocation chr1 2230000 2440000']);
+  });
+});
+
+describe('resolveTokens', () => {
+  it('turns token references into the values the page computes, at any depth', () => {
+    const element = document.createElement('div');
+    element.style.setProperty('--viz-seq-6', 'rgb(1, 2, 3)');
+    document.body.append(element);
+    expect(resolveTokens({ style: { BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 50 }, colors: ['var(--viz-seq-6)', 'red'] }, element)).toEqual({ style: { BGCOLOR: 'rgb(1, 2, 3)', HEIGHT: 50 }, colors: ['rgb(1, 2, 3)', 'red'] });
+    expect(resolveTokens('var(--missing)', element)).toBe('var(--missing)');
   });
 });
 

@@ -21,8 +21,16 @@ const top = 24;
 const plotWidth = width - left - 16;
 const plotHeight = height - top - bottom;
 
-const ceiling = (max: number) => Math.max(0.5, Math.ceil(max * 2) / 2);
-const ticks = (max: number) => Array.from({ length: Math.round(max / 0.5) + 1 }, (_, index) => index * 0.5);
+const steps = [0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000];
+
+/** The y axis always shows 0 and spans negative scores too, in at most six tick steps. */
+function scoreAxis(values: readonly number[]) {
+  const [low, high] = [Math.min(0, ...values), Math.max(0, ...values)];
+  const step = steps.find((size) => (high - low) / size <= 6) ?? 1000;
+  const [min, max] = [Math.floor(low / step) * step, Math.max(step, Math.ceil(high / step) * step)];
+  const ticks = Array.from({ length: Math.round((max - min) / step) + 1 }, (_, index) => min + index * step);
+  return { min, max, ticks, digits: step < 1 ? 1 : 0 };
+}
 
 interface Point {
   variant: Variant;
@@ -55,8 +63,8 @@ function rankPoints(variants: readonly Variant[], key: string) {
 
 export function VariantScorePlot({ variants, score, by = 'genome', selected, onSelect, summary }: VariantScorePlotProps) {
   const id = useId();
-  const max = ceiling(Math.max(0, ...variants.map((variant) => variant.scores[score.key] ?? 0)));
-  const y = (value: number) => top + plotHeight - (value / max) * plotHeight;
+  const axis = scoreAxis(variants.map((variant) => variant.scores[score.key] ?? 0));
+  const y = (value: number) => top + plotHeight - ((value - axis.min) / (axis.max - axis.min)) * plotHeight;
   const { points, labels } = by === 'genome' ? genomePoints(variants) : rankPoints(variants, score.key);
   const chosen = points.find((point) => point.variant.id === selected);
   const chosenY = chosen ? y(chosen.variant.scores[score.key] ?? 0) : 0;
@@ -64,11 +72,11 @@ export function VariantScorePlot({ variants, score, by = 'genome', selected, onS
   return (
     <figure className="variant-plot" aria-labelledby={`${id}-summary`}>
       <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true" focusable="false">
-        {ticks(max).map((tick) => (
+        {axis.ticks.map((tick) => (
           <g key={tick}>
             <line className="variant-plot-grid" x1={left} x2={width - 16} y1={y(tick)} y2={y(tick)} />
             <text className="variant-plot-tick" x={left - 8} y={y(tick) + 4} textAnchor="end">
-              {tick.toFixed(1)}
+              {tick.toFixed(axis.digits)}
             </text>
           </g>
         ))}

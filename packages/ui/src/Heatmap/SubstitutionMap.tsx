@@ -45,6 +45,15 @@ export function SubstitutionMap({ length, start, windowSize, onStart, columns, o
   const grid = useRef<HTMLDivElement>(null);
   const [focus, setFocus] = useState<readonly [number, number]>([0, Math.max(0, selected - start)]);
   const [hover, setHover] = useState<readonly [number, number] | null>(null);
+  const body = useRef<HTMLDivElement>(null);
+  const [tipAt, setTipAt] = useState<{ x: number; y: number } | null>(null);
+  // The tooltip lives outside the scrolling plot, so it is placed from the cell's position on screen.
+  const showTip = (cell: HTMLElement, at: readonly [number, number]) => {
+    const box = body.current?.getBoundingClientRect();
+    const rect = cell.getBoundingClientRect();
+    if (box) setTipAt({ x: rect.left - box.left + rect.width / 2, y: rect.bottom - box.top + 4 });
+    setHover(at);
+  };
   const last = Math.max(0, length - windowSize);
   const end = start + columns.length - 1;
   const strongest = Math.max(...overview, 0) || 1;
@@ -130,7 +139,7 @@ export function SubstitutionMap({ length, start, windowSize, onStart, columns, o
         onKeyDown={moveWindow}
         style={{ insetInlineStart: `${(start / length) * 100}%`, inlineSize: `${(windowSize / length) * 100}%` } as CSSProperties}
       />
-      <div className="substitution-body">
+      <div ref={body} className="substitution-body">
         <div className="substitution-plot" style={{ '--substitution-columns': columns.length } as CSSProperties}>
           <div className="substitution-ruler" aria-hidden="true">
             {columns.map((column) => (
@@ -164,11 +173,11 @@ export function SubstitutionMap({ length, start, windowSize, onStart, columns, o
                       aria-selected={column.position === selected}
                       onClick={() => onSelect(column.position)}
                       onKeyDown={(event) => moveFocus(event, row, index)}
-                      onPointerEnter={() => setHover([row, index])}
+                      onPointerEnter={(event) => showTip(event.currentTarget, [row, index])}
                       onPointerLeave={() => setHover(null)}
-                      onFocus={() => {
+                      onFocus={(event) => {
                         setFocus([row, index]);
-                        setHover([row, index]);
+                        showTip(event.currentTarget, [row, index]);
                       }}
                       onBlur={() => setHover(null)}
                     />
@@ -178,17 +187,18 @@ export function SubstitutionMap({ length, start, windowSize, onStart, columns, o
             ))}
             {selectedColumn && <span className="substitution-selected" aria-hidden="true" style={{ insetInlineStart: `calc(var(--substitution-label) + ${1 + selectedIndex * cellStep}px)` } as CSSProperties} />}
           </div>
-          {hover && hovered && hoveredBase && (
-            <DataTooltip
-              id={`${id}-tip`}
-              className="substitution-tip"
-              title={`Position ${number.format(hovered.position)}`}
-              subtitle={hoveredBase === hovered.reference ? `Reference ${hoveredBase}` : `${hovered.reference} to ${hoveredBase}`}
-              rows={[[spec.title, hoveredValue === undefined ? 'Reference' : format(hoveredValue)]]}
-              position={{ x: 24 + hover[1] * cellStep + 14, y: 48 + (hover[0] + 1) * 23 }}
-            />
-          )}
+
         </div>
+        {hover && tipAt && hovered && hoveredBase && (
+          <DataTooltip
+            id={`${id}-tip`}
+            className="substitution-tip"
+            title={`Position ${number.format(hovered.position)}`}
+            subtitle={hoveredBase === hovered.reference ? `Reference ${hoveredBase}` : `${hovered.reference} to ${hoveredBase}`}
+            rows={[[spec.title, hoveredValue === undefined ? 'Reference' : format(hoveredValue)]]}
+            position={tipAt}
+          />
+        )}
         {selectedColumn && (
           <section className="substitution-detail" aria-labelledby={`${id}-detail`}>
             <h3 id={`${id}-detail`}>Position {number.format(selectedColumn.position)}</h3>

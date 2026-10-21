@@ -5,6 +5,7 @@ export { IconButton, type IconButtonProps } from './IconButton/IconButton';
 export { StarToggle, type StarToggleProps } from './StarToggle/StarToggle';
 export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
 export { ScoreTracks, type ScoreTrack, type ScoreTracksProps } from './GenomeBrowser/ScoreTracks';
+export { GenomeTrackView, type GeneShape, type GenomeTrackViewProps, type ScoreTrackData, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
 export {
   BrowserSettingsDialog,
   ExportDialog,
@@ -116,7 +117,7 @@ export { ResultLayout, type ResultLayoutProps } from './Results/ResultLayout';
 export { ResultFiles, type ResultFile as ResultFileRow, type ResultFilesProps } from './Results/ResultFiles';
 export { AllFeaturesPlot, type AllFeaturesPlotProps } from './VariantEffects/AllFeaturesPlot';
 export { EffectGroups, type EffectExperiment, type EffectGroup, type StrengthCounts } from './VariantEffects/EffectGroups';
-export { expressionEffects, sequenceClassEffects, zEffects, type EffectScale } from './VariantEffects/EffectScale';
+export { asdEffects, expressionEffects, sequenceClassEffects, zEffects, type EffectScale } from './VariantEffects/EffectScale';
 export { EffectsHeatmap, type EffectsHeatmapProps } from './VariantEffects/EffectsHeatmap';
 export { EffectsControls, MolecularEffects, effectZScale, type EffectsControlsProps, type EffectsView, type MolecularEffectsProps } from './VariantEffects/MolecularEffects';
 export { StrongestEffects, type StrongestEffectsProps } from './VariantEffects/StrongestEffects';

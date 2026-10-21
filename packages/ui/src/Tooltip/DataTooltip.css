@@ -19,6 +19,7 @@
 
 .data-tooltip-title {
   font: var(--type-label-sm);
+  overflow-wrap: anywhere;
 }
 
 .data-tooltip-subtitle {
@@ -40,12 +41,16 @@
 }
 
 .data-tooltip-rows dt {
+  flex: none;
+  max-inline-size: 60%;
   font: var(--type-caption);
   color: var(--color-grey-300);
 }
 
 .data-tooltip-rows dd {
+  min-inline-size: 0;
   margin: 0;
+  overflow-wrap: break-word;
   font: var(--type-label-sm);
   text-align: end;
 }
@@ -53,6 +58,26 @@
 .data-tooltip-hint {
   font: var(--type-caption);
   color: var(--color-grey-400);
+}
+
+.data-tooltip-interactive {
+  pointer-events: auto;
+}
+
+.data-tooltip-link {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  font: var(--type-label-sm);
+  color: var(--text-on-brand);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.data-tooltip-link:focus-visible {
+  outline: none;
+  border-radius: var(--radius-xs);
+  box-shadow: var(--shadow-focus-ring);
 }
 
 .data-tooltip-note {

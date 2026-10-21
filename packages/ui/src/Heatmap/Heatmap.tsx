@@ -1,4 +1,7 @@
-import { useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import { Icon } from '../Icon/Icon';
+import { useDismiss } from '../List/useDismiss';
+import { BreakableText } from '../Text/BreakableText';
 import { DataTooltip } from '../Tooltip/DataTooltip';
 import { placeNearPoint } from '../Tooltip/placement';
 import { HeatmapCell } from './HeatmapCell';
@@ -9,6 +12,10 @@ export interface HeatmapColumn {
   label: string;
   /** A genome position, drawn on the ruler instead of a rotated label. */
   position?: number;
+  /** This column's place in a genome browser; the pinned tooltip and the table link to it. */
+  href?: string;
+  /** The column in words where the label is only a position, such as the variant chr1:2,232,996 C>T; the tooltip, table and screen readers use it. */
+  name?: string;
 }
 
 /** What a cell's tooltip lists instead of its single value, such as every allele at a position. */
@@ -44,6 +51,8 @@ export interface HeatmapProps {
   initialActive?: readonly [row: number, column: number] | undefined;
   /** Compact rows are 8px tall with labels hidden; the tooltip still works on every cell. */
   density?: 'full' | 'compact' | undefined;
+  /** What the tooltip calls a cell's value; the legend title by default. */
+  valueLabel?: string | undefined;
   /** Prints the value beside each cell, for a heatmap with a single column. */
   showValues?: boolean | undefined;
   /** Narrow cells are 8px wide, labelling every 20th position; auto narrows them when the columns wouldn't fit at full width. */
@@ -56,8 +65,22 @@ const counts = new Intl.NumberFormat('en-US');
 const cellWidth = 34;
 const narrowWidth = 8;
 const labelEvery = 20;
+const hoverGrace = 300;
+const switchDelay = 150;
+const labelWidths = { min: 160, max: 360, share: 0.4 };
 
-export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', showValues = false, columnWidth = 'full' }: HeatmapProps) {
+/** The row label column fits the longest label, within limits; longer labels wrap. */
+function labelColumn(box: HTMLElement, labels: readonly string[]) {
+  const sample = box.querySelector('.heatmap-row-label');
+  const context = document.createElement('canvas').getContext('2d');
+  if (!sample || !context) return labelWidths.min;
+  const style = getComputedStyle(sample);
+  context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+  const widest = Math.ceil(Math.max(0, ...labels.map((label) => context.measureText(label).width)) + (Number.parseFloat(style.paddingInlineEnd) || 0));
+  return Math.max(labelWidths.min, Math.min(widest, labelWidths.max, Math.floor(box.clientWidth * labelWidths.share)));
+}
+
+export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', valueLabel, showValues = false, columnWidth = 'full' }: HeatmapProps) {
   const id = useId();
   const scale = useMemo(() => new ScoreScale(spec), [spec]);
   const plot = useRef<HTMLDivElement>(null);
@@ -65,28 +88,63 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   const [active, setActive] = useState<Cell | null>(initialActive ?? null);
   const [focus, setFocus] = useState<Cell>(initialActive ?? [0, 0]);
   const [highlighted, setHighlighted] = useState<number | null>(null);
+  const [pinned, setPinned] = useState(false);
+  const tip = useRef<HTMLDivElement>(null);
+  const hiding = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // A short grace lets the pointer cross from a cell onto its tooltip, as WCAG 1.4.13 asks.
+  const hideSoon = () => {
+    clearTimeout(hiding.current);
+    hiding.current = setTimeout(() => setActive(null), hoverGrace);
+  };
+  // While a tooltip shows, switching to another cell waits briefly, so crossing cells on the way to the tooltip keeps it.
+  const show = (cell: Cell) => {
+    clearTimeout(hiding.current);
+    if (!active) return setActive(cell);
+    hiding.current = setTimeout(() => setActive(cell), switchDelay);
+  };
+  useEffect(() => () => clearTimeout(hiding.current), []);
+  const unpin = useCallback(() => {
+    setPinned(false);
+    setActive(null);
+  }, []);
+  useDismiss(tip, pinned, unpin);
+  useEffect(() => {
+    if (!pinned) return;
+    const closeOnEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      unpin();
+      plot.current?.querySelector<HTMLElement>(`[data-cell="${focus[0]}-${focus[1]}"]`)?.focus();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [pinned, unpin, focus]);
   const [place, setPlace] = useState<{ x: number; y: number }>();
   const [fits, setFits] = useState(true);
+  const [labelWidth, setLabelWidth] = useState(labelWidths.min);
   const narrow = columnWidth === 'narrow' || (columnWidth === 'auto' && !fits);
   const width = narrow ? narrowWidth : cellWidth;
   const format = (value: number) => ScoreScale.number(Number(value.toFixed(decimals)));
   const columnLabel = (column: HeatmapColumn) => (column.position === undefined ? column.label : counts.format(column.position));
+  const columnName = (column: HeatmapColumn) => column.name ?? columnLabel(column);
+  const labels = rows.map((row) => row.label).join('\n');
   const valueAt = ([row, column]: Cell) => rows[row]?.values[column] ?? null;
 
   useLayoutEffect(() => {
     const box = plot.current;
-    if (columnWidth !== 'auto' || !box) return;
+    if (!box) return;
     const fit = () => {
-      const label = Number.parseFloat(getComputedStyle(box).getPropertyValue('--heatmap-label')) || 0;
+      const label = labelColumn(box, labels.split('\n'));
       const room = box.clientWidth - label;
-      setFits(room <= 0 || columns.length * (cellWidth + 1) <= room);
+      setLabelWidth(label);
+      if (columnWidth === 'auto') setFits(room <= 0 || columns.length * (cellWidth + 1) <= room);
     };
     fit();
+    void document.fonts?.ready.then(fit);
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(fit);
     observer.observe(box);
     return () => observer.disconnect();
-  }, [columnWidth, columns.length]);
+  }, [columnWidth, columns.length, labels]);
 
   useLayoutEffect(() => {
     const box = figure.current;
@@ -110,10 +168,17 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
       Home: [row, 0],
       End: [row, columns.length - 1],
     };
-    if (event.key === 'Escape') return setActive(null);
+    if (event.key === 'Escape') return unpin();
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      setActive(focus);
+      return setPinned(true);
+    }
     const target = next[event.key];
     if (!target) return;
     event.preventDefault();
+    setPinned(false);
+    setActive(target);
     setFocus(target);
     plot.current?.querySelector<HTMLElement>(`[data-cell="${target[0]}-${target[1]}"]`)?.focus();
   };
@@ -135,7 +200,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
         </figcaption>
         <LegendStepped spec={spec} highlighted={highlighted ?? (activeValue === null ? null : scale.step(activeValue))} onHighlight={setHighlighted} />
       </div>
-      <div className="heatmap-plot" ref={plot} style={{ '--heatmap-columns': columns.length, '--heatmap-cell': `${width}px` } as CSSProperties}>
+      <div className="heatmap-plot" ref={plot} style={{ '--heatmap-columns': columns.length, '--heatmap-cell': `${width}px`, '--heatmap-label': `${labelWidth}px` } as CSSProperties}>
         {narrow && (
           <div className="heatmap-position-labels" aria-hidden="true">
             {columns.map((column, index) => (
@@ -153,8 +218,8 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
         <div role="grid" aria-label={title} className="heatmap-grid">
           {rows.map((row, r) => (
             <div role="row" key={row.label} className="heatmap-row">
-              <span role="rowheader" className="heatmap-row-label" title={row.label}>
-                {row.label}
+              <span role="rowheader" className="heatmap-row-label">
+                <BreakableText>{row.label}</BreakableText>
               </span>
               {row.values.map((value, c) => {
                 const column = columns[c];
@@ -169,14 +234,18 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
                     data-state={isActive ? 'hover' : undefined}
                     color={step === null ? null : scale.color(step)}
                     outlined={highlighted !== null && step === highlighted}
-                    aria-label={`${row.label}, ${column ? columnLabel(column) : ''}: ${scale.describe(value, format)}`}
-                    onPointerEnter={() => setActive([r, c])}
-                    onPointerLeave={() => setActive(null)}
+                    aria-label={`${row.label}, ${column ? columnName(column) : ''}: ${scale.describe(value, format)}`}
+                    onPointerEnter={() => !pinned && show([r, c])}
+                    onPointerLeave={() => !pinned && hideSoon()}
                     onFocus={() => {
                       setFocus([r, c]);
-                      setActive([r, c]);
+                      if (!pinned) setActive([r, c]);
                     }}
-                    onBlur={() => setActive(null)}
+                    onBlur={() => !pinned && setActive(null)}
+                    onClick={() => {
+                      setActive([r, c]);
+                      setPinned(true);
+                    }}
                     onKeyDown={move}
                   />
                 );
@@ -193,10 +262,15 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
       </div>
       {active && activeRow && place && (
         <DataTooltip
+          ref={tip}
+          pinned={pinned}
+          onPointerEnter={() => clearTimeout(hiding.current)}
+          onPointerLeave={() => !pinned && hideSoon()}
+          {...(activeHeader?.href && { link: { label: 'Open in Genome Browser', href: activeHeader.href } })}
           id={`${id}-tip`}
           title={activeRow.label}
-          {...(activeHeader && { subtitle: `${columnHeader} ${columnLabel(activeHeader)}` })}
-          rows={activeDetail?.rows ?? [[spec.title, scale.describe(activeValue, format)]]}
+          {...(activeHeader && { subtitle: `${columnHeader} ${columnName(activeHeader)}` })}
+          rows={activeDetail?.rows ?? [[valueLabel ?? spec.title, scale.describe(activeValue, format)]]}
           {...(activeDetail?.hint && { hint: activeDetail.hint })}
           position={place}
         />
@@ -212,7 +286,14 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
                 <th scope="col">{rowHeader}</th>
                 {columns.map((column) => (
                   <th scope="col" key={column.label}>
-                    {columnLabel(column)}
+                    {column.href ? (
+                      <a href={column.href} target="_blank" rel="noopener noreferrer">
+                        {columnName(column)}
+                        <Icon name="external-link" size={16} label="opens in a new tab" />
+                      </a>
+                    ) : (
+                      columnName(column)
+                    )}
                   </th>
                 ))}
               </tr>

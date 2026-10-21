@@ -1,5 +1,5 @@
 import { deepseaModels } from '@humanbase/data';
-import { DeepseaAbout, DeepseaForm, GeneFinder, geneExpressionTools, VariantSearch } from '@humanbase/hb';
+import { DeepseaAbout, DeepseaForm, GeneFinder, geneExpressionTools, VariantSearch, JobColumns } from '@humanbase/hb';
 import { Breadcrumbs, Tabs } from '@humanbase/ui';
 import { useNavigate, useSearchParams } from 'react-router';
 import '../ToolPage.css';
@@ -32,14 +32,14 @@ export function ExpectoPage({ tab }: { tab: ExpectoTab }) {
         {tab === 'variants' ? (
           <DeepseaForm model="expecto" onModelChange={() => undefined} onStarted={(link) => void navigate(link)} />
         ) : (
-          <div className="job-columns">
+          <JobColumns>
             {tab === 'gene' ? (
               <GeneFinder label="Search a gene" placeholder="Search a gene, such as IRGM" examples={geneExpressionTools.expecto.examples} onPick={(entrez) => void navigate(geneHref(entrez))} />
             ) : (
               <VariantSearch query={search.get('q') ?? ''} onQueryChange={(q) => setSearch(q ? { q } : {}, { replace: true })} geneHref={geneHref} />
             )}
             <DeepseaAbout model="expecto" />
-          </div>
+          </JobColumns>
         )}
       </Tabs>
     </section>

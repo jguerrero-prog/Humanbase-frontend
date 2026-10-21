@@ -98,6 +98,10 @@
   color: var(--text-disabled);
 }
 
+.tabs-panel {
+  padding-block-start: var(--space-3);
+}
+
 .tabs-panel:focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus-ring);

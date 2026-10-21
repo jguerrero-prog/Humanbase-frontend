@@ -1,5 +1,5 @@
 import { readTheDocs } from '@humanbase/data';
-import { GeneFinder, geneExpressionTools } from '@humanbase/hb';
+import { GeneFinder, geneExpressionTools, JobColumns } from '@humanbase/hb';
 import { AboutPanel, Breadcrumbs, Icon, useLinkHref } from '@humanbase/ui';
 import { useNavigate } from 'react-router';
 import '../ToolPage.css';
@@ -16,7 +16,7 @@ export function ExpectoScPage() {
         <h1>{tool.name}</h1>
         <p>Predicted effects of ClinVar and 1000 Genomes variants on gene expression in primary human cell types, within 20 kb of each gene’s start.</p>
       </header>
-      <div className="job-columns">
+      <JobColumns>
         <GeneFinder label="Search a gene" placeholder="Search a gene, such as PTEN" examples={tool.examples} onPick={(entrez) => void navigate(`/expecto-sc/genes/${entrez}/`)} />
         <AboutPanel
           tool={tool.name}
@@ -30,7 +30,7 @@ export function ExpectoScPage() {
         >
           ExPecto SC is a framework for ab initio sequence-based prediction of mutation gene expression effects for primary human cell types.
         </AboutPanel>
-      </div>
+      </JobColumns>
     </section>
   );
 }

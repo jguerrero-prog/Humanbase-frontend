@@ -175,6 +175,11 @@
   inline-size: 300px;
 }
 
+.strongest-effects {
+  display: grid;
+  gap: var(--space-6);
+}
+
 .effects-summary {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -316,6 +321,7 @@
 }
 
 .effect-value {
+  white-space: nowrap;
   font: var(--type-label-sm);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
@@ -353,9 +359,21 @@
   stroke-width: 0.5;
 }
 
-.all-features-label {
+.all-features-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 15rem);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.all-features-labels {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
   font: var(--type-caption);
-  fill: var(--text-default);
+  color: var(--text-default);
 }
 
 /* Phones: the focus line wraps, counts go two by two and raises sit above lowers. */
@@ -367,6 +385,10 @@
 
   .molecular-effects {
     padding: var(--space-4);
+  }
+
+  .all-features-body {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .effects-summary {

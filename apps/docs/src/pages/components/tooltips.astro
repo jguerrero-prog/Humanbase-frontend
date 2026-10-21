@@ -207,11 +207,27 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
           position={{ x: 276, y: 150 }}
         />
       </figure>
+      <figure class="data-stage">
+        <figcaption>Heatmap, pinned: a position with a genome browser link</figcaption>
+        <svg class="data-art" viewBox="0 0 680 380" aria-hidden="true" focusable="false">
+          {shades.map((row, r) => row.map((shade, c) => <rect class={`shade-${shade}`} x={60 + c * 34} y={70 + r * 34} width="32" height="32" />))}
+          <rect class="data-art-cell" x="229" y="103" width="34" height="34" rx="2" />
+        </svg>
+        <DataTooltip
+          title="alimentary canal"
+          subtitle="Position 89,622,419"
+          rows={[['T', '+0.136']]}
+          link={{ label: 'Open in Genome Browser', href: 'https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr10:89622419' }}
+          pinned
+          position={{ x: 276, y: 150 }}
+        />
+      </figure>
     </div>
     <ul class="points">
       <li>Nodes, edges and cells can be reached with the keyboard; focus shows the same tooltip, placed next to the item instead of the pointer.</li>
       <li>The hovered item gets a 2px ink outline, so it’s clear which point the values belong to.</li>
       <li>Clicking opens the drawer with the full details. The tooltip is a preview, never the only place a value appears.</li>
+      <li>Pinned: where a cell has no drawer but has a genome position, such as ExPecto, Sei and ASD Browser heatmaps, clicking (or Enter) pins the tooltip in place, borrowing the toggletip's behavior. The hint line becomes the link “Open in Genome Browser” with the external link icon, opening the UCSC Genome Browser at that position on the result's assembly, in a new tab. The tooltip is hoverable (WCAG 1.4.13): the pointer can move onto it, and its link works from hover too. Moving across other cells on the way waits 150ms before switching, and leaving waits 300ms before closing. While pinned, hovering other cells shows nothing; Escape, a click outside, or an arrow key unpins it. Tab reaches the link once pinned. View as table links each position the same way.</li>
     </ul>
   </DocSection>
 

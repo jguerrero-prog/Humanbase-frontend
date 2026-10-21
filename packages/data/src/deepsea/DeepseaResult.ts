@@ -118,7 +118,7 @@ export function variantRows(sets: readonly VariantScoresRecord[]): VariantRow[] 
 /** A feature's name as results show it: cell type, then what was measured, then the sample when it says something. */
 export function featureLabel(feature: ModelFeature): string {
   const treatment = treatmentOf(feature);
-  return `${feature.cell_type.name} / ${feature.chromatin_feature_type.name}${treatment ? ` (${treatment})` : ''}`;
+  return `${feature.cell_type.name.replaceAll('_', ' ')} / ${feature.chromatin_feature_type.name}${treatment ? ` (${treatment})` : ''}`;
 }
 
 /** The selected variant’s score for every feature, named from the model’s feature list. */

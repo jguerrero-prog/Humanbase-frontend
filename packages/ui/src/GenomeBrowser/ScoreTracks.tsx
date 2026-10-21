@@ -27,9 +27,9 @@ const trackHeight = 60;
 const steps = [100, 200, 500, 1_000, 2_000, 5_000, 10_000, 20_000, 50_000, 100_000, 200_000, 500_000, 1_000_000, 2_000_000, 5_000_000];
 const count = new Intl.NumberFormat('en-US');
 
-/** Tick positions a round step apart, about eight across the view. */
-function ticksOf(start: number, end: number): number[] {
-  const step = steps.find((size) => (end - start) / size <= 10) ?? (end - start) / 8;
+/** Tick positions a round step apart, at most `most` across the view (about eight by default). */
+export function ticksOf(start: number, end: number, most = 10): number[] {
+  const step = steps.find((size) => (end - start) / size <= most) ?? (end - start) / Math.min(8, most);
   const first = Math.ceil(start / step) * step;
   return Array.from({ length: Math.floor((end - first) / step) + 1 }, (_, index) => first + index * step);
 }

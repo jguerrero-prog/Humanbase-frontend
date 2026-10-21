@@ -63,10 +63,11 @@
   list-style: none;
 }
 
+/* One layer below the top bar, so the tabs pass under it while scrolling. */
 .result-header-tabs {
   position: sticky;
   inset-block-start: var(--layout-topbar-height);
-  z-index: var(--z-sticky);
+  z-index: calc(var(--z-sticky) - 1);
   background: var(--surface-page);
 }
 
@@ -532,9 +533,18 @@
   flex: 1;
 }
 
+/* Panels that stack straight inside a tab panel get the panel's 12px between parts. */
+.tabs-panel > .companion-search {
+  margin-block-end: var(--space-3);
+}
+
 .result-note {
   font: var(--type-caption);
   color: var(--text-secondary);
+}
+
+.table + .result-note {
+  margin-block-start: var(--space-4);
 }
 
 @media (width < 48rem) {

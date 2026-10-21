@@ -1,11 +1,96 @@
-.genome-engine {
-  min-block-size: 240px;
-  overflow-x: auto;
+/* Biodalliance's layers go up to z-index 5000; isolating the frame keeps them below the page's sticky bar. */
+.genome-engine-frame {
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
   border: var(--border-width-1) solid var(--border-subtle);
   border-radius: var(--radius-md);
 }
 
-/* The page sets the tracks, so Biodalliance's per-track remove buttons are hidden, as on the live site. */
+/* The design system's track headers sit in a fixed column, as on the Genome browser and ASD Browser pages. */
+.genome-engine-frame.is-headed {
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+
+.genome-engine-headers {
+  position: relative;
+  background: var(--surface-subtle);
+}
+
+.genome-engine-header {
+  position: absolute;
+  inset-inline: 0;
+  overflow: hidden;
+}
+
+.genome-engine-header .track-header {
+  inline-size: auto;
+}
+
+.genome-engine {
+  min-block-size: 240px;
+  overflow-x: auto;
+}
+
+/* The track engine sizes itself to its tracks; the minimum only holds space while Biodalliance loads. */
+.genome-engine:has(> .track-engine-host) {
+  min-block-size: 0;
+}
+
+/* Biodalliance's own chrome: the page draws the toolbar and headers, so its toolbar, labels and center guide are hidden. */
+.genome-engine .dalliance > .toolbar,
+.genome-engine .dalliance .guideline,
+.genome-engine .dalliance .single-base-guideline,
+.is-headed .genome-engine .dalliance .track-label {
+  display: none;
+}
+
+/* The score range is in each track's header, so Biodalliance's axis stays hidden; it sets display inline, so this uses visibility. */
+.genome-engine .dalliance .quant-overlay {
+  visibility: hidden;
+}
+
+.genome-engine .dalliance * {
+  font-family: var(--font-family-body);
+}
+
+/* Biodalliance's layout stylesheet draws graph paper and a checkerboard behind tracks; the design has plain tracks. */
+.genome-engine .dalliance .tier-viewport-background,
+.genome-engine .dalliance .tier,
+.genome-engine .dalliance .tier-tab {
+  background-image: none;
+}
+
+/* Tracks have no dividers, as in the coded genome browser; this removes Biodalliance's 3px rule under pinned tracks. */
+.genome-engine .dalliance .tier-holder-pinned-full {
+  border-block-end: 0;
+}
+
+/* Loading and error notices inside a track. */
+.genome-engine .dalliance .notifier {
+  padding: var(--space-0-5) var(--space-2);
+  font: var(--type-caption);
+  color: var(--text-secondary);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+}
+
+/* The page sets the tracks, so Biodalliance's per-track remove buttons stay hidden, as on the live site. */
 .genome-engine .tier-tab .fa-times {
   display: none;
+}
+
+@media (width < 48rem) {
+  .genome-engine-frame.is-headed {
+    grid-template-columns: 120px minmax(0, 1fr);
+  }
+
+  .genome-engine-header .track-header-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
