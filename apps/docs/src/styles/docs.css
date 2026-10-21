@@ -97,7 +97,7 @@
   min-height: 529px;
   padding: var(--space-10) var(--page-gutter);
   overflow: hidden;
-  background: linear-gradient(105deg, var(--action-primary), var(--color-emerald-500));
+  background: var(--surface-brand-deep);
 }
 
 .hero-logo {
@@ -118,7 +118,7 @@
 .hero-illustration {
   position: absolute;
   inset-block-start: 0;
-  inset-inline-end: 80px;
+  inset-inline-end: 0;
 }
 
 .hero-wave {
@@ -198,9 +198,9 @@
   border-radius: var(--radius-sm);
 }
 
-@media (width < 1600px) {
+/* Below 1440px the title reaches the mosaic's tiles, so the art steps back. */
+@media (width < 90rem) {
   .hero-illustration {
-    inset-inline-end: 0;
     opacity: 0.35;
   }
 }
