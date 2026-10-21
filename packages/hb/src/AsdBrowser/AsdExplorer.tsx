@@ -3,7 +3,7 @@ import {
   type AsdFeatureSet, type AsdVariantRow, type FeaturePredictionRecord, type FeaturesRecord,
 } from '@humanbase/data';
 import { defaultGenomeEngine, GenomeEngineView, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
-import { Alert, GenomeBrowserToolbar, Heatmap, ResultLayout, Skeleton, zEffects } from '@humanbase/ui';
+import { Alert, GenomeBrowserToolbar, Heatmap, ResultLayout, Skeleton, asdEffects, type EffectScale } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 import { EffectsCard } from '../Deepsea/EffectsCard';
 import { AsdHeader, AsdVariantTable, type AsdView } from './AsdParts';
@@ -242,6 +242,7 @@ function VariantEffects({ location, rows, selected, set, onSetChange }: VariantE
   const prediction = byPosition.get(keyOf(selected));
   const effects = useMemo(() => (prediction && features.data ? featureEffects(prediction, features.data) : undefined), [prediction, features.data]);
   const noun = set === 'dna' ? 'DNA feature' : 'RNA feature';
+  const scale = asdEffects(set === 'dna' ? 'DNA' : 'RNA');
   const failed = predictions.isError || features.isError;
 
   if (failed && (isMissingSample(predictions.error, showsSamples) || isMissingSample(features.error, showsSamples))) {
@@ -260,13 +261,13 @@ function VariantEffects({ location, rows, selected, set, onSetChange }: VariantE
         void predictions.refetch();
         void features.refetch();
       }}
-      scale={zEffects}
-      threshold={2}
+      scale={scale}
+      threshold={scale.bins.weak}
       featureNoun={noun}
       featurePlural={`${noun}s`}
       verb=""
-      choice={{ label: 'Features', options: featureSets, value: set, onChange: (value) => onSetChange(value as AsdFeatureSet), name: 'z-score' }}
-      heatmap={features.data && <RangeHeatmap location={location} rows={rows} selected={selected} byPosition={byPosition} features={features.data} />}
+      choice={{ label: 'Features', options: featureSets, value: set, onChange: (value) => onSetChange(value as AsdFeatureSet), name: 'Score' }}
+      heatmap={features.data && <RangeHeatmap location={location} rows={rows} selected={selected} byPosition={byPosition} features={features.data} scale={scale} />}
     />
   );
 }
@@ -277,12 +278,13 @@ interface RangeHeatmapProps {
   selected: AsdVariantRow;
   byPosition: ReadonlyMap<string, FeaturePredictionRecord>;
   features: FeaturesRecord;
+  scale: EffectScale;
 }
 
 const tickSteps = [1_000, 2_000, 5_000, 10_000, 20_000, 50_000, 100_000, 200_000, 500_000];
 
 /** Every variant in view, one column each in genome order, for the features the selected variant moves most. */
-function RangeHeatmap({ location, rows, selected, byPosition, features }: RangeHeatmapProps) {
+function RangeHeatmap({ location, rows, selected, byPosition, features, scale }: RangeHeatmapProps) {
   const named = features.model_features ?? [];
   const chosen = byPosition.get(keyOf(selected))?.feature_predictions ?? [];
   const top = named.filter((feature) => chosen[feature.idx] !== undefined).sort((a, b) => (chosen[b.idx] ?? 0) - (chosen[a.idx] ?? 0)).slice(0, heatmapRows);
@@ -291,15 +293,16 @@ function RangeHeatmap({ location, rows, selected, byPosition, features }: RangeH
 
   return (
     <Heatmap
-      title={`z-score. Showing the top ${top.length} of ${count.format(named.length)} features, sorted by ${labelOf(selected)}.`}
+      title={`${scale.legend.title.replace(/s$/, '')} scores. Showing the top ${top.length} of ${count.format(named.length)} features, sorted by ${labelOf(selected)}.`}
       summary="One column per variant in the browser’s view, in genomic order; rows sorted by the selected variant."
-      scale={zEffects.legend}
-      columns={rows.map((row) => ({ label: count.format(row.position), position: row.position, href: GenomeLocation.at(row.chromosome, row.position).ucscUrl }))}
+      scale={scale.legend}
+      columns={rows.map((row) => ({ label: count.format(row.position), position: row.position, name: labelOf(row), href: GenomeLocation.at(row.chromosome, row.position).ucscUrl }))}
       rows={top.map((feature) => ({ label: featureLabel(feature), values: rows.map((row) => byPosition.get(keyOf(row))?.feature_predictions[feature.idx] ?? null) }))}
       rowHeader="Feature"
-      columnHeader="Variant position"
+      columnHeader="Variant"
+      valueLabel="Score"
       axis={{ title: `Position on ${location.chrom}, ${assembly}`, offset: location.start, ticks }}
-      decimals={1}
+      decimals={scale.digits}
     />
   );
 }

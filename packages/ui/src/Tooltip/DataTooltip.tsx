@@ -14,12 +14,15 @@ export interface DataTooltipProps {
   /** A pinned tooltip stays in place after a click, so its link can be followed. */
   pinned?: boolean | undefined;
   ref?: Ref<HTMLDivElement> | undefined;
+  /** A tooltip with a link stays open while the pointer is on it, so the link can be reached from hover. */
+  onPointerEnter?: (() => void) | undefined;
+  onPointerLeave?: (() => void) | undefined;
   id?: string;
   position?: { x: number; y: number };
   className?: string;
 }
 
-export function DataTooltip({ title, subtitle, rows, hint, link, pinned = false, ref, id, position, className }: DataTooltipProps) {
+export function DataTooltip({ title, subtitle, rows, hint, link, pinned = false, ref, onPointerEnter, onPointerLeave, id, position, className }: DataTooltipProps) {
   const style = position ? ({ '--data-tooltip-x': `${position.x}px`, '--data-tooltip-y': `${position.y}px` } as CSSProperties) : undefined;
   return (
     <div
@@ -27,8 +30,10 @@ export function DataTooltip({ title, subtitle, rows, hint, link, pinned = false,
       id={id}
       role={pinned ? 'dialog' : 'tooltip'}
       aria-label={pinned ? title : undefined}
-      className={['data-tooltip', position && 'data-tooltip-placed', pinned && 'data-tooltip-pinned', className].filter(Boolean).join(' ')}
+      className={['data-tooltip', position && 'data-tooltip-placed', (pinned || link) && 'data-tooltip-interactive', className].filter(Boolean).join(' ')}
       style={style}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
     >
       <p className="data-tooltip-title">
         <BreakableText>{title}</BreakableText>
@@ -51,17 +56,11 @@ export function DataTooltip({ title, subtitle, rows, hint, link, pinned = false,
       </dl>
       {link ? (
         <p className="data-tooltip-hint">
-          {pinned ? (
-            <a className="data-tooltip-link" href={link.href} target="_blank" rel="noopener noreferrer">
-              {link.label}
-              <Icon name="external-link" size={16} label="opens in a new tab" />
-            </a>
-          ) : (
-            <span className="data-tooltip-link">
-              {link.label}
-              <Icon name="external-link" size={16} />
-            </span>
-          )}
+          {/* Until pinned, the link takes clicks but not focus, so Tab doesn't land on a tooltip that closes on blur. */}
+          <a className="data-tooltip-link" href={link.href} target="_blank" rel="noopener noreferrer" tabIndex={pinned ? undefined : -1}>
+            {link.label}
+            <Icon name="external-link" size={16} label="opens in a new tab" />
+          </a>
         </p>
       ) : (
         hint && <p className="data-tooltip-hint">{hint}</p>

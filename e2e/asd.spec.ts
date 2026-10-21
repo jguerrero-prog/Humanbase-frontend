@@ -8,7 +8,7 @@ test('the ASD Browser opens on the default range with each effects view, with th
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/asd/`);
   await expect(page.getByRole('heading', { name: 'Molecular effects of chr1:2,337,101 A>C' })).toBeVisible();
-  await expect(page.getByText('Raises, 28 DNA features')).toBeVisible();
+  await expect(page.getByText('Raises, 39 DNA features')).toBeVisible();
   // With the API off the genome browser draws from the recorded track windows, with no request.
   const browser = page.getByRole('application', { name: /^Genome browser, chr1:2,230,000-2,440,000/ });
   await expect(browser.getByText('← PEX10')).toBeVisible();
