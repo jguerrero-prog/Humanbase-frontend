@@ -75,7 +75,7 @@ export class AsdService {
 
   /** Predicted effects on every DNA or RNA feature for each variant in a range. */
   predictions(range: GenomeLocation, set: AsdFeatureSet): Promise<FeaturePredictionRecord[]> {
-    return this.client.get<FeaturePredictionRecord[]>(`deepsea/${predictionSets[set]}/feature_predictions/`, { chr_and_variant_range: `${range.chrom.replace(/^chr/i, '')}:${range.start}:${range.end}` });
+    return this.client.get<FeaturePredictionRecord[]>(`deepsea/${predictionSets[set]}/feature_predictions/`, { chr_and_variant_range: range.variantRange });
   }
 
   features(set: AsdFeatureSet): Promise<FeaturesRecord> {

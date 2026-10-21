@@ -19,11 +19,11 @@ export { GwasFileCheck, type GwasCheckResult, type GwasFormat } from './jobs/Gwa
 export { useNetwasExample, useNetwasJob, useNetwasResult } from './react/useNetwasJob';
 export { deepseaModels, genomeLabels, modelOf, readTheDocs, variantModels, type DeepseaModel, type EffectBins, type Genome } from './deepsea/DeepseaModel';
 export { DeepseaJob, type DeepseaFile, type DeepseaJobRecord, type ResultFile } from './deepsea/DeepseaJob';
-export { chrVariant, featureEffects, featureLabel, variantIdOf, variantRows, variantScoreTypes, type FeatureEffect, type FeaturePredictionRecord, type FeaturesRecord, type ModelFeature, type ScoreType, type VariantRow, type VariantScoresRecord, type VariantSequence } from './deepsea/DeepseaResult';
+export { featureEffects, featureLabel, variantIdOf, variantRows, variantScoreTypes, type FeatureEffect, type FeaturePredictionRecord, type FeaturesRecord, type ModelFeature, type ScoreType, type VariantRow, type VariantScoresRecord, type VariantSequence } from './deepsea/DeepseaResult';
 export { DeepseaService, type DeepseaRequest } from './deepsea/DeepseaService';
 export { deepseaExamples } from './deepsea/deepseaExamples';
 export { InsilicoResult, sequenceSpan, type InsilicoRecord, type Substitution } from './deepsea/InsilicoResult';
-export { useDeepseaFeatures, useDeepseaJob, useDeepseaVariants, useFeatureEffects, useInsilico } from './react/useDeepsea';
+export { useDeepseaFeatures, useDeepseaJob, useDeepseaVariants, useInsilico, useViewPredictions } from './react/useDeepsea';
 export { ExpectoService, type ScoredVariant, type VariantQuery } from './expecto/ExpectoService';
 export { TissueVariants, strongestOf, tissueTitle, type EffectRow, type GenePosition, type PositionAxis, type TissueDatabase, type TissueEffects, type TissueVariantsRecord } from './expecto/TissueVariants';
 export { expectoTissues, type ExpectoTissue } from './expecto/expectoTissues';

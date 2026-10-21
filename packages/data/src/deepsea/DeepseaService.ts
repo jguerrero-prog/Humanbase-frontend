@@ -1,4 +1,5 @@
 import type { DataClient } from '../DataClient';
+import type { GenomeLocation } from '../genome/GenomeLocation';
 import type { InputKind, VariantModel } from '../jobs/VariantFileCheck';
 import { DeepseaJob, type DeepseaJobRecord } from './DeepseaJob';
 import { deepseaModels, type Genome } from './DeepseaModel';
@@ -61,9 +62,9 @@ export class DeepseaService {
     return this.client.get<VariantScoresRecord>(`deepsea/jobs/${id}/variant_scores/`, { score_type: scoreType });
   }
 
-  async featurePredictions(id: string, scoreType: string, chrVariant: string): Promise<FeaturePredictionRecord | null> {
-    const rows = await this.client.get<FeaturePredictionRecord[]>(`deepsea/jobs/${id}/feature_predictions/`, { score_type: scoreType, chr_variant: chrVariant });
-    return rows[0] ?? null;
+  /** Each variant's score on every feature, for every variant of the job in a range, as the live job page reads them. */
+  featurePredictions(id: string, scoreType: string, range: GenomeLocation): Promise<FeaturePredictionRecord[]> {
+    return this.client.get<FeaturePredictionRecord[]>(`deepsea/jobs/${id}/feature_predictions/`, { score_type: scoreType, chr_and_variant_range: range.variantRange });
   }
 
   /** One sequence's mutagenesis for one feature, named by its index in the model's feature list. */

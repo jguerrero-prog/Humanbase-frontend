@@ -394,9 +394,9 @@
     {
       "area": "Genome browser start",
       "existing": "Opens at 1:2,230,000..2,440,000 until a variant is picked, then 100 kb around it",
-      "proposed": "Opens on the selected variant at 50 kb, with a marker",
-      "status": "Changed",
-      "evidence": "Seen on job 2e18fedf before and after a row click; capture pair 3; VariantGenomeBrowser.tsx:18, 30"
+      "proposed": "Opens on the selected variant with 50 kb either side (100 kb), as today, with a marker",
+      "status": "Same function",
+      "evidence": "Seen on job 2e18fedf before and after a row click; capture pair 3; job 76aea8fe reads 1:109767590:109867590 on load; DeepseaResultView.tsx startWidth"
     },
     {
       "area": "Genome browser tracks",

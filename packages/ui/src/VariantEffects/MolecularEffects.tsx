@@ -98,7 +98,7 @@ export function EffectsControls(props: EffectsControlsProps) {
       {search !== undefined && (
         <SearchField label={searchLabel} placeholder={searchLabel} size="medium" value={search} onChange={(event) => onSearch?.(event.target.value)} className="effects-search" />
       )}
-      {density !== undefined && <SegmentedControl label="Rows" size="small" segments={densities} value={density} onChange={(value) => onDensity?.(value as 'full' | 'compact')} />}
+      {density !== undefined && <SegmentedControl label="View" size="small" segments={densities} value={density} onChange={(value) => onDensity?.(value as 'full' | 'compact')} />}
       {groupByFeature !== undefined && (
         <Checkbox label={`Group experiments by ${featureNoun}`} checked={groupByFeature} onChange={(event) => onGroupByFeature?.(event.target.checked)} />
       )}

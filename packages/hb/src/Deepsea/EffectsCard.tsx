@@ -1,6 +1,7 @@
 import type { FeatureEffect } from '@humanbase/data';
-import { Alert, AllFeaturesPlot, EffectGroups, EffectsControls, EffectsHeatmap, MolecularEffects, Skeleton, StrongestEffects, type EffectScale, type EffectsView, type SelectOption } from '@humanbase/ui';
-import { useMemo, useState, type ReactNode } from 'react';
+import { Alert, AllFeaturesPlot, EffectGroups, EffectsControls, MolecularEffects, Skeleton, StrongestEffects, type EffectScale, type EffectsView, type SelectOption } from '@humanbase/ui';
+import { useMemo, useState } from 'react';
+import { InViewHeatmap, type InViewHeatmapProps } from './InViewHeatmap';
 import './Deepsea.css';
 
 const heatmapRows = 20;
@@ -11,8 +12,6 @@ const number = new Intl.NumberFormat('en-US');
 export interface EffectsCardProps {
   /** The selected variant, such as chr1:109,817,590 G>T. */
   label: string;
-  /** The selected variant in a genome browser, linked from the heatmap. */
-  href?: string | undefined;
   /** Undefined while they load. */
   effects: readonly FeatureEffect[] | undefined;
   failed: boolean;
@@ -29,8 +28,10 @@ export interface EffectsCardProps {
   choice: { label: string; options: readonly SelectOption[]; value: string; onChange: (value: string) => void; name: string };
   /** The score's documentation, such as Score type documentation. */
   scoreDocs?: { label: string; href: string } | undefined;
-  /** Replaces the one-variant heatmap, such as a heatmap of every variant in a genome browser's range. */
-  heatmap?: ReactNode;
+  /** Every variant in the genome browser's view, for the Heatmap tab; selected is the center one, whose effects these are. */
+  inView: Pick<InViewHeatmapProps, 'location' | 'variants' | 'selected' | 'onSelect' | 'onMove'>;
+  /** The score ranks smallest first, as humanbase.io's score types with reverse_order do, such as e-value. */
+  reverseOrder?: boolean | undefined;
   /** The open tab, kept by the page so it survives choosing another variant. */
   view?: EffectsView | undefined;
   onViewChange?: ((view: EffectsView) => void) | undefined;
@@ -42,7 +43,7 @@ const rank = (resource: string) => {
 };
 
 /** A variant's effect on every feature: Strongest effects, Heatmap and All features. */
-export function EffectsCard({ label, href, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, scoreDocs, heatmap, view: keptView, onViewChange }: EffectsCardProps) {
+export function EffectsCard({ label, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, scoreDocs, inView, reverseOrder = false, view: keptView, onViewChange }: EffectsCardProps) {
   const [ownView, setOwnView] = useState<EffectsView>('strongest');
   const view = keptView ?? ownView;
   const setView = onViewChange ?? setOwnView;
@@ -60,7 +61,6 @@ export function EffectsCard({ label, href, effects, failed, onRetry, scale, thre
   const found = useMemo(() => inResource.filter((effect) => `${effect.feature} ${effect.context}`.toLowerCase().includes(search.trim().toLowerCase())), [inResource, search]);
   const groups = useMemo(() => new EffectGroups(found, scale), [found, scale]);
   const all = useMemo(() => new EffectGroups(inResource, scale), [inResource, scale]);
-  const ownHeatmap = view === 'heatmap' && !heatmap;
   const allLabel = inCellTypes ? 'All features' : `All ${featurePlural}`;
 
   const content = failed ? (
@@ -84,18 +84,17 @@ export function EffectsCard({ label, href, effects, failed, onRetry, scale, thre
       verb={verb}
     />
   ) : view === 'heatmap' ? (
-    (heatmap ?? (
-      <EffectsHeatmap
-        variants={[label]}
-        links={[href]}
-        rows={[...found].sort((a, b) => (lowestFirst ? a.value - b.value : b.value - a.value)).slice(0, rows).map((experiment) => ({ experiment, values: [experiment.value] }))}
-        total={effects.length}
-        density={density}
-        lowestFirst={lowestFirst}
-        scale={scale}
-        {...(found.length > rows ? { onShowMore: () => setRows((shown) => shown + heatmapRows) } : {})}
-      />
-    ))
+    <InViewHeatmap
+      {...inView}
+      shown={found}
+      limit={rows}
+      reversed={lowestFirst !== reverseOrder}
+      compact={density === 'compact'}
+      scale={scale}
+      scoreName={choice.name}
+      featurePlural={featurePlural}
+      onShowMore={() => setRows((shown) => shown + heatmapRows)}
+    />
   ) : (
     <AllFeaturesPlot
       values={inResource.map((effect) => effect.value)}
@@ -114,11 +113,12 @@ export function EffectsCard({ label, href, effects, failed, onRetry, scale, thre
         onScore={choice.onChange}
         scoreDocs={scoreDocs}
         {...(view === 'strongest' ? { threshold, onThreshold: setThreshold, thresholdSteps: [scale.bins.weak, scale.bins.moderate, scale.bins.strong] } : {})}
-        {...(view !== 'heatmap' || ownHeatmap ? { search, onSearch: setSearch } : {})}
-        {...(resources.length > 1 && (view !== 'heatmap' || ownHeatmap) ? { resources: [{ value: allResources, label: 'All resources' }, ...resources.map((name) => ({ value: name, label: name }))], resource, onResource: setResource } : {})}
+        search={search}
+        onSearch={setSearch}
+        {...(resources.length > 1 ? { resources: [{ value: allResources, label: 'All resources' }, ...resources.map((name) => ({ value: name, label: name }))], resource, onResource: setResource } : {})}
         featureNoun={featureNoun}
         searchLabel={inCellTypes ? `Find a ${featureNoun} or cell type` : `Find a ${featureNoun}`}
-        {...(ownHeatmap ? { density, onDensity: setDensity, lowestFirst, onLowestFirst: setLowestFirst } : {})}
+        {...(view === 'heatmap' ? { density, onDensity: setDensity, lowestFirst, onLowestFirst: setLowestFirst } : {})}
       />
       {content}
       {effects && search && found.length === 0 && (

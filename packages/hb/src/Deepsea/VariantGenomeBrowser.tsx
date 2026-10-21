@@ -10,32 +10,28 @@ export interface VariantGenomeBrowserProps {
   position: number;
   /** The variant in words, such as chr7:49,813,589 G>C. */
   label: string;
+  /** The view, kept by the page so the molecular effects can follow it. */
+  location: GenomeLocation;
+  onLocationChange: (location: GenomeLocation) => void;
   onPreviousVariant?: (() => void) | undefined;
   onNextVariant?: (() => void) | undefined;
   engine?: GenomeBrowserEngineFactory | undefined;
 }
 
-// The design centers the browser on the selected variant at 50 kb.
-const startWidth = 50_000;
 const noTracks: readonly GenomeDataTrack[] = [];
 
 /** The genome around the selected variant, with the system toolbar. With the API off nothing loads, so the section is left out. */
-export function VariantGenomeBrowser({ assembly, chromosome, position, label, onPreviousVariant, onNextVariant, engine = defaultGenomeEngine }: VariantGenomeBrowserProps) {
+export function VariantGenomeBrowser({ assembly, chromosome, position, label, location, onLocationChange, onPreviousVariant, onNextVariant, engine = defaultGenomeEngine }: VariantGenomeBrowserProps) {
   const api = useHumanbase();
   const { showsSamples, genomeTracks } = api;
   const [failure, setFailure] = useState<Error>();
   const [locationError, setLocationError] = useState<string>();
   const chrom = withChr(chromosome);
-  const variantKey = `${chrom}:${position}`;
-  // Selecting another variant centers the browser on it at the current zoom.
-  const [view, setView] = useState(() => ({ variant: variantKey, location: new GenomeLocation(chrom, position, position, assembly).withWidth(startWidth) }));
-  if (view.variant !== variantKey) setView({ variant: variantKey, location: new GenomeLocation(chrom, position, position, assembly).withWidth(view.location.width) });
-  const location = view.location;
   const region = useMemo(() => ({ chrom: location.chrom, start: location.start, end: location.end }), [location]);
 
   const move = (to: GenomeLocation) => {
     setLocationError(undefined);
-    setView((current) => ({ ...current, location: to }));
+    onLocationChange(to);
   };
   const example = `${chrom}:${(position - 1000).toLocaleString('en-US')}-${(position + 1000).toLocaleString('en-US')}`;
   // Gene names come from the hg19 GENCODE index; hg38 results take regions only.

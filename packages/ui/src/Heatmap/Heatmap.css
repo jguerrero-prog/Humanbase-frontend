@@ -180,10 +180,21 @@
 }
 
 .heatmap-grid {
+  position: relative;
   display: grid;
   gap: 1px;
   inline-size: max-content;
   background: var(--surface-page);
+}
+
+.heatmap-selected-column {
+  position: absolute;
+  z-index: 1;
+  inset-block: 0;
+  inset-inline-start: calc(var(--heatmap-label) + 1px + var(--heatmap-at) * (var(--heatmap-cell) + 1px));
+  inline-size: var(--heatmap-cell);
+  outline: var(--border-width-2) solid var(--text-default);
+  pointer-events: none;
 }
 
 .heatmap-row {
@@ -204,6 +215,39 @@
 .heatmap-axis {
   position: relative;
   margin-inline-start: var(--heatmap-label);
+}
+
+.heatmap-axis-picks {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+}
+
+.heatmap-axis-pick {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: calc(var(--heatmap-at) * (var(--heatmap-cell) + 1px));
+  inline-size: var(--heatmap-cell);
+  block-size: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.heatmap-axis-pick:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus-ring);
+}
+
+.heatmap-draggable {
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.heatmap-draggable:active {
+  cursor: grabbing;
 }
 
 .heatmap-axis svg {
