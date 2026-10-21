@@ -54,6 +54,7 @@
 }
 
 .substitution-body {
+  position: relative;
   display: flex;
   min-inline-size: 0;
   gap: var(--space-4);
@@ -66,7 +67,8 @@
   position: relative;
   flex: 1 1 0;
   min-inline-size: 0;
-  overflow-x: auto;
+  padding-block: var(--space-1);
+  overflow: auto hidden;
 }
 
 .substitution-ruler,
