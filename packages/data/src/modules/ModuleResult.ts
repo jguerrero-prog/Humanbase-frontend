@@ -62,6 +62,13 @@ export interface Module {
   genes: readonly number[];
 }
 
+/** A gene connected to another in the result, in any module, with the connection's weight. */
+export interface ModuleNeighbor {
+  entrez: number;
+  weight: number;
+  module: Module | undefined;
+}
+
 export interface ModuleFilter {
   minimumSize: number;
   hideUnenriched: boolean;
@@ -73,6 +80,8 @@ export class ModuleResult {
   readonly modules: readonly Module[];
   private readonly moduleByGene = new Map<number, Module>();
   private readonly entrezByNode: ReadonlyMap<string, number>;
+  private edgeList: readonly (readonly [number, number, number])[] | undefined;
+  private neighborsByGene: Map<number, { entrez: number; weight: number }[]> | undefined;
 
   constructor(readonly record: CommunityRecord) {
     this.entrezByNode = new Map(record.nodes.map((node) => [node.id, Number(node.entrez)]));
@@ -129,10 +138,11 @@ export class ModuleResult {
 
   /** Connections between genes in the result, as Entrez IDs and a weight. */
   get edges(): readonly (readonly [number, number, number])[] {
-    return this.record.edges.flatMap(({ source, target, weight }) => {
+    this.edgeList ??= this.record.edges.flatMap(({ source, target, weight }) => {
       const [from, to] = this.entrezOf([source, target]);
       return from === undefined || to === undefined ? [] : [[from, to, weight] as const];
     });
+    return this.edgeList;
   }
 
   /** Databases with at least one enriched term, Gene Ontology (BP) first, as the live site picks it. */
@@ -155,6 +165,24 @@ export class ModuleResult {
       .filter((row) => ModuleResult.moduleId(row.cluster) === moduleId)
       .map((row) => ({ id: row.term, title: row.name, qValue: row.q_value, genes: this.entrezOf(row.genes) }))
       .sort((a, b) => a.qValue - b.qValue);
+  }
+
+  /** The enriched terms of a gene's own module that include it, most significant first. */
+  termsOf(entrez: number, database: string): ModuleTerm[] {
+    const module = this.moduleOf(entrez);
+    return module ? this.terms(module.id, database).filter((term) => term.genes.includes(entrez)) : [];
+  }
+
+  /** Every gene a gene connects to in the result, strongest first. */
+  neighbors(entrez: number): ModuleNeighbor[] {
+    if (!this.neighborsByGene) {
+      this.neighborsByGene = new Map();
+      for (const [source, target, weight] of this.edges) {
+        this.neighborsByGene.set(source, [...(this.neighborsByGene.get(source) ?? []), { entrez: target, weight }]);
+        this.neighborsByGene.set(target, [...(this.neighborsByGene.get(target) ?? []), { entrez: source, weight }]);
+      }
+    }
+    return (this.neighborsByGene.get(entrez) ?? []).map((neighbor) => ({ ...neighbor, module: this.moduleOf(neighbor.entrez) })).sort((a, b) => b.weight - a.weight);
   }
 
   isEnriched(moduleId: number, database: string): boolean {

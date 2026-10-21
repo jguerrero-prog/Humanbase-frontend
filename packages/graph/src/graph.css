@@ -49,6 +49,16 @@
   stroke-width: 2px;
 }
 
+.force-graph-node.is-hovered:not(.is-selected) .force-graph-ring {
+  stroke: var(--text-default);
+  stroke-width: 1.5px;
+  stroke-dasharray: 3 2;
+}
+
+.force-graph-focus-links {
+  pointer-events: none;
+}
+
 .force-graph-node text {
   font: 700 12px Lato, sans-serif;
   fill: var(--text-default);

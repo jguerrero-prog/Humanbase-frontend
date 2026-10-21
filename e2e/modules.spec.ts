@@ -68,6 +68,45 @@ test('the module result keeps its view in the URL, so a refresh shows the same t
   await expect(page.locator('.force-graph-links line').first()).toBeAttached();
 });
 
+test('a gene opens in the module drawer, chains to its neighbors and goes back, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${renal}&module=1`);
+  const module = page.getByRole('dialog', { name: 'M1, renal system development' });
+  await module.getByRole('radio', { name: 'Genes' }).click();
+  await expect(module.getByRole('button', { name: 'Show all 64 genes' })).toBeVisible();
+  await module.getByRole('searchbox', { name: 'Filter M1 genes' }).fill('HNF1B');
+  await module.getByRole('row', { name: /HNF1B/ }).hover();
+  await expect(page.locator('.force-graph-node.is-hovered')).toHaveAttribute('aria-label', 'HNF1B, M1');
+  await module.getByRole('button', { name: 'HNF1B' }).click();
+
+  const gene = page.getByRole('dialog', { name: 'HNF1B' });
+  await expect(page).toHaveURL(/module=1&gene=6928/);
+  await expect(gene.getByRole('heading', { level: 2, name: 'HNF1B' })).toBeFocused();
+  await expect(gene.getByRole('table', { name: 'Enriched terms of M1 that include HNF1B' }).getByRole('row')).toHaveCount(10);
+  await expect(page.locator('.force-graph-node.is-selected')).toHaveAttribute('aria-label', 'HNF1B, M1');
+  await expect(page.locator('.force-graph-focus-links line')).toHaveCount(2);
+  expect(await violationsOf(page)).toEqual([]);
+
+  await gene.getByRole('radio', { name: 'Gene neighbors' }).click();
+  const neighbors = gene.getByRole('table', { name: 'Genes connected to HNF1B' });
+  await expect(neighbors.getByRole('row')).toHaveText([/Gene/, /^HNF4A.*0\.13$/, /^KCNJ1.*0\.10$/]);
+  expect(await violationsOf(page)).toEqual([]);
+
+  await page.locator('.force-graph-node[aria-label="KCNJ1, M1"]').hover({ force: true });
+  await expect(page.getByRole('tooltip')).toContainText('KCNJ1');
+
+  await neighbors.getByRole('button', { name: 'HNF4A' }).click();
+  await expect(page.getByRole('dialog', { name: 'HNF4A' })).toBeVisible();
+  await expect(page).toHaveURL(/module=1&gene=3172/);
+  await page.reload();
+  await page.getByRole('button', { name: 'Back to M1' }).click();
+  await expect(page.getByRole('dialog', { name: 'M1, renal system development' })).toBeVisible();
+  await expect(page).not.toHaveURL(/gene=/);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  expect(apiRequests).toEqual([]);
+});
+
 test('Edit genes takes the result’s list back to the search', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(renal);

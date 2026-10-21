@@ -85,11 +85,6 @@ export function variantIdOf(sequence: VariantSequence): string {
   return `${sequence.chromosome}-${sequence.position}-${sequence.ref_allele}-${sequence.alt_allele}`;
 }
 
-/** The chr_variant parameter for a variant, such as 1:109817590. */
-export function chrVariant(variant: Pick<VariantRow, 'chromosome' | 'position'>): string {
-  return `${variant.chromosome.replace(/^chr/i, '')}:${variant.position}`;
-}
-
 /** Every variant once, with the score from each score type it appears in. */
 function newRow(id: string, sequence: VariantSequence): VariantRow {
   const row: VariantRow = { id, chromosome: sequence.chromosome, position: sequence.position, change: `${sequence.ref_allele}>${sequence.alt_allele}`, name: sequence.name ?? sequence.id ?? sequence.gene ?? '', scores: {} };

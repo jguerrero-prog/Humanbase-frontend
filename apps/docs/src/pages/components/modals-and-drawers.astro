@@ -6,6 +6,7 @@ import DocTable from '../../components/docs/DocTable.astro';
 import GeneDrawer from '../../components/docs/GeneDrawer.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
+import ModuleGeneDrawer from '../../components/docs/ModuleGeneDrawer.astro';
 import NetworkSketch from '../../components/docs/NetworkSketch.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
@@ -63,6 +64,7 @@ const behavior = [
   ['Unsaved changes', 'Form dialogs ask “Discard changes?” before closing.', 'Filter drawers apply as people change them, so nothing is lost.'],
   ['Scrolling', 'The page behind doesn’t scroll. Long bodies scroll inside, actions stay fixed.', 'The drawer body scrolls; header and footer stay fixed.'],
   ['Stacking', 'Never a dialog over a dialog. A dialog can open over a drawer.', 'One drawer at a time; a new item replaces the content.'],
+  ['Going deeper', 'Not used.', 'An item inside the drawer, such as a gene in a module, replaces the content in the same drawer. A Small ghost button with chevron-left, “Back to M1”, sits above the title and returns to the previous content. One level only; Escape and Close still close the drawer.'],
   ['Layer', 'z.modal (400).', 'z.drawer (300).'],
 ];
 
@@ -265,6 +267,18 @@ const usage = `import { Button, Dialog, Drawer, DrawerSection } from '@humanbase
         <div class="connection-notes">{connectionNotes.map((note) => <p>{note}</p>)}</div>
       </div>
     </div>
+
+    <div class="drawer-mode">
+      <h3>Going deeper: one item inside the drawer, with Back</h3>
+      <div class="connection">
+        <ModuleGeneDrawer view="terms" />
+        <div class="connection-notes">
+          <p>Choosing a gene in a module drawer shows that gene in the same drawer. “Back to M1”, a Small ghost button with chevron-left, sits above the title and returns to the module.</p>
+          <p>One level only: choosing another gene from here replaces the gene, and Back still returns to the module. Escape and Close close the drawer from either level.</p>
+          <p>When the content changes from inside the drawer, focus moves to the new title, so screen readers announce it. No backdrop, as for every drawer.</p>
+        </div>
+      </div>
+    </div>
   </DocSection>
 
   <DocSection title="Behavior" lead="How they open, close and stack.">
@@ -367,6 +381,7 @@ const usage = `import { Button, Dialog, Drawer, DrawerSection } from '@humanbase
       <li>Both are controlled: pass <code>open</code> and <code>onClose</code>. Escape, the Close button and, for <code>kind="confirm"</code>, a backdrop click all call <code>onClose</code>. Focus returns to whatever had it when the layer opened.</li>
       <li>Below 768px a drawer becomes a bottom sheet with a handle and a backdrop. Set <code>--drawer-top</code> to the top bar’s height so an over-content drawer starts below it.</li>
       <li><code>inline</code> renders either one open in the page flow, as on this page.</li>
+      <li>Pass a drawer <code>back</code> with a <code>label</code> and <code>onSelect</code> to show the Back button above the title when it shows one item inside another, such as a gene in a module.</li>
     </ul>
     <Code code={usage} lang="tsx" theme="css-variables" />
   </NoteCard>
@@ -555,7 +570,8 @@ const usage = `import { Button, Dialog, Drawer, DrawerSection } from '@humanbase
     align-items: start;
   }
 
-  .connection :global(.connection-drawer) {
+  .connection :global(.connection-drawer),
+  .connection :global(.module-gene-drawer) {
     border: var(--border-width-1) solid var(--border-subtle);
     box-shadow: none;
   }

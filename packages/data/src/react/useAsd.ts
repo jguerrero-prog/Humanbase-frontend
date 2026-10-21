@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import type { AsdFeatureSet, AsdWhere } from '../asd/AsdService';
+import type { FeaturePredictionRecord } from '../deepsea/DeepseaResult';
 import type { GenomeLocation } from '../genome/GenomeLocation';
 import { useHumanbase } from './HumanbaseProvider';
+import { keepSameData, useReadRange } from './useReadRange';
 
 const rangeKey = (range: GenomeLocation | undefined) => range && `${range.chrom}:${range.start}-${range.end}`;
 
@@ -23,10 +25,12 @@ export function useAsdColumns() {
   return useQuery({ queryKey: ['asd-columns'], queryFn: () => api.asd.columns(), staleTime: Infinity });
 }
 
-/** The DNA or RNA feature names, and each variant's predicted effect on them, for the browser's range. */
+/** The DNA or RNA feature names, and each variant's predicted effect on them, read for the browser's range as it moves. */
 export function useAsdEffects(range: GenomeLocation | undefined, set: AsdFeatureSet) {
   const api = useHumanbase();
   const features = useQuery({ queryKey: ['asd-features', set], queryFn: () => api.asd.features(set), staleTime: Infinity });
-  const predictions = useQuery({ queryKey: ['asd-predictions', set, rangeKey(range)], queryFn: () => api.asd.predictions(range as GenomeLocation, set), enabled: Boolean(range), staleTime: Infinity });
+  const read = useReadRange(range, set);
+  const key = ['asd-predictions', set, read?.variantRange];
+  const predictions = useQuery({ queryKey: key, queryFn: () => api.asd.predictions(read as GenomeLocation, set), enabled: Boolean(read), staleTime: Infinity, placeholderData: keepSameData<FeaturePredictionRecord[]>(key) });
   return { features, predictions };
 }

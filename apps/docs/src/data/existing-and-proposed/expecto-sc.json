@@ -136,8 +136,8 @@
     {
       "area": "Search page",
       "existing": "Search, PTEN example and Download additional files here, which opens the docs",
-      "proposed": "Search, PTEN example, a lead sentence, an About panel, a docs link and Download additional files, which opens /downloads/",
-      "status": "Changed",
+      "proposed": "Search, PTEN example, a lead sentence, an About panel, a docs link and Download additional files, which opens the same docs section in a new tab",
+      "status": "Same function",
       "evidence": "Capture pair 1; here links to humanbase.readthedocs.io/en/latest/expectosc.html#download"
     },
     {

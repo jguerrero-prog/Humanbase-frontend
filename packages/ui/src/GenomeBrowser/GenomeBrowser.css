@@ -174,6 +174,7 @@
 
 /* The design system's own genome tracks: plain SVG on the page surface, per the Genome browser specs. */
 .genome-tracks {
+  position: relative;
   border-block-start: 0;
 }
 
@@ -214,6 +215,12 @@
 
 .genome-tracks-bar.is-selected {
   fill: var(--text-default);
+}
+
+/* Segments are filled with the file's own colors, set on each one; the outline is the live site's 1px ink. */
+.genome-tracks-segment {
+  stroke: var(--text-default);
+  stroke-width: 1;
 }
 
 .genome-tracks-value {
@@ -267,4 +274,32 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+}
+
+/* The exported view is one standalone svg, so its headers are svg text in the track header's type. */
+.genome-figure-page {
+  fill: var(--surface-page);
+}
+
+.genome-figure-headers {
+  fill: var(--surface-subtle);
+}
+
+.genome-figure-title,
+.genome-figure-name {
+  font: 700 13px Lato, sans-serif;
+  fill: var(--text-default);
+}
+
+.genome-figure-meta {
+  font: 400 12px Lato, sans-serif;
+  fill: var(--text-secondary);
+}
+
+.genome-segment-table {
+  --table-max-height: 400px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
 }

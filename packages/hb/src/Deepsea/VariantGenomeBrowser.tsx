@@ -2,6 +2,7 @@ import { GenomeLocation, useHumanbase } from '@humanbase/data';
 import { defaultGenomeEngine, GenomeEngineView, withChr, type Assembly, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
 import { Alert, GenomeBrowserToolbar } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
+import { useGenomeBrowserTools } from '../GenomeBrowser/useGenomeBrowserTools';
 
 export interface VariantGenomeBrowserProps {
   assembly: Assembly;
@@ -9,32 +10,28 @@ export interface VariantGenomeBrowserProps {
   position: number;
   /** The variant in words, such as chr7:49,813,589 G>C. */
   label: string;
+  /** The view, kept by the page so the molecular effects can follow it. */
+  location: GenomeLocation;
+  onLocationChange: (location: GenomeLocation) => void;
   onPreviousVariant?: (() => void) | undefined;
   onNextVariant?: (() => void) | undefined;
   engine?: GenomeBrowserEngineFactory | undefined;
 }
 
-// The design centers the browser on the selected variant at 50 kb.
-const startWidth = 50_000;
 const noTracks: readonly GenomeDataTrack[] = [];
 
 /** The genome around the selected variant, with the system toolbar. With the API off nothing loads, so the section is left out. */
-export function VariantGenomeBrowser({ assembly, chromosome, position, label, onPreviousVariant, onNextVariant, engine = defaultGenomeEngine }: VariantGenomeBrowserProps) {
+export function VariantGenomeBrowser({ assembly, chromosome, position, label, location, onLocationChange, onPreviousVariant, onNextVariant, engine = defaultGenomeEngine }: VariantGenomeBrowserProps) {
   const api = useHumanbase();
   const { showsSamples, genomeTracks } = api;
   const [failure, setFailure] = useState<Error>();
   const [locationError, setLocationError] = useState<string>();
   const chrom = withChr(chromosome);
-  const variantKey = `${chrom}:${position}`;
-  // Selecting another variant centers the browser on it at the current zoom.
-  const [view, setView] = useState(() => ({ variant: variantKey, location: new GenomeLocation(chrom, position, position, assembly).withWidth(startWidth) }));
-  if (view.variant !== variantKey) setView({ variant: variantKey, location: new GenomeLocation(chrom, position, position, assembly).withWidth(view.location.width) });
-  const location = view.location;
   const region = useMemo(() => ({ chrom: location.chrom, start: location.start, end: location.end }), [location]);
 
   const move = (to: GenomeLocation) => {
     setLocationError(undefined);
-    setView((current) => ({ ...current, location: to }));
+    onLocationChange(to);
   };
   const example = `${chrom}:${(position - 1000).toLocaleString('en-US')}-${(position + 1000).toLocaleString('en-US')}`;
   // Gene names come from the hg19 GENCODE index; hg38 results take regions only.
@@ -52,6 +49,7 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, on
   };
   const onRegionChange = (moved: GenomeRegion) => move(new GenomeLocation(moved.chrom, moved.start, moved.end, assembly));
   const zoomStop = (GenomeLocation.zoomStops as readonly number[]).includes(location.width) ? location.width : undefined;
+  const { attach, ...tools } = useGenomeBrowserTools({ browser: 'variant-results', assembly, tracks: noTracks, location });
 
   if (showsSamples) return null;
   return (
@@ -67,24 +65,28 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, on
         onZoomStop={(bases) => move(location.withWidth(bases))}
         {...(onPreviousVariant && { onPreviousVariant })}
         {...(onNextVariant && { onNextVariant })}
-        trackActions={false}
+        {...tools.toolbar}
       />
+      {tools.panels}
       {failure && (
         <Alert tone="error" title="The genome browser couldn’t load">
           {failure.message} The molecular effects below still work.
         </Alert>
       )}
       <GenomeEngineView
+        ref={attach}
         engine={engine}
         files={genomeTracks}
-        label={location.regionLabel(2)}
+        label={location.regionLabel(tools.shownCount)}
         assembly={assembly}
         region={region}
-        tracks={noTracks}
+        tracks={tools.tracks}
+        hidden={tools.hidden}
         selected={{ chrom, position }}
         onRegionChange={onRegionChange}
         onStatusChange={(status, error) => setFailure(status === 'failed' ? error : undefined)}
         onCommand={(command) => {
+          if (tools.onCommand(command)) return;
           if (command === 'moveLeft' || command === 'moveRight') move(location.move(command === 'moveLeft' ? -0.1 : 0.1));
           else if (command === 'zoomIn' || command === 'zoomOut') move(location.zoom(command === 'zoomIn' ? 'in' : 'out'));
           else if (command === 'previousVariant') onPreviousVariant?.();

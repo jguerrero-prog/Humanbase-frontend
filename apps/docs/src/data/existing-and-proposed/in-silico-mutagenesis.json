@@ -207,6 +207,13 @@
       "evidence": "Both legends. Ask: is the value log2?"
     },
     {
+      "area": "Log-fold change score documentation",
+      "existing": "A book icon beside the Log-fold change legend opens in-silico-mutagenesis.html#output.",
+      "proposed": "A Log-fold change score documentation link beside the controls opens the same page.",
+      "status": "Same function",
+      "evidence": "humanbase.io deepsea bundle: the ISM heatmap legend links gY.ism.helpUrl#output with tooltip Log-fold change score documentation"
+    },
+    {
       "area": "Base row order",
       "existing": "A, G, C, T.",
       "proposed": "A, C, G, T.",

@@ -1,13 +1,14 @@
 import { ApiError } from '../ApiError';
 import type { DataClient } from '../DataClient';
 import type { Assembly } from './GenomeLocation';
-import type { GeneModel, GenomeSpan, GenomeTracks, ScorePoint, SequenceSpan } from './GenomeTracks';
+import type { GeneModel, GenomeSpan, GenomeTracks, ScorePoint, Segment, SequenceSpan } from './GenomeTracks';
 
 /** A recorded stretch of the track files, as pnpm samples:record saves it. */
 export interface RecordedWindow extends GenomeSpan {
   assembly: Assembly;
   genes: GeneModel[];
   scores: Record<string, ScorePoint[]>;
+  segments?: Record<string, Segment[]>;
   sequence?: SequenceSpan;
 }
 
@@ -24,6 +25,11 @@ export class SampleGenomeTracks implements GenomeTracks {
   async scores(bigWigUrl: string, span: GenomeSpan): Promise<ScorePoint[]> {
     const recorded = (await this.window(span, (window) => bigWigUrl in window.scores)).scores[bigWigUrl] ?? [];
     return recorded.filter((point) => overlaps(point, span));
+  }
+
+  async segments(bigBedUrl: string, span: GenomeSpan): Promise<Segment[]> {
+    const recorded = (await this.window(span, (window) => bigBedUrl in (window.segments ?? {}))).segments?.[bigBedUrl] ?? [];
+    return recorded.filter((segment) => overlaps(segment, span));
   }
 
   async sequence(assembly: Assembly, span: GenomeSpan): Promise<SequenceSpan | undefined> {

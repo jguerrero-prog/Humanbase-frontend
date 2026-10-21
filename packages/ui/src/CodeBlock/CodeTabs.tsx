@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import { Tabs } from '../Tabs/Tabs';
 import { CodeBlock, type CodeLine } from './CodeBlock';
-import { StoredChoice } from './StoredChoice';
+import { StoredChoice } from '../utils/StoredChoice';
 
 export interface CodeExample {
   language: string;

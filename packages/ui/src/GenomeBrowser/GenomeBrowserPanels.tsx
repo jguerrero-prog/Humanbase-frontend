@@ -22,21 +22,26 @@ export interface SuggestedTrack {
   shown: boolean;
 }
 
+export type TrackSource = 'suggested' | 'file' | 'url';
+
 export interface TracksDrawerProps extends LayerProps {
   tracks: readonly SuggestedTrack[];
+  /** Where tracks can come from; a browser that can't read your own files offers only suggested. */
+  sources?: readonly TrackSource[];
   onToggle?: (id: string, shown: boolean) => void;
   onAddFile?: (file: File) => void;
   onAddUrl?: (url: string) => void;
   onReset?: () => void;
 }
 
-const sources = [
+const allSources: readonly { value: TrackSource; label: string }[] = [
   { value: 'suggested', label: 'Suggested' },
   { value: 'file', label: 'Your file' },
   { value: 'url', label: 'By URL' },
 ];
 
-export function TracksDrawer({ tracks, onToggle, onAddFile, onAddUrl, onReset, open = false, inline = false, onClose = () => {} }: TracksDrawerProps) {
+export function TracksDrawer({ tracks, sources = ['suggested', 'file', 'url'], onToggle, onAddFile, onAddUrl, onReset, open = false, inline = false, onClose = () => {} }: TracksDrawerProps) {
+  const offered = allSources.filter((option) => sources.includes(option.value));
   const [source, setSource] = useState('suggested');
   const [url, setUrl] = useState('');
   const chooseFile = (event: ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +66,7 @@ export function TracksDrawer({ tracks, onToggle, onAddFile, onAddUrl, onReset, o
       }
     >
       <div className="tracks-panel">
-        <SegmentedControl label="Add tracks from" hideLabel size="small" segments={sources} value={source} onChange={setSource} />
+        {offered.length > 1 && <SegmentedControl label="Add tracks from" hideLabel size="small" segments={offered} value={source} onChange={setSource} />}
         {source === 'suggested' && (
           <ul className="tracks-list">
             {tracks.map((track) => (
@@ -87,7 +92,7 @@ export function TracksDrawer({ tracks, onToggle, onAddFile, onAddUrl, onReset, o
             </Button>
           </form>
         )}
-        <p className="tracks-note">Your file adds an indexed file (bigWig, bigBed, BAM or tabix VCF). By URL adds a track or a DAS source by its address, as + does today.</p>
+        {offered.length > 1 && <p className="tracks-note">Your file adds an indexed file (bigWig, bigBed, BAM or tabix VCF). By URL adds a track or a DAS source by its address, as + does today.</p>}
       </div>
     </Drawer>
   );

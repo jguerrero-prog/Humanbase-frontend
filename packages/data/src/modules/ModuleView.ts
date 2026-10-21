@@ -7,6 +7,8 @@ interface ModuleViewFields {
   tab: ModuleTab;
   /** The module open in the drawer. */
   module: number | undefined;
+  /** The gene open in the module drawer, by Entrez ID. */
+  gene: number | undefined;
   showEdges: boolean;
   hideUnenriched: boolean;
   minimumSize: number;
@@ -16,12 +18,13 @@ interface ModuleViewFields {
   expanded: boolean;
 }
 
-const keys = ['tab', 'module', 'edges', 'all', 'min', 'db', 'display', 'expand'];
+const keys = ['tab', 'module', 'gene', 'edges', 'all', 'min', 'db', 'display', 'expand'];
 
 // How a module result is shown, kept in the URL beside the job's body_tag so a link or refresh shows the same view.
 export class ModuleView implements ModuleViewFields {
   readonly tab: ModuleTab = 'modules';
   readonly module: number | undefined = undefined;
+  readonly gene: number | undefined = undefined;
   readonly showEdges: boolean = false;
   readonly hideUnenriched: boolean = ModuleResult.defaultFilter.hideUnenriched;
   readonly minimumSize: number = ModuleResult.defaultFilter.minimumSize;
@@ -35,10 +38,12 @@ export class ModuleView implements ModuleViewFields {
 
   static fromSearch(search: URLSearchParams): ModuleView {
     const module = Number(search.get('module'));
+    const gene = Number(search.get('gene'));
     const minimum = Number(search.get('min'));
     return new ModuleView({
       tab: search.get('tab') === 'genes' ? 'genes' : 'modules',
       module: Number.isInteger(module) && module > 0 ? module : undefined,
+      gene: Number.isInteger(gene) && gene > 0 ? gene : undefined,
       showEdges: search.get('edges') === '1',
       hideUnenriched: search.get('all') !== '1',
       minimumSize: Number.isInteger(minimum) && minimum >= 1 ? minimum : ModuleResult.defaultFilter.minimumSize,
@@ -66,6 +71,7 @@ export class ModuleView implements ModuleViewFields {
     for (const key of keys) next.delete(key);
     if (this.tab === 'genes') next.set('tab', 'genes');
     if (this.module !== undefined) next.set('module', String(this.module));
+    if (this.gene !== undefined) next.set('gene', String(this.gene));
     if (this.showEdges) next.set('edges', '1');
     if (!this.hideUnenriched) next.set('all', '1');
     if (this.minimumSize !== ModuleResult.defaultFilter.minimumSize) next.set('min', String(this.minimumSize));

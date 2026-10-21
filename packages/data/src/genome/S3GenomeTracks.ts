@@ -2,7 +2,7 @@
 import type { BigBed, BigWig } from '@gmod/bbi';
 import type { TwoBitFile } from '@gmod/twobit';
 import type { Assembly } from './GenomeLocation';
-import { geneModels, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type SequenceSpan } from './GenomeTracks.ts';
+import { geneModels, segmentOf, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type Segment, type SequenceSpan } from './GenomeTracks.ts';
 
 const files: Record<Assembly, { genes: string; sequence: string }> = {
   hg19: { genes: 'gencode.bb', sequence: 'hg19.2bit' },
@@ -16,6 +16,7 @@ const readers = () => Promise.all([import('@gmod/bbi'), import('@gmod/twobit'), 
 export class S3GenomeTracks implements GenomeTracks {
   private readonly tracks: string;
   private readonly opened = new Map<string, Promise<BigBed | BigWig | TwoBitFile>>();
+  private readonly segmentReads = new Map<string, Promise<Segment[]>>();
 
   constructor(tracks = 'https://humanbase.s3.amazonaws.com/tracks/') {
     this.tracks = tracks;
@@ -38,6 +39,25 @@ export class S3GenomeTracks implements GenomeTracks {
       const start = feature.end > feature.start ? feature.start + 1 : feature.start;
       return { start, end: Math.max(start, feature.end), value: Math.abs(low) > Math.abs(high) ? low : high };
     });
+  }
+
+  segments(bigBedUrl: string, span: GenomeSpan): Promise<Segment[]> {
+    // The track and its table ask for the same view, so the last few reads are kept.
+    const key = `${bigBedUrl} ${span.chrom}:${span.start}-${span.end}`;
+    let read = this.segmentReads.get(key);
+    if (!read) {
+      read = this.readSegments(bigBedUrl, span);
+      this.segmentReads.set(key, read);
+      read.catch(() => this.segmentReads.delete(key));
+      if (this.segmentReads.size > 8) this.segmentReads.delete(this.segmentReads.keys().next().value ?? key);
+    }
+    return read;
+  }
+
+  private async readSegments(bigBedUrl: string, span: GenomeSpan): Promise<Segment[]> {
+    const file = (await this.open(bigBedUrl, 'bigBed')) as BigBed;
+    const features = await file.getFeatures(span.chrom, span.start - 1, span.end);
+    return features.map(segmentOf).sort((a, b) => a.start - b.start);
   }
 
   async sequence(assembly: Assembly, span: GenomeSpan): Promise<SequenceSpan | undefined> {

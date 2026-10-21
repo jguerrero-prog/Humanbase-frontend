@@ -84,14 +84,23 @@ async function recordGenomeTracks() {
   const { S3GenomeTracks } = await import('../packages/data/src/genome/S3GenomeTracks.ts');
   const files = new S3GenomeTracks(genomeTracks.tracks);
   const windows = await Promise.all(
-    genomeTracks.windows.map(async ({ assembly, region, scores }) => {
+    genomeTracks.windows.map(async ({ assembly, region, scores: listed, segments: segmentFiles = [] }) => {
+      const scores = listed.map((score) => (typeof score === 'string' ? { url: score } : score));
       const [chrom, from, to] = region.split(/[:-]/);
       const width = Number(to) - Number(from);
       const span = { chrom, start: Math.max(1, Number(from) - width), end: Number(to) + width };
       const center = Math.round((span.start + span.end) / 2);
-      const read = await Promise.all([files.genes(assembly, span), files.sequence(assembly, { chrom, start: center - 1_000, end: center + 1_000 }), ...scores.map((url) => files.scores(url, span))]);
+      const read = await Promise.all([files.genes(assembly, span), files.sequence(assembly, { chrom, start: center - 1_000, end: center + 1_000 }), ...scores.map(({ url, bins }) => files.scores(url, span, bins))]);
+      const segments = await Promise.all(segmentFiles.map((url) => files.segments(url, span)));
       const [genes, sequence, ...values] = read;
-      return { assembly, ...span, genes, sequence, scores: Object.fromEntries(scores.map((url, index) => [url, rounded(values[index], 3)])) };
+      return {
+        assembly,
+        ...span,
+        genes,
+        sequence,
+        scores: Object.fromEntries(scores.map(({ url }, index) => [url, rounded(values[index], 3)])),
+        ...(segmentFiles.length && { segments: Object.fromEntries(segmentFiles.map((url, index) => [url, segments[index]])) }),
+      };
     }),
   );
   writeSample(join(samplesDir, 'genome/tracks.json'), { status: 200, body: { windows } });

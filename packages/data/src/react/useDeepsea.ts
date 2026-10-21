@@ -1,10 +1,13 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import type { DeepseaJob } from '../deepsea/DeepseaJob';
-import { chrVariant, featureEffects, variantRows, variantScoreTypes, type VariantRow, type VariantScoresRecord } from '../deepsea/DeepseaResult';
+import { variantRows, variantScoreTypes, type FeaturePredictionRecord, type VariantRow, type VariantScoresRecord } from '../deepsea/DeepseaResult';
 import { deepseaModels } from '../deepsea/DeepseaModel';
 import { DeepseaService } from '../deepsea/DeepseaService';
+import type { GenomeLocation } from '../genome/GenomeLocation';
 import type { VariantModel } from '../jobs/VariantFileCheck';
 import { useHumanbase } from './HumanbaseProvider';
+import { keepSameData, useReadRange } from './useReadRange';
 
 /** Reads a Sei, Beluga or Seqweaver job every 10 seconds until it finishes or fails. */
 export function useDeepseaJob(id: string | undefined) {
@@ -33,22 +36,25 @@ export function useDeepseaVariants(job: DeepseaJob | undefined) {
   return { scoreTypes: types.data, variants, error: failed[0]?.error, refetch: () => failed.forEach((query) => void query.refetch()) };
 }
 
-/** The selected variant's effect on every feature for one feature-level score. */
-export function useFeatureEffects(job: DeepseaJob | undefined, scoreType: string | undefined, variant: VariantRow | undefined) {
+/** Every variant's prediction on every feature in the genome browser's view, for one feature-level score, with the model's feature names. */
+export function useViewPredictions(job: DeepseaJob | undefined, scoreType: string | undefined, view: GenomeLocation | undefined) {
   const api = useHumanbase();
-  const where = variant ? chrVariant(variant) : '';
+  const id = job?.id ?? '';
   const model = job?.model.id;
   const named = model && deepseaModels[model].classFeatures?.scoreType === scoreType ? scoreType : undefined;
-  const features = useQuery({ queryKey: ['deepsea-features', model, named], queryFn: () => api.deepsea.features(model ?? 'sei', named), enabled: Boolean(model && variant), staleTime: Infinity });
-  const prediction = useQuery({
-    queryKey: ['deepsea-predictions', job?.id, scoreType, where],
-    queryFn: () => api.deepsea.featurePredictions(job?.id ?? '', scoreType ?? '', where),
-    enabled: Boolean(job && scoreType && where),
+  const features = useQuery({ queryKey: ['deepsea-features', model, named], queryFn: () => api.deepsea.features(model ?? 'sei', named), enabled: Boolean(model), staleTime: Infinity });
+  const range = useReadRange(view, `${id} ${scoreType ?? ''}`);
+  const key = ['deepsea-predictions', id, scoreType, range?.variantRange];
+  const predictions = useQuery({
+    queryKey: key,
+    queryFn: () => api.deepsea.featurePredictions(id, scoreType ?? '', range as GenomeLocation),
+    enabled: Boolean(id && scoreType && range),
     staleTime: Infinity,
+    placeholderData: keepSameData<FeaturePredictionRecord[]>(key),
   });
-  const effects = features.data && prediction.data ? featureEffects(prediction.data, features.data) : undefined;
-  const failed = [features, prediction].filter((query) => query.isError);
-  return { effects, isPending: features.isPending || prediction.isPending, error: failed[0]?.error, refetch: () => failed.forEach((query) => void query.refetch()) };
+  const inView = useMemo(() => view && predictions.data?.filter((record) => view.includes(record.chromosome, record.position)).sort((a, b) => a.position - b.position), [view, predictions.data]);
+  const failed = [features, predictions].filter((query) => query.isError);
+  return { features: features.data, predictions: inView, error: failed[0]?.error, refetch: () => failed.forEach((query) => void query.refetch()) };
 }
 
 /** A model's features, such as Beluga's 2,002 chromatin features; they never change, so they load once. */

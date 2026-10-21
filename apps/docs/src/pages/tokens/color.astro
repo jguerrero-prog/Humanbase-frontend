@@ -96,6 +96,8 @@ const vizGroups = [
   { title: 'Sequential', group: 'seq' },
   { title: 'Diverging', group: 'div' },
   { title: 'Categorical', group: 'cat' },
+  { title: 'Sei sequence classes', group: 'seqclass' },
+  { title: 'Chromosomes', group: 'chromosome' },
 ].map(({ title, group }) => ({ title, steps: flattenTokens(primitives.viz[group as keyof typeof primitives.viz] as never, ['viz', group]).toSorted((a, b) => divergingRank(a) - divergingRank(b)) }));
 
 const swatchLabel = (entry: TokenEntry) => `${slash(entry.path.slice(1))} ${colors.hex(entry.path.join('.'))}`;

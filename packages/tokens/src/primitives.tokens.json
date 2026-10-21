@@ -967,6 +967,426 @@
         }
       }
     },
+    "seqclass": {
+      "enhancer": {
+        "$type": "color",
+        "$description": "Sei sequence class group Enhancer, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.5961,
+            0.3059,
+            0.9529
+          ],
+          "hex": "#984EF3"
+        }
+      },
+      "ctcf": {
+        "$type": "color",
+        "$description": "Sei sequence class group CTCF, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9922,
+            0.7059,
+            0.3843
+          ],
+          "hex": "#FDB462"
+        }
+      },
+      "polycomb": {
+        "$type": "color",
+        "$description": "Sei sequence class group Polycomb, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.5412,
+            0.7294,
+            0.8314
+          ],
+          "hex": "#8ABAD4"
+        }
+      },
+      "promoter": {
+        "$type": "color",
+        "$description": "Sei sequence class group Promoter, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9373,
+            0.2314,
+            0.1725
+          ],
+          "hex": "#EF3B2C"
+        }
+      },
+      "heterochromatin": {
+        "$type": "color",
+        "$description": "Sei sequence class group Heterochromatin, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.4,
+            0.1451,
+            0.0235
+          ],
+          "hex": "#662506"
+        }
+      },
+      "transcription": {
+        "$type": "color",
+        "$description": "Sei sequence class group Transcription, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9843,
+            0.6039,
+            0.6
+          ],
+          "hex": "#FB9A99"
+        }
+      },
+      "tf": {
+        "$type": "color",
+        "$description": "Sei sequence class group Transcription factor, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.2196,
+            0.4235,
+            0.6902
+          ],
+          "hex": "#386CB0"
+        }
+      },
+      "low": {
+        "$type": "color",
+        "$description": "Sei sequence class group Low signal, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7529,
+            0.7529,
+            0.7529
+          ],
+          "hex": "#C0C0C0"
+        }
+      }
+    },
+    "chromosome": {
+      "1": {
+        "$type": "color",
+        "$description": "chr1 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.6196,
+            0.4745,
+            0.3608
+          ],
+          "hex": "#9E795C"
+        }
+      },
+      "2": {
+        "$type": "color",
+        "$description": "chr2 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.5059,
+            0.4745,
+            0.9294
+          ],
+          "hex": "#8179ED"
+        }
+      },
+      "3": {
+        "$type": "color",
+        "$description": "chr3 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.1333,
+            0.6824,
+            0.2392
+          ],
+          "hex": "#22AE3D"
+        }
+      },
+      "4": {
+        "$type": "color",
+        "$description": "chr4 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.8745,
+            0.3922,
+            0.8314
+          ],
+          "hex": "#DF64D4"
+        }
+      },
+      "5": {
+        "$type": "color",
+        "$description": "chr5 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.5922,
+            0.702,
+            0.1294
+          ],
+          "hex": "#97B321"
+        }
+      },
+      "6": {
+        "$type": "color",
+        "$description": "chr6 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.0118,
+            0.5529,
+            0.9529
+          ],
+          "hex": "#038DF3"
+        }
+      },
+      "7": {
+        "$type": "color",
+        "$description": "chr7 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.8667,
+            0.6314,
+            0.1255
+          ],
+          "hex": "#DDA120"
+        }
+      },
+      "8": {
+        "$type": "color",
+        "$description": "chr8 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.2706,
+            0.7098,
+            0.9725
+          ],
+          "hex": "#45B5F8"
+        }
+      },
+      "9": {
+        "$type": "color",
+        "$description": "chr9 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9412,
+            0.4941,
+            0.2627
+          ],
+          "hex": "#F07E43"
+        }
+      },
+      "10": {
+        "$type": "color",
+        "$description": "chr10 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.1804,
+            0.7961,
+            0.9255
+          ],
+          "hex": "#2ECBEC"
+        }
+      },
+      "11": {
+        "$type": "color",
+        "$description": "chr11 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.6824,
+            0.502,
+            0.1647
+          ],
+          "hex": "#AE802A"
+        }
+      },
+      "12": {
+        "$type": "color",
+        "$description": "chr12 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.2157,
+            0.5333,
+            0.7804
+          ],
+          "hex": "#3788C7"
+        }
+      },
+      "13": {
+        "$type": "color",
+        "$description": "chr13 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.498,
+            0.5725,
+            0.2
+          ],
+          "hex": "#7F9233"
+        }
+      },
+      "14": {
+        "$type": "color",
+        "$description": "chr14 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7216,
+            0.5647,
+            0.851
+          ],
+          "hex": "#B890D9"
+        }
+      },
+      "15": {
+        "$type": "color",
+        "$description": "chr15 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.3608,
+            0.6706,
+            0.3922
+          ],
+          "hex": "#5CAB64"
+        }
+      },
+      "16": {
+        "$type": "color",
+        "$description": "chr16 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7294,
+            0.6745,
+            0.7922
+          ],
+          "hex": "#BAACCA"
+        }
+      },
+      "17": {
+        "$type": "color",
+        "$description": "chr17 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.1176,
+            0.7647,
+            0.6118
+          ],
+          "hex": "#1EC39C"
+        }
+      },
+      "18": {
+        "$type": "color",
+        "$description": "chr18 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.5255,
+            0.502,
+            0.6
+          ],
+          "hex": "#868099"
+        }
+      },
+      "19": {
+        "$type": "color",
+        "$description": "chr19 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.1255,
+            0.5647,
+            0.4392
+          ],
+          "hex": "#209070"
+        }
+      },
+      "20": {
+        "$type": "color",
+        "$description": "chr20 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7686,
+            0.6941,
+            0.5529
+          ],
+          "hex": "#C4B18D"
+        }
+      },
+      "21": {
+        "$type": "color",
+        "$description": "chr21 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.1451,
+            0.6706,
+            0.7529
+          ],
+          "hex": "#25ABC0"
+        }
+      },
+      "22": {
+        "$type": "color",
+        "$description": "chr22 in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.4706,
+            0.5333,
+            0.4392
+          ],
+          "hex": "#788870"
+        }
+      },
+      "x": {
+        "$type": "color",
+        "$description": "chrX in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.1843,
+            0.5333,
+            0.6157
+          ],
+          "hex": "#2F889D"
+        }
+      },
+      "y": {
+        "$type": "color",
+        "$description": "chrY in the variant score plot, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.5725,
+            0.7216,
+            0.6902
+          ],
+          "hex": "#92B8B0"
+        }
+      }
+    },
     "edge": {
       "weak": {
         "$type": "dimension",
