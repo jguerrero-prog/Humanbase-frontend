@@ -8,11 +8,28 @@ export const humanbaseTracks = 'https://humanbase.s3.amazonaws.com/tracks';
 const grch37 = { speciesName: 'Human', taxon: 9606, auth: 'GRCh', version: '37', ucscName: 'hg19' };
 const grch38 = { speciesName: 'Human', taxon: 9606, auth: 'GRCh', version: '38', ucscName: 'hg38' };
 
+// The live site's gencode.xml rules (pseudogenes, RNA genes, then the rest), in the genome browser docs' colors:
+// genes in --text-secondary (grey 600); pseudogenes lighter, as on the live site.
+const geneBox = (fg: string, bg: string, labelled: boolean) => ({ glyph: 'BOX', HEIGHT: 10, FGCOLOR: fg, BGCOLOR: bg, ...(labelled ? { BUMP: 'yes', LABEL: 'yes' } : {}) });
+const geneRules = (method: string | undefined, transcript: [string, string], exon: [string, string]) =>
+  ['bb-transcript', 'transcript'].flatMap((type, index) => [
+    { type, ...(method ? { method } : {}), style: geneBox(...transcript, true) },
+    { type: ['bb-translation', 'translation'][index], ...(method ? { method } : {}), style: geneBox(...exon, false) },
+  ]);
+
+export const humanbaseGeneStyle = [
+  ...geneRules('.*pseudogene.*', ['var(--text-muted)', 'var(--surface-page)'], ['var(--text-muted)', 'var(--text-muted)']),
+  ...geneRules('.*RNA.*', ['var(--text-secondary)', 'var(--text-secondary)'], ['var(--text-secondary)', 'var(--text-secondary)']),
+  ...geneRules(undefined, ['var(--text-secondary)', 'var(--surface-page)'], ['var(--text-secondary)', 'var(--text-secondary)']),
+];
+
+// title and desc are what the design system's track headers show (title, then the line under it).
 const gencode19 = {
   name: 'GENCODE 19',
-  desc: 'Gene structures from GENCODE 19',
+  title: 'Genes',
+  desc: 'GENCODE 19',
   bwgURI: `${humanbaseTracks}/gencode.bb`,
-  stylesheet_uri: `${humanbaseTracks}/gencode.xml`,
+  style: humanbaseGeneStyle,
   collapseSuperGroups: true,
   trixURI: `${humanbaseTracks}/geneIndex.ix`,
 };
@@ -39,7 +56,7 @@ export const humanbaseAssemblies: Record<Assembly, BiodallianceAssembly> = {
   hg19: {
     coordSystem: grch37,
     sources: [
-      { name: 'Genome', twoBitURI: `${humanbaseTracks}/hg19.2bit`, tier_type: 'sequence', pinned: true },
+      { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}/hg19.2bit`, tier_type: 'sequence', pinned: true },
       gencode19,
       { name: 'Conservation', desc: 'Conservation', bwgURI: `${humanbaseTracks}/phastCons46way.bw`, noDownsample: true, disabled: true },
       chromHmm,
@@ -48,12 +65,13 @@ export const humanbaseAssemblies: Record<Assembly, BiodallianceAssembly> = {
   hg38: {
     coordSystem: grch38,
     sources: [
-      { name: 'Genome', twoBitURI: `${humanbaseTracks}/GRCh38/hg38.2bit`, tier_type: 'sequence', pinned: true },
+      { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}/GRCh38/hg38.2bit`, tier_type: 'sequence', pinned: true },
       {
         name: 'GENCODE 21',
-        desc: 'Gene structures from GENCODE 21',
+        title: 'Genes',
+        desc: 'GENCODE 21',
         bwgURI: `${humanbaseTracks}/GRCh38/gencode.v21.annotation.bb`,
-        stylesheet_uri: `${humanbaseTracks}/GRCh38/gencode2.xml`,
+        style: humanbaseGeneStyle,
         collapseSuperGroups: true,
         trixURI: `${humanbaseTracks}/GRCh38/gencode.v21.annotation.ix`,
       },
@@ -68,7 +86,6 @@ export const humanbaseBrowserOptions: Record<string, unknown> = {
   fullScreen: false,
   noTitle: true,
   noHelp: true,
-  rulerLocation: 'left',
   singleBaseHighlight: false,
   maxHeight: 1000,
   noPersist: true,
@@ -82,6 +99,19 @@ export const humanbaseBrowserOptions: Record<string, unknown> = {
   noExport: true,
   noOptions: true,
   noClearHighlightsButton: true,
+  noTrackEditor: true,
+  // The design system draws track headers and score ranges beside the tracks, so Biodalliance's are off.
+  rulerLocation: 'none',
+  // Only Biodalliance's layout stylesheet loads (see BiodallianceEngine); its Bootstrap and Font Awesome don't.
+  noSourceCSS: true,
+  tierBackgroundColors: ['var(--surface-page)', 'var(--surface-page)'],
+  // Genome browser docs: the selected variant is a 1px ink line at 50% through all tracks.
+  defaultHighlightFill: 'var(--text-default)',
+  defaultHighlightAlpha: 0.5,
+  // The design draws the sequence as plain letters, so every base shares one neutral color.
+  baseColors: { A: 'var(--text-secondary)', C: 'var(--text-secondary)', G: 'var(--text-secondary)', T: 'var(--text-secondary)', '-': 'var(--text-muted)', I: 'var(--text-muted)' },
+  // The coded genome browser places tracks 60px apart; this keeps that pitch when no score is in view.
+  minTierHeight: 60,
   // Tracks load on the main thread; this is the setup the live checks cover.
   useFetchWorkers: false,
 };

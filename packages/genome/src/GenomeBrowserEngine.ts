@@ -10,15 +10,30 @@ export interface GenomeRegion {
 /** A data track a page adds to the engine's own tracks, such as the ASD disease impact scores. */
 export interface GenomeDataTrack {
   name: string;
+  /** Where the scores come from and their range, shown under the track's name, such as "Model score, −0.4 to 3". */
+  meta?: string;
   /** A bigWig file the engine reads in byte ranges. */
   bigWigUrl: string;
-  /** The page's own description of how to draw it; each engine reads the parts it understands. */
+  /** The page's own description of how to draw it; each engine reads the parts it understands. Colors may be design tokens, such as var(--viz-seq-6). */
   style?: Record<string, unknown>;
+}
+
+/** Where one track sits inside the engine, so the page can draw its header beside it. */
+export interface GenomeTrackLayout {
+  name: string;
+  meta?: string | undefined;
+  top: number;
+  height: number;
 }
 
 export interface GenomeBrowserEvents {
   /** Called after someone drags or zooms inside the engine. */
   onRegionChange?: (region: GenomeRegion) => void;
+  /**
+   * Called when tracks are added, resized or reordered. An engine that reports its tracks
+   * gets the design system's track headers; one that draws its own labels can leave this out.
+   */
+  onTrackLayout?: (tracks: readonly GenomeTrackLayout[]) => void;
 }
 
 export interface GenomeMountOptions extends GenomeBrowserEvents {

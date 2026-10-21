@@ -1,4 +1,4 @@
-import { withChr, type GenomeBrowserEngine, type GenomeMountOptions, type GenomeRegion } from '../GenomeBrowserEngine';
+import { withChr, type GenomeBrowserEngine, type GenomeMountOptions, type GenomeRegion, type GenomeTrackLayout } from '../GenomeBrowserEngine';
 import { humanbaseAssemblies, humanbaseBrowserOptions, type BiodallianceAssembly } from './humanbaseConfig';
 
 /** The parts of Biodalliance's Browser this engine calls. */
@@ -8,6 +8,9 @@ interface DallianceBrowser {
   clearHighlights(): void;
   addViewListener(listener: (chr: string, min: number, max: number) => void): void;
   addInitListener(listener: () => void): void;
+  addTierListener(listener: () => void): void;
+  resizeViewer(): void;
+  tiers: readonly { row: HTMLElement; dasSource: { name?: string; title?: string; desc?: string } }[];
 }
 
 type DallianceConstructor = new (options: Record<string, unknown>) => DallianceBrowser;
@@ -46,6 +49,24 @@ export function loadBiodalliance(baseUrl = biodallianceBaseUrl): Promise<Dallian
   return loading;
 }
 
+/** Biodalliance draws on a canvas, which can't read CSS variables, so token colors such as var(--viz-seq-6) become their values. */
+export function resolveTokens<T>(value: T, element: Element): T {
+  if (typeof value === 'string') {
+    const token = /^var\((--[\w-]+)\)$/.exec(value)?.[1];
+    return (token ? getComputedStyle(element).getPropertyValue(token).trim() || value : value) as T;
+  }
+  if (Array.isArray(value)) return value.map((item: unknown) => resolveTokens(item, element)) as T;
+  if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, resolveTokens(item, element)])) as T;
+  return value;
+}
+
+/** With noSourceCSS, Biodalliance injects nothing, so its layout stylesheet is added once; its Bootstrap and Font Awesome never load. */
+function loadLayoutStyles(baseUrl: string): void {
+  const href = `${baseUrl}css/dalliance-scoped.css`;
+  if (document.querySelector(`link[href="${href}"]`)) return;
+  document.head.append(Object.assign(document.createElement('link'), { rel: 'stylesheet', href }));
+}
+
 let nextId = 0;
 
 /** Biodalliance's images (spinners, toggles) carry no meaning of their own, so they get an empty alt as they appear. */
@@ -64,11 +85,13 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
   #settle: ReturnType<typeof setTimeout> | undefined;
   #holder: HTMLElement | undefined;
   #images: MutationObserver | undefined;
+  #layout: ResizeObserver | undefined;
+  #resize: ResizeObserver | undefined;
   #destroyed = false;
 
   constructor(private readonly options: BiodallianceOptions = {}) {}
 
-  async mount(container: HTMLElement, { label, assembly, region, tracks, onRegionChange }: GenomeMountOptions): Promise<void> {
+  async mount(container: HTMLElement, { label, assembly, region, tracks, onRegionChange, onTrackLayout }: GenomeMountOptions): Promise<void> {
     // Biodalliance drops the port from a path-only prefix, so give it an absolute URL.
     const baseUrl = new URL(this.options.baseUrl ?? biodallianceBaseUrl, document.baseURI).href;
     const Browser = await loadBiodalliance(baseUrl);
@@ -79,23 +102,24 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
     // Biodalliance draws into an element it finds by id.
     const holder = document.createElement('div');
     holder.id = `humanbase-dalliance-${++nextId}`;
-    container.setAttribute('role', 'region');
+    if (!container.hasAttribute('role')) container.setAttribute('role', 'region');
     container.setAttribute('aria-label', label);
     container.append(holder);
     this.#holder = holder;
     this.#images = markImagesDecorative(holder);
     this.#shown = region;
+    const options = resolveTokens({ ...humanbaseBrowserOptions, ...this.options.browserOptions }, container);
+    if (options.noSourceCSS) loadLayoutStyles(baseUrl);
     const browser = new Browser({
       pageName: holder.id,
       prefix: baseUrl,
       cookieKey: `human-grc_${assembly}`,
-      ...humanbaseBrowserOptions,
-      ...this.options.browserOptions,
+      ...options,
       chr: withChr(region.chrom),
       viewStart: region.start,
       viewEnd: region.end,
       coordSystem: setup.coordSystem,
-      sources: [...setup.sources, ...tracks.map((track) => ({ name: track.name, bwgURI: track.bigWigUrl, pinned: true, ...(track.style ? { style: [track.style] } : {}) }))],
+      sources: resolveTokens([...setup.sources, ...tracks.map((track) => ({ name: track.name, bwgURI: track.bigWigUrl, pinned: true, zeroLine: 'var(--border-subtle)', ...(track.style ? { style: [track.style] } : {}) }))], container),
     });
     this.#browser = browser;
     await new Promise<void>((resolve, reject) => {
@@ -105,6 +129,15 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
         resolve();
       });
     });
+    if (onTrackLayout) this.#reportLayout(browser, holder, tracks, onTrackLayout);
+    // Biodalliance's own shortcuts run only while its root has focus; a focusable page element keeps focus instead.
+    if (container.tabIndex >= 0) holder.querySelector<HTMLElement>('.dalliance-root')?.addEventListener('focus', () => container.focus());
+    // Biodalliance sizes itself once and keeps its scale on resize, so the page's region is put back afterwards.
+    this.#resize = new ResizeObserver(() => {
+      browser.resizeViewer();
+      if (this.#shown) browser.setLocation(withChr(this.#shown.chrom), this.#shown.start, this.#shown.end);
+    });
+    this.#resize.observe(container);
     browser.addViewListener((chr, min, max) => {
       const moved = { chrom: withChr(chr), start: Math.round(min), end: Math.round(max) };
       clearTimeout(this.#settle);
@@ -114,6 +147,33 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
         onRegionChange?.(moved);
       }, this.options.settleMs ?? 400);
     });
+  }
+
+  /** Reports each track's place whenever Biodalliance adds, resizes or reorders tracks. */
+  #reportLayout(browser: DallianceBrowser, holder: HTMLElement, tracks: GenomeMountOptions['tracks'], report: (layout: readonly GenomeTrackLayout[]) => void): void {
+    const metaOf = new Map(tracks.map((track) => [track.name, track.meta]));
+    let frame = 0;
+    const measure = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        if (this.#destroyed) return;
+        const origin = holder.getBoundingClientRect().top;
+        const layout = browser.tiers
+          .filter((tier) => tier.row.isConnected && tier.row.offsetHeight > 0)
+          .map((tier) => {
+            const box = tier.row.getBoundingClientRect();
+            const name = tier.dasSource.name ?? '';
+            return { name: tier.dasSource.title ?? name, meta: metaOf.get(name) ?? tier.dasSource.desc, top: Math.round(box.top - origin), height: Math.round(box.height) };
+          })
+          .sort((a, b) => a.top - b.top);
+        report(layout);
+      });
+    };
+    this.#layout = new ResizeObserver(measure);
+    this.#layout.observe(holder);
+    browser.tiers.forEach((tier) => this.#layout?.observe(tier.row));
+    browser.addTierListener(measure);
+    measure();
   }
 
   showRegion(region: GenomeRegion): void {
@@ -130,6 +190,8 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
     this.#destroyed = true;
     clearTimeout(this.#settle);
     this.#images?.disconnect();
+    this.#layout?.disconnect();
+    this.#resize?.disconnect();
     this.#holder?.remove();
     this.#browser = undefined;
   }

@@ -19,5 +19,8 @@
   },
   "peerDependencies": {
     "react": "^19.3.0"
+  },
+  "dependencies": {
+    "@humanbase/ui": "workspace:*"
   }
 }
