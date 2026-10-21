@@ -169,8 +169,9 @@ a.nav-item,
 }
 
 .nav-menu-link {
-  display: grid;
-  gap: var(--space-0-5);
+  display: flex;
+  gap: var(--space-3);
+  align-items: start;
   padding: var(--space-3);
   color: var(--text-default);
   text-decoration: none;
@@ -180,6 +181,18 @@ a.nav-item,
 .nav-menu-link:hover,
 .nav-menu-link:focus-visible {
   background: var(--surface-sunken);
+}
+
+.nav-menu-link-text {
+  display: grid;
+  gap: var(--space-0-5);
+}
+
+.nav-menu-link-image {
+  flex: none;
+  inline-size: 20px;
+  block-size: 20px;
+  object-fit: contain;
 }
 
 .nav-menu-link-label {
@@ -345,8 +358,9 @@ a.nav-item,
 }
 
 .phone-menu-links a {
-  display: grid;
-  gap: var(--space-0-5);
+  display: flex;
+  gap: var(--space-3);
+  align-items: start;
   padding: 10px var(--space-4) 10px var(--space-8);
   color: var(--text-default);
   text-decoration: none;

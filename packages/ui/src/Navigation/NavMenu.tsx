@@ -2,6 +2,7 @@ import { Fragment, useEffect, useId, useRef, type KeyboardEvent } from 'react';
 import { useControlled } from '../hooks/useControlled';
 import { Icon } from '../Icon/Icon';
 import { ListNavigator } from '../List/ListNavigator';
+import { NavLinkContent, sectionHasImages } from './NavLinkContent';
 import type { NavGroup, NavItemState, NavSection } from './types';
 import { useLinkHref } from '../hooks/useLinkHref';
 
@@ -106,7 +107,7 @@ export function NavPanelContent({ section, onLinkKeyDown }: NavPanelContentProps
             {column.map((group, groupIndex) => (
               <Fragment key={group.label ?? groupIndex}>
                 {groupIndex > 0 && <hr className="nav-menu-divider" />}
-                <NavLinkGroup group={group} onLinkKeyDown={onLinkKeyDown} />
+                <NavLinkGroup group={group} reserveImage={sectionHasImages(section)} onLinkKeyDown={onLinkKeyDown} />
               </Fragment>
             ))}
           </div>
@@ -122,7 +123,7 @@ export function NavPanelContent({ section, onLinkKeyDown }: NavPanelContentProps
   );
 }
 
-function NavLinkGroup({ group, onLinkKeyDown }: { group: NavGroup; onLinkKeyDown: NavPanelContentProps['onLinkKeyDown'] }) {
+function NavLinkGroup({ group, reserveImage, onLinkKeyDown }: { group: NavGroup; reserveImage: boolean; onLinkKeyDown: NavPanelContentProps['onLinkKeyDown'] }) {
   const linkHref = useLinkHref();
   const id = useId();
   return (
@@ -136,8 +137,7 @@ function NavLinkGroup({ group, onLinkKeyDown }: { group: NavGroup; onLinkKeyDown
         {group.links.map((link) => (
           <li key={link.href}>
             <a className="nav-menu-link" href={linkHref(link.href)} onKeyDown={onLinkKeyDown}>
-              <span className="nav-menu-link-label">{link.label}</span>
-              {link.description && <span className="nav-menu-link-description">{link.description}</span>}
+              <NavLinkContent link={link} reserveImage={reserveImage} />
             </a>
           </li>
         ))}

@@ -2,6 +2,8 @@ export interface NavLink {
   label: string;
   href: string;
   description?: string;
+  /** A tool's icon, shown before its label in menus. */
+  image?: string;
 }
 
 export interface NavGroup {
