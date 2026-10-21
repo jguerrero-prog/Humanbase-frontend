@@ -3,7 +3,7 @@ import '@humanbase/ui/root.css';
 import '../styles/docs.css';
 import '../styles/docs-blocks.css';
 import { Logo } from '@humanbase/ui';
-import heroNetwork from '../assets/hero-network.svg?url';
+import heroArt from '@humanbase/ui/illustrations/expression-mosaic.svg?url';
 import SideMenu from '../components/SideMenu.astro';
 import { withBase } from '../withBase';
 
@@ -37,7 +37,7 @@ const { title, description = 'The Humanbase design system.' } = page;
         <header class="hero">
           <a class="hero-logo" href={withBase('/')}><Logo surface="green" /></a>
           <h1>{title}</h1>
-          <img class="hero-illustration" src={heroNetwork} alt="" width="454" height="529" />
+          <img class="hero-illustration" src={heroArt} alt="" width="520" height="400" />
           <svg class="hero-wave" viewBox="0 0 1571 47.08" preserveAspectRatio="none" aria-hidden="true">
             <path d="M0 14.0828C636.513 -17.0046 971.416 7.56287 1571 47.0828H0V14.0828Z" fill="currentColor"></path>
           </svg>
