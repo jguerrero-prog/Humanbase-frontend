@@ -128,10 +128,10 @@ const view = GenomeLocation.parse('1:109,767,590..109,867,590');
 element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
 ---
 
-<DocsLayout title="Genome browser" description="The toolbar, track headers, panels and words around Biodalliance, the genome browser that stays the engine.">
+<DocsLayout title="Genome browser" description="The genome browser: the design system draws its tracks, toolbar, track headers, panels and words; Biodalliance stays available as an alternative engine.">
   <Intro
-    lead="Variant results and the ASD Browser show variants in their genomic context with Biodalliance, an open-source genome browser. The redesign keeps Biodalliance as the engine and replaces what people see and touch around it: the toolbar, track headers, panels and words."
-    status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+    lead="Variant results and the ASD Browser show variants in their genomic context. The design system draws the tracks itself from the same Humanbase track files the live site reads, and replaces what people see and touch around them: the toolbar, track headers, panels and words. Biodalliance, the open-source browser the live site uses, stays available as an alternative engine."
+    status="Updated October 20, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
       rules={[
@@ -148,7 +148,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
     </DocTable>
   </DocSection>
 
-  <DocSection title="The browser" lead="On a variant result, centered on the selected variant at 50 kb. The toolbar and track headers are system components; the tracks are drawn by Biodalliance. Gene positions in this drawing are approximate.">
+  <DocSection title="The browser" lead="On a variant result, centered on the selected variant at 50 kb. The toolbar, track headers and tracks are system components; the tracks follow the specs below. Gene positions in this drawing are approximate.">
     <section class="browser" aria-label={view.regionLabel(trackCount)}>
       <GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="50 kb shown. A gene name works too." zoomStop={50000} moreItems={moreMenu} />
       <div class="browser-tracks">
@@ -220,17 +220,17 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
     </DocTable>
   </DocSection>
 
-  <DocSection title="What the Biodalliance integration needs" lead="Biodalliance stays the engine. The system toolbar and panels call its existing interface instead of showing its own, so nothing about the data or scores changes. For the team building the front end.">
+  <DocSection title="What the Biodalliance integration needs" lead="Biodalliance stays available as an alternative engine. The system toolbar and panels call its existing interface instead of showing its own, so nothing about the data or scores changes. For the team building the front end.">
     <DocTable caption="What the Biodalliance adapter needs" columns={['Need', 'Why']} widths={['320px']}>
       {integration.map(([need, why]) => <tr><th scope="row">{need}</th><td>{why}</td></tr>)}
     </DocTable>
     <NoteCard title="Using the engine in code">
       <ul>
         <li>Pages talk to one interface, <code>GenomeBrowserEngine</code> in <code>@humanbase/genome</code>: mount, show a region, mark the selected variant, and report when a drag or zoom settles.</li>
-        <li>With the API on, the ASD Browser uses Biodalliance, set up like the live site: the hg19 genome, GENCODE 19 genes and the DNA and RNA impact tracks from Humanbase's files on S3. Biodalliance is vendored in the repository with its licenses and loads from the app’s own site the first time a page needs it.</li>
-        <li>With the API off, the page draws the score tracks itself from the sample data and loads nothing.</li>
-        <li>Biodalliance takes this page's look: its own toolbar, labels, Bootstrap and Font Awesome are off, the track headers are the system's, and its options take tokens such as <code>var(--viz-seq-6)</code>, read from the page when it mounts. Keys work through the system toolbar. Its ruler, gene labels and the score tracks' faint grid are drawn on its canvas and keep its look. The package README's Theming section lists every setting.</li>
-        <li>To use another Biodalliance setup, edit <code>humanbaseConfig.ts</code> or pass your own options and <code>baseUrl</code>. To use another engine, implement the interface and change <code>defaultGenomeEngine</code>. The package README has the details.</li>
+        <li>The default engine, <code>TrackEngine</code>, draws <code>GenomeTrackView</code> from <code>@humanbase/ui</code>: the ruler, the sequence (letters once a base is 7px wide), the score tracks as <code>viz-seq-6</code> bars, GENCODE genes with names and strand arrows, and the selected variant as a 50% ink line with its value and a mono pill. Drag the tracks to move along the genome.</li>
+        <li>It reads the same files as the live site through <code>GenomeTracks</code> in <code>@humanbase/data</code>: the hg19 genome, GENCODE 19 genes and the DNA and RNA impact tracks from Humanbase's files on S3, in byte ranges. With the API off it reads recorded windows of those files from the sample data and makes no request.</li>
+        <li>Biodalliance is vendored in the repository with its licenses and takes this page's look when chosen: its own toolbar, labels, Bootstrap and Font Awesome are off and its options take tokens. Its ruler, gene labels and grid are drawn on its canvas and keep its look. The package README lists every setting.</li>
+        <li>To use another Biodalliance setup, edit <code>humanbaseConfig.ts</code> or pass your own options and <code>baseUrl</code>. To use Biodalliance or another engine, return it from <code>defaultGenomeEngine</code>, or pass <code>engine</code> to the page. The package README has the details.</li>
       </ul>
     </NoteCard>
   </DocSection>

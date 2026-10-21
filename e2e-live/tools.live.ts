@@ -143,13 +143,14 @@ test('ExPecto SC shows PTEN by organ', async ({ page }) => {
   await checkScreen(page, problems);
 });
 
-test('the ASD Browser loads Biodalliance in the design system, finds SCN2A and pages the table', async ({ page }) => {
+test('the ASD Browser draws the real track files, finds SCN2A and pages the table', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/asd/`);
   await expect(page.getByRole('heading', { name: /^Molecular effects of chr1:/ })).toBeVisible();
-  await expect(page.locator('.genome-engine')).toBeVisible();
-  await expect(page.locator('.genome-engine-header')).toHaveText(['Position', /^DNA disease impact score/, /^RNA disease impact score/, /^GenesGENCODE 19/]);
-  await expect(page.locator('.genome-engine .dalliance > .toolbar')).toBeHidden();
+  const browser = page.locator('.genome-engine');
+  await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Genes']);
+  await expect(browser.getByText('← PEX10')).toBeVisible();
+  await expect(browser.locator('.genome-tracks-bar.is-selected')).toHaveCount(2);
   const coveredBar = await page.evaluate(async () => {
     const bar = document.querySelector('.top-bar');
     const frame = document.querySelector('.genome-engine-frame');
@@ -171,6 +172,7 @@ test('the ASD Browser loads Biodalliance in the design system, finds SCN2A and p
   await find.fill('SCN2A');
   await find.press('Enter');
   await expect(page).toHaveURL(/chr2/);
+  await expect(browser.getByText('SCN2A →')).toBeVisible();
   await checkScreen(page, problems);
   await page.goto(`${web}/asd/?view=table`);
   await expect(page.getByText('127,133 variants', { exact: true })).toBeVisible();

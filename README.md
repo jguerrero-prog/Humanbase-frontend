@@ -13,7 +13,7 @@ The redesigned front end for [Humanbase](https://hb.flatironinstitute.org) and t
 | `packages/data` | The only code that talks to the API: `ApiClient`, models, services, React provider and hooks | |
 | `packages/hb` | Connected components: a pure component plus a data hook | |
 | `packages/graph` | The network and module graph renderer, swappable through `GraphRenderer` | |
-| `packages/genome` | The genome browser engine, swappable through `GenomeBrowserEngine`; Biodalliance when the API is on | |
+| `packages/genome` | The genome browser engine, swappable through `GenomeBrowserEngine`: the design system's own track engine by default, Biodalliance as an alternative | |
 
 ## Live preview
 
@@ -60,7 +60,7 @@ The front end always calls a relative `/api` path, so the API never needs extra 
 
 1. Serve `apps/web/dist` from the same origin as the API and send `/api` to the API. The API sends no CORS headers, so it can't be called from another domain.
 2. Send every path that isn't a file to `index.html`, so links such as `/networks/?entrez=3553` open on a refresh.
-3. Cache `assets/` for a year (every name has a content hash), and never cache `index.html` or `config.json`. The vendored genome browser lives in `biodalliance/`.
+3. Cache `assets/` for a year (every name has a content hash), and never cache `index.html` or `config.json`. The vendored Biodalliance, the alternative genome browser engine, lives in `biodalliance/`.
 4. Set `config.json`: `"api": true` beside the API, `"api": false` for the API-off demo. To serve under a path such as `/app/`, build with `WEB_BASE=/app/`.
 
 The [Deploying page](apps/docs/src/pages/resources/deploying.astro) on the design system site has an example nginx configuration and the checks to run before switching over. The GitHub Pages demo, built by `.github/workflows/pages.yml`, is the API-off example.
@@ -84,7 +84,7 @@ When the front end can't sit on the API's domain, Cloudflare Pages can serve it 
 
 With `"api": false` the front end never calls an API. Every screen shows sample data bundled in `packages/data/samples`, so you get the whole interface and design system with nothing behind it. Set it back to `true` to use the API at `apiBase`. The file is read when the page loads, so no rebuild is needed.
 
-The sample data is real Humanbase API responses, plus files the API links to, such as the NetWAS example GWAS files. Where a response can only come from submitting a job, the sample is hand-built in the same shape and says so in its `note`. `packages/data/endpoints.json` lists, for each endpoint, the requests the screens make, including not-found cases. `pnpm samples:record` fetches them from the public API, or from the origin you pass, and saves one file per request. It only sends read requests; it never submits a job. Gene lookups in the ASD Browser read static files on S3 instead of the API; the genes listed under `geneLookups` are recorded the same way, so those stay off too. Add `--only=/api/terms` to record only the samples whose path starts with that prefix. An endpoint can list `omit`, field names dropped from its samples wherever they appear, such as long term descriptions the screens never show.
+The sample data is real Humanbase API responses, plus files the API links to, such as the NetWAS example GWAS files. Where a response can only come from submitting a job, the sample is hand-built in the same shape and says so in its `note`. `packages/data/endpoints.json` lists, for each endpoint, the requests the screens make, including not-found cases. `pnpm samples:record` fetches them from the public API, or from the origin you pass, and saves one file per request. It only sends read requests; it never submits a job. Gene lookups and genome browser tracks read static files on S3 instead of the API; the genes listed under `geneLookups` and the windows listed under `genomeTracks` are recorded the same way, so those stay off too. Add `--only=/api/terms` to record only the samples whose path starts with that prefix. An endpoint can list `omit`, field names dropped from its samples wherever they appear, such as long term descriptions the screens never show.
 
 To connect your own engine instead of the Humanbase API, write a class that implements `DataClient` (`get`, `post`, and `text` for files the API links to, such as job results) and pass it to `new Humanbase(yourClient)` in `apps/web/src/main.tsx`. Services and screens don't change.
 

@@ -14,6 +14,7 @@
   "dependencies": {
     "@gmod/bbi": "11.3.2",
     "@gmod/trix": "3.1.0",
+    "@gmod/twobit": "6.0.12",
     "@tanstack/react-query": "5.104.1",
     "generic-filehandle2": "2.5.1"
   },

@@ -3,7 +3,7 @@ import {
   type AsdFeatureSet, type AsdVariantRow, type FeaturePredictionRecord, type FeaturesRecord,
 } from '@humanbase/data';
 import { defaultGenomeEngine, GenomeEngineView, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
-import { Alert, GenomeBrowserToolbar, Heatmap, ResultLayout, ScoreTracks, Skeleton, zEffects } from '@humanbase/ui';
+import { Alert, GenomeBrowserToolbar, Heatmap, ResultLayout, Skeleton, zEffects } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 import { EffectsCard } from '../Deepsea/EffectsCard';
 import { AsdHeader, AsdVariantTable, type AsdView } from './AsdParts';
@@ -22,7 +22,7 @@ export interface AsdState {
 export interface AsdExplorerProps {
   state: AsdState;
   onStateChange: (next: Partial<AsdState>) => void;
-  /** The genome browser used when the API is on; with the API off the page draws the score tracks itself. */
+  /** The genome browser; it reads the track files from S3, or the samples with the API off. */
   engine?: GenomeBrowserEngineFactory | undefined;
 }
 
@@ -35,12 +35,12 @@ const featureSets = [
   { value: 'rna', label: 'RNA features' },
 ];
 const sampleHelp = 'With the API off, the sample data covers chr1:2,230,000-2,440,000 and the CHD8, SCN2A and CHD9 examples. Search one of those, or turn the API on.';
-// The live ASD page's two impact tracks and their style.
-// Same bars, range and words as the API-off score tracks; 50px tall, per the genome browser docs.
-const impactStyle = { type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 50, MIN: -0.4, MAX: 3 } };
+// The live ASD page's two impact tracks, with the style Biodalliance reads; 50px tall, per the genome browser docs.
+const impactRange = [-0.4, 3] as const;
+const impactStyle = { type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 50, MIN: impactRange[0], MAX: impactRange[1] } };
 const impactTracks: readonly GenomeDataTrack[] = [
-  { name: 'DNA disease impact score', meta: 'Model score, −0.4 to 3', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw', style: impactStyle },
-  { name: 'RNA disease impact score', meta: 'Model score, −0.4 to 3', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw', style: impactStyle },
+  { name: 'DNA disease impact score', meta: 'Model score, −0.4 to 3', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw', range: impactRange, style: impactStyle },
+  { name: 'RNA disease impact score', meta: 'Model score, −0.4 to 3', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw', range: impactRange, style: impactStyle },
 ];
 const notice = 'Simons Simplex Collection (and Simons VIP) data may only be used for projects that advance autism and related developmental disorder research. Questions about the data go to collections@sfari.org.';
 
@@ -141,7 +141,7 @@ interface BrowserViewProps {
 }
 
 function BrowserView({ engine, location, state, onStateChange, onLocation, locationError, searchedGene }: BrowserViewProps) {
-  const { showsSamples } = useHumanbase();
+  const { showsSamples, genomeTracks } = useHumanbase();
   const [engineStatus, setEngineStatus] = useState<{ status: EngineStatus; error?: Error | undefined }>({ status: 'loading' });
   const region = useMemo(() => ({ chrom: location.chrom, start: location.start, end: location.end }), [location]);
   const onRegionChange = (moved: GenomeRegion) => onStateChange({ location: new GenomeLocation(moved.chrom, moved.start, moved.end).format() });
@@ -176,20 +176,8 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
   } else {
     body = (
       <>
-        {showsSamples && <ScoreTracks
-          label={location.regionLabel(2)}
-          start={location.start}
-          end={location.end}
-          min={-0.4}
-          max={3}
-          selected={selected.position}
-          tracks={[
-            { name: 'DNA disease impact score', source: 'Model score', scale: '−0.4 to 3', values: rows.map((row) => ({ position: row.position, value: row.dnaScore })) },
-            { name: 'RNA disease impact score', source: 'Model score', scale: '−0.4 to 3', values: rows.map((row) => ({ position: row.position, value: row.rnaScore })) },
-          ]}
-        />}
         <p className="asd-browser-note">
-          {count.format(rows.length)} variants in view; the selected one, {labelOf(selected)}, is {showsSamples ? 'drawn in ink' : 'highlighted in the browser'}. Previous variant and Next variant step through them, and the Table view lists them all.
+          {count.format(rows.length)} variants in view; the selected one, {labelOf(selected)}, is drawn in ink. Previous variant and Next variant step through them, and the Table view lists them all.
         </p>
         <VariantEffects key={`${keyOf(selected)}-${state.set}`} location={location} rows={rows} selected={selected} set={state.set} onSetChange={(set) => onStateChange({ set })} />
       </>
@@ -211,30 +199,27 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
         onNextVariant={() => step(1)}
         trackActions={false}
       />
-      {!showsSamples && (
-        <>
-          {engineStatus.status === 'failed' && (
-            <Alert tone="error" title="The genome browser couldn’t load">
-              {engineStatus.error?.message ?? 'Biodalliance didn’t start.'} The variants and their effects below still work.
-            </Alert>
-          )}
-          <GenomeEngineView
-            engine={engine}
-            label={location.regionLabel(impactTracks.length + 2)}
-            assembly="hg19"
-            region={region}
-            tracks={impactTracks}
-            selected={selected ? { chrom: selected.chromosome, position: selected.position } : undefined}
-            onRegionChange={onRegionChange}
-            onStatusChange={(status, error) => setEngineStatus({ status, error })}
-            onCommand={(command) => {
-              if (command === 'moveLeft' || command === 'moveRight') move(location.move(command === 'moveLeft' ? -0.1 : 0.1));
-              else if (command === 'zoomIn' || command === 'zoomOut') move(location.zoom(command === 'zoomIn' ? 'in' : 'out'));
-              else if (command === 'previousVariant' || command === 'nextVariant') step(command === 'previousVariant' ? -1 : 1);
-            }}
-          />
-        </>
+      {engineStatus.status === 'failed' && (
+        <Alert tone="error" title="The genome browser couldn’t load">
+          {engineStatus.error?.message ?? 'The genome browser didn’t start.'} The variants and their effects below still work.
+        </Alert>
       )}
+      <GenomeEngineView
+        engine={engine}
+        files={genomeTracks}
+        label={location.regionLabel(impactTracks.length + 2)}
+        assembly="hg19"
+        region={region}
+        tracks={impactTracks}
+        selected={selected ? { chrom: selected.chromosome, position: selected.position } : undefined}
+        onRegionChange={onRegionChange}
+        onStatusChange={(status, error) => setEngineStatus({ status, error })}
+        onCommand={(command) => {
+          if (command === 'moveLeft' || command === 'moveRight') move(location.move(command === 'moveLeft' ? -0.1 : 0.1));
+          else if (command === 'zoomIn' || command === 'zoomOut') move(location.zoom(command === 'zoomIn' ? 'in' : 'out'));
+          else if (command === 'previousVariant' || command === 'nextVariant') step(command === 'previousVariant' ? -1 : 1);
+        }}
+      />
       {body}
     </div>
   );

@@ -9,9 +9,11 @@ test('the ASD Browser opens on the default range with each effects view, with th
   await page.goto(`${web}/asd/`);
   await expect(page.getByRole('heading', { name: 'Molecular effects of chr1:2,337,101 A>C' })).toBeVisible();
   await expect(page.getByText('Raises, 28 DNA features')).toBeVisible();
-  // With the API off the page draws the score tracks itself instead of loading Biodalliance.
-  await expect(page.locator('.genome-engine')).toHaveCount(0);
-  await expect(page.getByRole('region', { name: /^Genome browser, chr1:2,230,000-2,440,000/ })).toBeVisible();
+  // With the API off the genome browser draws from the recorded track windows, with no request.
+  const browser = page.getByRole('application', { name: /^Genome browser, chr1:2,230,000-2,440,000/ });
+  await expect(browser.getByText('← PEX10')).toBeVisible();
+  await expect(browser.getByText('chr1:2,337,101', { exact: true })).toBeVisible();
+  await expect(browser.locator('.genome-tracks-bar')).not.toHaveCount(0);
   expect(await violationsOf(page)).toEqual([]);
   for (const tab of ['Heatmap', 'All features']) {
     await page.getByRole('tab', { name: tab }).click();

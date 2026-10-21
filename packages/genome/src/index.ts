@@ -6,3 +6,4 @@ export { GenomeEngineView, type EngineStatus, type GenomeEngineViewProps } from 
 export { BiodallianceEngine, biodallianceBaseUrl, loadBiodalliance, type BiodallianceOptions } from './biodalliance/BiodallianceEngine';
 export { humanbaseAssemblies, humanbaseBrowserOptions, humanbaseTracks, type BiodallianceAssembly } from './biodalliance/humanbaseConfig';
 export { defaultGenomeEngine } from './defaultGenomeEngine';
+export { TrackEngine } from './tracks/TrackEngine';

@@ -24,3 +24,10 @@ Object.assign(HTMLElement.prototype, {
     this.style.display = 'none';
   },
 });
+
+// jsdom has no layout, so nothing ever resizes; this stand-in lets components observe elements.
+globalThis.ResizeObserver ??= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};

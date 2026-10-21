@@ -33,6 +33,11 @@
   overflow-x: auto;
 }
 
+/* The track engine sizes itself to its tracks; the minimum only holds space while Biodalliance loads. */
+.genome-engine:has(> .track-engine-host) {
+  min-block-size: 0;
+}
+
 /* Biodalliance's own chrome: the page draws the toolbar and headers, so its toolbar, labels and center guide are hidden. */
 .genome-engine .dalliance > .toolbar,
 .genome-engine .dalliance .guideline,

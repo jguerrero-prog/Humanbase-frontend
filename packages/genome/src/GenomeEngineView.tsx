@@ -1,3 +1,4 @@
+import type { GenomeTracks } from '@humanbase/data';
 import { genomeCommand, TrackHeader, type GenomeCommand } from '@humanbase/ui';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { sameRegion, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion, type GenomeTrackLayout } from './GenomeBrowserEngine';
@@ -7,6 +8,8 @@ export type EngineStatus = 'loading' | 'ready' | 'failed';
 
 export interface GenomeEngineViewProps {
   engine: GenomeBrowserEngineFactory;
+  /** Reads the track files for engines that draw their own tracks. */
+  files: GenomeTracks;
   label: string;
   assembly: Assembly;
   region: GenomeRegion;
@@ -20,7 +23,7 @@ export interface GenomeEngineViewProps {
 }
 
 /** Mounts a genome browser engine and keeps it on the page's region and selection. */
-export function GenomeEngineView({ engine, label, assembly, region, tracks, selected, onRegionChange, onStatusChange, onCommand }: GenomeEngineViewProps) {
+export function GenomeEngineView({ engine, files, label, assembly, region, tracks, selected, onRegionChange, onStatusChange, onCommand }: GenomeEngineViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GenomeBrowserEngine | null>(null);
   const [ready, setReady] = useState(false);
@@ -30,13 +33,13 @@ export function GenomeEngineView({ engine, label, assembly, region, tracks, sele
   useLayoutEffect(() => {
     events.current = { onRegionChange, onStatusChange };
   });
-  // The engine is built once per assembly and track set; region and selection changes go through it.
+  // The engine is built once per assembly, file reader and track set; region and selection changes go through it.
   const first = useRef({ region, label });
 
   useEffect(() => {
     const element = container.current;
     if (!element) return;
-    const browser = engine();
+    const browser = engine(files);
     let live = true;
     setReady(false);
     events.current.onStatusChange?.('loading');
@@ -70,7 +73,7 @@ export function GenomeEngineView({ engine, label, assembly, region, tracks, sele
       setLayout([]);
       element.replaceChildren();
     };
-  }, [engine, assembly, tracks]);
+  }, [engine, files, assembly, tracks]);
 
   useEffect(() => {
     if (!ready || sameRegion(region, shown.current)) return;

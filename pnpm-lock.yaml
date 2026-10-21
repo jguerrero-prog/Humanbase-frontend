@@ -318,6 +318,9 @@ importers:
       '@gmod/trix':
         specifier: 3.1.0
         version: 3.1.0
+      '@gmod/twobit':
+        specifier: 6.0.12
+        version: 6.0.12
       '@tanstack/react-query':
         specifier: 5.104.1
         version: 5.104.1(react@19.3.0)
@@ -337,6 +340,9 @@ importers:
 
   packages/genome:
     dependencies:
+      '@humanbase/data':
+        specifier: workspace:*
+        version: link:../data
       '@humanbase/ui':
         specifier: workspace:*
         version: link:../ui
@@ -344,9 +350,15 @@ importers:
       '@types/react':
         specifier: 19.3.0
         version: 19.3.0
+      '@types/react-dom':
+        specifier: 19.3.0
+        version: 19.3.0(@types/react@19.3.0)
       react:
         specifier: 19.3.0
         version: 19.3.0
+      react-dom:
+        specifier: 19.3.0
+        version: 19.3.0(react@19.3.0)
       vite:
         specifier: 8.3.2
         version: 8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(yaml@2.9.1)
@@ -1095,6 +1107,9 @@ packages:
 
   '@gmod/trix@3.1.0':
     resolution: {integrity: sha512-A+JPMdH87Ncie4WyFC7L6H/mTVGsL5qYZkojMveBDcLYQsFwS9ralYMsOio5vxGLoqphV/1G2xhKr7nyn4b06g==}
+
+  '@gmod/twobit@6.0.12':
+    resolution: {integrity: sha512-LMU7dSVSidFaK9SPLoXsbNEq//87IA0nZD9pkssqXfjQ5Jr4tl2ueYS4LbhONk7t6JbQBKNJuzmMKGken/KXhw==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -4812,6 +4827,10 @@ snapshots:
   '@gmod/shared-read-cache@2.1.0': {}
 
   '@gmod/trix@3.1.0': {}
+
+  '@gmod/twobit@6.0.12':
+    dependencies:
+      generic-filehandle2: 2.5.1
 
   '@humanfs/core@0.19.2':
     dependencies:
