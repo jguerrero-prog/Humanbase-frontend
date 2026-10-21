@@ -66,7 +66,7 @@ for (const [tool, id, heading] of [
       await checkScreen(page, problems);
     }
     const before = page.url();
-    await page.getByRole('button', { name: 'Next' }).click();
+    await page.getByRole('button', { name: 'Next', exact: true }).click();
     await expect(page).not.toHaveURL(before);
     await expect(page.getByRole('heading', { name: /^Molecular effects of chr/ })).toBeVisible();
     await checkScreen(page, problems);

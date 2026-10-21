@@ -57,6 +57,8 @@ export interface HeatmapProps {
   showValues?: boolean | undefined;
   /** Narrow cells are 8px wide, labelling every 20th position; auto narrows them when the columns wouldn't fit at full width. */
   columnWidth?: 'full' | 'auto' | 'narrow' | undefined;
+  /** The center variant's column, outlined in ink, with a darker line to its position. */
+  selectedColumn?: number | undefined;
 }
 
 type Cell = readonly [number, number];
@@ -80,7 +82,7 @@ function labelColumn(box: HTMLElement, labels: readonly string[]) {
   return Math.max(labelWidths.min, Math.min(widest, labelWidths.max, Math.floor(box.clientWidth * labelWidths.share)));
 }
 
-export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', valueLabel, showValues = false, columnWidth = 'full' }: HeatmapProps) {
+export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', valueLabel, showValues = false, columnWidth = 'full', selectedColumn }: HeatmapProps) {
   const id = useId();
   const scale = useMemo(() => new ScoreScale(spec), [spec]);
   const plot = useRef<HTMLDivElement>(null);
@@ -216,6 +218,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
           </div>
         )}
         <div role="grid" aria-label={title} className="heatmap-grid">
+          {selectedColumn !== undefined && selectedColumn >= 0 && <span className="heatmap-selected-column" aria-hidden="true" style={{ '--heatmap-at': selectedColumn } as CSSProperties} />}
           {rows.map((row, r) => (
             <div role="row" key={row.label} className="heatmap-row">
               <span role="rowheader" className="heatmap-row-label">
@@ -258,7 +261,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
             </div>
           ))}
         </div>
-        {axis && !narrow && <PositionAxis axis={axis} columns={columns} active={activeColumn} />}
+        {axis && !narrow && <PositionAxis axis={axis} columns={columns} active={activeColumn} selected={selectedColumn} />}
       </div>
       {active && activeRow && place && (
         <DataTooltip
@@ -319,10 +322,11 @@ interface PositionAxisProps {
   axis: HeatmapAxis;
   columns: readonly HeatmapColumn[];
   active: number | undefined;
+  selected: number | undefined;
 }
 
 // A ruler of short offsets, with a line from each column to its position.
-function PositionAxis({ axis, columns, active }: PositionAxisProps) {
+function PositionAxis({ axis, columns, active, selected }: PositionAxisProps) {
   const width = columns.length * (cellWidth + 1) - 1;
   const first = axis.ticks[0] ?? 0;
   const last = axis.ticks.at(-1) ?? 1;
@@ -333,7 +337,7 @@ function PositionAxis({ axis, columns, active }: PositionAxisProps) {
       <svg width={width} height="64" viewBox={`0 0 ${width} 64`}>
         {columns.map((column, index) => {
           const position = column.position === undefined ? first : x(column.position - axis.offset);
-          return <line key={column.label} className={index === active ? 'connector connector-active' : 'connector'} x1={index * (cellWidth + 1) + cellWidth / 2} y1="0" x2={position} y2="28" />;
+          return <line key={column.label} className={index === active || index === selected ? 'connector connector-active' : 'connector'} x1={index * (cellWidth + 1) + cellWidth / 2} y1="0" x2={position} y2="28" />;
         })}
         <line className="ruler" x1="0" y1="34" x2={width} y2="34" />
         {columns.map((column) => column.position !== undefined && <line key={`v-${column.label}`} className="variant-tick" x1={x(column.position - axis.offset)} y1="28" x2={x(column.position - axis.offset)} y2="34" />)}

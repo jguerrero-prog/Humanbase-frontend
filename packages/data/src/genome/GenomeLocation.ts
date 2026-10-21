@@ -8,6 +8,7 @@ const geneName = /^[A-Za-z][A-Za-z0-9.-]*$/;
 
 export class GenomeLocation {
   static readonly zoomStops = [200, 2_000, 50_000, 500_000] as const;
+  static readonly readAhead = 50_000;
 
   constructor(
     readonly chrom: string,
@@ -92,6 +93,36 @@ export class GenomeLocation {
   move(fraction: number): GenomeLocation {
     const start = Math.max(0, this.start + Math.round(this.width * fraction));
     return new GenomeLocation(this.chrom, start, start + this.width, this.assembly);
+  }
+
+  /** The chr_and_variant_range parameter for predictions in this range, such as 1:2230000:2440000. */
+  get variantRange(): string {
+    return `${this.chrom.replace(/^chr/i, '')}:${this.start}:${this.end}`;
+  }
+
+  /** Whether a variant sits in this range; its chromosome may come with or without "chr". */
+  includes(chromosome: string, position: number): boolean {
+    return GenomeLocation.at(chromosome, position).chrom === this.chrom && position >= this.start && position <= this.end;
+  }
+
+  /** The variant in this range nearest its center, as humanbase.io picks the heatmap's center variant. */
+  nearest<T extends { chromosome: string; position: number }>(variants: readonly T[]): T | undefined {
+    const distance = (variant: T) => Math.abs(variant.position - this.center);
+    return variants.filter((variant) => this.includes(variant.chromosome, variant.position)).reduce<T | undefined>((best, variant) => (best && distance(best) <= distance(variant) ? best : variant), undefined);
+  }
+
+  /**
+   * The range to read predictions for this view, as humanbase.io does: the range already read while it covers the view,
+   * that range stretched 50 kb past the view when the view moves over one edge, and otherwise the view itself.
+   */
+  readRange(read: GenomeLocation | undefined): GenomeLocation {
+    if (!read || read.chrom !== this.chrom) return this;
+    if (this.start >= read.start && this.end <= read.end) return read;
+    const overlaps = (this.start >= read.start && this.start <= read.end) || (this.end >= read.start && this.end <= read.end);
+    if (!overlaps) return this;
+    return this.end >= read.end
+      ? new GenomeLocation(this.chrom, read.start, this.end + GenomeLocation.readAhead, this.assembly)
+      : new GenomeLocation(this.chrom, Math.max(0, this.start - GenomeLocation.readAhead), read.end, this.assembly);
   }
 
   // The chromosome length comes from the engine; the browser never guesses it.
