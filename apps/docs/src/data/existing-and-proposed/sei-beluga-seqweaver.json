@@ -366,9 +366,9 @@
     {
       "area": "Sei plot color",
       "existing": "Color style: Chromosome or Sequence class (Sei only)",
-      "proposed": "Grey alternating by chromosome; no color by sequence class",
-      "status": "Missing",
-      "evidence": "Color style dropdown on Sei job only, not on Beluga 8b26a498 or Seqweaver 76aea8fe; DeepseaResultView.tsx:157"
+      "proposed": "Color style: Chromosome or Sequence class (Sei only), with humanbase.io's 24 chromosome colors and eight group colors, and a legend above the plot",
+      "status": "Same function",
+      "evidence": "Color style dropdown on Sei job only, not on Beluga 8b26a498 or Seqweaver 76aea8fe; point colors compared one by one with job 2e18fedf; DeepseaResultView.tsx"
     },
     {
       "area": "Plot style",
@@ -432,6 +432,13 @@
       "proposed": "Same options in the Score field of molecular effects",
       "status": "Same function",
       "evidence": "Dropdowns read on jobs 2e18fedf, 8b26a498, 76aea8fe on both sites"
+    },
+    {
+      "area": "Score type documentation",
+      "existing": "A book icon beside Score type and beside the heatmap legend opens the model's docs at #output",
+      "proposed": "A Score type documentation link beside the plot's Score and the molecular effects' Score opens the same page",
+      "status": "Same function",
+      "evidence": "Links read on jobs 2e18fedf (sei.html#output), 8b26a498 (beluga.html#output), 76aea8fe (seqweaver.html#output), e504e3cc (expecto.html#output)"
     }
   ]
 }

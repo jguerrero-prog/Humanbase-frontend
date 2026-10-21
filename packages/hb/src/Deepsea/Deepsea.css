@@ -57,6 +57,11 @@
   inline-size: min(100%, 420px);
 }
 
+.insilico-controls > a.button {
+  white-space: normal;
+  text-align: start;
+}
+
 .insilico-window {
   display: grid;
   gap: var(--space-2);

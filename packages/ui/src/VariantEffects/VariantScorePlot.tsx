@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, type CSSProperties } from 'react';
 import { byGenomePosition, variantLabel, type Variant, type VariantScore } from './Variant';
 import './VariantEffects.css';
 
@@ -10,6 +10,8 @@ export interface VariantScorePlotProps {
   by?: PlotBy;
   selected?: string | undefined;
   onSelect?: ((id: string) => void) | undefined;
+  /** A color custom property per point, such as its chromosome or sequence class; without one, chromosomes alternate grey. */
+  pointColor?: ((variant: Variant) => string | undefined) | undefined;
   summary: string;
 }
 
@@ -61,7 +63,7 @@ function rankPoints(variants: readonly Variant[], key: string) {
   return { points, labels };
 }
 
-export function VariantScorePlot({ variants, score, by = 'genome', selected, onSelect, summary }: VariantScorePlotProps) {
+export function VariantScorePlot({ variants, score, by = 'genome', selected, onSelect, pointColor, summary }: VariantScorePlotProps) {
   const id = useId();
   const axis = scoreAxis(variants.map((variant) => variant.scores[score.key] ?? 0));
   const y = (value: number) => top + plotHeight - ((value - axis.min) / (axis.max - axis.min)) * plotHeight;
@@ -91,16 +93,20 @@ export function VariantScorePlot({ variants, score, by = 'genome', selected, onS
         <text className="variant-plot-title" transform={`translate(14 ${top + plotHeight / 2}) rotate(-90)`} textAnchor="middle">
           {score.label}
         </text>
-        {points.map(({ variant, x, band }) => (
-          <circle
-            key={variant.id}
-            className={band % 2 ? 'variant-plot-point variant-plot-point-light' : 'variant-plot-point'}
-            cx={x}
-            cy={y(variant.scores[score.key] ?? 0)}
-            r="6"
-            onPointerUp={() => onSelect?.(variant.id)}
-          />
-        ))}
+        {points.map(({ variant, x, band }) => {
+          const color = pointColor?.(variant);
+          return (
+            <circle
+              key={variant.id}
+              className={color ? 'variant-plot-point variant-plot-point-colored' : band % 2 ? 'variant-plot-point variant-plot-point-light' : 'variant-plot-point'}
+              {...(color && { style: { '--point-color': `var(${color})` } as CSSProperties })}
+              cx={x}
+              cy={y(variant.scores[score.key] ?? 0)}
+              r="6"
+              onPointerUp={() => onSelect?.(variant.id)}
+            />
+          );
+        })}
         {chosen && (
           <g className="variant-plot-selected">
             <circle cx={chosen.x} cy={chosenY} r="10" />
