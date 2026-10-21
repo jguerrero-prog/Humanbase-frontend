@@ -6,6 +6,7 @@ import { LegendStepped } from '../Heatmap/LegendStepped';
 import { ScoreScale } from '../Heatmap/ScoreScale';
 import { EffectGroups, type EffectExperiment, type EffectGroup, type StrengthCounts } from './EffectGroups';
 import type { EffectScale } from './EffectScale';
+import { BreakableText } from '../Text/BreakableText';
 import './VariantEffects.css';
 
 export interface StrongestEffectsProps {
@@ -174,8 +175,10 @@ function EffectList({ bars, groups, expanded, onToggle }: { bars: EffectBars; gr
 function EffectName({ feature, detail }: { feature: string; detail: string | undefined }) {
   return (
     <span className="effect-name-text">
-      <span className="effect-feature">{feature}</span>
-      <span className="effect-detail">{detail}</span>
+      <span className="effect-feature">
+        <BreakableText>{feature}</BreakableText>
+      </span>
+      <span className="effect-detail">{detail && <BreakableText>{detail}</BreakableText>}</span>
     </span>
   );
 }
@@ -183,7 +186,9 @@ function EffectName({ feature, detail }: { feature: string; detail: string | und
 function ExperimentRow({ bars, experiment }: { bars: EffectBars; experiment: EffectExperiment }) {
   return (
     <li className="effect-row effect-experiment">
-      <span className="effect-name effect-detail">{experiment.context}</span>
+      <span className="effect-name effect-detail">
+        <BreakableText>{experiment.context}</BreakableText>
+      </span>
       <EffectBar bars={bars} value={experiment.value} />
       <span className="effect-value">{bars.format(experiment.value)}</span>
     </li>

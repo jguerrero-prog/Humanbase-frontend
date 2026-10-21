@@ -19,6 +19,7 @@
 
 .data-tooltip-title {
   font: var(--type-label-sm);
+  overflow-wrap: anywhere;
 }
 
 .data-tooltip-subtitle {
@@ -40,12 +41,15 @@
 }
 
 .data-tooltip-rows dt {
+  min-inline-size: 0;
   font: var(--type-caption);
   color: var(--color-grey-300);
 }
 
 .data-tooltip-rows dd {
+  flex: none;
   margin: 0;
+  white-space: nowrap;
   font: var(--type-label-sm);
   text-align: end;
 }
