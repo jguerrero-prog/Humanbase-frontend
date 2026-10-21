@@ -32,7 +32,7 @@ export { AsdVariant, type AsdRecord, type AsdVariantRow } from './asd/AsdVariant
 export { AsdService, type AsdFeatureSet, type AsdPage, type AsdWhere } from './asd/AsdService';
 export { S3GeneLocator, type GeneLocator, type GeneSpan } from './genome/S3GeneLocator';
 export { SampleGeneLocator } from './genome/SampleGeneLocator';
-export { geneModels, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type SequenceSpan, type Transcript } from './genome/GenomeTracks';
+export { geneModels, segmentOf, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type Segment, type SequenceSpan, type Transcript } from './genome/GenomeTracks';
 export { S3GenomeTracks } from './genome/S3GenomeTracks';
 export { SampleGenomeTracks, type RecordedWindow } from './genome/SampleGenomeTracks';
 export { useAsdColumns, useAsdEffects, useAsdPage, useAsdRange } from './react/useAsd';
@@ -56,7 +56,7 @@ export { TermService, type TermDatabase } from './functions/TermService';
 export { ConnectionEvidence, ConnectionInNetwork, type DatasetEvidence, type EvidenceRecord } from './connections/Connection';
 export { ConnectionService } from './connections/ConnectionService';
 export { useAnnotatedTerms, useConnectionEvidence, useConnectionInAllNetworks, useGeneFunctions, useGenesFunctions, type GenesFunctions } from './react/useNetworkDetail';
-export { ModuleResult, termDatabaseNames, type CommunityRecord, type Module, type ModuleFilter, type ModuleTerm } from './modules/ModuleResult';
+export { ModuleResult, termDatabaseNames, type CommunityRecord, type Module, type ModuleFilter, type ModuleNeighbor, type ModuleTerm } from './modules/ModuleResult';
 export { ModuleService, type ModuleRequest } from './modules/ModuleService';
 export { useModuleResult } from './react/useModuleResult';
 export { moduleExamples, type ModuleExample } from './modules/moduleExamples';

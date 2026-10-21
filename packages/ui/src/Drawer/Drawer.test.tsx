@@ -18,7 +18,26 @@ function GeneDetail({ sheet }: { sheet?: boolean }) {
   );
 }
 
+function ModuleDetail() {
+  const [gene, setGene] = useState<string>();
+  return (
+    <Drawer open title={gene ?? 'M1'} {...(gene ? { back: { label: 'Back to M1', onSelect: () => setGene(undefined) } } : {})}>
+      {gene ? <p>{gene} terms</p> : <Button onClick={() => setGene('HNF1B')}>HNF1B</Button>}
+    </Drawer>
+  );
+}
+
 describe('Drawer', () => {
+  it('goes one level deeper and back in the same drawer, moving focus to the new title', async () => {
+    render(<ModuleDetail />);
+    await userEvent.click(screen.getByRole('button', { name: 'HNF1B' }));
+    expect(screen.getByRole('dialog', { name: 'HNF1B' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'HNF1B' })).toHaveFocus();
+    await userEvent.click(screen.getByRole('button', { name: 'Back to M1' }));
+    expect(screen.getByRole('heading', { level: 2, name: 'M1' })).toHaveFocus();
+    expect(screen.queryByRole('button', { name: 'Back to M1' })).not.toBeInTheDocument();
+  });
+
   it('opens over the page without trapping focus, and focuses its title', async () => {
     render(<GeneDetail />);
     await userEvent.click(screen.getByRole('button', { name: 'IL1R1' }));

@@ -1,6 +1,6 @@
 import { dataVersionNames, useModuleGenes, type GeneHit, type Integration, type ModuleResult, type ModuleView } from '@humanbase/data';
-import { NetworkGraph, type GraphData, type GraphRendererFactory, type NetworkGraphHandle } from '@humanbase/graph';
-import { Button, Cell, Checkbox, GraphToolbar, HeaderCell, KeyLegend, ResultHeader, ResultLayout, saveFile, SearchField, Select, Table, TextInput, type GraphAction } from '@humanbase/ui';
+import { NetworkGraph, type GraphData, type GraphFocus, type GraphLink, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
+import { Button, Cell, Checkbox, DataTooltip, GraphToolbar, HeaderCell, KeyLegend, placeNearPoint, ResultHeader, ResultLayout, saveFile, SearchField, Select, Table, TextInput, type GraphAction } from '@humanbase/ui';
 import { useMemo, useRef, useState } from 'react';
 import { ModuleDrawer } from './ModuleDrawer';
 import { moduleColors } from './moduleColors';
@@ -24,6 +24,8 @@ export interface ModuleResultViewProps {
 }
 
 const zoomStep = 1.3;
+const tooltipSize = { width: 240, height: 120 };
+const linksOf = (result: ModuleResult, entrez: number): GraphLink[] => result.neighbors(entrez).map((neighbor) => ({ source: String(entrez), target: String(neighbor.entrez), weight: neighbor.weight }));
 const genesWord = (count: number) => (count === 1 ? '1 gene' : `${count} genes`);
 
 export function ModuleResultView({ result, title, view, tissues, starting, onViewChange, onRename, onEditGenes, onTissueChange, renderer }: ModuleResultViewProps) {
@@ -34,8 +36,21 @@ export function ModuleResultView({ result, title, view, tissues, starting, onVie
   const { minimumSize, hideUnenriched } = view;
   const shown = useMemo(() => result.shown(database, { minimumSize, hideUnenriched }), [result, database, minimumSize, hideUnenriched]);
   const colors = useMemo(() => moduleColors(shown), [shown]);
-  const open = view.module === undefined ? undefined : result.module(view.module);
-  const selectModule = (id: number) => onViewChange(view.with({ module: id }));
+  const geneModule = view.gene === undefined ? undefined : result.moduleOf(view.gene);
+  const open = geneModule ?? (view.module === undefined ? undefined : result.module(view.module));
+  const openGene = geneModule && view.gene;
+  // A gene hovered in the graph carries where its tooltip goes; one hovered in a table doesn't.
+  const [hovered, setHovered] = useState<{ entrez: number; tooltip?: { x: number; y: number } }>();
+  const graphArea = useRef<HTMLDivElement>(null);
+  const selectModule = (id: number) => {
+    setHovered(undefined);
+    onViewChange(view.with({ module: id, gene: undefined }));
+  };
+  const selectGene = (entrez: number) => {
+    const module = result.moduleOf(entrez);
+    setHovered(undefined);
+    if (module) onViewChange(view.with({ module: module.id, gene: entrez }));
+  };
 
   const data = useMemo<GraphData>(() => {
     const inShown = new Set(shown.flatMap((module) => module.genes));
@@ -45,6 +60,15 @@ export function ModuleResultView({ result, title, view, tissues, starting, onVie
       links: view.showEdges ? result.edges.filter(([source, target]) => inShown.has(source) && inShown.has(target)).map(([source, target, weight]) => ({ source: String(source), target: String(target), weight })) : [],
     };
   }, [shown, colors, names.data, view.showEdges, result.edges]);
+
+  const selection = useMemo<GraphSelection>(() => {
+    if (openGene) return { kind: 'node', id: String(openGene), links: linksOf(result, openGene) };
+    return open ? { kind: 'group', id: String(open.id) } : null;
+  }, [open, openGene, result]);
+  const hover = useMemo<GraphFocus | null>(
+    () => (hovered ? { id: String(hovered.entrez), links: hovered.tooltip ? linksOf(result, hovered.entrez) : [] } : null),
+    [hovered, result],
+  );
 
   const suggestions = useMemo(() => {
     const text = find.trim().toLowerCase();
@@ -135,6 +159,26 @@ export function ModuleResultView({ result, title, view, tissues, starting, onVie
     />
   );
 
+  const hoverNode = (id: string | null, anchor?: DOMRect) => {
+    const area = graphArea.current?.getBoundingClientRect();
+    if (id === null || !anchor || !area) return setHovered(undefined);
+    const point = { x: anchor.x + anchor.width / 2 - area.x, y: anchor.y + anchor.height / 2 - area.y };
+    setHovered({ entrez: Number(id), tooltip: placeNearPoint(point, tooltipSize, { width: area.width, height: area.height }) });
+  };
+  const hoveredModule = hovered && result.moduleOf(hovered.entrez);
+  const tooltip = hovered?.tooltip && (
+    <DataTooltip
+      title={names.data?.get(hovered.entrez)?.symbol ?? result.symbol(hovered.entrez) ?? String(hovered.entrez)}
+      subtitle={names.data?.get(hovered.entrez)?.name ?? ''}
+      rows={[
+        ['Module', hoveredModule?.label ?? ''],
+        ['Entrez', String(hovered.entrez)],
+      ]}
+      hint="Click for details"
+      position={hovered.tooltip}
+    />
+  );
+
   const main = (
     <>
       <GraphToolbar label="Graph controls" groups={toolbar} tableLabel={asTable ? 'View as graph' : 'View as table'} onViewTable={() => onViewChange(view.with({ display: asTable ? 'graph' : 'table' }))} />
@@ -161,19 +205,19 @@ export function ModuleResultView({ result, title, view, tissues, starting, onVie
           </tbody>
         </Table>
       ) : (
-        <div className="graph-area">
+        <div className="graph-area" ref={graphArea}>
           <NetworkGraph
             ref={graph}
             data={data}
             label={`Modules of ${title}`}
-            selection={open ? { kind: 'group', id: String(open.id) } : null}
+            selection={selection}
+            hover={hover}
             renderer={renderer}
             onSelectGroup={(id) => selectModule(Number(id))}
-            onSelectNode={(id) => {
-              const module = result.moduleOf(Number(id));
-              if (module) selectModule(module.id);
-            }}
+            onSelectNode={(id) => selectGene(Number(id))}
+            onHoverNode={hoverNode}
           />
+          {tooltip}
         </div>
       )}
       <div className="graph-meta">
@@ -220,14 +264,20 @@ export function ModuleResultView({ result, title, view, tissues, starting, onVie
       <ResultLayout header={header} mainLabel="Module graph" main={main} companion={companion} companionLabel={view.tab === 'genes' ? 'Genes' : 'Modules'} expanded={view.expanded} />
       {open && (
         <ModuleDrawer
-          key={open.id}
           result={result}
           module={open}
+          gene={openGene}
           database={database}
           genes={names.data}
           integration={result.integration}
           version={result.version}
-          onClose={() => onViewChange(view.with({ module: undefined }))}
+          onSelectGene={selectGene}
+          onHoverGene={(entrez) => setHovered(entrez === undefined ? undefined : { entrez })}
+          onBack={() => selectModule(open.id)}
+          onClose={() => {
+            setHovered(undefined);
+            onViewChange(view.with({ module: undefined, gene: undefined }));
+          }}
         />
       )}
       {names.isError && <p className="module-muted">Gene names couldn’t load, so genes show their Entrez IDs. {genesWord(result.entrez.length)} are in this result.</p>}

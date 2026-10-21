@@ -5,7 +5,8 @@ export { IconButton, type IconButtonProps } from './IconButton/IconButton';
 export { StarToggle, type StarToggleProps } from './StarToggle/StarToggle';
 export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
 export { ScoreTracks, type ScoreTrack, type ScoreTracksProps } from './GenomeBrowser/ScoreTracks';
-export { GenomeTrackView, type GeneShape, type GenomeTrackViewProps, type ScoreTrackData, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
+export { GenomeTrackFigure, GenomeTrackView, type GeneShape, type GenomeTrackFigureProps, type GenomeTrackViewProps, type ScoreTrackData, type SegmentShape, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
+export { SegmentTable, type SegmentTableProps } from './GenomeBrowser/SegmentTable';
 export {
   BrowserSettingsDialog,
   ExportDialog,
@@ -15,6 +16,7 @@ export {
   type ExportSettings,
   type SuggestedTrack,
   type TrackSettings,
+  type TrackSource,
   type TrackStyle,
 } from './GenomeBrowser/GenomeBrowserPanels';
 export { genomeBrowserKeyHelp, genomeBrowserShortcuts, genomeCommand, type GenomeCommand } from './GenomeBrowser/genomeBrowserKeys';
@@ -42,6 +44,7 @@ export { SearchExamples, type SearchExample, type SearchExamplesProps } from './
 export { SearchField, SuggestionsEmpty, SuggestionsLoading, type SearchFieldProps, type SearchFieldSize, type SearchSuggestion } from './SearchField/SearchField';
 export { Select, type SelectOption, type SelectProps, type SelectSize } from './Select/Select';
 export { AboutPanel, type AboutPanelProps, type ExampleFile } from './Jobs/AboutPanel';
+export { DocsLink, type DocsLinkProps } from './Jobs/DocsLink';
 export { MultiSelect, multiSelectSummary, type MultiSelectOption, type MultiSelectProps } from './Select/MultiSelect';
 export { Spinner } from './Spinner/Spinner';
 export { Tabs, type TabItem, type TabsProps } from './Tabs/Tabs';
@@ -80,6 +83,7 @@ export {
   type TableProps,
 } from './Table/Table';
 export { ValueFormat, type FormattedValue } from './Table/ValueFormat';
+export { ViewAsTable, type ViewAsTableProps } from './Table/ViewAsTable';
 export { PageLink, Pagination, ShowMore, pageSizeMemory, rowsPerPage, type PageLinkProps, type PaginationProps, type ShowMoreProps } from './Pagination/Pagination';
 export { PageWindow, type PageSlot } from './Pagination/PageWindow';
 export { Breadcrumbs, SkipLink, type BreadcrumbsProps, type Crumb } from './Navigation/Breadcrumbs';
@@ -90,6 +94,8 @@ export type { NavGroup, NavItemState, NavLink, NavSection } from './Navigation/t
 export { DataTooltip, type DataTooltipProps } from './Tooltip/DataTooltip';
 export { anchorSupported, placeNearPoint, placeUnder, type Placement } from './Tooltip/placement';
 export { saveFile } from './utils/saveFile';
+export { standaloneSvg } from './utils/standaloneSvg';
+export { StoredChoice } from './utils/StoredChoice';
 export { Toggletip, type ToggletipProps } from './Tooltip/Toggletip';
 export { Tooltip, type TooltipProps } from './Tooltip/Tooltip';
 export { TooltipController, tooltips } from './Tooltip/TooltipController';
@@ -122,6 +128,8 @@ export { EffectGroups, type EffectExperiment, type EffectGroup, type StrengthCou
 export { asdEffects, expressionEffects, sequenceClassEffects, zEffects, type EffectScale } from './VariantEffects/EffectScale';
 export { EffectsHeatmap, type EffectsHeatmapProps } from './VariantEffects/EffectsHeatmap';
 export { EffectsControls, MolecularEffects, effectZScale, type EffectsControlsProps, type EffectsView, type MolecularEffectsProps } from './VariantEffects/MolecularEffects';
+export { chromosomeColor } from './VariantEffects/ChromosomeColor';
+export { sequenceClassColor, sequenceClassLegend } from './VariantEffects/SequenceClass';
 export { StrongestEffects, type StrongestEffectsProps } from './VariantEffects/StrongestEffects';
 export { byGenomePosition, variantLabel, variantLocation, variantName, type Variant, type VariantScore } from './VariantEffects/Variant';
 export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFocus';

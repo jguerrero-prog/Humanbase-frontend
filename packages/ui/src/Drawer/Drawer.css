@@ -52,6 +52,11 @@
   border-block-end: var(--border-width-1) solid var(--border-subtle);
 }
 
+.drawer-back {
+  justify-self: start;
+  margin-block-end: var(--space-0-5);
+}
+
 .drawer-body {
   display: grid;
   flex: 1;

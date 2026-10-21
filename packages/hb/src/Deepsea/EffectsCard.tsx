@@ -26,6 +26,8 @@ export interface EffectsCardProps {
   inCellTypes?: boolean;
   /** The score or feature set the effects are for, and its choices. */
   choice: { label: string; options: readonly SelectOption[]; value: string; onChange: (value: string) => void; name: string };
+  /** The score's documentation, such as Score type documentation. */
+  scoreDocs?: { label: string; href: string } | undefined;
   /** Every variant in the genome browser's view, for the Heatmap tab; selected is the center one, whose effects these are. */
   inView: Pick<InViewHeatmapProps, 'location' | 'variants' | 'selected' | 'onSelect' | 'onMove'>;
   /** The score ranks smallest first, as humanbase.io's score types with reverse_order do, such as e-value. */
@@ -41,7 +43,7 @@ const rank = (resource: string) => {
 };
 
 /** A variant's effect on every feature: Strongest effects, Heatmap and All features. */
-export function EffectsCard({ label, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, inView, reverseOrder = false, view: keptView, onViewChange }: EffectsCardProps) {
+export function EffectsCard({ label, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, scoreDocs, inView, reverseOrder = false, view: keptView, onViewChange }: EffectsCardProps) {
   const [ownView, setOwnView] = useState<EffectsView>('strongest');
   const view = keptView ?? ownView;
   const setView = onViewChange ?? setOwnView;
@@ -109,6 +111,7 @@ export function EffectsCard({ label, effects, failed, onRetry, scale, threshold:
         scores={choice.options}
         score={choice.value}
         onScore={choice.onChange}
+        scoreDocs={scoreDocs}
         {...(view === 'strongest' ? { threshold, onThreshold: setThreshold, thresholdSteps: [scale.bins.weak, scale.bins.moderate, scale.bins.strong] } : {})}
         search={search}
         onSearch={setSearch}

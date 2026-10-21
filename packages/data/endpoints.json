@@ -277,7 +277,7 @@
         ]
       },
       "recordedByHandSamples": {
-        "why": "Polling is a POST, which pnpm samples:record only sends to read-only endpoints. This poll of the live cache was recorded once on October 20, 2026 and trimmed; the note in the file says how.",
+        "why": "Polling is a POST, which pnpm samples:record only sends to read-only endpoints. This poll of the live cache was recorded on October 21, 2026 with every term, so offline term counts match live; only the per-term edge lists are left out, as the note in the file says.",
         "files": [
           "integrations/community@body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9@post-77074ba4"
         ]
@@ -604,13 +604,14 @@
     ]
   },
   "genomeTracks": {
-    "$note": "Not the API: the genome browser reads gene models, scores and sequence from the static track files on S3. pnpm samples:record saves each window padded by its own width on both sides, the listed score files over it, and 2 kb of sequence around its center, into genome/tracks.json.",
+    "$note": "Not the API: the genome browser reads gene models, scores, segments and sequence from the static track files on S3. pnpm samples:record saves each window padded by its own width on both sides, the listed score files over it (a file with bins, such as per-base conservation, summarised to about that many values), the listed segment files (bigBed, such as GM12878 ChromHMM) over it, and 2 kb of sequence around its center, into genome/tracks.json.",
     "tracks": "https://humanbase.s3.amazonaws.com/tracks/",
     "windows": [
-      { "assembly": "hg19", "region": "chr1:2230000-2440000", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] },
-      { "assembly": "hg19", "region": "chr14:21853352-21905457", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] },
-      { "assembly": "hg19", "region": "chr2:166095911-166248818", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] },
-      { "assembly": "hg19", "region": "chr16:53088944-53361413", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] }
+      { "assembly": "hg19", "region": "chr1:2230000-2440000", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
+      { "assembly": "hg19", "region": "chr14:21853352-21905457", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
+      { "assembly": "hg19", "region": "chr2:166095911-166248818", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
+      { "assembly": "hg19", "region": "chr16:53088944-53361413", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
+      { "assembly": "hg19", "region": "chr1:109792590-109842590", "scores": [], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] }
     ]
   }
 }

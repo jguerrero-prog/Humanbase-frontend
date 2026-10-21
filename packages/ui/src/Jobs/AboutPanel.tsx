@@ -1,7 +1,6 @@
 import { createElement, useId, type ReactNode } from 'react';
 import { Button } from '../Button/Button';
-import { useLinkHref } from '../hooks/useLinkHref';
-import { Icon } from '../Icon/Icon';
+import { DocsLink } from './DocsLink';
 import './AboutPanel.css';
 
 export interface ExampleFile {
@@ -31,20 +30,12 @@ export interface AboutPanelProps {
 
 /** The panel beside every tool form: what the tool does, its documentation and its example files. */
 export function AboutPanel({ tool, children, docsHref, links, examplesTitle = 'Example files', examples = [], headingLevel = 2 }: AboutPanelProps) {
-  const linkHref = useLinkHref();
   const id = useId();
-  const external = docsHref !== undefined && /^https?:/.test(docsHref);
   return (
     <aside className="about-panel" aria-labelledby={id}>
       {createElement(`h${headingLevel}`, { id, className: 'about-panel-title' }, `About ${tool}`)}
       <p>{children}</p>
-      {docsHref && (
-        <a className="button button-ghost button-small" href={linkHref(docsHref)} {...(external && { target: '_blank', rel: 'noreferrer' })}>
-          <Icon name="book-open" size={16} />
-          Read the {tool} documentation
-          {external && <Icon name="external-link" size={16} label="opens in a new tab" />}
-        </a>
-      )}
+      {docsHref && <DocsLink href={docsHref}>Read the {tool} documentation</DocsLink>}
       {links}
       {examples.length > 0 && (
         <>

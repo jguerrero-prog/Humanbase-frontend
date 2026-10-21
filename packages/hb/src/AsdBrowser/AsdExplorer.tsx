@@ -1,11 +1,12 @@
 import {
-  ApiError, AsdVariant, featureEffects, GenomeLocation, useAsdColumns, useAsdEffects, useAsdPage, useAsdRange, useHumanbase,
+  ApiError, AsdVariant, featureEffects, GenomeLocation, useAsdColumns, useAsdEffects, useAsdPage, readTheDocs, useAsdRange, useHumanbase,
   type AsdFeatureSet, type AsdVariantRow, type FeaturePredictionRecord,
 } from '@humanbase/data';
 import { defaultGenomeEngine, GenomeEngineView, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
 import { Alert, GenomeBrowserToolbar, ResultLayout, Skeleton, asdEffects, type EffectsView } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 import { EffectsCard } from '../Deepsea/EffectsCard';
+import { useGenomeBrowserTools } from '../GenomeBrowser/useGenomeBrowserTools';
 import { AsdHeader, AsdVariantTable, type AsdView } from './AsdParts';
 import './AsdBrowser.css';
 
@@ -107,7 +108,7 @@ export function AsdExplorer({ state, onStateChange, engine = defaultGenomeEngine
           searchError={searchError?.from === 'page' ? searchError.text : undefined}
           examples={['CHD8', 'SCN2A', defaultLocation.format()]}
           notice={notice}
-          downloadHref="/downloads/"
+          downloadHref="https://s3-us-west-2.amazonaws.com/humanbase/variants/dis_asd.tsv"
         />
       }
       main={
@@ -153,6 +154,7 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
     if (row) onStateChange({ variant: key, location: new GenomeLocation(row.chromosome, row.position, row.position).withWidth(location.width).format() });
   };
   const zoomStop = (GenomeLocation.zoomStops as readonly number[]).includes(location.width) ? location.width : undefined;
+  const { attach, ...tools } = useGenomeBrowserTools({ browser: 'asd', assembly: 'hg19', tracks: impactTracks, location });
 
   let body;
   if (range.isError) {
@@ -195,24 +197,28 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
         onZoomStop={(bases) => move(location.withWidth(bases))}
         onPreviousVariant={() => step(-1)}
         onNextVariant={() => step(1)}
-        trackActions={false}
+        {...tools.toolbar}
       />
+      {tools.panels}
       {engineStatus.status === 'failed' && (
         <Alert tone="error" title="The genome browser couldn’t load">
           {engineStatus.error?.message ?? 'The genome browser didn’t start.'} The variants and their effects below still work.
         </Alert>
       )}
       <GenomeEngineView
+        ref={attach}
         engine={engine}
         files={genomeTracks}
-        label={location.regionLabel(impactTracks.length + 2)}
+        label={location.regionLabel(tools.shownCount)}
         assembly="hg19"
         region={region}
-        tracks={impactTracks}
+        tracks={tools.tracks}
+        hidden={tools.hidden}
         selected={selected ? { chrom: selected.chromosome, position: selected.position } : undefined}
         onRegionChange={onRegionChange}
         onStatusChange={(status, error) => setEngineStatus({ status, error })}
         onCommand={(command) => {
+          if (tools.onCommand(command)) return;
           if (command === 'moveLeft' || command === 'moveRight') move(location.move(command === 'moveLeft' ? -0.1 : 0.1));
           else if (command === 'zoomIn' || command === 'zoomOut') move(location.zoom(command === 'zoomIn' ? 'in' : 'out'));
           else if (command === 'previousVariant' || command === 'nextVariant') step(command === 'previousVariant' ? -1 : 1);
@@ -278,6 +284,7 @@ function VariantEffects({ location, rows, selected, set, onSetChange, view, onVi
       featurePlural={`${noun}s`}
       verb=""
       choice={{ label: 'Features', options: featureSets, value: set, onChange: (value) => onSetChange(value as AsdFeatureSet), name: 'Score' }}
+      scoreDocs={{ label: 'Score type documentation', href: `${readTheDocs}asdbrowser.html#output` }}
       view={view}
       onViewChange={onViewChange}
       inView={{ location, variants, selected: index, onSelect, onMove }}

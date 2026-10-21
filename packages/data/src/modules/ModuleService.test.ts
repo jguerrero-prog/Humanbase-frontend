@@ -68,4 +68,19 @@ describe('ModuleResult', () => {
     expect(modules.databaseName('msigdb-h')).toBe('MSigDB: Hallmark (H)');
     expect(modules.symbol(80000)).toBe('GREB1L');
   });
+
+  it('lists a gene’s neighbors in any module, strongest first, and the terms of its module that include it', async () => {
+    const modules = await result();
+    const hnf1b = 6928;
+    expect(modules.neighbors(hnf1b).map(({ entrez, weight, module }) => [modules.symbol(entrez), weight.toFixed(3), module?.label])).toEqual([
+      ['HNF4A', '0.128', 'M1'],
+      ['KCNJ1', '0.098', 'M1'],
+    ]);
+    const terms = modules.termsOf(hnf1b, 'gene-ontology-bp');
+    expect(terms).toHaveLength(9);
+    expect(terms.every((term) => term.genes.includes(hnf1b))).toBe(true);
+    expect(terms[0]?.title).toBe('renal system development');
+    expect(modules.neighbors(0)).toEqual([]);
+    expect(modules.termsOf(0, 'gene-ontology-bp')).toEqual([]);
+  });
 });

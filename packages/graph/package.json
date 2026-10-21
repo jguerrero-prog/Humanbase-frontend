@@ -13,6 +13,7 @@
     "typecheck": "tsc -p ."
   },
   "dependencies": {
+    "@humanbase/ui": "workspace:*",
     "d3-force": "3.0.0",
     "d3-polygon": "3.0.1",
     "d3-selection": "3.0.0",

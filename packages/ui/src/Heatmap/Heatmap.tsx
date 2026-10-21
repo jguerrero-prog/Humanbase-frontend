@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
 import { Icon } from '../Icon/Icon';
 import { useDismiss } from '../List/useDismiss';
+import { ViewAsTable } from '../Table/ViewAsTable';
 import { BreakableText } from '../Text/BreakableText';
 import { DataTooltip } from '../Tooltip/DataTooltip';
 import { placeNearPoint } from '../Tooltip/placement';
@@ -315,8 +316,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
           position={place}
         />
       )}
-      <details className="heatmap-table">
-        <summary>View as table</summary>
+      <ViewAsTable className="heatmap-table">
         {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the table scrolls sideways, so it takes focus for arrow-key scrolling */}
         <div className="heatmap-table-scroll" role="region" aria-label={`${title}, as a table`} tabIndex={0}>
           <table>
@@ -350,7 +350,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
             </tbody>
           </table>
         </div>
-      </details>
+      </ViewAsTable>
     </figure>
   );
 }

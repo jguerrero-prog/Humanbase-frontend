@@ -1,5 +1,5 @@
 import { ApiError, featureLabel, sequenceSpan, useDeepseaFeatures, useHumanbase, useInsilico, type DeepseaJob, type InsilicoResult } from '@humanbase/data';
-import { ActionMenu, Alert, Button, Cell, HeaderCell, ResultHeader, ResultLayout, saveFile, Select, Skeleton, SubstitutionMap, Table, type ScaleSpec } from '@humanbase/ui';
+import { ActionMenu, Alert, Button, Cell, DocsLink, HeaderCell, ResultHeader, ResultLayout, saveFile, Select, Skeleton, SubstitutionMap, Table, type ScaleSpec } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { jobDateTime } from '../Jobs/JobPage';
 import { deepseaFormLink } from './DeepseaForm';
@@ -88,6 +88,7 @@ export function InsilicoResultView({ job, title, tools }: InsilicoResultViewProp
       <Button variant="secondary" size="small" icon="download" disabled={!result.data} onClick={() => result.data && saveFile(result.data.csv(), `${sequence ?? 'sequence'}_${feature.replace(/\W+/g, '_')}.csv`, 'text/csv')}>
         Download CSV
       </Button>
+      <DocsLink href={`${job.model.docsHref}#output`}>Log-fold change score documentation</DocsLink>
     </div>
   );
 

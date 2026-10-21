@@ -1,0 +1,89 @@
+---
+import { Button, Cell, Drawer, HeaderCell, ScoreCell, SegmentedControl, Table } from '@humanbase/ui';
+
+interface Props {
+  view: 'terms' | 'neighbors';
+}
+
+const { view } = Astro.props;
+const terms = [
+  ['renal system development', 'FGF8, GREB1L, ITGA8, NPHS1 and 3 more', '< 1 × 10⁻⁴'],
+  ['urogenital system development', 'FGF8, GREB1L, ITGA8, NPHS1 and 3 more', '< 1 × 10⁻⁴'],
+  ['kidney development', 'FGF8, GREB1L, ITGA8, NPHS1 and 2 more', '< 1 × 10⁻⁴'],
+  ['animal organ morphogenesis', 'CCDC40, FGF8, NKX2-5, STRA6 and 1 more', '0.0002'],
+];
+const neighbors: [string, string, string, number][] = [
+  ['HNF4A', 'hepatocyte nuclear factor 4 alpha', 'M1', 0.128],
+  ['KCNJ1', 'potassium inwardly rectifying channel subfamily J member 1', 'M1', 0.098],
+];
+---
+
+<Drawer inline title="HNF1B" subtitle="HNF1 homeobox B, in M1 renal system development" back={{ label: 'Back to M1', onSelect: () => undefined }} className="module-gene-drawer">
+  <SegmentedControl
+    label={`HNF1B details, ${view === 'terms' ? 'gene terms' : 'gene neighbors'}`}
+    hideLabel
+    size="small"
+    segments={[
+      { value: 'terms', label: 'Gene terms' },
+      { value: 'neighbors', label: 'Gene neighbors' },
+    ]}
+    defaultValue={view}
+  />
+  {
+    view === 'terms' ? (
+      <Table caption="Enriched terms of M1 that include HNF1B" density="compact" columnWidths={['auto', '136px', '96px']}>
+        <thead>
+          <tr>
+            <HeaderCell>Enriched term</HeaderCell>
+            <HeaderCell>Other M1 genes</HeaderCell>
+            <HeaderCell align="end" sort="ascending">q-value</HeaderCell>
+          </tr>
+        </thead>
+        <tbody>
+          {terms.map(([term, genes, q]) => (
+            <tr>
+              <Cell rowHeader>{term}</Cell>
+              <Cell>{genes}</Cell>
+              <Cell type="number">{q}</Cell>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    ) : (
+      <Table caption="Genes connected to HNF1B" density="compact" columnWidths={['80px', 'auto', '72px', '148px']}>
+        <thead>
+          <tr>
+            <HeaderCell>Gene</HeaderCell>
+            <HeaderCell>Description</HeaderCell>
+            <HeaderCell>Module</HeaderCell>
+            <HeaderCell align="end" sort="descending">Score</HeaderCell>
+          </tr>
+        </thead>
+        <tbody>
+          {neighbors.map(([symbol, name, module, score]) => (
+            <tr>
+              <Cell rowHeader><strong>{symbol}</strong></Cell>
+              <Cell>{name}</Cell>
+              <Cell>{module}</Cell>
+              <ScoreCell value={score} />
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    )
+  }
+  <Fragment slot="footer">
+    <Button>Open HNF1B in Networks</Button>
+    <Button variant="ghost">Download HNF1B</Button>
+  </Fragment>
+</Drawer>
+
+<style>
+  :global(.module-gene-drawer .table-cell) {
+    vertical-align: top;
+  }
+
+  :global(.module-gene-drawer .table-cell-text) {
+    white-space: normal;
+  }
+</style>
