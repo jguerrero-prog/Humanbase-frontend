@@ -48,7 +48,7 @@ export function GenomeBrowserToolbar({
         Previous variant
       </Button>
       <form role="search" className="genome-location" onSubmit={submit}>
-        <SearchField label="Location or gene" size="medium" name="location" defaultValue={location} aria-describedby={helpId} aria-invalid={locationError ? true : undefined} />
+        <SearchField key={location} label="Location or gene" size="medium" name="location" defaultValue={location} aria-describedby={helpId} aria-invalid={locationError ? true : undefined} />
         <p id={helpId} className={locationError ? 'genome-location-help genome-location-error' : 'genome-location-help'}>
           {locationError ?? (
             <>

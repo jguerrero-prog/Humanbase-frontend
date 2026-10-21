@@ -181,7 +181,14 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
             onPrevious={() => step(-1)}
             onNext={() => step(1)}
           />
-          <VariantGenomeBrowser assembly={job.assembly} chromosome={selected.chromosome} position={selected.position} label={variantLabel(selected)} />
+          <VariantGenomeBrowser
+            assembly={job.assembly}
+            chromosome={selected.chromosome}
+            position={selected.position}
+            label={variantLabel(selected)}
+            {...(index > 0 && { onPreviousVariant: () => step(-1) })}
+            {...(index < ordered.length - 1 && { onNextVariant: () => step(1) })}
+          />
           <VariantEffectsCard key={selected.id} job={job} variant={selected} featureTypes={featureTypes} />
         </>
       )}
