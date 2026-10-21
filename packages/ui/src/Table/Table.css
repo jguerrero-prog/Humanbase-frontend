@@ -106,9 +106,10 @@
   box-shadow: var(--shadow-focus-ring);
 }
 
+/* Vertical padding gives two-line cells room; one-line rows keep the row height. */
 .table-cell {
   block-size: var(--row-height, 48px);
-  padding: 0 var(--space-4);
+  padding: var(--space-2) var(--space-4);
   font: var(--cell-font, 400 15px/20px Lato, sans-serif);
   text-align: start;
   vertical-align: middle;

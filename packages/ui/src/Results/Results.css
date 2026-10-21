@@ -543,6 +543,10 @@
   color: var(--text-secondary);
 }
 
+.table + .result-note {
+  margin-block-start: var(--space-4);
+}
+
 @media (width < 48rem) {
   .graph-filters {
     grid-template-columns: minmax(0, 1fr);
