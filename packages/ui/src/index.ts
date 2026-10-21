@@ -31,6 +31,8 @@ export { GeneMatchSummary, type GeneMatchSummaryProps } from './GeneMatch/GeneMa
 export { GeneMatchTable, type GeneMatchEdit, type GeneMatchTableProps } from './GeneMatch/GeneMatchTable';
 export { GeneTagInput, unknownGenesMessage, type GeneTagInputProps } from './GeneTagInput/GeneTagInput';
 export { Icon, iconNames, type IconName, type IconSize } from './Icon/Icon';
+export { Illustration, type IllustrationProps } from './Illustration/Illustration';
+export { illustrationNames, illustrations, type IllustrationEntry, type IllustrationFormat, type IllustrationName } from './Illustration/illustrations';
 export { ListNavigator, type NavigableOption } from './List/ListNavigator';
 export { Logo } from './Logo/Logo';
 export { MenuDivider, MenuGroupLabel, MenuItem, MenuPanel, type MenuItemProps } from './Menu/Menu';

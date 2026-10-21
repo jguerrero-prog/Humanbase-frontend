@@ -1,0 +1,318 @@
+---
+import { Illustration, illustrationNames, illustrations, type IllustrationFormat } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import DoDont from '../../components/docs/DoDont.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const diagrams = import.meta.glob<string>('../../assets/formats/*.svg', { eager: true, query: '?url', import: 'default' });
+
+const formats: { format: IllustrationFormat; title: string; text: string; size: string }[] = [
+  { format: 'band', title: 'Band', text: 'Runs the full width along a section’s top or bottom edge, or as a thin divider.', size: '1440 × 44 to 186' },
+  { format: 'corner', title: 'Corner', text: 'Sits in one corner of a section and bleeds off both edges.', size: '520 to 620 × 400 to 460' },
+  { format: 'spot', title: 'Spot', text: 'A self-contained piece beside text, such as a How it works card or the top of a blog post.', size: '480 × 360 to 520 × 520' },
+  { format: 'rail', title: 'Vertical rail', text: 'Runs down the side of a long reading page and bleeds off the top and bottom.', size: '240 × 1200' },
+  { format: 'hero', title: 'Hero concept', text: 'For the emerald hero and dark section bands only. The art sits on the right, clear of the headline.', size: '1440 × 421, dark' },
+];
+
+const palette = [
+  { token: 'emerald/50', role: 'Soft fills and grounds' },
+  { token: 'emerald/100', role: 'Main fill' },
+  { token: 'emerald/200', role: 'Second fill, faint lines' },
+  { token: 'emerald/300', role: 'Fine lines' },
+  { token: 'emerald/400', role: 'Outlines' },
+  { token: 'emerald/500', role: 'Strong outlines, sparingly' },
+  { token: 'yellow/500', role: 'The one accent' },
+  { token: 'yellow/700', role: 'Accent outline' },
+];
+
+const galleries: { format: IllustrationFormat; title: string; lead: string; columns: number }[] = [
+  { format: 'band', title: 'Bands', lead: '14 full-width pieces for section edges, dividers and the footer. Shown at 0.44x.', columns: 2 },
+  { format: 'corner', title: 'Corners and spots', lead: '14 pieces that sit in a corner of a section or beside text, including the two on the homepage. Shown at up to 0.65x.', columns: 3 },
+  { format: 'spot', title: 'Feature spots', lead: 'Six 480 × 360 pieces for the How it works cards, three on the homepage and three on the Modules page. Each set reads left to right as one story. Shown at 0.83x.', columns: 3 },
+  { format: 'rail', title: 'Vertical rail', lead: 'One piece for the side of long reading pages. Shown at 0.4x.', columns: 5 },
+  { format: 'hero', title: 'Hero', lead: 'The final homepage hero, then the six explorations it came from. Hero pieces are the one place soft gradients and glows appear, because they sit on dark emerald.', columns: 2 },
+];
+
+const drawnFromData = [
+  ['Sequence tape', 'Reference bases around the strongest single change', 'In silico mutagenesis example, chr1:109,816,591 to 109,818,590'],
+  ['Tissue barcode', 'Strongest predicted expression effect in 204 tissues', 'IRGM, ExPecto tissue predictions'],
+  ['Genome ruler, Chromosome spread', 'Relative chromosome lengths, FTO on chromosome 16', 'GRCh37 chromosome sizes'],
+  ['GWAS skyline', 'Gene association across the genome, FTO peak', 'BMI GWAS (Randall 2013), VEGAS gene p-values'],
+  ['Experiment plate, Expression mosaic', 'Well and tile intensities', 'IL1B and TNF tissue predictions (BRENDA ontology)'],
+  ['Reads, Ridges', 'Predicted chromatin effects of 34 variants', 'DeepSEA predictions, ASD region chr1:2,230,000 to 2,440,000'],
+  ['Fine roots', 'Root tips and thickness by term size', 'IL1B Gene Ontology predictions, top 24'],
+  ['Data-driven', 'Co-expression matrix and evidence layers', 'IL1B and TNF network samples'],
+  ['Network-guided', 'Gene association, FTO and lifted genes', 'BMI GWAS (Randall 2013); the lift is illustrative'],
+  ['Functional modules, Gene function prediction, Tissue-specific kidney', 'Modules, their genes and CCDC28B’s prediction', 'Renal panel module detection result (369 genes, 20 modules)'],
+];
+
+const usage = `import { Illustration } from '@humanbase/ui';
+
+<Illustration name="cell-nucleus" />
+<Illustration name="hero-homepage" loading="eager" />`;
+---
+
+<DocsLayout title="Illustration" description="Humanbase illustrations: where they go, formats, palette, the full library and accessibility.">
+  <Intro
+    lead="Humanbase illustrations are calm, scientific drawings for the pages around the tools: the homepage, About, Resources, Docs and the blog. They show real biology in the system’s emerald and Simons Yellow, and many are shaped by Humanbase’s own data, so they inform as well as decorate."
+    status="Updated October 19, 2026 · 42 illustrations: 14 bands, 14 corners and spots, 6 feature spots, 1 vertical rail, 7 hero pieces · Original to Humanbase"
+  >
+    <KeyRules
+      rules={[
+        { title: 'Flat and fine', text: 'Flat fills from the emerald scale and fine 1 to 1.5px emerald lines. No gradients, shadows or glows on light backgrounds.' },
+        { title: 'One yellow accent', text: 'Each illustration has exactly one Simons Yellow detail: the variant, cell or gene the eye should land on.' },
+        { title: 'Real biology, off the edge', text: 'Draw real structures, often shaped by Humanbase data, and let them run off the frame. No body maps and no node-and-line networks.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection
+    title="Where illustrations go"
+    lead="Illustrations set the tone of the pages that introduce and explain Humanbase. Inside the tools, the data is the picture, so results, forms and tables stay clear of them."
+  >
+    <KeyRules
+      size="medium"
+      rules={[
+        { title: 'Pages around the tools', text: 'Homepage, About, Resources, Docs, the blog and What’s new. Match the subject to the page, such as the Neuron rail beside the ASD Browser’s About page.' },
+        { title: 'Never inside results', text: 'Keep illustrations out of result views, job forms, tables and charts, where they would compete with real data.' },
+        { title: 'One per section', text: 'Use at most one illustration in a section, so each keeps its quiet, deliberate feel.' },
+        { title: 'Anchored to an edge', text: 'Bands sit on a section’s top or bottom edge, corners in a corner, rails along a side, and each bleeds off the edge it is anchored to.' },
+      ]}
+    />
+  </DocSection>
+
+  <DocSection title="Formats" lead="Five shapes cover every placement. Sizes are the artboard at 1x; export SVG for the web and scale proportionally.">
+    <ul class="card-grid gallery-cards" style="--columns: 5">
+      {
+        formats.map((format) => (
+          <li>
+            <img class="format-diagram" src={diagrams[`../../assets/formats/${format.format}.svg`]} alt="" width="209" height="140" />
+            <h3>{format.title}</h3>
+            <p>{format.text}</p>
+            <code>{format.size}</code>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection
+    title="Palette"
+    lead="Light-background illustrations use these tokens plus white. Pieces drawn from data may blend between two neighboring tokens to show values, as a heatmap does. Each piece uses yellow once."
+  >
+    <ul class="card-grid gallery-cards palette" style="--columns: 8">
+      {
+        palette.map(({ token, role }) => (
+          <li>
+            <span class="swatch" style={`background: var(--color-${token.replace('/', '-')})`} />
+            <code class="swatch-token">{token}</code>
+            <p>{role}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  {
+    galleries.map((gallery) => (
+      <DocSection title={gallery.title} lead={gallery.lead}>
+        <ul class="card-grid gallery-cards" style={`--columns: ${gallery.columns}`}>
+          {illustrationNames
+            .filter((name) => illustrations[name].format === gallery.format)
+            .map((name) => {
+              const { title, use, width, height } = illustrations[name];
+              return (
+                <li>
+                  <div class:list={['preview', `preview-${gallery.format}`]}>
+                    <Illustration name={name} />
+                  </div>
+                  <h3>{title}</h3>
+                  <p>{use}</p>
+                  <code>
+                    {width} × {height}
+                  </code>
+                </li>
+              );
+            })}
+        </ul>
+      </DocSection>
+    ))
+  }
+
+  <DocSection title="Drawn from data" lead="These pieces are shaped by real Humanbase data. Others are illustrative; each component’s description says which.">
+    <DocTable caption="Illustrations drawn from data and their sources" columns={['Illustration', 'What the data shapes', 'Source']} widths={['22%', '36%', '42%']}>
+      {
+        drawnFromData.map(([names, shapes, source]) => (
+          <tr>
+            <th scope="row">{names}</th>
+            <td>{shapes}</td>
+            <td>{source}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Accessibility">
+    <KeyRules
+      size="medium"
+      rules={[
+        { title: 'Decorative', text: 'Illustrations are decoration. Use an empty alt (alt="") or aria-hidden="true" so screen readers skip them.' },
+        { title: 'Never the only message', text: 'Anything a reader needs, such as a gene name or a result, lives in text, never only in an illustration.' },
+        { title: 'Text stays readable', text: 'Never place body text over an illustration. Headlines on the dark hero keep at least 4.5:1 contrast.' },
+        { title: 'Still by default', text: 'Illustrations do not move. If one is ever animated, it stops for people who prefer reduced motion.' },
+      ]}
+    />
+  </DocSection>
+
+  <DocSection title="Do and don’t">
+    <DoDont
+      dos={['Pick an illustration whose subject fits the page.', 'Let it bleed off the edge it is anchored to.', 'Keep its yellow the only yellow nearby.', 'Use the component and scale it proportionally.']}
+      donts={[
+        'Don’t add gradients, shadows or glows to light-background pieces.',
+        'Don’t recolor outside the palette above or add a second accent.',
+        'Don’t put an illustration under body text or inside a result view.',
+        'Don’t crop through the yellow accent, or use a dark hero concept on a light background.',
+      ]}
+    />
+  </DocSection>
+
+  <NoteCard title="Using illustrations in Figma">
+    <ul>
+      <li>All 42 illustrations are components named “Illustration / name” in the “Components: Illustrations” section, below this page.</li>
+      <li>Each component’s description gives its suggested use and, where it applies, the data it is drawn from.</li>
+      <li>The Illustration library page keeps the review frames with captions. Source files (.ai, .svg, .png) live in the shared Humanbase illustrations folder.</li>
+      <li>For the web, export SVG at 1x and mark it decorative. Scale proportionally, never stretch.</li>
+    </ul>
+  </NoteCard>
+
+  <NoteCard title="Using illustrations in code">
+    <ul>
+      <li><code>&lt;Illustration name&gt;</code> places an SVG from <code>packages/ui/src/Illustration/art</code> as a decorative image with an empty alt, at its artboard width and height. Scale it with CSS.</li>
+      <li>Images load lazily; pass <code>loading="eager"</code> for one that is visible on load, such as the homepage hero.</li>
+      <li><code>illustrations</code> lists each one’s title, format, size, use and source, the same as its Figma description.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+
+  <p class="page-footer">Illustrations are original to Humanbase. Data-shaped pieces use samples recorded from the Humanbase API and the public sources listed above.</p>
+</DocsLayout>
+
+<style>
+  .gallery-cards {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .gallery-cards li {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .gallery-cards h3 {
+    font: var(--type-label);
+  }
+
+  .gallery-cards p {
+    font: var(--type-body-sm);
+    color: var(--text-muted);
+  }
+
+  .gallery-cards code {
+    font: var(--type-code-sm);
+    color: var(--text-secondary);
+  }
+
+  .preview {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: var(--surface-page);
+    border-radius: var(--radius-sm);
+  }
+
+  .preview :global(img) {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+  }
+
+  .preview-band {
+    padding-block: var(--space-2);
+  }
+
+  .preview-band :global(img) {
+    block-size: auto;
+  }
+
+  .preview-corner {
+    block-size: 300px;
+  }
+
+  .preview-spot {
+    aspect-ratio: 4 / 3;
+  }
+
+  .preview-rail {
+    block-size: 480px;
+  }
+
+  .preview-hero {
+    grid-template-rows: minmax(0, 1fr);
+    aspect-ratio: 631 / 199;
+    background: var(--color-emerald-800);
+  }
+
+  .preview-hero :global(img) {
+    block-size: auto;
+  }
+
+  .preview-hero :global(img[data-illustration="hero-homepage"]) {
+    block-size: 100%;
+    object-fit: cover;
+    object-position: top right;
+  }
+
+  .format-diagram {
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .palette .swatch {
+    block-size: var(--space-16);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+  }
+
+  .palette .swatch-token {
+    color: var(--text-default);
+  }
+
+  .page-footer {
+    font: var(--docs-small);
+    color: var(--text-muted);
+  }
+
+  @media (width < 64rem) {
+    .gallery-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (width < 40rem) {
+    .gallery-cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

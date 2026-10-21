@@ -12,6 +12,7 @@ const pages = [
   'http://localhost:4322/foundations/typography/',
   'http://localhost:4322/foundations/color-palette/',
   'http://localhost:4322/foundations/iconography/',
+  'http://localhost:4322/foundations/illustration/',
   'http://localhost:4322/foundations/elevation-and-borders/',
   'http://localhost:4322/components/text-inputs-and-search/',
   'http://localhost:4322/components/dropdowns-and-selects/',
