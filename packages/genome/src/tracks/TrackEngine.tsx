@@ -1,6 +1,8 @@
-import { assemblyNames, type GenomeTracks } from '@humanbase/data';
+import type { GenomeTracks } from '@humanbase/data';
+import { GenomeTrackFigure, standaloneSvg, type GenomeTrackViewProps } from '@humanbase/ui';
+import { flushSync } from 'react-dom';
 import { createRoot, type Root } from 'react-dom/client';
-import type { GenomeBrowserEngine, GenomeMountOptions, GenomeRegion } from '../GenomeBrowserEngine';
+import type { GenomeBrowserEngine, GenomeExportOptions, GenomeMountOptions, GenomeRegion } from '../GenomeBrowserEngine';
 import { TrackPanel } from './TrackPanel';
 
 type Listener = () => void;
@@ -9,7 +11,10 @@ type Listener = () => void;
 export interface TrackEngineView {
   region: GenomeRegion;
   highlight: { chrom: string; position: number } | undefined;
+  hidden: readonly string[];
 }
+
+export type DrawnTracks = Omit<GenomeTrackViewProps, 'onPan' | 'shift'>;
 
 /**
  * The design system's own genome browser: it reads the track files through GenomeTracks
@@ -17,11 +22,13 @@ export interface TrackEngineView {
  */
 export class TrackEngine implements GenomeBrowserEngine {
   private root: Root | undefined;
+  private host: HTMLElement | undefined;
   private view: TrackEngineView;
   private readonly listeners = new Set<Listener>();
+  private drawn: DrawnTracks | undefined;
 
   constructor(private readonly files: GenomeTracks) {
-    this.view = { region: { chrom: 'chr1', start: 1, end: 1 }, highlight: undefined };
+    this.view = { region: { chrom: 'chr1', start: 1, end: 1 }, highlight: undefined, hidden: [] };
   }
 
   mount(container: HTMLElement, options: GenomeMountOptions): Promise<void> {
@@ -29,14 +36,14 @@ export class TrackEngine implements GenomeBrowserEngine {
     const host = document.createElement('div');
     host.className = 'track-engine-host';
     container.append(host);
-    this.view = { ...this.view, region: options.region };
+    this.host = host;
+    this.view = { ...this.view, region: options.region, hidden: options.hidden ?? [] };
     this.root = createRoot(host);
     this.root.render(
       <TrackPanel
         engine={this}
         files={this.files}
         assembly={options.assembly}
-        assemblyName={assemblyNames[options.assembly]}
         tracks={options.tracks}
         onRegionChange={(region) => {
           this.update({ region });
@@ -55,9 +62,38 @@ export class TrackEngine implements GenomeBrowserEngine {
     this.update({ highlight: position });
   }
 
+  showTracks(hidden: readonly string[]): void {
+    this.update({ hidden });
+  }
+
+  /** Keeps what the panel last drew, so an export draws the same tracks and data. */
+  remember(drawn: DrawnTracks): void {
+    this.drawn = drawn;
+  }
+
+  exportSvg({ width, highlights, guideline, title }: GenomeExportOptions): Promise<Blob> {
+    const { drawn, host } = this;
+    if (!drawn || !host) return Promise.reject(new Error('The genome browser hasn’t drawn its tracks yet.'));
+    // The figure is drawn on the page for a moment, so its colors and fonts come from the page's tokens.
+    const holder = document.createElement('div');
+    holder.className = 'track-engine-export';
+    host.append(holder);
+    const root = createRoot(holder);
+    try {
+      flushSync(() => root.render(<GenomeTrackFigure {...drawn} width={width} marks={highlights} guide={guideline} title={title} />));
+      const svg = holder.querySelector('svg');
+      return svg ? Promise.resolve(standaloneSvg(svg)) : Promise.reject(new Error('The figure didn’t draw.'));
+    } finally {
+      root.unmount();
+      holder.remove();
+    }
+  }
+
   destroy(): void {
     const root = this.root;
     this.root = undefined;
+    this.host = undefined;
+    this.drawn = undefined;
     this.listeners.clear();
     // React can't unmount a root while the page's own render is under way.
     queueMicrotask(() => root?.unmount());

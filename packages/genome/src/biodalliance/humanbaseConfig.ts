@@ -58,7 +58,7 @@ export const humanbaseAssemblies: Record<Assembly, BiodallianceAssembly> = {
     sources: [
       { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}/hg19.2bit`, tier_type: 'sequence', pinned: true },
       gencode19,
-      { name: 'Conservation', desc: 'Conservation', bwgURI: `${humanbaseTracks}/phastCons46way.bw`, noDownsample: true, disabled: true },
+      // Conservation is a page track (suggestedTracks), so the Tracks drawer can show and hide it.
       chromHmm,
     ],
   },

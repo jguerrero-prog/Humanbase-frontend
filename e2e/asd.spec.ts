@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
 import { apiOff } from './apiOff';
 import { violationsOf } from './violations';
 
@@ -37,6 +38,49 @@ test('the ASD table finds a gene and opens a row in the browser, with the API of
   await page.getByRole('button', { name: /^chr14:/ }).first().click();
   await expect(page.getByRole('heading', { name: /^Molecular effects of chr14:/ })).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
+test('the ASD Browser shows and hides its tracks and exports the view as SVG, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/asd/`);
+  const browser = page.getByRole('application', { name: /^Genome browser, chr1:2,230,000-2,440,000/ });
+  const headers = page.locator('.genome-engine .track-header-name');
+  await expect(browser.getByText('← PEX10')).toBeVisible();
+  await expect(headers).toHaveText(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Genes']);
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Tracks' });
+  await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
+  await drawer.getByRole('checkbox', { name: 'Genes' }).uncheck();
+  await drawer.getByRole('checkbox', { name: 'Sequence' }).uncheck();
+  expect(await violationsOf(page)).toEqual([]);
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(headers).toHaveText(['DNA disease impact score', 'RNA disease impact score', 'Conservation']);
+  await expect(page.locator('.genome-engine').getByText('← PEX10')).toHaveCount(0);
+  await page.reload();
+  await expect(headers).toHaveText(['DNA disease impact score', 'RNA disease impact score', 'Conservation']);
+  await expect(page.locator('.genome-engine .genome-tracks-bar')).not.toHaveCount(0);
+
+  await page.locator('.genome-engine').focus();
+  await page.keyboard.press('x');
+  const dialog = page.getByRole('dialog', { name: 'Export the view' });
+  await dialog.getByRole('textbox', { name: 'Width' }).fill('900 px');
+  await dialog.getByRole('checkbox', { name: 'Include the vertical guideline' }).uncheck();
+  expect(await violationsOf(page)).toEqual([]);
+  const [download] = await Promise.all([page.waitForEvent('download'), dialog.getByRole('button', { name: 'Export' }).click()]);
+  expect(download.suggestedFilename()).toBe('chr1_2230000-2440000_hg19.svg');
+  const svg = await readFile(await download.path(), 'utf8');
+  expect(svg).toMatch(/^<svg[^>]+width="1120"/);
+  expect(svg).toContain('chr1:2,230,000-2,440,000, GRCh37/hg19');
+  expect(svg).toContain('Conservation');
+  expect(svg).toContain('chr1:2,337,101');
+  expect(svg).not.toContain('genome-tracks-guide');
+  await expect(dialog).toBeHidden();
+
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(headers).toHaveText(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Genes']);
   expect(apiRequests).toEqual([]);
 });
 

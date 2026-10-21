@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
 import { checkScreen, watch, web } from './live';
 
 test('the Modules renal panel result shows real modules, a module drawer and the Genes tab', async ({ page }) => {
@@ -66,12 +67,40 @@ for (const [tool, id, heading] of [
       await checkScreen(page, problems);
     }
     const before = page.url();
-    await page.getByRole('button', { name: 'Next' }).click();
+    await page.getByRole('button', { name: 'Next', exact: true }).click();
     await expect(page).not.toHaveURL(before);
     await expect(page.getByRole('heading', { name: /^Molecular effects of chr/ })).toBeVisible();
     await checkScreen(page, problems);
   });
 }
+
+test('the real Seqweaver result shows and hides genome tracks from the real files and exports the view', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);
+  const headers = page.locator('.genome-engine .track-header-name');
+  await expect(headers).toHaveText(['Sequence', 'Genes']);
+  await expect(page.locator('.genome-engine').getByText('CELSR2 →')).toBeVisible();
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Tracks' });
+  await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
+  await drawer.getByRole('checkbox', { name: 'Sequence' }).uncheck();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(headers).toHaveText(['Conservation', 'Genes']);
+  await expect(page.locator('.genome-engine .genome-tracks-bar')).not.toHaveCount(0);
+  await checkScreen(page, problems);
+  await page.getByRole('button', { name: 'Export' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Export the view' });
+  const [download] = await Promise.all([page.waitForEvent('download'), dialog.getByRole('button', { name: 'Export' }).click()]);
+  expect(download.suggestedFilename()).toMatch(/^chr1_\d+-\d+_hg19\.svg$/);
+  const svg = await readFile(await download.path(), 'utf8');
+  expect(svg).toContain('Conservation');
+  expect(svg).toContain('CELSR2 →');
+  expect(svg).toContain('genome-tracks-bar');
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(headers).toHaveText(['Sequence', 'Genes']);
+});
 
 test('the real Beluga result shows its variants and molecular effects', async ({ page }) => {
   const problems = watch(page);
@@ -151,6 +180,16 @@ test('the ASD Browser draws the real track files, finds SCN2A and pages the tabl
   await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Genes']);
   await expect(browser.getByText('← PEX10')).toBeVisible();
   await expect(browser.locator('.genome-tracks-bar.is-selected')).toHaveCount(2);
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Tracks' });
+  await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
+  await drawer.getByRole('checkbox', { name: 'RNA disease impact score' }).uncheck();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'Conservation', 'Genes']);
+  await expect(browser.locator('.genome-tracks-bar.is-selected')).toHaveCount(2);
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
+  await drawer.getByRole('button', { name: 'Done' }).click();
   const coveredBar = await page.evaluate(async () => {
     const bar = document.querySelector('.top-bar');
     const frame = document.querySelector('.genome-engine-frame');
