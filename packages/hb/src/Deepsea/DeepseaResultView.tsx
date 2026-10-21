@@ -18,6 +18,7 @@ import {
   VariantsTable,
   zEffects,
   type EffectScale,
+  type EffectsView,
   type PlotBy,
 } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
@@ -57,6 +58,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
   const featureTypes = (scoreTypes ?? []).filter((type) => type.level === 'FEATURE');
   const [scoreKey, setScoreKey] = useState<string>();
   const [plotBy, setPlotBy] = useState<PlotBy>('genome');
+  const [effectsView, setEffectsView] = useState<EffectsView>('strongest');
   const [filter, setFilter] = useState('');
   const [showAll, setShowAll] = useState(false);
   const [picked, setPicked] = useState(chosen);
@@ -189,7 +191,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
             {...(index > 0 && { onPreviousVariant: () => step(-1) })}
             {...(index < ordered.length - 1 && { onNextVariant: () => step(1) })}
           />
-          <VariantEffectsCard key={selected.id} job={job} variant={selected} featureTypes={featureTypes} />
+          <VariantEffectsCard key={selected.id} job={job} variant={selected} featureTypes={featureTypes} view={effectsView} onViewChange={setEffectsView} />
         </>
       )}
     </div>
@@ -200,10 +202,12 @@ interface VariantEffectsCardProps {
   job: DeepseaJob;
   variant: VariantRow;
   featureTypes: readonly ScoreType[];
+  view: EffectsView;
+  onViewChange: (view: EffectsView) => void;
 }
 
 /** The selected variant's effect on every feature, for the chosen feature-level score. */
-function VariantEffectsCard({ job, variant, featureTypes }: VariantEffectsCardProps) {
+function VariantEffectsCard({ job, variant, featureTypes, view, onViewChange }: VariantEffectsCardProps) {
   const model = job.model;
   const [typeKey, setTypeKey] = useState<string>();
   const type = featureTypes.find((item) => item.short_name === typeKey) ?? featureTypes[0];
@@ -212,6 +216,8 @@ function VariantEffectsCard({ job, variant, featureTypes }: VariantEffectsCardPr
   return (
     <EffectsCard
       label={variantLabel(variant)}
+      view={view}
+      onViewChange={onViewChange}
       href={GenomeLocation.at(variant.chromosome, variant.position, job.assembly).ucscUrl}
       effects={effects}
       failed={Boolean(error)}

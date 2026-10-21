@@ -29,6 +29,9 @@ export interface EffectsCardProps {
   choice: { label: string; options: readonly SelectOption[]; value: string; onChange: (value: string) => void; name: string };
   /** Replaces the one-variant heatmap, such as a heatmap of every variant in a genome browser's range. */
   heatmap?: ReactNode;
+  /** The open tab, kept by the page so it survives choosing another variant. */
+  view?: EffectsView | undefined;
+  onViewChange?: ((view: EffectsView) => void) | undefined;
 }
 
 const rank = (resource: string) => {
@@ -37,8 +40,10 @@ const rank = (resource: string) => {
 };
 
 /** A variant's effect on every feature: Strongest effects, Heatmap and All features. */
-export function EffectsCard({ label, href, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, heatmap }: EffectsCardProps) {
-  const [view, setView] = useState<EffectsView>('strongest');
+export function EffectsCard({ label, href, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, heatmap, view: keptView, onViewChange }: EffectsCardProps) {
+  const [ownView, setOwnView] = useState<EffectsView>('strongest');
+  const view = keptView ?? ownView;
+  const setView = onViewChange ?? setOwnView;
   const [threshold, setThreshold] = useState<number | null>(start);
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState<readonly string[]>([]);
