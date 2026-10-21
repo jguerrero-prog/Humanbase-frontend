@@ -9,12 +9,14 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
-const formats: { format: IllustrationFormat; title: string; text: string; size: string; lines: number }[] = [
-  { format: 'band', title: 'Band', text: 'Runs the full width along a section’s top or bottom edge, or as a thin divider.', size: '1440 × 44 to 186', lines: 4 },
-  { format: 'corner', title: 'Corner', text: 'Sits in one corner of a section and bleeds off both edges.', size: '520 to 620 × 400 to 460', lines: 4 },
-  { format: 'spot', title: 'Spot', text: 'A self-contained piece beside text, such as a How it works card or the top of a blog post.', size: '480 × 360 to 520 × 520', lines: 4 },
-  { format: 'rail', title: 'Vertical rail', text: 'Runs down the side of a long reading page and bleeds off the top and bottom.', size: '240 × 1200', lines: 6 },
-  { format: 'hero', title: 'Hero concept', text: 'For the emerald hero and dark section bands only. The art sits on the right, clear of the headline.', size: '1440 × 421, dark', lines: 2 },
+const diagrams = import.meta.glob<string>('../../assets/formats/*.svg', { eager: true, query: '?url', import: 'default' });
+
+const formats: { format: IllustrationFormat; title: string; text: string; size: string }[] = [
+  { format: 'band', title: 'Band', text: 'Runs the full width along a section’s top or bottom edge, or as a thin divider.', size: '1440 × 44 to 186' },
+  { format: 'corner', title: 'Corner', text: 'Sits in one corner of a section and bleeds off both edges.', size: '520 to 620 × 400 to 460' },
+  { format: 'spot', title: 'Spot', text: 'A self-contained piece beside text, such as a How it works card or the top of a blog post.', size: '480 × 360 to 520 × 520' },
+  { format: 'rail', title: 'Vertical rail', text: 'Runs down the side of a long reading page and bleeds off the top and bottom.', size: '240 × 1200' },
+  { format: 'hero', title: 'Hero concept', text: 'For the emerald hero and dark section bands only. The art sits on the right, clear of the headline.', size: '1440 × 421, dark' },
 ];
 
 const palette = [
@@ -89,14 +91,7 @@ const usage = `import { Illustration } from '@humanbase/ui';
       {
         formats.map((format) => (
           <li>
-            <span class:list={['format-diagram', `format-diagram-${format.format}`]} aria-hidden="true">
-              <span class="format-lines">
-                {Array.from({ length: format.lines }, () => (
-                  <span />
-                ))}
-              </span>
-              <span class="format-art" />
-            </span>
+            <img class="format-diagram" src={diagrams[`../../assets/formats/${format.format}.svg`]} alt="" width="209" height="140" />
             <h3>{format.title}</h3>
             <p>{format.text}</p>
             <code>{format.size}</code>
@@ -274,7 +269,7 @@ const usage = `import { Illustration } from '@humanbase/ui';
   }
 
   .preview-hero {
-    align-content: safe center;
+    grid-template-rows: minmax(0, 1fr);
     aspect-ratio: 631 / 199;
     background: var(--color-emerald-800);
   }
@@ -283,83 +278,15 @@ const usage = `import { Illustration } from '@humanbase/ui';
     block-size: auto;
   }
 
+  .preview-hero :global(img[data-illustration="hero-homepage"]) {
+    block-size: 100%;
+    object-fit: cover;
+    object-position: top right;
+  }
+
   .format-diagram {
-    position: relative;
-    display: block;
-    overflow: hidden;
-    aspect-ratio: 209 / 140;
-    background: var(--surface-page);
-    border: var(--border-width-1) solid var(--border-subtle);
-    border-radius: var(--radius-sm);
-  }
-
-  .format-lines {
-    display: grid;
-    gap: var(--space-2);
-    inline-size: 62%;
-    padding: 28px 0 0 var(--space-3);
-  }
-
-  .format-lines span {
-    block-size: 5px;
-    background: var(--border-subtle);
-  }
-
-  .format-lines span:last-child {
-    inline-size: 70%;
-  }
-
-  .format-art {
-    position: absolute;
-    background: var(--color-emerald-200);
-  }
-
-  .format-diagram-band .format-art {
-    inset: auto 0 0;
-    block-size: 20%;
-  }
-
-  .format-diagram-corner .format-art {
-    inset: 0 0 auto auto;
-    inline-size: 33%;
-    block-size: 38%;
-  }
-
-  .format-diagram-spot .format-art {
-    inset: 22% 10% auto auto;
-    inline-size: 17%;
-    block-size: 25%;
-  }
-
-  .format-diagram-rail .format-lines {
-    inline-size: 76%;
-    padding-inline-start: 24%;
-  }
-
-  .format-diagram-rail .format-art {
-    inset: 0 auto 0 0;
-    inline-size: 10%;
-  }
-
-  .format-diagram-hero {
-    background: var(--color-emerald-800);
-    border-color: var(--color-emerald-800);
-  }
-
-  .format-diagram-hero .format-lines span {
-    inline-size: 52%;
-    block-size: 6px;
-    background: var(--surface-page);
-  }
-
-  .format-diagram-hero .format-lines span:last-child {
-    inline-size: 32%;
-  }
-
-  .format-diagram-hero .format-art {
-    inset: 0 0 0 auto;
-    inline-size: 30%;
-    background: var(--color-emerald-600);
+    inline-size: 100%;
+    block-size: auto;
   }
 
   .palette .swatch {
