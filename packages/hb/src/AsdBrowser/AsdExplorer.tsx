@@ -294,7 +294,7 @@ function RangeHeatmap({ location, rows, selected, byPosition, features }: RangeH
       title={`z-score. Showing the top ${top.length} of ${count.format(named.length)} features, sorted by ${labelOf(selected)}.`}
       summary="One column per variant in the browser’s view, in genomic order; rows sorted by the selected variant."
       scale={zEffects.legend}
-      columns={rows.map((row) => ({ label: count.format(row.position), position: row.position }))}
+      columns={rows.map((row) => ({ label: count.format(row.position), position: row.position, href: GenomeLocation.at(row.chromosome, row.position).ucscUrl }))}
       rows={top.map((feature) => ({ label: featureLabel(feature), values: rows.map((row) => byPosition.get(keyOf(row))?.feature_predictions[feature.idx] ?? null) }))}
       rowHeader="Feature"
       columnHeader="Variant position"

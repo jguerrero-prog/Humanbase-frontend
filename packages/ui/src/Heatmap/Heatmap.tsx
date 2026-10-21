@@ -1,4 +1,6 @@
-import { useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import { Icon } from '../Icon/Icon';
+import { useDismiss } from '../List/useDismiss';
 import { BreakableText } from '../Text/BreakableText';
 import { DataTooltip } from '../Tooltip/DataTooltip';
 import { placeNearPoint } from '../Tooltip/placement';
@@ -10,6 +12,8 @@ export interface HeatmapColumn {
   label: string;
   /** A genome position, drawn on the ruler instead of a rotated label. */
   position?: number;
+  /** This column's place in a genome browser; the pinned tooltip and the table link to it. */
+  href?: string;
 }
 
 /** What a cell's tooltip lists instead of its single value, such as every allele at a position. */
@@ -78,6 +82,23 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   const [active, setActive] = useState<Cell | null>(initialActive ?? null);
   const [focus, setFocus] = useState<Cell>(initialActive ?? [0, 0]);
   const [highlighted, setHighlighted] = useState<number | null>(null);
+  const [pinned, setPinned] = useState(false);
+  const tip = useRef<HTMLDivElement>(null);
+  const unpin = useCallback(() => {
+    setPinned(false);
+    setActive(null);
+  }, []);
+  useDismiss(tip, pinned, unpin);
+  useEffect(() => {
+    if (!pinned) return;
+    const closeOnEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      unpin();
+      plot.current?.querySelector<HTMLElement>(`[data-cell="${focus[0]}-${focus[1]}"]`)?.focus();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [pinned, unpin, focus]);
   const [place, setPlace] = useState<{ x: number; y: number }>();
   const [fits, setFits] = useState(true);
   const [labelWidth, setLabelWidth] = useState(labelWidths.min);
@@ -127,10 +148,17 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
       Home: [row, 0],
       End: [row, columns.length - 1],
     };
-    if (event.key === 'Escape') return setActive(null);
+    if (event.key === 'Escape') return unpin();
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      setActive(focus);
+      return setPinned(true);
+    }
     const target = next[event.key];
     if (!target) return;
     event.preventDefault();
+    setPinned(false);
+    setActive(target);
     setFocus(target);
     plot.current?.querySelector<HTMLElement>(`[data-cell="${target[0]}-${target[1]}"]`)?.focus();
   };
@@ -187,13 +215,17 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
                     color={step === null ? null : scale.color(step)}
                     outlined={highlighted !== null && step === highlighted}
                     aria-label={`${row.label}, ${column ? columnLabel(column) : ''}: ${scale.describe(value, format)}`}
-                    onPointerEnter={() => setActive([r, c])}
-                    onPointerLeave={() => setActive(null)}
+                    onPointerEnter={() => !pinned && setActive([r, c])}
+                    onPointerLeave={() => !pinned && setActive(null)}
                     onFocus={() => {
                       setFocus([r, c]);
-                      setActive([r, c]);
+                      if (!pinned) setActive([r, c]);
                     }}
-                    onBlur={() => setActive(null)}
+                    onBlur={() => !pinned && setActive(null)}
+                    onClick={() => {
+                      setActive([r, c]);
+                      setPinned(true);
+                    }}
                     onKeyDown={move}
                   />
                 );
@@ -210,6 +242,9 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
       </div>
       {active && activeRow && place && (
         <DataTooltip
+          ref={tip}
+          pinned={pinned}
+          {...(activeHeader?.href && { link: { label: 'Open in Genome Browser', href: activeHeader.href } })}
           id={`${id}-tip`}
           title={activeRow.label}
           {...(activeHeader && { subtitle: `${columnHeader} ${columnLabel(activeHeader)}` })}
@@ -229,7 +264,14 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
                 <th scope="col">{rowHeader}</th>
                 {columns.map((column) => (
                   <th scope="col" key={column.label}>
-                    {columnLabel(column)}
+                    {column.href ? (
+                      <a href={column.href} target="_blank" rel="noopener noreferrer">
+                        {columnLabel(column)}
+                        <Icon name="external-link" size={16} label="opens in a new tab" />
+                      </a>
+                    ) : (
+                      columnLabel(column)
+                    )}
                   </th>
                 ))}
               </tr>

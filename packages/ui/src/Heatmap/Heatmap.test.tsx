@@ -37,6 +37,19 @@ describe('Heatmap', () => {
     expect(screen.getByRole('gridcell', { name: 'integument, 150,226,123: Not available' })).toBeInTheDocument();
   });
 
+  it('pins the tooltip on click with a genome browser link, ignores hover until Escape', () => {
+    const linked = { ...props, columns: props.columns.map((column) => ({ ...column, href: `https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:${column.position}` })) };
+    render(<Heatmap {...linked} />);
+    fireEvent.click(screen.getByRole('gridcell', { name: /^nervous system, 150,226,123/ }));
+    const pinned = screen.getByRole('dialog', { name: 'nervous system' });
+    expect(screen.getByRole('link', { name: /Open in Genome Browser/ })).toHaveAttribute('href', 'https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:150226123');
+    fireEvent.pointerEnter(screen.getByRole('gridcell', { name: /^nervous system, 150,226,178/ }));
+    expect(pinned).toHaveTextContent('Position 150,226,123');
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /150,226,178/ })).toHaveLength(1);
+  });
+
   it('moves focus with the arrow keys and shows the tooltip for the focused cell', () => {
     render(<Heatmap {...props} />);
     const first = screen.getByRole('gridcell', { name: /^nervous system, 150,226,123/ });

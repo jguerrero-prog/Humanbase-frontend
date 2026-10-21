@@ -1,4 +1,4 @@
-import { ApiError, useGene, useHumanbase, useTissueVariants, type EffectRow, type GenePosition, type TissueDatabase, type TissueEffects, type TissueVariants } from '@humanbase/data';
+import { ApiError, GenomeLocation, useGene, useHumanbase, useTissueVariants, type EffectRow, type GenePosition, type TissueDatabase, type TissueEffects, type TissueVariants } from '@humanbase/data';
 import { Alert, Button, EmptyState, Heatmap, ResultHeader, saveFile, ScoreScale, SearchField, SegmentedControl, Select, Skeleton, type HeatmapCellDetail, type ScaleSpec, useLinkHref } from '@humanbase/ui';
 import { useMemo } from 'react';
 import { useCopyLink } from '../Jobs/useCopyLink';
@@ -182,7 +182,7 @@ export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: G
             title={`${noun.label} by position`}
             summary={summaryOf(table, rows.length, noun.plural, symbol, strongest)}
             scale={tool.scale satisfies ScaleSpec}
-            columns={table.positions.map((item) => ({ label: `${item.chromosome}:${item.position} ${item.ref}`, position: item.position }))}
+            columns={table.positions.map((item) => ({ label: `${item.chromosome}:${item.position} ${item.ref}`, position: item.position, href: GenomeLocation.at(item.chromosome, item.position).ucscUrl }))}
             rows={rows}
             rowHeader={noun.label.replace(/s$/, '')}
             columnHeader="Position"

@@ -7,6 +7,8 @@ import './VariantEffects.css';
 export interface EffectsHeatmapProps {
   /** The variants in the genome browser's range, one column each. */
   variants: readonly string[];
+  /** Each variant's place in a genome browser, in the same order. */
+  links?: readonly (string | undefined)[] | undefined;
   /** Each experiment's value for each variant, in the same order. */
   rows: readonly { experiment: EffectExperiment; values: readonly (number | null)[] }[];
   /** How many features the score has, such as 232. */
@@ -18,7 +20,7 @@ export interface EffectsHeatmapProps {
   scale?: EffectScale | undefined;
 }
 
-export function EffectsHeatmap({ variants, rows, total, density = 'full', lowestFirst = false, onShowMore, initialActive, scale = zEffects }: EffectsHeatmapProps) {
+export function EffectsHeatmap({ variants, links = [], rows, total, density = 'full', lowestFirst = false, onShowMore, initialActive, scale = zEffects }: EffectsHeatmapProps) {
   const sorted = [...rows].sort((a, b) => (lowestFirst ? -1 : 1) * ((b.values[0] ?? 0) - (a.values[0] ?? 0)));
   const summary = `Showing the top ${sorted.length} of ${total} features for this variant.`;
   return (
@@ -27,7 +29,7 @@ export function EffectsHeatmap({ variants, rows, total, density = 'full', lowest
         title={`${scale.legend.title} of the strongest features for ${variants.join(', ')}`}
         summary={summary}
         scale={scale.legend}
-        columns={variants.map((label) => ({ label }))}
+        columns={variants.map((label, index) => ({ label, ...(links[index] && { href: links[index] }) }))}
         rows={sorted.map(({ experiment, values }) => ({ label: experiment.label, values }))}
         rowHeader="Experiment"
         columnHeader="Variant"

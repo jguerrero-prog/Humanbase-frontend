@@ -60,6 +60,26 @@
   color: var(--color-grey-400);
 }
 
+.data-tooltip-pinned {
+  pointer-events: auto;
+}
+
+.data-tooltip-link {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  font: var(--type-label-sm);
+  color: var(--text-on-brand);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a.data-tooltip-link:focus-visible {
+  outline: none;
+  border-radius: var(--radius-xs);
+  box-shadow: var(--shadow-focus-ring);
+}
+
 .data-tooltip-note {
   margin-inline-start: var(--space-2);
   font: var(--type-caption);
