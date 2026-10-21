@@ -32,6 +32,14 @@ describe('AsdExplorer', () => {
     expect(await screen.findByRole('heading', { name: /^Molecular effects of chr1:2,346,/ }, { timeout: 5000 })).toBeInTheDocument();
   });
 
+  it('keeps the chosen effects tab while stepping to another variant', async () => {
+    renderPage();
+    await userEvent.click(await screen.findByRole('tab', { name: 'Heatmap' }, { timeout: 5000 }));
+    await userEvent.click(screen.getByRole('button', { name: 'Next variant' }));
+    expect(await screen.findByRole('heading', { name: /^Molecular effects of chr1:2,346,/ }, { timeout: 5000 })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Heatmap' })).toHaveAttribute('aria-selected', 'true');
+  });
+
   it('lists every variant in pages of 25, and finds a gene’s variants', async () => {
     renderPage({ view: 'table', set: 'dna' });
     const table = await screen.findByRole('table', { name: 'ASD Browser variants' }, { timeout: 5000 });

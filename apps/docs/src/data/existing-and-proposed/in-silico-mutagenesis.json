@@ -1,0 +1,252 @@
+{
+  "slug": "in-silico-mutagenesis",
+  "title": "In silico mutagenesis",
+  "lead": "Mutates every base of a 2,000 bp sequence with Beluga and shows how each substitution changes one chromatin feature.",
+  "captured": "2026-10-21",
+  "pairs": [
+    {
+      "caption": "Form with the example loaded",
+      "input": "Example FASTA (4 sequences, 2,000 bp each)",
+      "existing": {
+        "url": "https://humanbase.io/ism",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/ism"
+          },
+          {
+            "do": "wait",
+            "ms": 12000
+          },
+          {
+            "do": "click",
+            "text": "Example FASTA submission"
+          },
+          {
+            "do": "wait",
+            "ms": 1500
+          }
+        ],
+        "file": "in-silico-mutagenesis-1-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/ism/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/ism/"
+          },
+          {
+            "do": "wait",
+            "ms": 10000
+          },
+          {
+            "do": "check",
+            "role": "radio",
+            "name": "Use the example"
+          },
+          {
+            "do": "wait",
+            "ms": 1500
+          }
+        ],
+        "file": "in-silico-mutagenesis-1-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Result map for HepG2 / CEBPB on the first sequence",
+      "input": "Job 0576e894-a2c5-48bb-9bdf-227962495d5f, sequence known_CEBP_binding_increase-GtoT__chr1_109816591_109818590, feature 297 HepG2 / CEBPB",
+      "existing": {
+        "url": "https://humanbase.io/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f"
+          },
+          {
+            "do": "wait",
+            "ms": 15000
+          },
+          {
+            "do": "click",
+            "text": "Index: 0 | Cell type: 8988T"
+          },
+          {
+            "do": "type",
+            "text": "CEBPB"
+          },
+          {
+            "do": "click",
+            "text": "Index: 297"
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Submit"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          }
+        ],
+        "file": "in-silico-mutagenesis-2-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          }
+        ],
+        "file": "in-silico-mutagenesis-2-proposed.jpg"
+      }
+    }
+  ],
+  "differences": [
+    {
+      "area": "Genome assembly",
+      "existing": "Hidden field genome_assembly=hg19, no visible choice.",
+      "proposed": "No assembly field for FASTA; the job takes the model's first genome, hg19.",
+      "status": "To confirm",
+      "evidence": "Existing form inputs on /ism; VariantJobForm.tsx:60,102. Ask: does the API use the assembly for FASTA jobs at all?"
+    },
+    {
+      "area": "Example",
+      "existing": "Fills an editable text box with the example sequences.",
+      "proposed": "Shows a file card (example.fasta, 8.2 KB, 4 sequences, 2,000 bp each, ready to run). Not editable; Paste is a separate choice.",
+      "status": "Changed",
+      "evidence": "Both forms after choosing the example option"
+    },
+    {
+      "area": "Sequence length",
+      "existing": "Accepts any length. Warns that shorter sequences are padded with N on both sides and longer ones trimmed to the central 2,000 bp, then lets you submit.",
+      "proposed": "Blocks the run unless every sequence is exactly 2,000 bp.",
+      "status": "Changed",
+      "evidence": "Pasted a 9 bp and a 2,200 bp sequence on both sites; VariantFileCheck.ts:100-110. Ask: should padding and trimming be kept?"
+    },
+    {
+      "area": "Allowed characters",
+      "existing": "Rule says A, T, C, G; lower case becomes upper case. Pasting XYZ or N showed no warning before submit.",
+      "proposed": "Lower case accepted; any other letter, N included, is flagged as not a base and blocks the run.",
+      "status": "Changed",
+      "evidence": "Paste test on both sites; VariantFileCheck.ts:127-129. Ask: does the API accept N?"
+    },
+    {
+      "area": "Problems while pasting",
+      "existing": "Lists each sequence and its length, such as s1 9 bp.",
+      "proposed": "Shows only a count, such as 2 lines need fixing; the per-line list appears only for uploaded files.",
+      "status": "Changed",
+      "evidence": "Paste test on both sites; VariantJobForm.tsx:130 and 142"
+    },
+    {
+      "area": "Example files and help",
+      "existing": "Collapsible Example files box inside the form, with one note covering Sei, Beluga and Seqweaver lengths.",
+      "proposed": "About panel beside the form with a Download link for example.fasta (2,000 bp for Beluga) and the docs link; FASTA rules in an accordion.",
+      "status": "Same function",
+      "evidence": "Both form pages"
+    },
+    {
+      "area": "Newsletter opt-in",
+      "existing": "An Opt-in to stay up to date with our newsletter checkbox appears once an email is typed.",
+      "proposed": "No checkbox on the form; the footer has a separate Release notes by email field.",
+      "status": "Missing",
+      "evidence": "Typed an email on /ism; VariantJobForm.tsx:156"
+    },
+    {
+      "area": "Run button",
+      "existing": "Submit, always active.",
+      "proposed": "Run in silico mutagenesis on 4 sequences; stays inactive until the file passes the checks.",
+      "status": "Changed",
+      "evidence": "Both forms; VariantJobForm.tsx:72 and 158"
+    },
+    {
+      "area": "Job list",
+      "existing": "None seen on the form or result page.",
+      "proposed": "Each started job is saved to this browser's Jobs list with title and sequence count.",
+      "status": "Added",
+      "evidence": "DeepseaForm.tsx:44"
+    },
+    {
+      "area": "Opening a result",
+      "existing": "Opens on feature 0 (8988T / DNase) with no map; you pick a sequence and feature, then press Submit.",
+      "proposed": "Opens straight on HepG2 / CEBPB for the first sequence and reloads as soon as either choice changes.",
+      "status": "Changed",
+      "evidence": "Both result pages for job 0576e894-a2c5-48bb-9bdf-227962495d5f; InsilicoResultView.tsx:19 and 63-67"
+    },
+    {
+      "area": "Feature names",
+      "existing": "Index: 297 | Cell type: HepG2 | Chromatin feature type: CEBPB | Treatment: None.",
+      "proposed": "HepG2 / CEBPB, with treatment in brackets only when there is one; no index, so 297 and 551 both read HepG2 / CEBPB.",
+      "status": "To confirm",
+      "evidence": "Existing feature list filtered by CEBPB; DeepseaResult.ts:119-121. Ask: is a short label fine, or is the index needed to tell duplicates apart?"
+    },
+    {
+      "area": "Sequence names and coordinates",
+      "existing": "Raw FASTA name; the axis shows positions in the sequence only.",
+      "proposed": "Name read as known_CEBP_binding_increase G>T, chr1:109,816,591-109,818,590; the side panel and table add the genome position of each base.",
+      "status": "Added",
+      "evidence": "Both result pages; InsilicoResult.ts:81-88 (relies on the name ending in _chr_start_end)"
+    },
+    {
+      "area": "Colour scale",
+      "existing": "Continuous blue to white to yellow, legend -0.8 to 0.8; cells far past the legend show black.",
+      "proposed": "Seven steps, blue to orange, edges at 0.1, 0.25 and 0.5 either way, words Mutation lowers and Mutation raises.",
+      "status": "To confirm",
+      "evidence": "Both result maps; InsilicoResultView.tsx:20. Ask: where does the live -0.8 to 0.8 come from (the percentile field?) and what does black mean?"
+    },
+    {
+      "area": "Value name",
+      "existing": "Log-fold change.",
+      "proposed": "Log2 fold change.",
+      "status": "To confirm",
+      "evidence": "Both legends. Ask: is the value log2?"
+    },
+    {
+      "area": "Base row order",
+      "existing": "A, G, C, T.",
+      "proposed": "A, C, G, T.",
+      "status": "Changed",
+      "evidence": "Both result maps"
+    },
+    {
+      "area": "Window",
+      "existing": "About 100 bp around position 1,000 (axis 960 to 1040 on screen).",
+      "proposed": "91 bp centred on the strongest substitution (positions 954 to 1,044 here), with a brush on the whole-sequence overview.",
+      "status": "Changed",
+      "evidence": "Both result maps; InsilicoResultView.tsx:15 and 139-142"
+    },
+    {
+      "area": "Reading a value",
+      "existing": "Hover tooltip with the raw value to six decimals, such as -0.059600.",
+      "proposed": "Clicking a position fills a side panel: genome position, reference base and each substitution's value to two decimals.",
+      "status": "Changed",
+      "evidence": "Both result maps"
+    },
+    {
+      "area": "Strongest changes table",
+      "existing": "None.",
+      "proposed": "Top 10 positions with genome position, strongest change, value and a Show button that moves the map there.",
+      "status": "Added",
+      "evidence": "Proposed result page; InsilicoResultView.tsx:167-194"
+    },
+    {
+      "area": "Job header and downloads",
+      "existing": "Tool title and description only, plus Download CSV for the current choice.",
+      "proposed": "Job title, model, sequence count, length, submitted time, Copy link, Rename, Download results (the job's files) and Download CSV.",
+      "status": "Added",
+      "evidence": "Both result pages; InsilicoResultView.tsx:43-60"
+    },
+    {
+      "area": "Result request",
+      "existing": "Asks the API with feature_name=297|HepG2|CEBPB|None.",
+      "proposed": "Asks with feature_name=297. Both returned data.",
+      "status": "To confirm",
+      "evidence": "Network requests on both result pages. Ask: is the index alone the supported form?"
+    }
+  ]
+}

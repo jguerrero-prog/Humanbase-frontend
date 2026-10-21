@@ -1,0 +1,282 @@
+{
+  "slug": "asd-browser",
+  "title": "ASD Browser",
+  "lead": "Browses the predicted effects of de novo noncoding variants from Simons Simplex Collection whole genomes, with disease impact tracks, per-variant molecular effects and a table of every variant.",
+  "captured": "2026-10-21",
+  "pairs": [
+    {
+      "caption": "Default range in the genome browser",
+      "input": "chr1:2,230,000-2,440,000, selected variant chr1:2,337,101 A>C",
+      "existing": {
+        "url": "https://humanbase.io/asdbrowser/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/asdbrowser/"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          }
+        ],
+        "file": "asd-browser-1-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/asd/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/asd/"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "scroll",
+            "selector": "text=Previous variant",
+            "offset": -110
+          }
+        ],
+        "file": "asd-browser-1-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Heatmap with the tooltip on the selected variant, first row",
+      "input": "chr1:2,337,101 A>C, iPS-20b Cell Line / H3K27me3, DNA features",
+      "existing": {
+        "url": "https://humanbase.io/asdbrowser/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/asdbrowser/"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "scroll",
+            "selector": "text=Molecular-level biochemical effects prediction",
+            "offset": -120
+          },
+          {
+            "do": "hover",
+            "text": "2337101 A>C",
+            "offset": {
+              "x": 6,
+              "y": "below label + 16"
+            }
+          }
+        ],
+        "file": "asd-browser-2-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/asd/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/asd/"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "click",
+            "role": "tab",
+            "name": "Heatmap"
+          },
+          {
+            "do": "wait",
+            "ms": 3000
+          },
+          {
+            "do": "scroll",
+            "selector": "text=/^Molecular effects of/",
+            "offset": -90
+          },
+          {
+            "do": "hover",
+            "selector": "[role=gridcell][aria-label*=\"2,337,101\"] >> nth=0"
+          }
+        ],
+        "file": "asd-browser-2-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Table view, first page",
+      "input": "All chromosomes, first page",
+      "existing": {
+        "url": "https://humanbase.io/dis_asd",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/dis_asd"
+          },
+          {
+            "do": "wait",
+            "ms": 15000
+          }
+        ],
+        "file": "asd-browser-3-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/asd/?view=table",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/asd/?view=table"
+          },
+          {
+            "do": "wait",
+            "ms": 15000
+          }
+        ],
+        "file": "asd-browser-3-proposed.jpg"
+      }
+    }
+  ],
+  "differences": [
+    {
+      "area": "Header and variant count",
+      "existing": "Paper title as the heading; text says 127,140 autism proband mutations.",
+      "proposed": "ASD Browser heading with Study, Variants 127,133 (from the API), Genome GRCh37/hg19 and Paper Zhou et al., 2019.",
+      "status": "To confirm",
+      "evidence": "Both pages; the existing table page also says Results: 127133. Ask: which count is right for the headline?"
+    },
+    {
+      "area": "Browser and table switch",
+      "existing": "View as table link opens a separate page, /dis_asd.",
+      "proposed": "Genome browser and Table switch on the same page (?view=table).",
+      "status": "Same function",
+      "evidence": "Both pages; AsdPage.tsx"
+    },
+    {
+      "area": "Finding a place",
+      "existing": "Location box in the browser toolbar; typing CHD8 there did not move the view in our test.",
+      "proposed": "Page search for a gene, region or position with Try examples; CHD8 moved to chr14:21,853,352-21,905,457 and a single position opens a 2 kb window.",
+      "status": "Changed",
+      "evidence": "Both sites; AsdService.ts:86-96. Ask: should the existing toolbar accept gene names?"
+    },
+    {
+      "area": "Zoom",
+      "existing": "Zoom in, zoom out and a slider marked 200bp, 2kb, 50kb, 500kb.",
+      "proposed": "Zoom in, zoom out and four buttons: 200 bp, 2 kb, 50 kb, 500 kb.",
+      "status": "Same function",
+      "evidence": "Both toolbars"
+    },
+    {
+      "area": "Step through variants",
+      "existing": "Double arrow buttons jump to the next or previous feature in the selected track (DNA Disease Impact Score).",
+      "proposed": "Previous variant and Next variant step through the variants in view and change the selected one.",
+      "status": "Same function",
+      "evidence": "Existing button titles; AsdExplorer.tsx:155-158"
+    },
+    {
+      "area": "Track tools",
+      "existing": "Buttons to add a track, configure tracks, export SVG and set options.",
+      "proposed": "None.",
+      "status": "Missing",
+      "evidence": "Existing toolbar button titles; AsdExplorer.tsx:202 (trackActions false)"
+    },
+    {
+      "area": "Disease impact tracks",
+      "existing": "Same S3 files (dis_dna.bw, dis_rna.bw, gencode.bb); axis marks -0.5, 1 and 3.",
+      "proposed": "Same files drawn by our own engine; labelled Model score, -0.4 to 3, with the selected variant's value written on each track (3.43, 4.35).",
+      "status": "To confirm",
+      "evidence": "Network requests on both; AsdExplorer.tsx:39-44. Ask: is the track floor -0.4 or -0.5, and what unit is the score?"
+    },
+    {
+      "area": "Page state in the address",
+      "existing": "Address stays /asdbrowser/ while you move or select.",
+      "proposed": "Location, selected variant, view and feature set are kept in the address, so a view can be shared.",
+      "status": "Added",
+      "evidence": "Proposed URL after Next variant: ?variant=chr1%3A2346202; AsdPage.tsx"
+    },
+    {
+      "area": "Effects views",
+      "existing": "Heatmap (default) and Features tabs, with a DNA or RNA features dropdown.",
+      "proposed": "Strongest effects (default), Heatmap and All features tabs, with the same DNA or RNA choice.",
+      "status": "Changed",
+      "evidence": "Both pages; MolecularEffects.tsx:24-29"
+    },
+    {
+      "area": "Heatmap layout",
+      "existing": "One column per variant, grouped with gaps by position, with rotated labels such as 2337101 A>C.",
+      "proposed": "One equal-width column per variant in genome order, joined to a position axis below; no column labels.",
+      "status": "Changed",
+      "evidence": "Both heatmaps; AsdExplorer.tsx:293-313"
+    },
+    {
+      "area": "Heatmap colours",
+      "existing": "Continuous blue to white to red, -3 to 3, so small values still show as pale tints.",
+      "proposed": "Seven steps; everything from -1 to 1 is one neutral grey, so many cells read as empty.",
+      "status": "To confirm",
+      "evidence": "Both heatmaps; EffectScale.ts:24-32 (edges 1, 2, 3 are placeholders). Ask: what unit and steps should the legend use?"
+    },
+    {
+      "area": "Heatmap controls",
+      "existing": "Search features, Reverse sort, Full or Compact view, and a down arrow below the rows.",
+      "proposed": "None on the range heatmap; search exists only in Strongest effects and All features.",
+      "status": "Missing",
+      "evidence": "Existing heatmap; EffectsCard.tsx:114. The down arrow did not change Showing top 20 in our test, so its purpose is to confirm."
+    },
+    {
+      "area": "Heatmap tooltip",
+      "existing": "Cell-type, Feature-type, Treatment, Position chr1:2337101 A>C, Score 7.1.",
+      "proposed": "Cell type / feature, Variant chr1:2,337,101 A>C, Score 7.11 with past the end of the legend (3); click pins it with Open in Genome Browser (UCSC).",
+      "status": "Changed",
+      "evidence": "Hovered the same cell on both; Heatmap.tsx:269, GenomeLocation.ts:59-61. Treatment is not shown."
+    },
+    {
+      "area": "Choosing a variant from the heatmap",
+      "existing": "Clicking a column label selects that variant and recentres the browser on it (1:2,241,201..2,451,203 for 2346202 G>T).",
+      "proposed": "Clicking a cell only pins the tooltip; the selection changes with Previous or Next variant, or from the table.",
+      "status": "Changed",
+      "evidence": "Clicked a label on the existing page; clicked a cell on the proposed page and the selection stayed chr1:2,337,101"
+    },
+    {
+      "area": "All features view",
+      "existing": "Features tab: every feature's score for the selected variant plotted by rank.",
+      "proposed": "All features tab, drawn with the shared all-features plot.",
+      "status": "Same function",
+      "evidence": "Existing Features tab; EffectsCard.tsx (AllFeaturesPlot). Not compared screen by screen."
+    },
+    {
+      "area": "Table columns",
+      "existing": "CHR, POSITION, Ref, Alt, Proband (check mark), Individual ID, both scores and genes, distance and four junction columns, all shown.",
+      "proposed": "Position (chr:pos), Change, Individual, both scores and genes, distance; the four junction columns hide under Columns. Scores of 1.5 or more are bold; blanks read Not available.",
+      "status": "Changed",
+      "evidence": "Both table pages; AsdParts.tsx:176-216"
+    },
+    {
+      "area": "Proband flag",
+      "existing": "Proband column marks probands (IDs ending p1) apart from siblings (s1).",
+      "proposed": "No Proband column and not offered under Columns.",
+      "status": "Missing",
+      "evidence": "Existing table; AsdVariant.ts:46 lists Proband as shown but AsdParts.tsx never draws it"
+    },
+    {
+      "area": "Table filtering",
+      "existing": "Free-text search on any column or a position; CHD8 gave 3 results.",
+      "proposed": "Chromosome filter and Only the genome browser's range; the page search moves the range instead of filtering text.",
+      "status": "Changed",
+      "evidence": "Searched CHD8 on /dis_asd; AsdParts.tsx:163-166. Ask: is text search across columns needed?"
+    },
+    {
+      "area": "Table to browser",
+      "existing": "Clicking a gene cell did not open the browser in our test.",
+      "proposed": "Each position is a button that opens the browser at that variant.",
+      "status": "Added",
+      "evidence": "Both tables; AsdParts.tsx:196-199"
+    },
+    {
+      "area": "Download data and notice",
+      "existing": "Download data fetches dis_asd.tsv from S3; the data-use notice is plain text.",
+      "proposed": "Download data opens the Downloads page; the notice is a dismissible alert remembered in this browser.",
+      "status": "Changed",
+      "evidence": "Existing link href; AsdExplorer.tsx:119, AsdParts.tsx:54-58"
+    }
+  ]
+}

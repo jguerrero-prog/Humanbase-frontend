@@ -1,0 +1,49 @@
+---
+
+interface Side {
+  url: string;
+  /** The capture's URL; captures are 1440 by 1000. */
+  image: string | undefined;
+}
+
+interface Props {
+  caption: string;
+  input?: string | undefined;
+  existing: Side;
+  proposed: Side;
+}
+
+const { caption, input, existing, proposed } = Astro.props;
+const sides = [
+  { name: 'Existing', site: 'humanbase.io', ...existing },
+  { name: 'Proposed', site: 'the redesign, live API', ...proposed },
+];
+---
+
+<figure class="comparison">
+  <figcaption class="comparison-caption">
+    <span class="comparison-title">{caption}</span>
+    {input && <span class="comparison-input">Input: {input}</span>}
+  </figcaption>
+  <div class="comparison-sides">
+    {
+      sides.map((side) => (
+        <section class="comparison-side" aria-label={`${side.name}: ${caption}`}>
+          <h3>
+            {side.name} <span>{side.site}</span>
+          </h3>
+          {side.image ? (
+            <div class="comparison-shot">
+              <img src={side.image} alt={`${side.name} screen: ${caption}`} width="1440" height="1000" loading="lazy" decoding="async" />
+            </div>
+          ) : (
+            <p class="comparison-missing">No capture yet.</p>
+          )}
+          <a href={side.url} class="comparison-link">
+            Open this screen
+          </a>
+        </section>
+      ))
+    }
+  </div>
+</figure>

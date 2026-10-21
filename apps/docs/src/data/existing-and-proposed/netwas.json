@@ -1,0 +1,283 @@
+{
+  "slug": "netwas",
+  "title": "NetWAS",
+  "lead": "Reranks gene-level GWAS results with a tissue network to find disease genes a p-value cutoff would miss.",
+  "captured": "2026-10-21",
+  "pairs": [
+    {
+      "caption": "The empty upload form",
+      "input": "None",
+      "existing": {
+        "url": "https://humanbase.io/netwas/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/netwas/"
+          },
+          {
+            "do": "wait",
+            "ms": 12000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "wait",
+            "ms": 1000
+          }
+        ],
+        "file": "netwas-1-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/netwas/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/netwas/"
+          },
+          {
+            "do": "wait",
+            "ms": 10000
+          }
+        ],
+        "file": "netwas-1-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Submitting without a file",
+      "input": "No file chosen, then submit (no job is created)",
+      "existing": {
+        "url": "https://humanbase.io/netwas/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/netwas/"
+          },
+          {
+            "do": "wait",
+            "ms": 12000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Submit"
+          },
+          {
+            "do": "wait",
+            "ms": 2000
+          },
+          {
+            "do": "scroll",
+            "text": "Submit a NetWAS analysis"
+          }
+        ],
+        "file": "netwas-2-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/netwas/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/netwas/"
+          },
+          {
+            "do": "wait",
+            "ms": 10000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Run NetWAS"
+          },
+          {
+            "do": "wait",
+            "ms": 2000
+          },
+          {
+            "do": "scroll",
+            "text": "NetWAS",
+            "exact": true,
+            "nth": 1
+          }
+        ],
+        "file": "netwas-2-proposed.jpg"
+      }
+    },
+    {
+      "caption": "A finished job: BMI VEGAS file, adipose tissue, p 0.01",
+      "input": "Job c66b3d05-2f49-4522-b910-1605609e4083",
+      "existing": {
+        "url": "https://humanbase.io/netwas/c66b3d05-2f49-4522-b910-1605609e4083",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/netwas/c66b3d05-2f49-4522-b910-1605609e4083"
+          },
+          {
+            "do": "wait",
+            "ms": 15000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "wait",
+            "ms": 1000
+          }
+        ],
+        "file": "netwas-3-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/netwas/c66b3d05-2f49-4522-b910-1605609e4083/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/netwas/c66b3d05-2f49-4522-b910-1605609e4083/"
+          },
+          {
+            "do": "wait",
+            "ms": 15000
+          }
+        ],
+        "file": "netwas-3-proposed.jpg"
+      }
+    }
+  ],
+  "differences": [
+    {
+      "area": "Network version",
+      "existing": "Select locked to GIANT; help says MAGE is coming soon",
+      "proposed": "GIANT or MAGE; MAGE runs as MAGE-WAS",
+      "status": "To confirm",
+      "evidence": "Disabled #formControlsVersion and its help text; NetwasForm.tsx toolOf. Ask whether MAGE-WAS is ready to offer"
+    },
+    {
+      "area": "MHC region",
+      "existing": "Not shown",
+      "proposed": "Exclude or Keep, only with MAGE",
+      "status": "Added",
+      "evidence": "Chose MAGE on the proposed form; NetwasForm.tsx:45"
+    },
+    {
+      "area": "Field order",
+      "existing": "Version, file, tissue, p-value, email, title",
+      "proposed": "Version, tissue, file, p-value, title, email",
+      "status": "Changed",
+      "evidence": "netwas-1 captures"
+    },
+    {
+      "area": "Example files",
+      "existing": "Collapsible Example files list with VEGAS, MAGMA and 2-column downloads",
+      "proposed": "Use the example loads the BMI VEGAS file and sets Adipose tissue; downloads sit in the About panel",
+      "status": "Added",
+      "evidence": "Clicked Use the example: 17,692 genes, Adipose tissue"
+    },
+    {
+      "area": "File upload",
+      "existing": "Plain file input with no type filter; help says max 3 MB and formats are detected",
+      "proposed": "Drop zone for .txt, .csv, .tsv or .out under 3 MB; reads the file first and shows gene count, format and bad lines",
+      "status": "Changed",
+      "evidence": "Existing input has no accept attribute; NetwasForm.tsx:232, GwasFileCheck.ts:23-38"
+    },
+    {
+      "area": "Tissue",
+      "existing": "Starts on global (i.e., not tissue specific), then the tissue list",
+      "proposed": "Starts on Global, then the tissue list",
+      "status": "Same function",
+      "evidence": "Both forms"
+    },
+    {
+      "area": "p-value threshold",
+      "existing": "0.01; help says at least 10 genes must fall below it",
+      "proposed": "0.01; must be between 0 and 1, and blocks only when no gene is below it",
+      "status": "To confirm",
+      "evidence": "Existing help text; NetwasForm.tsx:94. Ask where the 10-gene minimum is enforced"
+    },
+    {
+      "area": "Newsletter",
+      "existing": "Newsletter opt-in checkbox appears once an email is typed",
+      "proposed": "No opt-in",
+      "status": "Missing",
+      "evidence": "input[name=signup] became visible after typing an email"
+    },
+    {
+      "area": "Missing file error",
+      "existing": "Red label and Please select a GWAS file as input.",
+      "proposed": "Error summary at the top, error on the drop zone and a link to use the example",
+      "status": "Same function",
+      "evidence": "netwas-2 captures; no job was sent"
+    },
+    {
+      "area": "Submit button",
+      "existing": "Submit",
+      "proposed": "Run NetWAS, then Run NetWAS on 17,692 genes once a file is ready",
+      "status": "Same function",
+      "evidence": "Both forms"
+    },
+    {
+      "area": "Job page",
+      "existing": "/netwas/<id> shows the form again with a Recent NetWAS jobs panel",
+      "proposed": "/netwas/<id>/ is its own result page under Jobs",
+      "status": "Changed",
+      "evidence": "netwas-3 captures"
+    },
+    {
+      "area": "Results",
+      "existing": "No table on the page; results.txt opens the raw file",
+      "proposed": "Ranked gene table with All genes, New candidates and GWAS hits, Find a gene, score bars and 25 more at a time",
+      "status": "Added",
+      "evidence": "netwas-3 captures; NetwasGenes.tsx:17,35"
+    },
+    {
+      "area": "Links to Networks",
+      "existing": "None",
+      "proposed": "Open in Networks on each gene, in the job's tissue",
+      "status": "Added",
+      "evidence": "netwas-3 proposed capture"
+    },
+    {
+      "area": "Log and uploaded file",
+      "existing": "Details link to log.txt and the uploaded bmi-vegas.txt",
+      "proposed": "File name as text; log link only on failed jobs",
+      "status": "Missing",
+      "evidence": "Existing links point to S3; NetwasJobView.tsx:116,201"
+    },
+    {
+      "area": "Recent jobs",
+      "existing": "Recent NetWAS jobs dropdown with Clear all jobs, NetWAS only",
+      "proposed": "Jobs menu and /jobs page for all tools",
+      "status": "Changed",
+      "evidence": "netwas-3 existing capture; JobHistory in NetwasForm.tsx"
+    },
+    {
+      "area": "Reading the result",
+      "existing": "None",
+      "proposed": "How to read this panel with a score legend and a citation to copy",
+      "status": "Added",
+      "evidence": "netwas-3 proposed capture"
+    },
+    {
+      "area": "Job actions",
+      "existing": "None",
+      "proposed": "Rename, Copy link, Download result file",
+      "status": "Added",
+      "evidence": "netwas-3 proposed capture"
+    },
+    {
+      "area": "Running and failed jobs",
+      "existing": "Status box (Completed seen); running and failed states not seen",
+      "proposed": "Steps with elapsed time; failed jobs offer Edit and resubmit",
+      "status": "To confirm",
+      "evidence": "NetwasJobView.tsx stepsOf and failed actions. Ask what the existing page shows while a job runs or fails"
+    }
+  ]
+}

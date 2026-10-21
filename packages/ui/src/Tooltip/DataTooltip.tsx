@@ -25,6 +25,7 @@ export interface DataTooltipProps {
 export function DataTooltip({ title, subtitle, rows, hint, link, pinned = false, ref, onPointerEnter, onPointerLeave, id, position, className }: DataTooltipProps) {
   const style = position ? ({ '--data-tooltip-x': `${position.x}px`, '--data-tooltip-y': `${position.y}px` } as CSSProperties) : undefined;
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- mousedown only keeps focus in place; the link inside is the control
     <div
       ref={ref}
       id={id}
@@ -34,6 +35,8 @@ export function DataTooltip({ title, subtitle, rows, hint, link, pinned = false,
       style={style}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
+      // Safari moves focus off the page's content on mousedown, which would close a pinned tooltip before its link's click.
+      onMouseDown={pinned || link ? (event) => event.preventDefault() : undefined}
     >
       <p className="data-tooltip-title">
         <BreakableText>{title}</BreakableText>
