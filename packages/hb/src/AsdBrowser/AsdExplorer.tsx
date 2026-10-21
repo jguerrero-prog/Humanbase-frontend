@@ -3,7 +3,7 @@ import {
   type AsdFeatureSet, type AsdVariantRow, type FeaturePredictionRecord, type FeaturesRecord,
 } from '@humanbase/data';
 import { defaultGenomeEngine, GenomeEngineView, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
-import { Alert, GenomeBrowserToolbar, Heatmap, ResultLayout, Skeleton, asdEffects, type EffectScale } from '@humanbase/ui';
+import { Alert, GenomeBrowserToolbar, Heatmap, ResultLayout, Skeleton, asdEffects, type EffectScale, type EffectsView } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 import { EffectsCard } from '../Deepsea/EffectsCard';
 import { AsdHeader, AsdVariantTable, type AsdView } from './AsdParts';
@@ -142,6 +142,8 @@ interface BrowserViewProps {
 
 function BrowserView({ engine, location, state, onStateChange, onLocation, locationError, searchedGene }: BrowserViewProps) {
   const { showsSamples, genomeTracks } = useHumanbase();
+  // The effects tab stays as the browser moves and the variants below reload.
+  const [effectsView, setEffectsView] = useState<EffectsView>('strongest');
   const [engineStatus, setEngineStatus] = useState<{ status: EngineStatus; error?: Error | undefined }>({ status: 'loading' });
   const region = useMemo(() => ({ chrom: location.chrom, start: location.start, end: location.end }), [location]);
   const onRegionChange = (moved: GenomeRegion) => onStateChange({ location: new GenomeLocation(moved.chrom, moved.start, moved.end).format() });
@@ -179,7 +181,7 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
         <p className="asd-browser-note">
           {count.format(rows.length)} variants in view; the selected one, {labelOf(selected)}, is drawn in ink. Previous variant and Next variant step through them, and the Table view lists them all.
         </p>
-        <VariantEffects key={`${keyOf(selected)}-${state.set}`} location={location} rows={rows} selected={selected} set={state.set} onSetChange={(set) => onStateChange({ set })} />
+        <VariantEffects key={`${keyOf(selected)}-${state.set}`} location={location} rows={rows} selected={selected} set={state.set} onSetChange={(set) => onStateChange({ set })} view={effectsView} onViewChange={setEffectsView} />
       </>
     );
   }
@@ -231,11 +233,13 @@ interface VariantEffectsProps {
   selected: AsdVariantRow;
   set: AsdFeatureSet;
   onSetChange: (set: AsdFeatureSet) => void;
+  view: EffectsView;
+  onViewChange: (view: EffectsView) => void;
 }
 
 const positionKey = (record: Pick<FeaturePredictionRecord, 'chromosome' | 'position'>) => `${record.chromosome.startsWith('chr') ? record.chromosome : `chr${record.chromosome}`}:${record.position}`;
 
-function VariantEffects({ location, rows, selected, set, onSetChange }: VariantEffectsProps) {
+function VariantEffects({ location, rows, selected, set, onSetChange, view, onViewChange }: VariantEffectsProps) {
   const { showsSamples } = useHumanbase();
   const { features, predictions } = useAsdEffects(location, set);
   const byPosition = useMemo(() => new Map((predictions.data ?? []).map((record) => [positionKey(record), record])), [predictions.data]);
@@ -267,6 +271,8 @@ function VariantEffects({ location, rows, selected, set, onSetChange }: VariantE
       featurePlural={`${noun}s`}
       verb=""
       choice={{ label: 'Features', options: featureSets, value: set, onChange: (value) => onSetChange(value as AsdFeatureSet), name: 'Score' }}
+      view={view}
+      onViewChange={onViewChange}
       heatmap={features.data && <RangeHeatmap location={location} rows={rows} selected={selected} byPosition={byPosition} features={features.data} scale={scale} />}
     />
   );
