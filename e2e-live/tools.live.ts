@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { downloadFrom } from '../e2e/downloads';
 import { checkScreen, watch, web } from './live';
 
 test('the Modules renal panel result shows real modules, a module drawer and the Genes tab', async ({ page }) => {
@@ -39,6 +40,24 @@ test('the Modules search matches the renal disease panel', async ({ page }) => {
   await page.goto(`${web}/modules/`);
   await page.getByRole('button', { name: 'renal disease panel' }).click();
   await expect(page.getByText(/^\d+ matched$/)).toBeVisible();
+  await checkScreen(page, problems);
+});
+
+test('the Modules Download menu saves the real result as TSV, PDF and ZIP', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9`);
+  await expect(page.getByText(/Showing \d+ enriched modules/)).toBeVisible();
+  const tsv = await downloadFrom(page, 'Download', 'Download as TSV');
+  expect(tsv.name).toMatch(/^kidney_gene-ontology-bp_\d+\.tsv$/);
+  const rows = tsv.bytes.toString().split('\n');
+  expect(rows[0]).toMatch(/^GO_VERSION\t\S+/);
+  const terms = rows.indexOf('CLUSTER_NAME\tTERM_NAME\tGO_ID\tTERM_Q_VALUE\tGENE_COUNT\tTERM_GENES');
+  expect(rows[terms + 1]).toMatch(/^M\d+\t.+\tGO:\d{7}\t[\d.e-]+\t\d+\t[\w-]+(,[\w-]+)*$/);
+  expect(rows).toContain('SOURCE\tTARGET\tWEIGHT\t\t\t');
+  const pdf = await downloadFrom(page, 'Download', 'Download as PDF');
+  expect(pdf.bytes.subarray(0, 4).toString()).toBe('%PDF');
+  const zip = await downloadFrom(page, 'Download', 'Download as ZIP');
+  expect(zip.bytes.subarray(0, 2).toString()).toBe('PK');
   await checkScreen(page, problems);
 });
 

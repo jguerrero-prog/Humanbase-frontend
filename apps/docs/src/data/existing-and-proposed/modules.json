@@ -296,9 +296,9 @@
     {
       "area": "Downloads",
       "existing": "Download menu: TSV, PNG, SVG, PDF, ZIP",
-      "proposed": "Download (modules TSV), graph SVG in the toolbar, one module TSV in the drawer",
-      "status": "Missing",
-      "evidence": "Existing Download menu; ModuleResultView.tsx:56,72. PNG, PDF and ZIP are not offered"
+      "proposed": "Download menu: TSV, PNG, SVG, PDF, ZIP, with the same file names; one module TSV in the drawer",
+      "status": "Same function",
+      "evidence": "Downloaded each format on both sites for the renal panel; the TSV matches line for line apart from the date. moduleExport.ts"
     },
     {
       "area": "Find a gene",

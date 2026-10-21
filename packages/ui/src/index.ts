@@ -36,7 +36,7 @@ export { Icon, iconNames, type IconName, type IconSize } from './Icon/Icon';
 export { Illustration, type IllustrationProps } from './Illustration/Illustration';
 export { illustrationNames, illustrations, type IllustrationEntry, type IllustrationFormat, type IllustrationName } from './Illustration/illustrations';
 export { ListNavigator, type NavigableOption } from './List/ListNavigator';
-export { Logo } from './Logo/Logo';
+export { Logo, logoUrl } from './Logo/Logo';
 export { MenuDivider, MenuGroupLabel, MenuItem, MenuPanel, type MenuItemProps } from './Menu/Menu';
 export { RadioGroup, type RadioGroupProps, type RadioOption } from './RadioGroup/RadioGroup';
 export { SegmentedControl, type Segment, type SegmentedControlProps } from './SegmentedControl/SegmentedControl';
@@ -94,6 +94,7 @@ export type { NavGroup, NavItemState, NavLink, NavSection } from './Navigation/t
 export { DataTooltip, type DataTooltipProps } from './Tooltip/DataTooltip';
 export { anchorSupported, placeNearPoint, placeUnder, type Placement } from './Tooltip/placement';
 export { saveFile } from './utils/saveFile';
+export { bytesOf, cssColor, svgToPng, useExportMenu, useImageFormats, zipFormat, type ExportFormat, type SvgSource } from './utils/exportFiles';
 export { standaloneSvg } from './utils/standaloneSvg';
 export { StoredChoice } from './utils/StoredChoice';
 export { Toggletip, type ToggletipProps } from './Tooltip/Toggletip';
