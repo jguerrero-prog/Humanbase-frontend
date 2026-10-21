@@ -1,6 +1,6 @@
 import { GenomeLocation, type FeatureEffect } from '@humanbase/data';
 import { expressionEffects, zEffects } from '@humanbase/ui';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EffectsCard, type EffectsCardProps } from './EffectsCard';
 
@@ -64,6 +64,38 @@ describe('EffectsCard', () => {
     expect(document.querySelector('.heatmap-selected-column')).toHaveStyle({ '--heatmap-at': '1' });
     await userEvent.click(screen.getByRole('checkbox', { name: 'Lowest first' }));
     expect(rowLabels()).toEqual(['K562 / LIN28A', 'K562 / QKI', 'K562 / AGO']);
+  });
+
+  it('keeps one variant per 15px slot in Compact view, the center one or else the higher variant score, as humanbase.io does', async () => {
+    const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(150);
+    // Ten slots of 5 kb across chr1:109,792,590-109,842,590.
+    const near = [{ ...at(109_793_000, [1, 1, 1]), score: 0.2 }, { ...at(109_794_000, [2, 2, 2]), score: 0.9 }, { ...at(109_817_590, [1, -5, 3]), score: 0.1 }, { ...at(109_818_000, [3, 3, 3]), score: 2 }];
+    renderCard({ effects: near[2]?.effects ?? [], inView: { location: new GenomeLocation('chr1', 109_792_590, 109_842_590), variants: near, selected: 2 }, view: 'heatmap' });
+    const columns = () => within(screen.getAllByRole('row')[0] as HTMLElement).getAllByRole('gridcell').length;
+    expect(columns()).toBe(4);
+    await userEvent.click(screen.getByRole('radio', { name: 'Compact' }));
+    expect(columns()).toBe(2);
+    expect(screen.getAllByRole('gridcell', { name: /chr1:109,794,000 G>T/ })).toHaveLength(3);
+    expect(screen.queryAllByRole('gridcell', { name: /chr1:109,818,000 G>T/ })).toHaveLength(0);
+    width.mockRestore();
+  });
+
+  it('centers on a variant when its column is clicked, and moves the view when the cells are dragged', async () => {
+    const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1000);
+    const onSelect = vi.fn();
+    const onMove = vi.fn();
+    renderCard({ effects: variants[1]?.effects ?? [], inView: { location: new GenomeLocation('chr1', 109_792_590, 109_842_590), variants, selected: 1, onSelect, onMove }, view: 'heatmap' });
+    expect(screen.queryByRole('button', { name: 'Center on chr1:109,817,590 G>T' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Center on chr1:109,830,000 G>T' }));
+    expect(onSelect).toHaveBeenCalledWith('chr1-109830000-G-T');
+    const grid = screen.getByRole('grid');
+    fireEvent.pointerDown(grid, { button: 0, buttons: 1, clientX: 500 });
+    fireEvent.pointerMove(grid, { buttons: 1, clientX: 480 });
+    fireEvent.pointerMove(grid, { buttons: 1, clientX: 300 });
+    fireEvent.pointerUp(grid);
+    // 50 kb across 1,000px: a 20px drag to the left moves the view 1 kb to the right; a jump over 100px is ignored, as on humanbase.io.
+    expect(onMove.mock.calls).toEqual([[1_000]]);
+    width.mockRestore();
   });
 
   it('starts from the smallest values for a score humanbase.io marks reverse_order, such as e-value', () => {

@@ -147,6 +147,11 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
     const next = rows?.[index + by];
     if (next) onStateChange({ variant: keyOf(next) });
   };
+  // As on humanbase.io, clicking a heatmap column selects that variant and centers the browser on it at the same width.
+  const center = (key: string) => {
+    const row = rows?.find((one) => keyOf(one) === key);
+    if (row) onStateChange({ variant: key, location: new GenomeLocation(row.chromosome, row.position, row.position).withWidth(location.width).format() });
+  };
   const zoomStop = (GenomeLocation.zoomStops as readonly number[]).includes(location.width) ? location.width : undefined;
 
   let body;
@@ -172,7 +177,7 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
         <p className="asd-browser-note">
           {count.format(rows.length)} variants in view; the selected one, {labelOf(selected)}, is drawn in ink. Previous variant and Next variant step through them, and the Table view lists them all.
         </p>
-        <VariantEffects key={`${keyOf(selected)}-${state.set}`} location={location} rows={rows} selected={selected} set={state.set} onSetChange={(set) => onStateChange({ set })} view={effectsView} onViewChange={setEffectsView} />
+        <VariantEffects key={`${keyOf(selected)}-${state.set}`} location={location} rows={rows} selected={selected} set={state.set} onSetChange={(set) => onStateChange({ set })} view={effectsView} onViewChange={setEffectsView} onSelect={center} onMove={(bases) => move(location.move(bases / location.width))} />
       </>
     );
   }
@@ -226,11 +231,13 @@ interface VariantEffectsProps {
   onSetChange: (set: AsdFeatureSet) => void;
   view: EffectsView;
   onViewChange: (view: EffectsView) => void;
+  onSelect: (key: string) => void;
+  onMove: (bases: number) => void;
 }
 
 const positionKey = (record: Pick<FeaturePredictionRecord, 'chromosome' | 'position'>) => `${record.chromosome.startsWith('chr') ? record.chromosome : `chr${record.chromosome}`}:${record.position}`;
 
-function VariantEffects({ location, rows, selected, set, onSetChange, view, onViewChange }: VariantEffectsProps) {
+function VariantEffects({ location, rows, selected, set, onSetChange, view, onViewChange, onSelect, onMove }: VariantEffectsProps) {
   const { showsSamples } = useHumanbase();
   const { features, predictions } = useAsdEffects(location, set);
   const byPosition = useMemo(() => new Map((predictions.data ?? []).map((record) => [positionKey(record), record])), [predictions.data]);
@@ -273,7 +280,7 @@ function VariantEffects({ location, rows, selected, set, onSetChange, view, onVi
       choice={{ label: 'Features', options: featureSets, value: set, onChange: (value) => onSetChange(value as AsdFeatureSet), name: 'Score' }}
       view={view}
       onViewChange={onViewChange}
-      inView={{ location, variants, selected: index }}
+      inView={{ location, variants, selected: index, onSelect, onMove }}
     />
   );
 }

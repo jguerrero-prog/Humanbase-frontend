@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
 import { Icon } from '../Icon/Icon';
 import { useDismiss } from '../List/useDismiss';
 import { BreakableText } from '../Text/BreakableText';
@@ -59,6 +59,10 @@ export interface HeatmapProps {
   columnWidth?: 'full' | 'auto' | 'narrow' | undefined;
   /** The center variant's column, outlined in ink, with a darker line to its position. */
   selectedColumn?: number | undefined;
+  /** Makes each column's line to the ruler a button, such as one that centers the genome browser on that variant. */
+  onColumnSelect?: ((column: number) => void) | undefined;
+  /** Dragging across the cells reports each move's horizontal change in pixels; a drag never pins a tooltip. */
+  onDrag?: ((dx: number) => void) | undefined;
 }
 
 type Cell = readonly [number, number];
@@ -68,6 +72,7 @@ const cellWidth = 34;
 const narrowWidth = 8;
 const labelEvery = 20;
 const hoverGrace = 300;
+const dragStart = 4;
 const switchDelay = 150;
 const labelWidths = { min: 160, max: 360, share: 0.4 };
 
@@ -82,7 +87,8 @@ function labelColumn(box: HTMLElement, labels: readonly string[]) {
   return Math.max(labelWidths.min, Math.min(widest, labelWidths.max, Math.floor(box.clientWidth * labelWidths.share)));
 }
 
-export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', valueLabel, showValues = false, columnWidth = 'full', selectedColumn }: HeatmapProps) {
+export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', valueLabel, showValues = false, columnWidth = 'full', selectedColumn, onColumnSelect, onDrag }: HeatmapProps) {
+  const dragging = useRef<{ x: number; moved: boolean }>(undefined);
   const id = useId();
   const scale = useMemo(() => new ScoreScale(spec), [spec]);
   const plot = useRef<HTMLDivElement>(null);
@@ -217,7 +223,38 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
             ))}
           </div>
         )}
-        <div role="grid" aria-label={title} className="heatmap-grid">
+        <div
+          role="grid"
+          aria-label={title}
+          className={onDrag ? 'heatmap-grid heatmap-draggable' : 'heatmap-grid'}
+          {...(onDrag && {
+            onPointerDown: (event: PointerEvent<HTMLDivElement>) => {
+              if (event.button === 0) dragging.current = { x: event.clientX, moved: false };
+            },
+            onPointerMove: (event: PointerEvent<HTMLDivElement>) => {
+              const drag = dragging.current;
+              if (!drag) return;
+              if (!(event.buttons & 1)) {
+                dragging.current = undefined;
+                return;
+              }
+              const dx = event.clientX - drag.x;
+              if (!drag.moved && Math.abs(dx) < dragStart) return;
+              if (!drag.moved) event.currentTarget.setPointerCapture?.(event.pointerId);
+              drag.moved = true;
+              drag.x = event.clientX;
+              onDrag(dx);
+            },
+            onPointerUp: () => {
+              if (!dragging.current?.moved) dragging.current = undefined;
+            },
+            // A drag ends in a click on the cell under the pointer; it shouldn't pin that cell's tooltip.
+            onClickCapture: (event: MouseEvent<HTMLDivElement>) => {
+              if (dragging.current?.moved) event.stopPropagation();
+              dragging.current = undefined;
+            },
+          })}
+        >
           {selectedColumn !== undefined && selectedColumn >= 0 && <span className="heatmap-selected-column" aria-hidden="true" style={{ '--heatmap-at': selectedColumn } as CSSProperties} />}
           {rows.map((row, r) => (
             <div role="row" key={row.label} className="heatmap-row">
@@ -261,7 +298,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
             </div>
           ))}
         </div>
-        {axis && !narrow && <PositionAxis axis={axis} columns={columns} active={activeColumn} selected={selectedColumn} />}
+        {axis && !narrow && <PositionAxis axis={axis} columns={columns} active={activeColumn} selected={selectedColumn} onSelect={onColumnSelect} columnName={columnName} />}
       </div>
       {active && activeRow && place && (
         <DataTooltip
@@ -323,18 +360,42 @@ interface PositionAxisProps {
   columns: readonly HeatmapColumn[];
   active: number | undefined;
   selected: number | undefined;
+  onSelect: ((column: number) => void) | undefined;
+  columnName: (column: HeatmapColumn) => string;
 }
 
-// A ruler of short offsets, with a line from each column to its position.
-function PositionAxis({ axis, columns, active, selected }: PositionAxisProps) {
+// A ruler of short offsets, with a line from each column to its position; with onSelect, each line is a button.
+function PositionAxis({ axis, columns, active: hovered, selected, onSelect, columnName }: PositionAxisProps) {
+  const [picking, setPicking] = useState<number>();
+  const active = picking ?? hovered;
   const width = columns.length * (cellWidth + 1) - 1;
   const first = axis.ticks[0] ?? 0;
   const last = axis.ticks.at(-1) ?? 1;
   const x = (offset: number) => ((offset - first) / (last - first)) * width;
   const activePosition = active === undefined ? undefined : columns[active]?.position;
   return (
-    <div className="heatmap-axis" aria-hidden="true">
-      <svg width={width} height="64" viewBox={`0 0 ${width} 64`}>
+    <div className="heatmap-axis">
+      {onSelect && (
+        <div className="heatmap-axis-picks">
+          {columns.map((column, index) =>
+            index === selected ? null : (
+              <button
+                key={column.label}
+                type="button"
+                className="heatmap-axis-pick"
+                style={{ '--heatmap-at': index } as CSSProperties}
+                aria-label={`Center on ${columnName(column)}`}
+                onClick={() => onSelect(index)}
+                onPointerEnter={() => setPicking(index)}
+                onPointerLeave={() => setPicking(undefined)}
+                onFocus={() => setPicking(index)}
+                onBlur={() => setPicking(undefined)}
+              />
+            ),
+          )}
+        </div>
+      )}
+      <svg width={width} height="64" viewBox={`0 0 ${width} 64`} aria-hidden="true">
         {columns.map((column, index) => {
           const position = column.position === undefined ? first : x(column.position - axis.offset);
           return <line key={column.label} className={index === active || index === selected ? 'connector connector-active' : 'connector'} x1={index * (cellWidth + 1) + cellWidth / 2} y1="0" x2={position} y2="28" />;
@@ -351,11 +412,11 @@ function PositionAxis({ axis, columns, active, selected }: PositionAxisProps) {
         ))}
       </svg>
       {activePosition !== undefined && (
-        <span className="heatmap-axis-pill" style={{ insetInlineStart: `${x(activePosition - axis.offset)}px` } as CSSProperties}>
+        <span className="heatmap-axis-pill" aria-hidden="true" style={{ insetInlineStart: `${x(activePosition - axis.offset)}px` } as CSSProperties}>
           {counts.format(activePosition)}
         </span>
       )}
-      <p className="heatmap-axis-title">
+      <p className="heatmap-axis-title" aria-hidden="true">
         {axis.title}: {counts.format(axis.offset)} +
       </p>
     </div>

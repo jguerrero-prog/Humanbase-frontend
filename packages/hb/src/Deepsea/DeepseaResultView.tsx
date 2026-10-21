@@ -1,4 +1,4 @@
-import { featureEffects, GenomeLocation, useDeepseaVariants, useViewPredictions, variantIdOf, variantScoreTypes, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
+import { featureEffects, GenomeLocation, useDeepseaVariants, useHumanbase, useViewPredictions, variantIdOf, variantScoreTypes, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
 import {
   ActionMenu,
   Alert,
@@ -40,8 +40,8 @@ export interface DeepseaResultViewProps {
 
 const tableLabels: Record<string, string> = { dis: 'Disease impact', 'mean-evalue': 'Mean −log e', seqclass: 'Max class score' };
 const shownRows = 9;
-// The design centers the browser on the selected variant at 50 kb.
-const startWidth = 50_000;
+// As on humanbase.io, the browser opens on the selected variant with 50 kb either side.
+const startWidth = 100_000;
 const number = new Intl.NumberFormat('en-US');
 
 function effectScaleOf(model: DeepseaJob['model']): EffectScale {
@@ -55,6 +55,7 @@ const matches = (variant: VariantRow, text: string) => `${variantLabel(variant)}
 /** A finished Sei, Beluga or Seqweaver job: variant scores as a plot and table, then the selected variant's molecular effects. */
 export function DeepseaResultView({ job, title, tools, variant: chosen, onVariantChange }: DeepseaResultViewProps) {
   const model = job.model;
+  const { showsSamples } = useHumanbase();
   const { scoreTypes, variants, error, refetch } = useDeepseaVariants(job);
   const variantTypes = variantScoreTypes(model, scoreTypes ?? []);
   const featureTypes = (scoreTypes ?? []).filter((type) => type.level === 'FEATURE');
@@ -223,6 +224,9 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
               featureTypes={featureTypes}
               type={featureType}
               onTypeChange={setFeatureKey}
+              scoreKey={score.short_name}
+              onSelect={select}
+              {...(!showsSamples && { onMove: (bases: number) => browse(location.move(bases / location.width)) })}
               view={effectsView}
               onViewChange={setEffectsView}
             />
@@ -243,12 +247,17 @@ interface VariantEffectsCardProps {
   featureTypes: readonly ScoreType[];
   type: ScoreType;
   onTypeChange: (key: string) => void;
+  /** The page's variant score, which picks the variant a Compact heatmap column keeps. */
+  scoreKey: string;
+  onSelect: (id: string) => void;
+  /** Moves the genome browser; left out when no browser is shown. */
+  onMove?: ((bases: number) => void) | undefined;
   view: EffectsView;
   onViewChange: (view: EffectsView) => void;
 }
 
 /** The selected variant's effect on every feature, and every variant in the genome browser's view on the Heatmap tab, for the chosen feature-level score. */
-function VariantEffectsCard({ job, variant, variants, location, predictions: { features, predictions, error, refetch }, featureTypes, type, onTypeChange, view, onViewChange }: VariantEffectsCardProps) {
+function VariantEffectsCard({ job, variant, variants, location, predictions: { features, predictions, error, refetch }, featureTypes, type, onTypeChange, scoreKey, onSelect, onMove, view, onViewChange }: VariantEffectsCardProps) {
   const model = job.model;
   const label = variantLabel(variant);
   const byId = useMemo(() => new Map(variants.map((row) => [row.id, row])), [variants]);
@@ -257,9 +266,9 @@ function VariantEffectsCard({ job, variant, variants, location, predictions: { f
       (predictions ?? []).flatMap((record) => {
         const row = byId.get(variantIdOf(record));
         if (!row) return [];
-        return [{ key: row.id, name: variantLabel(row), position: row.position, href: GenomeLocation.at(row.chromosome, row.position, job.assembly).ucscUrl, effects: features ? featureEffects(record, features) : undefined }];
+        return [{ key: row.id, name: variantLabel(row), position: row.position, href: GenomeLocation.at(row.chromosome, row.position, job.assembly).ucscUrl, effects: features ? featureEffects(record, features) : undefined, score: row.scores[scoreKey] }];
       }),
-    [predictions, features, byId, job.assembly],
+    [predictions, features, byId, job.assembly, scoreKey],
   );
   const selected = inView.findIndex((item) => item.key === variant.id);
   if (predictions && selected === -1) {
@@ -274,7 +283,7 @@ function VariantEffectsCard({ job, variant, variants, location, predictions: { f
       label={label}
       view={view}
       onViewChange={onViewChange}
-      inView={{ location, variants: inView, selected }}
+      inView={{ location, variants: inView, selected, onSelect, onMove }}
       reverseOrder={type.reverse_order}
       effects={inView[selected]?.effects}
       failed={Boolean(error)}

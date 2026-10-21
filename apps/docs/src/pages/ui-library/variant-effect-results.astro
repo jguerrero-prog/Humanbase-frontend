@@ -117,7 +117,8 @@ const behavior = [
   ['Selection drives the page', 'Clicking a variant in the plot or table, or Previous and Next, moves the genome browser and both effect views. On load the first variant by genome position is selected, as today (chr1:109,817,590 in the example).'],
   ['Plot and table', 'Hovering one highlights the other; sorting the table never changes the plot.'],
   ['Score switches', 'Changing the variant score redraws the plot and re-sorts the table; changing the heatmap score keeps the selected rows in view.'],
-  ['Effects views', 'Strongest effects opens first with one variant in range; Heatmap opens first with two or more. Score, threshold, cell type and search apply to all three tabs; grouping by protein applies to Strongest effects. Heatmap rows can be Full or Compact.'],
+  ['Effects views', 'Strongest effects opens first with one variant in range; Heatmap opens first with two or more. Score, threshold, cell type and search apply to all three tabs; grouping by protein applies to Strongest effects. The heatmap’s View is Full or Compact, as on humanbase.io: Compact keeps one variant per 15px of its width, the center one or else the higher variant score.'],
+  ['Heatmap columns', 'One per variant in the genome browser’s view, opened with 50 kb either side of the selected variant, as on humanbase.io. Clicking a column’s line selects that variant and centers the browser on it; dragging the cells moves the browser. Moving the browser makes the variant nearest its center the selected one.'],
   ['Downloads', 'Download results lists the files from the job page; the plot’s download gives an image of the plot as shown.'],
   ['URL', 'Selected variant, scores, plot style and heatmap settings are in the URL.'],
 ];

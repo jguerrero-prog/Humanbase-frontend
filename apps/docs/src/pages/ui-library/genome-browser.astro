@@ -11,7 +11,7 @@ import NoteCard from '../../components/docs/NoteCard.astro';
 import { scoreLegends } from '../../data/score-legends';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
-const view = new GenomeLocation('chr1', 109_792_590, 109_842_590);
+const view = new GenomeLocation('chr1', 109_767_590, 109_867_590);
 const trackCount = 3;
 const variant = { position: 109_817_590, label: 'chr1:109,817,590 G>T', scores: [1, 0.9] };
 const genes = [
@@ -64,6 +64,9 @@ const heatmapNotes = [
   'The center variant’s column is outlined in ink and its line is darker; its bars in the score tracks are ink.',
   'DNA features and RNA features stay a select above the heatmap, as today; the stepped z-score legend sits beside it.',
   'Hovering a cell shows the data tooltip; hovering a column highlights its line and its bars in the browser.',
+  'Clicking a column’s line selects that variant and centers the browser on it at the same width, as humanbase.io’s column labels do. Each line is a button named “Center on” and the variant.',
+  'Dragging the cells moves the browser by the same share of its width as the drag is of the heatmap’s width, as on humanbase.io; a single move over 100px is ignored.',
+  'View: Full keeps every variant in view. Compact keeps one variant per 15px of the heatmap’s width, as humanbase.io does: the center variant, or else the one with the higher variant score.',
 ];
 const heatmapColumns = [2_232_996, 2_234_187, 2_235_106, 2_235_168, 2_235_624, 2_247_509, 2_250_950, 2_254_905, 2_255_213, 2_259_317];
 const zLegend = scoreLegends[0]!.spec;
@@ -84,7 +87,7 @@ const integration = [
   ['Hide the built-in toolbar and panels', 'The system toolbar, Tracks drawer and dialogs replace them; Biodalliance already drives location, zoom, tracks and export through its API.'],
   ['Track header column', 'Names, sources and scales move out of the data area into a fixed column, so labels never sit on top of bars.'],
   ['Track colors from the system', 'Score tracks use viz.seq step 6 (#1F5FAE); the selected variant is ink. Gene exons stay grey 600.'],
-  ['Location in words', 'Show chr1:109,792,590-109,842,590 with commas and the assembly beside it; accept today’s 1:109,767,590..109,867,590 format too.'],
+  ['Location in words', 'Show chr1:109,767,590-109,867,590 with commas and the assembly beside it; accept today’s 1:109,767,590..109,867,590 format too.'],
   ['Linked heatmap', 'Column positions and the center variant come from the browser’s view, as today; the connectors read the same positions.'],
   ['Remember choices', 'Tracks and settings are kept in this browser, like other preferences (no accounts).'],
 ];
@@ -121,7 +124,7 @@ const usage = `import { GenomeLocation } from '@humanbase/data';
 import { GenomeBrowserToolbar, TrackHeader, TracksDrawer, genomeCommand } from '@humanbase/ui';
 
 const view = GenomeLocation.parse('1:109,767,590..109,867,590');
-<GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="50 kb shown. A gene name works too."
+<GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="100 kb shown. A gene name works too."
   zoomStop={view.width} onZoom={(direction) => engine.zoomTo(view.zoom(direction))} />
 
 // One place maps keys to commands; the Biodalliance adapter carries them out.
@@ -148,9 +151,9 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
     </DocTable>
   </DocSection>
 
-  <DocSection title="The browser" lead="On a variant result, centered on the selected variant at 50 kb. The toolbar, track headers and tracks are system components; the tracks follow the specs below. Gene positions in this drawing are approximate.">
+  <DocSection title="The browser" lead="On a variant result, centered on the selected variant with 50 kb either side (100 kb), as on humanbase.io. The toolbar, track headers and tracks are system components; the tracks follow the specs below. Gene positions in this drawing are approximate.">
     <section class="browser" aria-label={view.regionLabel(trackCount)}>
-      <GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="50 kb shown. A gene name works too." zoomStop={50000} moreItems={moreMenu} />
+      <GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="100 kb shown. A gene name works too." moreItems={moreMenu} />
       <div class="browser-tracks">
         <div class="track-column">
           <div class="track-column-ruler">Position</div>

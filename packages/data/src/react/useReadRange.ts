@@ -10,3 +10,8 @@ export function useReadRange(view: GenomeLocation | undefined, key: string): Gen
   if (next !== current) setRead({ key, range: next });
   return next;
 }
+
+/** placeholderData that keeps the last range's predictions while a moved view's range loads, so a drag carries on; another score or set starts empty. */
+export function keepSameData<T>(key: readonly unknown[]) {
+  return (previous: T | undefined, query: { queryKey: readonly unknown[] } | undefined) => (query && key.slice(0, -1).every((part, index) => query.queryKey[index] === part) ? previous : undefined);
+}

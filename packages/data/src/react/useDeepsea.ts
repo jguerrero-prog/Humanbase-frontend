@@ -1,13 +1,13 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import type { DeepseaJob } from '../deepsea/DeepseaJob';
-import { variantRows, variantScoreTypes, type VariantRow, type VariantScoresRecord } from '../deepsea/DeepseaResult';
+import { variantRows, variantScoreTypes, type FeaturePredictionRecord, type VariantRow, type VariantScoresRecord } from '../deepsea/DeepseaResult';
 import { deepseaModels } from '../deepsea/DeepseaModel';
 import { DeepseaService } from '../deepsea/DeepseaService';
 import type { GenomeLocation } from '../genome/GenomeLocation';
 import type { VariantModel } from '../jobs/VariantFileCheck';
 import { useHumanbase } from './HumanbaseProvider';
-import { useReadRange } from './useReadRange';
+import { keepSameData, useReadRange } from './useReadRange';
 
 /** Reads a Sei, Beluga or Seqweaver job every 10 seconds until it finishes or fails. */
 export function useDeepseaJob(id: string | undefined) {
@@ -44,11 +44,13 @@ export function useViewPredictions(job: DeepseaJob | undefined, scoreType: strin
   const named = model && deepseaModels[model].classFeatures?.scoreType === scoreType ? scoreType : undefined;
   const features = useQuery({ queryKey: ['deepsea-features', model, named], queryFn: () => api.deepsea.features(model ?? 'sei', named), enabled: Boolean(model), staleTime: Infinity });
   const range = useReadRange(view, `${id} ${scoreType ?? ''}`);
+  const key = ['deepsea-predictions', id, scoreType, range?.variantRange];
   const predictions = useQuery({
-    queryKey: ['deepsea-predictions', id, scoreType, range?.variantRange],
+    queryKey: key,
     queryFn: () => api.deepsea.featurePredictions(id, scoreType ?? '', range as GenomeLocation),
     enabled: Boolean(id && scoreType && range),
     staleTime: Infinity,
+    placeholderData: keepSameData<FeaturePredictionRecord[]>(key),
   });
   const inView = useMemo(() => view && predictions.data?.filter((record) => view.includes(record.chromosome, record.position)).sort((a, b) => a.position - b.position), [view, predictions.data]);
   const failed = [features, predictions].filter((query) => query.isError);

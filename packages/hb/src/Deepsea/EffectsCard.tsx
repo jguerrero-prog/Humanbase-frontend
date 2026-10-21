@@ -1,7 +1,7 @@
-import type { FeatureEffect, GenomeLocation } from '@humanbase/data';
+import type { FeatureEffect } from '@humanbase/data';
 import { Alert, AllFeaturesPlot, EffectGroups, EffectsControls, MolecularEffects, Skeleton, StrongestEffects, type EffectScale, type EffectsView, type SelectOption } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
-import { InViewHeatmap, type VariantInView } from './InViewHeatmap';
+import { InViewHeatmap, type InViewHeatmapProps } from './InViewHeatmap';
 import './Deepsea.css';
 
 const heatmapRows = 20;
@@ -27,7 +27,7 @@ export interface EffectsCardProps {
   /** The score or feature set the effects are for, and its choices. */
   choice: { label: string; options: readonly SelectOption[]; value: string; onChange: (value: string) => void; name: string };
   /** Every variant in the genome browser's view, for the Heatmap tab; selected is the center one, whose effects these are. */
-  inView: { location: GenomeLocation; variants: readonly VariantInView[]; selected: number };
+  inView: Pick<InViewHeatmapProps, 'location' | 'variants' | 'selected' | 'onSelect' | 'onMove'>;
   /** The score ranks smallest first, as humanbase.io's score types with reverse_order do, such as e-value. */
   reverseOrder?: boolean | undefined;
   /** The open tab, kept by the page so it survives choosing another variant. */
@@ -87,7 +87,7 @@ export function EffectsCard({ label, effects, failed, onRetry, scale, threshold:
       shown={found}
       limit={rows}
       reversed={lowestFirst !== reverseOrder}
-      density={density}
+      compact={density === 'compact'}
       scale={scale}
       scoreName={choice.name}
       featurePlural={featurePlural}

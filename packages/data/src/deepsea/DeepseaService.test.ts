@@ -31,8 +31,8 @@ describe('DeepseaService', () => {
   });
 
   it('names every feature effect from the model’s feature list', async () => {
-    const view = GenomeLocation.at('chr1', 109817590).withWidth(50_000);
-    expect(view.variantRange).toBe('1:109792590:109842590');
+    const view = GenomeLocation.at('chr1', 109817590).withWidth(100_000);
+    expect(view.variantRange).toBe('1:109767590:109867590');
     const [prediction, ...others] = await service.featurePredictions(exampleJob, 'zscore', view);
     if (!prediction) throw new Error('No prediction recorded');
     expect(others).toEqual([]);
@@ -95,7 +95,7 @@ describe('DeepseaService', () => {
     expect(variantScoreTypes(job.model, types).map((type) => type.short_name)).toEqual(['seqclass']);
     const rows = variantRows([await service.variantScores(id, 'seqclass')]);
     expect(rows.find((row) => row.position === 49813589)).toMatchObject({ name: 'VWC2', topClass: 'P Promoter' });
-    const [prediction] = await service.featurePredictions(id, 'seqclass', GenomeLocation.at('chr7', 49813589).withWidth(50_000));
+    const [prediction] = await service.featurePredictions(id, 'seqclass', GenomeLocation.at('chr7', 49813589).withWidth(100_000));
     if (!prediction) throw new Error('No prediction recorded');
     const effects = featureEffects(prediction, await service.features('sei', 'seqclass'));
     expect(effects).toHaveLength(40);
