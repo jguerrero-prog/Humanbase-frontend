@@ -1,0 +1,254 @@
+{
+  "slug": "expecto",
+  "title": "ExPecto",
+  "lead": "ExPecto predicts how variants change gene expression across more than 200 tissues, by gene, by your own variant file, or by rsID.",
+  "captured": "2026-10-21",
+  "pairs": [
+    {
+      "caption": "The Submit variants form",
+      "input": "Empty form",
+      "existing": {
+        "url": "https://humanbase.io/expecto/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/expecto/"
+          },
+          {
+            "do": "wait",
+            "ms": 10000
+          },
+          {
+            "do": "click",
+            "text": "Submit variants"
+          },
+          {
+            "do": "wait",
+            "ms": 5000
+          }
+        ],
+        "file": "expecto-1-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/expecto/variants/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/expecto/variants/"
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          }
+        ],
+        "file": "expecto-1-proposed.jpg"
+      }
+    },
+    {
+      "caption": "PTEN's predicted expression effects by tissue system",
+      "input": "PTEN (Entrez 5728)",
+      "existing": {
+        "url": "https://humanbase.io/expecto/gene/5728",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/expecto/gene/5728"
+          },
+          {
+            "do": "wait",
+            "ms": 15000
+          }
+        ],
+        "file": "expecto-2-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/expecto/genes/5728/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/expecto/genes/5728/"
+          },
+          {
+            "do": "wait",
+            "ms": 15000
+          }
+        ],
+        "file": "expecto-2-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Results of ExPecto job e504e3cc",
+      "input": "Job e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1, the 12-variant example",
+      "existing": {
+        "url": "https://humanbase.io/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          }
+        ],
+        "file": "expecto-3-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          }
+        ],
+        "file": "expecto-3-proposed.jpg"
+      }
+    }
+  ],
+  "differences": [
+    {
+      "area": "Tab help",
+      "existing": "A ? icon on each tab shows a tooltip, such as \"Query ExPecto using custom variants\"",
+      "proposed": "No tab tooltips; a one-line summary sits under the title",
+      "status": "Missing",
+      "evidence": "Hovered the icons on humanbase.io/expecto"
+    },
+    {
+      "area": "Gene tab",
+      "existing": "Search, IRGM and CCR1 examples, then three illustrated sections: deep learning model, cell-type-specific expression, disease-risk variants",
+      "proposed": "Same search and examples, with an About panel and example file beside it; no illustrated sections",
+      "status": "Missing",
+      "evidence": "humanbase.io/expecto vs /expecto/"
+    },
+    {
+      "area": "Submit form: example files",
+      "existing": "example.vcf and example_strand.vcf in an Example files box inside the form, with Format rules",
+      "proposed": "example.vcf only, in the side panel; rules sit in a VCF rules accordion",
+      "status": "To confirm",
+      "evidence": "Capture pair 1. Ask: does ExPecto need example_strand.vcf, or is strand only for Seqweaver?"
+    },
+    {
+      "area": "Submit form: file check",
+      "existing": "Submit button; no check seen before sending",
+      "proposed": "The file is checked in the browser. Run stays off until it is valid and names the count, such as Run ExPecto on 12 variants. Limit is 20,000 variants",
+      "status": "Changed",
+      "evidence": "packages/hb/src/VariantJobForm/VariantJobForm.tsx; no job was submitted"
+    },
+    {
+      "area": "Submit form: mailing list",
+      "existing": "A signup checkbox (name signup) is in the form but was not visible",
+      "proposed": "No signup option",
+      "status": "To confirm",
+      "evidence": "DOM of humanbase.io/expecto?tabId=3. Ask: when does it show, and should the form keep it?"
+    },
+    {
+      "area": "SNP rsID: before searching",
+      "existing": "Lists all 85,312 variants, 20 a page, with pagination",
+      "proposed": "Shows the search, examples and the live total only; no list until you search",
+      "status": "Missing",
+      "evidence": "humanbase.io/expecto?tabId=2 vs /expecto/snps/"
+    },
+    {
+      "area": "SNP rsID: results",
+      "existing": "Six columns: CHR, POSITION, RSID, GENE, REFRENCE ALLELE, ALTERNATIVE ALLELE; all results on paged lists",
+      "proposed": "Four columns: Position, rsID, Gene, Change (G>A); first 10, then Show 7 more. IRGM gives 17 on both",
+      "status": "Changed",
+      "evidence": "Searched IRGM on both sides"
+    },
+    {
+      "area": "SNP rsID: rsID filter",
+      "existing": "First asks the API with rsid__isempty=False, then without it",
+      "proposed": "Never sends rsid__isempty",
+      "status": "To confirm",
+      "evidence": "Network requests on both sides. Ask: should variants with no rsID be hidden?"
+    },
+    {
+      "area": "Gene page: header",
+      "existing": "Symbol, name and a link menu: Ensembl, Entrez, MIM, HGNC",
+      "proposed": "Symbol, plus Name, Genome, Positions (65 near the start) and Tissue systems (16); no outside links",
+      "status": "Missing",
+      "evidence": "Capture pair 2; link menu opened on humanbase.io/expecto/gene/5728"
+    },
+    {
+      "area": "Gene page: view switch",
+      "existing": "Radio buttons: Tissue System overview, Choose tissue system and tissue",
+      "proposed": "Segmented control: Tissue systems, Tissues",
+      "status": "Same function",
+      "evidence": "Capture pair 2"
+    },
+    {
+      "area": "Gene page: filters",
+      "existing": "Resources and Tissue Systems are checkbox menus, so several can be picked at once",
+      "proposed": "Resource and Tissue system are single-choice menus, plus a new Find a tissue field",
+      "status": "Changed",
+      "evidence": "Opened both menus on humanbase.io; GeneExpression.tsx Select"
+    },
+    {
+      "area": "Heatmap: row labels",
+      "existing": "Clicking a tissue system, such as nervous system, opens just its tissues (Tissue Systems: 1 of 16)",
+      "proposed": "Row labels are plain text",
+      "status": "Missing",
+      "evidence": "Clicked nervous system on humanbase.io; proposed URL and view did not change"
+    },
+    {
+      "area": "Heatmap: tooltip",
+      "existing": "In the overview the title names the strongest tissue, such as Fibroblast of Arm. Lists all four alleles, with < cutoff and reference allele, to 6 decimals",
+      "proposed": "Title is the row, such as alimentary canal. Lists scored alleles and the reference, to 3 decimals, and marks the strongest. The strongest tissue is not named",
+      "status": "Changed",
+      "evidence": "Hovered cells on both sides. The hint naming it is replaced by the link: packages/ui/src/Tooltip/DataTooltip.tsx:12"
+    },
+    {
+      "area": "Heatmap: help",
+      "existing": "Help button opens a dialog explaining the tooltip",
+      "proposed": "No help dialog",
+      "status": "Missing",
+      "evidence": "Opened Help on humanbase.io/expecto/gene/5728"
+    },
+    {
+      "area": "Heatmap: color scale",
+      "existing": "Continuous blue to red, -1.0 to 1.0, titled Expression Effect",
+      "proposed": "Seven steps with edges at 0.1, 0.3 and 1, titled Expression effect, log fold change, with Decreases and Increases expression",
+      "status": "Changed",
+      "evidence": "Capture pair 2; packages/hb/src/Expecto/geneExpressionTools.ts"
+    },
+    {
+      "area": "Download",
+      "existing": "ExPectoHeatmap.tsv; first column Tissue; values carry the allele, such as T:0.135563",
+      "proposed": "pten_expecto_tissue_systems.tsv; first column row; headers carry the reference base, values are bare numbers, so the scored allele is lost",
+      "status": "Changed",
+      "evidence": "Downloaded both; GeneExpression.tsx download()"
+    },
+    {
+      "area": "Sharing a view",
+      "existing": "URL stays /expecto/gene/5728 whatever the view",
+      "proposed": "View, filters and search are kept in the URL, with a Copy link button",
+      "status": "Added",
+      "evidence": "apps/web/src/pages/expecto/GeneExpressionPage.tsx"
+    },
+    {
+      "area": "Job: layout",
+      "existing": "Scatter Plot and Table tabs; Plot style menu (Manhattan shown)",
+      "proposed": "Plot and a sortable variant list side by side; Plot by Genome position or Rank",
+      "status": "Changed",
+      "evidence": "Capture pair 3. Other existing plot styles not checked"
+    },
+    {
+      "area": "Job: tissue effects",
+      "existing": "Heatmap and Tissues tabs; top 20 of 218 tissues; Reverse Sort; Full or Compact view; Search tissues",
+      "proposed": "Strongest effects, Heatmap and All tissues tabs; Resource filter; Show effects of, defaulting to 0.1 or more",
+      "status": "Changed",
+      "evidence": "Job page on both sides"
+    },
+    {
+      "area": "Job: default threshold",
+      "existing": "Shows the top 20 tissues for chr3:12598855 G>A",
+      "proposed": "At 0.1 or more, chr3:12,598,855 G>A shows 0 tissues raised and none lowered, though 82 are weak",
+      "status": "To confirm",
+      "evidence": "Proposed job page. Ask: is 0.1 the right default, or should it start at All?"
+    }
+  ]
+}
