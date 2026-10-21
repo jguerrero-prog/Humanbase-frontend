@@ -1,10 +1,15 @@
 import type { GenomeTracks } from '@humanbase/data';
 import { genomeCommand, TrackHeader, type GenomeCommand } from '@humanbase/ui';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { sameRegion, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion, type GenomeTrackLayout } from './GenomeBrowserEngine';
+import { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState, type Ref } from 'react';
+import { sameRegion, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeExportOptions, type GenomeRegion, type GenomeTrackLayout } from './GenomeBrowserEngine';
 import './genome.css';
 
 export type EngineStatus = 'loading' | 'ready' | 'failed';
+
+/** What a page can ask of the mounted engine. */
+export interface GenomeEngineHandle {
+  exportSvg(options: GenomeExportOptions): Promise<Blob>;
+}
 
 export interface GenomeEngineViewProps {
   engine: GenomeBrowserEngineFactory;
@@ -14,16 +19,21 @@ export interface GenomeEngineViewProps {
   assembly: Assembly;
   region: GenomeRegion;
   tracks: readonly GenomeDataTrack[];
+  /** Tracks left out, by id (see genomeTrackList). */
+  hidden?: readonly string[] | undefined;
   /** The selected position, marked across every track. */
   selected?: { chrom: string; position: number } | undefined;
   onRegionChange?: (region: GenomeRegion) => void;
   onStatusChange?: (status: EngineStatus, error?: Error) => void;
   /** Keyboard commands from the genome browser's key map; with it, the tracks take focus and keys. */
   onCommand?: ((command: GenomeCommand) => void) | undefined;
+  ref?: Ref<GenomeEngineHandle> | undefined;
 }
 
 /** Mounts a genome browser engine and keeps it on the page's region and selection. */
-export function GenomeEngineView({ engine, files, label, assembly, region, tracks, selected, onRegionChange, onStatusChange, onCommand }: GenomeEngineViewProps) {
+const noneHidden: readonly string[] = [];
+
+export function GenomeEngineView({ engine, files, label, assembly, region, tracks, hidden = noneHidden, selected, onRegionChange, onStatusChange, onCommand, ref }: GenomeEngineViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GenomeBrowserEngine | null>(null);
   const [ready, setReady] = useState(false);
@@ -35,6 +45,13 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
   });
   // The engine is built once per assembly, file reader and track set; region and selection changes go through it.
   const first = useRef({ region, label });
+  const latestHidden = useRef(hidden);
+  useLayoutEffect(() => {
+    latestHidden.current = hidden;
+  });
+  useImperativeHandle(ref, () => ({
+    exportSvg: (options) => instance.current?.exportSvg(options) ?? Promise.reject(new Error('The genome browser hasn’t started yet.')),
+  }), []);
 
   useEffect(() => {
     const element = container.current;
@@ -49,6 +66,7 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
         assembly,
         region: first.current.region,
         tracks,
+        hidden: latestHidden.current,
         onRegionChange: (moved) => {
           shown.current = moved;
           events.current.onRegionChange?.(moved);
@@ -80,6 +98,11 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
     shown.current = region;
     instance.current?.showRegion(region);
   }, [ready, region]);
+
+  const hiddenKey = hidden.join('\n');
+  useEffect(() => {
+    if (ready) instance.current?.showTracks(hiddenKey ? hiddenKey.split('\n') : []);
+  }, [ready, hiddenKey]);
 
   const mark = selected ? `${selected.chrom}:${selected.position}` : '';
   useEffect(() => {

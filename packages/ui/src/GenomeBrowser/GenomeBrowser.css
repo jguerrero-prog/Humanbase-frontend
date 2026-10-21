@@ -268,3 +268,23 @@
     white-space: nowrap;
   }
 }
+
+/* The exported view is one standalone svg, so its headers are svg text in the track header's type. */
+.genome-figure-page {
+  fill: var(--surface-page);
+}
+
+.genome-figure-headers {
+  fill: var(--surface-subtle);
+}
+
+.genome-figure-title,
+.genome-figure-name {
+  font: 700 13px Lato, sans-serif;
+  fill: var(--text-default);
+}
+
+.genome-figure-meta {
+  font: 400 12px Lato, sans-serif;
+  fill: var(--text-secondary);
+}

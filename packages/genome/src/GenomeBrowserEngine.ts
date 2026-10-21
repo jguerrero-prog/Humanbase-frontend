@@ -46,6 +46,20 @@ export interface GenomeMountOptions extends GenomeBrowserEvents {
   assembly: Assembly;
   region: GenomeRegion;
   tracks: readonly GenomeDataTrack[];
+  /** Tracks left out from the start, by id (see genomeTrackList). */
+  hidden?: readonly string[] | undefined;
+}
+
+/** The Export dialog's choices. */
+export interface GenomeExportOptions {
+  /** The tracks' width in pixels, beside the header column. */
+  width: number;
+  /** Includes the selected variant's marks. */
+  highlights: boolean;
+  /** Includes the vertical guideline through every track. */
+  guideline: boolean;
+  /** A line above the tracks, such as the location and assembly; none when left out. */
+  title?: string | undefined;
 }
 
 /**
@@ -58,6 +72,10 @@ export interface GenomeBrowserEngine {
   showRegion(region: GenomeRegion): void;
   /** Marks one position, such as the selected variant; undefined clears the mark. */
   highlight(position: { chrom: string; position: number } | undefined): void;
+  /** Shows every track but these, by id. */
+  showTracks(hidden: readonly string[]): void;
+  /** The current view as an SVG file. */
+  exportSvg(options: GenomeExportOptions): Promise<Blob>;
   destroy(): void;
 }
 

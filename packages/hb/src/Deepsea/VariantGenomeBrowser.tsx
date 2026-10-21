@@ -2,6 +2,7 @@ import { GenomeLocation, useHumanbase } from '@humanbase/data';
 import { defaultGenomeEngine, GenomeEngineView, withChr, type Assembly, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
 import { Alert, GenomeBrowserToolbar } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
+import { useGenomeBrowserTools } from '../GenomeBrowser/useGenomeBrowserTools';
 
 export interface VariantGenomeBrowserProps {
   assembly: Assembly;
@@ -52,6 +53,7 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, on
   };
   const onRegionChange = (moved: GenomeRegion) => move(new GenomeLocation(moved.chrom, moved.start, moved.end, assembly));
   const zoomStop = (GenomeLocation.zoomStops as readonly number[]).includes(location.width) ? location.width : undefined;
+  const { attach, ...tools } = useGenomeBrowserTools({ browser: 'variant-results', assembly, tracks: noTracks, location });
 
   if (showsSamples) return null;
   return (
@@ -67,24 +69,28 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, on
         onZoomStop={(bases) => move(location.withWidth(bases))}
         {...(onPreviousVariant && { onPreviousVariant })}
         {...(onNextVariant && { onNextVariant })}
-        trackActions={false}
+        {...tools.toolbar}
       />
+      {tools.panels}
       {failure && (
         <Alert tone="error" title="The genome browser couldn’t load">
           {failure.message} The molecular effects below still work.
         </Alert>
       )}
       <GenomeEngineView
+        ref={attach}
         engine={engine}
         files={genomeTracks}
-        label={location.regionLabel(2)}
+        label={location.regionLabel(tools.shownCount)}
         assembly={assembly}
         region={region}
-        tracks={noTracks}
+        tracks={tools.tracks}
+        hidden={tools.hidden}
         selected={{ chrom, position }}
         onRegionChange={onRegionChange}
         onStatusChange={(status, error) => setFailure(status === 'failed' ? error : undefined)}
         onCommand={(command) => {
+          if (tools.onCommand(command)) return;
           if (command === 'moveLeft' || command === 'moveRight') move(location.move(command === 'moveLeft' ? -0.1 : 0.1));
           else if (command === 'zoomIn' || command === 'zoomOut') move(location.zoom(command === 'zoomIn' ? 'in' : 'out'));
           else if (command === 'previousVariant') onPreviousVariant?.();

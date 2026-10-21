@@ -38,6 +38,15 @@
   min-block-size: 0;
 }
 
+/* An export draws its figure here for a moment, off screen, to read the page's colors and fonts. */
+.track-engine-export {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: -100vw;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* Biodalliance's own chrome: the page draws the toolbar and headers, so its toolbar, labels and center guide are hidden. */
 .genome-engine .dalliance > .toolbar,
 .genome-engine .dalliance .guideline,

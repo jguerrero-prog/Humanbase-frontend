@@ -16,6 +16,8 @@ interface GenomeBrowserEngine {
   mount(container: HTMLElement, options: GenomeMountOptions): Promise<void>;
   showRegion(region: GenomeRegion): void;
   highlight(position: { chrom: string; position: number } | undefined): void;
+  showTracks(hidden: readonly string[]): void;
+  exportSvg(options: GenomeExportOptions): Promise<Blob>;
   destroy(): void;
 }
 ```
@@ -25,10 +27,12 @@ interface GenomeBrowserEngine {
 - `onRegionChange` fires once a drag or zoom inside the engine settles, never for a region the page set.
 - `showRegion` follows the page's own toolbar: search, zoom, Previous and Next variant.
 - `highlight` marks the selected variant; `undefined` clears it.
+- `showTracks` shows every track but the hidden ones, by id: `sequence`, `genes`, or a data track's name. `mount` takes the first `hidden` list too. `genomeTrackList` lists a browser's tracks in drawing order for the Tracks drawer, and `suggestedTracks` adds the live site's Conservation track (`phastCons46way.bw`) on hg19; it starts hidden (`hiddenByDefault`).
+- `exportSvg` returns the current view as an SVG file with the Export dialog's options: the tracks' width, the selected variant's highlights, the vertical guideline, and a title line such as the location. `TrackEngine` draws `GenomeTrackFigure` from `@humanbase/ui` with the data on screen; Biodalliance uses its own `makeSVG`.
 - Regions are 1-based and inclusive, with the `chr` prefix.
 - `onTrackLayout`, when set, receives each track's name, `meta`, top and height whenever the engine lays its tracks out, so the page can draw headers beside them.
 
-`GenomeEngineView` is the React wrapper pages use; pages pass it `files`, `useHumanbase().genomeTracks`. It mounts an engine once per assembly, file reader and track set, then passes region and selection changes to it. It draws the design system's `TrackHeader` for each track the engine reports, in the 220 px header column (120 px under 48rem). With `onCommand`, the tracks take keyboard focus and keys map through `genomeCommand` from `@humanbase/ui`, so arrows, + and −, and Ctrl+arrows act through the page's own toolbar.
+`GenomeEngineView` is the React wrapper pages use; it takes `hidden`, and its `ref` gets `exportSvg`; pages pass it `files`, `useHumanbase().genomeTracks`. It mounts an engine once per assembly, file reader and track set, then passes region and selection changes to it. It draws the design system's `TrackHeader` for each track the engine reports, in the 220 px header column (120 px under 48rem). With `onCommand`, the tracks take keyboard focus and keys map through `genomeCommand` from `@humanbase/ui`, so arrows, + and −, and Ctrl+arrows act through the page's own toolbar.
 
 ## Theming Biodalliance
 

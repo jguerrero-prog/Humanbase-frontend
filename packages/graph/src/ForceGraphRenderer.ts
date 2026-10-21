@@ -2,6 +2,7 @@ import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation, f
 import { polygonHull } from 'd3-polygon';
 import { select, type Selection } from 'd3-selection';
 import { zoom, zoomIdentity, type ZoomBehavior } from 'd3-zoom';
+import { standaloneSvg } from '@humanbase/ui';
 import { edgeBand, weakestBand } from './edgeBands';
 import type { GraphData, GraphGroup, GraphHighlight, GraphNode, GraphRenderer, GraphSelection, MountOptions } from './GraphRenderer';
 
@@ -256,15 +257,7 @@ export class ForceGraphRenderer implements GraphRenderer {
   }
 
   exportSvg(): Blob {
-    if (!this.svg) return new Blob([], { type: 'image/svg+xml' });
-    const copy = this.svg.cloneNode(true) as SVGSVGElement;
-    copy.setAttribute('xmlns', svgNs);
-    const originals = this.svg.querySelectorAll<SVGElement>('*');
-    copy.querySelectorAll<SVGElement>('*').forEach((element, index) => {
-      const style = getComputedStyle(originals[index] as SVGElement);
-      for (const property of ['fill', 'stroke', 'stroke-width', 'stroke-linejoin', 'opacity', 'font', 'paint-order']) element.style.setProperty(property, style.getPropertyValue(property));
-    });
-    return new Blob([new XMLSerializer().serializeToString(copy)], { type: 'image/svg+xml' });
+    return this.svg ? standaloneSvg(this.svg) : new Blob([], { type: 'image/svg+xml' });
   }
 
   destroy(): void {
