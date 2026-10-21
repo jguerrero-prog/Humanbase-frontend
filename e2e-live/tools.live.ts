@@ -16,6 +16,14 @@ test('the Modules renal panel result shows real modules, a module drawer and the
   await checkScreen(page, problems);
 });
 
+test('the Modules search matches the renal disease panel', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/modules/`);
+  await page.getByRole('button', { name: 'renal disease panel' }).click();
+  await expect(page.getByText(/^\d+ matched$/)).toBeVisible();
+  await checkScreen(page, problems);
+});
+
 test('the Modules Download menu saves the real result as TSV, PDF and ZIP', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9`);
@@ -31,14 +39,6 @@ test('the Modules Download menu saves the real result as TSV, PDF and ZIP', asyn
   expect(pdf.bytes.subarray(0, 4).toString()).toBe('%PDF');
   const zip = await downloadFrom(page, 'Download', 'Download as ZIP');
   expect(zip.bytes.subarray(0, 2).toString()).toBe('PK');
-  await checkScreen(page, problems);
-});
-
-test('the Modules search matches the renal disease panel', async ({ page }) => {
-  const problems = watch(page);
-  await page.goto(`${web}/modules/`);
-  await page.getByRole('button', { name: 'renal disease panel' }).click();
-  await expect(page.getByText(/^\d+ matched$/)).toBeVisible();
   await checkScreen(page, problems);
 });
 
