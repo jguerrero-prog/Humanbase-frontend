@@ -1,0 +1,311 @@
+{
+  "slug": "modules",
+  "title": "Modules",
+  "lead": "Finds groups of genes that work together in a tissue network from a pasted gene list, and the functions each group is enriched for.",
+  "captured": "2026-10-21",
+  "pairs": [
+    {
+      "caption": "The form with the renal disease panel example loaded",
+      "input": "Example: renal disease panel (504 genes, kidney)",
+      "existing": {
+        "url": "https://humanbase.io/module",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/module"
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "renal disease panel"
+          },
+          {
+            "do": "wait",
+            "ms": 12000
+          },
+          {
+            "do": "scroll",
+            "selector": "#GenePasteBox"
+          }
+        ],
+        "file": "modules-1-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/?analysis=modules",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/?analysis=modules"
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "renal disease panel"
+          },
+          {
+            "do": "wait",
+            "ms": 12000
+          },
+          {
+            "do": "scroll",
+            "text": "Gene list"
+          }
+        ],
+        "file": "modules-1-proposed.jpg"
+      }
+    },
+    {
+      "caption": "The renal result, all modules",
+      "input": "body_tag 2339dc3cd05964ab3f691a8f4851c7a9aab78ad9 (kidney, GIANT)",
+      "existing": {
+        "url": "https://humanbase.io/module/overview/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/module/overview/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "wait",
+            "ms": 1000
+          }
+        ],
+        "file": "modules-2-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          }
+        ],
+        "file": "modules-2-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Module M1 opened from the modules table",
+      "input": "Same result, click M1",
+      "existing": {
+        "url": "https://humanbase.io/module/detail/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/module/overview/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9"
+          },
+          {
+            "do": "wait",
+            "ms": 25000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "click",
+            "text": "M1",
+            "exact": true,
+            "nth": 1
+          },
+          {
+            "do": "wait",
+            "ms": 5000
+          }
+        ],
+        "file": "modules-3-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&module=1",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "M1",
+            "exact": true
+          },
+          {
+            "do": "wait",
+            "ms": 3000
+          }
+        ],
+        "file": "modules-3-proposed.jpg"
+      }
+    }
+  ],
+  "differences": [
+    {
+      "area": "Where the form lives",
+      "existing": "Its own page at /module, with its own title and examples",
+      "proposed": "On the homepage at /?analysis=modules, chosen from the Analysis picker",
+      "status": "Changed",
+      "evidence": "humanbase.io/module; humanbase-frontend.pages.dev/?analysis=modules; ModulesPage.tsx redirects to /?analysis=modules without a body_tag"
+    },
+    {
+      "area": "Gene list size",
+      "existing": "No size check seen: with 3 genes the Search button stays enabled",
+      "proposed": "Needs 20 to 3,500 genes; the button is disabled outside that range and a note says why",
+      "status": "To confirm",
+      "evidence": "Typed BRCA1 TP53 PTEN on humanbase.io/module, Search enabled; ModuleService.ts:22-23, ModuleSearch.tsx:183. Ask Julien what limits the API enforces"
+    },
+    {
+      "area": "Gene count",
+      "existing": "Not shown",
+      "proposed": "Live count under the box (504 genes for the renal panel) and in the button label",
+      "status": "Added",
+      "evidence": "modules-1 captures"
+    },
+    {
+      "area": "Default tissue",
+      "existing": "Starts on global when you paste your own list; examples set their tissue (kidney)",
+      "proposed": "No default; you must choose a tissue. Examples set their tissue (Kidney)",
+      "status": "Changed",
+      "evidence": "humanbase.io/module with 3 genes showed Select network: global; ModuleSearch.tsx:183 disables the button without a tissue"
+    },
+    {
+      "area": "Global network",
+      "existing": "global is in the network list",
+      "proposed": "Not offered; only tissue networks are listed",
+      "status": "To confirm",
+      "evidence": "Existing list includes global; proposed Tissue options had no match for global; ModuleSearch.tsx:63 picks kind tissue only. Ask whether global modules should stay"
+    },
+    {
+      "area": "Title",
+      "existing": "Pencil button opens an empty title field; examples leave it empty",
+      "proposed": "Plain Title field, prefilled with the example name",
+      "status": "Changed",
+      "evidence": "modules-1 captures; ModuleSearch.tsx:83"
+    },
+    {
+      "area": "Matching genes",
+      "existing": "Warning lists terms that matched several genes; table with radio buttons to pick one",
+      "proposed": "Summary (468 matched, 36 to check, none not found) and a table to choose a gene, remove rows or select several",
+      "status": "Changed",
+      "evidence": "modules-1 captures; ModuleSearch.tsx:199-205"
+    },
+    {
+      "area": "Result URL and deep links",
+      "existing": "/module/overview/, /module/detail/ and /module/term/ with body_tag; the open module is not in the URL, so a detail link opens the overview",
+      "proposed": "/modules/?body_tag=…; open module, tab and filters are kept in the URL (&module=1)",
+      "status": "Changed",
+      "evidence": "Loading /module/detail/?body_tag=2339dc… redirected to overview; ModuleView.ts:19-21"
+    },
+    {
+      "area": "Result title and rename",
+      "existing": "Pencil button beside Title; what it saves is not known",
+      "proposed": "Heading shows Untitled module search; Rename keeps the new title in this browser only",
+      "status": "To confirm",
+      "evidence": "ModuleExplorer.tsx:35. Ask whether the existing title edit reruns the job or saves on the server"
+    },
+    {
+      "area": "Changing tissue on a result",
+      "existing": "Network select plus a separate submit button",
+      "proposed": "Picking a tissue starts a new job straight away",
+      "status": "Same function",
+      "evidence": "#integrationSubmit on humanbase.io result; ModuleExplorer.tsx:83"
+    },
+    {
+      "area": "Data version on a result",
+      "existing": "GIANT or MAGE select next to the network",
+      "proposed": "Read-only Data version label",
+      "status": "To confirm",
+      "evidence": "modules-2 captures; ModuleResultView.tsx:83. Ask whether switching version on a result is used"
+    },
+    {
+      "area": "Module graph",
+      "existing": "One force layout with all 14 modules colored and node sizes that vary",
+      "proposed": "Each module packed in its own cluster; 6 modules colored, the rest gray; zoom, fit, expand and view as table",
+      "status": "Changed",
+      "evidence": "modules-2 captures"
+    },
+    {
+      "area": "Filters",
+      "existing": "Show edges off, hide unenriched on, minimum size 2 with minus and plus buttons",
+      "proposed": "Same three filters and defaults; size is a number field",
+      "status": "Same function",
+      "evidence": "modules-2 captures; ModuleResult.ts:69"
+    },
+    {
+      "area": "Term database",
+      "existing": "Term database: GO (BP), Disease Ontology, MSigDB C2-CP, MSigDB H",
+      "proposed": "Terms from: the same four databases",
+      "status": "Same function",
+      "evidence": "Options read from both result pages"
+    },
+    {
+      "area": "q-values",
+      "existing": "Rounded, such as <1e-4 and 0.0006",
+      "proposed": "Exact, such as 3.4 × 10⁻⁹",
+      "status": "Changed",
+      "evidence": "modules-2 captures, M1 row"
+    },
+    {
+      "area": "Opening a module",
+      "existing": "Graph zooms to the module with its edges; Module M1 tab with Terms and M1 Genes",
+      "proposed": "Drawer over the full graph with Terms and Genes, Open M1 genes in Networks and Download M1",
+      "status": "Changed",
+      "evidence": "modules-3 captures; ModuleDrawer.tsx"
+    },
+    {
+      "area": "Term drill-down",
+      "existing": "Clicking a term opens /module/term/ with Term edges (gene pairs and weights) and Term genes",
+      "proposed": "Term rows are text only",
+      "status": "Missing",
+      "evidence": "Clicked renal system development on humanbase.io; ModuleDrawer.tsx:83"
+    },
+    {
+      "area": "Gene drill-down",
+      "existing": "Hover labels a gene; clicking it highlights its neighbours and adds Gene Terms and Gene Neighbours tabs",
+      "proposed": "Clicking a gene opens its module drawer; no gene view",
+      "status": "Missing",
+      "evidence": "Clicked MESP2 in M1 on humanbase.io; tracked as issue #316"
+    },
+    {
+      "area": "Downloads",
+      "existing": "Download menu: TSV, PNG, SVG, PDF, ZIP",
+      "proposed": "Download (modules TSV), graph SVG in the toolbar, one module TSV in the drawer",
+      "status": "Missing",
+      "evidence": "Existing Download menu; ModuleResultView.tsx:56,72. PNG, PDF and ZIP are not offered"
+    },
+    {
+      "area": "Find a gene",
+      "existing": "Gene Search dropdown; it did not open in our test",
+      "proposed": "Find a gene suggests symbols and opens the gene's module",
+      "status": "To confirm",
+      "evidence": "Ask what Gene Search does on the existing result"
+    }
+  ]
+}

@@ -1,0 +1,326 @@
+{
+  "slug": "networks",
+  "title": "Networks",
+  "lead": "Shows the query genes and their most connected genes in a tissue network, with related genes, enriched processes and tissues, and details for any gene or connection.",
+  "captured": "2026-10-21",
+  "pairs": [
+    {
+      "caption": "IL1B and TNF in the global GIANT network",
+      "input": "IL1B + TNF",
+      "existing": {
+        "url": "https://humanbase.io/gene/3553+7124",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/gene/3553+7124"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          }
+        ],
+        "file": "networks-1-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/networks/?entrez=3553&entrez=7124&version=v1",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/networks/?entrez=3553&entrez=7124&version=v1"
+          },
+          {
+            "do": "wait",
+            "ms": 18000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          }
+        ],
+        "file": "networks-1-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Processes panel beside the graph",
+      "input": "IL1B + TNF",
+      "existing": {
+        "url": "https://humanbase.io/gene/3553+7124",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/gene/3553+7124"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          },
+          {
+            "do": "click",
+            "role": "tab",
+            "name": "Process"
+          },
+          {
+            "do": "wait",
+            "ms": 6000
+          },
+          {
+            "do": "scroll",
+            "selector": "#starred"
+          }
+        ],
+        "file": "networks-2-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/networks/?entrez=3553&entrez=7124&version=v1",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/networks/?entrez=3553&entrez=7124&version=v1"
+          },
+          {
+            "do": "wait",
+            "ms": 18000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "click",
+            "role": "tab",
+            "name": "^Processes",
+            "nameIsRegex": true
+          },
+          {
+            "do": "wait",
+            "ms": 6000
+          },
+          {
+            "do": "scroll",
+            "role": "tablist",
+            "name": "Genes, processes and tissues",
+            "offset": 300
+          }
+        ],
+        "file": "networks-2-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Gene detail for ICAM1",
+      "input": "IL1B + TNF, then ICAM1",
+      "existing": {
+        "url": "https://humanbase.io/gene/3553+7124",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/gene/3553+7124"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          },
+          {
+            "do": "scroll",
+            "selector": "#starred"
+          },
+          {
+            "do": "click",
+            "selector": "svg text:text-is(\"ICAM1\") >> nth=-1",
+            "force": true
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          }
+        ],
+        "file": "networks-3-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/networks/?entrez=3553&entrez=7124&version=v1&gene=3383",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/networks/?entrez=3553&entrez=7124&version=v1"
+          },
+          {
+            "do": "wait",
+            "ms": 18000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "^ICAM1\\s",
+            "within": "table",
+            "nameIsRegex": true
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          }
+        ],
+        "file": "networks-3-proposed.jpg"
+      }
+    }
+  ],
+  "differences": [
+    {
+      "area": "Address and sharing",
+      "existing": "/gene/3553+7124. Changing tissue, tab or filters keeps the same address.",
+      "proposed": "Tissue, tab, selected gene or connection, filters and starred sets are kept in the address.",
+      "status": "Changed",
+      "evidence": "Live: tissue set to mononuclear phagocyte and tabs changed, URL unchanged on humanbase.io; NetworkView.ts applyTo"
+    },
+    {
+      "area": "Old links",
+      "existing": "/gene/3553+7124 opens the network.",
+      "proposed": "/gene/3553+7124 shows 'Page not found'.",
+      "status": "Missing",
+      "evidence": "Live: humanbase-frontend.pages.dev/gene/3553+7124; routes.tsx has no gene route"
+    },
+    {
+      "area": "Header",
+      "existing": "Gene symbols with Entrez links and names, '+' opens a 'New Search' dialog, 'New query' button in the top bar.",
+      "proposed": "Symbols with names, 'Edit genes' dialog, tags for Data version and 'Genes shown 15 of 52', gene search in the top bar.",
+      "status": "Same function",
+      "evidence": "Screenshots networks-1"
+    },
+    {
+      "area": "Data version on the result",
+      "existing": "'Method GIANT' in a greyed field.",
+      "proposed": "'Data version GIANT' as a tag; no switch on this page.",
+      "status": "To confirm",
+      "evidence": "Ask whether Method can be changed on the existing result page."
+    },
+    {
+      "area": "Tabs",
+      "existing": "Tissue gene network, Tissue expression, Biological process gene network, Biological process, Disease.",
+      "proposed": "Tissue network, Tissue expression, Process network, Biological processes, Diseases.",
+      "status": "Same function",
+      "evidence": "Live tab labels"
+    },
+    {
+      "area": "Related genes list",
+      "existing": "Lists the 15 genes in the graph including IL1B and TNF (score 0.76), with red buttons to remove query genes.",
+      "proposed": "Lists the 13 related genes only; add with '+', remove query genes through 'Edit genes'.",
+      "status": "Changed",
+      "evidence": "Live: genes panel on both sites"
+    },
+    {
+      "area": "Side panel tabs",
+      "existing": "Genes, Process, Tissue, Detail.",
+      "proposed": "Genes, Processes, Tissues with counts. Details open in a side drawer.",
+      "status": "Changed",
+      "evidence": "Screenshots networks-2 and networks-3"
+    },
+    {
+      "area": "Processes list length",
+      "existing": "14 processes, p-values 1.2e-5 to 6.2e-5.",
+      "proposed": "620 processes, down to p = 0.33.",
+      "status": "To confirm",
+      "evidence": "Live, IL1B + TNF global. Ask whether the existing list applies a p-value cutoff the proposed should match."
+    },
+    {
+      "area": "Process p-values",
+      "existing": "Top terms show 1.2e-5.",
+      "proposed": "The same top terms show 9.0 × 10⁻⁶.",
+      "status": "To confirm",
+      "evidence": "Live, same genes and network. Ask which correction the existing p-values use."
+    },
+    {
+      "area": "Processes panel subtitle",
+      "existing": "'Biological processes and diseases represented in the network', but only Gene Ontology (BP) rows appeared.",
+      "proposed": "Gene Ontology (BP) processes only.",
+      "status": "To confirm",
+      "evidence": "Ask whether diseases should appear in this panel."
+    },
+    {
+      "area": "Connection legend",
+      "existing": "Continuous green to red scale from 0 to 1.",
+      "proposed": "Three bands: 0.5 to 0.75, 0.75 to 0.9, 0.9 and up, plus 'Showing 15 of 52 genes, 89 connections at 0.48 or more'.",
+      "status": "Changed",
+      "evidence": "Screenshots networks-1 and networks-2"
+    },
+    {
+      "area": "Genes shown",
+      "existing": "'Maximum number of genes' slider 0 to 50, starts at 15.",
+      "proposed": "'Genes shown' slider 5 to 50 with a number field, starts at 15.",
+      "status": "Changed",
+      "evidence": "Live: existing slider dragged to both ends; NetworkView.ts shownRange"
+    },
+    {
+      "area": "Prioritize by uniqueness",
+      "existing": "Toggle, off by default.",
+      "proposed": "Checkbox, off by default.",
+      "status": "Same function",
+      "evidence": "Live, both sites"
+    },
+    {
+      "area": "Downloads",
+      "existing": "Menu: save network as image, as text (visible), as text (entire).",
+      "proposed": "Download the graph as SVG; in table view, download the visible connections as TSV.",
+      "status": "Missing",
+      "evidence": "Existing download menu items; GraphPanel.tsx. No 'entire network as text' export in proposed."
+    },
+    {
+      "area": "Layout buttons",
+      "existing": "Two circle buttons and a lock button in the graph toolbar.",
+      "proposed": "Zoom in, zoom out, fit, expand. No layout or lock buttons.",
+      "status": "To confirm",
+      "evidence": "Existing toolbar has no labels. Ask what the circle buttons and lock do."
+    },
+    {
+      "area": "Table view",
+      "existing": "Not available.",
+      "proposed": "'View as table' lists every connection, strongest first.",
+      "status": "Added",
+      "evidence": "GraphPanel.tsx, ConnectionsTable.tsx"
+    },
+    {
+      "area": "Gene detail",
+      "existing": "Detail tab: name, aliases, gene IDs, Gene Ontology (BP) and Disease Ontology tables with search and download.",
+      "proposed": "Drawer adds the score to the query genes and 'Add to query'. Shows the 12 strongest terms per ontology, no search or download.",
+      "status": "Changed",
+      "evidence": "Screenshots networks-3; GeneDrawer.tsx shownTerms"
+    },
+    {
+      "area": "Connection detail",
+      "existing": "Detail tab: this network or All networks, a donut chart of data types and an evidence table.",
+      "proposed": "Drawer: this network or All networks, weight meter, data types as text, first 10 datasets with 'Show all'.",
+      "status": "Changed",
+      "evidence": "Live: CCL3 and CCL4 on both sites; ConnectionDrawer.tsx"
+    },
+    {
+      "area": "Tissue description",
+      "existing": "Shows the tissue's definition above the graph after choosing a tissue.",
+      "proposed": "Not shown.",
+      "status": "Missing",
+      "evidence": "Live: mononuclear phagocyte on humanbase.io; not in NetworkExplorer.tsx"
+    },
+    {
+      "area": "Red button by Data types",
+      "existing": "Red button next to the Data types filter.",
+      "proposed": "No equivalent outside compare mode.",
+      "status": "To confirm",
+      "evidence": "Not tested. Ask what it does (remove this network?)."
+    }
+  ]
+}

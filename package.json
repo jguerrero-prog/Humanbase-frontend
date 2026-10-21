@@ -22,6 +22,7 @@
     "api:generate": "node scripts/generate-api-types.mjs",
     "api:verify": "node scripts/verify-api.mjs",
     "samples:record": "node scripts/record-samples.mjs",
+    "docs:compare": "node scripts/capture-existing-and-proposed.mjs",
     "deploy:cloudflare": "pnpm --filter @humanbase/web build && wrangler pages deploy apps/web/dist --project-name humanbase-frontend --branch master"
   },
   "devDependencies": {

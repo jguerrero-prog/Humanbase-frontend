@@ -1,0 +1,256 @@
+{
+  "slug": "expecto-sc",
+  "title": "ExPecto SC",
+  "lead": "ExPecto SC shows a gene's predicted expression effects in primary human cell types, grouped by organ.",
+  "captured": "2026-10-21",
+  "pairs": [
+    {
+      "caption": "The ExPecto SC search page",
+      "input": "Empty search",
+      "existing": {
+        "url": "https://humanbase.io/expectosc",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/expectosc"
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          }
+        ],
+        "file": "expecto-sc-1-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/expecto-sc/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/expecto-sc/"
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          }
+        ],
+        "file": "expecto-sc-1-proposed.jpg"
+      }
+    },
+    {
+      "caption": "PTEN's predicted expression effects by organ",
+      "input": "PTEN (Entrez 5728)",
+      "existing": {
+        "url": "https://humanbase.io/expectosc/gene/5728",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/expectosc/gene/5728"
+          },
+          {
+            "do": "wait",
+            "ms": 18000
+          }
+        ],
+        "file": "expecto-sc-2-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/expecto-sc/genes/5728/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/expecto-sc/genes/5728/"
+          },
+          {
+            "do": "wait",
+            "ms": 15000
+          }
+        ],
+        "file": "expecto-sc-2-proposed.jpg"
+      }
+    },
+    {
+      "caption": "PTEN in retina cell types",
+      "input": "PTEN, retina only",
+      "existing": {
+        "url": "https://humanbase.io/expectosc/gene/5728",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/expectosc/gene/5728"
+          },
+          {
+            "do": "wait",
+            "ms": 18000
+          },
+          {
+            "do": "click",
+            "text": "Choose organ and cell-type"
+          },
+          {
+            "do": "wait",
+            "ms": 4000
+          },
+          {
+            "do": "click",
+            "text": "Organs: (all of 7)"
+          },
+          {
+            "do": "click",
+            "text": "retina"
+          },
+          {
+            "do": "click",
+            "text": "Organs: (1 of 7)"
+          },
+          {
+            "do": "wait",
+            "ms": 3000
+          }
+        ],
+        "file": "expecto-sc-3-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/expecto-sc/genes/5728/?view=cells&group=retina",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/expecto-sc/genes/5728/?view=cells&group=retina"
+          },
+          {
+            "do": "wait",
+            "ms": 15000
+          }
+        ],
+        "file": "expecto-sc-3-proposed.jpg"
+      }
+    }
+  ],
+  "differences": [
+    {
+      "area": "Name",
+      "existing": "ExPectoSC",
+      "proposed": "ExPecto SC",
+      "status": "Changed",
+      "evidence": "Page titles on both sides"
+    },
+    {
+      "area": "Search page",
+      "existing": "Search, PTEN example and Download additional files here, which opens the docs",
+      "proposed": "Search, PTEN example, a lead sentence, an About panel, a docs link and Download additional files, which opens /downloads/",
+      "status": "Changed",
+      "evidence": "Capture pair 1; here links to humanbase.readthedocs.io/en/latest/expectosc.html#download"
+    },
+    {
+      "area": "Example gene",
+      "existing": "Clicking PTEN opens /expectosc/gene/5728",
+      "proposed": "Clicking PTEN opens /expecto-sc/genes/5728/",
+      "status": "Same function",
+      "evidence": "Clicked on both sides"
+    },
+    {
+      "area": "Tools",
+      "existing": "Gene search only; no variant or rsID tabs",
+      "proposed": "Gene search only",
+      "status": "Same function",
+      "evidence": "Both search pages"
+    },
+    {
+      "area": "Gene page: header",
+      "existing": "Symbol, name and a link menu: Ensembl, Entrez, MIM, HGNC",
+      "proposed": "Symbol, plus Name, Genome, Positions (309 within 20 kb of the start) and Organs (7); no outside links",
+      "status": "Missing",
+      "evidence": "Capture pair 2"
+    },
+    {
+      "area": "Gene page: view switch",
+      "existing": "Radio buttons: Organ overview, Choose organ and cell-type",
+      "proposed": "Segmented control: Organs, Cell types",
+      "status": "Same function",
+      "evidence": "Capture pair 2"
+    },
+    {
+      "area": "Organ filter",
+      "existing": "Organs is a checkbox menu, so several organs can be shown at once",
+      "proposed": "Organ is a single-choice menu, plus a new Find a cell type field",
+      "status": "Changed",
+      "evidence": "Capture pair 3"
+    },
+    {
+      "area": "Heatmap: row labels",
+      "existing": "Clicking an organ, such as retina, opens its cell types (Organs: 1 of 7)",
+      "proposed": "Row labels are plain text",
+      "status": "Missing",
+      "evidence": "Clicked retina on humanbase.io/expectosc/gene/5728"
+    },
+    {
+      "area": "Heatmap: columns",
+      "existing": "309 columns, every position labelled, repeats included (89623293 twice); the heatmap is 4,635 px wide",
+      "proposed": "309 columns, about one label in 16; full positions in the tooltip and table",
+      "status": "Same function",
+      "evidence": "Counted ticks and widths on both sides"
+    },
+    {
+      "area": "Heatmap: tooltip",
+      "existing": "Title names the strongest cell type, such as Endothelial / brain; value at full precision, such as -9.304812532010242",
+      "proposed": "Title is the organ, such as brain; value to 2 decimals, marked strongest; strongest cell type not named; Open in Genome Browser link",
+      "status": "Changed",
+      "evidence": "Hovered cells on both sides; packages/ui/src/Tooltip/DataTooltip.tsx:12"
+    },
+    {
+      "area": "Color scale",
+      "existing": "Continuous blue to red, -100 to 100, titled Expression Effect",
+      "proposed": "Seven steps with edges at 10, 30 and 100, titled Expression effect, z-score",
+      "status": "To confirm",
+      "evidence": "geneExpressionTools.ts notes PTEN reaches -140. Ask: are these the right bin edges for ExPecto SC z-scores?"
+    },
+    {
+      "area": "Help",
+      "existing": "No Help button",
+      "proposed": "No help dialog",
+      "status": "Same function",
+      "evidence": "Gene pages on both sides"
+    },
+    {
+      "area": "Cell type names",
+      "existing": "Cell type / organ, such as Amacrine cell / retina",
+      "proposed": "Same",
+      "status": "Same function",
+      "evidence": "Capture pair 3"
+    },
+    {
+      "area": "Summary and table",
+      "existing": "None",
+      "proposed": "A sentence names the strongest effect (a decrease of 140.16 at 89,623,406, in Retinal Rod celltype C / retina), plus View as table",
+      "status": "Added",
+      "evidence": "Capture pair 2"
+    },
+    {
+      "area": "Download",
+      "existing": "ExPectoSCHeatmap.tsv; values carry the allele, such as C:-20.945462382817144",
+      "proposed": "pten_expecto-sc_organs.tsv; headers carry a base, such as chr10:89623292:C; values are bare numbers",
+      "status": "Changed",
+      "evidence": "Downloaded both; GeneExpression.tsx download()"
+    },
+    {
+      "area": "Sharing a view",
+      "existing": "URL stays /expectosc/gene/5728 whatever the view",
+      "proposed": "View, organ and search are kept in the URL, such as ?view=cells&group=retina, with a Copy link button",
+      "status": "Added",
+      "evidence": "apps/web/src/pages/expecto/GeneExpressionPage.tsx"
+    },
+    {
+      "area": "IRGM",
+      "existing": "Loads, chromosome 5 positions from 150208534",
+      "proposed": "Loads, 117 positions; strongest is a decrease of 10.59 in ab T cell / liver",
+      "status": "Same function",
+      "evidence": "/expectosc/gene/345611 and /expecto-sc/genes/345611/"
+    },
+    {
+      "area": "Breadcrumb",
+      "existing": "Home / ExPectoSC / Gene",
+      "proposed": "Sequence analysis > ExPecto SC > PTEN",
+      "status": "Same function",
+      "evidence": "Gene pages on both sides"
+    }
+  ]
+}

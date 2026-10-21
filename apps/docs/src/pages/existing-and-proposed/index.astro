@@ -1,0 +1,33 @@
+---
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import { comparisons, countOf } from '../../data/existingAndProposed';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { withBase } from '../../withBase';
+---
+
+<DocsLayout title="Existing and proposed" description="Each Humanbase tool today next to the proposed redesign, with what differs.">
+  <Intro
+    lead="Each Humanbase tool as it is today on humanbase.io, next to the proposed redesign running on the live Humanbase API, with the same input. Under each pair, a table lists what differs, so the Humanbase team can confirm or correct what the redesign assumes."
+    status="Screens are recaptured with pnpm docs:compare; the differences are checked by hand against both sites"
+  />
+
+  <DocSection title="Tools" lead="Missing means humanbase.io does it and the proposed build doesn't yet. To confirm means a question for the Humanbase team.">
+    <DocTable caption="Tools compared" columns={['Tool', 'Missing', 'To confirm', 'Changed', 'Added']} widths={['36%', '16%', '16%', '16%', '16%']}>
+      {
+        comparisons.map((comparison) => (
+          <tr>
+            <th scope="row">
+              <a href={withBase(`/existing-and-proposed/${comparison.slug}/`)}>{comparison.title}</a>
+            </th>
+            <td>{countOf(comparison, 'Missing')}</td>
+            <td>{countOf(comparison, 'To confirm')}</td>
+            <td>{countOf(comparison, 'Changed')}</td>
+            <td>{countOf(comparison, 'Added')}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+</DocsLayout>

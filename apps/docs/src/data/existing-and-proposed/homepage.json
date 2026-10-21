@@ -1,0 +1,378 @@
+{
+  "slug": "homepage",
+  "title": "Homepage",
+  "lead": "Pick an analysis, search one or more genes, choose a tissue and data version, then open the gene network.",
+  "captured": "2026-10-21",
+  "pairs": [
+    {
+      "caption": "Homepage on arrival",
+      "input": "None",
+      "existing": {
+        "url": "https://humanbase.io/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/"
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          }
+        ],
+        "file": "homepage-1-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/"
+          },
+          {
+            "do": "wait",
+            "ms": 6000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          }
+        ],
+        "file": "homepage-1-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Typing IL1B in the gene search",
+      "input": "IL1B",
+      "existing": {
+        "url": "https://humanbase.io/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/"
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          },
+          {
+            "do": "click",
+            "text": "Select an analysis"
+          },
+          {
+            "do": "click",
+            "selector": "#react-select-SearchDropdown-option-0",
+            "note": "the Networks option"
+          },
+          {
+            "do": "wait",
+            "ms": 1500
+          },
+          {
+            "do": "type",
+            "selector": "#react-select-2-input",
+            "text": "IL1B"
+          },
+          {
+            "do": "wait",
+            "ms": 7000
+          }
+        ],
+        "file": "homepage-2-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/"
+          },
+          {
+            "do": "wait",
+            "ms": 6000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "type",
+            "role": "combobox",
+            "name": "Search genes",
+            "text": "IL1B"
+          },
+          {
+            "do": "wait",
+            "ms": 6000
+          }
+        ],
+        "file": "homepage-2-proposed.jpg"
+      }
+    },
+    {
+      "caption": "IL1B and TNF chosen, ready to show the network",
+      "input": "IL1B + TNF",
+      "existing": {
+        "url": "https://humanbase.io/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/"
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          },
+          {
+            "do": "click",
+            "text": "Select an analysis"
+          },
+          {
+            "do": "click",
+            "selector": "#react-select-SearchDropdown-option-0",
+            "note": "the Networks option"
+          },
+          {
+            "do": "wait",
+            "ms": 1500
+          },
+          {
+            "do": "type",
+            "selector": "#react-select-2-input",
+            "text": "IL1B"
+          },
+          {
+            "do": "wait",
+            "ms": 7000
+          },
+          {
+            "do": "click",
+            "text": "IL1B interleukin 1 beta"
+          },
+          {
+            "do": "wait",
+            "ms": 3000
+          },
+          {
+            "do": "type",
+            "selector": "#react-select-2-input",
+            "text": "TNF"
+          },
+          {
+            "do": "wait",
+            "ms": 7000
+          },
+          {
+            "do": "click",
+            "text": "TNF tumor necrosis factor"
+          },
+          {
+            "do": "wait",
+            "ms": 3000
+          }
+        ],
+        "file": "homepage-3-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/"
+          },
+          {
+            "do": "wait",
+            "ms": 6000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "type",
+            "role": "combobox",
+            "name": "Search genes",
+            "text": "IL1B"
+          },
+          {
+            "do": "wait",
+            "ms": 6000
+          },
+          {
+            "do": "click",
+            "role": "option",
+            "name": "^IL1B",
+            "nameIsRegex": true
+          },
+          {
+            "do": "wait",
+            "ms": 3000
+          },
+          {
+            "do": "type",
+            "role": "combobox",
+            "name": "Search genes",
+            "text": "TNF"
+          },
+          {
+            "do": "wait",
+            "ms": 6000
+          },
+          {
+            "do": "click",
+            "role": "option",
+            "name": "^TNF\\s",
+            "nameIsRegex": true
+          },
+          {
+            "do": "wait",
+            "ms": 3000
+          }
+        ],
+        "file": "homepage-3-proposed.jpg"
+      }
+    }
+  ],
+  "differences": [
+    {
+      "area": "Search before choosing an analysis",
+      "existing": "Gene search gives no suggestions until an analysis is chosen. Typing IL1B with no analysis showed 0 results.",
+      "proposed": "Suggestions appear right away. Choosing a gene switches the analysis to Networks.",
+      "status": "Changed",
+      "evidence": "Live: humanbase.io screen reader text '0 results available for search term IL1B'; proposed HomeSearch.tsx note text"
+    },
+    {
+      "area": "Analysis menu",
+      "existing": "Flat list of 10 tools, each with a one-line description.",
+      "proposed": "Same tools grouped under Network analysis, Variant effects, Sequences and Browsers, with a 'Compare them' link.",
+      "status": "Same function",
+      "evidence": "Both menus opened on the live sites; HomeSearch.tsx footer links to /sequence-tools/"
+    },
+    {
+      "area": "Term and disease search",
+      "existing": "Typing 'cancer' lists genes with tags showing the matched disease (for example ING1: head and neck cancer, cancer). TNF suggestions also show pathway tags.",
+      "proposed": "Typing 'cancer' lists the same genes but with no tags. Pressing Enter treats 'cancer' as a gene and reports 'Not found'.",
+      "status": "Missing",
+      "evidence": "Live: both sites with input 'cancer'"
+    },
+    {
+      "area": "Example searches",
+      "existing": "IL1B, BRCA1, PTEN, cancer, autism, plus three gene sets. With Networks chosen, the list drops to IL1B, BRCA1, PTEN, cancer, autism.",
+      "proposed": "IL1B, BRCA1, PTEN and 'Autism gene set'. No 'cancer' or 'autism' term examples. Renal and synapse sets live in Modules mode.",
+      "status": "Changed",
+      "evidence": "Live homepages; HomeSearch.tsx exampleGenes; data/src/modules/moduleExamples.ts"
+    },
+    {
+      "area": "Example click",
+      "existing": "Clicking IL1B chooses Networks and adds IL1B to the gene table.",
+      "proposed": "Clicking IL1B chooses Networks and adds IL1B to the gene table.",
+      "status": "Same function",
+      "evidence": "Live: both sites, URL stays on the homepage"
+    },
+    {
+      "area": "Several genes at once",
+      "existing": "Typing 'IL1B TNF' turns the field into a text box; Enter lists both genes under 'Search Results'.",
+      "proposed": "Typing 'IL1B TNF' and Enter matches both. Pasted lists split on new lines, commas, semicolons and tabs.",
+      "status": "Same function",
+      "evidence": "Live: both sites; HomeSearch.tsx pasteList"
+    },
+    {
+      "area": "Gene table",
+      "existing": "'Selected Genes': Search term, Entrez id, Standard name, Aliases, Description, remove button.",
+      "proposed": "'How your genes matched': You typed, Gene with name, Entrez ID, Status, remove button, and counts of matched, to check and not found. No aliases column.",
+      "status": "Changed",
+      "evidence": "Screenshots homepage-3"
+    },
+    {
+      "area": "Unmatched or ambiguous genes",
+      "existing": "Not observed.",
+      "proposed": "Each term gets a status: Matched, To check (choose between candidates) or Not found.",
+      "status": "To confirm",
+      "evidence": "Proposed showed 'cancer: Not found'. Ask what the existing site does with a symbol it cannot match or that matches several genes."
+    },
+    {
+      "area": "Gene missing from a data version",
+      "existing": "Not observed.",
+      "proposed": "Warns when a gene is not in GIANT or MAGE and offers to remove it or switch version.",
+      "status": "Added",
+      "evidence": "OutsideVersionAlert.tsx"
+    },
+    {
+      "area": "Tissue choice",
+      "existing": "'Select network' list with a filter box; 'global' is an option.",
+      "proposed": "'Tissue' list with a filter box; leave empty for the global network. Changing data version clears the tissue.",
+      "status": "Same function",
+      "evidence": "Live screenshots; HomeSearch.tsx chooseVersion"
+    },
+    {
+      "area": "Data version",
+      "existing": "GIANT by default; options GIANT and MAGE.",
+      "proposed": "GIANT by default; options GIANT and MAGE.",
+      "status": "Same function",
+      "evidence": "Live: both version menus opened"
+    },
+    {
+      "area": "Submit",
+      "existing": "'Search IL1B' or 'Search (2) genes'.",
+      "proposed": "'Show network for 2 genes'.",
+      "status": "Same function",
+      "evidence": "Screenshots homepage-3"
+    },
+    {
+      "area": "Result address",
+      "existing": "/gene/3553+7124. Tissue and data version are not in the address.",
+      "proposed": "/networks/?entrez=3553&entrez=7124&version=v1, with &tissue= when a tissue is chosen.",
+      "status": "Changed",
+      "evidence": "Live result URLs after submitting IL1B + TNF"
+    },
+    {
+      "area": "'IL1B in mononuclear phagocyte' link",
+      "existing": "Links to /gene/3553 and opens the global network.",
+      "proposed": "Opens /networks/?entrez=3553&tissue=mononuclear-phagocyte&version=v1.",
+      "status": "Changed",
+      "evidence": "Live: clicked on humanbase.io, tissue showed 'global'; home/content.ts"
+    },
+    {
+      "area": "Top navigation",
+      "existing": "Analyses, Resources, Documentation, About, Mailing list.",
+      "proposed": "Network analysis, Sequence analysis, Data, Docs, About, Jobs.",
+      "status": "Changed",
+      "evidence": "Live headers"
+    },
+    {
+      "area": "What's new",
+      "existing": "Only under About, What's New.",
+      "proposed": "A 'What's new' list on the homepage with an 'All updates' link.",
+      "status": "Added",
+      "evidence": "Proposed homepage; HomePage.tsx"
+    },
+    {
+      "area": "Mailing list and contact",
+      "existing": "'Mailing list' in the top bar and a floating 'Contact us' button.",
+      "proposed": "'Release notes by email, Subscribe' and 'Contact us' in the footer.",
+      "status": "Changed",
+      "evidence": "Live pages"
+    },
+    {
+      "area": "Hero text",
+      "existing": "'data-driven predictions of gene expression, function, regulation, and interactions in human'.",
+      "proposed": "'Predictions of gene function, regulation and interactions in human', plus a line citing 7,463 genome-scale datasets.",
+      "status": "To confirm",
+      "evidence": "HomePage.tsx leads. Ask whether 7,463 is the right dataset count and whether 'expression' should stay in the title."
+    }
+  ]
+}

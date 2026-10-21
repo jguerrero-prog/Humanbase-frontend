@@ -1,0 +1,437 @@
+{
+  "slug": "sei-beluga-seqweaver",
+  "title": "Sei, Beluga and Seqweaver",
+  "lead": "Sei, Beluga and Seqweaver predict how variants, regions or sequences change regulatory activity (Sei, Beluga) or RNA-binding protein targets (Seqweaver), using one shared form and one shared result page.",
+  "captured": "2026-10-21",
+  "pairs": [
+    {
+      "caption": "The Sei form with the example VCF loaded",
+      "input": "Sei, GRCh37/hg19, Variants (VCF), the example file",
+      "existing": {
+        "url": "https://humanbase.io/sei/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/sei/"
+          },
+          {
+            "do": "wait",
+            "ms": 12000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          },
+          {
+            "do": "click",
+            "text": "Example VCF submission"
+          },
+          {
+            "do": "wait",
+            "ms": 1500
+          },
+          {
+            "do": "scroll",
+            "text": "Submit a Sei analysis",
+            "offset": 140
+          }
+        ],
+        "file": "sei-beluga-seqweaver-1-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/sei/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/sei/"
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          },
+          {
+            "do": "click",
+            "role": "radio",
+            "name": "Use the example"
+          },
+          {
+            "do": "wait",
+            "ms": 1500
+          }
+        ],
+        "file": "sei-beluga-seqweaver-1-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Sei result: variant scores plot and table",
+      "input": "Sei job 2e18fedf-3de7-4d08-a894-9a937a2b860b, 12 variants, default view",
+      "existing": {
+        "url": "https://humanbase.io/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/"
+          },
+          {
+            "do": "wait",
+            "ms": 25000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          }
+        ],
+        "file": "sei-beluga-seqweaver-2-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "scroll",
+            "selector": "h1",
+            "offset": 120
+          }
+        ],
+        "file": "sei-beluga-seqweaver-2-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Selected variant in the genome browser",
+      "input": "Same Sei job, variant chr7:49,813,589 G>C chosen from the table",
+      "existing": {
+        "url": "https://humanbase.io/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/"
+          },
+          {
+            "do": "wait",
+            "ms": 25000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          },
+          {
+            "do": "click",
+            "role": "tab",
+            "name": "Table"
+          },
+          {
+            "do": "wait",
+            "ms": 1500
+          },
+          {
+            "do": "click",
+            "text": "49813589",
+            "dispatch": true
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          },
+          {
+            "do": "scroll",
+            "text": "Genome browser (hg19)",
+            "offset": 200
+          }
+        ],
+        "file": "sei-beluga-seqweaver-3-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "click",
+            "text": "chr7:49,813,589 G>C"
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          },
+          {
+            "do": "scroll",
+            "text": "Selected variant",
+            "offset": 90
+          }
+        ],
+        "file": "sei-beluga-seqweaver-3-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Molecular effects heatmap for the selected variant",
+      "input": "Same Sei job and variant, Heatmap tab, sequence class score",
+      "existing": {
+        "url": "https://humanbase.io/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/"
+          },
+          {
+            "do": "wait",
+            "ms": 25000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          },
+          {
+            "do": "click",
+            "role": "tab",
+            "name": "Table"
+          },
+          {
+            "do": "wait",
+            "ms": 1500
+          },
+          {
+            "do": "click",
+            "text": "49813589",
+            "dispatch": true
+          },
+          {
+            "do": "wait",
+            "ms": 8000
+          },
+          {
+            "do": "scroll",
+            "text": "Heatmap",
+            "offset": 200
+          }
+        ],
+        "file": "sei-beluga-seqweaver-4-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "click",
+            "text": "chr7:49,813,589 G>C"
+          },
+          {
+            "do": "wait",
+            "ms": 4000
+          },
+          {
+            "do": "click",
+            "role": "tab",
+            "name": "Heatmap"
+          },
+          {
+            "do": "wait",
+            "ms": 4000
+          },
+          {
+            "do": "scroll",
+            "text": "Molecular effects of chr7:49,813,589 G>C",
+            "offset": 100
+          }
+        ],
+        "file": "sei-beluga-seqweaver-4-proposed.jpg"
+      }
+    }
+  ],
+  "differences": [
+    {
+      "area": "Navigation",
+      "existing": "Seqweaver form lives at /seqweaver-deepsea; /seqweaver is a gnomAD RBP effects browser",
+      "proposed": "/seqweaver is the form; /seqweaver-deepsea is a 404 and there is no gnomAD browser",
+      "status": "Missing",
+      "evidence": "Analyses menu on humanbase.io links Seqweaver to /seqweaver-deepsea; humanbase.io/seqweaver/ shows the gnomAD browser; humanbase-frontend.pages.dev/seqweaver-deepsea/ says Page not found; apps/web/src/routes.tsx:46-51"
+    },
+    {
+      "area": "Model field",
+      "existing": "Shown but disabled; fixed to the page's tool",
+      "proposed": "Enabled; choosing another model opens that tool's page",
+      "status": "Changed",
+      "evidence": "#formDeepSEAModel isDisabled true on /sei/, /beluga/, /seqweaver-deepsea/; packages/hb/src/VariantJobForm/VariantJobForm.tsx:101, apps/web/src/pages/deepsea/DeepseaPage.tsx:18"
+    },
+    {
+      "area": "Input type",
+      "existing": "Type dropdown: VCF, BED, FASTA",
+      "proposed": "What are you submitting? Variants (VCF), Regions (BED), Sequences (FASTA)",
+      "status": "Same function",
+      "evidence": "Type options read on all three existing forms; VariantJobForm.tsx:116-121"
+    },
+    {
+      "area": "Genome with FASTA",
+      "existing": "Genome assembly stays visible for FASTA",
+      "proposed": "Genome assembly is hidden for FASTA; hg19 is still sent",
+      "status": "To confirm",
+      "evidence": "Existing form keeps Genome assembly after choosing FASTA; VariantJobForm.tsx:102 and DeepseaService.ts:46. Ask: does the API use genome_assembly for FASTA jobs?"
+    },
+    {
+      "area": "Example input",
+      "existing": "Example VCF submission puts the example text in an editable Submission box",
+      "proposed": "Use the example shows example.vcf as a file card with a summary; editing means Paste",
+      "status": "Changed",
+      "evidence": "Textarea readOnly false on humanbase.io; capture pair 1; VariantJobForm.tsx:84-90, 134-147"
+    },
+    {
+      "area": "Example files to download",
+      "existing": "One shared set: example.vcf, example_strand.vcf, example.bed, example.fasta (one FASTA for all tools)",
+      "proposed": "About panel lists example.vcf, .bed and .fasta per tool; FASTA sized for that tool; Seqweaver's VCF and BED carry a strand",
+      "status": "Changed",
+      "evidence": "Example files links point to s3 .../deepsea/examples/ on all three existing forms; DeepseaForm.tsx:70-92"
+    },
+    {
+      "area": "File checks",
+      "existing": "No check seen before Submit (not tested, to avoid starting jobs)",
+      "proposed": "Checks the file in the browser: counts, line problems, wrong type, up to 20,000 variants; Run button names the count",
+      "status": "To confirm",
+      "evidence": "VariantJobForm.tsx:69-72, 149; packages/data/src/jobs/VariantFileCheck.ts:26, 39-42. Ask: what limits does the API enforce, and is 20,000 right?"
+    },
+    {
+      "area": "Seqweaver strand",
+      "existing": "Example VCF has a sixth strand column (+ or -)",
+      "proposed": "Strand column is required for Seqweaver VCFs; a missing strand blocks Run",
+      "status": "To confirm",
+      "evidence": "Existing Seqweaver example lines end in - or +; VariantFileCheck.ts:85-88. Ask: does the API require the strand or default it?"
+    },
+    {
+      "area": "Newsletter opt-in",
+      "existing": "Opt-in to stay up to date with our newsletter appears after an email is typed",
+      "proposed": "No opt-in on the form; signup is always sent as false (footer has Subscribe)",
+      "status": "Missing",
+      "evidence": "Checkbox appeared after filling the email on humanbase.io/sei/; packages/data/src/deepsea/DeepseaService.ts:38"
+    },
+    {
+      "area": "Sei intro",
+      "existing": "New sequence model notice with links to the Sei code repository and the bioRxiv manuscript",
+      "proposed": "Summary line only; no repository or manuscript links",
+      "status": "Missing",
+      "evidence": "Links github.com/FunctionLab/sei-framework and biorxiv 2021.07.29.454384 on humanbase.io/sei/; no match for sei-framework in the repo"
+    },
+    {
+      "area": "Job tracking",
+      "existing": "After Submit, a Recent Sei jobs panel under the form shows status and View Results; kept in localStorage for 24 hours",
+      "proposed": "Opens a job page with steps (Submitted, Queued, Running, Results ready); job kept in the Jobs menu with no expiry in code",
+      "status": "Changed",
+      "evidence": "Seen after one accidental submission on humanbase.io/sei/; existing bundle stores deepsea_job_ keys with a 24 h cutoff; DeepseaJobView.tsx:16-21, DeepseaForm.tsx:44"
+    },
+    {
+      "area": "Email on results",
+      "existing": "Result page shows the submitter's email address",
+      "proposed": "Result page does not show the email",
+      "status": "Changed",
+      "evidence": "humanbase.io/deepsea/jobs/a5de3bd5-f4e6-4201-8f88-5bbe1931c094/ shows a@b.org; DeepseaResultView.tsx:78-83"
+    },
+    {
+      "area": "Result header",
+      "existing": "Variant effect predictions, created date and model; no title shown when Untitled",
+      "proposed": "Job title with Rename and Copy link; Model, Genome, Variants and Submitted labels",
+      "status": "Added",
+      "evidence": "Capture pair 2; DeepseaResultView.tsx:74-91"
+    },
+    {
+      "area": "Downloads",
+      "existing": "Download results is one link to the job's tar.gz",
+      "proposed": "Download results menu lists each file: per-feature TSVs, the variant score bigWig, the uploaded query and the archive",
+      "status": "Added",
+      "evidence": "Existing link to s3 .../<id>.tar.gz; proposed menu on the Sei job shows 5 items; DeepseaResultView.tsx:88"
+    },
+    {
+      "area": "Sei score type",
+      "existing": "Score type lists Max sequence class score and each of the 40 sequence classes",
+      "proposed": "Score lists only Max sequence class score",
+      "status": "Missing",
+      "evidence": "Existing dropdown read on job 2e18fedf; proposed combobox has one option; DeepseaModel.ts variantScores ['seqclass']"
+    },
+    {
+      "area": "Sei plot color",
+      "existing": "Color style: Chromosome or Sequence class (Sei only)",
+      "proposed": "Grey alternating by chromosome; no color by sequence class",
+      "status": "Missing",
+      "evidence": "Color style dropdown on Sei job only, not on Beluga 8b26a498 or Seqweaver 76aea8fe; DeepseaResultView.tsx:157"
+    },
+    {
+      "area": "Plot style",
+      "existing": "Plot style: Manhattan or Score Rank; overview strip under the plot",
+      "proposed": "Plot by: Genome position or Rank; no overview strip",
+      "status": "Same function",
+      "evidence": "Capture pair 2; DeepseaResultView.tsx:140-149"
+    },
+    {
+      "area": "Variants table",
+      "existing": "Separate Table tab: every score as a column (40 classes for Sei), search, Chr filter, Show data in genomic range",
+      "proposed": "Table beside the plot: variant, gene and top class, one score column (two for Beluga and Seqweaver), filter by name or position, first 9 then Show all",
+      "status": "Changed",
+      "evidence": "Existing headers read from the Sei Table tab; proposed table on all three jobs; DeepseaResultView.tsx:122-174. Ask: are the Chr filter and genomic range filter needed?"
+    },
+    {
+      "area": "Selecting a variant",
+      "existing": "Choosing a table row moves the genome browser; selection is not in the URL",
+      "proposed": "Plot, table, Previous and Next all select; the variant is kept in the URL as ?variant=",
+      "status": "Added",
+      "evidence": "Row click moved existing browser to 7:49,763,588..49,863,590 with the URL unchanged; proposed URL ?variant=chr7-49813589-G-C; apps/web/src/pages/deepsea/DeepseaJobPage.tsx:13"
+    },
+    {
+      "area": "Genome browser start",
+      "existing": "Opens at 1:2,230,000..2,440,000 until a variant is picked, then 100 kb around it",
+      "proposed": "Opens on the selected variant at 50 kb, with a marker",
+      "status": "Changed",
+      "evidence": "Seen on job 2e18fedf before and after a row click; capture pair 3; VariantGenomeBrowser.tsx:18, 30"
+    },
+    {
+      "area": "Genome browser tracks",
+      "existing": "Variant score track (such as Max sequence class score) plus GENCODE 19; add track, print and settings buttons",
+      "proposed": "Position, sequence and GENCODE 19 genes only; no score track or track actions",
+      "status": "Missing",
+      "evidence": "Capture pair 3; VariantGenomeBrowser.tsx:19, 70, 83"
+    },
+    {
+      "area": "Molecular effects views",
+      "existing": "Two tabs: Heatmap and Sequence classes (Features for Beluga and Seqweaver)",
+      "proposed": "Three tabs: Strongest effects (new, with 0.5, 1, 2 or All thresholds), Heatmap and All features",
+      "status": "Added",
+      "evidence": "Tabs read on all three jobs; EffectsCard.tsx:70-104"
+    },
+    {
+      "area": "Heatmap",
+      "existing": "Top 20 of 40, Full or Compact, Reverse sort; columns numbered across the browser range",
+      "proposed": "Top 20 of 40, Full or Compact rows, Lowest first, Show more; one column for the selected variant",
+      "status": "To confirm",
+      "evidence": "Capture pair 4; EffectsCard.tsx:84-95. Ask: should the heatmap show every variant in the browser range, as the existing axis suggests?"
+    },
+    {
+      "area": "Effect color scale",
+      "existing": "Continuous blue to red, -6 to 6, for Sei",
+      "proposed": "Binned blue to brown at 0.5, 1 and 2 for Sei; z-score bins 2, 3, 5 for Beluga and Seqweaver",
+      "status": "Changed",
+      "evidence": "Capture pair 4 legends; DeepseaModel.ts bins; DeepseaResultView.tsx:45-48"
+    },
+    {
+      "area": "Feature score types",
+      "existing": "Sei: Sequence class score, Probability diffs. Beluga and Seqweaver: z-score, e-value, Probability diffs",
+      "proposed": "Same options in the Score field of molecular effects",
+      "status": "Same function",
+      "evidence": "Dropdowns read on jobs 2e18fedf, 8b26a498, 76aea8fe on both sites"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+---
+import Comparison from '../../components/docs/Comparison.astro';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import { captureImage, comparisons, countOf, statuses, type Comparison as ComparisonData } from '../../data/existingAndProposed';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+export function getStaticPaths() {
+  return comparisons.map((comparison) => ({ params: { slug: comparison.slug }, props: { comparison } }));
+}
+
+const { comparison } = Astro.props as { comparison: ComparisonData };
+const dateOf = (iso: string) => new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+const counts = statuses.map((status) => [status, countOf(comparison, status)] as const).filter(([, count]) => count > 0);
+const differences = [...comparison.differences].sort((a, b) => statuses.indexOf(a.status) - statuses.indexOf(b.status));
+---
+
+<DocsLayout title={`${comparison.title}: existing and proposed`} description={comparison.lead}>
+  <Intro lead={comparison.lead} status={`Captured ${dateOf(comparison.captured)}, with the same input on both sides · ${counts.map(([status, count]) => `${count} ${status.toLowerCase()}`).join(' · ')}`} />
+
+  <DocSection title="Side by side" lead="Existing is humanbase.io today; proposed is the redesign running on the live Humanbase API. Open this screen goes to the live page.">
+    <div class="comparisons">
+      {comparison.pairs.map((pair) => <Comparison caption={pair.caption} input={pair.input} existing={{ url: pair.existing.url, image: captureImage(pair.existing.file) }} proposed={{ url: pair.proposed.url, image: captureImage(pair.proposed.file) }} />)}
+    </div>
+  </DocSection>
+
+  <DocSection title="What differs" lead="Missing and To confirm come first: they are the questions for the Humanbase team. Same function means it looks different but does the same thing.">
+    <DocTable caption={`What differs in ${comparison.title}`} columns={['Area', 'Existing', 'Proposed', 'Status']} widths={['16%', '32%', '32%', '20%']}>
+      {
+        differences.map((difference) => (
+          <tr>
+            <th scope="row">{difference.area}</th>
+            <td>{difference.existing}</td>
+            <td>{difference.proposed}</td>
+            <td class="comparison-status">{difference.status}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+</DocsLayout>

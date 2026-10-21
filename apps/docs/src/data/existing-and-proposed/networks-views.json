@@ -1,0 +1,217 @@
+{
+  "slug": "networks-views",
+  "title": "Networks: other views",
+  "lead": "The other tabs and the compare flow of the gene network page.",
+  "captured": "2026-10-21",
+  "pairs": [
+    {
+      "caption": "Tissue expression tab",
+      "input": "IL1B + TNF",
+      "existing": {
+        "url": "https://humanbase.io/gene/3553+7124",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/gene/3553+7124"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          },
+          {
+            "do": "click",
+            "role": "tab",
+            "name": "Tissue expression"
+          },
+          {
+            "do": "wait",
+            "ms": 12000
+          },
+          {
+            "do": "scroll",
+            "text": "Experimentally validated and computationally predicted tissue/cell-type expression",
+            "offset": 150
+          }
+        ],
+        "file": "networks-views-1-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/networks/?entrez=3553&entrez=7124&version=v1&tab=expression",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/networks/?entrez=3553&entrez=7124&version=v1"
+          },
+          {
+            "do": "wait",
+            "ms": 18000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "click",
+            "role": "tab",
+            "name": "Tissue expression"
+          },
+          {
+            "do": "wait",
+            "ms": 12000
+          },
+          {
+            "do": "scroll",
+            "role": "tablist",
+            "name": "Views of IL1B and TNF",
+            "offset": 10
+          }
+        ],
+        "file": "networks-views-1-proposed.jpg"
+      }
+    },
+    {
+      "caption": "Adding a network to compare",
+      "input": "IL1B + TNF",
+      "existing": {
+        "url": "https://humanbase.io/gene/3553+7124",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase.io/gene/3553+7124"
+          },
+          {
+            "do": "wait",
+            "ms": 20000
+          },
+          {
+            "do": "click",
+            "text": "Dismiss"
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Add network",
+            "nameIsRegex": true
+          },
+          {
+            "do": "wait",
+            "ms": 3000
+          }
+        ],
+        "file": "networks-views-2-existing.jpg"
+      },
+      "proposed": {
+        "url": "https://humanbase-frontend.pages.dev/networks/?entrez=3553&entrez=7124&version=v1",
+        "steps": [
+          {
+            "do": "goto",
+            "url": "https://humanbase-frontend.pages.dev/networks/?entrez=3553&entrez=7124&version=v1"
+          },
+          {
+            "do": "wait",
+            "ms": 18000
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Dismiss"
+          },
+          {
+            "do": "click",
+            "role": "button",
+            "name": "Compare"
+          },
+          {
+            "do": "wait",
+            "ms": 3000
+          }
+        ],
+        "file": "networks-views-2-proposed.jpg"
+      }
+    }
+  ],
+  "differences": [
+    {
+      "area": "Tissue system filter",
+      "existing": "Checkboxes start empty and all 75 tissues show.",
+      "proposed": "Checkboxes start checked with 'Clear all'; uncheck to hide a system. Also 75 tissues.",
+      "status": "Changed",
+      "evidence": "Screenshots networks-views-1; TissueExpression.tsx"
+    },
+    {
+      "area": "Tissue search",
+      "existing": "None.",
+      "proposed": "'Filter tissues' search field.",
+      "status": "Added",
+      "evidence": "TissueExpression.tsx"
+    },
+    {
+      "area": "Expression scale",
+      "existing": "Continuous scale 0 to 1, colored system stripes by each row, average shown as a bar column.",
+      "proposed": "Five-step scale (below 0.5 to 0.9 and up), average as a heatmap column.",
+      "status": "Changed",
+      "evidence": "Screenshots networks-views-1"
+    },
+    {
+      "area": "Download predictions",
+      "existing": "Button on the Tissue expression tab.",
+      "proposed": "Button on the Tissue expression tab.",
+      "status": "Same function",
+      "evidence": "Live existing tab; NetworkExplorer.tsx downloadPredictions"
+    },
+    {
+      "area": "Process network start",
+      "existing": "Process picker shows 'global', data types '0 of 5 selected' and an 'Add network' step.",
+      "proposed": "Empty state 'Choose a process'; picking one builds the network.",
+      "status": "Changed",
+      "evidence": "Live tab on both sites"
+    },
+    {
+      "area": "Process list",
+      "existing": "190 entries in the picker.",
+      "proposed": "189 processes.",
+      "status": "To confirm",
+      "evidence": "Live counts. The existing count may include 'global'."
+    },
+    {
+      "area": "Process network with MAGE",
+      "existing": "Not observed.",
+      "proposed": "Note that process networks use GIANT even when MAGE is chosen.",
+      "status": "Added",
+      "evidence": "NetworkExplorer.tsx alert"
+    },
+    {
+      "area": "Biological processes and Diseases order",
+      "existing": "Diseases led by 'gastrointestinal system cancer'; processes led by 'mitotic nuclear division'.",
+      "proposed": "Diseases led by 'stomach cancer'; processes led by 'activation of MAPK activity'.",
+      "status": "To confirm",
+      "evidence": "Live, IL1B + TNF. Ask which sort order is intended."
+    },
+    {
+      "area": "Biological processes and Diseases rows",
+      "existing": "Expandable rows with confidence, 'experimental' badge and source count per gene.",
+      "proposed": "Expandable rows with a confidence per gene and an Evidence column; 50 rows at a time with 'Show more'.",
+      "status": "Same function",
+      "evidence": "Live tabs; GeneAssociations.tsx"
+    },
+    {
+      "area": "Compare entry",
+      "existing": "'Add network' opens 'Add a tissue network to compare'.",
+      "proposed": "'Compare' opens 'Add a network to compare'.",
+      "status": "Same function",
+      "evidence": "Screenshots networks-views-2"
+    },
+    {
+      "area": "Compare defaults",
+      "existing": "Tissue preset to global; data types '0 of 5 selected'.",
+      "proposed": "Tissue must be chosen; data types start at all 5.",
+      "status": "To confirm",
+      "evidence": "Screenshots networks-views-2. Ask whether '0 of 5' means all types."
+    }
+  ]
+}

@@ -92,6 +92,22 @@ const sections: NavSection[] = [
     ],
   },
   {
+    heading: 'Existing and proposed',
+    items: [
+      { label: 'Overview', href: '/existing-and-proposed/' },
+      { label: 'Homepage', href: '/existing-and-proposed/homepage/' },
+      { label: 'Networks', href: '/existing-and-proposed/networks/' },
+      { label: 'Networks: other views', href: '/existing-and-proposed/networks-views/' },
+      { label: 'Modules', href: '/existing-and-proposed/modules/' },
+      { label: 'NetWAS', href: '/existing-and-proposed/netwas/' },
+      { label: 'Sei, Beluga and Seqweaver', href: '/existing-and-proposed/sei-beluga-seqweaver/' },
+      { label: 'ExPecto', href: '/existing-and-proposed/expecto/' },
+      { label: 'ExPecto SC', href: '/existing-and-proposed/expecto-sc/' },
+      { label: 'In silico mutagenesis', href: '/existing-and-proposed/in-silico-mutagenesis/' },
+      { label: 'ASD Browser', href: '/existing-and-proposed/asd-browser/' },
+    ],
+  },
+  {
     heading: 'Resources',
     items: [{ label: 'Figma library', href: '/resources/figma-library/' }, { label: 'Changelog', href: '/resources/changelog/' }, { label: 'Contribution guide', href: '/resources/contribution-guide/' }, { label: 'Deploying', href: '/resources/deploying/' }, { label: 'Contact the team', href: '/resources/contact-the-team/' }],
   },
