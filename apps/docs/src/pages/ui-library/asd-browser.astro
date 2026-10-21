@@ -22,9 +22,9 @@ const variants: AsdVariantRow[] = [
 const positions = [2_232_996, 2_234_187, 2_235_106, 2_235_168, 2_235_624, 2_247_509, 2_250_950, 2_254_905, 2_255_213, 2_259_317];
 const pattern = [0.4, -1.1, 2.6, 0.9, -2.4, 3.4, 1.2, -0.6, 5.2, -3.1, 0.2];
 const heatmap: AsdBrowserProps['heatmap'] = {
-  title: 'z-score. Showing the top 20 of 2,002 features, sorted by chr1:2,337,101 A>C.',
+  title: 'DNA feature scores. Showing the top 20 of 2,002 features, sorted by chr1:2,337,101 A>C.',
   summary: 'Illustrative values: the feature names and scores in this drawing weren’t captured from the live browser.',
-  scale: { title: 'z-score', kind: 'diverging', edges: [-5, -3, -2, 2, 3, 5], words: ['Lowers', 'Raises'] },
+  scale: { title: 'DNA features', kind: 'diverging', edges: [-3, -2, -1, 1, 2, 3], words: ['Lowers', 'Raises'] },
   columns: positions.map((position) => ({ label: String(position), position })),
   rows: Array.from({ length: 6 }, (_, row) => ({ label: `DNA feature ${row + 1}`, values: positions.map((_, column) => pattern[(row * 3 + column) % pattern.length] ?? 0) })),
   axis: { title: 'Position on chr1, GRCh37/hg19', offset: 2_230_000, ticks: [0, 10_000, 20_000, 30_000] },

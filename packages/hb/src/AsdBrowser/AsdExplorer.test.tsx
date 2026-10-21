@@ -26,7 +26,7 @@ describe('AsdExplorer', () => {
   it('opens the browser on the variant nearest the middle, with its strongest DNA effects', async () => {
     renderPage();
     expect(await screen.findByRole('heading', { name: 'Molecular effects of chr1:2,337,101 A>C' }, { timeout: 5000 })).toBeInTheDocument();
-    expect(await screen.findByText('Raises, 28 DNA features', {}, { timeout: 5000 })).toBeInTheDocument();
+    expect(await screen.findByText('Raises, 39 DNA features', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByText(/^34 variants in view/)).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Next variant' }));
     expect(await screen.findByRole('heading', { name: /^Molecular effects of chr1:2,346,/ }, { timeout: 5000 })).toBeInTheDocument();
