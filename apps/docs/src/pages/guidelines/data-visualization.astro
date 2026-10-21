@@ -2,7 +2,7 @@
 import { withBase } from '../../withBase';
 import { ColorCatalog, contrastRatio, lightness } from '@humanbase/tokens/color';
 import primitives from '@humanbase/tokens/src/primitives.tokens.json';
-import { KeyLegend, ScaleLegend, sequenceClassLegend } from '@humanbase/ui';
+import { chromosomeColor, KeyLegend, ScaleLegend, sequenceClassLegend } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
@@ -37,6 +37,7 @@ const categorical = [
   return { name: index < all.length - 1 ? `${index + 1}. ${name}` : name, cssVar: `--viz-${key.replace('.', '-')}`, hex, ratio: ratio(hex) };
 });
 
+const chromosomeItems = [...Array.from({ length: 22 }, (_, i) => `chr${i + 1}`), 'chrX', 'chrY'].map((label) => ({ label, color: chromosomeColor(label) ?? '' }));
 const moduleItems = modules.map(({ id, label }) => ({ label, color: `--viz-cat-${id}` }));
 const edgeItems = [...edgeBands].reverse();
 
@@ -98,7 +99,7 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
     <KeyRules
       rules={[
         { title: 'Green is not data', text: 'Emerald belongs to the interface: brand and selection. Charts never use it, so a green mark never looks “selected”.' },
-        { title: 'One scale per kind of data', text: 'Amounts get one blue ramp, directions get blue to orange, groups get six named colors. Never a rainbow.' },
+        { title: 'One scale per kind of data', text: 'Amounts get one blue ramp, directions get blue to orange, groups get six named colors. Never a rainbow. Two sets copy humanbase.io instead: Sei sequence classes and chromosomes.' },
         { title: 'Color is never alone', text: 'Every encoding is also in a label, a position, a line width or a table view, and every chart has a legend.' },
       ]}
     />
@@ -147,11 +148,21 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
     </article>
     <article class="scale-card">
       <header><h3>Sei sequence classes</h3><code>viz.seqclass.*</code></header>
-      <p>The one set of group colors the system doesn’t choose: Sei’s eight sequence class groups keep the colors humanbase.io gives them, so a plot colored by sequence class reads the same on both sites. Only the Sei plot’s Color style, Sequence class, uses them.</p>
+      <p>An exception to the six categorical colors: Sei’s eight sequence class groups keep the colors humanbase.io gives them, so a plot colored by sequence class reads the same on both sites. Only the Sei plot’s Color style, Sequence class, uses them.</p>
       <KeyLegend title="Sequence class" items={sequenceClassLegend} />
       <ul class="points">
         <li>A class is matched to its group by the start of its name, as on humanbase.io: E for Enhancer, PC for Polycomb before P for Promoter, HET, TN, TF, L.</li>
         <li>Points get the 1px outline every filled category mark gets, and the class is also named in the variants table.</li>
+        <li>The legend keeps humanbase.io’s label text exactly, including its spelling “Heterochomatin”.</li>
+      </ul>
+    </article>
+    <article class="scale-card">
+      <header><h3>Chromosomes</h3><code>viz.chromosome.1 to .22, .x, .y</code></header>
+      <p>The second exception to the six categorical colors: the variant score plot colors each of the 24 chromosomes the way humanbase.io does, so a result reads the same on both sites. The values are the ones humanbase.io renders, from its distinct-colors palette (24 colors, hue 50 to 340, chroma 0 to 90, lightness 45 to 80), read from the live site on October 21, 2026.</p>
+      <KeyLegend title="Chromosome" items={chromosomeItems} />
+      <ul class="points">
+        <li>Only the variant score plot uses them, in every DeepSEA result, and in Sei’s Color style, Chromosome.</li>
+        <li>Neighboring chromosomes can look alike, so the axis labels and the variants table carry the chromosome too; color is never the only cue.</li>
       </ul>
     </article>
   </DocSection>

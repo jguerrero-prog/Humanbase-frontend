@@ -32,6 +32,13 @@ describe('AsdExplorer', () => {
     expect(await screen.findByRole('heading', { name: /^Molecular effects of chr1:2,346,/ }, { timeout: 5000 })).toBeInTheDocument();
   });
 
+  it('links the ASD Browser’s score type documentation and its data file, as humanbase.io does', async () => {
+    renderPage();
+    await screen.findByRole('heading', { name: 'Molecular effects of chr1:2,337,101 A>C' }, { timeout: 5000 });
+    expect(screen.getByRole('link', { name: /Score type documentation/ })).toHaveAttribute('href', 'https://humanbase.readthedocs.io/en/latest/asdbrowser.html#output');
+    expect(screen.getByRole('link', { name: /Download data/ })).toHaveAttribute('href', 'https://s3-us-west-2.amazonaws.com/humanbase/variants/dis_asd.tsv');
+  });
+
   it('keeps the chosen effects tab while stepping to another variant', async () => {
     renderPage();
     await userEvent.click(await screen.findByRole('tab', { name: 'Heatmap' }, { timeout: 5000 }));

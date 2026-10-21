@@ -3,6 +3,7 @@ import {
   ActionMenu,
   Alert,
   byGenomePosition,
+  chromosomeColor,
   DocsLink,
   expressionEffects,
   KeyLegend,
@@ -171,11 +172,11 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
               by={plotBy}
               selected={selected?.id}
               onSelect={select}
-              {...(byClass && { pointColor: (row) => sequenceClassColor(row.topClass) })}
+              pointColor={(row) => (byClass ? sequenceClassColor(row.topClass) : chromosomeColor(row.chromosome))}
               summary={
                 byClass
                   ? `${number.format(ordered.length)} variants, colored by the sequence class each changes most; the class is also in the table.`
-                  : `${number.format(ordered.length)} variants. Chromosomes alternate dark and light grey; position carries the chromosome, so color doesn’t have to.`
+                  : `${number.format(ordered.length)} variants, colored by chromosome; position also carries the chromosome.`
               }
             />
           </div>

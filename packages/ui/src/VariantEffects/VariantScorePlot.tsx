@@ -10,7 +10,7 @@ export interface VariantScorePlotProps {
   by?: PlotBy;
   selected?: string | undefined;
   onSelect?: ((id: string) => void) | undefined;
-  /** A color custom property per point, such as its sequence class; without it, chromosomes alternate grey. */
+  /** A color custom property per point, such as its chromosome or sequence class; without one, chromosomes alternate grey. */
   pointColor?: ((variant: Variant) => string | undefined) | undefined;
   summary: string;
 }

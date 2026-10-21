@@ -11,7 +11,8 @@ const groups: readonly SequenceClassGroup[] = [
   { prefix: 'CTCF', label: 'CTCF', color: '--viz-seqclass-ctcf' },
   { prefix: 'PC', label: 'Polycomb', color: '--viz-seqclass-polycomb' },
   { prefix: 'P ', label: 'Promoter', color: '--viz-seqclass-promoter' },
-  { prefix: 'HET', label: 'Heterochromatin', color: '--viz-seqclass-heterochromatin' },
+  // humanbase.io's legend spells it this way.
+  { prefix: 'HET', label: 'Heterochomatin', color: '--viz-seqclass-heterochromatin' },
   { prefix: 'TN', label: 'Transcription', color: '--viz-seqclass-transcription' },
   { prefix: 'TF', label: 'Transcription factor', color: '--viz-seqclass-tf' },
   { prefix: 'L', label: 'Low signal', color: '--viz-seqclass-low' },

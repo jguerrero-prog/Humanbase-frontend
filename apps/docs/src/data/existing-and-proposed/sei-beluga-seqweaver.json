@@ -366,9 +366,9 @@
     {
       "area": "Sei plot color",
       "existing": "Color style: Chromosome or Sequence class (Sei only)",
-      "proposed": "Color style: Chromosome (grey alternating) or Sequence class (Sei only), with humanbase.io's eight group colors and a legend above the plot",
-      "status": "Changed",
-      "evidence": "Color style dropdown on Sei job only, not on Beluga 8b26a498 or Seqweaver 76aea8fe; live Chromosome uses one color per chromosome; DeepseaResultView.tsx"
+      "proposed": "Color style: Chromosome or Sequence class (Sei only), with humanbase.io's 24 chromosome colors and eight group colors, and a legend above the plot",
+      "status": "Same function",
+      "evidence": "Color style dropdown on Sei job only, not on Beluga 8b26a498 or Seqweaver 76aea8fe; point colors compared one by one with job 2e18fedf; DeepseaResultView.tsx"
     },
     {
       "area": "Plot style",

@@ -1,5 +1,5 @@
 import {
-  ApiError, AsdVariant, featureEffects, featureLabel, GenomeLocation, useAsdColumns, useAsdEffects, useAsdPage, useAsdRange, useHumanbase,
+  ApiError, AsdVariant, featureEffects, featureLabel, GenomeLocation, useAsdColumns, useAsdEffects, useAsdPage, readTheDocs, useAsdRange, useHumanbase,
   type AsdFeatureSet, type AsdVariantRow, type FeaturePredictionRecord, type FeaturesRecord,
 } from '@humanbase/data';
 import { defaultGenomeEngine, GenomeEngineView, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
@@ -271,6 +271,7 @@ function VariantEffects({ location, rows, selected, set, onSetChange, view, onVi
       featurePlural={`${noun}s`}
       verb=""
       choice={{ label: 'Features', options: featureSets, value: set, onChange: (value) => onSetChange(value as AsdFeatureSet), name: 'Score' }}
+      scoreDocs={{ label: 'Score type documentation', href: `${readTheDocs}asdbrowser.html#output` }}
       view={view}
       onViewChange={onViewChange}
       heatmap={features.data && <RangeHeatmap location={location} rows={rows} selected={selected} byPosition={byPosition} features={features.data} scale={scale} />}

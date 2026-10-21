@@ -25,7 +25,7 @@ describe('DeepseaJobView', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Untitled Seqweaver job' }, { timeout: 5000 })).toBeInTheDocument();
     expect(await screen.findByText('Molecular effects of chr1:109,817,590 G>T', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(await screen.findByText('LIN28A', {}, { timeout: 5000 })).toBeInTheDocument();
-    expect(screen.getByText('10 variants. Chromosomes alternate dark and light grey; position carries the chromosome, so color doesn’t have to.')).toBeInTheDocument();
+    expect(screen.getByText('10 variants, colored by chromosome; position also carries the chromosome.')).toBeInTheDocument();
   });
 
   it('reads Sei effects as sequence classes', async () => {
@@ -44,7 +44,7 @@ describe('DeepseaJobView', () => {
     await userEvent.click(style);
     await userEvent.click(screen.getByRole('option', { name: 'Sequence class' }));
     const legend = screen.getByRole('group', { name: /^Sequence class$/ });
-    expect(within(legend).getAllByRole('listitem').map((item) => item.textContent)).toEqual(['Enhancer', 'CTCF', 'Polycomb', 'Promoter', 'Heterochromatin', 'Transcription', 'Transcription factor', 'Low signal']);
+    expect(within(legend).getAllByRole('listitem').map((item) => item.textContent)).toEqual(['Enhancer', 'CTCF', 'Polycomb', 'Promoter', 'Heterochomatin', 'Transcription', 'Transcription factor', 'Low signal']);
     expect(screen.getByText(/colored by the sequence class each changes most/)).toBeInTheDocument();
   });
 

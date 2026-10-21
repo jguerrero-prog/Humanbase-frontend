@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EffectGroups, type EffectExperiment } from './EffectGroups';
 import { EffectsHeatmap } from './EffectsHeatmap';
+import { chromosomeColor } from './ChromosomeColor';
 import { sequenceClassColor } from './SequenceClass';
 import { StrongestEffects } from './StrongestEffects';
 import type { Variant } from './Variant';
@@ -48,6 +49,16 @@ describe('VariantScorePlot', () => {
     const [first, second] = container.querySelectorAll('circle');
     expect(second?.getAttribute('style')).toContain('--point-color: var(--viz-seqclass-promoter)');
     expect(first?.getAttribute('style')).toBeNull();
+  });
+});
+
+describe('chromosomeColor', () => {
+  it('gives each of the 24 chromosomes its own color, as humanbase.io does', () => {
+    expect(chromosomeColor('chr3')).toBe('--viz-chromosome-3');
+    expect(chromosomeColor('chrX')).toBe('--viz-chromosome-x');
+    expect(chromosomeColor('chr22')).toBe('--viz-chromosome-22');
+    expect(chromosomeColor('chrM')).toBeUndefined();
+    expect(chromosomeColor('chr23')).toBeUndefined();
   });
 });
 
