@@ -150,6 +150,18 @@ test('the ASD Browser loads Biodalliance in the design system, finds SCN2A and p
   await expect(page.locator('.genome-engine')).toBeVisible();
   await expect(page.locator('.genome-engine-header')).toHaveText(['Position', /^DNA disease impact score/, /^RNA disease impact score/, /^GenesGENCODE 19/]);
   await expect(page.locator('.genome-engine .dalliance > .toolbar')).toBeHidden();
+  const coveredBar = await page.evaluate(async () => {
+    const bar = document.querySelector('.top-bar');
+    const frame = document.querySelector('.genome-engine-frame');
+    if (!bar || !frame) return ['missing top bar or genome browser'];
+    scrollBy(0, frame.getBoundingClientRect().top - bar.clientHeight + 200);
+    await new Promise((settled) => setTimeout(settled, 300));
+    const { top, bottom } = bar.getBoundingClientRect();
+    const covered: number[][] = [];
+    for (let x = 8; x < innerWidth; x += 16) for (let y = top + 2; y < bottom; y += 6) if (!bar.contains(document.elementFromPoint(x, y))) covered.push([x, y]);
+    return covered;
+  });
+  expect(coveredBar, 'the genome browser draws over the top bar').toEqual([]);
   await page.locator('.genome-engine').focus();
   await page.keyboard.press('ArrowRight');
   await expect(page).toHaveURL(/location=chr1/);

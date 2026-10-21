@@ -1,4 +1,6 @@
+/* Biodalliance's layers go up to z-index 5000; isolating the frame keeps them below the page's sticky bar. */
 .genome-engine-frame {
+  isolation: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   overflow: hidden;
