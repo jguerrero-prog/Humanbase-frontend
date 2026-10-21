@@ -25,5 +25,12 @@ Object.assign(HTMLElement.prototype, {
   },
 });
 
+// jsdom has no layout, so nothing ever resizes; this stand-in lets components observe elements.
+globalThis.ResizeObserver ??= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
 // jsdom has no canvas; returning no context lets code that measures text fall back to its defaults.
 HTMLCanvasElement.prototype.getContext = () => null;

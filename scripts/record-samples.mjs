@@ -6,7 +6,7 @@ import { sampleKey } from '../packages/data/src/sample/sampleKey.ts';
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice('--only='.length);
 const target = (args.find((arg) => !arg.startsWith('--')) ?? process.env.HB_API_PROXY_TARGET ?? 'https://hb.flatironinstitute.org').replace(/\/$/, '');
-const { endpoints, geneLookups } = JSON.parse(readFileSync(new URL('../packages/data/endpoints.json', import.meta.url), 'utf8'));
+const { endpoints, geneLookups, genomeTracks } = JSON.parse(readFileSync(new URL('../packages/data/endpoints.json', import.meta.url), 'utf8'));
 const samplesDir = fileURLToPath(new URL('../packages/data/samples/', import.meta.url));
 
 // Samples over 100 KB skip the indentation, which only helps reading small ones.
@@ -79,8 +79,27 @@ async function recordGene(name) {
   return { sample: key, result: `${span.chrom}:${span.start}-${span.end}` };
 }
 
+// Genome tracks read static files on S3 too; every window goes into one sample the API-off genome browser reads.
+async function recordGenomeTracks() {
+  const { S3GenomeTracks } = await import('../packages/data/src/genome/S3GenomeTracks.ts');
+  const files = new S3GenomeTracks(genomeTracks.tracks);
+  const windows = await Promise.all(
+    genomeTracks.windows.map(async ({ assembly, region, scores }) => {
+      const [chrom, from, to] = region.split(/[:-]/);
+      const width = Number(to) - Number(from);
+      const span = { chrom, start: Math.max(1, Number(from) - width), end: Number(to) + width };
+      const center = Math.round((span.start + span.end) / 2);
+      const read = await Promise.all([files.genes(assembly, span), files.sequence(assembly, { chrom, start: center - 1_000, end: center + 1_000 }), ...scores.map((url) => files.scores(url, span))]);
+      const [genes, sequence, ...values] = read;
+      return { assembly, ...span, genes, sequence, scores: Object.fromEntries(scores.map((url, index) => [url, rounded(values[index], 3)])) };
+    }),
+  );
+  writeSample(join(samplesDir, 'genome/tracks.json'), { status: 200, body: { windows } });
+  return { sample: 'genome/tracks', result: `${windows.length} windows` };
+}
+
 const pathOf = (sample) => (typeof sample === 'string' ? sample : sample.path);
 const genes = (geneLookups?.genes ?? []).filter((name) => !only || `genome/genes/${name.toLowerCase()}`.startsWith(only)).map(recordGene);
-const jobs = [...endpoints.flatMap((endpoint) => (endpoint.samples ?? []).filter((sample) => !only || pathOf(sample).startsWith(only)).map((sample) => record(endpoint, sample))), ...genes];
+const jobs = [...endpoints.flatMap((endpoint) => (endpoint.samples ?? []).filter((sample) => !only || pathOf(sample).startsWith(only)).map((sample) => record(endpoint, sample))), ...genes, ...(genomeTracks && (!only || 'genome/tracks'.startsWith(only)) ? [recordGenomeTracks()] : [])];
 console.log(`Recording ${jobs.length} samples from ${target}\n`);
 console.table(await Promise.all(jobs));

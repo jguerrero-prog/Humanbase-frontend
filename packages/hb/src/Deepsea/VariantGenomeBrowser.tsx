@@ -18,7 +18,7 @@ const noTracks: readonly GenomeDataTrack[] = [];
 
 /** The genome around the selected variant. With the API off nothing loads, so the section is left out. */
 export function VariantGenomeBrowser({ assembly, chromosome, position, label, engine = defaultGenomeEngine }: VariantGenomeBrowserProps) {
-  const { showsSamples } = useHumanbase();
+  const { showsSamples, genomeTracks } = useHumanbase();
   const [failure, setFailure] = useState<Error>();
   const chrom = withChr(chromosome);
   const region = useMemo(() => ({ chrom, start: Math.max(1, position - halfWidth), end: position + halfWidth }), [chrom, position]);
@@ -32,6 +32,7 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, en
       )}
       <GenomeEngineView
         engine={engine}
+        files={genomeTracks}
         label={`Genome browser, 50 kb around ${label}`}
         assembly={assembly}
         region={region}

@@ -5,6 +5,7 @@ export { IconButton, type IconButtonProps } from './IconButton/IconButton';
 export { StarToggle, type StarToggleProps } from './StarToggle/StarToggle';
 export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
 export { ScoreTracks, type ScoreTrack, type ScoreTracksProps } from './GenomeBrowser/ScoreTracks';
+export { GenomeTrackView, type GeneShape, type GenomeTrackViewProps, type ScoreTrackData, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
 export {
   BrowserSettingsDialog,
   ExportDialog,

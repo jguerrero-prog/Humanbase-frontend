@@ -601,5 +601,15 @@
       "SCN2A",
       "CHD9"
     ]
+  },
+  "genomeTracks": {
+    "$note": "Not the API: the genome browser reads gene models, scores and sequence from the static track files on S3. pnpm samples:record saves each window padded by its own width on both sides, the listed score files over it, and 2 kb of sequence around its center, into genome/tracks.json.",
+    "tracks": "https://humanbase.s3.amazonaws.com/tracks/",
+    "windows": [
+      { "assembly": "hg19", "region": "chr1:2230000-2440000", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] },
+      { "assembly": "hg19", "region": "chr14:21853352-21905457", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] },
+      { "assembly": "hg19", "region": "chr2:166095911-166248818", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] },
+      { "assembly": "hg19", "region": "chr16:53088944-53361413", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw"] }
+    ]
   }
 }

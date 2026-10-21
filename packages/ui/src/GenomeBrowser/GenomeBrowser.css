@@ -172,8 +172,99 @@
   stroke-width: 1;
 }
 
+/* The design system's own genome tracks: plain SVG on the page surface, per the Genome browser specs. */
+.genome-tracks {
+  border-block-start: 0;
+}
+
+.genome-tracks .track-header {
+  inline-size: auto;
+  min-inline-size: 0;
+  overflow: hidden;
+}
+
+.genome-tracks-area {
+  display: block;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.genome-tracks-area.is-draggable {
+  cursor: grab;
+}
+
+.genome-tracks-area.is-draggable:active {
+  cursor: grabbing;
+}
+
+.genome-tracks-note {
+  font: var(--type-caption);
+  fill: var(--text-secondary);
+}
+
+.genome-tracks-base {
+  font: 400 11px "Atkinson Hyperlegible Mono", monospace;
+  fill: var(--text-secondary);
+}
+
+.genome-tracks-bar {
+  fill: var(--viz-seq-6);
+}
+
+.genome-tracks-bar.is-selected {
+  fill: var(--text-default);
+}
+
+.genome-tracks-value {
+  font: 700 11px Lato, sans-serif;
+  fill: var(--text-default);
+}
+
+.genome-tracks-gene {
+  fill: var(--text-secondary);
+}
+
+.genome-tracks-gene.is-muted {
+  fill: var(--text-muted);
+}
+
+.genome-tracks-intron {
+  stroke: currentcolor;
+  color: var(--text-secondary);
+}
+
+.genome-tracks-gene.is-muted .genome-tracks-intron {
+  color: var(--text-muted);
+}
+
+.genome-tracks-gene-name {
+  font: 700 12px Lato, sans-serif;
+  fill: var(--text-default);
+}
+
+.genome-tracks-guide {
+  stroke: var(--text-default);
+  stroke-opacity: 0.5;
+}
+
+.genome-tracks-pill {
+  fill: var(--surface-inverse);
+}
+
+.genome-tracks-pill-text {
+  font: 400 12px "Atkinson Hyperlegible Mono", monospace;
+  fill: var(--text-on-brand);
+}
+
 @media (width < 48rem) {
   .score-tracks {
     grid-template-columns: 120px minmax(0, 1fr);
+  }
+
+  .genome-tracks .track-header-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

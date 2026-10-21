@@ -1,3 +1,5 @@
+import type { GenomeTracks } from '@humanbase/data';
+
 export type Assembly = 'hg19' | 'hg38';
 
 /** A stretch of one chromosome, 1-based and inclusive, with the chr prefix, such as chr1:2,230,000-2,440,000. */
@@ -14,6 +16,8 @@ export interface GenomeDataTrack {
   meta?: string;
   /** A bigWig file the engine reads in byte ranges. */
   bigWigUrl: string;
+  /** The scores' range, drawn from bottom to top of the track; bars grow from 0. */
+  range?: readonly [number, number];
   /** The page's own description of how to draw it; each engine reads the parts it understands. Colors may be design tokens, such as var(--viz-seq-6). */
   style?: Record<string, unknown>;
 }
@@ -57,7 +61,8 @@ export interface GenomeBrowserEngine {
   destroy(): void;
 }
 
-export type GenomeBrowserEngineFactory = () => GenomeBrowserEngine;
+/** Makes an engine; files reads the track files, from S3 with the API on or the samples with it off. */
+export type GenomeBrowserEngineFactory = (files: GenomeTracks) => GenomeBrowserEngine;
 
 export const withChr = (chrom: string) => (chrom.startsWith('chr') ? chrom : `chr${chrom}`);
 
