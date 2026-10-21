@@ -50,6 +50,17 @@ export class GenomeLocation {
     return assemblyNames[this.assembly];
   }
 
+  /** One base, such as a variant; the chromosome may come with or without "chr". */
+  static at(chromosome: string, position: number, assembly: Assembly = 'hg19'): GenomeLocation {
+    return new GenomeLocation(chromosome.startsWith('chr') ? chromosome : `chr${chromosome}`, position, position, assembly);
+  }
+
+  /** The same place on the UCSC Genome Browser, where humanbase.io sends positions. */
+  get ucscUrl(): string {
+    const place = this.start === this.end ? `${this.chrom}:${this.start}` : `${this.chrom}:${this.start}-${this.end}`;
+    return `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${this.assembly}&position=${place}`;
+  }
+
   format(): string {
     return `${this.chrom}:${count.format(this.start)}-${count.format(this.end)}`;
   }

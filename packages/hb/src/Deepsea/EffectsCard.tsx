@@ -11,6 +11,8 @@ const number = new Intl.NumberFormat('en-US');
 export interface EffectsCardProps {
   /** The selected variant, such as chr1:109,817,590 G>T. */
   label: string;
+  /** The selected variant in a genome browser, linked from the heatmap. */
+  href?: string | undefined;
   /** Undefined while they load. */
   effects: readonly FeatureEffect[] | undefined;
   failed: boolean;
@@ -35,7 +37,7 @@ const rank = (resource: string) => {
 };
 
 /** A variant's effect on every feature: Strongest effects, Heatmap and All features. */
-export function EffectsCard({ label, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, heatmap }: EffectsCardProps) {
+export function EffectsCard({ label, href, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, heatmap }: EffectsCardProps) {
   const [view, setView] = useState<EffectsView>('strongest');
   const [threshold, setThreshold] = useState<number | null>(start);
   const [search, setSearch] = useState('');
@@ -78,6 +80,7 @@ export function EffectsCard({ label, effects, failed, onRetry, scale, threshold:
     (heatmap ?? (
       <EffectsHeatmap
         variants={[label]}
+        links={[href]}
         rows={[...found].sort((a, b) => (lowestFirst ? a.value - b.value : b.value - a.value)).slice(0, rows).map((experiment) => ({ experiment, values: [experiment.value] }))}
         total={effects.length}
         density={density}

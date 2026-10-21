@@ -1,4 +1,4 @@
-import { useDeepseaVariants, useFeatureEffects, variantScoreTypes, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
+import { GenomeLocation, useDeepseaVariants, useFeatureEffects, variantScoreTypes, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
 import {
   ActionMenu,
   Alert,
@@ -212,6 +212,7 @@ function VariantEffectsCard({ job, variant, featureTypes }: VariantEffectsCardPr
   return (
     <EffectsCard
       label={variantLabel(variant)}
+      href={GenomeLocation.at(variant.chromosome, variant.position, job.assembly).ucscUrl}
       effects={effects}
       failed={Boolean(error)}
       onRetry={refetch}

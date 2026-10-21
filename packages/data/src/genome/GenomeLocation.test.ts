@@ -9,6 +9,11 @@ describe('GenomeLocation', () => {
     expect(GenomeLocation.parse('chr1:abc')).toBeUndefined();
   });
 
+  it('links a position to the UCSC Genome Browser on its own assembly', () => {
+    expect(GenomeLocation.at('10', 89622510).ucscUrl).toBe('https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr10:89622510');
+    expect(GenomeLocation.at('chr3', 12598855, 'hg38').ucscUrl).toBe('https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg38&position=chr3:12598855');
+  });
+
   it('says where the view is in words', () => {
     const view = new GenomeLocation('chr1', 109_792_590, 109_842_590);
     expect(view.help()).toBe('GRCh37/hg19. 50 kb shown. A gene name works too.');
