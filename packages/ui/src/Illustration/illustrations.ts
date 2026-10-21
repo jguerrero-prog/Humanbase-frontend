@@ -136,7 +136,7 @@ export const illustrations = {
     format: 'corner',
     width: 760,
     height: 640,
-    use: 'Left of the manuscript section on the homepage; corner or spot beside text',
+    use: 'Corner or spot beside text; About, Docs and blog posts',
     source: 'Waddington’s landscape as fine ridgelines on white, with a yellow cell resting in a valley. Illustrative.',
   },
   'cell-nucleus': {
