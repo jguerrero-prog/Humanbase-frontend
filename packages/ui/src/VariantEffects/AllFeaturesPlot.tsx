@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import { ScoreScale } from '../Heatmap/ScoreScale';
+import { BreakableText } from '../Text/BreakableText';
 import { zEffects, type EffectScale } from './EffectScale';
 import './VariantEffects.css';
 
@@ -14,12 +15,12 @@ export interface AllFeaturesPlotProps {
   scale?: EffectScale | undefined;
 }
 
-const width = 1214;
+const width = 970;
 const height = 380;
 const left = 56;
 const bottom = 56;
 const top = 16;
-const plotWidth = width - left - 260;
+const plotWidth = width - left - 16;
 const plotHeight = height - top - bottom;
 
 export function AllFeaturesPlot({ values, labels = [], marked = 20, summary, scale: effectScale = zEffects }: AllFeaturesPlotProps) {
@@ -36,39 +37,45 @@ export function AllFeaturesPlot({ values, labels = [], marked = 20, summary, sca
 
   return (
     <figure className="all-features" aria-labelledby={`${id}-summary`}>
-      <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true" focusable="false">
-        {yTicks.map((tick) => (
-          <g key={tick}>
-            <line className="variant-plot-grid" x1={left} x2={left + plotWidth} y1={y(tick)} y2={y(tick)} />
-            <text className="variant-plot-tick" x={left - 8} y={y(tick) + 4} textAnchor="end">
+      <div className="all-features-body">
+        <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true" focusable="false">
+          {yTicks.map((tick) => (
+            <g key={tick}>
+              <line className="variant-plot-grid" x1={left} x2={left + plotWidth} y1={y(tick)} y2={y(tick)} />
+              <text className="variant-plot-tick" x={left - 8} y={y(tick) + 4} textAnchor="end">
+                {tick}
+              </text>
+            </g>
+          ))}
+          {xTicks.map((tick) => (
+            <text key={tick} className="variant-plot-tick" x={x(tick)} y={top + plotHeight + 18} textAnchor="middle">
               {tick}
             </text>
-          </g>
-        ))}
-        {xTicks.map((tick) => (
-          <text key={tick} className="variant-plot-tick" x={x(tick)} y={top + plotHeight + 18} textAnchor="middle">
-            {tick}
+          ))}
+          <text className="variant-plot-title" x={left + plotWidth / 2} y={height - 8} textAnchor="middle">
+            Rank, lowest to highest
           </text>
-        ))}
-        <text className="variant-plot-title" x={left + plotWidth / 2} y={height - 8} textAnchor="middle">
-          Rank, lowest to highest
-        </text>
-        <text className="variant-plot-title" transform={`translate(14 ${top + plotHeight / 2}) rotate(-90)`} textAnchor="middle">
-          {effectScale.legend.title}
-        </text>
-        <rect className="all-features-marked" x={x(firstMarked) - 6} y={top} width={x(sorted.length) - x(firstMarked) + 12} height={plotHeight} />
-        <text className="variant-plot-tick" x={x(firstMarked) - 10} y={top + 12} textAnchor="end">
-          Top {marked}, shown in the heatmap
-        </text>
-        {sorted.map((value, index) => (
-          <circle key={index} className="all-features-point" cx={x(index + 1)} cy={y(value)} r="3" style={{ fill: `var(${scale.color(scale.step(value) ?? 4)})` }} />
-        ))}
-        {labels.map(({ label, value }, index) => (
-          <text key={label} className="all-features-label" x={x(sorted.length) + 14} y={top + 12 + index * 20}>
-            {label}, {ScoreScale.number(value)}
+          <text className="variant-plot-title" transform={`translate(14 ${top + plotHeight / 2}) rotate(-90)`} textAnchor="middle">
+            {effectScale.legend.title}
           </text>
-        ))}
-      </svg>
+          <rect className="all-features-marked" x={x(firstMarked) - 6} y={top} width={x(sorted.length) - x(firstMarked) + 12} height={plotHeight} />
+          <text className="variant-plot-tick" x={x(firstMarked) - 10} y={top + 12} textAnchor="end">
+            Top {marked}, shown in the heatmap
+          </text>
+          {sorted.map((value, index) => (
+            <circle key={index} className="all-features-point" cx={x(index + 1)} cy={y(value)} r="3" style={{ fill: `var(${scale.color(scale.step(value) ?? 4)})` }} />
+          ))}
+        </svg>
+        {labels.length > 0 && (
+          <ol className="all-features-labels" aria-label="Strongest">
+            {labels.map(({ label, value }) => (
+              <li key={label}>
+                <BreakableText>{label}</BreakableText>, {ScoreScale.number(value)}
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
       <figcaption id={`${id}-summary`} className="variant-plot-summary">
         {summary}
       </figcaption>

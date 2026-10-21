@@ -109,6 +109,7 @@
 .heatmap {
   position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   margin: 0;
 }
@@ -193,13 +194,11 @@
 }
 
 .heatmap-row-label {
-  overflow: hidden;
   padding-inline-end: var(--space-3);
   font: var(--type-body-sm);
   color: var(--text-default);
   text-align: end;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .heatmap-axis {

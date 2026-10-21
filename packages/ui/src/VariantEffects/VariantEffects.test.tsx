@@ -33,6 +33,14 @@ describe('VariantScorePlot', () => {
     expect(screen.getByRole('figure')).toHaveAccessibleName('2 variants.');
     expect(screen.getByText('chr1:109,817,590 G>T')).toBeInTheDocument();
   });
+
+  it('keeps negative scores inside the plot', () => {
+    const mixed = variants.map((variant, index) => ({ ...variant, scores: { impact: index ? -1.3 : 2.05 } }));
+    const { container } = render(<VariantScorePlot variants={mixed} score={{ key: 'impact', label: 'Max sequence class score' }} summary="2 variants." />);
+    const dots = [...container.querySelectorAll('circle')].map((dot) => Number(dot.getAttribute('cy')));
+    expect(dots.every((cy) => cy >= 24 && cy <= 275)).toBe(true);
+    expect(screen.getByText('-2')).toBeInTheDocument();
+  });
 });
 
 describe('StrongestEffects', () => {

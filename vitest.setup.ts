@@ -31,3 +31,6 @@ globalThis.ResizeObserver ??= class {
   unobserve() {}
   disconnect() {}
 };
+
+// jsdom has no canvas; returning no context lets code that measures text fall back to its defaults.
+HTMLCanvasElement.prototype.getContext = () => null;

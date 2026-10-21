@@ -41,15 +41,16 @@
 }
 
 .data-tooltip-rows dt {
-  min-inline-size: 0;
+  flex: none;
+  max-inline-size: 60%;
   font: var(--type-caption);
   color: var(--color-grey-300);
 }
 
 .data-tooltip-rows dd {
-  flex: none;
+  min-inline-size: 0;
   margin: 0;
-  white-space: nowrap;
+  overflow-wrap: break-word;
   font: var(--type-label-sm);
   text-align: end;
 }
