@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { BreakableText } from '../Text/BreakableText';
 import './DataTooltip.css';
 
 export interface DataTooltipProps {
@@ -16,8 +17,14 @@ export function DataTooltip({ title, subtitle, rows, hint, id, position, classNa
   const style = position ? ({ '--data-tooltip-x': `${position.x}px`, '--data-tooltip-y': `${position.y}px` } as CSSProperties) : undefined;
   return (
     <div id={id} role="tooltip" className={['data-tooltip', position && 'data-tooltip-placed', className].filter(Boolean).join(' ')} style={style}>
-      <p className="data-tooltip-title">{title}</p>
-      {subtitle && <p className="data-tooltip-subtitle">{subtitle}</p>}
+      <p className="data-tooltip-title">
+        <BreakableText>{title}</BreakableText>
+      </p>
+      {subtitle && (
+        <p className="data-tooltip-subtitle">
+          <BreakableText>{subtitle}</BreakableText>
+        </p>
+      )}
       <dl className="data-tooltip-rows">
         {rows.map(([label, value, note]) => (
           <div key={label}>

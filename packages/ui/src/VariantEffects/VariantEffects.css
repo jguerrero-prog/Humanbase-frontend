@@ -316,6 +316,7 @@
 }
 
 .effect-value {
+  white-space: nowrap;
   font: var(--type-label-sm);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
