@@ -45,6 +45,8 @@ export interface CommunityRecord {
   enrichment_name_lookup?: Readonly<Record<string, string>>;
   /** Every query gene: [symbol, name] by Entrez ID. */
   query_entrez?: Readonly<Record<string, readonly [string, string]>>;
+  /** The term release and network version the result was computed with. */
+  versions?: { term: string; integration: string };
 }
 
 export interface ModuleTerm {

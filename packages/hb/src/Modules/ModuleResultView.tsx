@@ -1,9 +1,10 @@
 import { dataVersionNames, useModuleGenes, type GeneHit, type Integration, type ModuleResult, type ModuleView } from '@humanbase/data';
 import { NetworkGraph, type GraphData, type GraphRendererFactory, type NetworkGraphHandle } from '@humanbase/graph';
-import { Button, Cell, Checkbox, GraphToolbar, HeaderCell, KeyLegend, ResultHeader, ResultLayout, saveFile, SearchField, Select, Table, TextInput, type GraphAction } from '@humanbase/ui';
+import { ActionMenu, Button, Cell, Checkbox, GraphToolbar, HeaderCell, KeyLegend, ResultHeader, ResultLayout, SearchField, Select, Table, TextInput, type GraphAction } from '@humanbase/ui';
 import { useMemo, useRef, useState } from 'react';
 import { ModuleDrawer } from './ModuleDrawer';
 import { moduleColors } from './moduleColors';
+import { useModuleDownloads } from './moduleExport';
 import { ModuleGenesTable } from './ModuleGenesTable';
 import { ModulesTable, ModuleSwatch } from './ModulesTable';
 import '../Networks/Networks.css';
@@ -52,13 +53,8 @@ export function ModuleResultView({ result, title, view, tissues, starting, onVie
     return [...names.data.values()].filter((gene) => gene.symbol.toLowerCase().startsWith(text) && result.moduleOf(gene.entrez)).slice(0, 8);
   }, [find, names.data, result]);
 
-  const fileName = (title || 'modules').replace(/[^\w-]+/g, '_');
-  const downloadModules = () => {
-    const lines = ['module\tsymbol\tentrez\tname', ...result.modules.flatMap((module) => module.genes.map((entrez) => `${module.label}\t${names.data?.get(entrez)?.symbol ?? ''}\t${entrez}\t${names.data?.get(entrez)?.name ?? ''}`))];
-    saveFile(lines.join('\n'), `${fileName}_modules.tsv`, 'text/tab-separated-values');
-  };
-
   const asTable = view.display === 'table';
+  const downloads = useModuleDownloads({ result, modules: shown, database, tissues, graph: asTable ? undefined : graph });
   const expand: GraphAction = { label: 'Expand', icon: 'maximize', pressed: view.expanded, onSelect: () => onViewChange(view.with({ expanded: !view.expanded })) };
   const toolbar: GraphAction[][] = asTable
     ? [[expand]]
@@ -69,7 +65,6 @@ export function ModuleResultView({ result, title, view, tissues, starting, onVie
           { label: 'Fit to screen', icon: 'fit', onSelect: () => graph.current?.fit() },
           expand,
         ],
-        [{ label: 'Download the graph as SVG', icon: 'download', onSelect: () => graph.current && saveFile(graph.current.exportSvg(), `${fileName}.svg`) }],
       ];
 
   const enriched = result.enrichedCount(database);
@@ -120,9 +115,7 @@ export function ModuleResultView({ result, title, view, tissues, starting, onVie
               if (module) onViewChange(view.with({ module: module.id, hideUnenriched: view.hideUnenriched && result.isEnriched(module.id, database), minimumSize: Math.min(view.minimumSize, module.genes.length) }));
             }}
           />
-          <Button variant="secondary" icon="download" onClick={downloadModules}>
-            Download
-          </Button>
+          <ActionMenu label="Download" trigger="text" items={downloads} />
         </>
       }
       tabs={[

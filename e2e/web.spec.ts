@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { apiOff } from './apiOff';
+import { downloadFrom } from './downloads';
 
 const web = 'http://localhost:4173';
 const pages = ['/', '/networks/?entrez=3553&entrez=7124&version=v1', '/jobs/', '/not-built-yet/'];
@@ -215,5 +216,26 @@ test('starring a tissue rings its genes, keeps the star in the URL and has no WC
   await page.keyboard.press('Escape');
   await page.reload();
   await expect(page.locator('.force-graph-node').filter({ has: page.locator('.force-graph-star') })).toHaveCount(3);
+  expect(apiRequests).toEqual([]);
+});
+
+test('the network Download menu saves the graph and the visible or entire network, named as the live site names them', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1`);
+  await expect(page.getByText(/Showing \d+ of \d+ genes/)).toBeVisible();
+  const png = await downloadFrom(page, 'Download network', 'Download as PNG');
+  expect([png.name, png.bytes.subarray(1, 4).toString()]).toEqual(['global.png', 'PNG']);
+  const svg = await downloadFrom(page, 'Download network', 'Download as SVG');
+  expect(svg.name).toBe('global.svg');
+  expect(svg.bytes.toString()).toContain('<svg');
+  const lines = async (item: string) => {
+    const file = await downloadFrom(page, 'Download network', item);
+    expect(file.name).toBe('global.txt');
+    return file.bytes.toString().split('\n');
+  };
+  const visible = await lines('Download visible network as text');
+  const entire = await lines('Download entire network as text');
+  expect([visible[0], visible[1]]).toEqual(['GENE1,GENE2,WEIGHT', 'CCL3,CCL4,0.9924881536514399']);
+  expect([visible.length, entire.length]).toEqual([91, 1328]);
   expect(apiRequests).toEqual([]);
 });

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { apiOff } from './apiOff';
+import { downloadFrom } from './downloads';
 import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
@@ -74,5 +75,26 @@ test('Edit genes takes the result’s list back to the search', async ({ page })
   await expect(page).toHaveURL(/\/\?analysis=modules$/);
   await expect(page.getByRole('textbox', { name: 'Title' })).toHaveValue('');
   await expect(page.getByRole('button', { name: 'Find modules in 504 genes' })).toBeVisible();
+  expect(apiRequests).toEqual([]);
+});
+
+test('the module Download menu saves the live site’s TSV, PNG, SVG, PDF and ZIP, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(renal);
+  await expect(page.getByText('Showing 14 enriched modules of 2 genes or more. Edges hidden.')).toBeVisible();
+  const name = /^kidney_gene-ontology-bp_\d+\.(tsv|png|svg|pdf|zip)$/;
+  const tsv = await downloadFrom(page, 'Download', 'Download as TSV');
+  expect(tsv.name).toMatch(name);
+  const rows = tsv.bytes.toString().split('\n');
+  expect(rows.slice(0, 3)).toEqual(['GO_VERSION\treleases/2018-05-14\t\t\t\t', 'NETWORK_NAME\tkidney\t\t\t\t', 'NETWORK_VERSION\t1\t\t\t\t']);
+  expect(rows).toEqual(expect.arrayContaining(['RESULTING GENE COUNT\t351\t\t\t\t', 'CLUSTER_NAME\tTERM_NAME\tGO_ID\tTERM_Q_VALUE\tGENE_COUNT\tTERM_GENES', 'SOURCE\tTARGET\tWEIGHT\t\t\t']));
+  for (const [format, magic] of [['PNG', '\x89PNG'], ['SVG', '<svg'], ['PDF', '%PDF']] as const) {
+    const file = await downloadFrom(page, 'Download', `Download as ${format}`);
+    expect(file.name).toMatch(name);
+    expect(file.bytes.subarray(0, magic.length).toString('latin1')).toBe(magic);
+  }
+  const zip = await downloadFrom(page, 'Download', 'Download as ZIP');
+  const base = zip.name.replace(/\.zip$/, '');
+  for (const extension of ['tsv', 'png', 'svg', 'pdf']) expect(zip.bytes.toString('latin1')).toContain(`${base}.${extension}`);
   expect(apiRequests).toEqual([]);
 });

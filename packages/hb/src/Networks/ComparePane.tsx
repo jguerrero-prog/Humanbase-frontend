@@ -13,7 +13,6 @@ export interface ComparePaneProps {
   title: string;
   integrations: readonly Integration[];
   queryNames: string;
-  fileName: string;
   selection: GraphSelection;
   onQueryChange: (query: NetworkQuery) => void;
   onViewChange: (view: NetworkView) => void;
@@ -22,7 +21,7 @@ export interface ComparePaneProps {
   renderer?: GraphRendererFactory | undefined;
 }
 
-export function ComparePane({ query, view, title, integrations, queryNames, fileName, selection, onQueryChange, onViewChange, onSelect, onRemove, renderer }: ComparePaneProps) {
+export function ComparePane({ query, view, title, integrations, queryNames, selection, onQueryChange, onViewChange, onSelect, onRemove, renderer }: ComparePaneProps) {
   const result = useNetwork(query);
   const network = result.data;
   const { data: dataTypes = [] } = useDataTypes(query.version);
@@ -55,7 +54,7 @@ export function ComparePane({ query, view, title, integrations, queryNames, file
           minConfidence={minConfidence}
           label={`Network of ${queryNames} and ${subset ? subset.genes.filter((gene) => !gene.isQuery).length : 0} related genes in the ${title} network. The genes table lists the same genes.`}
           tableCaption={`Connections between the genes in the ${title} network graph, strongest first`}
-          fileName={fileName}
+          networkTitle={title}
           selection={selection}
           loading={<GraphLoading />}
           canExpand={false}
