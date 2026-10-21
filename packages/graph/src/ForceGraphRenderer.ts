@@ -3,7 +3,7 @@ import { polygonHull } from 'd3-polygon';
 import { select, type Selection } from 'd3-selection';
 import { zoom, zoomIdentity, type ZoomBehavior } from 'd3-zoom';
 import { edgeBand, weakestBand } from './edgeBands';
-import type { GraphData, GraphGroup, GraphHighlight, GraphNode, GraphRenderer, GraphSelection, MountOptions } from './GraphRenderer';
+import type { GraphData, GraphFocus, GraphGroup, GraphHighlight, GraphLink, GraphNode, GraphRenderer, GraphSelection, MountOptions } from './GraphRenderer';
 
 const svgNs = 'http://www.w3.org/2000/svg';
 const radius = { node: 6, query: 10, ring: 4, member: 5, star: 3.5 };
@@ -42,6 +42,9 @@ export class ForceGraphRenderer implements GraphRenderer {
   private groupLabels = new Map<string, SVGGElement>();
   private placed = new Map<string, { x: number; y: number; r: number }>();
   private hullLayer: SVGGElement | undefined;
+  private selectedLinkLayer: SVGGElement | undefined;
+  private hoverLinkLayer: SVGGElement | undefined;
+  private hovered: SVGGElement | undefined;
   private highlights: readonly GraphHighlight[] = [];
 
   mount(container: HTMLElement, options: MountOptions): void {
@@ -72,10 +75,7 @@ export class ForceGraphRenderer implements GraphRenderer {
 
     const linkLayer = svgElement('g', { class: 'force-graph-links' });
     for (const link of placed.links) {
-      const band = edgeBand(link.weight) ?? weakestBand;
-      const line = svgElement('line', { x1: link.source.x, y1: link.source.y, x2: link.target.x, y2: link.target.y });
-      line.style.setProperty('--edge-color', `var(${band.color})`);
-      line.style.setProperty('--edge-width', `var(${band.width})`);
+      const line = this.drawLine(link.source, link.target, link.weight);
       const hit = svgElement('line', { class: 'force-graph-hit', x1: link.source.x, y1: link.source.y, x2: link.target.x, y2: link.target.y });
       hit.addEventListener('click', () => this.options?.onSelectLink?.(link.source.id, link.target.id));
       linkLayer.append(line, hit);
@@ -85,7 +85,10 @@ export class ForceGraphRenderer implements GraphRenderer {
     const groups = new Map((data.groups ?? []).map((group) => [group.id, group]));
     const nodeLayer = svgElement('g', { class: 'force-graph-nodes' });
     for (const node of placed.nodes) nodeLayer.append(this.drawNode(node, node.group ? groups.get(node.group) : undefined));
-    canvas.append(this.hullLayer, linkLayer, nodeLayer);
+    this.selectedLinkLayer = svgElement('g', { class: 'force-graph-links force-graph-focus-links', 'aria-hidden': 'true' });
+    this.hoverLinkLayer = svgElement('g', { class: 'force-graph-links force-graph-focus-links', 'aria-hidden': 'true' });
+    this.hovered = undefined;
+    canvas.append(this.hullLayer, linkLayer, this.selectedLinkLayer, this.hoverLinkLayer, nodeLayer);
     if (data.groups) canvas.append(this.drawGroupLabels(placed.nodes, data.groups));
 
     const xs = placed.nodes.map((n) => n.x);
@@ -94,6 +97,25 @@ export class ForceGraphRenderer implements GraphRenderer {
     this.highlight(this.highlights);
     svg.setAttribute('viewBox', `${minX - padding} ${minY - padding} ${maxX - minX + padding * 2 + 60} ${maxY - minY + padding * 2}`);
     this.fit();
+  }
+
+  private drawLine(from: { x: number; y: number }, to: { x: number; y: number }, weight: number): SVGLineElement {
+    const band = edgeBand(weight) ?? weakestBand;
+    const line = svgElement('line', { x1: from.x, y1: from.y, x2: to.x, y2: to.y });
+    line.style.setProperty('--edge-color', `var(${band.color})`);
+    line.style.setProperty('--edge-width', `var(${band.width})`);
+    return line;
+  }
+
+  /** Draws links between placed genes into a layer of their own, replacing what it held. */
+  private drawFocusLinks(layer: SVGGElement | undefined, links: readonly GraphLink[]): void {
+    layer?.replaceChildren(
+      ...links.flatMap((link) => {
+        const from = this.placed.get(link.source);
+        const to = this.placed.get(link.target);
+        return from && to ? [this.drawLine(from, to, link.weight)] : [];
+      }),
+    );
   }
 
   private drawNode(node: PlacedNode, cluster?: GraphGroup): SVGGElement {
@@ -110,6 +132,13 @@ export class ForceGraphRenderer implements GraphRenderer {
       group.append(label);
     }
     this.whenChosen(group, () => this.options?.onSelectNode?.(node.id));
+    const dot = group.lastElementChild as SVGCircleElement;
+    const hoverStart = () => this.options?.onHoverNode?.(node.id, dot.getBoundingClientRect());
+    const hoverEnd = () => this.options?.onHoverNode?.(null);
+    group.addEventListener('pointerenter', hoverStart);
+    group.addEventListener('focus', hoverStart);
+    group.addEventListener('pointerleave', hoverEnd);
+    group.addEventListener('blur', hoverEnd);
     this.nodes.set(node.id, group);
     return group;
   }
@@ -196,13 +225,16 @@ export class ForceGraphRenderer implements GraphRenderer {
     const linked = new Set<string>();
     if (selection?.kind === 'node') {
       linked.add(selection.id);
-      for (const link of this.links) if (link.source === selection.id || link.target === selection.id) linked.add(link.source).add(link.target);
+      for (const link of [...this.links, ...(selection.links ?? [])]) if (link.source === selection.id || link.target === selection.id) linked.add(link.source).add(link.target);
     }
     if (selection?.kind === 'link') linked.add(selection.source).add(selection.target);
     if (selection?.kind === 'group') for (const [id, group] of this.groupOf) if (group === selection.id) linked.add(id);
+    this.drawFocusLinks(this.selectedLinkLayer, selection?.kind === 'node' ? (selection.links ?? []) : []);
+    const nodeGroup = selection?.kind === 'node' && selection.links ? this.groupOf.get(selection.id) : undefined;
+    const linkedGroups = new Set([...linked].flatMap((id) => this.groupOf.get(id) ?? []));
     for (const [id, label] of this.groupLabels) {
-      label.classList.toggle('is-selected', selection?.kind === 'group' && selection.id === id);
-      label.classList.toggle('is-faded', selection?.kind === 'group' && selection.id !== id);
+      label.classList.toggle('is-selected', (selection?.kind === 'group' && selection.id === id) || nodeGroup === id);
+      label.classList.toggle('is-faded', (selection?.kind === 'group' && selection.id !== id) || (nodeGroup !== undefined && !linkedGroups.has(id)));
     }
     for (const [id, element] of this.nodes) {
       element.classList.toggle('is-selected', selection?.kind === 'node' && selection.id === id);
@@ -214,6 +246,13 @@ export class ForceGraphRenderer implements GraphRenderer {
       element.classList.toggle('is-selected', isSelected);
       element.classList.toggle('is-faded', selection !== null && !isSelected && !touches);
     }
+  }
+
+  hover(focus: GraphFocus | null): void {
+    this.hovered?.classList.remove('is-hovered');
+    this.hovered = focus ? this.nodes.get(focus.id) : undefined;
+    this.hovered?.classList.add('is-hovered');
+    this.drawFocusLinks(this.hoverLinkLayer, focus?.links ?? []);
   }
 
   highlight(sets: readonly GraphHighlight[]): void {
@@ -277,5 +316,8 @@ export class ForceGraphRenderer implements GraphRenderer {
     this.groupLabels.clear();
     this.placed.clear();
     this.hullLayer = undefined;
+    this.selectedLinkLayer = undefined;
+    this.hoverLinkLayer = undefined;
+    this.hovered = undefined;
   }
 }

@@ -1,4 +1,5 @@
-import { useId, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { Button } from '../Button/Button';
 import { LayerHeader } from '../Layer/LayerHeader';
 import { useLayer } from '../Layer/useLayer';
 import { PHONE_QUERY, useMediaQuery } from '../Layer/useMediaQuery';
@@ -18,12 +19,14 @@ export interface DrawerProps {
   footer?: ReactNode;
   inline?: boolean;
   className?: string;
+  /** Going one level deeper inside the drawer, such as from a module to one of its genes: a Back button above the title. */
+  back?: { label: string; onSelect: () => void } | undefined;
   children: ReactNode;
 }
 
 const swipeToClose = 64;
 
-export function Drawer({ title, subtitle, open = false, onClose = () => {}, size = 'medium', placement = 'over', sheet, footer, inline = false, className, children }: DrawerProps) {
+export function Drawer({ title, subtitle, open = false, onClose = () => {}, size = 'medium', placement = 'over', sheet, footer, inline = false, className, back, children }: DrawerProps) {
   const titleId = useId();
   const phone = useMediaQuery(PHONE_QUERY);
   const asSheet = sheet ?? phone;
@@ -36,6 +39,14 @@ export function Drawer({ title, subtitle, open = false, onClose = () => {}, size
     closeOnBackdrop: true,
     initialFocus: (element) => element.querySelector<HTMLElement>('.layer-title'),
   });
+
+  // New content moves focus to its title when focus was in the drawer or lost with a removed button.
+  useEffect(() => {
+    const dialog = layer.ref.current;
+    const active = document.activeElement;
+    if (!dialog?.open || (active !== document.body && !dialog.contains(active))) return;
+    dialog.querySelector<HTMLElement>('.layer-title')?.focus();
+  }, [title, back?.label, layer.ref]);
 
   return (
     <dialog
@@ -52,7 +63,16 @@ export function Drawer({ title, subtitle, open = false, onClose = () => {}, size
             onPointerUp={(event) => event.clientY - swipeStart.current > swipeToClose && onClose()}
           />
         )}
-        <LayerHeader titleId={titleId} title={title} subtitle={subtitle} onClose={onClose} className="drawer-header" />
+        <LayerHeader titleId={titleId} title={title} subtitle={subtitle} onClose={onClose}
+          className="drawer-header"
+          above={
+            back && (
+              <Button variant="ghost" size="small" icon="chevron-left" className="drawer-back" onClick={back.onSelect}>
+                {back.label}
+              </Button>
+            )
+          }
+        />
         {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the body scrolls, so it takes focus for arrow-key scrolling */}
         <div className="drawer-body" role="region" aria-labelledby={titleId} tabIndex={0}>
           {children}

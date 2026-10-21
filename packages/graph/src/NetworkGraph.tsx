@@ -1,6 +1,6 @@
 import { useEffect, useImperativeHandle, useLayoutEffect, useRef, type Ref } from 'react';
 import { ForceGraphRenderer } from './ForceGraphRenderer';
-import type { GraphData, GraphHighlight, GraphRenderer, GraphRendererFactory, GraphSelection } from './GraphRenderer';
+import type { GraphData, GraphFocus, GraphHighlight, GraphRenderer, GraphRendererFactory, GraphSelection } from './GraphRenderer';
 import './graph.css';
 
 export interface NetworkGraphHandle {
@@ -15,9 +15,12 @@ export interface NetworkGraphProps {
   selection?: GraphSelection;
   /** Starred sets, ringed in their colors. */
   highlights?: readonly GraphHighlight[];
+  /** The gene to ring with a dashed ring, with the links to draw from it. */
+  hover?: GraphFocus | null;
   onSelectNode?: (id: string) => void;
   onSelectLink?: (source: string, target: string) => void;
   onSelectGroup?: (id: string) => void;
+  onHoverNode?: (id: string | null, anchor?: DOMRect) => void;
   /** Swap in another renderer, such as the live site's. Defaults to the plain force-directed one. */
   renderer?: GraphRendererFactory | undefined;
   className?: string;
@@ -27,12 +30,12 @@ export interface NetworkGraphProps {
 const defaultRenderer: GraphRendererFactory = () => new ForceGraphRenderer();
 const noHighlights: readonly GraphHighlight[] = [];
 
-export function NetworkGraph({ data, label, selection = null, highlights = noHighlights, onSelectNode, onSelectLink, onSelectGroup, renderer, className, ref }: NetworkGraphProps) {
+export function NetworkGraph({ data, label, selection = null, highlights = noHighlights, hover = null, onSelectNode, onSelectLink, onSelectGroup, onHoverNode, renderer, className, ref }: NetworkGraphProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GraphRenderer | null>(null);
-  const events = useRef({ onSelectNode, onSelectLink, onSelectGroup });
+  const events = useRef({ onSelectNode, onSelectLink, onSelectGroup, onHoverNode });
   useLayoutEffect(() => {
-    events.current = { onSelectNode, onSelectLink, onSelectGroup };
+    events.current = { onSelectNode, onSelectLink, onSelectGroup, onHoverNode };
   });
 
   useEffect(() => {
@@ -43,6 +46,7 @@ export function NetworkGraph({ data, label, selection = null, highlights = noHig
       onSelectNode: (id) => events.current.onSelectNode?.(id),
       onSelectLink: (source, target) => events.current.onSelectLink?.(source, target),
       onSelectGroup: (id) => events.current.onSelectGroup?.(id),
+      onHoverNode: (id, anchor) => events.current.onHoverNode?.(id, anchor),
     });
     instance.current = graph;
     return () => {
@@ -54,6 +58,7 @@ export function NetworkGraph({ data, label, selection = null, highlights = noHig
   useEffect(() => instance.current?.render(data), [data, renderer, label]);
   useEffect(() => instance.current?.select(selection), [selection, data, renderer, label]);
   useEffect(() => instance.current?.highlight(highlights), [highlights, data, renderer, label]);
+  useEffect(() => instance.current?.hover(hover), [hover, data, renderer, label]);
 
   useImperativeHandle(ref, () => ({
     zoomBy: (factor) => instance.current?.zoomBy(factor),

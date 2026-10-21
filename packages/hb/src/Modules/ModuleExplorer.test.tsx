@@ -46,12 +46,42 @@ describe('ModuleExplorer', () => {
     const table = await screen.findByRole('table', { name: 'Modules and their top terms' });
     await userEvent.click(within(table).getByRole('button', { name: 'M1' }));
     const drawer = await screen.findByRole('dialog', { name: 'M1, renal system development' });
-    expect(within(drawer).getByText('64 genes, 10 enriched terms in Gene Ontology (BP)')).toBeInTheDocument();
-    expect(await within(drawer).findByText('NPHS2, NPHS1')).toBeInTheDocument();
+    expect(within(drawer).getByText('64 genes, 149 enriched terms in Gene Ontology (BP)')).toBeInTheDocument();
+    expect((await within(drawer).findAllByText('FGF8, GREB1L, HNF1B, ITGA8 and more'))[0]).toBeInTheDocument();
     expect(within(drawer).getByRole('link', { name: 'Open M1 genes in Networks' })).toHaveAttribute('href', expect.stringMatching(/^\/networks\/\?entrez=.*&tissue=kidney/));
     await userEvent.click(within(drawer).getByRole('radio', { name: 'Genes' }));
-    expect(within(drawer).getByRole('table', { name: 'Genes in M1' })).toHaveTextContent('ABCB11');
+    const genes = within(drawer).getByRole('table', { name: 'Genes in M1' });
+    expect(genes).toHaveTextContent('ABCB11');
+    expect(within(genes).getAllByRole('row')).toHaveLength(10);
+    await userEvent.click(within(genes).getByRole('button', { name: 'Show all 64 genes' }));
+    expect(within(genes).getAllByRole('row')).toHaveLength(65);
   });
+
+  it('opens a gene of a module in the same drawer, moves to its neighbors and goes back', async () => {
+    renderExplorer();
+    await userEvent.click(within(await screen.findByRole('table', { name: 'Modules and their top terms' })).getByRole('button', { name: 'M1' }));
+    const module = await screen.findByRole('dialog', { name: 'M1, renal system development' });
+    await userEvent.click(within(module).getByRole('radio', { name: 'Genes' }));
+    await userEvent.type(within(module).getByRole('searchbox', { name: 'Filter M1 genes' }), 'HNF1');
+    await userEvent.click(within(module).getByRole('button', { name: 'HNF1B' }));
+
+    const gene = await screen.findByRole('dialog', { name: 'HNF1B' });
+    expect(within(gene).getByText('HNF1 homeobox B, in M1 renal system development')).toBeInTheDocument();
+    expect(within(gene).getByRole('heading', { level: 2, name: 'HNF1B' })).toHaveFocus();
+    expect(within(within(gene).getByRole('table', { name: 'Enriched terms of M1 that include HNF1B' })).getAllByRole('row')).toHaveLength(10);
+    expect(within(gene).getAllByText('FGF8, GREB1L, ITGA8, NPHS1 and 3 more')[0]).toBeInTheDocument();
+    expect(within(gene).getByRole('link', { name: 'Open HNF1B in Networks' })).toHaveAttribute('href', expect.stringMatching(/^\/networks\/\?entrez=6928&tissue=kidney/));
+    await userEvent.click(within(gene).getByRole('radio', { name: 'Gene neighbors' }));
+    const neighbors = within(gene).getByRole('table', { name: 'Genes connected to HNF1B' });
+    expect(within(neighbors).getAllByRole('row').slice(1).map((row) => row.textContent)).toEqual([expect.stringMatching(/^HNF4A.*M10\.13/), expect.stringMatching(/^KCNJ1.*M10\.10/)]);
+
+    await userEvent.click(within(neighbors).getByRole('button', { name: 'HNF4A' }));
+    const next = await screen.findByRole('dialog', { name: 'HNF4A' });
+    expect(within(next).getByRole('table', { name: 'Genes connected to HNF4A' })).toHaveTextContent('HNF1B');
+    await userEvent.click(within(next).getByRole('button', { name: 'Back to M1' }));
+    expect(await screen.findByRole('dialog', { name: 'M1, renal system development' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Back to M1' })).not.toBeInTheDocument();
+  }, 15_000);
 
   it('lists genes by module and shows modules with no enriched terms on request', async () => {
     renderExplorer();

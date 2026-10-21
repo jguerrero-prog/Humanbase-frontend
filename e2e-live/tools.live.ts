@@ -15,6 +15,24 @@ test('the Modules renal panel result shows real modules, a module drawer and the
   await checkScreen(page, problems);
 });
 
+test('a Modules gene shows its live terms and neighbors, and chains to a neighbor', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&module=1&gene=6928`);
+  const gene = page.getByRole('dialog', { name: 'HNF1B' });
+  await expect(gene.getByText('HNF1 homeobox B, in M1 renal system development')).toBeVisible();
+  await expect(gene.getByRole('table', { name: 'Enriched terms of M1 that include HNF1B' }).getByRole('row')).toHaveCount(10);
+  await checkScreen(page, problems);
+  await gene.getByRole('radio', { name: 'Gene neighbors' }).click();
+  const neighbors = gene.getByRole('table', { name: 'Genes connected to HNF1B' });
+  await expect(neighbors.getByRole('row')).toHaveText([/Gene/, /^HNF4A.*M1.*0\.13$/, /^KCNJ1.*M1.*0\.10$/]);
+  await checkScreen(page, problems);
+  await neighbors.getByRole('button', { name: 'HNF4A' }).click();
+  await expect(page.getByRole('dialog', { name: 'HNF4A' }).getByRole('table', { name: 'Genes connected to HNF4A' })).toContainText('HNF1B');
+  await page.getByRole('button', { name: 'Back to M1' }).click();
+  await expect(page.getByRole('dialog', { name: /^M1, / })).toBeVisible();
+  await checkScreen(page, problems);
+});
+
 test('the Modules search matches the renal disease panel', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/modules/`);

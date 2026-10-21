@@ -39,12 +39,21 @@ export interface GraphHighlight {
   nodes: readonly string[];
 }
 
-export type GraphSelection ={ kind: 'node'; id: string } | { kind: 'link'; source: string; target: string } | { kind: 'group'; id: string } | null;
+/** A gene with its own connections, drawn even when the graph's links are hidden. */
+export interface GraphFocus {
+  id: string;
+  links: readonly GraphLink[];
+}
+
+/** A node selection with links draws them and keeps their genes and the node's group at full strength. */
+export type GraphSelection = { kind: 'node'; id: string; links?: readonly GraphLink[] } | { kind: 'link'; source: string; target: string } | { kind: 'group'; id: string } | null;
 
 export interface GraphEvents {
   onSelectNode?: (id: string) => void;
   onSelectLink?: (source: string, target: string) => void;
   onSelectGroup?: (id: string) => void;
+  /** A gene is hovered or focused, with where it is on screen, or null when it no longer is. */
+  onHoverNode?: (id: string | null, anchor?: DOMRect) => void;
 }
 
 export interface MountOptions extends GraphEvents {
@@ -60,6 +69,8 @@ export interface GraphRenderer {
   mount(container: HTMLElement, options: MountOptions): void;
   render(data: GraphData): void;
   select(selection: GraphSelection): void;
+  /** Rings a gene with a dashed ring and draws its links; null clears it. */
+  hover(focus: GraphFocus | null): void;
   /** Rings each set's genes in its color, in the order given, and shades the area around them. An empty list clears it. */
   highlight(sets: readonly GraphHighlight[]): void;
   zoomBy(factor: number): void;
