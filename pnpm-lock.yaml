@@ -235,6 +235,9 @@ importers:
       '@humanbase/data':
         specifier: workspace:*
         version: link:../../packages/data
+      '@humanbase/genome':
+        specifier: workspace:*
+        version: link:../../packages/genome
       '@humanbase/graph':
         specifier: workspace:*
         version: link:../../packages/graph

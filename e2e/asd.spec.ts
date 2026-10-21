@@ -51,15 +51,27 @@ test('the ASD Browser shows and hides its tracks and exports the view as SVG, wi
   await page.getByRole('button', { name: 'Tracks' }).click();
   const drawer = page.getByRole('dialog', { name: 'Tracks' });
   await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
+  await drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' }).check();
   await drawer.getByRole('checkbox', { name: 'Genes' }).uncheck();
   await drawer.getByRole('checkbox', { name: 'Sequence' }).uncheck();
   expect(await violationsOf(page)).toEqual([]);
   await drawer.getByRole('button', { name: 'Done' }).click();
-  await expect(headers).toHaveText(['DNA disease impact score', 'RNA disease impact score', 'Conservation']);
+  await expect(headers).toHaveText(['DNA disease impact score', 'RNA disease impact score', 'Conservation', 'GM12878 ChromHMM']);
   await expect(page.locator('.genome-engine').getByText('← PEX10')).toHaveCount(0);
   await page.reload();
-  await expect(headers).toHaveText(['DNA disease impact score', 'RNA disease impact score', 'Conservation']);
+  await expect(headers).toHaveText(['DNA disease impact score', 'RNA disease impact score', 'Conservation', 'GM12878 ChromHMM']);
   await expect(page.locator('.genome-engine .genome-tracks-bar')).not.toHaveCount(0);
+
+  const segments = page.locator('.genome-engine .genome-tracks-segment');
+  await expect(segments).toHaveCount(108);
+  await expect(segments.first()).toHaveAttribute('fill', '#C2D69A');
+  await segments.nth(23).hover();
+  await expect(page.getByRole('tooltip')).toHaveText(/^QuiesGM12878 ChromHMMStart2,249,001Length17,400 bp$/);
+  await page.getByText('View as table').click();
+  const table = page.getByRole('table', { name: 'GM12878 ChromHMM segments in chr1:2,230,000-2,440,000, GRCh37/hg19' });
+  await expect(table.getByRole('row')).toHaveCount(109);
+  await expect(table.getByRole('row').nth(1)).toHaveText(/^Low\s*2,229,601\s*2,230,400\s*800 bp$/);
+  expect(await violationsOf(page)).toEqual([]);
 
   await page.locator('.genome-engine').focus();
   await page.keyboard.press('x');
@@ -73,6 +85,8 @@ test('the ASD Browser shows and hides its tracks and exports the view as SVG, wi
   expect(svg).toMatch(/^<svg[^>]+width="1120"/);
   expect(svg).toContain('chr1:2,230,000-2,440,000, GRCh37/hg19');
   expect(svg).toContain('Conservation');
+  expect(svg).toContain('GM12878 ChromHMM');
+  expect(svg.match(/class="genome-tracks-segment"/g)).toHaveLength(108);
   expect(svg).toContain('chr1:2,337,101');
   expect(svg).not.toContain('genome-tracks-guide');
   await expect(dialog).toBeHidden();

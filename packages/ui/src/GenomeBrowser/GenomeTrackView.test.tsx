@@ -31,6 +31,33 @@ describe('GenomeTrackView', () => {
     expect(screen.getByText('RNA disease impact score didn’t load. Move or zoom to try again.')).toBeInTheDocument();
   });
 
+  it('draws segments in the file’s own colors and names each one in the Data tooltip on hover', () => {
+    const segments = [
+      { start: 101, end: 300, name: 'ReprW', color: '#7F7F7F' },
+      { start: 301, end: 400, name: 'Tss', color: '#FF0000' },
+    ];
+    const { container } = render(<GenomeTrackView start={1} end={1000} width={1000} segments={[{ name: 'GM12878 ChromHMM', meta: 'Genome segmentation', state: 'ready', data: segments }]} />);
+    expect(screen.getByText('Genome segmentation')).toBeInTheDocument();
+    const boxes = [...container.querySelectorAll('.genome-tracks-segment')];
+    expect(boxes.map((box) => [box.getAttribute('fill'), box.getAttribute('width'), box.getAttribute('height')])).toEqual([
+      ['#7F7F7F', '200', '8'],
+      ['#FF0000', '100', '8'],
+    ]);
+    fireEvent.pointerEnter(boxes[0] as Element, { clientX: 150 });
+    const tip = screen.getByRole('tooltip');
+    expect(tip).toHaveTextContent('ReprW');
+    expect(tip).toHaveTextContent('GM12878 ChromHMM');
+    expect(tip).toHaveTextContent('Start101');
+    expect(tip).toHaveTextContent('Length200 bp');
+    fireEvent.pointerLeave(boxes[0] as Element);
+    expect(screen.queryByRole('tooltip')).toBeNull();
+  });
+
+  it('says when a segment track has nothing to draw', () => {
+    render(<GenomeTrackView start={1} end={100} width={600} segments={[{ name: 'GM12878 ChromHMM', meta: '', state: 'ready', data: [], empty: 'Zoom in to under 5 Mb to see GM12878 ChromHMM.' }]} />);
+    expect(screen.getByText('Zoom in to under 5 Mb to see GM12878 ChromHMM.')).toBeInTheDocument();
+  });
+
   it('reports a drag in pixels', () => {
     const onPan = vi.fn();
     const { container } = render(<GenomeTrackView start={1} end={100} width={600} onPan={onPan} />);

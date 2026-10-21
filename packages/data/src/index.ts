@@ -32,7 +32,7 @@ export { AsdVariant, type AsdRecord, type AsdVariantRow } from './asd/AsdVariant
 export { AsdService, type AsdFeatureSet, type AsdPage, type AsdWhere } from './asd/AsdService';
 export { S3GeneLocator, type GeneLocator, type GeneSpan } from './genome/S3GeneLocator';
 export { SampleGeneLocator } from './genome/SampleGeneLocator';
-export { geneModels, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type SequenceSpan, type Transcript } from './genome/GenomeTracks';
+export { geneModels, segmentOf, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type Segment, type SequenceSpan, type Transcript } from './genome/GenomeTracks';
 export { S3GenomeTracks } from './genome/S3GenomeTracks';
 export { SampleGenomeTracks, type RecordedWindow } from './genome/SampleGenomeTracks';
 export { useAsdColumns, useAsdEffects, useAsdPage, useAsdRange } from './react/useAsd';

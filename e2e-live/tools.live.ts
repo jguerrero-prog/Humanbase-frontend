@@ -83,10 +83,21 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await page.getByRole('button', { name: 'Tracks' }).click();
   const drawer = page.getByRole('dialog', { name: 'Tracks' });
   await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
+  await drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' }).check();
   await drawer.getByRole('checkbox', { name: 'Sequence' }).uncheck();
   await drawer.getByRole('button', { name: 'Done' }).click();
-  await expect(headers).toHaveText(['Conservation', 'Genes']);
+  await expect(headers).toHaveText(['Conservation', 'GM12878 ChromHMM', 'Genes']);
   await expect(page.locator('.genome-engine .genome-tracks-bar')).not.toHaveCount(0);
+  // chr1:109,792,590-109,842,590 holds 39 segments in gm12878.ChromHMM.bb, the first PromP and the one under the variant ReprW.
+  const segments = page.locator('.genome-engine .genome-tracks-segment');
+  await expect(segments).toHaveCount(39);
+  await expect(segments.first()).toHaveAttribute('fill', '#CF0BC6');
+  await segments.nth(11).hover();
+  await expect(page.getByRole('tooltip')).toHaveText(/^QuiesGM12878 ChromHMMStart109,806,801Length9,600 bp$/);
+  await page.getByText('View as table').click();
+  const table = page.getByRole('table', { name: 'GM12878 ChromHMM segments in chr1:109,792,590-109,842,590, GRCh37/hg19' });
+  await expect(table.getByRole('row')).toHaveCount(40);
+  await expect(table.getByRole('row').filter({ hasText: '109,816,601' })).toHaveText(/^ReprW\s*109,816,601\s*109,818,400\s*1,800 bp$/);
   await checkScreen(page, problems);
   await page.getByRole('button', { name: 'Export' }).click();
   const dialog = page.getByRole('dialog', { name: 'Export the view' });
@@ -96,6 +107,7 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   expect(svg).toContain('Conservation');
   expect(svg).toContain('CELSR2 →');
   expect(svg).toContain('genome-tracks-bar');
+  expect(svg.match(/class="genome-tracks-segment"/g)).toHaveLength(39);
   await page.getByRole('button', { name: 'Tracks' }).click();
   await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
   await drawer.getByRole('button', { name: 'Done' }).click();
@@ -183,9 +195,11 @@ test('the ASD Browser draws the real track files, finds SCN2A and pages the tabl
   await page.getByRole('button', { name: 'Tracks' }).click();
   const drawer = page.getByRole('dialog', { name: 'Tracks' });
   await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
+  await drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' }).check();
   await drawer.getByRole('checkbox', { name: 'RNA disease impact score' }).uncheck();
   await drawer.getByRole('button', { name: 'Done' }).click();
-  await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'Conservation', 'Genes']);
+  await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'Conservation', 'GM12878 ChromHMM', 'Genes']);
+  await expect(browser.locator('.genome-tracks-segment')).toHaveCount(108);
   await expect(browser.locator('.genome-tracks-bar.is-selected')).toHaveCount(2);
   await page.getByRole('button', { name: 'Tracks' }).click();
   await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();

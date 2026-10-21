@@ -34,12 +34,11 @@ const gencode19 = {
   trixURI: `${humanbaseTracks}/geneIndex.ix`,
 };
 
-const chromHmm = {
+/** The live site's GM12878 ChromHMM track: BGITEM fills each segment with the file's own itemRgb. */
+export const chromHmm = {
   name: 'GM12878 ChromHMM',
   desc: 'GM12878 ChromHMM Genome Segmentation',
-  pennant: 'https://genome.ucsc.edu/images/encodeThumbnail.jpg',
-  disabled: true,
-  bwgURI: `${humanbaseTracks}/gm12878.ChromHMM.bb`,
+  bigBedUrl: `${humanbaseTracks}/gm12878.ChromHMM.bb`,
   style: [
     { type: 'bigbed', style: { glyph: 'BOX', FGCOLOR: 'black', BGCOLOR: 'blue', HEIGHT: 8, BUMP: false, LABEL: false, ZINDEX: 20, BGITEM: true, id: 'style1' } },
     { type: 'bb-translation', style: { glyph: 'BOX', FGCOLOR: 'black', BGITEM: true, BGCOLOR: 'red', HEIGHT: 10, BUMP: true, ZINDEX: 20, id: 'style2' } },
@@ -58,8 +57,7 @@ export const humanbaseAssemblies: Record<Assembly, BiodallianceAssembly> = {
     sources: [
       { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}/hg19.2bit`, tier_type: 'sequence', pinned: true },
       gencode19,
-      // Conservation is a page track (suggestedTracks), so the Tracks drawer can show and hide it.
-      chromHmm,
+      // Conservation and GM12878 ChromHMM are page tracks (suggestedTracks), so the Tracks drawer can show and hide them.
     ],
   },
   hg38: {
