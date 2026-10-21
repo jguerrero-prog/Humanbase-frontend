@@ -251,14 +251,6 @@
   color: var(--text-secondary);
 }
 
-.heatmap-table summary {
-  inline-size: fit-content;
-  font: var(--type-label-sm);
-  color: var(--text-link);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
 .heatmap-table-scroll {
   overflow-x: auto;
   margin-block-start: var(--space-3);

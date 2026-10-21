@@ -5,7 +5,8 @@ export { IconButton, type IconButtonProps } from './IconButton/IconButton';
 export { StarToggle, type StarToggleProps } from './StarToggle/StarToggle';
 export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
 export { ScoreTracks, type ScoreTrack, type ScoreTracksProps } from './GenomeBrowser/ScoreTracks';
-export { GenomeTrackFigure, GenomeTrackView, type GeneShape, type GenomeTrackFigureProps, type GenomeTrackViewProps, type ScoreTrackData, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
+export { GenomeTrackFigure, GenomeTrackView, type GeneShape, type GenomeTrackFigureProps, type GenomeTrackViewProps, type ScoreTrackData, type SegmentShape, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
+export { SegmentTable, type SegmentTableProps } from './GenomeBrowser/SegmentTable';
 export {
   BrowserSettingsDialog,
   ExportDialog,
@@ -81,6 +82,7 @@ export {
   type TableProps,
 } from './Table/Table';
 export { ValueFormat, type FormattedValue } from './Table/ValueFormat';
+export { ViewAsTable, type ViewAsTableProps } from './Table/ViewAsTable';
 export { PageLink, Pagination, ShowMore, pageSizeMemory, rowsPerPage, type PageLinkProps, type PaginationProps, type ShowMoreProps } from './Pagination/Pagination';
 export { PageWindow, type PageSlot } from './Pagination/PageWindow';
 export { Breadcrumbs, SkipLink, type BreadcrumbsProps, type Crumb } from './Navigation/Breadcrumbs';

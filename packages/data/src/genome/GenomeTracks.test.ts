@@ -1,9 +1,10 @@
 import { SampleClient } from '../sample/SampleClient';
-import { geneModels, transcriptOf } from './GenomeTracks';
+import { geneModels, segmentOf, transcriptOf } from './GenomeTracks';
 import { SampleGenomeTracks } from './SampleGenomeTracks';
 
 const dna = 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw';
 const view = { chrom: 'chr1', start: 2_230_000, end: 2_440_000 };
+const chromHmm = 'https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb';
 
 describe('geneModels', () => {
   it('reads GENCODE lines 1-based and merges a gene’s transcripts', () => {
@@ -16,6 +17,13 @@ describe('geneModels', () => {
   });
 });
 
+describe('segmentOf', () => {
+  it('reads a ChromHMM line 1-based, with its code and the file’s own color', () => {
+    expect(segmentOf({ start: 109_816_600, end: 109_818_400, rest: 'ReprW\t1000\t.\t109816600\t109818400\t127,127,127' })).toEqual({ start: 109_816_601, end: 109_818_400, name: 'ReprW', color: '#7F7F7F' });
+    expect(segmentOf({ start: 0, end: 200, rest: 'Tss\t1000\t.\t0\t200\t255,0,0' }).color).toBe('#FF0000');
+  });
+});
+
 describe('SampleGenomeTracks', () => {
   const tracks = new SampleGenomeTracks(SampleClient.bundled());
 
@@ -25,6 +33,14 @@ describe('SampleGenomeTracks', () => {
     const scores = await tracks.scores(dna, view);
     expect(scores).toHaveLength(34);
     expect(scores.find((point) => point.start === 2_337_101)?.value).toBeCloseTo(3.427);
+  });
+
+  it('answers GM12878 ChromHMM segments from the recorded windows', async () => {
+    const segments = await tracks.segments(chromHmm, { chrom: 'chr1', start: 109_792_590, end: 109_842_590 });
+    expect(segments).toHaveLength(39);
+    expect(segments[0]).toEqual({ start: 109_792_001, end: 109_792_800, name: 'PromP', color: '#CF0BC6' });
+    expect(segments.find((segment) => segment.start === 109_816_601)).toEqual({ start: 109_816_601, end: 109_818_400, name: 'ReprW', color: '#7F7F7F' });
+    expect((await tracks.segments(chromHmm, view)).length).toBeGreaterThan(0);
   });
 
   it('reads sequence near the window’s center, and none elsewhere', async () => {

@@ -55,14 +55,15 @@ describe('AsdExplorer', () => {
     await screen.findByRole('heading', { name: 'Molecular effects of chr1:2,337,101 A>C' }, { timeout: 5000 });
     await userEvent.click(screen.getByRole('button', { name: 'Tracks' }));
     const drawer = within(screen.getByRole('dialog', { name: 'Tracks' }));
-    expect(drawer.getAllByRole('checkbox').map((box) => (box as HTMLInputElement).labels?.[0]?.textContent)).toEqual(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Conservation', 'Genes']);
+    expect(drawer.getAllByRole('checkbox').map((box) => (box as HTMLInputElement).labels?.[0]?.textContent)).toEqual(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Conservation', 'GM12878 ChromHMM', 'Genes']);
+    expect(drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' })).not.toBeChecked();
     expect(drawer.queryByRole('radio', { name: 'By URL' })).toBeNull();
     expect(drawer.getByRole('checkbox', { name: 'Conservation' })).not.toBeChecked();
     await userEvent.click(drawer.getByRole('checkbox', { name: 'Conservation' }));
     expect(screen.getByRole('application', { name: /5 tracks$/, hidden: true })).toBeInTheDocument();
     await userEvent.click(drawer.getByRole('checkbox', { name: 'Genes' }));
     expect(drawer.getByRole('checkbox', { name: 'Conservation' })).toBeChecked();
-    expect(JSON.parse(localStorage.getItem('humanbase:genome-tracks:asd:hg19') ?? '')).toEqual(['genes']);
+    expect(JSON.parse(localStorage.getItem('humanbase:genome-tracks:asd:hg19') ?? '')).toEqual(['GM12878 ChromHMM', 'genes']);
     await userEvent.click(drawer.getByRole('button', { name: 'Reset to default tracks' }));
     expect(drawer.getByRole('checkbox', { name: 'Conservation' })).not.toBeChecked();
     expect(drawer.getByRole('checkbox', { name: 'Genes' })).toBeChecked();

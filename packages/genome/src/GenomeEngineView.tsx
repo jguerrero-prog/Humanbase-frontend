@@ -1,7 +1,8 @@
-import type { GenomeTracks } from '@humanbase/data';
-import { genomeCommand, TrackHeader, type GenomeCommand } from '@humanbase/ui';
+import { GenomeLocation, type GenomeTracks } from '@humanbase/data';
+import { genomeCommand, SegmentTable, TrackHeader, type GenomeCommand } from '@humanbase/ui';
 import { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState, type Ref } from 'react';
-import { sameRegion, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeExportOptions, type GenomeRegion, type GenomeTrackLayout } from './GenomeBrowserEngine';
+import { sameRegion, withChr, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeExportOptions, type GenomeRegion, type GenomeTrackLayout } from './GenomeBrowserEngine';
+import { useSegmentTracks } from './tracks/useTrackData';
 import './genome.css';
 
 export type EngineStatus = 'loading' | 'ready' | 'failed';
@@ -111,39 +112,49 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
     instance.current?.highlight(mark ? { chrom, position: Number(position) } : undefined);
   }, [ready, mark]);
 
+  // Segment tracks are listed as tables under any engine, so their states never rest on color alone.
+  const span = { chrom: withChr(region.chrom), start: Math.round(region.start), end: Math.round(region.end) };
+  const segmentTracks = useSegmentTracks(files, tracks.filter((track) => !hidden.includes(track.name)), span);
+  const location = new GenomeLocation(span.chrom, span.start, span.end, assembly);
+
   // An engine that reports its tracks gets the design system's headers beside them; others keep their own labels.
   const headed = layout.length > 0;
   const surface = { ref: container, className: 'genome-engine', 'aria-label': label, 'aria-busy': !ready || undefined };
   return (
-    <div className={headed ? 'genome-engine-frame is-headed' : 'genome-engine-frame'}>
-      {headed && (
-        <div className="genome-engine-headers">
-          {layout.map((track) => (
-            <div key={track.name} className="genome-engine-header" style={{ insetBlockStart: track.top, blockSize: track.height }}>
-              <TrackHeader name={track.name} source={track.meta ?? ''} />
-            </div>
-          ))}
-        </div>
-      )}
-      {onCommand ? (
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- the tracks pan and zoom with keys, as in the design system's Keyboard spec
-        <div
-          {...surface}
-          role="application"
-          aria-roledescription="genome browser"
-          aria-keyshortcuts="ArrowLeft ArrowRight + - Control+ArrowLeft Control+ArrowRight"
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          tabIndex={0}
-          onKeyDown={(event) => {
-            const command = genomeCommand(event);
-            if (!command) return;
-            event.preventDefault();
-            onCommand(command);
-          }}
-        />
-      ) : (
-        <div {...surface} role="region" />
-      )}
-    </div>
+    <>
+      <div className={headed ? 'genome-engine-frame is-headed' : 'genome-engine-frame'}>
+        {headed && (
+          <div className="genome-engine-headers">
+            {layout.map((track) => (
+              <div key={track.name} className="genome-engine-header" style={{ insetBlockStart: track.top, blockSize: track.height }}>
+                <TrackHeader name={track.name} source={track.meta ?? ''} />
+              </div>
+            ))}
+          </div>
+        )}
+        {onCommand ? (
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- the tracks pan and zoom with keys, as in the design system's Keyboard spec
+          <div
+            {...surface}
+            role="application"
+            aria-roledescription="genome browser"
+            aria-keyshortcuts="ArrowLeft ArrowRight + - Control+ArrowLeft Control+ArrowRight"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+            tabIndex={0}
+            onKeyDown={(event) => {
+              const command = genomeCommand(event);
+              if (!command) return;
+              event.preventDefault();
+              onCommand(command);
+            }}
+          />
+        ) : (
+          <div {...surface} role="region" />
+        )}
+      </div>
+      {segmentTracks.map((track) => (
+        <SegmentTable key={track.name} track={track} where={`${location.format()}, ${location.assemblyName}`} />
+      ))}
+    </>
   );
 }

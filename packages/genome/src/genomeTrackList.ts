@@ -1,5 +1,5 @@
 import { assemblyNames } from '@humanbase/data';
-import { humanbaseTracks } from './biodalliance/humanbaseConfig';
+import { chromHmm, humanbaseTracks } from './biodalliance/humanbaseConfig';
 import type { Assembly, GenomeDataTrack } from './GenomeBrowserEngine';
 
 /** One track a browser can show or hide; data tracks use their name as id. */
@@ -37,6 +37,7 @@ export const suggestedTracks: Record<Assembly, readonly GenomeDataTrack[]> = {
       range: conservationRange,
       style: { type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 50, MIN: conservationRange[0], MAX: conservationRange[1] } },
     },
+    { name: chromHmm.name, meta: 'Genome segmentation', bigBedUrl: chromHmm.bigBedUrl, style: chromHmm.style },
   ],
   hg38: [],
 };

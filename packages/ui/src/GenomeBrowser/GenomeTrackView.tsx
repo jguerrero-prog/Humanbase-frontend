@@ -1,4 +1,6 @@
-import { useRef, type PointerEvent } from 'react';
+import { useRef, useState, type PointerEvent } from 'react';
+import { DataTooltip } from '../Tooltip/DataTooltip';
+import { placeNearPoint } from '../Tooltip/placement';
 import { TrackHeader } from './GenomeBrowserToolbar';
 import { ticksOf } from './ScoreTracks';
 import './GenomeBrowser.css';
@@ -23,12 +25,22 @@ export interface TrackOf<T> {
   meta: string;
   state: TrackState;
   data?: T | undefined;
+  /** What the track says when it has nothing to draw. */
+  empty?: string | undefined;
 }
 
 export interface ScoreTrackData {
   min: number;
   max: number;
   values: readonly { start: number; end: number; value: number }[];
+}
+
+/** One segment of a segment track, such as a chromatin state, 1-based and inclusive, in the file's own color. */
+export interface SegmentShape {
+  start: number;
+  end: number;
+  name: string;
+  color: string;
 }
 
 export interface GenomeTrackViewProps {
@@ -39,6 +51,7 @@ export interface GenomeTrackViewProps {
   width: number;
   sequence?: TrackOf<{ start: number; bases: string }> | undefined;
   scores?: readonly TrackOf<ScoreTrackData>[] | undefined;
+  segments?: readonly TrackOf<readonly SegmentShape[]>[] | undefined;
   genes?: TrackOf<readonly GeneShape[]> | undefined;
   /** The selected position, drawn as an ink guide through every track with its label on a pill. */
   selected?: { position: number; label: string } | undefined;
@@ -51,6 +64,10 @@ export interface GenomeTrackViewProps {
 const rulerHeight = 30;
 const sequenceHeight = 60;
 const scoreHeight = 60;
+const segmentHeight = 60;
+// The live site's ChromHMM boxes are 8px high.
+const segmentBox = 8;
+const tooltipSize = { width: 240, height: 117 };
 const geneRowHeight = 36;
 const geneMinHeight = 60;
 const pillHeight = 30;
@@ -98,7 +115,7 @@ interface DrawingOptions {
 }
 
 /** Where each row sits: the ruler, each track, then the selected variant's pill. */
-function layoutOf({ start, end, width, sequence, scores = [], genes, selected: chosenPosition }: GenomeTrackViewProps, marks: boolean) {
+function layoutOf({ start, end, width, sequence, scores = [], segments = [], genes, selected: chosenPosition }: GenomeTrackViewProps, marks: boolean) {
   const selected = chosenPosition && chosenPosition.position >= start && chosenPosition.position <= end ? chosenPosition : undefined;
   const span = Math.max(1, end - start + 1);
   const x = (position: number) => ((position - start) / span) * width;
@@ -109,6 +126,7 @@ function layoutOf({ start, end, width, sequence, scores = [], genes, selected: c
     { key: 'ruler', height: rulerHeight },
     ...(sequence ? [{ key: 'sequence', height: sequenceHeight, track: sequence }] : []),
     ...scores.map((track) => ({ key: `score-${track.name}`, height: scoreHeight, track })),
+    ...segments.map((track) => ({ key: `segments-${track.name}`, height: segmentHeight, track })),
     ...(genes ? [{ key: 'genes', height: geneHeight, track: genes }] : []),
     { key: 'pill', height: pill },
   ];
@@ -121,8 +139,16 @@ function layoutOf({ start, end, width, sequence, scores = [], genes, selected: c
 type Layout = ReturnType<typeof layoutOf>;
 
 /** The tracks inside an svg, shared by the browser on the page and its exported figure. */
-function TrackDrawing({ props, layout, marks = true, guide = true }: { props: GenomeTrackViewProps; layout: Layout } & DrawingOptions) {
-  const { start, end, width, sequence, scores = [], genes, shift = 0 } = props;
+interface SegmentHover {
+  segment: SegmentShape;
+  track: string;
+  box: SVGRectElement;
+  /** Where the pointer came in, from the left of the window. */
+  pointer: number;
+}
+
+function TrackDrawing({ props, layout, marks = true, guide = true, onSegment }: { props: GenomeTrackViewProps; layout: Layout; onSegment?: (hover: SegmentHover | undefined) => void } & DrawingOptions) {
+  const { start, end, width, sequence, scores = [], segments = [], genes, shift = 0 } = props;
   const { selected, span, x, placed, geneHeight, topOf, guideEnd } = layout;
   const perBase = width / span;
   const marked = marks ? selected : undefined;
@@ -193,6 +219,29 @@ function TrackDrawing({ props, layout, marks = true, guide = true }: { props: Ge
           );
         })}
 
+        {segments.map((track) => {
+          const top = topOf(`segments-${track.name}`);
+          if (track.state !== 'ready' || !track.data) return <g key={track.name}>{stateNote(track, top, segmentHeight)}</g>;
+          if (track.data.length === 0) return <g key={track.name}>{note(top, segmentHeight, track.empty ?? 'No segments in view.')}</g>;
+          return (
+            <g key={track.name}>
+              {track.data.map((segment) => (
+                <rect
+                  key={segment.start}
+                  className="genome-tracks-segment"
+                  x={x(segment.start)}
+                  y={top + (segmentHeight - segmentBox) / 2}
+                  width={Math.max(1, x(segment.end + 1) - x(segment.start))}
+                  height={segmentBox}
+                  fill={segment.color}
+                  onPointerEnter={onSegment && ((event) => onSegment({ segment, track: track.name, box: event.currentTarget, pointer: event.clientX }))}
+                  onPointerLeave={onSegment && (() => onSegment(undefined))}
+                />
+              ))}
+            </g>
+          );
+        })}
+
         {genes &&
           (genes.state !== 'ready'
             ? stateNote(genes, geneTop, geneHeight)
@@ -228,11 +277,21 @@ function TrackDrawing({ props, layout, marks = true, guide = true }: { props: Ge
 export function GenomeTrackView(props: GenomeTrackViewProps) {
   const { width, onPan } = props;
   const drag = useRef<{ from: number; pointer: number } | undefined>(undefined);
+  const frame = useRef<HTMLDivElement>(null);
+  const [hover, setHover] = useState<{ segment: SegmentShape; track: string; at: { x: number; y: number } }>();
   const layout = layoutOf(props, true);
+  const onSegment = (hovered: SegmentHover | undefined) => {
+    const box = frame.current;
+    if (!hovered || !box || drag.current) return setHover(undefined);
+    const outer = box.getBoundingClientRect();
+    const point = { x: hovered.pointer - outer.left, y: hovered.box.getBoundingClientRect().bottom - outer.top };
+    setHover({ segment: hovered.segment, track: hovered.track, at: placeNearPoint(point, tooltipSize, { width: box.clientWidth, height: box.clientHeight }, 4) });
+  };
 
   const pointer = onPan && {
     onPointerDown: (event: PointerEvent<SVGSVGElement>) => {
       if (event.button !== 0) return;
+      setHover(undefined);
       event.currentTarget.setPointerCapture(event.pointerId);
       drag.current = { from: event.clientX, pointer: event.pointerId };
     },
@@ -251,14 +310,25 @@ export function GenomeTrackView(props: GenomeTrackViewProps) {
   };
 
   return (
-    <div className="score-tracks genome-tracks">
+    <div ref={frame} className="score-tracks genome-tracks">
       <div className="score-tracks-column" style={{ gridTemplateRows: layout.rows.map((row) => `${row.height}px`).join(' ') }}>
         <div className="score-tracks-ruler-label">Position</div>
         {layout.rows.flatMap((row) => ('track' in row && row.track ? [<TrackHeader key={row.key} name={row.track.name} source={row.track.meta} />] : []))}
       </div>
       <svg className={onPan ? 'genome-tracks-area is-draggable' : 'genome-tracks-area'} width={width} height={layout.height} aria-hidden="true" focusable="false" {...pointer}>
-        <TrackDrawing props={props} layout={layout} />
+        <TrackDrawing props={props} layout={layout} onSegment={onSegment} />
       </svg>
+      {hover && (
+        <DataTooltip
+          title={hover.segment.name}
+          subtitle={hover.track}
+          rows={[
+            ['Start', count.format(hover.segment.start)],
+            ['Length', `${count.format(hover.segment.end - hover.segment.start + 1)} bp`],
+          ]}
+          position={hover.at}
+        />
+      )}
     </div>
   );
 }

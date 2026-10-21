@@ -13,6 +13,7 @@
     "@astrojs/mdx": "8.0.2",
     "@astrojs/react": "7.0.0",
     "@humanbase/data": "workspace:*",
+    "@humanbase/genome": "workspace:*",
     "@humanbase/graph": "workspace:*",
     "@humanbase/hb": "workspace:*",
     "@humanbase/tokens": "workspace:*",

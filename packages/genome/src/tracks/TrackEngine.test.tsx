@@ -1,5 +1,6 @@
 import { SampleClient, SampleGenomeTracks } from '@humanbase/data';
-import { act, screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
+import { hiddenByDefault, suggestedTracks } from '../genomeTrackList';
 import { TrackEngine } from './TrackEngine';
 
 describe('TrackEngine', () => {
@@ -51,6 +52,28 @@ describe('TrackEngine', () => {
     act(() => engine.showTracks(['genes']));
     expect(screen.getByText('Sequence')).toBeInTheDocument();
     expect(screen.queryByText('← PEX10')).toBeNull();
+    engine.destroy();
+    container.remove();
+    vi.restoreAllMocks();
+  });
+
+  it('draws GM12878 ChromHMM from the file once it is turned on, and exports it', async () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains('score-tracks-column') ? 220 : 1220;
+    });
+    const container = document.createElement('div');
+    document.body.append(container);
+    const engine = new TrackEngine(new SampleGenomeTracks(SampleClient.bundled()));
+    const region = { chrom: 'chr1', start: 109_792_590, end: 109_842_590 };
+    await act(() => engine.mount(container, { label: 'Genome browser', assembly: 'hg19', region, tracks: suggestedTracks.hg19, hidden: hiddenByDefault('hg19') }));
+    expect(screen.queryByText('Genome segmentation')).toBeNull();
+    act(() => engine.showTracks(['Conservation']));
+    expect(screen.getByText('Genome segmentation')).toBeInTheDocument();
+    await waitFor(() => expect(container.querySelectorAll('.genome-tracks-segment')).toHaveLength(39));
+    expect(container.querySelector('.genome-tracks-segment')).toHaveAttribute('fill', '#CF0BC6');
+    const svg = await (await act(() => engine.exportSvg({ width: 600, highlights: true, guideline: true }))).text();
+    expect(svg).toContain('GM12878 ChromHMM');
+    expect(svg.match(/class="genome-tracks-segment"/g)).toHaveLength(39);
     engine.destroy();
     container.remove();
     vi.restoreAllMocks();

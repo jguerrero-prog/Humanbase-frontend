@@ -1,4 +1,4 @@
-import { withChr, type GenomeBrowserEngine, type GenomeExportOptions, type GenomeMountOptions, type GenomeRegion, type GenomeTrackLayout } from '../GenomeBrowserEngine';
+import { isSegmentTrack, trackFile, withChr, type GenomeBrowserEngine, type GenomeExportOptions, type GenomeMountOptions, type GenomeRegion, type GenomeTrackLayout } from '../GenomeBrowserEngine';
 import { genesTrack, sequenceTrack } from '../genomeTrackList';
 import { humanbaseAssemblies, humanbaseBrowserOptions, type BiodallianceAssembly } from './humanbaseConfig';
 
@@ -185,7 +185,13 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
 
   /** Biodalliance's sources, with the ones a page can toggle remembered by id; hidden ones start disabled. */
   #sources(setup: BiodallianceAssembly, tracks: GenomeMountOptions['tracks'], hidden: readonly string[], container: HTMLElement): Record<string, unknown>[] {
-    const data = tracks.map((track) => ({ name: track.name, bwgURI: track.bigWigUrl, pinned: true, zeroLine: 'var(--border-subtle)', ...(track.style ? { style: [track.style] } : {}) }));
+    const data = tracks.map((track) => ({
+      name: track.name,
+      bwgURI: trackFile(track),
+      pinned: true,
+      ...(!isSegmentTrack(track) && { zeroLine: 'var(--border-subtle)' }),
+      ...(track.style && { style: Array.isArray(track.style) ? track.style : [track.style] }),
+    }));
     const idOf = (source: Record<string, unknown>) =>
       source.twoBitURI ? sequenceTrack : source.title === 'Genes' && !source.disabled ? genesTrack : tracks.some((track) => track.name === source.name) ? String(source.name) : undefined;
     return resolveTokens([...setup.sources, ...data], container).map((source) => {
