@@ -137,4 +137,35 @@ describe('ForceGraphRenderer with groups', () => {
     expect(container.querySelector('[aria-label="CCDC40, M3"]')?.classList.contains('is-faded')).toBe(false);
     expect(container.querySelector('[aria-label="M1, 2 genes"]')?.classList.contains('is-faded')).toBe(true);
   });
+
+  it('selects a gene with its own links, keeping its module and neighbors at full strength', () => {
+    const { container, renderer } = mountedGroups();
+    renderer.select({ kind: 'node', id: '2', links: [{ source: '2', target: '3', weight: 0.6 }] });
+    expect(container.querySelectorAll('.force-graph-focus-links line')).toHaveLength(1);
+    expect(container.querySelector('[aria-label="HNF1B, M1"]')?.classList.contains('is-selected')).toBe(true);
+    expect(container.querySelector('[aria-label="CCDC40, M3"]')?.classList.contains('is-faded')).toBe(false);
+    expect(container.querySelector('[aria-label="FGF8, M1"]')?.classList.contains('is-faded')).toBe(true);
+    expect(container.querySelector('[aria-label="M1, 2 genes"]')?.classList.contains('is-selected')).toBe(true);
+    renderer.select(null);
+    expect(container.querySelectorAll('.force-graph-focus-links line')).toHaveLength(0);
+  });
+
+  it('reports hover and focus on a gene, and rings the hovered gene with its links', () => {
+    const container = document.createElement('div');
+    const onHoverNode = vi.fn();
+    const renderer = new ForceGraphRenderer();
+    renderer.mount(container, { label: 'Modules', onHoverNode });
+    renderer.render(grouped);
+    const fgf8 = container.querySelector('[aria-label="FGF8, M1"]') as SVGGElement;
+    fgf8.dispatchEvent(new Event('pointerenter'));
+    expect(onHoverNode).toHaveBeenLastCalledWith('1', expect.anything());
+    fgf8.dispatchEvent(new Event('blur'));
+    expect(onHoverNode).toHaveBeenLastCalledWith(null);
+    renderer.hover({ id: '1', links: [{ source: '1', target: '2', weight: 0.9 }] });
+    expect(fgf8.classList.contains('is-hovered')).toBe(true);
+    expect(container.querySelectorAll('.force-graph-focus-links line')).toHaveLength(1);
+    renderer.hover(null);
+    expect(fgf8.classList.contains('is-hovered')).toBe(false);
+    expect(container.querySelectorAll('.force-graph-focus-links line')).toHaveLength(0);
+  });
 });

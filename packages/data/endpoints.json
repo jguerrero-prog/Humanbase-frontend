@@ -277,7 +277,7 @@
         ]
       },
       "recordedByHandSamples": {
-        "why": "Polling is a POST, which pnpm samples:record only sends to read-only endpoints. This poll of the live cache was recorded once on October 20, 2026 and trimmed; the note in the file says how.",
+        "why": "Polling is a POST, which pnpm samples:record only sends to read-only endpoints. This poll of the live cache was recorded on October 21, 2026 with every term, so offline term counts match live; only the per-term edge lists are left out, as the note in the file says.",
         "files": [
           "integrations/community@body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9@post-77074ba4"
         ]
