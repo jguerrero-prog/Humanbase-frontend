@@ -1,4 +1,5 @@
 import { useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import { BreakableText } from '../Text/BreakableText';
 import { DataTooltip } from '../Tooltip/DataTooltip';
 import { placeNearPoint } from '../Tooltip/placement';
 import { HeatmapCell } from './HeatmapCell';
@@ -56,6 +57,18 @@ const counts = new Intl.NumberFormat('en-US');
 const cellWidth = 34;
 const narrowWidth = 8;
 const labelEvery = 20;
+const labelWidths = { min: 160, max: 360, share: 0.4 };
+
+/** The row label column fits the longest label, within limits; longer labels wrap. */
+function labelColumn(box: HTMLElement, labels: readonly string[]) {
+  const sample = box.querySelector('.heatmap-row-label');
+  const context = document.createElement('canvas').getContext('2d');
+  if (!sample || !context) return labelWidths.min;
+  const style = getComputedStyle(sample);
+  context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+  const widest = Math.ceil(Math.max(0, ...labels.map((label) => context.measureText(label).width)) + (Number.parseFloat(style.paddingInlineEnd) || 0));
+  return Math.max(labelWidths.min, Math.min(widest, labelWidths.max, Math.floor(box.clientWidth * labelWidths.share)));
+}
 
 export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', showValues = false, columnWidth = 'full' }: HeatmapProps) {
   const id = useId();
@@ -67,26 +80,30 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   const [highlighted, setHighlighted] = useState<number | null>(null);
   const [place, setPlace] = useState<{ x: number; y: number }>();
   const [fits, setFits] = useState(true);
+  const [labelWidth, setLabelWidth] = useState(labelWidths.min);
   const narrow = columnWidth === 'narrow' || (columnWidth === 'auto' && !fits);
   const width = narrow ? narrowWidth : cellWidth;
   const format = (value: number) => ScoreScale.number(Number(value.toFixed(decimals)));
   const columnLabel = (column: HeatmapColumn) => (column.position === undefined ? column.label : counts.format(column.position));
+  const labels = rows.map((row) => row.label).join('\n');
   const valueAt = ([row, column]: Cell) => rows[row]?.values[column] ?? null;
 
   useLayoutEffect(() => {
     const box = plot.current;
-    if (columnWidth !== 'auto' || !box) return;
+    if (!box) return;
     const fit = () => {
-      const label = Number.parseFloat(getComputedStyle(box).getPropertyValue('--heatmap-label')) || 0;
+      const label = labelColumn(box, labels.split('\n'));
       const room = box.clientWidth - label;
-      setFits(room <= 0 || columns.length * (cellWidth + 1) <= room);
+      setLabelWidth(label);
+      if (columnWidth === 'auto') setFits(room <= 0 || columns.length * (cellWidth + 1) <= room);
     };
     fit();
+    void document.fonts?.ready.then(fit);
     if (typeof ResizeObserver === 'undefined') return;
     const observer = new ResizeObserver(fit);
     observer.observe(box);
     return () => observer.disconnect();
-  }, [columnWidth, columns.length]);
+  }, [columnWidth, columns.length, labels]);
 
   useLayoutEffect(() => {
     const box = figure.current;
@@ -135,7 +152,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
         </figcaption>
         <LegendStepped spec={spec} highlighted={highlighted ?? (activeValue === null ? null : scale.step(activeValue))} onHighlight={setHighlighted} />
       </div>
-      <div className="heatmap-plot" ref={plot} style={{ '--heatmap-columns': columns.length, '--heatmap-cell': `${width}px` } as CSSProperties}>
+      <div className="heatmap-plot" ref={plot} style={{ '--heatmap-columns': columns.length, '--heatmap-cell': `${width}px`, '--heatmap-label': `${labelWidth}px` } as CSSProperties}>
         {narrow && (
           <div className="heatmap-position-labels" aria-hidden="true">
             {columns.map((column, index) => (
@@ -153,8 +170,8 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
         <div role="grid" aria-label={title} className="heatmap-grid">
           {rows.map((row, r) => (
             <div role="row" key={row.label} className="heatmap-row">
-              <span role="rowheader" className="heatmap-row-label" title={row.label}>
-                {row.label}
+              <span role="rowheader" className="heatmap-row-label">
+                <BreakableText>{row.label}</BreakableText>
               </span>
               {row.values.map((value, c) => {
                 const column = columns[c];
