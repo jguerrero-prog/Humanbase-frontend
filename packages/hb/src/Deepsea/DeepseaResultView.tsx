@@ -3,13 +3,17 @@ import {
   ActionMenu,
   Alert,
   byGenomePosition,
+  DocsLink,
   expressionEffects,
+  KeyLegend,
   ResultHeader,
   ResultLayout,
   SearchField,
   SegmentedControl,
   Select,
+  sequenceClassColor,
   sequenceClassEffects,
+  sequenceClassLegend,
   Skeleton,
   VariantFocus,
   variantLabel,
@@ -40,6 +44,12 @@ export interface DeepseaResultViewProps {
 
 const tableLabels: Record<string, string> = { dis: 'Disease impact', 'mean-evalue': 'Mean −log e', seqclass: 'Max class score' };
 const shownRows = 9;
+const scoreDocsLabel = 'Score type documentation';
+type ColorStyle = 'chr' | 'seqclass';
+const colorStyles = [
+  { value: 'chr', label: 'Chromosome' },
+  { value: 'seqclass', label: 'Sequence class' },
+];
 const number = new Intl.NumberFormat('en-US');
 
 function effectScaleOf(model: DeepseaJob['model']): EffectScale {
@@ -58,6 +68,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
   const featureTypes = (scoreTypes ?? []).filter((type) => type.level === 'FEATURE');
   const [scoreKey, setScoreKey] = useState<string>();
   const [plotBy, setPlotBy] = useState<PlotBy>('genome');
+  const [colorStyle, setColorStyle] = useState<ColorStyle>('chr');
   const [effectsView, setEffectsView] = useState<EffectsView>('strongest');
   const [filter, setFilter] = useState('');
   const [showAll, setShowAll] = useState(false);
@@ -121,6 +132,9 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
 
   const tableScores = variantTypes.map((type) => ({ key: type.short_name, label: tableLabels[type.short_name] ?? type.name }));
   const filtered = ordered.filter((row) => matches(row, filter));
+  // Sei variants name the sequence class they change most, so only Sei offers Color style.
+  const hasClasses = ordered.some((row) => row.topClass);
+  const byClass = hasClasses && colorStyle === 'seqclass';
   const byScore = [...filtered].sort((a, b) => (b.scores[score.short_name] ?? 0) - (a.scores[score.short_name] ?? 0));
   const index = selected ? ordered.indexOf(selected) : -1;
   const step = (by: number) => {
@@ -137,6 +151,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
           <div className="deepsea-plot">
             <div className="deepsea-plot-controls">
               <Select label="Score" size="small" options={scoreOptions(variantTypes)} value={score.short_name} onChange={setScoreKey} />
+              <DocsLink href={`${model.docsHref}#output`}>{scoreDocsLabel}</DocsLink>
               <SegmentedControl
                 label="Plot by"
                 size="small"
@@ -147,14 +162,21 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
                   { value: 'rank', label: 'Rank' },
                 ]}
               />
+              {hasClasses && <Select label="Color style" size="small" options={colorStyles} value={colorStyle} onChange={(value) => setColorStyle(value as ColorStyle)} />}
             </div>
+            {byClass && <KeyLegend title="Sequence class" items={sequenceClassLegend} />}
             <VariantScorePlot
               variants={ordered}
               score={{ key: score.short_name, label: score.name.replace('-log', '−log') }}
               by={plotBy}
               selected={selected?.id}
               onSelect={select}
-              summary={`${number.format(ordered.length)} variants. Chromosomes alternate dark and light grey; position carries the chromosome, so color doesn’t have to.`}
+              {...(byClass && { pointColor: (row) => sequenceClassColor(row.topClass) })}
+              summary={
+                byClass
+                  ? `${number.format(ordered.length)} variants, colored by the sequence class each changes most; the class is also in the table.`
+                  : `${number.format(ordered.length)} variants. Chromosomes alternate dark and light grey; position carries the chromosome, so color doesn’t have to.`
+              }
             />
           </div>
         }
@@ -229,6 +251,7 @@ function VariantEffectsCard({ job, variant, featureTypes, view, onViewChange }: 
       verb={model.verb}
       inCellTypes={!model.expecto}
       choice={{ label: 'Score', options: scoreOptions(featureTypes), value: type.short_name, onChange: setTypeKey, name: type.name }}
+      scoreDocs={{ label: scoreDocsLabel, href: `${model.docsHref}#output` }}
     />
   );
 }

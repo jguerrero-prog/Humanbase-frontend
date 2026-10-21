@@ -42,6 +42,7 @@ export { SearchExamples, type SearchExample, type SearchExamplesProps } from './
 export { SearchField, SuggestionsEmpty, SuggestionsLoading, type SearchFieldProps, type SearchFieldSize, type SearchSuggestion } from './SearchField/SearchField';
 export { Select, type SelectOption, type SelectProps, type SelectSize } from './Select/Select';
 export { AboutPanel, type AboutPanelProps, type ExampleFile } from './Jobs/AboutPanel';
+export { DocsLink, type DocsLinkProps } from './Jobs/DocsLink';
 export { MultiSelect, multiSelectSummary, type MultiSelectOption, type MultiSelectProps } from './Select/MultiSelect';
 export { Spinner } from './Spinner/Spinner';
 export { Tabs, type TabItem, type TabsProps } from './Tabs/Tabs';
@@ -122,6 +123,7 @@ export { EffectGroups, type EffectExperiment, type EffectGroup, type StrengthCou
 export { asdEffects, expressionEffects, sequenceClassEffects, zEffects, type EffectScale } from './VariantEffects/EffectScale';
 export { EffectsHeatmap, type EffectsHeatmapProps } from './VariantEffects/EffectsHeatmap';
 export { EffectsControls, MolecularEffects, effectZScale, type EffectsControlsProps, type EffectsView, type MolecularEffectsProps } from './VariantEffects/MolecularEffects';
+export { sequenceClassColor, sequenceClassLegend } from './VariantEffects/SequenceClass';
 export { StrongestEffects, type StrongestEffectsProps } from './VariantEffects/StrongestEffects';
 export { byGenomePosition, variantLabel, variantLocation, variantName, type Variant, type VariantScore } from './VariantEffects/Variant';
 export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFocus';

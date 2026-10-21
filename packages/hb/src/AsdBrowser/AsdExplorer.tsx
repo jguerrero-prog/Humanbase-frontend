@@ -116,7 +116,7 @@ export function AsdExplorer({ state, onStateChange, engine = defaultGenomeEngine
           searchError={searchError?.from === 'page' ? searchError.text : undefined}
           examples={['CHD8', 'SCN2A', defaultLocation.format()]}
           notice={notice}
-          downloadHref="/downloads/"
+          downloadHref="https://s3-us-west-2.amazonaws.com/humanbase/variants/dis_asd.tsv"
         />
       }
       main={

@@ -1,5 +1,5 @@
 import { AsdVariant, type AsdVariantRow } from '@humanbase/data';
-import { ActionMenu, Alert, Button, Cell, Checkbox, HeaderCell, Pagination, ResultHeader, SearchField, SegmentedControl, Select, Table, useLinkHref, type ContextLabelProps, type Crumb } from '@humanbase/ui';
+import { ActionMenu, Alert, Button, Cell, Checkbox, HeaderCell, Icon, Pagination, ResultHeader, SearchField, SegmentedControl, Select, Table, useLinkHref, type ContextLabelProps, type Crumb } from '@humanbase/ui';
 import { useId, useState, type FormEvent, type ReactNode } from 'react';
 import './AsdBrowser.css';
 
@@ -43,7 +43,7 @@ export interface AsdHeaderProps {
   notice: string;
   /** The browser storage key that remembers a dismissed notice; empty to always show it. */
   noticeKey?: string | undefined;
-  /** Where Download data goes, such as the Downloads page. */
+  /** The file Download data opens in a new tab, as on humanbase.io. */
   downloadHref?: string | undefined;
 }
 
@@ -77,8 +77,9 @@ export function AsdHeader({ crumbs, subtitle, context, view, onViewChange, query
           <>
             <SegmentedControl label="View" hideLabel size="small" segments={views} value={view} onChange={(value) => onViewChange(value as AsdView)} />
             {downloadHref ? (
-              <a className="button button-secondary" href={linkHref(downloadHref)}>
+              <a className="button button-secondary" href={linkHref(downloadHref)} target="_blank" rel="noreferrer">
                 Download data
+                <Icon name="external-link" size={16} label="opens in a new tab" />
               </a>
             ) : (
               <Button variant="secondary" icon="download">

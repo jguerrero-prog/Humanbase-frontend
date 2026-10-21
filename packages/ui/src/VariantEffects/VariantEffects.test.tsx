@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EffectGroups, type EffectExperiment } from './EffectGroups';
 import { EffectsHeatmap } from './EffectsHeatmap';
+import { sequenceClassColor } from './SequenceClass';
 import { StrongestEffects } from './StrongestEffects';
 import type { Variant } from './Variant';
 import { VariantScorePlot } from './VariantScorePlot';
@@ -40,6 +41,27 @@ describe('VariantScorePlot', () => {
     const dots = [...container.querySelectorAll('circle')].map((dot) => Number(dot.getAttribute('cy')));
     expect(dots.every((cy) => cy >= 24 && cy <= 275)).toBe(true);
     expect(screen.getByText('-2')).toBeInTheDocument();
+  });
+
+  it('colors points by the color each variant is given', () => {
+    const { container } = render(<VariantScorePlot variants={variants} score={{ key: 'impact', label: 'Score' }} pointColor={(variant) => (variant.id === 'a' ? '--viz-seqclass-promoter' : undefined)} summary="2 variants." />);
+    const [first, second] = container.querySelectorAll('circle');
+    expect(second?.getAttribute('style')).toContain('--point-color: var(--viz-seqclass-promoter)');
+    expect(first?.getAttribute('style')).toBeNull();
+  });
+});
+
+describe('sequenceClassColor', () => {
+  it('matches a Sei class to its group by name, as humanbase.io does', () => {
+    expect(sequenceClassColor('PC1 Polycomb / Heterochromatin')).toBe('--viz-seqclass-polycomb');
+    expect(sequenceClassColor('P Promoter')).toBe('--viz-seqclass-promoter');
+    expect(sequenceClassColor('E12 Erythroblast-like')).toBe('--viz-seqclass-enhancer');
+    expect(sequenceClassColor('CTCF CTCF-Cohesin')).toBe('--viz-seqclass-ctcf');
+    expect(sequenceClassColor('HET5 Centromere')).toBe('--viz-seqclass-heterochromatin');
+    expect(sequenceClassColor('TN4 Transcription')).toBe('--viz-seqclass-transcription');
+    expect(sequenceClassColor('TF3 FOXA1 / AR / ESR1')).toBe('--viz-seqclass-tf');
+    expect(sequenceClassColor('L7 Low signal')).toBe('--viz-seqclass-low');
+    expect(sequenceClassColor(undefined)).toBeUndefined();
   });
 });
 

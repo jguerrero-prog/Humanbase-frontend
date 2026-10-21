@@ -27,6 +27,8 @@ export interface EffectsCardProps {
   inCellTypes?: boolean;
   /** The score or feature set the effects are for, and its choices. */
   choice: { label: string; options: readonly SelectOption[]; value: string; onChange: (value: string) => void; name: string };
+  /** The score's documentation, such as Score type documentation. */
+  scoreDocs?: { label: string; href: string } | undefined;
   /** Replaces the one-variant heatmap, such as a heatmap of every variant in a genome browser's range. */
   heatmap?: ReactNode;
   /** The open tab, kept by the page so it survives choosing another variant. */
@@ -40,7 +42,7 @@ const rank = (resource: string) => {
 };
 
 /** A variant's effect on every feature: Strongest effects, Heatmap and All features. */
-export function EffectsCard({ label, href, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, heatmap, view: keptView, onViewChange }: EffectsCardProps) {
+export function EffectsCard({ label, href, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, scoreDocs, heatmap, view: keptView, onViewChange }: EffectsCardProps) {
   const [ownView, setOwnView] = useState<EffectsView>('strongest');
   const view = keptView ?? ownView;
   const setView = onViewChange ?? setOwnView;
@@ -110,6 +112,7 @@ export function EffectsCard({ label, href, effects, failed, onRetry, scale, thre
         scores={choice.options}
         score={choice.value}
         onScore={choice.onChange}
+        scoreDocs={scoreDocs}
         {...(view === 'strongest' ? { threshold, onThreshold: setThreshold, thresholdSteps: [scale.bins.weak, scale.bins.moderate, scale.bins.strong] } : {})}
         {...(view !== 'heatmap' || ownHeatmap ? { search, onSearch: setSearch } : {})}
         {...(resources.length > 1 && (view !== 'heatmap' || ownHeatmap) ? { resources: [{ value: allResources, label: 'All resources' }, ...resources.map((name) => ({ value: name, label: name }))], resource, onResource: setResource } : {})}

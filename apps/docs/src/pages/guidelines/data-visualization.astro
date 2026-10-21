@@ -2,7 +2,7 @@
 import { withBase } from '../../withBase';
 import { ColorCatalog, contrastRatio, lightness } from '@humanbase/tokens/color';
 import primitives from '@humanbase/tokens/src/primitives.tokens.json';
-import { KeyLegend, ScaleLegend } from '@humanbase/ui';
+import { KeyLegend, ScaleLegend, sequenceClassLegend } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
@@ -143,6 +143,15 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
         <li>The closest pair stays clearly apart in every simulation (smallest difference 17 to 21, against 26 for typical vision). Indigo replaced Okabe–Ito’s bluish green, which sat close to emerald and tested worse.</li>
         <li>Orange, sky blue and the grey are under 3:1 on white, so filled marks always get a 1px grey 600 outline. The outline meets the 3:1 rule for graphics; the fill tells groups apart.</li>
         <li>Use them in this order, so the first groups get the most distinct colors.</li>
+      </ul>
+    </article>
+    <article class="scale-card">
+      <header><h3>Sei sequence classes</h3><code>viz.seqclass.*</code></header>
+      <p>The one set of group colors the system doesn’t choose: Sei’s eight sequence class groups keep the colors humanbase.io gives them, so a plot colored by sequence class reads the same on both sites. Only the Sei plot’s Color style, Sequence class, uses them.</p>
+      <KeyLegend title="Sequence class" items={sequenceClassLegend} />
+      <ul class="points">
+        <li>A class is matched to its group by the start of its name, as on humanbase.io: E for Enhancer, PC for Polycomb before P for Promoter, HET, TN, TF, L.</li>
+        <li>Points get the 1px outline every filled category mark gets, and the class is also named in the variants table.</li>
       </ul>
     </article>
   </DocSection>

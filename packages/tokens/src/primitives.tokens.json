@@ -967,6 +967,112 @@
         }
       }
     },
+    "seqclass": {
+      "enhancer": {
+        "$type": "color",
+        "$description": "Sei sequence class group Enhancer, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.5961,
+            0.3059,
+            0.9529
+          ],
+          "hex": "#984EF3"
+        }
+      },
+      "ctcf": {
+        "$type": "color",
+        "$description": "Sei sequence class group CTCF, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9922,
+            0.7059,
+            0.3843
+          ],
+          "hex": "#FDB462"
+        }
+      },
+      "polycomb": {
+        "$type": "color",
+        "$description": "Sei sequence class group Polycomb, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.5412,
+            0.7294,
+            0.8314
+          ],
+          "hex": "#8ABAD4"
+        }
+      },
+      "promoter": {
+        "$type": "color",
+        "$description": "Sei sequence class group Promoter, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9373,
+            0.2314,
+            0.1725
+          ],
+          "hex": "#EF3B2C"
+        }
+      },
+      "heterochromatin": {
+        "$type": "color",
+        "$description": "Sei sequence class group Heterochromatin, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.4,
+            0.1451,
+            0.0235
+          ],
+          "hex": "#662506"
+        }
+      },
+      "transcription": {
+        "$type": "color",
+        "$description": "Sei sequence class group Transcription, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.9843,
+            0.6039,
+            0.6
+          ],
+          "hex": "#FB9A99"
+        }
+      },
+      "tf": {
+        "$type": "color",
+        "$description": "Sei sequence class group Transcription factor, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.2196,
+            0.4235,
+            0.6902
+          ],
+          "hex": "#386CB0"
+        }
+      },
+      "low": {
+        "$type": "color",
+        "$description": "Sei sequence class group Low signal, as humanbase.io colors it",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7529,
+            0.7529,
+            0.7529
+          ],
+          "hex": "#C0C0C0"
+        }
+      }
+    },
     "edge": {
       "weak": {
         "$type": "dimension",

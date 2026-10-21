@@ -1,13 +1,13 @@
 import { readTheDocs } from '@humanbase/data';
 import { GeneFinder, geneExpressionTools, JobColumns } from '@humanbase/hb';
-import { AboutPanel, Breadcrumbs, Icon, useLinkHref } from '@humanbase/ui';
+import { AboutPanel, Breadcrumbs, DocsLink } from '@humanbase/ui';
 import { useNavigate } from 'react-router';
 import '../ToolPage.css';
 
 export function ExpectoScPage() {
-  const linkHref = useLinkHref();
   const navigate = useNavigate();
   const tool = geneExpressionTools['expecto-sc'];
+  const docsHref = `${readTheDocs}expectosc.html`;
   return (
     <section className="page-section tool-page">
       <title>ExPecto SC · Humanbase</title>
@@ -20,12 +20,11 @@ export function ExpectoScPage() {
         <GeneFinder label="Search a gene" placeholder="Search a gene, such as PTEN" examples={tool.examples} onPick={(entrez) => void navigate(`/expecto-sc/genes/${entrez}/`)} />
         <AboutPanel
           tool={tool.name}
-          docsHref={`${readTheDocs}expectosc.html`}
+          docsHref={docsHref}
           links={
-            <a className="button button-ghost button-small" href={linkHref('/downloads/')}>
-              <Icon name="download" size={16} />
+            <DocsLink href={`${docsHref}#download`} icon="download">
               Download additional files
-            </a>
+            </DocsLink>
           }
         >
           ExPecto SC is a framework for ab initio sequence-based prediction of mutation gene expression effects for primary human cell types.

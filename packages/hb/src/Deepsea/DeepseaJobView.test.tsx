@@ -36,6 +36,26 @@ describe('DeepseaJobView', () => {
     expect(screen.getByText('strong, 2 or more')).toBeInTheDocument();
   });
 
+  it('colors the Sei plot by sequence class on request, with humanbase.io’s groups', async () => {
+    renderJob('2e18fedf-3de7-4d08-a894-9a937a2b860b');
+    const style = await screen.findByRole('combobox', { name: 'Color style' }, { timeout: 5000 });
+    expect(style).toHaveTextContent('Chromosome');
+    expect(screen.queryByRole('group', { name: /^Sequence class$/ })).not.toBeInTheDocument();
+    await userEvent.click(style);
+    await userEvent.click(screen.getByRole('option', { name: 'Sequence class' }));
+    const legend = screen.getByRole('group', { name: /^Sequence class$/ });
+    expect(within(legend).getAllByRole('listitem').map((item) => item.textContent)).toEqual(['Enhancer', 'CTCF', 'Polycomb', 'Promoter', 'Heterochromatin', 'Transcription', 'Transcription factor', 'Low signal']);
+    expect(screen.getByText(/colored by the sequence class each changes most/)).toBeInTheDocument();
+  });
+
+  it('links each model’s score type documentation, as humanbase.io does', async () => {
+    renderJob('76aea8fe-8ec7-4698-a193-a186c7665edb');
+    await screen.findByText('Molecular effects of chr1:109,817,590 G>T', {}, { timeout: 5000 });
+    const links = await screen.findAllByRole('link', { name: /Score type documentation/ }, { timeout: 5000 });
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(['https://humanbase.readthedocs.io/en/latest/seqweaver.html#output', 'https://humanbase.readthedocs.io/en/latest/seqweaver.html#output']);
+    expect(screen.queryByRole('combobox', { name: 'Color style' })).not.toBeInTheDocument();
+  });
+
   it('reads ExPecto effects as tissues, with their resource and system', async () => {
     renderJob('e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1', 'chr5-134871851-A-G');
     expect(await screen.findByRole('heading', { level: 1, name: 'Untitled ExPecto job' }, { timeout: 5000 })).toBeInTheDocument();
@@ -76,6 +96,7 @@ describe('DeepseaJobView', () => {
     expect(detail).toHaveTextContent('chr1:109,817,590 · reference T');
     expect(detail).toHaveTextContent('A−4.63C−4.00G−4.24TReference');
     expect(screen.getByRole('slider', { name: 'Window along the sequence' })).toHaveAttribute('aria-valuenow', '954');
+    expect(screen.getByRole('link', { name: /Log-fold change score documentation/ })).toHaveAttribute('href', 'https://humanbase.readthedocs.io/en/latest/in-silico-mutagenesis.html#output');
   });
 
   it('lists the strongest positions under the map and shows one on request', async () => {
