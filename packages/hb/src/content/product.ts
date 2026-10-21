@@ -18,9 +18,9 @@ export const productSections: NavSection[] = [
       [
         {
           links: [
-            { label: 'Networks', href: '/networks/', description: 'Tissue-specific gene networks, MAGE and GIANT' },
-            { label: 'Modules', href: '/modules/', description: 'Functional modules in large gene lists' },
-            { label: 'NetWAS', href: '/netwas/', description: 'Reprioritize GWAS results with networks' },
+            { label: 'Networks', href: '/networks/', description: 'Tissue-specific gene networks, MAGE and GIANT', image: networks },
+            { label: 'Modules', href: '/modules/', description: 'Functional modules in large gene lists', image: modules },
+            { label: 'NetWAS', href: '/netwas/', description: 'Reprioritize GWAS results with networks', image: netwas },
           ],
         },
       ],
@@ -33,16 +33,16 @@ export const productSections: NavSection[] = [
         {
           label: 'Variant effects',
           links: [
-            { label: 'Sei', href: '/sei/', description: 'Regulatory and chromatin effects' },
-            { label: 'Beluga', href: '/beluga/', description: 'Chromatin effects (2019 model)' },
-            { label: 'Seqweaver', href: '/seqweaver/', description: 'Post-transcriptional effects' },
-            { label: 'ExPecto', href: '/expecto/', description: 'Tissue-specific expression effects' },
-            { label: 'ExPecto SC', href: '/expecto-sc/', description: 'Cell-type-specific expression effects' },
+            { label: 'Sei', href: '/sei/', description: 'Regulatory and chromatin effects', image: deepsea },
+            { label: 'Beluga', href: '/beluga/', description: 'Chromatin effects (2019 model)', image: deepsea },
+            { label: 'Seqweaver', href: '/seqweaver/', description: 'Post-transcriptional effects', image: seqweaver },
+            { label: 'ExPecto', href: '/expecto/', description: 'Tissue-specific expression effects', image: expecto },
+            { label: 'ExPecto SC', href: '/expecto-sc/', description: 'Cell-type-specific expression effects', image: expectoSc },
           ],
         },
       ],
       [
-        { label: 'Sequences', links: [{ label: 'In silico mutagenesis', href: '/ism/', description: 'Regulatory features of a sequence' }] },
+        { label: 'Sequences', links: [{ label: 'In silico mutagenesis', href: '/ism/', description: 'Regulatory features of a sequence', image: ism }] },
         { label: 'Browsers', links: [{ label: 'ASD Browser', href: '/asd/', description: 'Predicted effects of ASD proband mutations' }] },
       ],
     ],

@@ -4,6 +4,7 @@ import { Icon } from '../Icon/Icon';
 import { activeJobCount, JobsMenu, type JobsMenuSummary } from '../Jobs/JobsMenu';
 import { useDismiss } from '../List/useDismiss';
 import { Logo } from '../Logo/Logo';
+import { NavLinkContent, sectionHasImages } from './NavLinkContent';
 import { NavMenu } from './NavMenu';
 import type { NavSection } from './types';
 import './Navigation.css';
@@ -93,8 +94,7 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
                       group.links.map((link) => (
                         <li key={link.href}>
                           <a href={linkHref(link.href)}>
-                            <span className="nav-menu-link-label">{link.label}</span>
-                            {link.description && <span className="nav-menu-link-description">{link.description}</span>}
+                            <NavLinkContent link={link} reserveImage={sectionHasImages(section)} />
                           </a>
                         </li>
                       )),
