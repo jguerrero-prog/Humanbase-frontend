@@ -95,8 +95,8 @@ describe('plot colors', () => {
 
   it('bands the overview by chromosome color, or alternates dark and light grey for sequence classes', () => {
     expect(bandColor('chr7', 4, 'chromosome')).toBe('--viz-chromosome-7');
-    expect([0, 1, 2].map((index) => bandColor('chr7', index, 'sequence-class'))).toEqual(['--color-grey-500', '--color-grey-300', '--color-grey-500']);
-    expect(rankBandColor).toBe('--color-grey-300');
+    expect([0, 1, 2].map((index) => bandColor('chr7', index, 'sequence-class'))).toEqual(['--viz-band-dark', '--viz-band-light', '--viz-band-dark']);
+    expect(rankBandColor).toBe('--viz-band-neutral');
   });
 });
 

@@ -123,10 +123,9 @@
 }
 
 .graph-toolbar-divider {
-  inline-size: var(--border-width-1);
+  align-self: center;
   block-size: 24px;
   margin-inline: var(--space-1);
-  background: var(--border-subtle);
 }
 
 .graph-toolbar-table {
@@ -335,11 +334,6 @@
 
 .annotation-publications li > * {
   align-self: start;
-}
-
-.annotation-table-narrow .table-cell-text {
-  overflow: visible;
-  white-space: normal;
 }
 
 .annotation-table-narrow .annotation-toggle {

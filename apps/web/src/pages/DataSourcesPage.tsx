@@ -25,11 +25,14 @@ function SourceSection({ title, description, columns, rows, note }: DataSection)
         <tbody>
           {rows.map((cells) => (
             <tr key={String(cells[0])}>
-              {cells.map((cell, index) => (
-                <Cell key={index} rowHeader={index === 0} type={columns[index]?.type ?? 'text'}>
-                  {cell}
-                </Cell>
-              ))}
+              {cells.map((cell, index) => {
+                const type = columns[index]?.type ?? 'text';
+                return (
+                  <Cell key={index} rowHeader={index === 0} type={type} wrap={type === 'text'}>
+                    {cell}
+                  </Cell>
+                );
+              })}
             </tr>
           ))}
         </tbody>

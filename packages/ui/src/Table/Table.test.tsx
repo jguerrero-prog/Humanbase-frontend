@@ -20,6 +20,23 @@ describe('Table', () => {
     expect(screen.getByRole('cell', { name: '0.97' })).toBeInTheDocument();
   });
 
+  it('keeps cells to one line unless they wrap', () => {
+    render(
+      <Table caption="Data sources" density="compact">
+        <tbody>
+          <tr>
+            <Cell rowHeader>MAGE</Cell>
+            <Cell wrap>289 tissue and cell-type networks</Cell>
+            <Cell type="number">7,463</Cell>
+          </tr>
+        </tbody>
+      </Table>,
+    );
+    expect(screen.getByRole('rowheader', { name: 'MAGE' })).not.toHaveClass('table-cell-wrap');
+    expect(screen.getByRole('cell', { name: '289 tissue and cell-type networks' })).toHaveClass('table-cell', 'table-cell-text', 'table-cell-wrap');
+    expect(screen.getByRole('cell', { name: '7,463' })).not.toHaveClass('table-cell-wrap');
+  });
+
   it('marks only the sorted column and sorts from a header button', async () => {
     const onSort = vi.fn();
     render(

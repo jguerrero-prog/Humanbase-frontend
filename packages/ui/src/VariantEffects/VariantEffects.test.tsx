@@ -60,7 +60,7 @@ describe('VariantScorePlot', () => {
     expect(container.querySelector('.variant-plot-band')?.getAttribute('style')).toContain('--point-color: var(--viz-chromosome-1)');
     rerender(<VariantScorePlot variants={classed} score={score} colorBy="sequence-class" summary="2 variants." />);
     expect(container.querySelector('.variant-plot-point')?.getAttribute('style')).toContain('--point-color: var(--viz-seqclass-promoter)');
-    expect(container.querySelector('.variant-plot-band')?.getAttribute('style')).toContain('--point-color: var(--color-grey-500)');
+    expect(container.querySelector('.variant-plot-band')?.getAttribute('style')).toContain('--point-color: var(--viz-band-dark)');
   });
 
   it('selects on click and moves between variants with the keyboard, showing each one’s tooltip', async () => {

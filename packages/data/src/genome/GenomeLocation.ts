@@ -11,6 +11,8 @@ const geneName = /^[A-Za-z][A-Za-z0-9.-]*$/;
 export class GenomeLocation {
   static readonly zoomStops = [200, 2_000, 50_000, 500_000] as const;
   static readonly readAhead = 50_000;
+  /** The day the chromosome lengths were recorded from UCSC. */
+  static readonly chromosomesRecorded = chromosomeSizes.recorded;
 
   constructor(
     readonly chrom: string,

@@ -98,4 +98,24 @@ describe('TrackEngine', () => {
     container.remove();
     vi.restoreAllMocks();
   });
+
+  it('opens a score bar’s details with Location and the value read from the file', async () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains('score-tracks-column') ? 220 : 1220;
+    });
+    const container = document.createElement('div');
+    document.body.append(container);
+    const engine = new TrackEngine(new SampleGenomeTracks(SampleClient.bundled()));
+    const dna = { name: 'DNA disease impact score', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw', range: [-0.4, 3] as const };
+    const region = { chrom: 'chr1', start: 2_230_000, end: 2_440_000 };
+    await act(() => engine.mount(container, { label: 'Genome browser', assembly: 'hg19', region, tracks: [dna] }));
+    const scores = await screen.findByRole('group', { name: 'DNA disease impact score, items' });
+    fireEvent.click(within(scores).getByRole('button', { name: '3.62 at 2,346,202' }));
+    const popover = screen.getByRole('dialog', { name: 'DNA disease impact score' });
+    // The bundled sample is rounded to 3 decimals; the live file gives 3.6189358234405518.
+    expect([...popover.querySelectorAll('dl > div')].map((row) => row.textContent)).toEqual(['Locationchr1:2,346,202-2,346,202', 'Score3.619']);
+    engine.destroy();
+    container.remove();
+    vi.restoreAllMocks();
+  });
 });

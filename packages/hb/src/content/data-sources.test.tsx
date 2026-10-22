@@ -1,3 +1,4 @@
+import { GenomeLocation } from '@humanbase/data';
 import { render, screen } from '@testing-library/react';
 import { dataEraFrom, dataSourcesFor, reproducibilityHref, type DataSection } from './data-sources';
 
@@ -18,8 +19,8 @@ describe('dataSourcesFor', () => {
   const current = dataSourcesFor('current');
   const older = dataSourcesFor('up-to-may-2026');
 
-  it('lists the same seven sections in each era', () => {
-    const titles = ['Networks', 'Gene records', 'Ontologies', 'Gene annotations', 'Network compendia', 'SEEK (beta) data compendia', 'Variant effect prediction models'];
+  it('lists the same eight sections in each era', () => {
+    const titles = ['Networks', 'Gene records', 'Ontologies', 'Gene annotations', 'Network compendia', 'SEEK (beta) data compendia', 'Variant effect prediction models', 'Genome browser reference'];
     expect(current.map((item) => item.title)).toEqual(titles);
     expect(older.map((item) => item.title)).toEqual(titles);
   });
@@ -46,6 +47,16 @@ describe('dataSourcesFor', () => {
     expect(note?.title).toBe('About reproducibility for this era');
     render(<p>{note?.body}</p>);
     expect(screen.getByRole('link', { name: 'Reproducing legacy results' })).toHaveAttribute('href', reproducibilityHref);
+  });
+
+  it('credits UCSC for the chromosome sizes in both eras', () => {
+    for (const sections of [current, older]) {
+      const [name, version, used] = section(sections, 'Genome browser reference')?.rows[0] ?? [];
+      expect([version, used]).toEqual([`${GenomeLocation.chromosomesRecorded} (GRCh37/hg19, GRCh38/hg38)`, 'Genome browsers: where each chromosome ends']);
+      const { unmount } = render(<p>{name}</p>);
+      expect(screen.getByRole('link', { name: 'Chromosome sizes (UCSC Genome Browser)' })).toHaveAttribute('href', 'https://genome.ucsc.edu/');
+      unmount();
+    }
   });
 
   it('formats study counts and links each compendium file', () => {

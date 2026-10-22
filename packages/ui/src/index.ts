@@ -9,7 +9,7 @@ export { IconButton, type IconButtonProps } from './IconButton/IconButton';
 export { StarToggle, type StarToggleProps } from './StarToggle/StarToggle';
 export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
 export { ScoreTracks, type ScoreTrack, type ScoreTracksProps } from './GenomeBrowser/ScoreTracks';
-export { GenomeTrackFigure, GenomeTrackView, type GeneShape, type GenomeTrackFigureProps, type GenomeTrackViewProps, type ItemDetails, type ScoreTrackData, type SegmentShape, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
+export { GenomeTrackFigure, GenomeTrackView, type GeneShape, type GenomeTrackFigureProps, type GenomeTrackViewProps, type ItemDetails, type ScoreShape, type ScoreTrackData, type SegmentShape, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
 export { SegmentTable, type SegmentTableProps } from './GenomeBrowser/SegmentTable';
 export {
   BrowserSettingsDialog,
@@ -25,6 +25,7 @@ export {
 } from './GenomeBrowser/GenomeBrowserPanels';
 export { genomeBrowserKeyHelp, genomeBrowserShortcuts, genomeCommand, type GenomeCommand } from './GenomeBrowser/genomeBrowserKeys';
 export { ContextLabel, type ContextLabelProps } from './ContextLabel/ContextLabel';
+export { Divider, type DividerOrientation, type DividerProps } from './Divider/Divider';
 export { Dialog, type DialogKind, type DialogProps, type DialogSize } from './Dialog/Dialog';
 export { DocsLayout, DOCS_NARROW_QUERY, type DocsLayoutProps } from './Docs/DocsLayout';
 export { DocsMarkdown, type DocsMarkdownProps, type ImageSizes } from './Docs/DocsMarkdown';

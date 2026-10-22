@@ -1,12 +1,12 @@
 .data-sources {
   inline-size: min(1200px, 100% - 2 * var(--layout-margin-mobile));
   margin-inline: auto;
-  padding-block: var(--space-12) 112px;
+  padding-block: var(--space-12) var(--space-28);
 }
 
 .data-sources-eras {
   display: grid;
-  gap: 56px;
+  gap: var(--space-14);
   padding-block-start: var(--space-8);
 }
 
@@ -28,13 +28,6 @@
 .data-sources-heading p {
   font: var(--type-body-lg);
   color: var(--text-secondary);
-}
-
-/* Long names and descriptions wrap instead of being cut off. */
-.data-sources-section .table-cell-text {
-  overflow: visible;
-  white-space: normal;
-  overflow-wrap: anywhere;
 }
 
 @media (width < 40rem) {

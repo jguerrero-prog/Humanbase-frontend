@@ -3,7 +3,7 @@ import { apiOff } from './apiOff';
 import { violationsOf } from './violations';
 
 const dataSources = 'http://localhost:4173/data-sources/';
-const sections = ['Networks', 'Gene records', 'Ontologies', 'Gene annotations', 'Network compendia', 'SEEK (beta) data compendia', 'Variant effect prediction models'];
+const sections = ['Networks', 'Gene records', 'Ontologies', 'Gene annotations', 'Network compendia', 'SEEK (beta) data compendia', 'Variant effect prediction models', 'Genome browser reference'];
 
 test.beforeEach(async ({ page }) => {
   await apiOff(page);

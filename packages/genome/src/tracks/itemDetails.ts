@@ -1,4 +1,4 @@
-import { GenomeLocation, type GeneModel, type Segment } from '@humanbase/data';
+import { GenomeLocation, type GeneModel, type ScorePoint, type Segment } from '@humanbase/data';
 import type { ItemDetails } from '@humanbase/ui';
 
 // The fields humanbase.io's genome browser lists when an item is clicked, checked October 22, 2026.
@@ -16,4 +16,10 @@ export const geneDetails = (chrom: string, gene: GeneModel): ItemDetails => [
 export const segmentDetails = (chrom: string, segment: Segment): ItemDetails => [
   ['Location', location(chrom, segment)],
   ['Score', String(segment.score)],
+];
+
+/** A score bar's details, such as a disease impact score's: where it is, and the value read from the file at full precision. */
+export const scoreDetails = (chrom: string, point: ScorePoint): ItemDetails => [
+  ['Location', location(chrom, point)],
+  ['Score', String(point.value)],
 ];

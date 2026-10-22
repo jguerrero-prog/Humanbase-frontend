@@ -45,7 +45,7 @@ export function ModuleGeneList({ module, genes, onSelectGene, onHoverGene }: Mod
                 <Cell rowHeader>
                   <GeneButton gene={gene} onSelectGene={onSelectGene} onHoverGene={onHoverGene} />
                 </Cell>
-                <Cell>{gene.name}</Cell>
+                <Cell wrap>{gene.name}</Cell>
               </tr>
             ))
           )}
