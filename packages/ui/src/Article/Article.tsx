@@ -3,44 +3,55 @@ import { Illustration } from '../Illustration/Illustration';
 import type { IllustrationName } from '../Illustration/illustrations';
 import './Article.css';
 
-export interface ArticleLayoutProps {
+export interface ArticleHeroProps {
   title: string;
   lead: ReactNode;
-  /** Where the article was first published, such as a journal and year. */
+  /** Where the text was first published, such as a journal and year. */
   source?: ReactNode;
   doi?: string;
   player?: ReactNode;
   band?: IllustrationName;
-  backMatter?: ReactNode;
-  /** 2 when the article is shown inside another page, such as a design system example. */
+  /** 2 when the hero is shown inside another page, such as a design system example. */
   titleLevel?: 1 | 2;
+  titleId?: string;
+}
+
+/** The cream opening of an article or content page: title, lead, optional source and player, then an illustrated band. */
+export function ArticleHero({ title, lead, source, doi, player, band = 'capillary', titleLevel = 1, titleId }: ArticleHeroProps) {
+  const Title = titleLevel === 1 ? 'h1' : 'h2';
+  return (
+    <header className="article-hero">
+      <div className="article-hero-content">
+        <Title id={titleId} className="article-title">
+          {title}
+        </Title>
+        <div className="article-overview">
+          <p className="article-lead">{lead}</p>
+          {(source || doi) && (
+            <p className="article-source">
+              {source && <span>{source}</span>}
+              {doi && <a href={doi}>{doi}</a>}
+            </p>
+          )}
+          {player}
+        </div>
+      </div>
+      <Illustration name={band} className="article-band" loading="eager" />
+    </header>
+  );
+}
+
+export interface ArticleLayoutProps extends Omit<ArticleHeroProps, 'titleId'> {
+  backMatter?: ReactNode;
   children: ReactNode;
 }
 
 /** A long read: cream hero with an illustrated band, one centered reading column, then back matter. */
-export function ArticleLayout({ title, lead, source, doi, player, band = 'capillary', backMatter, titleLevel = 1, children }: ArticleLayoutProps) {
+export function ArticleLayout({ backMatter, children, ...hero }: ArticleLayoutProps) {
   const titleId = useId();
-  const Title = titleLevel === 1 ? 'h1' : 'h2';
   return (
     <article className="article" aria-labelledby={titleId}>
-      <header className="article-hero">
-        <div className="article-hero-content">
-          <Title id={titleId} className="article-title">
-            {title}
-          </Title>
-          <div className="article-overview">
-            <p className="article-lead">{lead}</p>
-            {(source || doi) && (
-              <p className="article-source">
-                {source && <span>{source}</span>}
-                {doi && <a href={doi}>{doi}</a>}
-              </p>
-            )}
-            {player}
-          </div>
-        </div>
-        <Illustration name={band} className="article-band" loading="eager" />
-      </header>
+      <ArticleHero {...hero} titleId={titleId} />
       <div className="article-body">
         {children}
         {backMatter && <footer className="article-back">{backMatter}</footer>}
