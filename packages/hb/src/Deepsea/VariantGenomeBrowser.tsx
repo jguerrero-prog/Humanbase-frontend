@@ -37,7 +37,11 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
   // Gene names come from the hg19 GENCODE index; hg38 results take regions only.
   const onLocation = async (text: string) => {
     const typed = GenomeLocation.parse(text, assembly);
-    if (typed instanceof GenomeLocation) return move(typed);
+    if (typed instanceof GenomeLocation) {
+      const { location: kept, message } = typed.fit();
+      if (kept) move(kept);
+      return setLocationError(message);
+    }
     if (!typed || assembly !== 'hg19') return setLocationError(`Enter a region such as ${example}.`);
     try {
       const found = await api.asd.find(text);
@@ -47,7 +51,7 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
       setLocationError(`The gene index didn’t answer. Try again, or enter a region such as ${example}.`);
     }
   };
-  const onRegionChange = (moved: GenomeRegion) => move(new GenomeLocation(moved.chrom, moved.start, moved.end, assembly));
+  const onRegionChange = (moved: GenomeRegion) => move(new GenomeLocation(moved.chrom, moved.start, moved.end, assembly).fit().location ?? location);
   const zoomStop = (GenomeLocation.zoomStops as readonly number[]).includes(location.width) ? location.width : undefined;
   const { attach, ...tools } = useGenomeBrowserTools({ browser: 'variant-results', assembly, tracks: noTracks, location });
 

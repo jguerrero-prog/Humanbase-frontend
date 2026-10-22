@@ -1,5 +1,5 @@
 export { ActionMenu, type ActionMenuItem, type ActionMenuProps } from './ActionMenu/ActionMenu';
-export { ArticleFigure, ArticleLayout, ArticleSection, DropCapParagraph, RefMark, ReferenceList, type ArticleFigureProps, type ArticleImage, type ArticleLayoutProps, type ArticleSectionProps, type ReferenceMark } from './Article/Article';
+export { ArticleFigure, ArticleHero, ArticleLayout, ArticleSection, DropCapParagraph, RefMark, ReferenceList, type ArticleFigureProps, type ArticleHeroProps, type ArticleImage, type ArticleLayoutProps, type ArticleSectionProps, type ReferenceMark } from './Article/Article';
 export { AudioPill, type AudioPillProps, type PlaybackState } from './AudioPlayer/AudioPill';
 export { AudioPlayer, type AudioPlayerProps } from './AudioPlayer/AudioPlayer';
 export { clockTime, spokenTime } from './AudioPlayer/playbackTime';
@@ -140,5 +140,6 @@ export { byGenomePosition, variantLabel, variantLocation, variantName, type Vari
 export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFocus';
 export { VariantScorePlot, type PlotBy, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
 export { VariantsTable, type VariantsTableProps } from './VariantEffects/VariantsTable';
+export { useCopy } from './hooks/useCopy';
 export { useDebounced } from './hooks/useDebounced';
 export { LinkBaseProvider, useLinkHref } from './hooks/useLinkHref';

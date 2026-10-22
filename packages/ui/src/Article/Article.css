@@ -71,8 +71,20 @@
   padding-block: var(--space-6);
 }
 
-.article-section-body + .article-section-body {
+.article-section-body + .article-section-body,
+.article-section:first-child {
   padding-block-start: 0;
+}
+
+.article-section:last-child {
+  padding-block-end: 0;
+}
+
+.article-body > hr {
+  inline-size: 100%;
+  margin: 0;
+  border: 0;
+  border-block-start: var(--border-width-1) solid var(--border-subtle);
 }
 
 .article-section-body > h2 {

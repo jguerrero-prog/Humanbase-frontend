@@ -124,6 +124,8 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await drawer.getByRole('checkbox', { name: 'Sequence' }).uncheck();
   await drawer.getByRole('button', { name: 'Done' }).click();
   await expect(headers).toHaveText(['Conservation', 'GM12878 ChromHMM', 'Genes']);
+  // Results open at 100 kb; the counts below are for the 50 kb view around the variant.
+  await page.getByRole('radio', { name: '50 kb' }).check();
   await expect(page.locator('.genome-engine .genome-tracks-bar')).not.toHaveCount(0);
   // chr1:109,792,590-109,842,590 holds 39 segments in gm12878.ChromHMM.bb, the first PromP and the one under the variant ReprW.
   const segments = page.locator('.genome-engine .genome-tracks-segment');
@@ -149,6 +151,22 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
   await drawer.getByRole('button', { name: 'Done' }).click();
   await expect(headers).toHaveText(['Sequence', 'Genes']);
+});
+
+test('the real Seqweaver result’s genome browser stops at the end of chr1 and says so', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);
+  await expect(page.locator('.genome-engine').getByText('CELSR2 →')).toBeVisible();
+  const field = page.getByRole('searchbox', { name: 'Location or gene' });
+  await field.fill('chr1:249,300,000-249,310,000');
+  await field.press('Enter');
+  await expect(page.getByText('chr1 ends at 249,250,621 on GRCh37/hg19. Showing up to the end.')).toBeVisible();
+  await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
+  await page.locator('.genome-engine').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
+  await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Genes']);
+  await checkScreen(page, problems);
 });
 
 test('the real Beluga result shows its variants and molecular effects', async ({ page }) => {
