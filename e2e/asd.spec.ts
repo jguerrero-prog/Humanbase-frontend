@@ -250,6 +250,30 @@ test('the ASD Browser fits a phone without scrolling sideways', async ({ page })
   }
 });
 
+test('the ASD Browser toolbar centers its controls on one line and wraps Next variant with Tracks and Export', async ({ page }) => {
+  await apiOff(page);
+  const toolbar = page.getByRole('toolbar', { name: 'Genome browser' });
+  // Read every control in one pass, measured from the toolbar, so the page can't move between readings.
+  const middles = () =>
+    toolbar.evaluate((bar) => {
+      const top = bar.getBoundingClientRect().top;
+      const centers = [...bar.querySelectorAll('button')].map((button) => {
+        const box = button.getBoundingClientRect();
+        return [button.getAttribute('aria-label') ?? button.textContent?.trim(), Math.round(box.top - top + box.height / 2)] as const;
+      });
+      return Object.fromEntries(centers);
+    });
+  for (const width of [1440, 1200, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(`${web}/asd/`);
+    await expect(page.locator('.genome-tracks-bar').first()).toBeVisible();
+    const middle = await middles();
+    if (width > 375) expect(middle['Previous variant']).toBe(middle['Zoom out']);
+    expect(middle['Next variant']).toBe(middle['Tracks']);
+    expect(middle['Export']).toBe(middle['Tracks']);
+  }
+});
+
 test('a drag on the ASD heatmap moves the view on every step and keeps the heatmap while each range loads', async ({ page }) => {
   await slowSampleApi(page);
   await page.setViewportSize({ width: 1440, height: 900 });
