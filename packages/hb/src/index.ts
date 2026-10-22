@@ -4,6 +4,7 @@ export { AsdBrowser, type AsdBrowserProps, type AsdView } from './AsdBrowser/Asd
 export { AsdExplorer, type AsdExplorerProps, type AsdState } from './AsdBrowser/AsdExplorer';
 export { AsdHeader, AsdVariantTable, type AsdHeaderProps, type AsdVariantTableProps } from './AsdBrowser/AsdParts';
 export { aboutArticle, type AboutSection } from './content/about/about';
+export { doiLink, humanbaseCitation, humanbaseCitationText, methodCitations, netwasCitation, type MethodCitation, type PlatformCitation } from './content/cite';
 export { analysisColumns, analysisIcons, analysisOptions, productFooter, productSections } from './content/product';
 export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
 export { DeepseaAbout, DeepseaForm, deepseaFormLink, deepseaJobLink, type DeepseaFormProps } from './Deepsea/DeepseaForm';

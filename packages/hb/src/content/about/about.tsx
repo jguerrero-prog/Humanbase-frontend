@@ -1,11 +1,12 @@
 import { RefMark, ReferenceList, type ArticleFigureProps } from '@humanbase/ui';
 import type { ReactNode } from 'react';
+import { humanbaseCitation } from '../cite';
 import analysis from './analysis.png?url';
 import narration from './narration.m4a?url';
 import pipeline from './pipeline.png?url';
 
 // The About page: Sealfon et al., Nature Methods (2026), as laid out in Figma. scripts/narration has the spoken version.
-const doi = 'https://doi.org/10.1038/s41592-025-02994-8';
+const { doi } = humanbaseCitation;
 const link = (href: string) => <a href={href}>{href}</a>;
 
 export interface AboutSection {
