@@ -1,4 +1,8 @@
 export { ActionMenu, type ActionMenuItem, type ActionMenuProps } from './ActionMenu/ActionMenu';
+export { ArticleFigure, ArticleLayout, ArticleSection, DropCapParagraph, RefMark, ReferenceList, type ArticleFigureProps, type ArticleImage, type ArticleLayoutProps, type ArticleSectionProps, type ReferenceMark } from './Article/Article';
+export { AudioPill, type AudioPillProps, type PlaybackState } from './AudioPlayer/AudioPill';
+export { AudioPlayer, type AudioPlayerProps } from './AudioPlayer/AudioPlayer';
+export { clockTime, spokenTime } from './AudioPlayer/playbackTime';
 export { Badge, StatusBadge, type BadgeProps, type BadgeSize, type BadgeTone, type JobStatus, type StatusBadgeProps } from './Badge/Badge';
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from './Button/Button';
 export { IconButton, type IconButtonProps } from './IconButton/IconButton';

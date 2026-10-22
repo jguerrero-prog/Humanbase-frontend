@@ -1,0 +1,154 @@
+.article-hero {
+  display: grid;
+  background: var(--surface-cream);
+}
+
+.article-hero-content {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-24) clamp(var(--layout-margin-mobile), 8.4vw, 120px) var(--space-12);
+}
+
+.article-title,
+.article-overview {
+  max-inline-size: 560px;
+}
+
+.article-overview {
+  display: grid;
+  gap: var(--space-6);
+  justify-items: start;
+}
+
+.article-title {
+  font: var(--type-h1);
+  letter-spacing: var(--type-h1-tracking);
+}
+
+.article-lead {
+  font: var(--type-lead);
+}
+
+.article-source {
+  display: grid;
+  gap: var(--space-0-5);
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.article-band {
+  inline-size: 100%;
+  block-size: 150px;
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+.article-body {
+  display: grid;
+  gap: var(--space-6);
+  inline-size: min(748px, 100% - 2 * var(--layout-margin-mobile));
+  margin-inline: auto;
+  padding-block: 80px 112px;
+  font: var(--type-body-lg);
+}
+
+/* Chrome ignores logical margins and padding on ::first-letter. */
+.article-drop-cap::first-letter {
+  float: left;
+  margin: 0 var(--space-4) 0 0;
+  padding: 0 var(--space-6);
+  font: 700 88px/80px var(--font-family-heading);
+  color: var(--color-yellow-700);
+  background:
+    url("./drop-cap-cells-left.svg") left center / 24px 80px no-repeat,
+    url("./drop-cap-cells-right.svg") right center / 24px 80px no-repeat;
+}
+
+.article-section {
+  display: grid;
+  gap: var(--space-3);
+  padding-block: var(--space-6);
+}
+
+.article-section-body + .article-section-body {
+  padding-block-start: 0;
+}
+
+.article-section-body > h2 {
+  font: var(--type-h3);
+  letter-spacing: var(--type-h3-tracking);
+}
+
+.article-figure {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.article-figure img {
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.article-figure figcaption {
+  display: grid;
+  gap: var(--space-2);
+  font: var(--type-body-sm);
+}
+
+.article-credit {
+  font: var(--type-caption);
+  color: var(--text-muted);
+}
+
+.article-body sup {
+  line-height: 0;
+}
+
+.article-meta {
+  color: var(--text-secondary);
+}
+
+.article-back {
+  display: grid;
+  gap: var(--space-8);
+  padding-block-start: var(--space-8);
+  font: var(--type-body);
+}
+
+.article-section-back {
+  gap: var(--space-2);
+  padding-block: 0;
+}
+
+.article-section-back > h2 {
+  font: var(--type-h4);
+  letter-spacing: var(--type-h4-tracking);
+}
+
+.article-section-back :is(ol, ul) {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding-inline-start: var(--space-6);
+  font: var(--type-body-sm);
+}
+
+.article-references li {
+  scroll-margin-block-start: calc(var(--layout-topbar-height) + var(--space-6));
+}
+
+.article-body a {
+  overflow-wrap: anywhere;
+}
+
+@media (width < 40rem) {
+  .article-hero-content {
+    padding-block: var(--space-12) var(--space-8);
+  }
+
+  .article-body {
+    padding-block: var(--space-12) var(--space-16);
+  }
+}

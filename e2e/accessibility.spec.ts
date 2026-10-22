@@ -45,6 +45,8 @@ const pages = [
   'http://localhost:4322/ui-library/genome-browser/',
   'http://localhost:4322/ui-library/results-layout/',
   'http://localhost:4322/ui-library/netwas-results/',
+  'http://localhost:4322/ui-library/article-template/',
+  'http://localhost:4322/components/audio-player/',
   'http://localhost:4322/existing-and-proposed/',
   'http://localhost:4322/existing-and-proposed/homepage/',
   'http://localhost:4322/existing-and-proposed/networks/',

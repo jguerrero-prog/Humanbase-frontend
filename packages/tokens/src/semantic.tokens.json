@@ -39,6 +39,11 @@
       "$type": "color",
       "$value": "{color.grey.50}"
     },
+    "cream": {
+      "$type": "color",
+      "$value": "{color.cream}",
+      "$description": "Warm band behind an article hero and its illustration"
+    },
     "sunken": {
       "$type": "color",
       "$value": "{color.grey.100}"

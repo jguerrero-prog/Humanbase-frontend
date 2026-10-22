@@ -1,0 +1,98 @@
+---
+import { Code } from 'astro:components';
+import { ArticleExample } from '../../components/docs/ArticleExample';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { withBase } from '../../withBase';
+
+const anatomy = [
+  ['Hero', 'surface.cream. Padding 96px top, 120px sides, 48px bottom; 20px between title and overview.'],
+  ['Title', 'h1, type.h1, text.default, at most 560px wide.'],
+  ['Overview', 'At most 560px, 24px gaps: lead in type.lead; source in type.body-sm text.secondary, with the DOI link 2px below; then the audio player, if there is one.'],
+  ['Band', 'A band illustration, Capillary by default, 150px tall along the hero’s bottom edge. Decorative, with empty alt text.'],
+  ['Reading column', '748px, centered. Padding 80px top and 112px bottom; 24px between blocks; body text in type.body-lg.'],
+  ['Drop cap', 'The opening paragraph’s first letter: Cabin Bold 88px in color.yellow.700, three lines tall, with whole cells from the Cells illustration on either side and none behind it; 16px to the text.'],
+  ['Section', 'An h2 styled type.h3, 12px above its text; 24px above and below, none above when one section follows another.'],
+  ['Figure', 'The image at the column’s full width, then the caption in type.body-sm with its “Fig. 1 |” title in bold, and the credit in type.caption text.muted.'],
+  ['Reference marks', 'Superscript links to the numbered References: “1–5” or “9,10”. Screen readers hear “References 1–5”.'],
+  ['Back matter', '32px above and between sections: an h2 styled type.h4, text in type.body, lists in type.body-sm.'],
+];
+
+const rules = [
+  ['Headings', 'One h1, the title. Body sections and back matter sections are h2, so the outline stays flat and every section is a named region.'],
+  ['Drop cap', 'Drawn with ::first-letter, so the word stays whole: screen readers, search and copy see “Increasing”, not “I ncreasing”. The cells are a CSS background.'],
+  ['Figures', '<figure> with <figcaption>. The alt text says what the graphic says, step by step or tool by tool; the caption adds context and the credit.'],
+  ['Reference marks', 'Real links in <sup>, with visually hidden “Reference” before the number. The References list is an <ol> whose items have ids ref-1, ref-2 and so on.'],
+  ['Links', 'Shown as written in the source, such as https://humanbase.io, and allowed to break anywhere on narrow screens.'],
+  ['Listening', 'The audio player is optional. When there is one, the article text is its transcript.'],
+];
+
+const usage = `import { ArticleFigure, ArticleLayout, ArticleSection, AudioPlayer, DropCapParagraph, RefMark, ReferenceList } from '@humanbase/ui';
+
+<ArticleLayout
+  title="An Interactive AI Platform for Human Biology"
+  lead="Humanbase uses machine learning to…"
+  source="Sealfon et al., Nature Methods (2026)"
+  doi="https://doi.org/10.1038/s41592-025-02994-8"
+  player={<AudioPlayer src={narration} duration={487} />}
+  backMatter={<ArticleSection kind="back" title="References"><ReferenceList references={references} /></ArticleSection>}
+>
+  <DropCapParagraph>Increasing quantities of genomic data…</DropCapParagraph>
+  <ArticleSection title="Analysis">
+    <p>Humanbase offers numerous avenues…</p>
+    <ArticleFigure image={figure} caption={caption} credit={credit} />
+  </ArticleSection>
+  <p>…through RNA binding protein interactions<RefMark refs={[[1, 5]]} />.</p>
+</ArticleLayout>`;
+---
+
+<DocsLayout title="Article template" description="The layout for long reads such as the About page: cream hero with a band illustration, one reading column, drop cap, figures, reference marks and back matter.">
+  <Intro lead="The article template sets long reads, such as the About page’s Nature Methods correspondence, in one comfortable column. It is the only place outside the design system where illustrations appear: the Capillary band under the hero and Cells around the drop cap." status="Added October 21, 2026 · Template: Article (hero, body, back matter)">
+    <KeyRules
+      rules={[
+        { title: 'One column', text: '748px of body text, centered, about 80 characters a line.' },
+        { title: 'Faithful to the source', text: 'Published text is copied as written, with its figures, credit and references.' },
+        { title: 'Readable by everyone', text: 'Semantic sections, figures with alt text, and reference marks that are real links.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Example" lead="The start of the About page, built with the template. The full page is at /about/ in the app.">
+    <div class="frame">
+      <ArticleExample />
+    </div>
+  </DocSection>
+
+  <DocSection title="Anatomy and specs">
+    <DocTable caption="Parts of the article template" columns={['Part', 'Spec']} widths={['184px']}>
+      {anatomy.map(([part, spec]) => <tr><th scope="row">{part}</th><td>{spec}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Structure and accessibility">
+    <DocTable caption="Rules for article markup" columns={['Rule', 'How']} widths={['184px']}>
+      {rules.map(([rule, how]) => <tr><th scope="row">{rule}</th><td>{how}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the template in code">
+    <ul>
+      <li>The About page’s text, figures and narration live in <code>packages/hb/src/content/about/about.tsx</code>, apart from the page that lays them out.</li>
+      <li>The drop cap is tuned for Cabin Bold at 88px: three lines of type.body-lg. Use <code>DropCapParagraph</code> only for the opening paragraph.</li>
+      <li>See the <a href={withBase('/components/audio-player/')}>Audio player</a> for the optional narration.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .frame {
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+</style>

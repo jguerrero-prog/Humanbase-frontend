@@ -509,6 +509,19 @@
         "hex": "#FFFFFF"
       }
     },
+    "cream": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          1,
+          0.9843,
+          0.9765
+        ],
+        "hex": "#FFFBF9"
+      },
+      "$description": "UI surfaces only, not data"
+    },
     "error": {
       "50": {
         "$type": "color",
