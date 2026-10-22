@@ -1,0 +1,85 @@
+.docs-markdown {
+  display: grid;
+  gap: var(--space-5);
+  min-inline-size: 0;
+  font: var(--type-body-lg);
+  letter-spacing: var(--type-body-lg-tracking);
+}
+
+.docs-markdown > * {
+  min-inline-size: 0;
+}
+
+.docs-markdown :is(.docs-h2, .docs-h3, .docs-h4) {
+  scroll-margin-block-start: calc(var(--layout-topbar-height) + var(--space-6));
+}
+
+.docs-markdown .docs-h2 {
+  margin-block-start: var(--space-8);
+  font: var(--type-h3);
+  letter-spacing: var(--type-h3-tracking);
+}
+
+.docs-markdown .docs-h3 {
+  margin-block-start: var(--space-4);
+  font: var(--type-h4);
+  letter-spacing: var(--type-h4-tracking);
+}
+
+.docs-markdown .docs-h4 {
+  font: var(--type-label);
+  letter-spacing: var(--type-label-tracking);
+}
+
+.docs-markdown :is(ul, ol) {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-inline-start: var(--space-6);
+}
+
+.docs-markdown li > :is(ul, ol) {
+  margin-block-start: var(--space-2);
+}
+
+.docs-markdown a {
+  overflow-wrap: anywhere;
+}
+
+.docs-markdown .inline-code {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.docs-markdown blockquote {
+  margin: 0;
+  padding-inline-start: var(--space-4);
+  border-inline-start: var(--border-width-2) solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.docs-markdown .article-figure {
+  margin-block: var(--space-2);
+}
+
+.docs-markdown .article-figure img {
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.tex-math sub,
+.tex-math sup {
+  line-height: 0;
+}
+
+.tex-math-display {
+  overflow: auto hidden;
+  padding-block: var(--space-1);
+  font-size: 1.15em;
+  text-align: center;
+}
+
+/* Chrome lets a block formula scroll itself; the wrapper scrolls instead, so it can take focus. */
+.tex-math-display math {
+  overflow: visible;
+}

@@ -40,7 +40,7 @@ test('the Up to May 2026 tab is in the URL, drops MAGE and explains reproducibil
 
   const note = page.getByText('About reproducibility for this era');
   await expect(note).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Reproducing legacy results' })).toHaveAttribute('href', 'https://humanbase.readthedocs.io/en/latest/reproducibility.html');
+  await expect(page.getByRole('link', { name: 'Reproducing legacy results' })).toHaveAttribute('href', '/docs/reproducibility/');
   expect(await violationsOf(page)).toEqual([]);
 
   await page.reload();

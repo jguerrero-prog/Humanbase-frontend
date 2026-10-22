@@ -1,0 +1,112 @@
+---
+{
+  "title": "NetWAS - Network-wide Association Study",
+  "slug": "netwas",
+  "group": "network-analysis",
+  "label": "NetWAS: network-wide association study",
+  "order": 6,
+  "live": "https://humanbase.readthedocs.io/en/latest/netwas.html",
+  "sections": [
+    {
+      "id": "netwas-network-wide-association-study",
+      "title": "NetWAS - Network-wide Association Study",
+      "level": 1
+    },
+    {
+      "id": "method",
+      "title": "Method",
+      "level": 2
+    },
+    {
+      "id": "gwas-file",
+      "title": "GWAS File",
+      "level": 2
+    },
+    {
+      "id": "netwas-results",
+      "title": "NetWAS Results",
+      "level": 2
+    },
+    {
+      "id": "example",
+      "title": "Example",
+      "level": 2
+    },
+    {
+      "id": "hypertension-gwas",
+      "title": "Hypertension GWAS",
+      "level": 3
+    }
+  ],
+  "images": {}
+}
+---
+
+# NetWAS - Network-wide Association Study {#netwas-network-wide-association-study}
+
+Tissue-specific networks provide a new means to generate hypotheses related to the molecular basis of human disease. We developed an approach, termed network-wide association study (NetWAS). In NetWAS, the statistical associations from a standard GWAS guide the analysis of functional networks. This reprioritization method is driven by discovery and does not depend on prior disease knowledge. NetWAS, in conjunction with tissue-specific networks, effectively reprioritizes statistical associations from distinct GWAS to identify disease-associated genes, and tissue-specific NetWAS better identifies genes associated with hypertension than either GWAS or tissue-naive NetWAS. NetWAS supports both GIANT and MAGE tissue networks.
+
+The NetWAS method is described in the following publication: Greene, C. S., Krishnan, A., Wong, A. K., Ricciotti, E., Zelaya, R. A., Himmelstein, D. S., … & Troyanskaya, O. G. (2015). [Understanding multicellular function and disease with human tissue-specific networks](https://www.nature.com/articles/ng.3259). Nature Genetics.
+
+## Method {#method}
+
+NetWAS trains a support vector machine classifier using nominally significant (P < 0.01) genes as positive examples and 10,000 randomly selected non-significant (P ≥ 0.01) genes as negatives. The classifier is constructed using a tissue network relevant to a disease (e.g. kidney for hypertension), where the features of the classifier are the edge weights of the labeled examples to all the genes in the network. Genes are re-ranked using their distance from the hyperplane, which represent a network-based prioritization of a GWAS, termed NetWAS.
+
+To calculate per-gene P values for a GWAS, we suggest the versatile gene-based association study (VEGAS) system.
+
+We have performed and evaluated NetWAS on six GWAS: C-reactive protein levels (lnCRP), type 2 diabetes (T2D), body mass index (BMI), hypertension (ht), alzheimer’s (adni) and advanced age-related macular degeneration (advanced AMD).
+
+## GWAS File {#gwas-file}
+
+NetWAS requires as input a GWAS result file, with per-gene p-values. We suggest the versatile gene-based association study (VEGAS) system for calculating gene p-values, but we also support forge and pseq formats.
+
+- [VEGAS](https://pmc.ncbi.nlm.nih.gov/articles/PMC2896770/): versatile gene-based association study
+- [FORGE](https://github.com/inti/FORGE): multivariate calculation of gene-wide p-values from Genome-Wide Association Studies Authors and Affiliations
+- [PLINK/SEQ](https://zzz.bwh.harvard.edu/plinkseq/): a library for the analysis of genetic variation data
+
+## NetWAS Results {#netwas-results}
+
+When a NetWAS analysis finishes, a result file will be emailed to the provided address and/or can be accessed at a given URL. An example file is show below:
+
+```
+##################################################################################
+# HumanBase NetWAS Analysis Results
+#
+# Job id:      d7732f19-916d-4458-97b5-936b8d6345cb
+# Job title:
+# Email:
+# Created:     2017-08-21 17:07:33 EDT
+# GWAS file:   bmi-2012.out.txt
+# GWAS format: vegas
+# Tissue:      adipose_tissue
+# P-value:     0.01
+#
+# Result file format:
+#
+# Column 1) Gene symbol
+# Column 2) Training label: 1 (+, nominally significant p-value)
+#                          -1 (-, not nominally significant p-value)
+#                           0 (not used in training)
+# Column 3) NetWAS Score: Distance from the SVM separating hyperplane. Positive scores
+# are in the positive direction (more like nominally significant), negative scores
+# are in the negative direction (more like non-significant)
+##################################################################################
+# NetWAS citation:
+# Greene CS*, Krishnan A*, Wong AK*, Ricciotti E, Zelaya RA, Himmelstein DS, Zhang
+# R, Hartmann BM, Zaslavsky E, Sealfon SC, Chasman DI, FitzGerald GA, Dolinski K,
+# Grosser T, Troyanskaya OG. (2015). Understanding multicellular function and
+# disease with human tissue-specific networks. Nature Genetics. 10.1038/ng.3259w.
+##################################################################################
+KRT6B  -1      0.561327
+EMP1   -1      0.541169
+ZBTB41 -1      0.503238
+PNPLA8 -1      0.454396
+ITGB4  -1      0.440985
+........
+```
+
+## Example {#example}
+
+### Hypertension GWAS {#hypertension-gwas}
+
+Hypertension is a major cardiovascular risk factor and a complex trait involving a large number of genetic variants. We converted SNP-level association statistics into gene-level statistics for each of three recorded phenotypes—diastolic blood pressure (DBP), systolic blood pressure (SBP) and hypertension. Using the tissue-specific network for kidney, a tissue that has a central role in blood pressure control, NetWAS constructed a classifier that identified tissue-specific network connectivity patterns associated with the phenotype of interest. Genes annotated to hypertension phenotypes in the Online Mendelian Inheritance in Man (OMIM) database were more highly ranked by this classifier than by the initial GWAS. ([citation](http://www.nature.com/ng/journal/v47/n6/full/ng.3259.html))
