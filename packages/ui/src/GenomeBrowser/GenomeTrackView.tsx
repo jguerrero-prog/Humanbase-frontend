@@ -35,10 +35,19 @@ export interface TrackOf<T> {
   empty?: string | undefined;
 }
 
+/** One score bar: a value over a stretch, or at one position when start and end are equal. */
+export interface ScoreShape {
+  start: number;
+  end: number;
+  value: number;
+  /** What clicking the bar shows; a bar without details doesn't open a popover. */
+  details?: ItemDetails | undefined;
+}
+
 export interface ScoreTrackData {
   min: number;
   max: number;
-  values: readonly { start: number; end: number; value: number }[];
+  values: readonly ScoreShape[];
 }
 
 /** One segment of a segment track, such as a chromatin state, 1-based and inclusive, in the file's own color. */
@@ -77,6 +86,7 @@ const segmentHeight = 60;
 const segmentBox = 8;
 const tooltipSize = { width: 240, height: 117 };
 const dragStart = 4;
+const minTarget = 24;
 const geneRowHeight = 36;
 const geneMinHeight = 60;
 const pillHeight = 30;
@@ -162,10 +172,30 @@ function geneBox({ gene, row, labelAt, label }: PlacedGene, geneTop: number, x: 
   return { left, top: geneTop + 4 + row * geneRowHeight, width: Math.max(1, right - left), height: 32 };
 }
 
-const segmentKey = (track: string, segment: SegmentShape) => `${track} ${segment.start}`;
+/** Each bar from 0 to its value: at least 2px wide and 1px tall, centered on its bases. */
+function scoreBarsOf({ min, max, values }: ScoreTrackData, top: number, x: (position: number) => number, perBase: number) {
+  const yOf = (value: number) => top + ((max - Math.max(min, Math.min(max, value))) / (max - min)) * (scoreHeight - 8) + 4;
+  const zero = yOf(0);
+  const bars = values.map((point) => {
+    const [y1, y2] = [zero, yOf(point.value)].sort((a, b) => a - b) as [number, number];
+    const width = Math.max(2, x(point.end + 1) - x(point.start));
+    return { point, box: { left: x(point.start) + (perBase - width) / 2, top: y1, width, height: Math.max(1, y2 - y1) } };
+  });
+  return { yOf, zero, bars };
+}
+
+// A short bar's button is at least 24px tall and stays inside its track, clear of the next track's items.
+function scoreTarget(bar: Box, top: number): Box {
+  const height = Math.max(minTarget, bar.height);
+  const middle = Math.min(top + scoreHeight - 4 - height / 2, Math.max(top + 4 + height / 2, bar.top + bar.height / 2));
+  return { ...bar, top: middle - height / 2, height };
+}
+
+const spanKey = (track: string, item: { start: number }) => `${track} ${item.start}`;
+const spanWords = (item: { start: number; end: number }) => (item.end > item.start ? `${count.format(item.start)} to ${count.format(item.end)}` : count.format(item.start));
 const geneKey = (track: string, gene: GeneShape) => `${track} ${gene.name}`;
 
-/** One gene or segment that opens its details on click or Enter. */
+/** One score bar, gene or segment that opens its details on click or Enter. */
 interface TrackItem {
   key: string;
   label: string;
@@ -174,7 +204,19 @@ interface TrackItem {
 }
 
 /** The items with details, by track, in the order the tracks are drawn. */
-function itemGroupsOf({ width, segments = [], genes }: GenomeTrackViewProps, { x, placed, topOf }: Layout): { track: string; items: TrackItem[] }[] {
+function itemGroupsOf({ width, scores = [], segments = [], genes }: GenomeTrackViewProps, { x, span, placed, topOf }: Layout): { track: string; items: TrackItem[] }[] {
+  const scoreGroups = scores.map((track) => {
+    const top = topOf(`score-${track.name}`);
+    return {
+      track: track.name,
+      items:
+        track.state === 'ready' && track.data
+          ? scoreBarsOf(track.data, top, x, width / span).bars.flatMap(({ point, box }) =>
+              point.details ? [{ key: spanKey(track.name, point), label: `${point.value.toFixed(2)} at ${spanWords(point)}`, details: point.details, box: scoreTarget(box, top) }] : [],
+            )
+          : [],
+    };
+  });
   const segmentGroups = segments.map((track) => {
     const top = topOf(`segments-${track.name}`) + (segmentHeight - segmentBox) / 2;
     const items = (track.state === 'ready' && track.data) || [];
@@ -183,13 +225,13 @@ function itemGroupsOf({ width, segments = [], genes }: GenomeTrackViewProps, { x
       items: items.flatMap((segment) => {
         if (!segment.details) return [];
         const [left, right] = [Math.max(0, x(segment.start)), Math.min(width, x(segment.end + 1))];
-        return [{ key: segmentKey(track.name, segment), label: `${segment.name}, ${count.format(segment.start)} to ${count.format(segment.end)}`, details: segment.details, box: { left, top, width: Math.max(1, right - left), height: segmentBox } }];
+        return [{ key: spanKey(track.name, segment), label: `${segment.name}, ${spanWords(segment)}`, details: segment.details, box: { left, top, width: Math.max(1, right - left), height: segmentBox } }];
       }),
     };
   });
   const geneTop = topOf('genes');
   const geneItems = genes?.state === 'ready' ? placed.flatMap((item) => (item.gene.details ? [{ key: geneKey(genes.name, item.gene), label: item.gene.name, details: item.gene.details, box: geneBox(item, geneTop, x, width) }] : [])) : [];
-  return [...segmentGroups, ...(genes ? [{ track: genes.name, items: geneItems }] : [])].filter((group) => group.items.length > 0);
+  return [...scoreGroups, ...segmentGroups, ...(genes ? [{ track: genes.name, items: geneItems }] : [])].filter((group) => group.items.length > 0);
 }
 
 /** The tracks inside an svg, shared by the browser on the page and its exported figure. */
@@ -260,18 +302,22 @@ function TrackDrawing({ props, layout, marks = true, guide = true, onSegment, in
         {scores.map((track) => {
           const top = topOf(`score-${track.name}`);
           if (track.state !== 'ready' || !track.data) return <g key={track.name}>{stateNote(track, top, scoreHeight)}</g>;
-          const { min, max, values } = track.data;
-          const yOf = (value: number) => top + ((max - Math.max(min, Math.min(max, value))) / (max - min)) * (scoreHeight - 8) + 4;
-          const zero = yOf(0);
-          const chosen = marked && values.find((point) => point.start <= marked.position && point.end >= marked.position);
+          const { yOf, zero, bars } = scoreBarsOf(track.data, top, x, perBase);
+          const chosen = marked && track.data.values.find((point) => point.start <= marked.position && point.end >= marked.position);
           return (
             <g key={track.name}>
               <line className="score-tracks-baseline" x1={-width} y1={zero} x2={2 * width} y2={zero} />
-              {values.map((point) => {
-                const [y1, y2] = [zero, yOf(point.value)].sort((a, b) => a - b) as [number, number];
-                const barWidth = Math.max(2, x(point.end + 1) - x(point.start));
-                return <rect key={point.start} className={point === chosen ? 'genome-tracks-bar is-selected' : 'genome-tracks-bar'} x={x(point.start) + (perBase - barWidth) / 2} y={y1} width={barWidth} height={Math.max(1, y2 - y1)} />;
-              })}
+              {bars.map(({ point, box }) => (
+                <rect
+                  key={point.start}
+                  className={point === chosen ? 'genome-tracks-bar is-selected' : 'genome-tracks-bar'}
+                  x={box.left}
+                  y={box.top}
+                  width={box.width}
+                  height={box.height}
+                  data-item={interactive && point.details ? spanKey(track.name, point) : undefined}
+                />
+              ))}
               {chosen && (
                 <text className="genome-tracks-value" x={x(chosen.end + 1) + 6} y={Math.max(top + 12, yOf(chosen.value) + 10)}>
                   {chosen.value.toFixed(2)}
@@ -296,7 +342,7 @@ function TrackDrawing({ props, layout, marks = true, guide = true, onSegment, in
                   width={Math.max(1, x(segment.end + 1) - x(segment.start))}
                   height={segmentBox}
                   fill={segment.color}
-                  data-item={interactive && segment.details ? segmentKey(track.name, segment) : undefined}
+                  data-item={interactive && segment.details ? spanKey(track.name, segment) : undefined}
                   onPointerEnter={onSegment && ((event) => onSegment({ segment, track: track.name, box: event.currentTarget, pointer: event.clientX }))}
                   onPointerLeave={onSegment && (() => onSegment(undefined))}
                 />

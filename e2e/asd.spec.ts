@@ -205,6 +205,32 @@ test('the ASD Browser opens a gene’s and a segment’s details on click and fr
   expect(apiRequests).toEqual([]);
 });
 
+test('the ASD Browser opens a disease impact score’s details on click and from the keyboard, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/asd/`);
+  const browser = page.getByRole('application', { name: /^Genome browser, chr1:2,230,000-2,440,000/ });
+  await browser.locator('[data-item="DNA disease impact score 2346202"]').click();
+  const dna = page.getByRole('dialog', { name: 'DNA disease impact score' });
+  // humanbase.io lists Location and Score for its score tracks; the sample is rounded to 3 decimals.
+  await expect(dna).toHaveText(/^DNA disease impact scoreLocationchr1:2,346,202-2,346,202Score3\.619$/);
+  await expect(dna.getByRole('button', { name: 'Close' })).toBeFocused();
+  expect(await violationsOf(page)).toEqual([]);
+  await page.keyboard.press('Escape');
+  await expect(dna).toBeHidden();
+  const bar = page.getByRole('button', { name: '3.62 at 2,346,202' });
+  await expect(bar).toBeFocused();
+
+  const rna = page.getByRole('group', { name: 'RNA disease impact score, items' }).getByRole('button', { name: '5.58 at 2,377,039' });
+  await rna.focus();
+  await page.keyboard.press('Enter');
+  const popover = page.getByRole('dialog', { name: 'RNA disease impact score' });
+  await expect(popover).toHaveText(/^RNA disease impact scoreLocationchr1:2,377,039-2,377,039Score5\.584$/);
+  expect(await violationsOf(page)).toEqual([]);
+  await popover.getByRole('button', { name: 'Close' }).click();
+  await expect(rna).toBeFocused();
+  expect(apiRequests).toEqual([]);
+});
+
 test('the ASD Browser fits a phone without scrolling sideways', async ({ page }) => {
   await apiOff(page);
   await page.setViewportSize({ width: 375, height: 812 });
