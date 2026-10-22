@@ -140,6 +140,8 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
   // The effects tab stays as the browser moves and the variants below reload.
   const [effectsView, setEffectsView] = useState<EffectsView>('strongest');
   const [engineStatus, setEngineStatus] = useState<{ status: EngineStatus; error?: Error | undefined }>({ status: 'loading' });
+  // A variant picked with Previous, Next or a heatmap column starts its effects afresh; one reached by moving the browser keeps them, so a drag carries on.
+  const [picked, setPicked] = useState(state.variant);
   const region = useMemo(() => ({ chrom: location.chrom, start: location.start, end: location.end }), [location]);
   const onRegionChange = (moved: GenomeRegion) => onStateChange({ location: (new GenomeLocation(moved.chrom, moved.start, moved.end).fit().location ?? location).format() });
   const range = useAsdRange(location);
@@ -149,12 +151,16 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
   const move = (to: GenomeLocation) => onStateChange({ location: to.format(), variant: undefined });
   const step = (by: number) => {
     const next = rows?.[index + by];
-    if (next) onStateChange({ variant: keyOf(next) });
+    if (!next) return;
+    setPicked(keyOf(next));
+    onStateChange({ variant: keyOf(next) });
   };
   // As on humanbase.io, clicking a heatmap column selects that variant and centers the browser on it at the same width.
   const center = (key: string) => {
     const row = rows?.find((one) => keyOf(one) === key);
-    if (row) onStateChange({ variant: key, location: new GenomeLocation(row.chromosome, row.position, row.position).withWidth(location.width).format() });
+    if (!row) return;
+    setPicked(key);
+    onStateChange({ variant: key, location: new GenomeLocation(row.chromosome, row.position, row.position).withWidth(location.width).format() });
   };
   const zoomStop = (GenomeLocation.zoomStops as readonly number[]).includes(location.width) ? location.width : undefined;
   const { attach, ...tools } = useGenomeBrowserTools({ browser: 'asd', assembly: 'hg19', tracks: impactTracks, location });
@@ -182,7 +188,7 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
         <p className="asd-browser-note">
           {count.format(rows.length)} variants in view; the selected one, {labelOf(selected)}, is drawn in ink. Previous variant and Next variant step through them, and the Table view lists them all.
         </p>
-        <VariantEffects key={`${keyOf(selected)}-${state.set}`} location={location} rows={rows} selected={selected} set={state.set} onSetChange={(set) => onStateChange({ set })} view={effectsView} onViewChange={setEffectsView} onSelect={center} onMove={(bases) => move(location.move(bases / location.width))} />
+        <VariantEffects key={`${picked ?? ''}-${state.set}`} location={location} rows={rows} selected={selected} set={state.set} onSetChange={(set) => onStateChange({ set })} view={effectsView} onViewChange={setEffectsView} onSelect={center} onMove={(bases) => move(location.move(bases / location.width))} />
       </>
     );
   }
