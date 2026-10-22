@@ -1,5 +1,5 @@
 import { render, screen, within } from '@testing-library/react';
-import { ArticleFigure, ArticleLayout, ArticleSection, DropCapParagraph, RefMark, ReferenceList } from './Article';
+import { ArticleFigure, ArticleHero, ArticleLayout, ArticleSection, DropCapParagraph, RefMark, ReferenceList } from './Article';
 
 function Example() {
   return (
@@ -35,6 +35,13 @@ describe('ArticleLayout', () => {
     expect(within(article).getByRole('link', { name: 'https://doi.org/10.1038/s41592-025-02994-8' })).toHaveAttribute('href', 'https://doi.org/10.1038/s41592-025-02994-8');
     expect(within(article).getByRole('button', { name: 'Listen to this story' })).toBeInTheDocument();
     expect(container.querySelector('[data-illustration="capillary"]')).toHaveAttribute('alt', '');
+  });
+
+  it('offers the hero on its own, without a source line or player', () => {
+    const { container } = render(<ArticleHero title="Data sources" lead="Refreshed periodically." band="reads" />);
+    expect(screen.getByRole('heading', { level: 1, name: 'Data sources' })).toBeInTheDocument();
+    expect(container.querySelector('.article-source')).toBeNull();
+    expect(container.querySelector('[data-illustration="reads"]')).toHaveAttribute('alt', '');
   });
 
   it('keeps the drop cap word whole', () => {

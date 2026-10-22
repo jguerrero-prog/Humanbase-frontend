@@ -83,9 +83,15 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
   const score = variantTypes.find((type) => type.short_name === scoreKey) ?? variantTypes[0];
   const ordered = useMemo(() => [...(variants ?? [])].sort(byGenomePosition), [variants]);
   const selected = ordered.find((row) => row.id === (picked ?? chosen)) ?? ordered[0];
-  const select = (id: string) => {
+  // A variant picked from the plot, table, heatmap or Previous and Next starts its effects afresh; one reached by moving the browser keeps them, so a drag carries on.
+  const [effectsKey, setEffectsKey] = useState(chosen);
+  const show = (id: string) => {
     setPicked(id);
     onVariantChange?.(id);
+  };
+  const select = (id: string) => {
+    show(id);
+    setEffectsKey(id);
   };
   // Selecting another variant centers the browser on it at the current zoom.
   const [view, setView] = useState<{ variant: string; location: GenomeLocation }>();
@@ -97,7 +103,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
     const nearest = to.nearest(ordered);
     const center = nearest && selected && nearest.chromosome === selected.chromosome && nearest.position === selected.position ? selected : nearest;
     setView({ variant: center?.id ?? selected?.id ?? '', location: to });
-    if (center && center.id !== selected?.id) select(center.id);
+    if (center && center.id !== selected?.id) show(center.id);
   };
   const [featureKey, setFeatureKey] = useState<string>();
   const featureType = featureTypes.find((type) => type.short_name === featureKey) ?? featureTypes[0];
@@ -232,7 +238,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
           )}
           {location && featureType && (
             <VariantEffectsCard
-              key={selected.id}
+              key={effectsKey ?? ''}
               job={job}
               variant={selected}
               variants={ordered}
