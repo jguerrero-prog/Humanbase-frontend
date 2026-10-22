@@ -44,11 +44,21 @@ const headerStates = [
 
 const cellTypes = [
   ['Gene', 'Gene symbols. Link to the gene page.', 'Lato Bold, ink. Links to the gene page, underlined on hover and focus. Green is kept for selection.'],
-  ['Text', 'Names and descriptions.', 'Lato 15, grey 600. One line, cut off with an ellipsis and shown in full on hover.'],
+  ['Text', 'Names and descriptions.', 'Lato 15, grey 600. One line, cut off with an ellipsis and shown in full on hover. Descriptions can wrap instead (Wrapping text).'],
   ['Number', 'Counts, p-values, sizes.', 'Lato 15, right-aligned, tabular figures, thousands separated by commas.'],
   ['ID', 'GO, Entrez and dataset IDs.', 'Atkinson Hyperlegible Mono 14, so 0 and O never look alike.'],
   ['Score', 'Network scores from 0 to 1.', 'Number with an 80px grey bar. The number carries the value; the bar helps scanning. Green is kept for selection.'],
   ['Checkbox', 'Row selection for bulk actions.', '56px column, 20px checkbox.'],
+];
+
+const wrapped = [
+  ['Gene Ontology (Biological Process)', 'releases/2018-05-14', 'FMD enrichment (GIANT + MAGE), Networks: ‘Process’ panel and gene predictions, SEEK (beta)'],
+  ['BRENDA Ontology', 'releases/2021-10-26', 'Networks: ‘Tissue’ panel'],
+];
+
+const wrapRules = [
+  ['Wrap', 'Descriptions, sources and “Used in” columns, where every word matters and an ellipsis would hide it.'],
+  ['Don’t wrap', 'Gene symbols, names people scan down a column, IDs and numbers. They stay on one line so rows line up and columns compare.'],
 ];
 
 const rowStates = [
@@ -93,6 +103,7 @@ const specs = [
   ['table.sort.icon', '16px chevron, 1.5px stroke, 4px from the label'],
   ['table.row.height', '48px comfortable, 36px compact'],
   ['table.cell.padding', '8px 16px; rows still 48px comfortable and 36px compact, and grow for two-line cells'],
+  ['table.cell.wrap', 'Text wraps and the row grows; 12px top and bottom (8px compact), long words break anywhere'],
   ['table.note', 'A note under a table sits 16px below it, in caption text'],
   ['table.cell.text', 'Lato 15/20 (14/20 compact); grey 600 for text, ink for numbers'],
   ['table.row.line', '1px border.subtle #E8E8E8'],
@@ -131,7 +142,7 @@ const { directionOf, toggle } = useTableSort({ column: 'score', direction: 'desc
 <DocsLayout title="Tables" description="Results tables: anatomy, header and cell types, row states, density, patterns, states and accessibility.">
   <Intro
     lead="Most Humanbase results end up in a table: related genes, enriched GO terms, datasets and job history. Tables are built for scanning and comparing, so they stay quiet: thin row lines, no stripes, numbers lined up on the right, and the column people sort by always marked."
-    status="Updated October 16, 2026 · Components: Table header cell, Table cell, Checkbox"
+    status="Updated October 22, 2026 · Components: Table header cell, Table cell, Checkbox"
   >
     <KeyRules
       rules={[
@@ -225,6 +236,33 @@ const { directionOf, toggle } = useTableSort({ column: 'score', direction: 'desc
         ))
       }
     </ul>
+  </DocSection>
+
+  <DocSection title="Wrapping text" lead="Text cells are one line by default. Wrap, the Table cell’s Wrap=On variant, lets a text cell wrap instead: the row grows to fit, with 12px above and below the text, or 8px in compact tables.">
+    <Table caption="Ontologies" columnWidths={['32%', '24%', 'auto']}>
+      <thead>
+        <tr>
+          <HeaderCell>Name</HeaderCell>
+          <HeaderCell>Version</HeaderCell>
+          <HeaderCell>Used in</HeaderCell>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          wrapped.map(([name, version, used]) => (
+            <tr>
+              <Cell rowHeader wrap>{name}</Cell>
+              <Cell wrap>{version}</Cell>
+              <Cell wrap>{used}</Cell>
+            </tr>
+          ))
+        }
+      </tbody>
+    </Table>
+    <DocTable caption="When to wrap" columns={['Choice', 'Use for']} widths={['20%', '80%']}>
+      {wrapRules.map(([title, text]) => <tr><th scope="row">{title}</th><td>{text}</td></tr>)}
+    </DocTable>
+    <p class="doc-note">Reference tables such as Data sources wrap every text column, since each name there is a sentence people read once, not a value they compare.</p>
   </DocSection>
 
   <DocSection title="Row states" lead="Rows stay white. Hover adds a grey 50 fill. A selected row is marked by its checked box alone, and the bar above the table says how many rows are selected.">
@@ -490,6 +528,7 @@ const { directionOf, toggle } = useTableSort({ column: 'score', direction: 'desc
       <li><code>Table</code> renders a real <code>&lt;table&gt;</code> with a caption, inside a scroll region that takes focus so keyboard users can scroll it. Pass <code>showCaption</code> to show the caption; most tables use the toolbar title instead.</li>
       <li><code>HeaderCell</code> becomes a sort button when it has a <code>sort</code> prop, and sets <code>aria-sort</code> only on the sorted column. <code>useTableSort</code> keeps the column and direction.</li>
       <li><code>useRowSelection</code> tracks selected rows for <code>SelectCell</code>, <code>SelectAllCell</code> and <code>SelectionBar</code>. Pass a sentence to <code>status</code>, such as “Sorted by score, highest first”, and it is announced politely.</li>
+      <li><code>Cell</code> takes <code>wrap</code> for text that wraps instead of being cut off with an ellipsis. Use it for descriptions and “Used in” columns, not for names, IDs or numbers.</li>
       <li><code>ValueFormat</code> formats scores, counts, p-values and dates the same way everywhere, and writes “Not available” for missing values.</li>
     </ul>
     <Code code={usage} lang="tsx" theme="css-variables" />

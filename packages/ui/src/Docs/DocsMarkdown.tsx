@@ -32,11 +32,17 @@ function onlyImage(node: Element | undefined): Element | undefined {
 }
 
 function Paragraph({ node, children, images }: ComponentProps<'p'> & ExtraProps & { images: ImageSizes }) {
+  const linkHref = useLinkHref();
   const image = onlyImage(node);
   if (!image) return <p>{children}</p>;
   const src = String(image.properties.src ?? '');
   const [width, height] = images[src.split('/').at(-1) ?? ''] ?? [];
-  return <ArticleFigure image={{ src, alt: String(image.properties.alt ?? ''), width: width ?? 0, height: height ?? 0 }} />;
+  return <ArticleFigure image={{ src: linkHref(src), alt: String(image.properties.alt ?? ''), width: width ?? 0, height: height ?? 0 }} />;
+}
+
+function DocsImage({ src = '', alt = '' }: ComponentProps<'img'>) {
+  const linkHref = useLinkHref();
+  return <img src={linkHref(src)} alt={alt} />;
 }
 
 function DocsLink({ href = '', children }: ComponentProps<'a'>) {
@@ -80,6 +86,7 @@ function baseComponents(images: ImageSizes): Components {
     h4: ({ id, children }) => <h4 id={id} className="docs-h4">{children}</h4>,
     p: (props) => <Paragraph {...props} images={images} />,
     a: DocsLink,
+    img: DocsImage,
     pre: Pre,
     code: Code,
     blockquote: Blockquote,

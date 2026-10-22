@@ -79,7 +79,7 @@ export function RankedAnnotationTable({ caption, termLabel, scoreLabel, scoreLab
           return (
             <Fragment key={row.identifier}>
               <tr>
-                <Cell rowHeader>
+                <Cell rowHeader wrap={narrow}>
                   {sources > 0 ? (
                     <button type="button" className="annotation-toggle" aria-expanded={open} aria-controls={panelId} onClick={() => toggle(row.name)}>
                       <Icon name={open ? 'chevron-down' : 'chevron-right'} size={16} />
@@ -94,7 +94,7 @@ export function RankedAnnotationTable({ caption, termLabel, scoreLabel, scoreLab
                 {(row.confidences ?? [row.confidence]).map((value, column) => (
                   <ScoreCell key={column} value={value} />
                 ))}
-                <Cell>
+                <Cell wrap={narrow}>
                   {sources > 0 ? (
                     <span className="annotation-evidence">
                       <Badge size="small">Experimental</Badge>

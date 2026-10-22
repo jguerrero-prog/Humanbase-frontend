@@ -49,7 +49,7 @@
   gap: var(--space-6);
   inline-size: min(748px, 100% - 2 * var(--layout-margin-mobile));
   margin-inline: auto;
-  padding-block: 80px 112px;
+  padding-block: 80px var(--space-28);
   font: var(--type-body-lg);
 }
 
@@ -78,13 +78,6 @@
 
 .article-section:last-child {
   padding-block-end: 0;
-}
-
-.article-body > hr {
-  inline-size: 100%;
-  margin: 0;
-  border: 0;
-  border-block-start: var(--border-width-1) solid var(--border-subtle);
 }
 
 .article-section-body > h2 {
