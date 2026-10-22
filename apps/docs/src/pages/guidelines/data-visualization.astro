@@ -2,7 +2,7 @@
 import { withBase } from '../../withBase';
 import { ColorCatalog, contrastRatio, lightness } from '@humanbase/tokens/color';
 import primitives from '@humanbase/tokens/src/primitives.tokens.json';
-import { chromosomeColor, KeyLegend, ScaleLegend, sequenceClassLegend } from '@humanbase/ui';
+import { chromosomeColor, KeyLegend, ScaleLegend, sequenceClassLegend, VariantScorePlot } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
@@ -12,6 +12,7 @@ import EffectTrack from '../../components/viz/EffectTrack.astro';
 import HeatmapDiagram from '../../components/viz/HeatmapDiagram.astro';
 import NetworkDiagram from '../../components/viz/NetworkDiagram.astro';
 import ScaleRamp from '../../components/viz/ScaleRamp.astro';
+import { exampleVariants, selectedVariant } from '../../data/variant-effects';
 import { edgeBands, enrichedTerms, modules, promoterTrack, tissueScores, variantEffects } from '../../data/viz-examples';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
@@ -298,6 +299,16 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
       <li>Gridlines: 1px grey 200, only on the value axis. New charts have no borders, backgrounds or 3D effects; the existing network views keep their own style.</li>
       <li>Values at the end of bars use tabular figures and the formatting rules from the Tables page.</li>
       <li>Every chart has a “View as table” option with the same data, for screen readers and for copying.</li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Variant score plot" lead="Sei, Beluga and Seqweaver results plot every variant’s score the way humanbase.io does, so a result reads the same on both sites. The data encoding is humanbase.io’s; axes, text, tooltip and brush use our tokens.">
+    <VariantScorePlot variants={exampleVariants} score={{ key: 'impact', label: 'Disease impact score' }} selected={selectedVariant} summary="The Seqweaver example’s variants by genome position, colored by chromosome." />
+    <ul class="points">
+      <li>Manhattan (x titled Genome) joins the chromosomes that have variants, each as long as its variants span, with a gap of 18/800 of the total span between them. Ticks read chromosome:position, such as chr3:12598855. Score Rank (x titled Rank) puts the highest score at 1.</li>
+      <li>Points are 12px, colored by chromosome (viz.chromosome) in both plot styles, or by sequence class group (viz.seqclass) on Sei’s Color style. The y axis always includes 0.</li>
+      <li>The overview under the plot shows every variant over its chromosome’s band at half strength: chromosome colors, or dark and light grey in turn while points show sequence classes, or one light grey band for Score Rank. Drag across it, or use the mouse wheel over the plot, to zoom.</li>
+      <li>Hover or arrow keys open the Data tooltip; Enter selects; + and - zoom. The selected variant has a 2px ink ring, and an ink dot in the overview. The variants table beside the plot is its text alternative.</li>
     </ul>
   </DocSection>
 

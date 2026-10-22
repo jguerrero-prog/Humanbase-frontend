@@ -162,7 +162,7 @@ test('the real Beluga result shows its variants and molecular effects', async ({
 test('the real ExPecto result names each variant by its gene and shows tissue effects', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/?variant=chr5-134871851-A-G`);
-  await expect(page.getByRole('button', { name: /NEUROG1/ })).toBeVisible();
+  await expect(page.getByRole('table', { name: 'Variants in this job' }).getByRole('button', { name: /NEUROG1/ })).toBeVisible();
   await expect(page.getByText('Fallopian Tube')).toBeVisible();
   await checkScreen(page, problems);
 });

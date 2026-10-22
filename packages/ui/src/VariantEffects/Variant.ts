@@ -25,6 +25,9 @@ export const variantLocation = (variant: Variant) => `${variant.chromosome}:${po
 
 export const variantLabel = (variant: Variant) => `${variantLocation(variant)} ${variant.change}`;
 
+/** A variant's score as the table, plot and focus line show it, to two decimals. */
+export const variantScore = (variant: Pick<Variant, 'scores'>, key: string) => (variant.scores[key] ?? 0).toFixed(2);
+
 const chromosomeRank = (name: string) => {
   const id = name.replace(/^chr/i, '');
   const number = Number(id);

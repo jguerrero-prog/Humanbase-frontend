@@ -373,9 +373,9 @@
     {
       "area": "Plot style",
       "existing": "Plot style: Manhattan or Score Rank; overview strip under the plot",
-      "proposed": "Plot by: Genome position or Rank; no overview strip",
+      "proposed": "Plot style: Manhattan or Score Rank, laid out as humanbase.io lays it out; overview strip with chromosome bands, a brush and mouse-wheel zoom; arrow keys, Enter and + and - on the points",
       "status": "Same function",
-      "evidence": "Capture pair 2; DeepseaResultView.tsx:140-149"
+      "evidence": "Point positions, tick labels and overview bands compared one by one with job 2e18fedf at a 1,100px plot on October 22, 2026 (ScorePlotLayout.test.ts); VariantScorePlot.tsx"
     },
     {
       "area": "Variants table",

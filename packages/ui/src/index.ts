@@ -136,9 +136,12 @@ export { EffectsControls, MolecularEffects, effectZScale, type EffectsControlsPr
 export { chromosomeColor } from './VariantEffects/ChromosomeColor';
 export { sequenceClassColor, sequenceClassLegend } from './VariantEffects/SequenceClass';
 export { StrongestEffects, type StrongestEffectsProps } from './VariantEffects/StrongestEffects';
-export { byGenomePosition, variantLabel, variantLocation, variantName, type Variant, type VariantScore } from './VariantEffects/Variant';
+export { byGenomePosition, variantLabel, variantLocation, variantName, variantScore, type Variant, type VariantScore } from './VariantEffects/Variant';
 export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFocus';
-export { VariantScorePlot, type PlotBy, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
+export { type PlotColorBy } from './VariantEffects/plotColors';
+export { type PlotBy } from './VariantEffects/ScorePlotLayout';
+export { VariantScorePlot, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
 export { VariantsTable, type VariantsTableProps } from './VariantEffects/VariantsTable';
 export { useDebounced } from './hooks/useDebounced';
+export { useWidth } from './hooks/useWidth';
 export { LinkBaseProvider, useLinkHref } from './hooks/useLinkHref';
