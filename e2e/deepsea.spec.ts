@@ -65,6 +65,20 @@ test('the Seqweaver example result has no WCAG 2.2 AA violations in each view, w
   expect(apiRequests).toEqual([]);
 });
 
+test('heatmap cells fill rows whose labels wrap, so the grid has no gaps, with the API off', async ({ page }) => {
+  await apiOff(page);
+  for (const width of [1440, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(example);
+    await page.getByRole('tab', { name: 'Heatmap' }).click();
+    const rows = page.locator('.heatmap-row');
+    await expect(rows.first()).toBeVisible();
+    const heights = await rows.evaluateAll((all) => all.map((row) => ({ row: row.getBoundingClientRect().height, cells: [...row.querySelectorAll('.heatmap-cell')].map((cell) => cell.getBoundingClientRect().height) })));
+    expect(heights.some(({ row }) => row > 30), `a label wraps at ${width}px`).toBe(true);
+    for (const { row, cells } of heights) for (const cell of cells) expect(cell).toBeCloseTo(row, 0);
+  }
+});
+
 test('Sei and Beluga results read their own scales, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/?variant=chr7-49813589-G-C`);

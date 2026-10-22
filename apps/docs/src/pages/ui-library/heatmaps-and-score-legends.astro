@@ -24,7 +24,7 @@ const parts = [
   ['Title', 'Says what the cells are and in what unit: “Predicted effect on IRGM expression, log fold change”.'],
   ['Legend', 'Top right, beside the cells; stepped, with the score’s own words at the ends.'],
   ['Column labels', 'Positions in the mono font with commas; the axis title names the chromosome and assembly. A ruler replaces rotated labels on position axes.'],
-  ['Row labels', 'Right-aligned beside the cells, always in full. The label column fits the longest label, from 160 to 360px and at most 40% of the plot; a longer label wraps at its slashes, underscores and commas.'],
+  ['Row labels', 'Right-aligned beside the cells, always in full. The label column fits the longest label, from 160 to 360px and at most 40% of the plot; a longer label wraps at its slashes, underscores and commas, and the cells in its row grow to the same height, so the grid has no gaps.'],
   ['Gaps', '1px white between cells, so neighbors of the same step still read as separate values.'],
   ['Not available', 'White with a grey outline and a diagonal line, never a color from the legend and never zero.'],
   ['Hover and focus', '2px ink outline and the tooltip with every value for that cell.'],
@@ -84,7 +84,7 @@ const specs = [
   ['viz.div steps', '#0B3D7A #3F7FC8 #9CBFE6 #F2F2F2 #EDB98F #C8681F #6E2E00'],
   ['viz.seq steps', '#C9DCF2 #9CBFE6 #3F7FC8 #1F5FAE #0B3D7A'],
   ['viz.sig steps', '#F2F2F2 #9CBFE6 #3F7FC8 #0B3D7A, for e-values'],
-  ['viz.heatmap.cell', '34 by 26px, 1px white gap; missing: white, grey outline, diagonal'],
+  ['viz.heatmap.cell', '34 by 26px, taller when its row label wraps; 1px white gap; missing: white, grey outline, diagonal'],
   ['heatmap.focus', '2px ink outline, 2px outside the cell'],
   ['heatmap.positionAxis', 'Ruler 1px grey 600; tick labels Atkinson Hyperlegible Mono 11 grey 600; variant ticks 6px; connectors 0.75px grey, 1.5px ink for the hovered or selected column; full label on an ink pill'],
 ];
