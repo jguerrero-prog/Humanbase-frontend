@@ -172,10 +172,19 @@ test('the ASD Browser opens a gene’s and a segment’s details on click and fr
   const drawer = page.getByRole('dialog', { name: 'Tracks' });
   await drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' }).check();
   await drawer.getByRole('button', { name: 'Done' }).click();
+  const segment = page.getByRole('dialog', { name: 'GM12878 ChromHMM' });
+  const pol2Box = page.locator('.genome-tracks-segment[data-item="GM12878 ChromHMM 2303401"]');
+  await pol2Box.hover();
+  await expect(page.getByRole('tooltip')).toHaveText(/^Pol2GM12878 ChromHMM/);
+  await pol2Box.click();
+  await expect(segment).toBeVisible();
+  await expect(page.getByRole('tooltip')).toBeHidden();
+  await page.keyboard.press('Escape');
+  await page.mouse.move(0, 0);
+
   const pol2 = page.getByRole('button', { name: 'Pol2, 2,303,401 to 2,313,000' });
   await pol2.focus();
   await page.keyboard.press('Enter');
-  const segment = page.getByRole('dialog', { name: 'GM12878 ChromHMM' });
   await expect(segment).toHaveText(/^GM12878 ChromHMMLocationchr1:2,303,401-2,313,000Score1000$/);
   const [frame, popover] = await Promise.all([page.locator('.genome-tracks').boundingBox(), segment.boundingBox()]);
   expect(popover && frame && popover.x >= frame.x && popover.x + popover.width <= frame.x + frame.width && popover.y + popover.height <= frame.y + frame.height).toBe(true);

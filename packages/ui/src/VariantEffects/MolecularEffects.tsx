@@ -18,10 +18,12 @@ export interface MolecularEffectsProps {
   onViewChange?: ((view: EffectsView) => void) | undefined;
   /** The third tab follows the score: All features, or All tissues for ExPecto. */
   allLabel?: string | undefined;
+  /** What the effects are, as each model's paper names them: Expression effects for ExPecto. */
+  heading?: string | undefined;
   children: ReactNode;
 }
 
-export function MolecularEffects({ variant, view, onViewChange, allLabel = 'All features', children }: MolecularEffectsProps) {
+export function MolecularEffects({ variant, view, onViewChange, allLabel = 'All features', heading = 'Molecular effects', children }: MolecularEffectsProps) {
   const id = useId();
   const tabs = [
     { value: 'strongest', label: 'Strongest effects' },
@@ -31,7 +33,7 @@ export function MolecularEffects({ variant, view, onViewChange, allLabel = 'All 
   return (
     <section className="molecular-effects" aria-labelledby={id}>
       <h3 id={id} className="molecular-effects-title">
-        Molecular effects of {variant}
+        {heading} of {variant}
       </h3>
       <Tabs label={`Views of the effects of ${variant}`} tabs={tabs} value={view} onChange={(value) => onViewChange?.(value as EffectsView)}>
         {children}
