@@ -12,6 +12,10 @@
   block-size: auto;
 }
 
+.variant-plot-body {
+  position: relative;
+}
+
 .variant-plot-grid {
   stroke: var(--border-subtle);
 }
@@ -28,28 +32,58 @@
 
 .variant-plot-point {
   cursor: pointer;
-  fill: var(--color-grey-600);
-}
-
-.variant-plot-point-light {
-  fill: var(--color-grey-400);
-}
-
-.variant-plot-point-colored {
   fill: var(--point-color);
   stroke: var(--text-secondary);
   stroke-width: 1;
 }
 
-.variant-plot-selected circle {
+.variant-plot-point:focus-visible {
+  box-shadow: none;
+  stroke: var(--focus-ring);
+  stroke-width: 2;
+}
+
+.variant-plot-selected {
+  pointer-events: none;
   fill: none;
   stroke: var(--text-default);
   stroke-width: 2;
 }
 
-.variant-plot-selected text {
-  font: var(--type-code-sm);
+.variant-plot-hover {
+  pointer-events: none;
+  fill: none;
+  stroke: var(--text-default);
+}
+
+.variant-plot-band {
+  fill: var(--point-color);
+  fill-opacity: 0.5;
+}
+
+.variant-plot-overview-point {
+  fill: var(--point-color);
+}
+
+.variant-plot-overview-selected {
   fill: var(--text-default);
+}
+
+.variant-plot-window {
+  fill: var(--color-grey-500);
+  fill-opacity: 0.3;
+  stroke: var(--surface-page);
+}
+
+.variant-plot-handle {
+  fill: var(--text-default);
+}
+
+.variant-plot-brush .overlay,
+.variant-plot-brush .selection,
+.variant-plot-brush .handle {
+  fill: transparent;
+  stroke: none;
 }
 
 .variant-plot-summary {

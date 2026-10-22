@@ -30,25 +30,64 @@ describe('VariantsTable', () => {
 });
 
 describe('VariantScorePlot', () => {
-  it('names the selected variant and describes the plot in words', () => {
-    render(<VariantScorePlot variants={variants} score={{ key: 'impact', label: 'Disease impact score' }} selected="b" summary="2 variants." />);
+  const score = { key: 'impact', label: 'Disease impact score' };
+  const three: Variant[] = [...variants, { id: 'c', chromosome: 'chr16', position: 85900000, change: 'A>C', name: 'GSE1', scores: { impact: -0.4 } }];
+  const point = (name: RegExp) => screen.getByRole('button', { name });
+
+  it('describes the plot in words and marks the selected variant', () => {
+    render(<VariantScorePlot variants={variants} score={score} selected="b" summary="2 variants." />);
     expect(screen.getByRole('figure')).toHaveAccessibleName('2 variants.');
-    expect(screen.getByText('chr1:109,817,590 G>T')).toBeInTheDocument();
+    expect(point(/^chr1:109,817,590 G>T/)).toHaveAttribute('aria-pressed', 'true');
+    expect(point(/^chr1:109,817,590 G>T/)).toHaveAccessibleName('chr1:109,817,590 G>T, [known_CEBP_binding_increase], Disease impact score 1.00');
+    expect(point(/^chr16/)).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('keeps negative scores inside the plot', () => {
-    const mixed = variants.map((variant, index) => ({ ...variant, scores: { impact: index ? -1.3 : 2.05 } }));
-    const { container } = render(<VariantScorePlot variants={mixed} score={{ key: 'impact', label: 'Max sequence class score' }} summary="2 variants." />);
-    const dots = [...container.querySelectorAll('circle')].map((dot) => Number(dot.getAttribute('cy')));
-    expect(dots.every((cy) => cy >= 24 && cy <= 275)).toBe(true);
-    expect(screen.getByText('-2')).toBeInTheDocument();
+  it('titles the x axis Genome or Rank and keeps negative scores inside the plot', () => {
+    const { container, rerender } = render(<VariantScorePlot variants={three} score={score} summary="3 variants." />);
+    expect(screen.getByText('Genome')).toBeInTheDocument();
+    const cys = [...container.querySelectorAll('.variant-plot-point')].map((dot) => Number(dot.getAttribute('cy')));
+    expect(cys.every((cy) => cy >= 18 && cy <= 232)).toBe(true);
+    expect(screen.getByText('chr1:109817590')).toBeInTheDocument();
+    rerender(<VariantScorePlot variants={three} score={score} by="rank" summary="3 variants." />);
+    expect(screen.getByText('Rank')).toBeInTheDocument();
+    expect(screen.queryByText('chr1:109817590')).not.toBeInTheDocument();
   });
 
-  it('colors points by the color each variant is given', () => {
-    const { container } = render(<VariantScorePlot variants={variants} score={{ key: 'impact', label: 'Score' }} pointColor={(variant) => (variant.id === 'a' ? '--viz-seqclass-promoter' : undefined)} summary="2 variants." />);
-    const [first, second] = container.querySelectorAll('circle');
-    expect(second?.getAttribute('style')).toContain('--point-color: var(--viz-seqclass-promoter)');
-    expect(first?.getAttribute('style')).toBeNull();
+  it('colors points by chromosome, or by sequence class', () => {
+    const classed = variants.map((variant) => ({ ...variant, topClass: 'P Promoter' }));
+    const { container, rerender } = render(<VariantScorePlot variants={classed} score={score} summary="2 variants." />);
+    expect(container.querySelector('.variant-plot-point')?.getAttribute('style')).toContain('--point-color: var(--viz-chromosome-1)');
+    expect(container.querySelector('.variant-plot-band')?.getAttribute('style')).toContain('--point-color: var(--viz-chromosome-1)');
+    rerender(<VariantScorePlot variants={classed} score={score} colorBy="sequence-class" summary="2 variants." />);
+    expect(container.querySelector('.variant-plot-point')?.getAttribute('style')).toContain('--point-color: var(--viz-seqclass-promoter)');
+    expect(container.querySelector('.variant-plot-band')?.getAttribute('style')).toContain('--point-color: var(--color-grey-500)');
+  });
+
+  it('selects on click and moves between variants with the keyboard, showing each one’s tooltip', async () => {
+    const onSelect = vi.fn();
+    render(<VariantScorePlot variants={three} score={score} selected="b" onSelect={onSelect} summary="3 variants." />);
+    await userEvent.click(point(/^chr16:85,833,314/));
+    expect(onSelect).toHaveBeenLastCalledWith('a');
+    await userEvent.unhover(point(/^chr16:85,833,314/));
+    point(/^chr1:/).focus();
+    await userEvent.keyboard('{ArrowRight}');
+    expect(point(/^chr16:85,833,314/)).toHaveFocus();
+    expect(screen.getByRole('tooltip')).toHaveTextContent('chr16:85,833,314 G>T');
+    await userEvent.keyboard('{End}{Enter}');
+    expect(onSelect).toHaveBeenLastCalledWith('c');
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+  });
+
+  it('zooms with + and - and draws the window in the overview', async () => {
+    const { container } = render(<VariantScorePlot variants={three} score={score} summary="3 variants." />);
+    const window = () => Number(container.querySelector('.variant-plot-window')?.getAttribute('width'));
+    const whole = window();
+    point(/^chr1:/).focus();
+    await userEvent.keyboard('+');
+    expect(window()).toBeLessThan(whole);
+    await userEvent.keyboard('---');
+    expect(window()).toBeCloseTo(whole);
   });
 });
 

@@ -99,3 +99,54 @@ test('the DeepSEA job and result pages fit a phone without scrolling sideways', 
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
   }
 });
+
+test('the Sei score plot switches plot style, zooms with the brush, the wheel and keys, and selects, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/`);
+  const plot = page.getByRole('figure', { name: /^12 variants/ });
+  const ticks = plot.locator('.variant-plot-tick');
+  const windowWidth = async () => Number(await plot.locator('.variant-plot-window').getAttribute('width'));
+  await expect(plot.getByText('Genome', { exact: true })).toBeVisible();
+  await expect(ticks.filter({ hasText: 'chr3:12598855' })).toHaveCount(1);
+  await expect(plot.getByRole('button', { name: /^chr3:12,598,855 G>A/ })).toHaveAttribute('aria-pressed', 'true');
+  const whole = await windowWidth();
+  const wholeTicks = await ticks.allTextContents();
+
+  await plot.scrollIntoViewIfNeeded();
+  const brush = await plot.locator('.variant-plot-brush').boundingBox();
+  if (!brush) throw new Error('no brush');
+  // The window starts on the whole axis, so zooming starts from a handle.
+  await page.mouse.move(brush.x + brush.width - 1, brush.y + brush.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(brush.x + brush.width * 0.4, brush.y + brush.height / 2, { steps: 5 });
+  await page.mouse.up();
+  expect(await windowWidth()).toBeLessThan(whole * 0.5);
+  expect(await ticks.allTextContents()).not.toEqual(wholeTicks);
+
+  await page.getByRole('combobox', { name: 'Plot style' }).click();
+  await page.getByRole('option', { name: 'Score Rank' }).click();
+  await expect(plot.getByText('Rank', { exact: true })).toBeVisible();
+  expect(await windowWidth()).toBeCloseTo(whole);
+  await plot.getByRole('button', { name: /^chr7:49,813,589 G>C/ }).click();
+  await expect(page).toHaveURL(/variant=chr7-49813589-G-C/);
+  await expect(page.getByRole('heading', { name: 'Molecular effects of chr7:49,813,589 G>C' })).toBeVisible();
+
+  await plot.scrollIntoViewIfNeeded();
+  const box = await plot.locator('svg').boundingBox();
+  if (!box) throw new Error('no plot');
+  await page.mouse.move(box.x + box.width / 2, box.y + 120);
+  await page.mouse.wheel(0, -100);
+  await expect.poll(windowWidth).toBeLessThan(whole);
+
+  await plot.getByRole('button', { name: /^chr7:49,813,589 G>C/ }).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(plot.getByRole('button', { name: /^chr17:76,352,731/ })).toBeFocused();
+  await expect(page.getByRole('tooltip')).toContainText('chr17:76,352,731');
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/variant=chr17-76352731-/);
+  const zoomed = await windowWidth();
+  await page.keyboard.press('-');
+  await expect.poll(windowWidth).toBeGreaterThan(zoomed);
+  expect(await violationsOf(page)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});

@@ -79,7 +79,7 @@ test('running the ExPecto example opens its result, with the API off', async ({ 
   await page.getByRole('button', { name: 'Run ExPecto on 12 variants' }).click();
   await expect(page).toHaveURL(`${web}/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/`);
   await expect(page.getByRole('heading', { level: 1, name: 'Untitled ExPecto job' })).toBeVisible();
-  await page.getByRole('button', { name: /NEUROG1/ }).click();
+  await page.getByRole('table', { name: 'Variants in this job' }).getByRole('button', { name: /NEUROG1/ }).click();
   await expect(page.getByText('Fallopian Tube')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   expect(apiRequests).toEqual([]);
