@@ -86,6 +86,7 @@ const segmentHeight = 60;
 const segmentBox = 8;
 const tooltipSize = { width: 240, height: 117 };
 const dragStart = 4;
+const minTarget = 24;
 const geneRowHeight = 36;
 const geneMinHeight = 60;
 const pillHeight = 30;
@@ -183,6 +184,13 @@ function scoreBarsOf({ min, max, values }: ScoreTrackData, top: number, x: (posi
   return { yOf, zero, bars };
 }
 
+// A short bar's button is at least 24px tall and stays inside its track, clear of the next track's items.
+function scoreTarget(bar: Box, top: number): Box {
+  const height = Math.max(minTarget, bar.height);
+  const middle = Math.min(top + scoreHeight - 4 - height / 2, Math.max(top + 4 + height / 2, bar.top + bar.height / 2));
+  return { ...bar, top: middle - height / 2, height };
+}
+
 const spanKey = (track: string, item: { start: number }) => `${track} ${item.start}`;
 const spanWords = (item: { start: number; end: number }) => (item.end > item.start ? `${count.format(item.start)} to ${count.format(item.end)}` : count.format(item.start));
 const geneKey = (track: string, gene: GeneShape) => `${track} ${gene.name}`;
@@ -197,15 +205,18 @@ interface TrackItem {
 
 /** The items with details, by track, in the order the tracks are drawn. */
 function itemGroupsOf({ width, scores = [], segments = [], genes }: GenomeTrackViewProps, { x, span, placed, topOf }: Layout): { track: string; items: TrackItem[] }[] {
-  const scoreGroups = scores.map((track) => ({
-    track: track.name,
-    items:
-      track.state === 'ready' && track.data
-        ? scoreBarsOf(track.data, topOf(`score-${track.name}`), x, width / span).bars.flatMap(({ point, box }) =>
-            point.details ? [{ key: spanKey(track.name, point), label: `${point.value.toFixed(2)} at ${spanWords(point)}`, details: point.details, box }] : [],
-          )
-        : [],
-  }));
+  const scoreGroups = scores.map((track) => {
+    const top = topOf(`score-${track.name}`);
+    return {
+      track: track.name,
+      items:
+        track.state === 'ready' && track.data
+          ? scoreBarsOf(track.data, top, x, width / span).bars.flatMap(({ point, box }) =>
+              point.details ? [{ key: spanKey(track.name, point), label: `${point.value.toFixed(2)} at ${spanWords(point)}`, details: point.details, box: scoreTarget(box, top) }] : [],
+            )
+          : [],
+    };
+  });
   const segmentGroups = segments.map((track) => {
     const top = topOf(`segments-${track.name}`) + (segmentHeight - segmentBox) / 2;
     const items = (track.state === 'ready' && track.data) || [];
