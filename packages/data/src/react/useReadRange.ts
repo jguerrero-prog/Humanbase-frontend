@@ -11,7 +11,12 @@ export function useReadRange(view: GenomeLocation | undefined, key: string): Gen
   return next;
 }
 
-/** placeholderData that keeps the last range's predictions while a moved view's range loads, so a drag carries on; another score or set starts empty. */
+/** placeholderData that keeps the last range's data while a moved range loads, so a drag carries on; a change to any other part of the key starts empty. */
 export function keepSameData<T>(key: readonly unknown[]) {
   return (previous: T | undefined, query: { queryKey: readonly unknown[] } | undefined) => (query && key.slice(0, -1).every((part, index) => query.queryKey[index] === part) ? previous : undefined);
+}
+
+/** Options for data read for a genome range, which is the key's last part: kept once loaded, and kept while a moved range loads (see keepSameData). */
+export function rangeQuery<T>(queryKey: readonly unknown[], queryFn: () => Promise<T>, enabled: boolean) {
+  return { queryKey, queryFn, enabled, staleTime: Infinity, placeholderData: keepSameData<T>(queryKey) };
 }
