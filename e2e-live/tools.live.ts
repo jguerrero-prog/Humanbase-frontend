@@ -124,6 +124,8 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await drawer.getByRole('checkbox', { name: 'Sequence' }).uncheck();
   await drawer.getByRole('button', { name: 'Done' }).click();
   await expect(headers).toHaveText(['Conservation', 'GM12878 ChromHMM', 'Genes']);
+  // Results open at 100 kb; the counts below are for the 50 kb view around the variant.
+  await page.getByRole('radio', { name: '50 kb' }).check();
   await expect(page.locator('.genome-engine .genome-tracks-bar')).not.toHaveCount(0);
   // chr1:109,792,590-109,842,590 holds 39 segments in gm12878.ChromHMM.bb, the first PromP and the one under the variant ReprW.
   const segments = page.locator('.genome-engine .genome-tracks-segment');
