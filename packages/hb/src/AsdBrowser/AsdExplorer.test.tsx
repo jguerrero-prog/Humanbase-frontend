@@ -26,6 +26,8 @@ describe('AsdExplorer', () => {
   it('opens the browser on the variant nearest the middle, with its strongest DNA effects', async () => {
     renderPage();
     expect(await screen.findByRole('heading', { name: 'Molecular effects of chr1:2,337,101 A>C' }, { timeout: 5000 })).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: 'Heatmap' }, { timeout: 5000 })).toHaveAttribute('aria-selected', 'true');
+    await userEvent.click(screen.getByRole('tab', { name: 'Strongest effects' }));
     expect(await screen.findByText('Raises, 39 DNA features', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByText(/^34 variants in view/)).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Next variant' }));
@@ -41,10 +43,10 @@ describe('AsdExplorer', () => {
 
   it('keeps the chosen effects tab while stepping to another variant', async () => {
     renderPage();
-    await userEvent.click(await screen.findByRole('tab', { name: 'Heatmap' }, { timeout: 5000 }));
+    await userEvent.click(await screen.findByRole('tab', { name: 'All features' }, { timeout: 5000 }));
     await userEvent.click(screen.getByRole('button', { name: 'Next variant' }));
     expect(await screen.findByRole('heading', { name: /^Molecular effects of chr1:2,346,/ }, { timeout: 5000 })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Heatmap' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tab', { name: 'All features' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('starts the effects afresh for a variant picked with Next variant', async () => {

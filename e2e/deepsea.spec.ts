@@ -53,8 +53,10 @@ test('the Seqweaver example result has no WCAG 2.2 AA violations in each view, w
   await page.goto(example);
   await expect(page.getByRole('heading', { name: 'Molecular effects of chr1:109,817,590 G>T' })).toBeVisible();
   await expect(page.getByText('LIN28A').first()).toBeVisible();
+  // As on humanbase.io, the effects card opens on Heatmap, even with one variant in range.
+  await expect(page.getByRole('tab', { name: 'Heatmap' })).toHaveAttribute('aria-selected', 'true');
   expect(await violationsOf(page)).toEqual([]);
-  for (const tab of ['Heatmap', 'All features']) {
+  for (const tab of ['Strongest effects', 'All features']) {
     await page.getByRole('tab', { name: tab }).click();
     await expect(page.getByRole('tab', { name: tab })).toHaveAttribute('aria-selected', 'true');
     expect(await violationsOf(page)).toEqual([]);
@@ -68,10 +70,12 @@ test('the Seqweaver example result has no WCAG 2.2 AA violations in each view, w
 test('Sei and Beluga results read their own scales, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/?variant=chr7-49813589-G-C`);
+  await page.getByRole('tab', { name: 'Strongest effects' }).click();
   await expect(page.getByText('Raises, 13 sequence classes')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   await page.goto(`${web}/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/`);
   await expect(page.getByRole('heading', { name: 'Molecular effects of chr3:12,598,855 G>A' })).toBeVisible();
+  await page.getByRole('tab', { name: 'Strongest effects' }).click();
   await expect(page.getByText('UBF', { exact: true })).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   expect(apiRequests).toEqual([]);

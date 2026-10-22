@@ -40,16 +40,20 @@ test('the ASD Browser opens on the default range with each effects view, with th
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/asd/`);
   await expect(page.getByRole('heading', { name: 'Molecular effects of chr1:2,337,101 A>C' })).toBeVisible();
-  await expect(page.getByText('Raises, 39 DNA features')).toBeVisible();
+  // As on humanbase.io, the effects card opens on Heatmap: here, the 34 variants in view.
+  await expect(page.getByText(/^34 variants in view/)).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Heatmap' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('grid').first()).toBeVisible();
   // With the API off the genome browser draws from the recorded track windows, with no request.
   const browser = page.getByRole('application', { name: /^Genome browser, chr1:2,230,000-2,440,000/ });
   await expect(browser.getByText('← PEX10')).toBeVisible();
   await expect(browser.getByText('chr1:2,337,101', { exact: true })).toBeVisible();
   await expect(browser.locator('.genome-tracks-bar')).not.toHaveCount(0);
   expect(await violationsOf(page)).toEqual([]);
-  for (const tab of ['Heatmap', 'All features']) {
+  for (const tab of ['Strongest effects', 'All features']) {
     await page.getByRole('tab', { name: tab }).click();
     await expect(page.getByRole('tab', { name: tab })).toHaveAttribute('aria-selected', 'true');
+    if (tab === 'Strongest effects') await expect(page.getByText('Raises, 39 DNA features')).toBeVisible();
     expect(await violationsOf(page)).toEqual([]);
   }
   await page.getByRole('combobox', { name: 'Features' }).click();
@@ -98,7 +102,7 @@ test('the ASD Browser shows and hides its tracks and exports the view as SVG, wi
   await expect(segments.first()).toHaveAttribute('fill', '#C2D69A');
   await segments.nth(23).hover();
   await expect(page.getByRole('tooltip')).toHaveText(/^QuiesGM12878 ChromHMMStart2,249,001Length17,400 bp$/);
-  await page.getByText('View as table').click();
+  await page.getByRole('group').filter({ hasText: 'View as tableGM12878 ChromHMM' }).getByText('View as table').click();
   const table = page.getByRole('table', { name: 'GM12878 ChromHMM segments in chr1:2,230,000-2,440,000, GRCh37/hg19' });
   await expect(table.getByRole('row')).toHaveCount(109);
   await expect(table.getByRole('row').nth(1)).toHaveText(/^Low\s*2,229,601\s*2,230,400\s*800 bp$/);

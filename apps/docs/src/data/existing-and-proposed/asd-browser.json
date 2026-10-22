@@ -197,7 +197,7 @@
     {
       "area": "Effects views",
       "existing": "Heatmap (default) and Features tabs, with a DNA or RNA features dropdown.",
-      "proposed": "Strongest effects (default), Heatmap and All features tabs, with the same DNA or RNA choice.",
+      "proposed": "Strongest effects, Heatmap and All features tabs, opening on Heatmap as today, with the same DNA or RNA choice.",
       "status": "Changed",
       "evidence": "Both pages; MolecularEffects.tsx:24-29"
     },

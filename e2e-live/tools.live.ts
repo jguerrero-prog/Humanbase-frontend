@@ -97,8 +97,9 @@ for (const [tool, id, heading] of [
     await page.goto(`${web}/deepsea/jobs/${id}/`);
     await expect(page.getByRole('heading', { name: heading })).toBeVisible();
     await expect(page.locator('.genome-engine')).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Heatmap' })).toHaveAttribute('aria-selected', 'true');
     await checkScreen(page, problems);
-    for (const tab of ['Heatmap', 'All features']) {
+    for (const tab of ['Strongest effects', 'All features']) {
       await page.getByRole('tab', { name: tab }).click();
       await expect(page.getByRole('tab', { name: tab })).toHaveAttribute('aria-selected', 'true');
       await expect(page.getByRole('tabpanel')).not.toBeEmpty();
@@ -187,6 +188,7 @@ test('the real Beluga result shows its variants and molecular effects', async ({
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/`);
   await expect(page.getByRole('heading', { name: 'Molecular effects of chr3:12,598,855 G>A' })).toBeVisible();
+  await page.getByRole('tab', { name: 'Strongest effects' }).click();
   await expect(page.getByText(/Raises, \d+ /)).toBeVisible();
   await checkScreen(page, problems);
 });
@@ -195,6 +197,7 @@ test('the real ExPecto result names each variant by its gene and shows tissue ef
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/?variant=chr5-134871851-A-G`);
   await expect(page.getByRole('table', { name: 'Variants in this job' }).getByRole('button', { name: /NEUROG1/ })).toBeVisible();
+  await page.getByRole('tab', { name: 'Strongest effects' }).click();
   await expect(page.getByText('Fallopian Tube')).toBeVisible();
   await checkScreen(page, problems);
 });
@@ -257,6 +260,7 @@ test('the ASD Browser draws the real track files, finds SCN2A and pages the tabl
   const problems = watch(page);
   await page.goto(`${web}/asd/`);
   await expect(page.getByRole('heading', { name: /^Molecular effects of chr1:/ })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Heatmap' })).toHaveAttribute('aria-selected', 'true');
   const browser = page.locator('.genome-engine');
   await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Genes']);
   await expect(browser.getByText('← PEX10')).toBeVisible();
@@ -301,6 +305,7 @@ test('the ASD Browser draws the real track files, finds SCN2A and pages the tabl
   await page.locator('.genome-engine').focus();
   await page.keyboard.press('ArrowRight');
   await expect(page).toHaveURL(/location=chr1/);
+  await page.getByRole('tab', { name: 'Strongest effects' }).click();
   await expect(page.getByText(/Raises, \d+ DNA features/)).toBeVisible();
   await checkScreen(page, problems);
   const find = page.getByLabel('Find a gene, region or position');

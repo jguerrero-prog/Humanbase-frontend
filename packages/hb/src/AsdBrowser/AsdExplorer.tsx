@@ -3,7 +3,7 @@ import {
   type AsdFeatureSet, type AsdVariantRow, type FeaturePredictionRecord,
 } from '@humanbase/data';
 import { defaultGenomeEngine, GenomeEngineView, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
-import { Alert, GenomeBrowserToolbar, ResultLayout, Skeleton, asdEffects, type EffectsView } from '@humanbase/ui';
+import { Alert, GenomeBrowserToolbar, ResultLayout, Skeleton, asdEffects, defaultEffectsView, type EffectsView } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 import { EffectsCard } from '../Deepsea/EffectsCard';
 import { useGenomeBrowserTools } from '../GenomeBrowser/useGenomeBrowserTools';
@@ -138,7 +138,7 @@ interface BrowserViewProps {
 function BrowserView({ engine, location, state, onStateChange, onLocation, locationError, searchedGene }: BrowserViewProps) {
   const { showsSamples, genomeTracks } = useHumanbase();
   // The effects tab stays as the browser moves and the variants below reload.
-  const [effectsView, setEffectsView] = useState<EffectsView>('strongest');
+  const [effectsView, setEffectsView] = useState<EffectsView>(defaultEffectsView);
   const [engineStatus, setEngineStatus] = useState<{ status: EngineStatus; error?: Error | undefined }>({ status: 'loading' });
   // A variant picked with Previous, Next or a heatmap column starts its effects afresh; one reached by moving the browser keeps them, so a drag carries on.
   const [picked, setPicked] = useState(state.variant);

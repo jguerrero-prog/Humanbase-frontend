@@ -1,5 +1,5 @@
 import type { FeatureEffect } from '@humanbase/data';
-import { Alert, AllFeaturesPlot, EffectGroups, EffectsControls, MolecularEffects, Skeleton, StrongestEffects, type EffectScale, type EffectsView, type SelectOption } from '@humanbase/ui';
+import { Alert, AllFeaturesPlot, defaultEffectsView, EffectGroups, EffectsControls, MolecularEffects, Skeleton, StrongestEffects, type EffectScale, type EffectsView, type SelectOption } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 import { InViewHeatmap, type InViewHeatmapProps } from './InViewHeatmap';
 import './Deepsea.css';
@@ -44,7 +44,7 @@ const rank = (resource: string) => {
 
 /** A variant's effect on every feature: Strongest effects, Heatmap and All features. */
 export function EffectsCard({ label, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, scoreDocs, inView, reverseOrder = false, view: keptView, onViewChange }: EffectsCardProps) {
-  const [ownView, setOwnView] = useState<EffectsView>('strongest');
+  const [ownView, setOwnView] = useState<EffectsView>(defaultEffectsView);
   const view = keptView ?? ownView;
   const setView = onViewChange ?? setOwnView;
   const [threshold, setThreshold] = useState<number | null>(start);
