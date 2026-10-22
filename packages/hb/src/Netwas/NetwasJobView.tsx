@@ -1,6 +1,7 @@
 import { ApiError, NetworkQuery, useGeneListMatches, useIntegrations, useNetwasJob, useNetwasResult, type NetwasJob } from '@humanbase/data';
 import { Alert, Button, ContextLabel, EmptyState, JobDetails, NetwasGuide, ResultHeader, ResultLayout, saveFile, Skeleton, StatusBadge, type JobStep, useLinkHref } from '@humanbase/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { netwasCitation as citation } from '../content/cite';
 import { elapsed, jobDateTime as dateTime, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
 import { NetwasGenes } from '../NetwasGenes/NetwasGenes';
 import type { NetwasDraft } from './NetwasForm';
@@ -12,7 +13,6 @@ export interface NetwasJobViewProps {
   onEditAndResubmit: (draft: NetwasDraft) => void;
 }
 
-const citation = 'Greene CS, Krishnan A, Wong AK, et al. (2015). Understanding multicellular function and disease with human tissue-specific networks. Nature Genetics.';
 const usualTime = 'NetWAS jobs usually take 10 to 30 minutes.';
 const date = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 

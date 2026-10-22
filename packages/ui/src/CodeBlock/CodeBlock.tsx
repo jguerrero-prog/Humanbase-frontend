@@ -1,5 +1,6 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useId, useRef, useState, type ReactNode } from 'react';
 import { Disclosure } from '../Disclosure/Disclosure';
+import { useCopy } from '../hooks/useCopy';
 import { useOverflow } from '../hooks/useOverflow';
 import { Icon } from '../Icon/Icon';
 import './CodeBlock.css';
@@ -19,21 +20,8 @@ export interface CopyButtonProps {
   'data-state'?: 'hover' | 'copied';
 }
 
-const copiedFor = 2000;
-
 export function CopyButton({ text, label, 'data-state': dataState }: CopyButtonProps) {
-  const [copied, setCopied] = useState(false);
-  useEffect(() => {
-    if (!copied) return;
-    const timer = setTimeout(() => setCopied(false), copiedFor);
-    return () => clearTimeout(timer);
-  }, [copied]);
-
-  const copy = async () => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-  };
-
+  const { copied, copy, status } = useCopy(text, `${label} copied`);
   const showCopied = copied || dataState === 'copied';
   return (
     <>
@@ -43,9 +31,7 @@ export function CopyButton({ text, label, 'data-state': dataState }: CopyButtonP
         {' '}
         <span className="visually-hidden">{label}</span>
       </button>
-      <span role="status" className="visually-hidden">
-        {copied ? `${label} copied` : ''}
-      </span>
+      {status}
     </>
   );
 }
