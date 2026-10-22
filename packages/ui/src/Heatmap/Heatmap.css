@@ -221,10 +221,16 @@
   display: grid;
   grid-template-columns: var(--heatmap-label) repeat(var(--heatmap-columns), var(--heatmap-cell));
   gap: 1px;
-  align-items: center;
+}
+
+/* A wrapped label makes the row taller; the cells grow with it so the grid has no gaps. */
+.heatmap-row .heatmap-cell {
+  block-size: auto;
+  min-block-size: 26px;
 }
 
 .heatmap-row-label {
+  align-self: center;
   padding-inline-end: var(--space-3);
   font: var(--type-body-sm);
   color: var(--text-default);
@@ -348,6 +354,7 @@
 }
 
 .heatmap-value {
+  align-self: center;
   padding-inline-start: var(--space-2);
   font: var(--type-body-sm);
   font-variant-numeric: tabular-nums;
@@ -355,7 +362,7 @@
 }
 
 .heatmap-compact .heatmap-cell {
-  block-size: var(--space-2);
+  min-block-size: var(--space-2);
 }
 
 .heatmap-compact .heatmap-row-label,
@@ -367,6 +374,6 @@
 
 .heatmap-narrow .heatmap-cell {
   inline-size: var(--heatmap-cell);
-  block-size: 22px;
+  min-block-size: 22px;
 }
 
