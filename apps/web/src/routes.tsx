@@ -55,6 +55,7 @@ export const routes: RouteObject[] = [
           page('expecto/genes/:entrez', geneExpression('expecto')),
           page('expecto-sc', async () => (await import('./pages/expecto/ExpectoScPage')).ExpectoScPage),
           page('expecto-sc/genes/:entrez', geneExpression('expecto-sc')),
+          page('data-sources', async () => (await import('./pages/DataSourcesPage')).DataSourcesPage),
           page('about', async () => (await import('./pages/AboutPage')).AboutPage),
           page('jobs',async () => (await import('./pages/JobsPage')).JobsPage),
           { path: '*', element: <NotFoundPage /> },

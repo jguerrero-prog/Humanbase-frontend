@@ -26,3 +26,4 @@ export { elapsed, JobWaiting, jobDateTime, syncJobHistory, useJobActions, useJob
 export { JobColumns } from './Jobs/JobColumns';
 export { JobsList, jobLinkFrom, type JobsListProps } from './Jobs/JobsList';
 export { JobWatcher } from './Jobs/JobWatcher';
+export { dataEraFrom, dataEras, dataSourcesFor, dataSourcesPage, reproducibilityHref, type DataColumn, type DataEra, type DataNote, type DataSection } from './content/data-sources';

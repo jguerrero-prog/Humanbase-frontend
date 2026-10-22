@@ -1,5 +1,5 @@
 export { ActionMenu, type ActionMenuItem, type ActionMenuProps } from './ActionMenu/ActionMenu';
-export { ArticleFigure, ArticleLayout, ArticleSection, DropCapParagraph, RefMark, ReferenceList, type ArticleFigureProps, type ArticleImage, type ArticleLayoutProps, type ArticleSectionProps, type ReferenceMark } from './Article/Article';
+export { ArticleFigure, ArticleHero, ArticleLayout, ArticleSection, DropCapParagraph, RefMark, ReferenceList, type ArticleFigureProps, type ArticleHeroProps, type ArticleImage, type ArticleLayoutProps, type ArticleSectionProps, type ReferenceMark } from './Article/Article';
 export { AudioPill, type AudioPillProps, type PlaybackState } from './AudioPlayer/AudioPill';
 export { AudioPlayer, type AudioPlayerProps } from './AudioPlayer/AudioPlayer';
 export { clockTime, spokenTime } from './AudioPlayer/playbackTime';
