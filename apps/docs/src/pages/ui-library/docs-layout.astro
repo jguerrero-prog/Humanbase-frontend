@@ -14,6 +14,7 @@ const anatomy = [
   ['Sidebar', 'DocsNav, 272px, sticky 40px below the top bar and scrolling on its own when it is taller than the window.'],
   ['Search the docs', 'Search field, medium, at the top of the sidebar. Results list under it, one per section, with the page name and a line of text.'],
   ['Groups', 'Get started, Network analysis and Sequence analysis, as on readthedocs. An h2 in type.eyebrow, uppercase, text.muted.'],
+  ['Sub-navigation', 'As on readthedocs, the open page is expanded and lists its h2 sections, marking the one being read. Any page’s chevron shows its sections in place without leaving the page. Opening another page makes it the expanded one; the rest collapse.'],
   ['Breadcrumbs', 'Docs, then the page. Use cases add a step: Docs / Use cases / Sei use case.'],
   ['Title', 'h1 in type.h1, with the live page’s id, such as #sei.'],
   ['Reading column', 'The article template’s 748px column. Body in type.body-lg with 20px between blocks; h2 in type.h3 and h3 in type.h4, each with the live heading id.'],
@@ -26,7 +27,9 @@ const navStates = [
   { key: 'Hover', state: 'Hover', spec: 'action.ghost-hover background.' },
   { key: 'Focus', state: 'Focus', spec: 'The focus ring (shadow.focus-ring).' },
   { key: 'Current', state: 'Current page', spec: 'aria-current="page": surface.subtle background, the 3px bar in action.primary, type.label weight.' },
-  { key: 'Parent', state: 'Parent of the page', spec: 'aria-current="true", for Use cases while a use case is open: type.label weight, no bar.' },
+  { key: 'Parent', state: 'Parent of the page', spec: 'aria-current="true", for Use cases while a use case is open: type.label weight, no bar. The open use case shows under it as a Current sub item, indented 40px.' },
+  { key: 'Collapsed', state: 'Toggle: Collapsed', spec: 'A page with h2 sections ends in a 32px chevron button, chevron-right 16px in text.secondary. Pages without sections have no toggle (Toggle: None).' },
+  { key: 'Expanded', state: 'Toggle: Expanded', spec: 'chevron-down, with the page’s h2 sections below as sub items: 28px indent, at least 30px tall, type.body-sm in text.secondary. The section being read is Current: type.label-sm in text.default.' },
 ] as const;
 
 const tocStates = [
@@ -38,8 +41,9 @@ const tocStates = [
 
 const rules = [
   ['Landmarks', 'The sidebar is <nav aria-label="Docs">, the list is <nav aria-label="On this page">, the page is an <article> named by its title.'],
-  ['Current page', 'aria-current="page" on the open page’s link, aria-current="location" on the section being read. Color is never the only signal: weight and a bar change too.'],
+  ['Current page', 'aria-current="page" on the open page’s link, aria-current="location" on the section being read, in both the sidebar and On this page. Color is never the only signal: weight and a bar change too.'],
   ['Anchors', 'Every heading keeps its id from readthedocs, so sei.html#output becomes /docs/sei/#output. Headings leave room for the sticky top bar when scrolled to.'],
+  ['Section toggles', 'Each chevron is its own button, named “Show sections of Sei”, with aria-expanded and aria-controls pointing at the list it shows. The page name stays a plain link. Tab reaches it, Enter or Space toggles it, and it has the focus ring.'],
   ['Search', 'A combobox with a listbox of results. Arrow keys move, Enter opens the section, Esc closes or clears.'],
   ['Menu', 'Below 1200px a “Docs menu” button opens the sidebar in a drawer, a bottom sheet on phones, with focus moved into it and back on close.'],
   ['Formulas', 'Simple ones are text with real sub elements; others are native MathML. Nothing is drawn as an image.'],
@@ -48,7 +52,7 @@ const rules = [
 const responsive = [
   ['1440px and wider', 'All three columns at full width.'],
   ['1200 to 1439px', 'The reading column narrows; sidebar and On this page keep their widths.'],
-  ['Below 1200px', 'One column, at most 748px. The sidebar becomes the Docs menu button above the breadcrumbs, and On this page moves under the title.'],
+  ['Below 1200px', 'One column, at most 748px. The sidebar becomes the Docs menu button above the breadcrumbs, which stays under the top bar while the page scrolls, and On this page moves under the title.'],
   ['Below 640px', 'Side margins drop to the mobile margin; the menu opens as a bottom sheet.'],
 ];
 

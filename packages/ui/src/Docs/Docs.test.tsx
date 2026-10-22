@@ -1,4 +1,5 @@
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { DocsLayout } from './DocsLayout';
 import { DocsMarkdown } from './DocsMarkdown';
 import { DocsNav } from './DocsNav';
@@ -21,6 +22,47 @@ describe('DocsNav', () => {
     expect(within(nav).getByRole('link', { name: 'Sei' })).toHaveAttribute('aria-current', 'page');
     expect(within(nav).getByRole('link', { name: 'Use cases' })).toHaveAttribute('aria-current', 'true');
     expect(within(nav).getByRole('link', { name: 'Beluga (DeepSEA)' })).not.toHaveAttribute('aria-current');
+  });
+});
+
+const withSections = [
+  {
+    label: 'Sequence analysis',
+    items: [
+      { label: 'Sei', href: '/docs/sei/', current: 'page' as const, sections: [{ label: 'Input', href: '/docs/sei/#input', id: 'input' }, { label: 'Output', href: '/docs/sei/#output', id: 'output' }] },
+      { label: 'Beluga (DeepSEA)', href: '/docs/beluga/', sections: [{ label: 'Output', href: '/docs/beluga/#output' }] },
+      { label: 'Use cases', href: '/docs/use-cases/', current: 'true' as const, sections: [{ label: 'Tutorials', href: '/docs/use-cases/#tutorials' }, { label: 'Sei use case', href: '/docs/use-cases/sei-use-case/', level: 2 as const, current: true }] },
+      { label: 'Citations', href: '/docs/citations/' },
+    ],
+  },
+];
+
+describe('DocsNav sections', () => {
+  it('expands the open page, and a chevron shows another page’s sections without leaving', async () => {
+    render(<DocsNav groups={withSections} />);
+    const seiToggle = screen.getByRole('button', { name: 'Show sections of Sei' });
+    expect(seiToggle).toHaveAttribute('aria-expanded', 'true');
+    expect(document.getElementById(seiToggle.getAttribute('aria-controls') ?? '')).toBeVisible();
+    expect(screen.getByRole('link', { name: 'Input' })).toHaveAttribute('href', '/docs/sei/#input');
+
+    const belugaToggle = screen.getByRole('button', { name: 'Show sections of Beluga (DeepSEA)' });
+    expect(belugaToggle).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(belugaToggle);
+    expect(belugaToggle).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getAllByRole('link', { name: 'Output' })).toHaveLength(2);
+
+    await userEvent.click(seiToggle);
+    expect(seiToggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('link', { name: 'Input' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Show sections of Citations' })).not.toBeInTheDocument();
+  });
+
+  it('marks the section being read and the open use case under Use cases', () => {
+    render(<DocsNav groups={withSections} />);
+    expect(screen.getByRole('link', { name: 'Input' })).toHaveAttribute('aria-current', 'location');
+    const useCase = screen.getByRole('link', { name: 'Sei use case' });
+    expect(useCase).toHaveAttribute('aria-current', 'page');
+    expect(useCase.closest('li')).toHaveClass('docs-nav-sub-level-2');
   });
 });
 

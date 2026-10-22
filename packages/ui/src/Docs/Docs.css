@@ -41,6 +41,21 @@
   padding: var(--space-8) var(--layout-margin-tablet) 112px;
 }
 
+/* The menu button stays under the top bar, so the sidebar is one tap away anywhere on the page. */
+.docs-layout-menu-button {
+  justify-self: start;
+  box-shadow: var(--shadow-elevation-1);
+}
+
+/* Only on a narrow window: a narrow example inside a wide page stays in place. */
+@media (width < 75rem) {
+  .docs-layout-menu-button {
+    position: sticky;
+    inset-block-start: calc(var(--layout-topbar-height) + var(--space-2));
+    z-index: var(--z-sticky);
+  }
+}
+
 .docs-layout-menu .drawer-body {
   padding-inline: var(--space-3);
 }
@@ -78,22 +93,33 @@
   list-style: none;
 }
 
-.docs-nav-item {
-  display: block;
-  padding: var(--space-2) var(--space-3);
-  font: var(--type-body);
-  color: var(--text-default);
-  text-decoration: none;
+.docs-nav-row {
+  display: flex;
+  align-items: center;
   border-inline-start: 3px solid transparent;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
-.docs-nav-item:hover,
-.docs-nav-item[data-state="hover"] {
+.docs-nav-row:hover,
+.docs-nav-row[data-state="hover"] {
   background: var(--action-ghost-hover);
 }
 
-.docs-nav-item[data-state="focus"] {
+.docs-nav-row[data-current="page"] {
+  background: var(--surface-subtle);
+  border-inline-start-color: var(--action-primary);
+}
+
+.docs-nav-item {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  font: var(--type-body);
+  color: var(--text-default);
+  text-decoration: none;
+  border-radius: var(--radius-xs);
+}
+
+.docs-nav-row[data-state="focus"] .docs-nav-item {
   box-shadow: var(--shadow-focus-ring);
 }
 
@@ -102,9 +128,55 @@
   letter-spacing: var(--type-label-tracking);
 }
 
-.docs-nav-item[aria-current="page"] {
-  background: var(--surface-subtle);
-  border-inline-start-color: var(--action-primary);
+.docs-nav-toggle {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  margin-inline-end: var(--space-1);
+  padding: 0;
+  color: var(--text-secondary);
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.docs-nav-toggle:hover {
+  color: var(--text-default);
+  background: var(--action-ghost-hover);
+}
+
+.docs-nav .docs-nav-sub {
+  gap: 0;
+  padding-block: var(--space-1);
+}
+
+.docs-nav-sub-item {
+  display: flex;
+  align-items: center;
+  min-block-size: 30px;
+  padding: var(--space-1) var(--space-3) var(--space-1) 28px;
+  font: var(--type-body-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-xs);
+}
+
+.docs-nav-sub-level-2 .docs-nav-sub-item {
+  padding-inline-start: 40px;
+}
+
+.docs-nav-sub-item:hover {
+  color: var(--text-default);
+  text-decoration: underline;
+}
+
+.docs-nav-sub-item[aria-current] {
+  font: var(--type-label-sm);
+  letter-spacing: var(--type-label-sm-tracking);
+  color: var(--text-default);
 }
 
 .on-this-page {
@@ -150,4 +222,8 @@
   inline-size: 100%;
   padding-block: var(--space-4);
   border-block: var(--border-width-1) solid var(--border-subtle);
+}
+
+.docs-nav .docs-nav-sub[hidden] {
+  display: none;
 }

@@ -366,7 +366,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     <ul class="points">{crumbRules.map((rule) => <li>{rule}</li>)}</ul>
   </DocSection>
 
-  <DocSection title="Docs nav and On this page" lead="The two navigation lists on docs pages. DocsNav is the sidebar: search, then the pages in groups, the open page marked with a 3px action.primary bar. OnThisPage lists the page’s h2 and h3 sections and marks the one being read.">
+  <DocSection title="Docs nav and On this page" lead="The two navigation lists on docs pages. DocsNav is the sidebar: search, then the pages in groups, the open page marked with a 3px action.primary bar and expanded to list its sections, with the one being read as the current sub item. A chevron button on each page shows its sections without leaving. OnThisPage lists the page’s h2 and h3 sections and marks the one being read.">
     <div class="docs-nav-specimens">
       <DocsNavExample />
       <OnThisPageExample />

@@ -1,4 +1,4 @@
-import type { Crumb, DocsNavGroup, DocsSection, ImageSizes } from '@humanbase/ui';
+import type { Crumb, DocsNavGroup, DocsNavSubItem, DocsSection, ImageSizes } from '@humanbase/ui';
 
 export type DocsGroup = 'get-started' | 'network-analysis' | 'sequence-analysis' | 'use-cases';
 
@@ -69,9 +69,23 @@ export class DocsLibrary {
         .map((page) => ({
           label: page.label ?? page.title,
           href: page.route,
+          sections: this.subItems(page, current),
           ...(page === current ? { current: 'page' as const } : current?.group === 'use-cases' && page.slug === useCasesSlug ? { current: 'true' as const } : {}),
         })),
     }));
+  }
+
+  /** A page's h2 sections for the sidebar; under Use cases, the open use case follows the section that links to it. */
+  private subItems(page: DocsPage, current: DocsPage | undefined): DocsNavSubItem[] {
+    const openUseCase = page.slug === useCasesSlug && current?.group === 'use-cases' ? current : undefined;
+    const chunks = page.markdown.split(/^## /m).slice(1);
+    return page.sections
+      .filter((section) => section.level === 2)
+      .flatMap((section, index) => {
+        const item: DocsNavSubItem = { label: section.title, href: `${page.route}#${section.id}`, ...(page === current && { id: section.id }) };
+        const linksOpen = openUseCase && chunks[index]?.includes(`(${openUseCase.route})`);
+        return openUseCase && linksOpen ? [item, { label: openUseCase.title, href: openUseCase.route, level: 2 as const, current: true }] : [item];
+      });
   }
 
   breadcrumbs(page: DocsPage): Crumb[] {

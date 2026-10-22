@@ -24,6 +24,22 @@ describe('docsLibrary', () => {
     expect(docsLibrary.breadcrumbs(page)).toEqual([{ label: 'Docs', href: '/docs/' }, { label: 'Use cases', href: '/docs/use-cases/' }, { label: 'Sei use case' }]);
   });
 
+  it('lists each page’s h2 sections, with the open use case under its Use cases section', () => {
+    const sei = docsLibrary.navGroups(docsLibrary.page('sei'))[2]?.items.find((item) => item.label === 'Sei');
+    expect(sei?.sections?.map((section) => [section.label, section.href, section.id])).toEqual([
+      ['Introduction', '/docs/sei/#introduction', 'introduction'],
+      ['Input', '/docs/sei/#input', 'input'],
+      ['Output', '/docs/sei/#output', 'output'],
+    ]);
+    const useCases = docsLibrary.navGroups(docsLibrary.page('use-cases/sei-use-case'))[0]?.items[1];
+    expect(useCases?.sections?.map((section) => [section.label, section.level ?? 1, section.current ?? false])).toEqual([
+      ['Sequence Analysis Use Cases', 1, false],
+      ['Sei use case', 2, true],
+      ['Network Analysis Use Cases', 1, false],
+      ['Tutorials', 1, false],
+    ]);
+  });
+
   it('maps readthedocs addresses to clean routes', () => {
     expect(docsLibrary.legacyRoute('sei.html')).toBe('/docs/sei/');
     expect(docsLibrary.legacyRoute('use-cases/sei-use-case.html')).toBe('/docs/use-cases/sei-use-case/');

@@ -20,11 +20,14 @@ export function useCurrentSection(ids: readonly string[]): string | undefined {
     // Watching a band from the top of the window to the reading line calls update whenever a heading crosses that line.
     const observer = new IntersectionObserver(update, { rootMargin: `0px 0px ${readingLine - window.innerHeight}px 0px`, threshold: 0 });
     for (const heading of headings) observer.observe(heading);
+    // A jump, such as to an anchor, can carry a heading past the line without it ever crossing the band.
+    window.addEventListener('scrollend', update);
     window.addEventListener('hashchange', update);
     const frame = requestAnimationFrame(update);
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
+      window.removeEventListener('scrollend', update);
       window.removeEventListener('hashchange', update);
     };
   }, [key]);

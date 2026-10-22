@@ -43,12 +43,12 @@ export function DocsLayout({ nav, breadcrumbs, title, titleId, sections, locatio
         <div className="docs-layout-sidebar">{nav}</div>
       )}
       <article className="docs-layout-main" aria-labelledby={headingId}>
+        {narrow && (
+          <Button variant="secondary" size="small" icon="menu" className="docs-layout-menu-button" aria-haspopup="dialog" aria-expanded={menuOpenAt === location} onClick={() => setMenuOpenAt(location)}>
+            Docs menu
+          </Button>
+        )}
         <header className="docs-layout-header">
-          {narrow && (
-            <Button variant="secondary" size="small" icon="menu" className="docs-layout-menu-button" aria-haspopup="dialog" aria-expanded={menuOpenAt === location} onClick={() => setMenuOpenAt(location)}>
-              Docs menu
-            </Button>
-          )}
           {breadcrumbs}
           <Title id={headingId} className="docs-layout-title">
             {title}

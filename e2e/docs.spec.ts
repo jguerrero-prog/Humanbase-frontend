@@ -37,13 +37,36 @@ test('a use case shows its screenshots under Docs / Use cases', async ({ page })
   await page.goto(`${app}/docs/use-cases/sei-use-case/`);
   const crumbs = page.getByRole('navigation', { name: 'Breadcrumb' });
   await expect(crumbs.getByRole('link')).toHaveText(['Docs', 'Use cases']);
-  await expect(page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Use cases' })).toHaveAttribute('aria-current', 'true');
+  await expect(page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Use cases', exact: true })).toHaveAttribute('aria-current', 'true');
+  await expect(page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Sei use case' })).toHaveAttribute('aria-current', 'page');
   const figures = page.getByRole('main').getByRole('figure');
   await expect(figures).toHaveCount(4);
   for (const figure of await figures.all()) {
     await figure.scrollIntoViewIfNeeded();
     await expect.poll(() => figure.locator('img').evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   }
+  expect(await violationsOf(page)).toEqual([]);
+});
+
+test('a chevron shows another page’s sections in place, and the open page marks the section being read', async ({ page }) => {
+  await page.goto(`${app}/docs/sei/`);
+  const nav = page.getByRole('navigation', { name: 'Docs' });
+  const seiSections = nav.getByRole('button', { name: 'Show sections of Sei', exact: true });
+  await expect(seiSections).toHaveAttribute('aria-expanded', 'true');
+  await expect(nav.getByRole('link', { name: 'Introduction' })).toHaveAttribute('aria-current', 'location');
+
+  const beluga = nav.getByRole('button', { name: 'Show sections of Beluga (DeepSEA)' });
+  await beluga.focus();
+  await page.keyboard.press('Enter');
+  await expect(beluga).toHaveAttribute('aria-expanded', 'true');
+  await expect(nav.getByRole('link', { name: 'Output' })).toHaveCount(2);
+  await expect(page).toHaveURL(`${app}/docs/sei/`);
+  await page.keyboard.press('Space');
+  await expect(beluga).toHaveAttribute('aria-expanded', 'false');
+
+  await page.getByRole('heading', { level: 3, name: 'Sequence classes' }).evaluate((heading) => heading.scrollIntoView());
+  await expect(nav.getByRole('link', { name: 'Output' })).toHaveAttribute('aria-current', 'location');
+  await expect(nav.getByRole('link', { name: 'Introduction' })).not.toHaveAttribute('aria-current');
   expect(await violationsOf(page)).toEqual([]);
 });
 

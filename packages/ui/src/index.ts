@@ -29,7 +29,7 @@ export { Dialog, type DialogKind, type DialogProps, type DialogSize } from './Di
 export { DocsLayout, DOCS_NARROW_QUERY, type DocsLayoutProps } from './Docs/DocsLayout';
 export { DocsMarkdown, type DocsMarkdownProps, type ImageSizes } from './Docs/DocsMarkdown';
 export { docsSections, plainText, type DocsSection, type DocsSectionText } from './Docs/markdownSections';
-export { DocsNav, type DocsNavGroup, type DocsNavItem, type DocsNavProps } from './Docs/DocsNav';
+export { DocsNav, type DocsNavGroup, type DocsNavItem, type DocsNavProps, type DocsNavSubItem } from './Docs/DocsNav';
 export { OnThisPage, type OnThisPageProps } from './Docs/OnThisPage';
 export { TexMath, type TexMathProps } from './Docs/TexMath';
 export { useCurrentSection } from './Docs/useCurrentSection';
