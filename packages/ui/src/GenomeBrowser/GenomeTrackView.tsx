@@ -395,7 +395,7 @@ export function GenomeTrackView(props: GenomeTrackViewProps) {
   const { frame, tip, ...details } = useItemDetails(groups, `${props.start}-${props.end} ${width}`);
   const onSegment = (hovered: SegmentHover | undefined) => {
     const box = frame.current;
-    if (!hovered || !box || drag.current?.moved || details.open) return setHover(undefined);
+    if (!hovered || !box || drag.current?.moved) return setHover(undefined);
     const outer = box.getBoundingClientRect();
     const point = { x: hovered.pointer - outer.left, y: hovered.box.getBoundingClientRect().bottom - outer.top };
     setHover({ segment: hovered.segment, track: hovered.track, at: placeNearPoint(point, tooltipSize, { width: box.clientWidth, height: box.clientHeight }, 4) });
@@ -449,7 +449,7 @@ export function GenomeTrackView(props: GenomeTrackViewProps) {
         </svg>
         <ItemButtons groups={groups} details={details} />
       </div>
-      {hover && (
+      {hover && !details.open && (
         <DataTooltip
           title={hover.segment.name}
           subtitle={hover.track}

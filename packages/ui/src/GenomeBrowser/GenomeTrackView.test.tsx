@@ -151,6 +151,19 @@ describe('GenomeTrackView', () => {
       expect(screen.queryByRole('dialog')).toBeNull();
     });
 
+    it('hides a segment’s hover tooltip while its popover is open', async () => {
+      const { container } = render(view());
+      const reprW = container.querySelector('.genome-tracks-segment') as Element;
+      await userEvent.hover(reprW);
+      expect(screen.getByRole('tooltip')).toHaveTextContent('ReprW');
+      await userEvent.click(reprW);
+      expect(screen.getByRole('dialog', { name: 'GM12878 ChromHMM' })).toBeInTheDocument();
+      expect(screen.queryByRole('tooltip')).toBeNull();
+      await userEvent.keyboard('{Escape}');
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(screen.getByRole('tooltip')).toHaveTextContent('ReprW');
+    });
+
     it('leaves items without details out of the keyboard and the popover', async () => {
       const { container } = render(<GenomeTrackView start={1} end={1000} width={1000} genes={{ name: 'Genes', meta: 'GENCODE 19', state: 'ready', data: [gene] }} />);
       expect(screen.queryByRole('button')).toBeNull();
