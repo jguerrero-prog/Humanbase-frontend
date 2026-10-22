@@ -3,6 +3,7 @@ export { NetwasGenes, type NetwasGenesProps } from './NetwasGenes/NetwasGenes';
 export { AsdBrowser, type AsdBrowserProps, type AsdView } from './AsdBrowser/AsdBrowser';
 export { AsdExplorer, type AsdExplorerProps, type AsdState } from './AsdBrowser/AsdExplorer';
 export { AsdHeader, AsdVariantTable, type AsdHeaderProps, type AsdVariantTableProps } from './AsdBrowser/AsdParts';
+export { aboutArticle, type AboutSection } from './content/about/about';
 export { analysisColumns, analysisIcons, analysisOptions, productFooter, productSections } from './content/product';
 export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
 export { DeepseaAbout, DeepseaForm, deepseaFormLink, deepseaJobLink, type DeepseaFormProps } from './Deepsea/DeepseaForm';

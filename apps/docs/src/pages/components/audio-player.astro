@@ -1,0 +1,170 @@
+---
+import { aboutArticle } from '@humanbase/hb';
+import { AudioPill, AudioPlayer } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const { narration } = aboutArticle;
+
+const states = [
+  { title: 'Idle', text: 'In the hero. The whole pill is one button: “Listen to this story”.', props: { state: 'idle' as const } },
+  { title: 'Playing', text: 'Pause, elapsed time, position, total.', props: { state: 'playing' as const, elapsed: 134 } },
+  { title: 'Paused', text: 'The same, with the play icon.', props: { state: 'paused' as const, elapsed: 134 } },
+  { title: 'Docked', text: 'Playing, fixed to the bottom of the window, with a close button.', props: { state: 'playing' as const, elapsed: 134, docked: true, onClose: () => undefined } },
+];
+
+const specs = [
+  ['pill', 'radius.full, surface.page, 1px border.subtle; 50px tall; padding 6px, 20px on the right (8px when docked); gap 12px'],
+  ['pill.docked', 'stroke focus.ring, shadow elevation.3, z-index z.toast, 24px above the bottom edge, centered'],
+  ['toggle', '36 × 36px circle, surface.inverse; 20px play or pause icon in text.on-brand'],
+  ['close', '32 × 32px circle, transparent; 20px x icon in text.secondary; surface.sunken on hover'],
+  ['label', 'type.label-sm, text.default: “Listen to this story”'],
+  ['time', 'type.code-sm with tabular figures; elapsed in text.default, total in text.secondary'],
+  ['track', '180 × 4px, radius.full, border.subtle; the played part in surface.inverse; 12px thumb in surface.inverse; 24px tall hit area'],
+];
+
+const motion = [
+  ['Docking', 'Fades in while rising 8px from the bottom edge: motion.distance.sm, motion.duration.moderate (200ms), motion.easing.enter. The same entrance as a toast.'],
+  ['Closing', 'Fades out while dropping 8px: motion.duration.base (150ms), motion.easing.exit. The hero pill returns to Idle when it finishes.'],
+  ['Reduced motion', 'Fades only. The motion tokens set every distance to 0, so nothing moves.'],
+  ['Progress', 'The played part follows the audio’s own time updates; it never animates on its own.'],
+];
+
+const access = [
+  ['Never autoplays', 'Nothing plays until someone presses the pill. The native <audio> element uses preload="none", so the file loads only then.'],
+  ['Names', 'Idle: “Listen to this story”, its visible text. Docked: “Pause” or “Play the story”, and “Close the player”. The docked pill is a group named “Audio player”.'],
+  ['Position', 'A native range input labeled “Position”, read as “2 minutes 14 seconds of 8 minutes 7 seconds”. Left and Right move 5 seconds, Page Up and Down 30, Home and End jump to the ends.'],
+  ['Time text', 'The elapsed and total times are hidden from screen readers, because the slider already says them.'],
+  ['Focus', 'Pressing the Idle pill moves focus to Pause in the docked player. Closing returns it to the Idle pill. Every control shows the system focus ring.'],
+  ['Transcript', 'The article text is the transcript: the narration reads the page as written, so no separate transcript is needed. Change both together.'],
+];
+
+const usage = `import { AudioPlayer } from '@humanbase/ui';
+
+<AudioPlayer src={narration} duration={487} />`;
+---
+
+<DocsLayout title="Audio player" description="A narration pill that docks to the bottom of the window while a story plays: states, specs, motion and accessibility.">
+  <Intro lead="The audio player lets people listen to a long read, such as the About page, while they scroll. It waits in the hero as a small pill and docks to the bottom of the window once it plays." status="Added October 21, 2026 · Component: Audio player (Idle, Playing, Paused, Docked)">
+    <KeyRules
+      rules={[
+        { title: 'Only on request', text: 'It never autoplays and doesn’t load the file until someone presses play.' },
+        { title: 'Stays in reach', text: 'Docked at the bottom, so people can pause or close it from anywhere in the article.' },
+        { title: 'The page is the transcript', text: 'The narration reads the article text as written, so the page itself is the transcript.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Try it" lead="The About page narration, 8 minutes 7 seconds. Press the pill to dock the player at the bottom of this window.">
+    <div class="specimen live">
+      <AudioPlayer src={narration.src} duration={narration.duration} client:load />
+    </div>
+  </DocSection>
+
+  <DocSection title="States" lead="Idle in the hero; Playing, Paused and Docked once it starts.">
+    <ul class="states">
+      {
+        states.map((state) => (
+          <li>
+            <div class="specimen">
+              <AudioPill duration={narration.duration} {...state.props} />
+            </div>
+            <strong>{state.title}</strong>
+            <span>{state.text}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </DocSection>
+
+  <DocSection title="Behavior" lead="One player per page.">
+    <ul class="points">
+      <li>Pressing the Idle pill starts playback and docks the player. The hero keeps the pill’s space so the page doesn’t jump.</li>
+      <li>Close stops playback, rewinds to the start and hides the docked player; the hero pill returns to Idle.</li>
+      <li>When the story ends, the docked player stays, paused at the end, until it is closed.</li>
+      <li>The docked player sits above the page and footer at the toast layer. On narrow screens the track shrinks first.</li>
+    </ul>
+  </DocSection>
+
+  <DocSection title="Motion">
+    <DocTable caption="How the audio player moves" columns={['Moment', 'Motion']} widths={['224px']}>
+      {motion.map(([moment, how]) => <tr><th scope="row">{moment}</th><td>{how}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Accessibility">
+    <DocTable caption="Accessibility rules for the audio player" columns={['Rule', 'What the component does']} widths={['224px']}>
+      {access.map(([rule, does]) => <tr><th scope="row">{rule}</th><td>{does}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Specs and tokens">
+    <DocTable caption="Audio player tokens and values" columns={['Part', 'Value']} widths={['224px']}>
+      {specs.map(([part, value]) => <tr><th scope="row"><code>{part}</code></th><td>{value}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <NoteCard title="Using the component in code">
+    <ul>
+      <li><code>AudioPlayer</code> owns a native <code>&lt;audio&gt;</code> element and moves <code>AudioPill</code> between its states. Use <code>AudioPill</code> alone only to show a state, as on this page.</li>
+      <li><code>duration</code> is the length in seconds, shown before the file’s metadata loads.</li>
+      <li>The About narration is made with Kokoro text to speech from <code>scripts/narration/narration.txt</code>. The README there explains how to regenerate it.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .specimen {
+    display: flex;
+    align-items: center;
+    padding: var(--space-8);
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .live {
+    background: var(--surface-cream);
+  }
+
+  .states {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .states li {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .states strong {
+    font: var(--type-label-sm);
+  }
+
+  .states span {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .points {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding-inline-start: var(--space-6);
+  }
+
+  @media (width < 64rem) {
+    .states {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

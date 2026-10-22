@@ -74,6 +74,7 @@ const sections: NavSection[] = [
       { label: 'Pagination', href: '/components/pagination/' },
       { label: 'Badges and tags', href: '/components/badges-and-tags/' },
       { label: 'Code block', href: '/components/code-block/' },
+      { label: 'Audio player', href: '/components/audio-player/' },
     ],
   },
   {
@@ -90,6 +91,7 @@ const sections: NavSection[] = [
       { label: 'Heatmaps and score legends', href: '/ui-library/heatmaps-and-score-legends/' },
       { label: 'ASD Browser', href: '/ui-library/asd-browser/' },
       { label: 'NetWAS results', href: '/ui-library/netwas-results/' },
+      { label: 'Article template', href: '/ui-library/article-template/' },
     ],
   },
   {
