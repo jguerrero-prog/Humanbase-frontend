@@ -88,7 +88,7 @@ export class AsdService {
     if (position) {
       const [, chrom = '', at = ''] = position;
       const center = Number(at.replaceAll(',', ''));
-      return { location: new GenomeLocation(`chr${chrom.toUpperCase()}`, center, center).withWidth(2_000) };
+      return { location: new GenomeLocation(`chr${chrom.toUpperCase()}`, Math.max(0, center - 1_000), center + 1_000) };
     }
     const parsed = GenomeLocation.parse(text);
     if (!parsed) return undefined;

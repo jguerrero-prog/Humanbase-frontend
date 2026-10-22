@@ -1,3 +1,5 @@
+import chromosomeSizes from './chromosomeSizes.json';
+
 export type Assembly = 'hg19' | 'hg38';
 
 export const assemblyNames: Record<Assembly, string> = { hg19: 'GRCh37/hg19', hg38: 'GRCh38/hg38' };
@@ -24,9 +26,15 @@ export class GenomeLocation {
     if (match) {
       const [, chrom = '', from = '', to = ''] = match;
       const [start, end] = [from, to].map((value) => Number(value.replaceAll(',', ''))) as [number, number];
-      return new GenomeLocation(`chr${chrom.toUpperCase()}`, Math.min(start, end), Math.max(start, end), assembly);
+      const name = chrom.toUpperCase() === 'MT' ? 'M' : chrom.toUpperCase();
+      return new GenomeLocation(`chr${name}`, Math.min(start, end), Math.max(start, end), assembly);
     }
     return geneName.test(typed) ? { gene: typed } : undefined;
+  }
+
+  /** The main chromosomes' lengths in bases, recorded from UCSC by scripts/record-chrom-sizes.mjs. */
+  static chromosomes(assembly: Assembly): Readonly<Record<string, number>> {
+    return chromosomeSizes[assembly];
   }
 
   static widthInWords(bases: number): string {
@@ -49,6 +57,10 @@ export class GenomeLocation {
 
   get assemblyName(): string {
     return assemblyNames[this.assembly];
+  }
+
+  get chromosomeLength(): number | undefined {
+    return GenomeLocation.chromosomes(this.assembly)[this.chrom];
   }
 
   /** One base, such as a variant; the chromosome may come with or without "chr". */
@@ -79,8 +91,7 @@ export class GenomeLocation {
   }
 
   withWidth(width: number): GenomeLocation {
-    const start = Math.max(0, this.center - Math.round(width / 2));
-    return new GenomeLocation(this.chrom, start, start + width, this.assembly);
+    return this.startingAt(this.center - Math.round(width / 2), width);
   }
 
   // One zoom step goes to the next stop in that direction; the view can sit between stops.
@@ -91,8 +102,13 @@ export class GenomeLocation {
   }
 
   move(fraction: number): GenomeLocation {
-    const start = Math.max(0, this.start + Math.round(this.width * fraction));
-    return new GenomeLocation(this.chrom, start, start + this.width, this.assembly);
+    return this.startingAt(this.start + Math.round(this.width * fraction), this.width);
+  }
+
+  // Panning and zooming stop at either end of the chromosome.
+  private startingAt(start: number, width: number): GenomeLocation {
+    const from = Math.max(0, start);
+    return new GenomeLocation(this.chrom, from, from + width, this.assembly).clamp(this.chromosomeLength ?? Infinity).location;
   }
 
   /** The chr_and_variant_range parameter for predictions in this range, such as 1:2230000:2440000. */
@@ -125,7 +141,13 @@ export class GenomeLocation {
       : new GenomeLocation(this.chrom, Math.max(0, this.start - GenomeLocation.readAhead), read.end, this.assembly);
   }
 
-  // The chromosome length comes from the engine; the browser never guesses it.
+  /** A typed view kept on its chromosome, with the reason when it moved; no location when the chromosome isn't on the assembly. */
+  fit(): { location?: GenomeLocation; message?: string } {
+    const length = this.chromosomeLength;
+    if (length === undefined) return { message: `There is no ${this.chrom} on ${this.assemblyName}. Enter chr1 to chr22, chrX, chrY or chrM.` };
+    return this.clamp(length);
+  }
+
   clamp(chromosomeLength: number): { location: GenomeLocation; message?: string } {
     if (this.end <= chromosomeLength) return { location: this };
     const location = new GenomeLocation(this.chrom, Math.max(0, chromosomeLength - this.width), chromosomeLength, this.assembly);

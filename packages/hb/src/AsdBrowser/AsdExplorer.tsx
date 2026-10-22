@@ -52,7 +52,7 @@ const isMissingSample = (error: unknown, showsSamples: boolean) => showsSamples 
 
 function locationOf(text: string | undefined): GenomeLocation {
   const parsed = text ? GenomeLocation.parse(text) : undefined;
-  return parsed instanceof GenomeLocation ? parsed : defaultLocation;
+  return (parsed instanceof GenomeLocation && parsed.fit().location) || defaultLocation;
 }
 
 /** The connected ASD Browser: search, the genome browser view with each variant's molecular effects, and the table. */
@@ -78,9 +78,12 @@ export function AsdExplorer({ state, onStateChange, engine = defaultGenomeEngine
         fail(gene ? (api.showsSamples ? sampleHelp : GenomeLocation.geneNotFound(gene)) : 'Enter a gene such as CHD8, a region such as chr1:2,230,000-2,440,000 or a position such as chr1:2,337,101.');
         return;
       }
+      const { location: kept, message } = found.location.fit();
+      if (message) fail(message);
+      if (!kept) return;
       setSearchedGene(found.gene);
       if (state.view === 'table') setRangeOnly(true);
-      onStateChange({ location: found.location.format(), variant: undefined });
+      onStateChange({ location: kept.format(), variant: undefined });
     } catch {
       fail('The gene index didn’t answer. Try again, or search a region such as chr1:2,230,000-2,440,000.');
     }
@@ -138,7 +141,7 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
   const [effectsView, setEffectsView] = useState<EffectsView>('strongest');
   const [engineStatus, setEngineStatus] = useState<{ status: EngineStatus; error?: Error | undefined }>({ status: 'loading' });
   const region = useMemo(() => ({ chrom: location.chrom, start: location.start, end: location.end }), [location]);
-  const onRegionChange = (moved: GenomeRegion) => onStateChange({ location: new GenomeLocation(moved.chrom, moved.start, moved.end).format() });
+  const onRegionChange = (moved: GenomeRegion) => onStateChange({ location: (new GenomeLocation(moved.chrom, moved.start, moved.end).fit().location ?? location).format() });
   const range = useAsdRange(location);
   const rows = range.data;
   const selected = rows?.find((row) => keyOf(row) === state.variant) ?? (rows && location.nearest(rows));

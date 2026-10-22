@@ -98,6 +98,32 @@ test('the ASD Browser shows and hides its tracks and exports the view as SVG, wi
   expect(apiRequests).toEqual([]);
 });
 
+test('the ASD Browser stops at the end of a chromosome and says when a typed position is past it, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/asd/?location=chr1:249,200,000-249,250,000`);
+  const field = page.getByRole('searchbox', { name: 'Location or gene' });
+  await expect(field).toHaveValue('chr1:249,200,000-249,250,000');
+  for (const press of [1, 2]) {
+    await page.locator('.genome-engine').focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(field, `press ${press}`).toHaveValue('chr1:249,200,621-249,250,621');
+  }
+  await page.locator('.genome-engine').focus();
+  await page.keyboard.press('-');
+  await expect(field).toHaveValue('chr1:248,750,621-249,250,621');
+  await field.fill('chr1:300,000,000-300,010,000');
+  await field.press('Enter');
+  await expect(page.getByText('chr1 ends at 249,250,621 on GRCh37/hg19. Showing up to the end.')).toBeVisible();
+  await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
+  await expect(field).toHaveAttribute('aria-invalid', 'true');
+  await field.fill('chr23:1,000-2,000');
+  await field.press('Enter');
+  await expect(page.getByText('There is no chr23 on GRCh37/hg19. Enter chr1 to chr22, chrX, chrY or chrM.')).toBeVisible();
+  await expect(page).toHaveURL(/location=chr1/);
+  expect(await violationsOf(page)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
 test('the ASD Browser fits a phone without scrolling sideways', async ({ page }) => {
   await apiOff(page);
   await page.setViewportSize({ width: 375, height: 812 });
