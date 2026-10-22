@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type PointerEvent, type RefObject } from 'react';
+import { useMoreToScroll, useScrollState } from '../hooks/useScrollState';
 import { Icon } from '../Icon/Icon';
 import { usePinned } from '../List/useDismiss';
 import { ViewAsTable } from '../Table/ViewAsTable';
@@ -120,6 +121,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   const [place, setPlace] = useState<{ x: number; y: number }>();
   const [fits, setFits] = useState(true);
   const [labelWidth, setLabelWidth] = useState(labelWidths.min);
+  const more = useMoreToScroll(plot);
   const narrow = columnWidth === 'narrow' || (columnWidth === 'auto' && !fits);
   const width = narrow ? narrowWidth : cellWidth;
   const format = (value: number) => ScoreScale.number(Number(value.toFixed(decimals)));
@@ -199,97 +201,93 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
         </figcaption>
         <LegendStepped spec={spec} highlighted={highlighted ?? (activeValue === null ? null : scale.step(activeValue))} onHighlight={setHighlighted} />
       </div>
-      <div className="heatmap-plot" ref={plot} style={{ '--heatmap-columns': columns.length, '--heatmap-cell': `${width}px`, '--heatmap-label': `${labelWidth}px` } as CSSProperties}>
-        {narrow && (
-          <div className="heatmap-position-labels" aria-hidden="true">
-            {columns.map((column, index) => (
-              <span key={column.label}>{index % labelEvery === 0 ? columnLabel(column) : ''}</span>
-            ))}
-          </div>
-        )}
-        {!axis && !narrow && (
-          <div className="heatmap-column-labels" aria-hidden="true">
-            {columns.map((column) => (
-              <span key={column.label}>{columnLabel(column)}</span>
-            ))}
-          </div>
-        )}
-        <div
-          role="grid"
-          aria-label={title}
-          className={onDrag ? 'heatmap-grid heatmap-draggable' : 'heatmap-grid'}
-          {...(onDrag && {
-            onPointerDown: (event: PointerEvent<HTMLDivElement>) => {
-              if (event.button === 0) dragging.current = { x: event.clientX, moved: false };
-            },
-            onPointerMove: (event: PointerEvent<HTMLDivElement>) => {
-              const drag = dragging.current;
-              if (!drag) return;
-              if (!(event.buttons & 1)) {
-                dragging.current = undefined;
-                return;
-              }
-              const dx = event.clientX - drag.x;
-              if (!drag.moved && Math.abs(dx) < dragStart) return;
-              if (!drag.moved) event.currentTarget.setPointerCapture?.(event.pointerId);
-              drag.moved = true;
-              drag.x = event.clientX;
-              onDrag(dx);
-            },
-            onPointerUp: () => {
-              if (!dragging.current?.moved) dragging.current = undefined;
-            },
-            // A drag ends in a click on the cell under the pointer; it shouldn't pin that cell's tooltip.
-            onClickCapture: (event: MouseEvent<HTMLDivElement>) => {
-              if (dragging.current?.moved) event.stopPropagation();
-              dragging.current = undefined;
-            },
-          })}
-        >
-          {selectedColumn !== undefined && selectedColumn >= 0 && <span className="heatmap-selected-column" aria-hidden="true" style={{ '--heatmap-at': selectedColumn } as CSSProperties} />}
-          {rows.map((row, r) => (
-            <div role="row" key={row.label} className="heatmap-row">
-              <span role="rowheader" className="heatmap-row-label">
-                <BreakableText>{row.label}</BreakableText>
-              </span>
-              {row.values.map((value, c) => {
-                const column = columns[c];
-                const step = scale.step(value);
-                const isActive = active?.[0] === r && active[1] === c;
-                return (
-                  <HeatmapCell
-                    key={column?.label ?? c}
-                    role="gridcell"
-                    tabIndex={focus[0] === r && focus[1] === c ? 0 : -1}
-                    data-cell={`${r}-${c}`}
-                    data-state={isActive ? 'hover' : undefined}
-                    color={step === null ? null : scale.color(step)}
-                    outlined={highlighted !== null && step === highlighted}
-                    aria-label={`${row.label}, ${column ? columnName(column) : ''}: ${scale.describe(value, format)}`}
-                    onPointerEnter={() => !pinned && show([r, c])}
-                    onPointerLeave={() => !pinned && hideSoon()}
-                    onFocus={() => {
-                      setFocus([r, c]);
-                      if (!pinned) setActive([r, c]);
-                    }}
-                    onBlur={() => !pinned && setActive(null)}
-                    onClick={() => {
-                      setActive([r, c]);
-                      setPinned(true);
-                    }}
-                    onKeyDown={move}
-                  />
-                );
-              })}
-              {showValues && (
-                <span className="heatmap-value" aria-hidden="true">
-                  {row.values[0] === null || row.values[0] === undefined ? '' : format(row.values[0])}
-                </span>
-              )}
+      <div className="heatmap-frame" data-more={more || undefined}>
+        <div className="heatmap-plot" ref={plot} style={{ '--heatmap-columns': columns.length, '--heatmap-cell': `${width}px`, '--heatmap-label': `${labelWidth}px` } as CSSProperties}>
+          {narrow && <PositionLabels plot={plot} columns={columns} labelOf={columnLabel} />}
+          {!axis && !narrow && (
+            <div className="heatmap-column-labels" aria-hidden="true">
+              {columns.map((column) => (
+                <span key={column.label}>{columnLabel(column)}</span>
+              ))}
             </div>
-          ))}
+          )}
+          <div
+            role="grid"
+            aria-label={title}
+            className={onDrag ? 'heatmap-grid heatmap-draggable' : 'heatmap-grid'}
+            {...(onDrag && {
+              onPointerDown: (event: PointerEvent<HTMLDivElement>) => {
+                if (event.button === 0) dragging.current = { x: event.clientX, moved: false };
+              },
+              onPointerMove: (event: PointerEvent<HTMLDivElement>) => {
+                const drag = dragging.current;
+                if (!drag) return;
+                if (!(event.buttons & 1)) {
+                  dragging.current = undefined;
+                  return;
+                }
+                const dx = event.clientX - drag.x;
+                if (!drag.moved && Math.abs(dx) < dragStart) return;
+                if (!drag.moved) event.currentTarget.setPointerCapture?.(event.pointerId);
+                drag.moved = true;
+                drag.x = event.clientX;
+                onDrag(dx);
+              },
+              onPointerUp: () => {
+                if (!dragging.current?.moved) dragging.current = undefined;
+              },
+              // A drag ends in a click on the cell under the pointer; it shouldn't pin that cell's tooltip.
+              onClickCapture: (event: MouseEvent<HTMLDivElement>) => {
+                if (dragging.current?.moved) event.stopPropagation();
+                dragging.current = undefined;
+              },
+            })}
+          >
+            {selectedColumn !== undefined && selectedColumn >= 0 && <span className="heatmap-selected-column" aria-hidden="true" style={{ '--heatmap-at': selectedColumn } as CSSProperties} />}
+            {rows.map((row, r) => (
+              <div role="row" key={row.label} className="heatmap-row">
+                <span role="rowheader" className="heatmap-row-label">
+                  <BreakableText>{row.label}</BreakableText>
+                </span>
+                {row.values.map((value, c) => {
+                  const column = columns[c];
+                  const step = scale.step(value);
+                  const isActive = active?.[0] === r && active[1] === c;
+                  return (
+                    <HeatmapCell
+                      key={column?.label ?? c}
+                      role="gridcell"
+                      tabIndex={focus[0] === r && focus[1] === c ? 0 : -1}
+                      data-cell={`${r}-${c}`}
+                      data-state={isActive ? 'hover' : undefined}
+                      color={step === null ? null : scale.color(step)}
+                      outlined={highlighted !== null && step === highlighted}
+                      aria-label={`${row.label}, ${column ? columnName(column) : ''}: ${scale.describe(value, format)}`}
+                      onPointerEnter={() => !pinned && show([r, c])}
+                      onPointerLeave={() => !pinned && hideSoon()}
+                      onFocus={() => {
+                        setFocus([r, c]);
+                        if (!pinned) setActive([r, c]);
+                      }}
+                      onBlur={() => !pinned && setActive(null)}
+                      onClick={() => {
+                        setActive([r, c]);
+                        setPinned(true);
+                      }}
+                      onKeyDown={move}
+                    />
+                  );
+                })}
+                {showValues && (
+                  <span className="heatmap-value" aria-hidden="true">
+                    {row.values[0] === null || row.values[0] === undefined ? '' : format(row.values[0])}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+          {axis && !narrow && <PositionAxis axis={axis} columns={columns} active={activeColumn} selected={selectedColumn} onSelect={onColumnSelect} columnName={columnName} />}
         </div>
-        {axis && !narrow && <PositionAxis axis={axis} columns={columns} active={activeColumn} selected={selectedColumn} onSelect={onColumnSelect} columnName={columnName} />}
       </div>
       {active && activeRow && place && (
         <DataTooltip
@@ -342,6 +340,29 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
         </div>
       </ViewAsTable>
     </figure>
+  );
+}
+
+const labelsInView = (plot: HTMLElement) =>
+  [...plot.querySelectorAll<HTMLElement>('.heatmap-position-labels > span')].map((label) => (label.offsetLeft >= plot.scrollLeft && label.offsetLeft + label.scrollWidth <= plot.scrollLeft + plot.clientWidth ? '1' : '0')).join('');
+
+interface PositionLabelsProps {
+  plot: RefObject<HTMLDivElement | null>;
+  columns: readonly HeatmapColumn[];
+  labelOf: (column: HeatmapColumn) => string;
+}
+
+// A position every 20th column; one the plot's scroll edge would cut is hidden until it scrolls fully into view.
+function PositionLabels({ plot, columns, labelOf }: PositionLabelsProps) {
+  const inView = useScrollState(plot, labelsInView, '');
+  return (
+    <div className="heatmap-position-labels" aria-hidden="true">
+      {columns.map((column, index) => (
+        <span key={column.label} data-cut={inView[index] === '0' || undefined}>
+          {index % labelEvery === 0 ? labelOf(column) : ''}
+        </span>
+      ))}
+    </div>
   );
 }
 
