@@ -11,12 +11,10 @@ import {
   ResultHeader,
   ResultLayout,
   SearchField,
-  SegmentedControl,
   Select,
   StrongestEffects,
   VariantFocus,
   VariantScorePlot,
-  chromosomeColor,
   VariantsTable,
   variantLabel,
 } from '@humanbase/ui';
@@ -52,9 +50,9 @@ const effectScores = [
   { value: 'diff', label: 'Probability diffs' },
 ];
 const cellTypes = [{ value: 'all', label: 'All cell types' }];
-const plotBy = [
-  { value: 'genome', label: 'Genome position' },
-  { value: 'rank', label: 'Rank' },
+const plotStyles = [
+  { value: 'genome', label: 'Manhattan' },
+  { value: 'rank', label: 'Score Rank' },
 ];
 
 const focus = exampleVariants.find((variant) => variant.id === selectedVariant)!;
@@ -115,6 +113,10 @@ const words = [
 ];
 
 const behavior = [
+  ['Score plot', 'Drawn as humanbase.io draws it, with its numbers: 12px points (r 6) on a 250px plot, each variant at its score between 18 and 232px. Manhattan joins the chromosomes that have variants, each as long as its variants span, with a gap of 18/800 of the total span between them; x is titled Genome and its seven ticks read chromosome:position (chr3:12598855), the last one blank. Score Rank puts the highest score at 1; x is titled Rank. The y axis always includes 0 and is titled with the score.'],
+  ['Overview and brush', 'A 34px strip under the plot shows every variant at r 2, over its chromosome’s band at half strength: the chromosome colors, or dark and light grey in turn while points show sequence classes, or one light grey band for Score Rank. Dragging across it zooms the plot to that window; the window’s edges have 3px ink handles. The mouse wheel over the plot zooms around the pointer and moves the window. Changing the score or the plot style shows everything again.'],
+  ['Hover and keyboard', 'Hovering a point draws a ring and a guide line to the axis and opens the Data tooltip: the variant, its name and class, and the score. The points are one Tab stop: arrow keys move between them in plot order and open the same tooltip, Enter selects, + and - zoom, Escape closes the tooltip. The variants table beside the plot is its text alternative.'],
+  ['Selected variant', 'A 2px ink ring (r 10) in the plot and an ink dot (r 4) in the overview, following the page’s selected variant.'],
   ['Selection drives the page', 'Clicking a variant in the plot or table, or Previous and Next, moves the genome browser and both effect views. On load the first variant by genome position is selected, as today (chr1:109,817,590 in the example).'],
   ['Plot and table', 'Hovering one highlights the other; sorting the table never changes the plot.'],
   ['Score switches', 'Changing the variant score redraws the plot and re-sorts the table; changing the heatmap score keeps the selected rows in view.'],
@@ -127,7 +129,8 @@ const behavior = [
 ];
 
 const specs = [
-  ['score plot', 'Main view, 7 columns; points 12px grey 600 and grey 400 by alternating chromosome; selected: 2px ink ring'],
+  ['score plot', 'Main view, 7 columns; plot 250px with border/subtle gridlines on the score axis only, as Charts asks, no frame; points 12px in viz.chromosome or viz.seqclass with a 1px text/secondary outline; ticks Lato 13 text/secondary; axis titles Lato 14 bold; selected: 2px ink ring'],
+  ['overview', '34px under the axis title; bands at 50% opacity; points 4px; window grey 500 at 30% with a white edge; handles 3px ink; selected point 8px ink'],
   ['variants table', 'Companion, 5 columns; position and change in Atkinson Hyperlegible Mono 13; selected row grey 100, bold'],
   ['focus line', 'Atkinson Hyperlegible Mono 24 for the variant, Lato 15 grey for its name and score'],
   ['heatmap', 'viz.div scale, 34 by 26px cells with 1px gaps; labels Lato 12 right-aligned; Legend / Diverging beside it'],
@@ -144,7 +147,7 @@ const usage = `import { EffectGroups, MolecularEffects, StrongestEffects, Varian
 const effects = new EffectGroups(experiments); // feature, cell, context, label, value
 
 <VariantScorePlot variants={variants} score={{ key: 'impact', label: 'Disease impact score' }}
-  selected={selected} onSelect={setSelected} summary="10 variants." />
+  by="genome" colorBy="chromosome" selected={selected} onSelect={setSelected} summary="10 variants." />
 <VariantsTable variants={variants} scores={scores} sortBy="impact" selected={selected} onSelect={setSelected} />
 
 <MolecularEffects variant="chr1:109,817,590 G>T" view={view} onViewChange={setView}>
@@ -184,10 +187,10 @@ const effects = new EffectGroups(experiments); // feature, cell, context, label,
         <Fragment slot="main">
           <div class="plot-controls">
             <Select label="Score" size="small" options={scoreOptions} value="impact" />
-            <SegmentedControl label="Plot by" size="small" segments={plotBy} value="genome" />
+            <Select label="Plot style" size="small" options={plotStyles} value="genome" />
             <IconButton icon="download" label="Download the plot" />
           </div>
-          <VariantScorePlot variants={exampleVariants} score={{ key: 'impact', label: 'Disease impact score' }} selected={selectedVariant} pointColor={(variant) => chromosomeColor(variant.chromosome)} summary="The 9 of the example’s 10 variants that Figma records, colored by chromosome; position also carries the chromosome." />
+          <VariantScorePlot variants={exampleVariants} score={{ key: 'impact', label: 'Disease impact score' }} selected={selectedVariant} summary="The 9 of the example’s 10 variants that Figma records, colored by chromosome; position also carries the chromosome." />
         </Fragment>
         <Fragment slot="companion">
           <SearchField label="Filter by name or position" placeholder="Filter by name or position" size="medium" />

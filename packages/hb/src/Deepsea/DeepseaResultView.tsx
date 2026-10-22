@@ -3,22 +3,20 @@ import {
   ActionMenu,
   Alert,
   byGenomePosition,
-  chromosomeColor,
   DocsLink,
   expressionEffects,
   KeyLegend,
   ResultHeader,
   ResultLayout,
   SearchField,
-  SegmentedControl,
   Select,
-  sequenceClassColor,
   sequenceClassEffects,
   sequenceClassLegend,
   Skeleton,
   VariantFocus,
   variantLabel,
   variantName,
+  variantScore,
   VariantScorePlot,
   VariantsTable,
   zEffects,
@@ -49,6 +47,11 @@ const shownRows = 9;
 const startWidth = 100_000;
 const scoreDocsLabel = 'Score type documentation';
 type ColorStyle = 'chr' | 'seqclass';
+// humanbase.io's Plot style names, Manhattan first and by default.
+const plotStyles = [
+  { value: 'genome', label: 'Manhattan' },
+  { value: 'rank', label: 'Score Rank' },
+];
 const colorStyles = [
   { value: 'chr', label: 'Chromosome' },
   { value: 'seqclass', label: 'Sequence class' },
@@ -80,9 +83,15 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
   const score = variantTypes.find((type) => type.short_name === scoreKey) ?? variantTypes[0];
   const ordered = useMemo(() => [...(variants ?? [])].sort(byGenomePosition), [variants]);
   const selected = ordered.find((row) => row.id === (picked ?? chosen)) ?? ordered[0];
-  const select = (id: string) => {
+  // A variant picked from the plot, table, heatmap or Previous and Next starts its effects afresh; one reached by moving the browser keeps them, so a drag carries on.
+  const [effectsKey, setEffectsKey] = useState(chosen);
+  const show = (id: string) => {
     setPicked(id);
     onVariantChange?.(id);
+  };
+  const select = (id: string) => {
+    show(id);
+    setEffectsKey(id);
   };
   // Selecting another variant centers the browser on it at the current zoom.
   const [view, setView] = useState<{ variant: string; location: GenomeLocation }>();
@@ -94,7 +103,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
     const nearest = to.nearest(ordered);
     const center = nearest && selected && nearest.chromosome === selected.chromosome && nearest.position === selected.position ? selected : nearest;
     setView({ variant: center?.id ?? selected?.id ?? '', location: to });
-    if (center && center.id !== selected?.id) select(center.id);
+    if (center && center.id !== selected?.id) show(center.id);
   };
   const [featureKey, setFeatureKey] = useState<string>();
   const featureType = featureTypes.find((type) => type.short_name === featureKey) ?? featureTypes[0];
@@ -171,26 +180,17 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
             <div className="deepsea-plot-controls">
               <Select label="Score" size="small" options={scoreOptions(variantTypes)} value={score.short_name} onChange={setScoreKey} />
               <DocsLink href={`${model.docsHref}#output`}>{scoreDocsLabel}</DocsLink>
-              <SegmentedControl
-                label="Plot by"
-                size="small"
-                value={plotBy}
-                onChange={(value) => setPlotBy(value as PlotBy)}
-                segments={[
-                  { value: 'genome', label: 'Genome position' },
-                  { value: 'rank', label: 'Rank' },
-                ]}
-              />
+              <Select label="Plot style" size="small" options={plotStyles} value={plotBy} onChange={(value) => setPlotBy(value as PlotBy)} />
               {hasClasses && <Select label="Color style" size="small" options={colorStyles} value={colorStyle} onChange={(value) => setColorStyle(value as ColorStyle)} />}
             </div>
             {byClass && <KeyLegend title="Sequence class" items={sequenceClassLegend} />}
             <VariantScorePlot
-              variants={ordered}
+              variants={variants}
               score={{ key: score.short_name, label: score.name.replace('-log', '−log') }}
               by={plotBy}
               selected={selected?.id}
               onSelect={select}
-              pointColor={(row) => (byClass ? sequenceClassColor(row.topClass) : chromosomeColor(row.chromosome))}
+              colorBy={byClass ? 'sequence-class' : 'chromosome'}
               summary={
                 byClass
                   ? `${number.format(ordered.length)} variants, colored by the sequence class each changes most; the class is also in the table.`
@@ -218,7 +218,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
         <>
           <VariantFocus
             label={variantLabel(selected)}
-            detail={`${variantName(selected)}, ${score.name.toLowerCase()} ${(selected.scores[score.short_name] ?? 0).toFixed(2)}`}
+            detail={`${variantName(selected)}, ${score.name.toLowerCase()} ${variantScore(selected, score.short_name)}`}
             hasPrevious={index > 0}
             hasNext={index < ordered.length - 1}
             onPrevious={() => step(-1)}
@@ -238,7 +238,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
           )}
           {location && featureType && (
             <VariantEffectsCard
-              key={selected.id}
+              key={effectsKey ?? ''}
               job={job}
               variant={selected}
               variants={ordered}

@@ -1,4 +1,4 @@
-import { readTheDocs } from '@humanbase/data';
+import { docsPage } from '@humanbase/data';
 import { GeneFinder, geneExpressionTools, JobColumns } from '@humanbase/hb';
 import { AboutPanel, Breadcrumbs, DocsLink } from '@humanbase/ui';
 import { useNavigate } from 'react-router';
@@ -7,7 +7,7 @@ import '../ToolPage.css';
 export function ExpectoScPage() {
   const navigate = useNavigate();
   const tool = geneExpressionTools['expecto-sc'];
-  const docsHref = `${readTheDocs}expectosc.html`;
+  const docsHref = docsPage('expectosc');
   return (
     <section className="page-section tool-page">
       <title>ExPecto SC · Humanbase</title>

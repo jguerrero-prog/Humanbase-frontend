@@ -1,3 +1,4 @@
+import { docsPage } from '@humanbase/data';
 import { ValueFormat } from '@humanbase/ui';
 import type { ReactNode } from 'react';
 
@@ -70,7 +71,7 @@ const format = new ValueFormat();
 const compendiumFile = (file: string) => <a href={`https://humanbase.s3.amazonaws.com/compendia/${file}`}>{file}</a>;
 const compendium = (name: string, studies: number, file: string, eras?: readonly DataEra[]): DataRowSource => ({ cells: [name, format.count(studies), compendiumFile(file)], eras });
 
-export const reproducibilityHref = 'https://humanbase.readthedocs.io/en/latest/reproducibility.html';
+export const reproducibilityHref = docsPage('reproducibility');
 
 const sections: readonly DataSectionSource[] = [
   {

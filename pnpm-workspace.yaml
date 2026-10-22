@@ -1,6 +1,7 @@
 packages:
   - apps/*
   - packages/*
+  - scripts/docs-import
 
 allowBuilds:
   esbuild: true

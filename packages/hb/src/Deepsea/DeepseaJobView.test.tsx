@@ -52,7 +52,7 @@ describe('DeepseaJobView', () => {
     renderJob('76aea8fe-8ec7-4698-a193-a186c7665edb');
     await screen.findByText('Molecular effects of chr1:109,817,590 G>T', {}, { timeout: 5000 });
     const links = await screen.findAllByRole('link', { name: /Score type documentation/ }, { timeout: 5000 });
-    expect(links.map((link) => link.getAttribute('href'))).toEqual(['https://humanbase.readthedocs.io/en/latest/seqweaver.html#output', 'https://humanbase.readthedocs.io/en/latest/seqweaver.html#output']);
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/docs/seqweaver/#output', '/docs/seqweaver/#output']);
     expect(screen.queryByRole('combobox', { name: 'Color style' })).not.toBeInTheDocument();
   });
 
@@ -96,7 +96,7 @@ describe('DeepseaJobView', () => {
     expect(detail).toHaveTextContent('chr1:109,817,590 · reference T');
     expect(detail).toHaveTextContent('A−4.63C−4.00G−4.24TReference');
     expect(screen.getByRole('slider', { name: 'Window along the sequence' })).toHaveAttribute('aria-valuenow', '954');
-    expect(screen.getByRole('link', { name: /Log-fold change score documentation/ })).toHaveAttribute('href', 'https://humanbase.readthedocs.io/en/latest/in-silico-mutagenesis.html#output');
+    expect(screen.getByRole('link', { name: /Log-fold change score documentation/ })).toHaveAttribute('href', '/docs/in-silico-mutagenesis/#output');
   });
 
   it('lists the strongest positions under the map and shows one on request', async () => {

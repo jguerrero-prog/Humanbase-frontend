@@ -1,0 +1,194 @@
+---
+import { Code } from 'astro:components';
+import { DocsLayoutExample, DocsNavExample, DocsNavItemState, OnThisPageExample } from '../../components/docs/DocsLayoutExample';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import { withBase } from '../../withBase';
+
+const anatomy = [
+  ['Page', 'Under the top bar: 32px side margins, 40px top and 112px bottom padding. Columns are 272px, 748px and 208px with 64px between them, centered.'],
+  ['Sidebar', 'DocsNav, 272px, sticky 40px below the top bar and scrolling on its own when it is taller than the window.'],
+  ['Search the docs', 'Search field, medium, at the top of the sidebar. Results list under it, one per section, with the page name and a line of text.'],
+  ['Groups', 'Get started, Network analysis and Sequence analysis, as on readthedocs. An h2 in type.eyebrow, uppercase, text.muted.'],
+  ['Sub-navigation', 'As on readthedocs, the open page is expanded and lists its h2 sections, marking the one being read. Any page’s chevron shows its sections in place without leaving the page. Opening another page makes it the expanded one; the rest collapse.'],
+  ['Breadcrumbs', 'Docs, then the page. Use cases add a step: Docs / Use cases / Sei use case.'],
+  ['Title', 'h1 in type.h1, with the live page’s id, such as #sei.'],
+  ['Reading column', 'The article template’s 748px column. Body in type.body-lg with 20px between blocks; h2 in type.h3 and h3 in type.h4, each with the live heading id.'],
+  ['On this page', 'OnThisPage, 208px, sticky like the sidebar. Lists h2 and h3 sections; level 3 is indented 12px.'],
+  ['Content blocks', 'Code block with Copy, labelled with the heading above it. Table in compact density, captioned the same way, numbers end-aligned. Screenshots as figures at the column’s width. Notes and warnings as Alerts.'],
+];
+
+const navStates = [
+  { key: 'Default', state: 'Default', spec: 'Lato Regular 16 (type.body) in text.default, 8px 12px padding, a transparent 3px bar on the start edge.' },
+  { key: 'Hover', state: 'Hover', spec: 'action.ghost-hover background.' },
+  { key: 'Focus', state: 'Focus', spec: 'The focus ring (shadow.focus-ring).' },
+  { key: 'Current', state: 'Current page', spec: 'aria-current="page": surface.subtle background, the 3px bar in action.primary, type.label weight.' },
+  { key: 'Parent', state: 'Parent of the page', spec: 'aria-current="true", for Use cases while a use case is open: type.label weight, no bar. The open use case shows under it as a Current sub item, indented 40px.' },
+  { key: 'Collapsed', state: 'Toggle: Collapsed', spec: 'A page with h2 sections ends in a 32px chevron button, chevron-right 16px in text.secondary. Pages without sections have no toggle (Toggle: None).' },
+  { key: 'Expanded', state: 'Toggle: Expanded', spec: 'chevron-down, with the page’s h2 sections below as sub items: 28px indent, at least 30px tall, type.body-sm in text.secondary. The section being read is Current: type.label-sm in text.default.' },
+] as const;
+
+const tocStates = [
+  ['Default', 'type.body-sm in text.secondary, with a 2px border.subtle line on the start edge.'],
+  ['Hover', 'text.default and underlined.'],
+  ['Current', 'aria-current="location": bold text.default and the line in action.primary. It follows the heading that last passed the reading line, 120px from the top of the window, just under the top bar.'],
+  ['Hidden', 'With fewer than two h2 or h3 sections, the list is left out.'],
+];
+
+const rules = [
+  ['Landmarks', 'The sidebar is <nav aria-label="Docs">, the list is <nav aria-label="On this page">, the page is an <article> named by its title.'],
+  ['Current page', 'aria-current="page" on the open page’s link, aria-current="location" on the section being read, in both the sidebar and On this page. Color is never the only signal: weight and a bar change too.'],
+  ['Anchors', 'Every heading keeps its id from readthedocs, so sei.html#output becomes /docs/sei/#output. Headings leave room for the sticky top bar when scrolled to.'],
+  ['Section toggles', 'Each chevron is its own button, named “Show sections of Sei”, with aria-expanded and aria-controls pointing at the list it shows. The page name stays a plain link. Tab reaches it, Enter or Space toggles it, and it has the focus ring.'],
+  ['Search', 'A combobox with a listbox of results. Arrow keys move, Enter opens the section, Esc closes or clears.'],
+  ['Menu', 'Below 1200px a “Docs menu” button opens the sidebar in a drawer, a bottom sheet on phones, with focus moved into it and back on close.'],
+  ['Formulas', 'Simple ones are text with real sub elements; others are native MathML. Nothing is drawn as an image.'],
+];
+
+const responsive = [
+  ['1440px and wider', 'All three columns at full width.'],
+  ['1200 to 1439px', 'The reading column narrows; sidebar and On this page keep their widths.'],
+  ['Below 1200px', 'One column, at most 748px. The sidebar becomes the Docs menu button above the breadcrumbs, which stays under the top bar while the page scrolls, and On this page moves under the title.'],
+  ['Below 640px', 'Side margins drop to the mobile margin; the menu opens as a bottom sheet.'],
+];
+
+const importSteps = [
+  'pnpm docs:import fetches every page the live sidebar links to, one at a time, then every image, and writes Markdown to packages/hb/src/content/docs/pages and images to apps/web/public/docs/img.',
+  'Front matter holds the title, route, group, live URL, section ids and image sizes. Headings carry their live id as {#id}.',
+  'Links between docs pages become /docs/ routes with their anchors; other links stay. The only text change is HumanBase to Humanbase in prose.',
+  'Each run prints which pages and images were added, removed or changed, so an update is a reviewed diff. scripts/docs-import/README.md has the details.',
+];
+
+const usage = `import { DocsSearch, docsLibrary } from '@humanbase/hb';
+import { Breadcrumbs, DocsLayout, DocsMarkdown, DocsNav } from '@humanbase/ui';
+
+const page = docsLibrary.page('sei');
+
+<DocsLayout
+  nav={<DocsNav groups={docsLibrary.navGroups(page)} search={<DocsSearch onOpen={navigate} />} />}
+  breadcrumbs={<Breadcrumbs items={docsLibrary.breadcrumbs(page)} />}
+  title={page.title}
+  titleId={page.sections[0].id}
+  sections={page.sections}
+>
+  <DocsMarkdown markdown={page.markdown} images={page.images} />
+</DocsLayout>`;
+---
+
+<DocsLayout title="Docs layout" description="The layout for the Humanbase documentation at /docs/: sidebar with search, the article template’s reading column, and On this page.">
+  <Intro lead="The documentation from humanbase.readthedocs.io, inside the website. The text follows the live docs word for word; the layout, type and components are the design system’s." status="Added October 22, 2026 · Components: DocsNav, OnThisPage, DocsLayout, DocsMarkdown">
+    <KeyRules
+      rules={[
+        { title: 'Faithful to the source', text: 'Imported from the live docs, with every heading id and image.' },
+        { title: 'Easy to find your way', text: 'Grouped like the live sidebar, with search and a list of the page’s sections.' },
+        { title: 'Built from the system', text: 'Code blocks, tables, figures and alerts are the same components as everywhere else.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Example" lead="The In silico mutagenesis page in the layout used below 1200px. The app shows every page at /docs/.">
+    <div class="frame">
+      <DocsLayoutExample />
+    </div>
+  </DocSection>
+
+  <DocSection title="Anatomy and specs">
+    <DocTable caption="Parts of the docs layout" columns={['Part', 'Spec']} widths={['184px']}>
+      {anatomy.map(([part, spec]) => <tr><th scope="row">{part}</th><td>{spec}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Docs nav" lead="The sidebar, as it shows on the Sei page.">
+    <div class="specimens">
+      <div class="specimen"><DocsNavExample /></div>
+      <ul class="states">
+        {navStates.map(({ key }) => <li><DocsNavItemState state={key} /></li>)}
+      </ul>
+    </div>
+    <DocTable caption="Docs nav item states" columns={['State', 'Spec']} widths={['184px']}>
+      {navStates.map(({ state, spec }) => <tr><th scope="row">{state}</th><td>{spec}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="On this page list" lead="Sei’s sections, with Output being read.">
+    <div class="specimen narrow"><OnThisPageExample /></div>
+    <DocTable caption="On this page item states" columns={['State', 'Spec']} widths={['184px']}>
+      {tocStates.map(([state, spec]) => <tr><th scope="row">{state}</th><td>{spec}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Accessibility">
+    <DocTable caption="Accessibility rules for docs pages" columns={['Rule', 'How']} widths={['184px']}>
+      {rules.map(([rule, how]) => <tr><th scope="row">{rule}</th><td>{how}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Responsive behavior">
+    <DocTable caption="The docs layout by window width" columns={['Width', 'Layout']} widths={['184px']}>
+      {responsive.map(([width, layout]) => <tr><th scope="row">{width}</th><td>{layout}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="How the import works" lead="Docs content is bundled with the app; nothing is fetched from readthedocs when someone reads it.">
+    <ol class="steps">{importSteps.map((step) => <li>{step}</li>)}</ol>
+  </DocSection>
+
+  <NoteCard title="Using the layout in code">
+    <ul>
+      <li>The reading column is the <a href={withBase('/ui-library/article-template/')}>Article template</a>’s; code blocks are the <a href={withBase('/components/code-block/')}>Code block</a>.</li>
+      <li>DocsMarkdown renders Markdown as React elements with react-markdown; raw HTML in the Markdown is skipped.</li>
+    </ul>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+</DocsLayout>
+
+<style>
+  .frame {
+    overflow: hidden;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .specimens {
+    display: grid;
+    grid-template-columns: 272px minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  .specimen {
+    inline-size: 272px;
+    padding: var(--space-4);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .narrow {
+    inline-size: 240px;
+  }
+
+  .states {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .steps {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding-inline-start: var(--space-6);
+  }
+
+  @media (width < 64rem) {
+    .specimens {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

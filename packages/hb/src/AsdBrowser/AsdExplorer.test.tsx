@@ -35,7 +35,7 @@ describe('AsdExplorer', () => {
   it('links the ASD Browser’s score type documentation and its data file, as humanbase.io does', async () => {
     renderPage();
     await screen.findByRole('heading', { name: 'Molecular effects of chr1:2,337,101 A>C' }, { timeout: 5000 });
-    expect(screen.getByRole('link', { name: /Score type documentation/ })).toHaveAttribute('href', 'https://humanbase.readthedocs.io/en/latest/asdbrowser.html#output');
+    expect(screen.getByRole('link', { name: /Score type documentation/ })).toHaveAttribute('href', '/docs/asdbrowser/#output');
     expect(screen.getByRole('link', { name: /Download data/ })).toHaveAttribute('href', 'https://s3-us-west-2.amazonaws.com/humanbase/variants/dis_asd.tsv');
   });
 
@@ -45,6 +45,15 @@ describe('AsdExplorer', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next variant' }));
     expect(await screen.findByRole('heading', { name: /^Molecular effects of chr1:2,346,/ }, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Heatmap' })).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('starts the effects afresh for a variant picked with Next variant', async () => {
+    renderPage();
+    const search = await screen.findByRole('searchbox', { name: 'Find a DNA feature or cell type' }, { timeout: 5000 });
+    await userEvent.type(search, 'K562');
+    await userEvent.click(screen.getByRole('button', { name: 'Next variant' }));
+    expect(await screen.findByRole('heading', { name: /^Molecular effects of chr1:2,346,/ }, { timeout: 5000 })).toBeInTheDocument();
+    expect(screen.getByRole('searchbox', { name: 'Find a DNA feature or cell type' })).toHaveValue('');
   });
 
   it('lists every variant in pages of 25, and finds a gene’s variants', async () => {

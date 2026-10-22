@@ -58,6 +58,7 @@ export const routes: RouteObject[] = [
           page('data-sources', async () => (await import('./pages/DataSourcesPage')).DataSourcesPage),
           page('about', async () => (await import('./pages/AboutPage')).AboutPage),
           page('cite', async () => (await import('./pages/CitePage')).CitePage),
+          page('docs/*', async () => (await import('./pages/DocsPage')).DocsPage),
           page('jobs',async () => (await import('./pages/JobsPage')).JobsPage),
           { path: '*', element: <NotFoundPage /> },
         ],
