@@ -116,6 +116,9 @@
   --viz-chromosome-22: #788870;
   --viz-chromosome-x: #2F889D;
   --viz-chromosome-y: #92B8B0;
+  --viz-band-dark: #787878;
+  --viz-band-light: #BBBBBB;
+  --viz-band-neutral: #D3D3D3;
   --viz-edge-weak: 1px;
   --viz-edge-medium: 1.75px;
   --viz-edge-strong: 2.5px;
@@ -129,8 +132,10 @@
   --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
+  --space-14: 56px;
   --space-16: 64px;
   --space-24: 96px;
+  --space-28: 112px;
   --space-32: 128px;
   --space-0-5: 2px;
   --layout-margin-mobile: var(--space-4);

@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useId, useRef, type KeyboardEvent } from 'react';
+import { Divider } from '../Divider/Divider';
 import { useControlled } from '../hooks/useControlled';
 import { Icon } from '../Icon/Icon';
 import { ListNavigator } from '../List/ListNavigator';
@@ -106,7 +107,7 @@ export function NavPanelContent({ section, onLinkKeyDown }: NavPanelContentProps
           <div key={index} className="nav-menu-column">
             {column.map((group, groupIndex) => (
               <Fragment key={group.label ?? groupIndex}>
-                {groupIndex > 0 && <hr className="nav-menu-divider" />}
+                {groupIndex > 0 && <Divider className="nav-menu-divider" />}
                 <NavLinkGroup group={group} reserveImage={sectionHasImages(section)} onLinkKeyDown={onLinkKeyDown} />
               </Fragment>
             ))}

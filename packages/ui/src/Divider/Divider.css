@@ -1,0 +1,18 @@
+/* No specificity, so a layout's own margin or size on the divider wins in any stylesheet order. */
+:where(.divider) {
+  flex: none;
+  margin: 0;
+  border: 0;
+}
+
+:where(.divider-horizontal) {
+  inline-size: 100%;
+  border-block-start: var(--border-width-1) solid var(--border-subtle);
+}
+
+:where(.divider-vertical) {
+  display: block;
+  align-self: stretch;
+  inline-size: 0;
+  border-inline-start: var(--border-width-1) solid var(--border-subtle);
+}

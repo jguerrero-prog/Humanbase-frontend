@@ -5,13 +5,31 @@ import layers from '@humanbase/tokens/src/layers.tokens.json';
 import primitives from '@humanbase/tokens/src/primitives.tokens.json';
 import semantic from '@humanbase/tokens/src/semantic.tokens.json';
 import { ColorCatalog } from '@humanbase/tokens/color';
-import { Icon } from '@humanbase/ui';
+import { Divider, Icon, IconButton } from '@humanbase/ui';
+import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import { displayColor, displayValue } from '../../tokenDisplay';
+
+const dividers = [
+  ['Horizontal', 'An <hr>, announced as a separator', 'Between sections of an article, groups in a menu or groups of links. Spans its container.'],
+  ['Vertical', 'A decorative <span>, hidden from screen readers', 'Between groups of controls in a row, such as the graph toolbar. Fills the row’s height unless the layout sets one.'],
+];
+
+const dividerUsage = `import { Divider } from '@humanbase/ui';
+
+<ArticleSection title="Citing Humanbase">…</ArticleSection>
+<Divider />
+<ArticleSection title="Additional references">…</ArticleSection>
+
+<div role="toolbar" aria-label="Graph">
+  <IconButton label="Zoom in" icon="zoom-in" />
+  <Divider orientation="vertical" className="graph-toolbar-divider" />
+  <IconButton label="Download" icon="download" />
+</div>`;
 
 const byName = (entries: TokenEntry[]) => new Map(entries.map((entry) => [entry.path.join('.'), entry]));
 const effectTokens = byName(flattenTokens(effects));
@@ -82,7 +100,7 @@ const sceneSuggestions = ['IL1A interleukin 1 alpha', 'IL1B interleukin 1 beta',
 <DocsLayout title="Elevation and borders" description="Elevation levels, layer order, borders, surfaces and card states.">
   <Intro
     lead="Elevation shows what sits on top of what. Most of Humanbase is flat and separated by thin borders, which keeps dense scientific screens calm. Shadows are kept for things that float above the page, such as menus, the scrolled top bar and dialogs, so a shadow always means “this is on top and can be dismissed”."
-    status="Updated October 16, 2026 · Shadows use ink (#1A1A1A) at low opacity, never color"
+    status="Updated October 22, 2026 · Shadows use ink (#1A1A1A) at low opacity, never color"
   >
     <KeyRules
       rules={[
@@ -183,6 +201,26 @@ const sceneSuggestions = ['IL1A interleukin 1 alpha', 'IL1B interleukin 1 beta',
     </DocTable>
   </DocSection>
 
+  <DocSection title="Dividers" lead="Divider is a 1px border.subtle rule, Horizontal or Vertical as in Figma. It has no margin of its own: the space around it comes from the layout it sits in, such as a 24px gap between article sections." spacing="loose">
+    <div class="card-grid" style="--columns: 2">
+      <div class="divider-sample">
+        <p>Citing Humanbase</p>
+        <Divider />
+        <p>Additional references</p>
+      </div>
+      <div class="divider-sample divider-sample-row">
+        <IconButton label="Zoom in" icon="zoom-in" />
+        <IconButton label="Zoom out" icon="zoom-out" />
+        <Divider orientation="vertical" />
+        <IconButton label="Download" icon="download" />
+      </div>
+    </div>
+    <DocTable caption="Divider orientations" columns={['Orientation', 'Element', 'Use']} widths={['144px', '264px']}>
+      {dividers.map(([orientation, element, use]) => <tr><th scope="row">{orientation}</th><td>{element}</td><td>{use}</td></tr>)}
+    </DocTable>
+    <Code code={dividerUsage} lang="tsx" theme="css-variables" />
+  </DocSection>
+
   <DocSection title="Surfaces" lead="Each surface pairs a fill with its border and elevation, so a layer always looks the same wherever it appears." spacing="loose">
     <ul class="samples">
       {
@@ -271,6 +309,21 @@ const sceneSuggestions = ['IL1A interleukin 1 alpha', 'IL1B interleukin 1 beta',
 
   .levels li,
   .samples li,
+  .divider-sample {
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .divider-sample-row {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    justify-content: start;
+  }
+
   .border-width {
     display: grid;
     align-content: start;

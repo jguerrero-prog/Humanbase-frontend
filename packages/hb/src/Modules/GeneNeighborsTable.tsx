@@ -27,7 +27,7 @@ export function GeneNeighborsTable({ caption, neighbors, onSelectGene, onHoverGe
             <Cell rowHeader>
               <GeneButton gene={gene} onSelectGene={onSelectGene} onHoverGene={onHoverGene} />
             </Cell>
-            <Cell>{gene.name}</Cell>
+            <Cell wrap>{gene.name}</Cell>
             <Cell>{module?.label ?? ''}</Cell>
             <ScoreCell value={weight} />
           </tr>

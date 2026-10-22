@@ -98,6 +98,7 @@ const vizGroups = [
   { title: 'Categorical', group: 'cat' },
   { title: 'Sei sequence classes', group: 'seqclass' },
   { title: 'Chromosomes', group: 'chromosome' },
+  { title: 'Score plot bands', group: 'band' },
 ].map(({ title, group }) => ({ title, steps: flattenTokens(primitives.viz[group as keyof typeof primitives.viz] as never, ['viz', group]).toSorted((a, b) => divergingRank(a) - divergingRank(b)) }));
 
 const swatchLabel = (entry: TokenEntry) => `${slash(entry.path.slice(1))} ${colors.hex(entry.path.join('.'))}`;
@@ -106,7 +107,7 @@ const swatchLabel = (entry: TokenEntry) => `${slash(entry.path.slice(1))} ${colo
 <DocsLayout title="Color tokens" description="Primitive ramps, the semantic tokens components use, and the data visualization scales.">
   <Intro
     lead="Colors live in two Figma variable collections. Primitives hold every value once: four ramps, status colors and the data scales. Semantic tokens point at primitives by role, such as text/default or border/selected. Components use semantic tokens; data views use viz tokens."
-    status="Updated October 16, 2026 · Tokens · Every swatch on this page is bound to its variable"
+    status="Updated October 22, 2026 · Tokens · Every swatch on this page is bound to its variable"
   >
     <KeyRules
       rules={[
@@ -165,7 +166,7 @@ const swatchLabel = (entry: TokenEntry) => `${slash(entry.path.slice(1))} ${colo
     </DocTable>
   </DocSection>
 
-  <DocSection title="Data visualization tokens" lead="Only for data. Sequential for amounts, diverging for direction, categorical for groups (Data visualization, Heatmaps and score legends).">
+  <DocSection title="Data visualization tokens" lead="Only for data. Sequential for amounts, diverging for direction, categorical for groups (Data visualization, Heatmaps and score legends). The score plot bands are humanbase.io’s greys for the variant score plot’s overview: dark and light alternate by chromosome under Sequence class, and neutral is the one Score Rank band.">
     {
       vizGroups.map(({ title, steps }) => (
         <section class="ramp" aria-label={title}>

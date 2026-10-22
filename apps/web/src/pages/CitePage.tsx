@@ -1,5 +1,5 @@
 import { doiLink, humanbaseCitation, humanbaseCitationText, methodCitations } from '@humanbase/hb';
-import { ArticleLayout, ArticleSection, Button, useCopy } from '@humanbase/ui';
+import { ArticleLayout, ArticleSection, Button, Divider, useCopy } from '@humanbase/ui';
 import './CitePage.css';
 
 function CopyCitation() {
@@ -33,7 +33,7 @@ export function CitePage() {
           <HumanbaseCitation />
           <CopyCitation />
         </ArticleSection>
-        <hr />
+        <Divider />
         <ArticleSection title="Additional references">
           <p>If you use specific tools within Humanbase, please also cite the relevant method papers:</p>
           <dl className="cite-methods">

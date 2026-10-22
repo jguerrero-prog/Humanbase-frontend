@@ -133,8 +133,6 @@
 .variants-table-name {
   font: var(--type-caption);
   color: var(--text-secondary);
-  white-space: normal;
-  overflow-wrap: anywhere;
 }
 
 .variant-focus {

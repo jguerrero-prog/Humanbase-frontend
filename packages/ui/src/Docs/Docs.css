@@ -5,7 +5,7 @@
   grid-template-columns: 272px minmax(0, 748px) 208px;
   column-gap: var(--space-16);
   justify-content: center;
-  padding: 40px var(--space-8) 112px;
+  padding: var(--space-10) var(--space-8) var(--space-28);
 }
 
 .docs-layout-sidebar,
@@ -38,7 +38,7 @@
 
 .docs-layout-narrow {
   grid-template-columns: minmax(0, 748px);
-  padding: var(--space-8) var(--layout-margin-tablet) 112px;
+  padding: var(--space-8) var(--layout-margin-tablet) var(--space-28);
 }
 
 /* The menu button stays under the top bar, so the sidebar is one tap away anywhere on the page. */
