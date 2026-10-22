@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { downloadFrom } from '../e2e/downloads';
+import { violationsOf } from '../e2e/violations';
 import { checkScreen, watch, web } from './live';
 
 test('the Modules renal panel result shows real modules, a module drawer and the Genes tab', async ({ page }) => {
@@ -138,6 +139,19 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await expect(table.getByRole('row')).toHaveCount(40);
   await expect(table.getByRole('row').filter({ hasText: '109,816,601' })).toHaveText(/^ReprW\s*109,816,601\s*109,818,400\s*1,800 bp$/);
   await checkScreen(page, problems);
+  // The item details list what humanbase.io lists for each track, read from the real files.
+  await page.locator('.genome-engine').getByText('CELSR2 →').click();
+  const gene = page.getByRole('dialog', { name: 'Genes' });
+  await expect(gene).toHaveText(/^GenesMethodprotein_codingLocationchr1:109,792,641-109,818,372Score1000$/);
+  expect(await violationsOf(page)).toEqual([]);
+  await page.getByRole('button', { name: 'ReprW, 109,816,601 to 109,818,400' }).focus();
+  await page.keyboard.press('Enter');
+  const segment = page.getByRole('dialog', { name: 'GM12878 ChromHMM' });
+  await expect(segment).toHaveText(/^GM12878 ChromHMMLocationchr1:109,816,601-109,818,400Score1000$/);
+  expect(await violationsOf(page)).toEqual([]);
+  await page.keyboard.press('Escape');
+  await expect(segment).toBeHidden();
+  await expect(page.getByRole('button', { name: 'ReprW, 109,816,601 to 109,818,400' })).toBeFocused();
   await page.getByRole('button', { name: 'Export' }).click();
   const dialog = page.getByRole('dialog', { name: 'Export the view' });
   const [download] = await Promise.all([page.waitForEvent('download'), dialog.getByRole('button', { name: 'Export' }).click()]);
@@ -247,6 +261,10 @@ test('the ASD Browser draws the real track files, finds SCN2A and pages the tabl
   await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Genes']);
   await expect(browser.getByText('← PEX10')).toBeVisible();
   await expect(browser.locator('.genome-tracks-bar.is-selected')).toHaveCount(2);
+  await browser.getByText('← MORN1').click();
+  await expect(page.getByRole('dialog', { name: 'Genes' })).toHaveText(/^GenesMethodprotein_codingLocationchr1:2,252,692-2,323,146Score1000$/);
+  expect(await violationsOf(page)).toEqual([]);
+  await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Tracks' }).click();
   const drawer = page.getByRole('dialog', { name: 'Tracks' });
   await drawer.getByRole('checkbox', { name: 'Conservation' }).check();

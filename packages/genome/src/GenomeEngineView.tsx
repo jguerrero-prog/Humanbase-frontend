@@ -142,7 +142,8 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
             tabIndex={0}
             onKeyDown={(event) => {
-              const command = genomeCommand(event);
+              // Keys pressed on a control inside the tracks, such as an item or its details, are that control's.
+              const command = event.target === event.currentTarget ? genomeCommand(event) : undefined;
               if (!command) return;
               event.preventDefault();
               onCommand(command);

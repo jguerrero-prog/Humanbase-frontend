@@ -1,5 +1,5 @@
-import type { GenomeSpan, GenomeTracks } from '@humanbase/data';
-import type { SegmentShape, TrackOf, TrackState } from '@humanbase/ui';
+import type { GenomeSpan, GenomeTracks, Segment } from '@humanbase/data';
+import type { TrackOf, TrackState } from '@humanbase/ui';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { isSegmentTrack, type GenomeDataTrack } from '../GenomeBrowserEngine';
 
@@ -38,11 +38,11 @@ export function useTrackData<T>(read: (() => Promise<T>) | undefined, key: strin
 }
 
 /** The segment tracks among these, with their segments in the span. */
-export function useSegmentTracks(files: GenomeTracks, tracks: readonly GenomeDataTrack[], span: GenomeSpan): TrackOf<readonly SegmentShape[]>[] {
+export function useSegmentTracks(files: GenomeTracks, tracks: readonly GenomeDataTrack[], span: GenomeSpan): TrackOf<readonly Segment[]>[] {
   const shown = tracks.filter(isSegmentTrack);
   const near = shown.length > 0 && span.end - span.start + 1 <= readLimit;
   const urls = shown.map((track) => track.bigBedUrl).join(' ');
-  const loaded = useTrackData<Record<string, SegmentShape[]>>(
+  const loaded = useTrackData<Record<string, Segment[]>>(
     near ? async () => Object.fromEntries(await Promise.all(shown.map(async (track) => [track.bigBedUrl, await files.segments(track.bigBedUrl, span)] as const))) : undefined,
     near ? `${span.chrom}:${span.start}-${span.end} ${urls}` : 'far',
   );

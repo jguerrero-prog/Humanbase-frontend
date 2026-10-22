@@ -155,6 +155,56 @@ test('the ASD Browser stops at the end of a chromosome and says when a typed pos
   expect(apiRequests).toEqual([]);
 });
 
+test('the ASD Browser opens a gene’s and a segment’s details on click and from the keyboard, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/asd/`);
+  const browser = page.getByRole('application', { name: /^Genome browser, chr1:2,230,000-2,440,000/ });
+  await browser.getByText('← MORN1').click();
+  const gene = page.getByRole('dialog', { name: 'Genes' });
+  await expect(gene).toHaveText(/^GenesMethodprotein_codingLocationchr1:2,252,692-2,323,146Score1000$/);
+  await expect(gene.getByRole('button', { name: 'Close' })).toBeFocused();
+  expect(await violationsOf(page)).toEqual([]);
+  await page.keyboard.press('Escape');
+  await expect(gene).toBeHidden();
+  await expect(page.getByRole('button', { name: 'MORN1' })).toBeFocused();
+
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Tracks' });
+  await drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' }).check();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  const pol2 = page.getByRole('button', { name: 'Pol2, 2,303,401 to 2,313,000' });
+  await pol2.focus();
+  await page.keyboard.press('Enter');
+  const segment = page.getByRole('dialog', { name: 'GM12878 ChromHMM' });
+  await expect(segment).toHaveText(/^GM12878 ChromHMMLocationchr1:2,303,401-2,313,000Score1000$/);
+  const [frame, popover] = await Promise.all([page.locator('.genome-tracks').boundingBox(), segment.boundingBox()]);
+  expect(popover && frame && popover.x >= frame.x && popover.x + popover.width <= frame.x + frame.width && popover.y + popover.height <= frame.y + frame.height).toBe(true);
+  expect(await violationsOf(page)).toEqual([]);
+  await segment.getByRole('button', { name: 'Close' }).click();
+  await expect(segment).toBeHidden();
+  await expect(pol2).toBeFocused();
+
+  await page.keyboard.press('Enter');
+  await expect(segment).toBeVisible();
+  await page.getByRole('heading', { name: /^Molecular effects of/ }).click();
+  await expect(segment).toBeHidden();
+  await pol2.focus();
+  await page.keyboard.press('Enter');
+  const area = await page.locator('.genome-tracks-area').boundingBox();
+  if (!area) throw new Error('no tracks');
+  await page.mouse.move(area.x + 600, area.y + 100);
+  await page.mouse.down();
+  await page.mouse.move(area.x + 500, area.y + 100, { steps: 5 });
+  await page.mouse.up();
+  await expect(segment).toBeHidden();
+  await expect(page).toHaveURL(/location=chr1/);
+
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  expect(apiRequests).toEqual([]);
+});
+
 test('the ASD Browser fits a phone without scrolling sideways', async ({ page }) => {
   await apiOff(page);
   await page.setViewportSize({ width: 375, height: 812 });

@@ -25,6 +25,22 @@ export function placeNearPoint(point: { x: number; y: number }, size: Size, boun
   return { x: Math.max(0, x), y: Math.max(0, y) };
 }
 
+interface Box {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
+/** Centered under a box, with where its arrow points; above the box when only that fits, and always inside the bounds. */
+export function placeUnderBox(box: Box, size: Size, bounds: Size, offset = 8) {
+  const under = box.bottom + offset + size.height <= bounds.height || box.top - offset - size.height < 0;
+  const center = (Math.max(0, box.left) + Math.min(bounds.width, box.right)) / 2;
+  const x = Math.max(0, Math.min(bounds.width - size.width, center - size.width / 2));
+  const y = under ? Math.min(box.bottom + offset, Math.max(0, bounds.height - size.height)) : box.top - offset - size.height;
+  return { x, y, side: under ? ('bottom' as const) : ('top' as const), arrow: Math.max(offset + 4, Math.min(size.width - offset - 4, center - x)) };
+}
+
 export const anchorSupported = typeof CSS !== 'undefined' && CSS.supports('anchor-name: --anchor');
 
 // Without CSS anchor positioning, a popover is placed under its button once, when it opens.
