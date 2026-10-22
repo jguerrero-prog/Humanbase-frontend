@@ -1,5 +1,5 @@
 import { SampleClient, SampleGenomeTracks } from '@humanbase/data';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { hiddenByDefault, suggestedTracks } from '../genomeTrackList';
 import { TrackEngine } from './TrackEngine';
 
@@ -74,6 +74,26 @@ describe('TrackEngine', () => {
     const svg = await (await act(() => engine.exportSvg({ width: 600, highlights: true, guideline: true }))).text();
     expect(svg).toContain('GM12878 ChromHMM');
     expect(svg.match(/class="genome-tracks-segment"/g)).toHaveLength(39);
+    engine.destroy();
+    container.remove();
+    vi.restoreAllMocks();
+  });
+
+  it('opens each gene’s and segment’s details with the fields humanbase.io shows, read from the files', async () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains('score-tracks-column') ? 220 : 1220;
+    });
+    const container = document.createElement('div');
+    document.body.append(container);
+    const engine = new TrackEngine(new SampleGenomeTracks(SampleClient.bundled()));
+    const region = { chrom: 'chr1', start: 2_230_000, end: 2_440_000 };
+    await act(() => engine.mount(container, { label: 'Genome browser', assembly: 'hg19', region, tracks: suggestedTracks.hg19, hidden: ['Conservation'] }));
+    fireEvent.click(await screen.findByRole('button', { name: 'MORN1' }));
+    const gene = screen.getByRole('dialog', { name: 'Genes' });
+    expect([...gene.querySelectorAll('dl > div')].map((row) => row.textContent)).toEqual(['Methodprotein_coding', 'Locationchr1:2,252,692-2,323,146', 'Score1000']);
+    fireEvent.click(await screen.findByRole('button', { name: 'Pol2, 2,303,401 to 2,313,000' }));
+    const segment = screen.getByRole('dialog', { name: 'GM12878 ChromHMM' });
+    expect([...within(segment).getAllByRole('definition')].map((value) => value.textContent)).toEqual(['chr1:2,303,401-2,313,000', '1000']);
     engine.destroy();
     container.remove();
     vi.restoreAllMocks();

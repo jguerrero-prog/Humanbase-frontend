@@ -3,6 +3,7 @@ import { GenomeTrackView, type GeneShape, type TrackOf } from '@humanbase/ui';
 import { useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { isSegmentTrack, withChr, type Assembly, type GenomeDataTrack, type GenomeRegion, type GenomeScoreTrack } from '../GenomeBrowserEngine';
 import { builtInTracks, genesTrack, sequenceTrack } from '../genomeTrackList';
+import { geneDetails, segmentDetails } from './itemDetails';
 import type { DrawnTracks, TrackEngine } from './TrackEngine';
 import { readLimit, useSegmentTracks, useTrackData } from './useTrackData';
 
@@ -17,7 +18,7 @@ interface TrackPanelProps {
 const readableBase = 7;
 const count = new Intl.NumberFormat('en-US');
 
-const shapeOf = (gene: GeneModel): GeneShape => ({ ...gene, muted: gene.type.includes('pseudogene') });
+const shapeOf = (chrom: string, gene: GeneModel): GeneShape => ({ ...gene, muted: gene.type.includes('pseudogene'), details: geneDetails(chrom, gene) });
 
 /** Measures the drawing area beside the header column. */
 function useAreaWidth() {
@@ -59,9 +60,9 @@ export function TrackPanel({ engine, files, assembly, tracks: allTracks, onRegio
     `${where} ${bins} ${urls}`,
   );
 
-  const segments = useSegmentTracks(files, shownTracks, span);
+  const segments = useSegmentTracks(files, shownTracks, span).map((track) => ({ ...track, data: track.data?.map((segment) => ({ ...segment, details: segmentDetails(chrom, segment) })) }));
 
-  const geneTrack: TrackOf<readonly GeneShape[]> = { name: named.genes.name, meta: named.genes.meta, ...(bases > readLimit ? { state: 'ready', data: [] } : { state: genes.state, data: genes.data?.map(shapeOf) }) };
+  const geneTrack: TrackOf<readonly GeneShape[]> = { name: named.genes.name, meta: named.genes.meta, ...(bases > readLimit ? { state: 'ready', data: [] } : { state: genes.state, data: genes.data?.map((gene) => shapeOf(chrom, gene)) }) };
 
   const pan = (pixels: number, done: boolean) => {
     if (!done) {

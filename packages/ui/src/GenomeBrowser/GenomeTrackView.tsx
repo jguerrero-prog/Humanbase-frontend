@@ -1,12 +1,16 @@
-import { useRef, useState, type PointerEvent } from 'react';
-import { DataTooltip } from '../Tooltip/DataTooltip';
-import { placeNearPoint } from '../Tooltip/placement';
+import { useCallback, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
+import { usePinned } from '../List/useDismiss';
+import { DataTooltip, type DataTooltipProps } from '../Tooltip/DataTooltip';
+import { placeNearPoint, placeUnderBox } from '../Tooltip/placement';
 import { TrackHeader } from './GenomeBrowserToolbar';
 import { ticksOf } from './ScoreTracks';
 import './GenomeBrowser.css';
 
 /** Whether a track's data is in: loading, ready, or failed to load. */
 export type TrackState = 'loading' | 'ready' | 'failed';
+
+/** The label and value rows an item's details popover lists. */
+export type ItemDetails = DataTooltipProps['rows'];
 
 export interface GeneShape {
   name: string;
@@ -17,6 +21,8 @@ export interface GeneShape {
   muted?: boolean;
   exons: readonly (readonly [number, number])[];
   coding: readonly (readonly [number, number])[];
+  /** What clicking the gene shows; a gene without details doesn't open a popover. */
+  details?: ItemDetails | undefined;
 }
 
 export interface TrackOf<T> {
@@ -41,6 +47,8 @@ export interface SegmentShape {
   end: number;
   name: string;
   color: string;
+  /** What clicking the segment shows; a segment without details doesn't open a popover. */
+  details?: ItemDetails | undefined;
 }
 
 export interface GenomeTrackViewProps {
@@ -68,6 +76,7 @@ const segmentHeight = 60;
 // The live site's ChromHMM boxes are 8px high.
 const segmentBox = 8;
 const tooltipSize = { width: 240, height: 117 };
+const dragStart = 4;
 const geneRowHeight = 36;
 const geneMinHeight = 60;
 const pillHeight = 30;
@@ -138,6 +147,51 @@ function layoutOf({ start, end, width, sequence, scores = [], segments = [], gen
 
 type Layout = ReturnType<typeof layoutOf>;
 
+interface Box {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+/** A gene's bar and its name below it, inside the drawing. */
+function geneBox({ gene, row, labelAt, label }: PlacedGene, geneTop: number, x: (position: number) => number, width: number): Box {
+  const half = (label.length * characterWidth) / 2;
+  const left = Math.max(0, Math.min(x(gene.start), labelAt - half));
+  const right = Math.min(width, Math.max(x(gene.end + 1), labelAt + half));
+  return { left, top: geneTop + 4 + row * geneRowHeight, width: Math.max(1, right - left), height: 32 };
+}
+
+const segmentKey = (track: string, segment: SegmentShape) => `${track} ${segment.start}`;
+const geneKey = (track: string, gene: GeneShape) => `${track} ${gene.name}`;
+
+/** One gene or segment that opens its details on click or Enter. */
+interface TrackItem {
+  key: string;
+  label: string;
+  details: ItemDetails;
+  box: Box;
+}
+
+/** The items with details, by track, in the order the tracks are drawn. */
+function itemGroupsOf({ width, segments = [], genes }: GenomeTrackViewProps, { x, placed, topOf }: Layout): { track: string; items: TrackItem[] }[] {
+  const segmentGroups = segments.map((track) => {
+    const top = topOf(`segments-${track.name}`) + (segmentHeight - segmentBox) / 2;
+    const items = (track.state === 'ready' && track.data) || [];
+    return {
+      track: track.name,
+      items: items.flatMap((segment) => {
+        if (!segment.details) return [];
+        const [left, right] = [Math.max(0, x(segment.start)), Math.min(width, x(segment.end + 1))];
+        return [{ key: segmentKey(track.name, segment), label: `${segment.name}, ${count.format(segment.start)} to ${count.format(segment.end)}`, details: segment.details, box: { left, top, width: Math.max(1, right - left), height: segmentBox } }];
+      }),
+    };
+  });
+  const geneTop = topOf('genes');
+  const geneItems = genes?.state === 'ready' ? placed.flatMap((item) => (item.gene.details ? [{ key: geneKey(genes.name, item.gene), label: item.gene.name, details: item.gene.details, box: geneBox(item, geneTop, x, width) }] : [])) : [];
+  return [...segmentGroups, ...(genes ? [{ track: genes.name, items: geneItems }] : [])].filter((group) => group.items.length > 0);
+}
+
 /** The tracks inside an svg, shared by the browser on the page and its exported figure. */
 interface SegmentHover {
   segment: SegmentShape;
@@ -147,7 +201,15 @@ interface SegmentHover {
   pointer: number;
 }
 
-function TrackDrawing({ props, layout, marks = true, guide = true, onSegment }: { props: GenomeTrackViewProps; layout: Layout; onSegment?: (hover: SegmentHover | undefined) => void } & DrawingOptions) {
+interface TrackDrawingProps extends DrawingOptions {
+  props: GenomeTrackViewProps;
+  layout: Layout;
+  onSegment?: ((hover: SegmentHover | undefined) => void) | undefined;
+  /** Marks each item with details so a click can find it, and gives genes a target as big as their name. */
+  interactive?: boolean | undefined;
+}
+
+function TrackDrawing({ props, layout, marks = true, guide = true, onSegment, interactive = false }: TrackDrawingProps) {
   const { start, end, width, sequence, scores = [], segments = [], genes, shift = 0 } = props;
   const { selected, span, x, placed, geneHeight, topOf, guideEnd } = layout;
   const perBase = width / span;
@@ -234,6 +296,7 @@ function TrackDrawing({ props, layout, marks = true, guide = true, onSegment }: 
                   width={Math.max(1, x(segment.end + 1) - x(segment.start))}
                   height={segmentBox}
                   fill={segment.color}
+                  data-item={interactive && segment.details ? segmentKey(track.name, segment) : undefined}
                   onPointerEnter={onSegment && ((event) => onSegment({ segment, track: track.name, box: event.currentTarget, pointer: event.clientX }))}
                   onPointerLeave={onSegment && (() => onSegment(undefined))}
                 />
@@ -247,11 +310,14 @@ function TrackDrawing({ props, layout, marks = true, guide = true, onSegment }: 
             ? stateNote(genes, geneTop, geneHeight)
             : placed.length === 0
               ? note(geneTop, geneHeight, 'No genes in view.')
-              : placed.map(({ gene, row, labelAt, label }) => {
+              : placed.map((item) => {
+                  const { gene, row, labelAt, label } = item;
                   const top = geneTop + 8 + row * geneRowHeight;
                   const middle = top + 5;
+                  const target = interactive && gene.details ? geneBox(item, geneTop, x, width) : undefined;
                   return (
-                    <g key={gene.name} className={gene.muted ? 'genome-tracks-gene is-muted' : 'genome-tracks-gene'}>
+                    <g key={gene.name} className={gene.muted ? 'genome-tracks-gene is-muted' : 'genome-tracks-gene'} data-item={target && geneKey(genes.name, gene)}>
+                      {target && <rect className="genome-tracks-hit" x={target.left} y={target.top} width={target.width} height={target.height} />}
                       <line className="genome-tracks-intron" x1={x(gene.start)} y1={middle} x2={x(gene.end + 1)} y2={middle} />
                       {gene.exons.map(([from, to]) => (
                         <rect key={`e${from}`} x={x(from)} y={middle - 3} width={Math.max(1, x(to + 1) - x(from))} height={6} />
@@ -276,37 +342,53 @@ function TrackDrawing({ props, layout, marks = true, guide = true, onSegment }: 
 /** The genome browser's tracks, drawn by the design system: ruler, sequence, score tracks and genes, with headers beside them. */
 export function GenomeTrackView(props: GenomeTrackViewProps) {
   const { width, onPan } = props;
-  const drag = useRef<{ from: number; pointer: number } | undefined>(undefined);
-  const frame = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ from: number; pointer: number; moved: boolean } | undefined>(undefined);
   const [hover, setHover] = useState<{ segment: SegmentShape; track: string; at: { x: number; y: number } }>();
   const layout = layoutOf(props, true);
+  const groups = itemGroupsOf(props, layout);
+  const { frame, tip, ...details } = useItemDetails(groups, `${props.start}-${props.end} ${width}`);
   const onSegment = (hovered: SegmentHover | undefined) => {
     const box = frame.current;
-    if (!hovered || !box || drag.current) return setHover(undefined);
+    if (!hovered || !box || drag.current?.moved || details.open) return setHover(undefined);
     const outer = box.getBoundingClientRect();
     const point = { x: hovered.pointer - outer.left, y: hovered.box.getBoundingClientRect().bottom - outer.top };
     setHover({ segment: hovered.segment, track: hovered.track, at: placeNearPoint(point, tooltipSize, { width: box.clientWidth, height: box.clientHeight }, 4) });
   };
 
+  // A press only becomes a drag once it moves a few pixels, so a click still opens the item under it.
   const pointer = onPan && {
     onPointerDown: (event: PointerEvent<SVGSVGElement>) => {
-      if (event.button !== 0) return;
-      setHover(undefined);
-      event.currentTarget.setPointerCapture(event.pointerId);
-      drag.current = { from: event.clientX, pointer: event.pointerId };
+      if (event.button === 0) drag.current = { from: event.clientX, pointer: event.pointerId, moved: false };
     },
     onPointerMove: (event: PointerEvent<SVGSVGElement>) => {
-      if (drag.current?.pointer === event.pointerId) onPan(event.clientX - drag.current.from, false);
+      const current = drag.current;
+      if (current?.pointer !== event.pointerId) return;
+      const moved = event.clientX - current.from;
+      if (!current.moved && Math.abs(moved) < dragStart) return;
+      if (!current.moved) {
+        current.moved = true;
+        setHover(undefined);
+        event.currentTarget.setPointerCapture(event.pointerId);
+      }
+      onPan(moved, false);
     },
     onPointerUp: (event: PointerEvent<SVGSVGElement>) => {
-      if (drag.current?.pointer !== event.pointerId) return;
-      onPan(event.clientX - drag.current.from, true);
-      drag.current = undefined;
+      const current = drag.current;
+      if (current?.pointer !== event.pointerId) return;
+      if (current.moved) onPan(event.clientX - current.from, true);
+      else drag.current = undefined;
     },
     onPointerCancel: () => {
+      if (drag.current?.moved) onPan(0, true);
       drag.current = undefined;
-      onPan(0, true);
     },
+  };
+  // A drag ends in a click; only a press that didn't move opens an item.
+  const onClick = (event: MouseEvent<SVGSVGElement>) => {
+    const dragged = drag.current?.moved;
+    drag.current = undefined;
+    const key = !dragged && (event.target as Element).closest('[data-item]')?.getAttribute('data-item');
+    if (key) details.show(key);
   };
 
   return (
@@ -315,9 +397,12 @@ export function GenomeTrackView(props: GenomeTrackViewProps) {
         <div className="score-tracks-ruler-label">Position</div>
         {layout.rows.flatMap((row) => ('track' in row && row.track ? [<TrackHeader key={row.key} name={row.track.name} source={row.track.meta} />] : []))}
       </div>
-      <svg className={onPan ? 'genome-tracks-area is-draggable' : 'genome-tracks-area'} width={width} height={layout.height} aria-hidden="true" focusable="false" {...pointer}>
-        <TrackDrawing props={props} layout={layout} onSegment={onSegment} />
-      </svg>
+      <div className="genome-tracks-plot">
+        <svg className={onPan ? 'genome-tracks-area is-draggable' : 'genome-tracks-area'} width={width} height={layout.height} aria-hidden="true" focusable="false" onClick={onClick} {...pointer}>
+          <TrackDrawing props={props} layout={layout} onSegment={onSegment} interactive />
+        </svg>
+        <ItemButtons groups={groups} details={details} />
+      </div>
       {hover && (
         <DataTooltip
           title={hover.segment.name}
@@ -329,6 +414,93 @@ export function GenomeTrackView(props: GenomeTrackViewProps) {
           position={hover.at}
         />
       )}
+      {details.open && (
+        <DataTooltip
+          key={details.open.item.key}
+          ref={tip}
+          id={details.id}
+          className="data-tooltip-details"
+          pinned
+          title={details.open.track}
+          rows={details.open.item.details}
+          onClose={details.closeToItem}
+          position={details.place ?? { x: 0, y: 0 }}
+          arrow={details.place && { side: details.place.side, at: details.place.arrow }}
+        />
+      )}
+    </div>
+  );
+}
+
+type ItemDetailsState = Omit<ReturnType<typeof useItemDetails>, 'frame' | 'tip'>;
+
+const itemButton = (frame: HTMLElement | null, key: string | undefined) => (key ? frame?.querySelector<HTMLElement>(`[data-item-button="${CSS.escape(key)}"]`) : undefined);
+
+/** The one open item details popover: pinned under its item until Close, Escape, a click outside or a move of the view. */
+function useItemDetails(groups: ReturnType<typeof itemGroupsOf>, view: string) {
+  const id = useId();
+  const frame = useRef<HTMLDivElement>(null);
+  const tip = useRef<HTMLDivElement>(null);
+  const [opened, setOpened] = useState<{ key: string; view: string }>();
+  const [place, setPlace] = useState<ReturnType<typeof placeUnderBox>>();
+  const openKey = opened?.view === view ? opened.key : undefined;
+  const open = groups.flatMap((group) => group.items.map((item) => ({ track: group.track, item }))).find(({ item }) => item.key === openKey);
+  const close = useCallback(() => setOpened(undefined), []);
+  const closeToItem = () => {
+    itemButton(frame.current, openKey)?.focus();
+    close();
+  };
+  usePinned(tip, Boolean(open), close, () => itemButton(frame.current, openKey));
+  useLayoutEffect(() => {
+    const [outer, panel] = [frame.current, tip.current];
+    const button = itemButton(outer, openKey);
+    if (!outer || !button || !panel) return;
+    const [bounds, item] = [outer.getBoundingClientRect(), button.getBoundingClientRect()];
+    const box = { left: item.left - bounds.left, right: item.right - bounds.left, top: item.top - bounds.top, bottom: item.bottom - bounds.top };
+    setPlace(placeUnderBox(box, { width: panel.offsetWidth, height: panel.offsetHeight }, { width: outer.clientWidth, height: outer.clientHeight }));
+  }, [openKey]);
+  return { frame, tip, id, open, place, show: (key: string) => setOpened({ key, view }), closeToItem };
+}
+
+/** The items as buttons over the drawing, one tab stop per track; arrow keys move between a track's items. */
+function ItemButtons({ groups, details }: { groups: ReturnType<typeof itemGroupsOf>; details: ItemDetailsState }) {
+  const [current, setCurrent] = useState<Record<string, string>>({});
+  const move = (event: KeyboardEvent<HTMLButtonElement>, items: readonly TrackItem[], index: number) => {
+    const next = { ArrowLeft: index - 1, ArrowUp: index - 1, ArrowRight: index + 1, ArrowDown: index + 1, Home: 0, End: items.length - 1 }[event.key];
+    const target = next === undefined ? undefined : items[Math.max(0, Math.min(items.length - 1, next))];
+    if (!target) return;
+    event.preventDefault();
+    event.currentTarget.parentElement?.querySelector<HTMLElement>(`[data-item-button="${CSS.escape(target.key)}"]`)?.focus();
+  };
+  return (
+    <div className="genome-tracks-items">
+      {groups.map(({ track, items }) => {
+        const stop = items.some((item) => item.key === current[track]) ? current[track] : items[0]?.key;
+        return (
+          <div key={track} role="group" aria-label={`${track}, items`}>
+            {items.map((item, index) => {
+              const isOpen = details.open?.item.key === item.key;
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  className="genome-tracks-item"
+                  style={{ insetInlineStart: item.box.left, insetBlockStart: item.box.top, inlineSize: item.box.width, blockSize: item.box.height }}
+                  data-item-button={item.key}
+                  tabIndex={item.key === stop ? 0 : -1}
+                  aria-label={item.label}
+                  aria-haspopup="dialog"
+                  aria-expanded={isOpen}
+                  aria-controls={isOpen ? details.id : undefined}
+                  onFocus={() => setCurrent((was) => ({ ...was, [track]: item.key }))}
+                  onClick={() => details.show(item.key)}
+                  onKeyDown={(event) => move(event, items, index)}
+                />
+              );
+            })}
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useId, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { Icon } from '../Icon/Icon';
-import { useDismiss } from '../List/useDismiss';
+import { usePinned } from '../List/useDismiss';
 import { anchorSupported, placeUnder } from './placement';
 import './Toggletip.css';
 import { useLinkHref } from '../hooks/useLinkHref';
@@ -25,18 +25,7 @@ export function Toggletip({ term, title = term, body, link, size = 'default', op
   const [ownOpen, setOwnOpen] = useState(false);
   const open = openProp ?? ownOpen;
   const close = useCallback(() => setOwnOpen(false), []);
-  useDismiss(wrapper, ownOpen, close);
-
-  useEffect(() => {
-    if (!ownOpen) return;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      close();
-      button.current?.focus();
-    };
-    document.addEventListener('keydown', closeOnEscape);
-    return () => document.removeEventListener('keydown', closeOnEscape);
-  }, [ownOpen, close]);
+  usePinned(wrapper, ownOpen, close, () => button.current);
 
   useLayoutEffect(() => {
     const node = panel.current;

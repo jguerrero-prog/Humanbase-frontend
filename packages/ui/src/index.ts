@@ -9,7 +9,7 @@ export { IconButton, type IconButtonProps } from './IconButton/IconButton';
 export { StarToggle, type StarToggleProps } from './StarToggle/StarToggle';
 export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
 export { ScoreTracks, type ScoreTrack, type ScoreTracksProps } from './GenomeBrowser/ScoreTracks';
-export { GenomeTrackFigure, GenomeTrackView, type GeneShape, type GenomeTrackFigureProps, type GenomeTrackViewProps, type ScoreTrackData, type SegmentShape, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
+export { GenomeTrackFigure, GenomeTrackView, type GeneShape, type GenomeTrackFigureProps, type GenomeTrackViewProps, type ItemDetails, type ScoreTrackData, type SegmentShape, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
 export { SegmentTable, type SegmentTableProps } from './GenomeBrowser/SegmentTable';
 export {
   BrowserSettingsDialog,
@@ -96,7 +96,7 @@ export { NavMenu, NavPanelContent, type NavMenuProps } from './Navigation/NavMen
 export { TopBar, type TopBarProps } from './Navigation/TopBar';
 export type { NavGroup, NavItemState, NavLink, NavSection } from './Navigation/types';
 export { DataTooltip, type DataTooltipProps } from './Tooltip/DataTooltip';
-export { anchorSupported, placeNearPoint, placeUnder, type Placement } from './Tooltip/placement';
+export { anchorSupported, placeNearPoint, placeUnder, placeUnderBox, type Placement } from './Tooltip/placement';
 export { saveFile } from './utils/saveFile';
 export { bytesOf, cssColor, svgToPng, useExportMenu, useImageFormats, zipFormat, type ExportFormat, type SvgSource } from './utils/exportFiles';
 export { standaloneSvg } from './utils/standaloneSvg';

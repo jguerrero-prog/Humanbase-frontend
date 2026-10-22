@@ -228,6 +228,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
       <li>The hovered item gets a 2px ink outline, so it’s clear which point the values belong to.</li>
       <li>Clicking opens the drawer with the full details. The tooltip is a preview, never the only place a value appears.</li>
       <li>Pinned: where a cell has no drawer but has a genome position, such as ExPecto, Sei and ASD Browser heatmaps, clicking (or Enter) pins the tooltip in place, borrowing the toggletip's behavior. The hint line becomes the link “Open in Genome Browser” with the external link icon, opening the UCSC Genome Browser at that position on the result's assembly, in a new tab. The tooltip is hoverable (WCAG 1.4.13): the pointer can move onto it, and its link works from hover too. Moving across other cells on the way waits 150ms before switching, and leaving waits 300ms before closing. While pinned, hovering other cells shows nothing; Escape, a click outside, or an arrow key unpins it. Tab reaches the link once pinned. View as table links each position the same way.</li>
+      <li>Pinned with a close button: the genome browser’s item details are a Data tooltip pinned under the clicked item, 280px wide, with a 28px round close button and an arrow pointing at the item. It is a non-modal dialog named by its title; focus moves to the close button and returns to the item on Close or Escape. See Genome browser, Item details.</li>
     </ul>
   </DocSection>
 

@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { GenomeTrackView } from './GenomeTrackView';
 
 const gene = { name: 'PEX10', strand: '-' as const, start: 2_336_000, end: 2_345_000, exons: [[2_336_000, 2_336_500]] as const, coding: [[2_336_100, 2_336_400]] as const };
@@ -68,5 +69,92 @@ describe('GenomeTrackView', () => {
     fireEvent.pointerUp(area, { clientX: 200, pointerId: 1 });
     expect(onPan).toHaveBeenNthCalledWith(1, -50, false);
     expect(onPan).toHaveBeenLastCalledWith(-100, true);
+  });
+
+  describe('item details', () => {
+    const details = [['Method', 'protein_coding'], ['Location', 'chr1:2,336,000-2,345,000'], ['Score', '1000']] as const;
+    const segments = [
+      { start: 101, end: 300, name: 'ReprW', color: '#7F7F7F', details: [['Location', 'chr1:101-300'], ['Score', '1000']] as const },
+      { start: 301, end: 400, name: 'Tss', color: '#FF0000', details: [['Location', 'chr1:301-400'], ['Score', '900']] as const },
+    ];
+    const view = (start = 1, onPan?: (pixels: number, done: boolean) => void) => (
+      <GenomeTrackView
+        start={start}
+        end={1000}
+        width={1000}
+        onPan={onPan}
+        segments={[{ name: 'GM12878 ChromHMM', meta: 'Genome segmentation', state: 'ready', data: segments }]}
+        genes={{ name: 'Genes', meta: 'GENCODE 19', state: 'ready', data: [{ ...gene, start: 500, end: 900, details }] }}
+      />
+    );
+
+    it('opens on click with the track name and only the item’s fields, and moves focus into it', async () => {
+      const { container } = render(view());
+      await userEvent.click(container.querySelector('.genome-tracks-gene-name') as Element);
+      const popover = screen.getByRole('dialog', { name: 'Genes' });
+      expect([...popover.querySelectorAll('dt')].map((term) => term.textContent)).toEqual(['Method', 'Location', 'Score']);
+      expect(popover).toHaveTextContent('protein_coding');
+      expect(popover).toHaveTextContent('chr1:2,336,000-2,345,000');
+      expect(popover.querySelector('.data-tooltip-hint')).toBeNull();
+      expect(within(popover).getByRole('button', { name: 'Close' })).toHaveFocus();
+      expect(screen.getByRole('button', { name: 'PEX10' })).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    it('opens on Enter from the keyboard, moves between a track’s items with arrow keys, and returns focus on Escape', async () => {
+      render(view());
+      const reprW = screen.getByRole('button', { name: 'ReprW, 101 to 300' });
+      const tss = screen.getByRole('button', { name: 'Tss, 301 to 400' });
+      expect(reprW).toHaveAttribute('tabindex', '0');
+      expect(tss).toHaveAttribute('tabindex', '-1');
+      reprW.focus();
+      await userEvent.keyboard('{ArrowRight}');
+      expect(tss).toHaveFocus();
+      expect(tss).toHaveAttribute('tabindex', '0');
+      await userEvent.keyboard('{Enter}');
+      const popover = screen.getByRole('dialog', { name: 'GM12878 ChromHMM' });
+      expect(popover).toHaveTextContent('chr1:301-400');
+      expect(popover).toHaveTextContent('900');
+      await userEvent.keyboard('{Escape}');
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(tss).toHaveFocus();
+    });
+
+    it('shows one at a time, and closes on the close button, a click outside, a drag or a move of the view', async () => {
+      const onPan = vi.fn();
+      const { container, rerender } = render(view(1, onPan));
+      const area = container.querySelector('.genome-tracks-area') as SVGSVGElement;
+      area.setPointerCapture = vi.fn();
+      const [first, second] = [...container.querySelectorAll('.genome-tracks-segment')] as Element[];
+      await userEvent.click(first as Element);
+      await userEvent.click(second as Element);
+      expect(screen.getAllByRole('dialog')).toHaveLength(1);
+      expect(screen.getByRole('dialog')).toHaveTextContent('chr1:301-400');
+      await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(screen.getByRole('button', { name: 'Tss, 301 to 400' })).toHaveFocus();
+
+      await userEvent.click(first as Element);
+      await userEvent.click(document.body);
+      expect(screen.queryByRole('dialog')).toBeNull();
+
+      await userEvent.click(first as Element);
+      fireEvent.pointerDown(area, { button: 0, clientX: 300, pointerId: 1 });
+      fireEvent.pointerMove(area, { clientX: 250, pointerId: 1 });
+      fireEvent.pointerUp(area, { clientX: 250, pointerId: 1 });
+      fireEvent.click(first as Element);
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(onPan).toHaveBeenLastCalledWith(-50, true);
+
+      await userEvent.click(first as Element);
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      rerender(view(11, onPan));
+      expect(screen.queryByRole('dialog')).toBeNull();
+    });
+
+    it('leaves items without details out of the keyboard and the popover', async () => {
+      const { container } = render(<GenomeTrackView start={1} end={1000} width={1000} genes={{ name: 'Genes', meta: 'GENCODE 19', state: 'ready', data: [gene] }} />);
+      expect(screen.queryByRole('button')).toBeNull();
+      expect(container.querySelector('[data-item]')).toBeNull();
+    });
   });
 });

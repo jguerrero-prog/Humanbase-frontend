@@ -1,6 +1,6 @@
 ---
 import { GenomeLocation, SampleClient, SampleGenomeTracks } from '@humanbase/data';
-import { isSegmentTrack, suggestedTracks } from '@humanbase/genome';
+import { geneDetails, isSegmentTrack, segmentDetails, suggestedTracks } from '@humanbase/genome';
 import { ActionMenu, BrowserSettingsDialog, DataTooltip, ExportDialog, GenomeBrowserToolbar, GenomeTrackFigure, Heatmap, SegmentTable, TrackHeader, TrackSettingsDialog, TracksDrawer, genomeBrowserKeyHelp, type ActionMenuItem } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
@@ -81,7 +81,8 @@ const heatmapRows = Array.from({ length: 12 }, (_, row) => ({
 const keyboard = [
   ...genomeBrowserKeyHelp,
   ['Screen readers', `The browser region is labeled with its location, such as “${view.regionLabel(trackCount)}”; View as table lists the variants and genes in view with positions and scores.`],
-  ['Focus', 'Tab reaches the toolbar, each track header’s menu, then the tracks; the 2px focus ring from Tokens shows on all of them.'],
+  ['Focus', 'Tab reaches the toolbar, each track header’s menu, the tracks, then the items of each track with details; the 2px focus ring from Tokens shows on all of them.'],
+  ['On an item', 'Arrow keys, Home and End move between the items of that track; Enter or Space opens its details; Tab moves on to the next track.'],
 ];
 
 const integration = [
@@ -118,6 +119,7 @@ const specs = [
   ['ruler and positions', 'Atkinson Hyperlegible Mono 11 grey 600 with commas; ticks every tenth of the view'],
   ['score tracks', 'viz.seq step 6 bars; selected variant ink with its value in Lato Bold 11'],
   ['selected variant', '1px ink line at 50% through all tracks; mono label on an ink pill'],
+  ['item details', 'Data tooltip, 280px, elevation 2; title Lato Bold 14 and a 28px round close button with a 16px x; 6px arrow; 8px from the item'],
   ['linked heatmap', '16px columns in genomic order; 0.75px grey connectors to the ruler; center column 2px ink outline'],
 ];
 
@@ -134,9 +136,36 @@ const chromRules = [
   ['Same as humanbase.io', 'Each segment is an 8px box filled with the file’s color for that segment and a 1px black outline, with no labels and no stacking, as humanbase.io’s browser config draws it.'],
   ['State names', 'Shown as the file’s state codes, such as Tss, EnhW, Ctcf, ReprW and Quies, as on humanbase.io. Plain-language names, a legend or any regrouping would change how the output reads, so they need a research ticket for subject-matter experts first.'],
   ['Hover', 'The Data tooltip gives the state code, the source, the start and the length of the segment.'],
+  ['Click', 'Opens the item details popover with Location and Score, the fields humanbase.io lists (see Item details).'],
   ['Never color alone', 'The state code is in the tooltip and in View as table, which lists each segment’s code, start, end and length.'],
   ['Where it appears', 'Suggested tracks on hg19 results and the ASD Browser, off until turned on, as on humanbase.io. Not listed on hg38. Source: humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb.'],
   ['Export', 'Included in the SVG export at the export width.'],
+];
+
+// The item details popover lists what humanbase.io's genome browser lists for each track, checked in Playwright on October 22, 2026.
+const detailGene = chromGenes.find((gene) => gene.name === 'CELSR2')!;
+const itemDetailRules = [
+  ['Opens', 'Clicking a gene or a segment, or Enter or Space on a focused one. A drag never opens it: a press becomes a drag after 4px.'],
+  ['Fields', 'Exactly what humanbase.io lists for that track. Genes (GENCODE): Method, the transcript type; Location; Score, from the file. GM12878 ChromHMM: Location and Score. Anything more, such as links or exon counts, needs a research ticket for subject-matter experts first.'],
+  ['Title', 'The track’s name, as in its header. No hint line.'],
+  ['Stays until', 'Close, Escape, a click outside, or moving the view by dragging, keys or the toolbar. Only one is open at a time: opening another item closes the first.'],
+  ['Placement', 'Centered under the item with the 6px arrow pointing at it; above it when there isn’t room below. Always inside the browser area.'],
+  ['The open item', 'Outlined 2px ink, as a hovered heatmap cell is.'],
+  ['Hover', 'Segment tracks keep their hover Data tooltip; it doesn’t show while a popover is open.'],
+  ['Where', 'The ASD Browser and every variant result’s browser, on genes and GM12878 ChromHMM. The DNA and RNA disease impact scores and Conservation don’t open one yet.'],
+  ['Biodalliance', 'The alternative engine keeps its own click behavior.'],
+];
+const itemDetailStates = [
+  ['Closed', 'The item as drawn; the pointer becomes a hand over it.'],
+  ['Focused', 'The 2px focus ring around the item’s area: a gene’s bar and name, or a segment’s box.'],
+  ['Open', 'The item is outlined 2px ink and the popover is pinned under it, focus on its close button.'],
+  ['Open, no room below', 'The popover sits above the item and the arrow points down.'],
+];
+const itemDetailAccess = [
+  ['Role', 'A non-modal dialog named by the track, such as “Genes”. Each item is a button named by its gene, or its state code and position, such as “ReprW, 109,816,601 to 109,818,400”, that says it opens a dialog and whether it’s open.'],
+  ['Focus', 'Moves to the close button when it opens and returns to the item on Close or Escape. Each track’s items are one tab stop.'],
+  ['Close button', '28px, round, with the 16px x icon, named “Close”.'],
+  ['Contrast', 'The Data tooltip’s: white on ink 17.4:1, labels in grey 300 11.4:1.'],
 ];
 
 const usage = `import { GenomeLocation } from '@humanbase/data';
@@ -153,7 +182,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
 <DocsLayout title="Genome browser" description="The genome browser: the design system draws its tracks, toolbar, track headers, panels and words; Biodalliance stays available as an alternative engine.">
   <Intro
     lead="Variant results and the ASD Browser show variants in their genomic context. The design system draws the tracks itself from the same Humanbase track files the live site reads, and replaces what people see and touch around them: the toolbar, track headers, panels and words. Biodalliance, the open-source browser the live site uses, stays available as an alternative engine."
-    status="Updated October 20, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+    status="Updated October 22, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
       rules={[
@@ -250,6 +279,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
       <ul>
         <li>Pages talk to one interface, <code>GenomeBrowserEngine</code> in <code>@humanbase/genome</code>: mount, show a region, mark the selected variant, and report when a drag or zoom settles.</li>
         <li>The default engine, <code>TrackEngine</code>, draws <code>GenomeTrackView</code> from <code>@humanbase/ui</code>: the ruler, the sequence (letters once a base is 7px wide), the score tracks as <code>viz-seq-6</code> bars, GENCODE genes with names and strand arrows, and the selected variant as a 50% ink line with its value and a mono pill. Drag the tracks to move along the genome.</li>
+        <li>Items open their details when the page gives them <code>details</code>: <code>geneDetails</code> and <code>segmentDetails</code> in <code>@humanbase/genome</code> list humanbase.io’s fields, and <code>GenomeTrackView</code> draws the popover with <code>DataTooltip</code> and <code>placeUnderBox</code>. An item without details doesn’t open one.</li>
         <li>Segment tracks, such as GM12878 ChromHMM, read a bigBed file through <code>GenomeTracks.segments</code> and draw each segment as an 8px box in the file’s own color; <code>SegmentTable</code> lists them under View as table, under either engine.</li>
         <li>It reads the same files as the live site through <code>GenomeTracks</code> in <code>@humanbase/data</code>: the hg19 genome, GENCODE 19 genes and the DNA and RNA impact tracks from Humanbase's files on S3, in byte ranges. With the API off it reads recorded windows of those files from the sample data and makes no request.</li>
         <li>Biodalliance is vendored in the repository with its licenses and takes this page's look when chosen: its own toolbar, labels, Bootstrap and Font Awesome are off and its options take tokens. Its ruler, gene labels and grid are drawn on its canvas and keep its look. The package README lists every setting.</li>
@@ -286,6 +316,28 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
     <SegmentTable track={chromTrack} where={`${view.format()}, ${view.assemblyName}`} />
     <DocTable caption="GM12878 ChromHMM track rules" columns={['Rule', 'Detail']} widths={['240px']}>
       {chromRules.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Item details" lead="Clicking an item in a track opens its details, as on humanbase.io: the Data tooltip, pinned, 280px wide, with the track’s name, the fields humanbase.io lists for that item and a close button. Shown with CELSR2 and the ReprW segment under the in silico mutagenesis example’s variant, from the recorded sample of the files.">
+    <div class="item-details" inert>
+      <figure>
+        <figcaption>Genes: a gene, below it</figcaption>
+        <DataTooltip className="data-tooltip-details" pinned title="Genes" rows={geneDetails(view.chrom, detailGene)} onClose={() => undefined} arrow={{ side: 'bottom', at: 140 }} />
+      </figure>
+      <figure>
+        <figcaption>GM12878 ChromHMM: a segment, above it when there isn’t room below</figcaption>
+        <DataTooltip className="data-tooltip-details" pinned title={chromHmm.name} rows={segmentDetails(view.chrom, hovered)} onClose={() => undefined} arrow={{ side: 'top', at: 140 }} />
+      </figure>
+    </div>
+    <DocTable caption="Item details rules" columns={['Rule', 'Detail']} widths={['240px']}>
+      {itemDetailRules.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
+    <DocTable caption="Item details states" columns={['State', 'What shows']} widths={['240px']}>
+      {itemDetailStates.map(([state, text]) => <tr><th scope="row">{state}</th><td>{text}</td></tr>)}
+    </DocTable>
+    <DocTable caption="Item details accessibility" columns={['Need', 'How']} widths={['240px']}>
+      {itemDetailAccess.map(([need, how]) => <tr><th scope="row">{need}</th><td>{how}</td></tr>)}
     </DocTable>
   </DocSection>
 
@@ -353,6 +405,28 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
   .chromhmm figcaption {
     font: var(--type-body-sm);
     color: var(--text-secondary);
+  }
+
+  .item-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+  }
+
+  .item-details figure {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    margin: 0;
+  }
+
+  .item-details figcaption {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  .item-details :global(.data-tooltip) {
+    position: relative;
   }
 
   .panels {
