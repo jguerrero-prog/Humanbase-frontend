@@ -140,5 +140,6 @@ export { byGenomePosition, variantLabel, variantLocation, variantName, type Vari
 export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFocus';
 export { VariantScorePlot, type PlotBy, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
 export { VariantsTable, type VariantsTableProps } from './VariantEffects/VariantsTable';
+export { useCopy } from './hooks/useCopy';
 export { useDebounced } from './hooks/useDebounced';
 export { LinkBaseProvider, useLinkHref } from './hooks/useLinkHref';
