@@ -149,6 +149,14 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
   await drawer.getByRole('button', { name: 'Done' }).click();
   await expect(headers).toHaveText(['Sequence', 'Genes']);
+  const field = page.getByRole('searchbox', { name: 'Location or gene' });
+  await field.fill('chr1:249,300,000-249,310,000');
+  await field.press('Enter');
+  await expect(page.getByText('chr1 ends at 249,250,621 on GRCh37/hg19. Showing up to the end.')).toBeVisible();
+  await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
+  await page.locator('.genome-engine').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
 });
 
 test('the real Beluga result shows its variants and molecular effects', async ({ page }) => {
