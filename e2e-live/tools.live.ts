@@ -149,6 +149,12 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
   await drawer.getByRole('button', { name: 'Done' }).click();
   await expect(headers).toHaveText(['Sequence', 'Genes']);
+});
+
+test('the real Seqweaver result’s genome browser stops at the end of chr1 and says so', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);
+  await expect(page.locator('.genome-engine').getByText('CELSR2 →')).toBeVisible();
   const field = page.getByRole('searchbox', { name: 'Location or gene' });
   await field.fill('chr1:249,300,000-249,310,000');
   await field.press('Enter');
@@ -157,6 +163,8 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await page.locator('.genome-engine').focus();
   await page.keyboard.press('ArrowRight');
   await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
+  await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Genes']);
+  await checkScreen(page, problems);
 });
 
 test('the real Beluga result shows its variants and molecular effects', async ({ page }) => {
