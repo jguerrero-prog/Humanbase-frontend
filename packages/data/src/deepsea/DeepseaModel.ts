@@ -35,6 +35,8 @@ export interface DeepseaModel {
   featurePlural: string;
   /** What a raised feature does, as in Raises binding; empty reads as just Raises. */
   verb: string;
+  /** The effects card's name when the model's paper uses another than Molecular effects: Expression effects for ExPecto. */
+  effectsHeading?: string;
   /** VCF files for this model add a strand column. */
   strand: boolean;
   /** The variant-level scores a result loads, when not all of them; Sei also sends one per sequence class. */
@@ -134,6 +136,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     featureNoun: 'tissue',
     featurePlural: 'tissues',
     verb: 'expression',
+    effectsHeading: 'Expression effects',
     strand: false,
     threshold: 0.1,
     bins: { strong: 0.1, moderate: 0.05, weak: 0.02 },
