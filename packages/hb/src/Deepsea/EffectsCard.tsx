@@ -12,6 +12,8 @@ const number = new Intl.NumberFormat('en-US');
 export interface EffectsCardProps {
   /** The selected variant, such as chr1:109,817,590 G>T. */
   label: string;
+  /** The card's name, Molecular effects unless the model's paper names them otherwise. */
+  heading?: string | undefined;
   /** Undefined while they load. */
   effects: readonly FeatureEffect[] | undefined;
   failed: boolean;
@@ -43,7 +45,7 @@ const rank = (resource: string) => {
 };
 
 /** A variant's effect on every feature: Strongest effects, Heatmap and All features. */
-export function EffectsCard({ label, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, scoreDocs, inView, reverseOrder = false, view: keptView, onViewChange }: EffectsCardProps) {
+export function EffectsCard({ label, heading, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, scoreDocs, inView, reverseOrder = false, view: keptView, onViewChange }: EffectsCardProps) {
   const [ownView, setOwnView] = useState<EffectsView>('strongest');
   const view = keptView ?? ownView;
   const setView = onViewChange ?? setOwnView;
@@ -105,7 +107,7 @@ export function EffectsCard({ label, effects, failed, onRetry, scale, threshold:
   );
 
   return (
-    <MolecularEffects variant={label} view={view} onViewChange={setView} allLabel={allLabel}>
+    <MolecularEffects variant={label} view={view} onViewChange={setView} allLabel={allLabel} heading={heading}>
       <EffectsControls
         scoreLabel={choice.label}
         scores={choice.options}
