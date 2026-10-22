@@ -172,10 +172,19 @@ test('the ASD Browser opens a gene’s and a segment’s details on click and fr
   const drawer = page.getByRole('dialog', { name: 'Tracks' });
   await drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' }).check();
   await drawer.getByRole('button', { name: 'Done' }).click();
+  const segment = page.getByRole('dialog', { name: 'GM12878 ChromHMM' });
+  const pol2Box = page.locator('.genome-tracks-segment[data-item="GM12878 ChromHMM 2303401"]');
+  await pol2Box.hover();
+  await expect(page.getByRole('tooltip')).toHaveText(/^Pol2GM12878 ChromHMM/);
+  await pol2Box.click();
+  await expect(segment).toBeVisible();
+  await expect(page.getByRole('tooltip')).toBeHidden();
+  await page.keyboard.press('Escape');
+  await page.mouse.move(0, 0);
+
   const pol2 = page.getByRole('button', { name: 'Pol2, 2,303,401 to 2,313,000' });
   await pol2.focus();
   await page.keyboard.press('Enter');
-  const segment = page.getByRole('dialog', { name: 'GM12878 ChromHMM' });
   await expect(segment).toHaveText(/^GM12878 ChromHMMLocationchr1:2,303,401-2,313,000Score1000$/);
   const [frame, popover] = await Promise.all([page.locator('.genome-tracks').boundingBox(), segment.boundingBox()]);
   expect(popover && frame && popover.x >= frame.x && popover.x + popover.width <= frame.x + frame.width && popover.y + popover.height <= frame.y + frame.height).toBe(true);
@@ -238,6 +247,30 @@ test('the ASD Browser fits a phone without scrolling sideways', async ({ page })
     await page.goto(`${web}${path}`);
     await expect(page.getByRole('heading', { level: 1, name: 'ASD Browser' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
+  }
+});
+
+test('the ASD Browser toolbar centers its controls on one line and wraps Next variant with Tracks and Export', async ({ page }) => {
+  await apiOff(page);
+  const toolbar = page.getByRole('toolbar', { name: 'Genome browser' });
+  // Read every control in one pass, measured from the toolbar, so the page can't move between readings.
+  const middles = () =>
+    toolbar.evaluate((bar) => {
+      const top = bar.getBoundingClientRect().top;
+      const centers = [...bar.querySelectorAll('button')].map((button) => {
+        const box = button.getBoundingClientRect();
+        return [button.getAttribute('aria-label') ?? button.textContent?.trim(), Math.round(box.top - top + box.height / 2)] as const;
+      });
+      return Object.fromEntries(centers);
+    });
+  for (const width of [1440, 1200, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(`${web}/asd/`);
+    await expect(page.locator('.genome-tracks-bar').first()).toBeVisible();
+    const middle = await middles();
+    if (width > 375) expect(middle['Previous variant']).toBe(middle['Zoom out']);
+    expect(middle['Next variant']).toBe(middle['Tracks']);
+    expect(middle['Export']).toBe(middle['Tracks']);
   }
 });
 

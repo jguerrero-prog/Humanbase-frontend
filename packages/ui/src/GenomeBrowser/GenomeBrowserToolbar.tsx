@@ -44,9 +44,11 @@ export function GenomeBrowserToolbar({
 
   return (
     <div role="toolbar" aria-label="Genome browser" className={['genome-toolbar', className].filter(Boolean).join(' ')}>
-      <Button variant="ghost" size="small" aria-keyshortcuts={keys.previousVariant} onClick={onPreviousVariant}>
-        Previous variant
-      </Button>
+      <div className="genome-step">
+        <Button variant="ghost" size="small" aria-keyshortcuts={keys.previousVariant} onClick={onPreviousVariant}>
+          Previous variant
+        </Button>
+      </div>
       <form role="search" className="genome-location" onSubmit={submit}>
         <SearchField key={location} label="Location or gene" size="medium" name="location" defaultValue={location} aria-describedby={helpId} aria-invalid={locationError ? true : undefined} />
         <p id={helpId} className={locationError ? 'genome-location-help genome-location-error' : 'genome-location-help'}>
@@ -69,24 +71,26 @@ export function GenomeBrowserToolbar({
         />
         <IconButton label="Zoom in" icon="zoom-in" shortcut={keys.zoomIn} onClick={() => onZoom?.('in')} />
       </div>
-      {(trackActions || moreItems.length > 0) && (
-        <div className="genome-actions">
-          {trackActions && (
-            <>
-              <Button variant="secondary" size="small" icon="genome-track" aria-keyshortcuts={keys.openTracks} onClick={onTracks}>
-                Tracks
-              </Button>
-              <Button variant="ghost" size="small" icon="download" aria-keyshortcuts={keys.openExport} onClick={onExport}>
-                Export
-              </Button>
-            </>
-          )}
-          {moreItems.length > 0 && <ActionMenu label="More browser options" items={moreItems} />}
-        </div>
-      )}
-      <Button variant="ghost" size="small" className="genome-next" aria-keyshortcuts={keys.nextVariant} onClick={onNextVariant}>
-        Next variant
-      </Button>
+      <div className="genome-step genome-end">
+        {(trackActions || moreItems.length > 0) && (
+          <div className="genome-actions">
+            {trackActions && (
+              <>
+                <Button variant="secondary" size="small" icon="genome-track" aria-keyshortcuts={keys.openTracks} onClick={onTracks}>
+                  Tracks
+                </Button>
+                <Button variant="ghost" size="small" icon="download" aria-keyshortcuts={keys.openExport} onClick={onExport}>
+                  Export
+                </Button>
+              </>
+            )}
+            {moreItems.length > 0 && <ActionMenu label="More browser options" items={moreItems} />}
+          </div>
+        )}
+        <Button variant="ghost" size="small" className="genome-next" aria-keyshortcuts={keys.nextVariant} onClick={onNextVariant}>
+          Next variant
+        </Button>
+      </div>
     </div>
   );
 }
