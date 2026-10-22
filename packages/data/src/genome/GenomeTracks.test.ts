@@ -12,14 +12,14 @@ describe('geneModels', () => {
     const second = transcriptOf({ start: 249, end: 500, rest: 'ENST2\t1000\t+\t0\t0\t0,0,0\t2\t51,51\t0,200\tENSG1\tGENE1\tretained_intron' });
     expect(first).toMatchObject({ name: 'GENE1', start: 100, end: 400, thickStart: 150, thickEnd: 350, blocks: [[100, 200], [300, 400]] });
     expect(geneModels([first, second])).toEqual([
-      { name: 'GENE1', strand: '+', start: 100, end: 500, type: 'protein_coding', exons: [[100, 200], [250, 400], [450, 500]], coding: [[150, 200], [300, 350]] },
+      { name: 'GENE1', strand: '+', start: 100, end: 500, type: 'protein_coding', score: 1000, exons: [[100, 200], [250, 400], [450, 500]], coding: [[150, 200], [300, 350]] },
     ]);
   });
 });
 
 describe('segmentOf', () => {
   it('reads a ChromHMM line 1-based, with its code and the file’s own color', () => {
-    expect(segmentOf({ start: 109_816_600, end: 109_818_400, rest: 'ReprW\t1000\t.\t109816600\t109818400\t127,127,127' })).toEqual({ start: 109_816_601, end: 109_818_400, name: 'ReprW', color: '#7F7F7F' });
+    expect(segmentOf({ start: 109_816_600, end: 109_818_400, rest: 'ReprW\t1000\t.\t109816600\t109818400\t127,127,127' })).toEqual({ start: 109_816_601, end: 109_818_400, name: 'ReprW', color: '#7F7F7F', score: 1000 });
     expect(segmentOf({ start: 0, end: 200, rest: 'Tss\t1000\t.\t0\t200\t255,0,0' }).color).toBe('#FF0000');
   });
 });
@@ -38,8 +38,8 @@ describe('SampleGenomeTracks', () => {
   it('answers GM12878 ChromHMM segments from the recorded windows', async () => {
     const segments = await tracks.segments(chromHmm, { chrom: 'chr1', start: 109_792_590, end: 109_842_590 });
     expect(segments).toHaveLength(39);
-    expect(segments[0]).toEqual({ start: 109_792_001, end: 109_792_800, name: 'PromP', color: '#CF0BC6' });
-    expect(segments.find((segment) => segment.start === 109_816_601)).toEqual({ start: 109_816_601, end: 109_818_400, name: 'ReprW', color: '#7F7F7F' });
+    expect(segments[0]).toEqual({ start: 109_792_001, end: 109_792_800, name: 'PromP', color: '#CF0BC6', score: 1000 });
+    expect(segments.find((segment) => segment.start === 109_816_601)).toEqual({ start: 109_816_601, end: 109_818_400, name: 'ReprW', color: '#7F7F7F', score: 1000 });
     expect((await tracks.segments(chromHmm, view)).length).toBeGreaterThan(0);
   });
 

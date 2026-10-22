@@ -1,4 +1,4 @@
-import { useEffect, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useRef, type RefObject } from 'react';
 
 export function useDismiss(container: RefObject<HTMLElement | null>, open: boolean, close: () => void) {
   useEffect(() => {
@@ -13,4 +13,23 @@ export function useDismiss(container: RefObject<HTMLElement | null>, open: boole
       document.removeEventListener('focusin', closeOutside);
     };
   }, [container, open, close]);
+}
+
+/** A pinned panel closes on a click or focus outside it, or on Escape, which also returns focus to what opened it. */
+export function usePinned(container: RefObject<HTMLElement | null>, open: boolean, close: () => void, opener: () => HTMLElement | null | undefined) {
+  useDismiss(container, open, close);
+  const latestOpener = useRef(opener);
+  useLayoutEffect(() => {
+    latestOpener.current = opener;
+  });
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      close();
+      latestOpener.current()?.focus();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [open, close]);
 }

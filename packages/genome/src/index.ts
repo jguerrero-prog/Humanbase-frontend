@@ -8,3 +8,4 @@ export { BiodallianceEngine, biodallianceBaseUrl, loadBiodalliance, type Biodall
 export { humanbaseAssemblies, humanbaseBrowserOptions, humanbaseTracks, type BiodallianceAssembly } from './biodalliance/humanbaseConfig';
 export { defaultGenomeEngine } from './defaultGenomeEngine';
 export { TrackEngine } from './tracks/TrackEngine';
+export { geneDetails, segmentDetails } from './tracks/itemDetails';

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
 import { Icon } from '../Icon/Icon';
-import { useDismiss } from '../List/useDismiss';
+import { usePinned } from '../List/useDismiss';
 import { ViewAsTable } from '../Table/ViewAsTable';
 import { BreakableText } from '../Text/BreakableText';
 import { DataTooltip } from '../Tooltip/DataTooltip';
@@ -116,17 +116,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
     setPinned(false);
     setActive(null);
   }, []);
-  useDismiss(tip, pinned, unpin);
-  useEffect(() => {
-    if (!pinned) return;
-    const closeOnEscape = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      unpin();
-      plot.current?.querySelector<HTMLElement>(`[data-cell="${focus[0]}-${focus[1]}"]`)?.focus();
-    };
-    document.addEventListener('keydown', closeOnEscape);
-    return () => document.removeEventListener('keydown', closeOnEscape);
-  }, [pinned, unpin, focus]);
+  usePinned(tip, pinned, unpin, () => plot.current?.querySelector<HTMLElement>(`[data-cell="${focus[0]}-${focus[1]}"]`));
   const [place, setPlace] = useState<{ x: number; y: number }>();
   const [fits, setFits] = useState(true);
   const [labelWidth, setLabelWidth] = useState(labelWidths.min);

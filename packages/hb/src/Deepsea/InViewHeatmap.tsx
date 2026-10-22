@@ -1,6 +1,5 @@
 import type { FeatureEffect, GenomeLocation } from '@humanbase/data';
-import { Button, Heatmap, type EffectScale } from '@humanbase/ui';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { Button, Heatmap, useWidth, type EffectScale } from '@humanbase/ui';
 
 export interface VariantInView {
   key: string;
@@ -56,22 +55,6 @@ function compactColumns(variants: readonly VariantInView[], selected: number, lo
     if (holder === undefined || index === selected || beats) kept.set(slot, index);
   });
   return [...kept.values()].sort((a, b) => a - b);
-}
-
-function useWidth() {
-  const box = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(0);
-  useLayoutEffect(() => {
-    const element = box.current;
-    if (!element) return;
-    const fit = () => setWidth(element.clientWidth);
-    fit();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(fit);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
-  return [box, width] as const;
 }
 
 /** One column per variant in view, in genome order; rows ranked by the size of the center variant's effect, as on humanbase.io. */

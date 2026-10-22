@@ -199,6 +199,41 @@
   cursor: grabbing;
 }
 
+/* The item buttons sit over the drawing for the keyboard; the drawing takes the pointer, so a drag still pans. */
+.genome-tracks-plot {
+  position: relative;
+  min-inline-size: 0;
+}
+
+.genome-tracks-items {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.genome-tracks-item {
+  position: absolute;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-xs);
+}
+
+.genome-tracks-item[aria-expanded="true"],
+.genome-tracks-item:focus-visible {
+  outline: var(--border-width-2) solid var(--text-default);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.genome-tracks-hit {
+  fill: transparent;
+}
+
+.genome-tracks-area [data-item] {
+  cursor: pointer;
+}
+
 .genome-tracks-note {
   font: var(--type-caption);
   fill: var(--text-secondary);

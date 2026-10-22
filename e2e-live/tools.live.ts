@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { downloadFrom } from '../e2e/downloads';
+import { violationsOf } from '../e2e/violations';
 import { checkScreen, watch, web } from './live';
 
 test('the Modules renal panel result shows real modules, a module drawer and the Genes tab', async ({ page }) => {
@@ -124,6 +125,8 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await drawer.getByRole('checkbox', { name: 'Sequence' }).uncheck();
   await drawer.getByRole('button', { name: 'Done' }).click();
   await expect(headers).toHaveText(['Conservation', 'GM12878 ChromHMM', 'Genes']);
+  // Results open at 100 kb; the counts below are for the 50 kb view around the variant.
+  await page.getByRole('radio', { name: '50 kb' }).check();
   await expect(page.locator('.genome-engine .genome-tracks-bar')).not.toHaveCount(0);
   // chr1:109,792,590-109,842,590 holds 39 segments in gm12878.ChromHMM.bb, the first PromP and the one under the variant ReprW.
   const segments = page.locator('.genome-engine .genome-tracks-segment');
@@ -136,6 +139,19 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await expect(table.getByRole('row')).toHaveCount(40);
   await expect(table.getByRole('row').filter({ hasText: '109,816,601' })).toHaveText(/^ReprW\s*109,816,601\s*109,818,400\s*1,800 bp$/);
   await checkScreen(page, problems);
+  // The item details list what humanbase.io lists for each track, read from the real files.
+  await page.locator('.genome-engine').getByText('CELSR2 →').click();
+  const gene = page.getByRole('dialog', { name: 'Genes' });
+  await expect(gene).toHaveText(/^GenesMethodprotein_codingLocationchr1:109,792,641-109,818,372Score1000$/);
+  expect(await violationsOf(page)).toEqual([]);
+  await page.getByRole('button', { name: 'ReprW, 109,816,601 to 109,818,400' }).focus();
+  await page.keyboard.press('Enter');
+  const segment = page.getByRole('dialog', { name: 'GM12878 ChromHMM' });
+  await expect(segment).toHaveText(/^GM12878 ChromHMMLocationchr1:109,816,601-109,818,400Score1000$/);
+  expect(await violationsOf(page)).toEqual([]);
+  await page.keyboard.press('Escape');
+  await expect(segment).toBeHidden();
+  await expect(page.getByRole('button', { name: 'ReprW, 109,816,601 to 109,818,400' })).toBeFocused();
   await page.getByRole('button', { name: 'Export' }).click();
   const dialog = page.getByRole('dialog', { name: 'Export the view' });
   const [download] = await Promise.all([page.waitForEvent('download'), dialog.getByRole('button', { name: 'Export' }).click()]);
@@ -151,6 +167,22 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await expect(headers).toHaveText(['Sequence', 'Genes']);
 });
 
+test('the real Seqweaver result’s genome browser stops at the end of chr1 and says so', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);
+  await expect(page.locator('.genome-engine').getByText('CELSR2 →')).toBeVisible();
+  const field = page.getByRole('searchbox', { name: 'Location or gene' });
+  await field.fill('chr1:249,300,000-249,310,000');
+  await field.press('Enter');
+  await expect(page.getByText('chr1 ends at 249,250,621 on GRCh37/hg19. Showing up to the end.')).toBeVisible();
+  await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
+  await page.locator('.genome-engine').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
+  await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Genes']);
+  await checkScreen(page, problems);
+});
+
 test('the real Beluga result shows its variants and molecular effects', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/`);
@@ -162,7 +194,7 @@ test('the real Beluga result shows its variants and molecular effects', async ({
 test('the real ExPecto result names each variant by its gene and shows tissue effects', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/?variant=chr5-134871851-A-G`);
-  await expect(page.getByRole('button', { name: /NEUROG1/ })).toBeVisible();
+  await expect(page.getByRole('table', { name: 'Variants in this job' }).getByRole('button', { name: /NEUROG1/ })).toBeVisible();
   await expect(page.getByText('Fallopian Tube')).toBeVisible();
   await checkScreen(page, problems);
 });
@@ -229,6 +261,10 @@ test('the ASD Browser draws the real track files, finds SCN2A and pages the tabl
   await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Genes']);
   await expect(browser.getByText('← PEX10')).toBeVisible();
   await expect(browser.locator('.genome-tracks-bar.is-selected')).toHaveCount(2);
+  await browser.getByText('← MORN1').click();
+  await expect(page.getByRole('dialog', { name: 'Genes' })).toHaveText(/^GenesMethodprotein_codingLocationchr1:2,252,692-2,323,146Score1000$/);
+  expect(await violationsOf(page)).toEqual([]);
+  await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Tracks' }).click();
   const drawer = page.getByRole('dialog', { name: 'Tracks' });
   await drawer.getByRole('checkbox', { name: 'Conservation' }).check();

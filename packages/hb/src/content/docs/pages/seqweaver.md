@@ -1,0 +1,136 @@
+---
+{
+  "title": "Seqweaver",
+  "slug": "seqweaver",
+  "group": "sequence-analysis",
+  "label": "Seqweaver",
+  "order": 10,
+  "live": "https://humanbase.readthedocs.io/en/latest/seqweaver.html",
+  "sections": [
+    {
+      "id": "seqweaver",
+      "title": "Seqweaver",
+      "level": 1
+    },
+    {
+      "id": "introduction",
+      "title": "Introduction",
+      "level": 2
+    },
+    {
+      "id": "input",
+      "title": "Input",
+      "level": 2
+    },
+    {
+      "id": "large-submissions",
+      "title": "Large submissions",
+      "level": 3
+    },
+    {
+      "id": "downloads",
+      "title": "Downloads",
+      "level": 2
+    },
+    {
+      "id": "output",
+      "title": "Output",
+      "level": 2
+    },
+    {
+      "id": "variant-scores",
+      "title": "Variant scores",
+      "level": 3
+    },
+    {
+      "id": "molecular-level-biochemical-effects-prediction",
+      "title": "Molecular-level biochemical effects prediction",
+      "level": 3
+    },
+    {
+      "id": "see-also",
+      "title": "See also",
+      "level": 2
+    }
+  ],
+  "images": {}
+}
+---
+
+# Seqweaver {#seqweaver}
+
+## Introduction {#introduction}
+
+Seqweaver is a deep learning framework designed to predict how genetic variants affect post-transcriptional RNA-binding protein (RBP) interactions. The model is trained on RBP-RNA interaction data obtained from CLIP-seq experiments. Seqweaver consists of 232 RBP models spanning 88 distinct RBPs, and can predict the impact of genetic variants at single-nucleotide resolution. Importantly, this framework is trained without using any variant data, allowing it to predict the impact on RBP binding of any variant, including rare or previously unseen ones.
+
+Seqweaver is described in: Park CY, Zhou J, Wong AK, Chen KM, Theesfeld CL, Darnell RB, Troyanskaya OG. [Genome-wide landscape of RNA-binding protein target site dysregulation reveals a major impact on psychiatric disorder risk](https://www.nature.com/articles/s41588-020-00761-3). Nat Genet. 2021 Feb;53(2):166-173.
+
+## Input {#input}
+
+We support three types of input: VCF, FASTA, BED. If you want to predict effects of noncoding variants, use VCF format input. If you want to predict RBP interaction probabilities directly from transcript sequences, you can use FASTA format. If you want to specify sequences from the human reference genome, you can use BED format.
+
+Examples of all input formats are available in the job submission interface. See below for a quick introduction:
+
+**VCF format** is used for specifying a genomic variant. A minimal example is `chr8 38120276 [QKI disruption] C A +` (if you want to copy this text as input, you will need to change spaces to tabs). The six columns are chromosome, position, name, reference allele, alternative allele, and strand. Note that strand must be specified for Seqweaver but not for the other deep learning models.
+
+**FASTA format** input should include sequences of 1000 bp length each. If a sequence is different from 1000 bp:
+
+- **Note**: The prediction is for the center base of the input sequence
+- **Longer sequences**: Only the center 1000 bp will be used
+- **Shorter sequences**: Sequences shorter than 1000 bp will be padded with ‘N’ bases evenly on both sides
+  - **Important**: We do not recommend using FASTA input smaller than 1000 bp unless it is very close (only a few bp off)
+  - **Note**: This padding behavior is not recommended. N’s were extremely rare in training data (only appearing in assembly gaps), and the model has not been evaluated with artificially padded sequences
+  - **Strong recommendation**: Always provide sequences of exactly 1000 bp by including genomic flanking sequences
+
+**BED format** provides another way to specify sequences. A minimal example is `chr1 109817090 109817091 . 0 -`. The columns are chromosome, start position, end position, name, score, and strand.
+
+**Important BED Format Notes:**
+
+- **Coordinate System**: BED format uses 0-indexed start positions and 1-indexed end positions (half-open intervals). This is different from VCF format which uses 1-indexed positions.
+  - For equal start/end coordinates: interpreted as single position analysis (e.g., chr1:10000-10000 → center at position 10000)
+  - For odd-length intervals: the center is unambiguous (e.g., chr1:100-103 has center at position 101)
+  - For even-length intervals: we use the left-center position (floor division)
+- **Sequence Extraction**: As stated in the [Selene SDK documentation](https://selene.flatironinstitute.org/master/predict.html#selene_sdk.predict.model_predict.ModelPredict.get_predictions_for_bed_file): _“The coordinates specified in each row are only used to find the center position for the resulting sequence– regions returned will have the length expected by the model.”_
+  - **Model-specific lengths**: Sequence length varies by model (Seqweaver: 1000bp, Beluga: 2000bp, Sei: 4096bp)
+    - Example: 5000bp interval chr1:10000-15000 with Beluga model → only center 2000bp (chr1:11500-13500) analyzed
+    - Consider using multiple smaller intervals if you need analysis of the entire large region
+
+### Large submissions {#large-submissions}
+
+We recommend using the web server if you have <10,000 variants or sequences. You will experience degraded performance when submitting a larger set of sequences. In those instances, we suggest that you split the set into multiple <10,000 submissions, or run the standalone version on your local machine, or contact our group directly.
+
+## Downloads {#downloads}
+
+The 1000 Genome Project RBP LDScores used in GWAS analysis are available [here](https://humanbase.s3-us-west-2.amazonaws.com/seqweaver/Seqweaver_RBP_ldscores.tar.gz) (33.5 GB).
+
+GnomAD (v2.1) Seqweaver RBP target site dysregulation scores are available [here](https://humanbase.s3-us-west-2.amazonaws.com/seqweaver/Seqweaver_RBP_gnomAD.tar.gz) (37.6 GB).
+
+The code for making variant effect predictions for Seqweaver [RBP model](https://humanbase.s3-us-west-2.amazonaws.com/seqweaver/Seqweaver-v0.1.tar.gz) (6.6 GB) are available from this link (Zhou and Park et al. Nature Gen 2019). Our [new version](https://s3-us-west-2.amazonaws.com/humanbase/asd/code_asd_dnarna_v3.tar.gz) simplifies the dependencies by using the [Selene](https://github.com/FunctionLab/selene) package and streamlines the prediction process for RBP models.
+
+## Output {#output}
+
+### Variant scores {#variant-scores}
+
+- **Disease impact score:** DIS is calculated by training a logistic regression model that prioritizes likely disease-associated mutations on the basis of the predicted post-transcriptional regulatory effects of these mutations (See [Zhou et. al, 2019](https://pubmed.ncbi.nlm.nih.gov/31133750/)). The predicted DIS probabilities are then converted into DIS e-values, computed based on the empirical distributions of predicted effects for gnomAD variants. The final DIS score is:
+
+$$
+-\log_{10}(DIS\ evalue_{feature})
+$$
+
+- **Mean -log e-value:** For each predicted regulatory feature effect ($abs(p_{alt}-p_{ref})$) of a variant, we calculate a feature e-value based on the empirical distribution of that feature’s effects among gnomAD variants (see Molecular-level biochemical effects prediction: e-value). The MLE score of a variant is
+
+$$
+\sum{-\log_{10}(evalue_{feature})}/N
+$$
+
+### Molecular-level biochemical effects prediction {#molecular-level-biochemical-effects-prediction}
+
+- **z-score:** A scaled score where the feature diff score ($p_{alt} - p_{ref}$) is divided by the root mean square of the feature diff score across gnomAD variants. Note that this is “sign-preserving”, i.e. a negative z-score indicates that a mutation decreases the probability of a regulatory feature.
+- **E-value:** E-value is defined as the expected proportion of SNPs with a larger predicted effect. We calculate an ‘e-value’ based on the empirical distribution of that feature’s effect ($abs(p_{alt}-p_{ref})$) among gnomAD variants. For example, a feature e-value of 0.01 indicates that only 1% of gnomAD variants have a larger predicted effect.
+- **Probability diffs:** The difference between the predicted probability of the reference allele and the alternative allele for a regulatory feature ($p_{alt}-p_{ref}$).
+- **Probability:** The predicted probability for the given allele for each regulatory feature (displayed in the interface for BED and FASTA inputs).
+
+## See also {#see-also}
+
+- [Sei](/docs/sei/) - Latest chromatin and regulatory impact model with 4096bp input sequences
+- [Beluga (DeepSEA)](/docs/beluga/) - 2018 DeepSEA model with 2000bp input sequences

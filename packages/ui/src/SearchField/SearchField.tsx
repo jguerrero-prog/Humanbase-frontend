@@ -34,11 +34,15 @@ export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElem
   heading?: string;
   note?: string;
   inlineSuggestions?: boolean;
+  /** What the suggestions are, for “No genes match”. */
+  matchNoun?: string;
+  /** What Enter does with a highlighted suggestion. */
+  enterHint?: string;
 }
 
 export function SearchField({
   label, size = 'large', loading = false, value, defaultValue = '', disabled, className, onChange, onClear, onKeyDown,
-  suggestions, suggestionsLoading = false, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, defaultHighlight = -1, heading, note, inlineSuggestions = false, ...rest
+  suggestions, suggestionsLoading = false, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, defaultHighlight = -1, heading, note, inlineSuggestions = false, matchNoun = 'genes', enterHint = 'open gene', ...rest
 }: SearchFieldProps) {
   const id = useId();
   const listboxId = `${id}-suggestions`;
@@ -97,7 +101,7 @@ export function SearchField({
 
   const optionId = (index: number) => `${id}-suggestion-${index}`;
   const count = suggestions?.length ?? 0;
-  const announcement = !open || suggestionsLoading ? '' : count === 0 ? `No genes match “${text}”` : `${count} ${count === 1 ? 'suggestion' : 'suggestions'}`;
+  const announcement = !open || suggestionsLoading ? '' : count === 0 ? `No ${matchNoun} match “${text}”` : `${count} ${count === 1 ? 'suggestion' : 'suggestions'}`;
 
   return (
     <div ref={wrapper} className={['search-field-group', inlineSuggestions && 'search-field-inline', className].filter(Boolean).join(' ')}>
@@ -146,7 +150,7 @@ export function SearchField({
           {suggestionsLoading ? (
             <SuggestionsLoading />
           ) : count === 0 ? (
-            <SuggestionsEmpty query={text} text={noMatchesText} />
+            <SuggestionsEmpty query={text} text={noMatchesText} noun={matchNoun} />
           ) : (
             <>
               {heading && <p className="search-suggestions-heading">{heading}</p>}
@@ -190,7 +194,7 @@ export function SearchField({
               ) : (
                 <p className="search-suggestions-keys" aria-hidden="true">
                   <span><kbd>↑ ↓</kbd> move</span>
-                  <span><kbd>Enter</kbd> open gene</span>
+                  <span><kbd>Enter</kbd> {enterHint}</span>
                   <span><kbd>Esc</kbd> close</span>
                 </p>
               )}
@@ -211,10 +215,10 @@ export function SuggestionsLoading() {
   );
 }
 
-export function SuggestionsEmpty({ query, text }: { query: string; text: string }) {
+export function SuggestionsEmpty({ query, text, noun = 'genes' }: { query: string; text: string; noun?: string }) {
   return (
     <div className="search-suggestions-empty">
-      <p className="search-suggestions-empty-title">No genes match “{query}”</p>
+      <p className="search-suggestions-empty-title">No {noun} match “{query}”</p>
       <p>{text}</p>
     </div>
   );

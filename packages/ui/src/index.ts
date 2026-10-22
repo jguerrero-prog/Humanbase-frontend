@@ -1,5 +1,5 @@
 export { ActionMenu, type ActionMenuItem, type ActionMenuProps } from './ActionMenu/ActionMenu';
-export { ArticleFigure, ArticleLayout, ArticleSection, DropCapParagraph, RefMark, ReferenceList, type ArticleFigureProps, type ArticleImage, type ArticleLayoutProps, type ArticleSectionProps, type ReferenceMark } from './Article/Article';
+export { ArticleFigure, ArticleHero, ArticleLayout, ArticleSection, DropCapParagraph, RefMark, ReferenceList, type ArticleFigureProps, type ArticleHeroProps, type ArticleImage, type ArticleLayoutProps, type ArticleSectionProps, type ReferenceMark } from './Article/Article';
 export { AudioPill, type AudioPillProps, type PlaybackState } from './AudioPlayer/AudioPill';
 export { AudioPlayer, type AudioPlayerProps } from './AudioPlayer/AudioPlayer';
 export { clockTime, spokenTime } from './AudioPlayer/playbackTime';
@@ -9,7 +9,7 @@ export { IconButton, type IconButtonProps } from './IconButton/IconButton';
 export { StarToggle, type StarToggleProps } from './StarToggle/StarToggle';
 export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
 export { ScoreTracks, type ScoreTrack, type ScoreTracksProps } from './GenomeBrowser/ScoreTracks';
-export { GenomeTrackFigure, GenomeTrackView, type GeneShape, type GenomeTrackFigureProps, type GenomeTrackViewProps, type ScoreTrackData, type SegmentShape, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
+export { GenomeTrackFigure, GenomeTrackView, type GeneShape, type GenomeTrackFigureProps, type GenomeTrackViewProps, type ItemDetails, type ScoreTrackData, type SegmentShape, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
 export { SegmentTable, type SegmentTableProps } from './GenomeBrowser/SegmentTable';
 export {
   BrowserSettingsDialog,
@@ -26,6 +26,13 @@ export {
 export { genomeBrowserKeyHelp, genomeBrowserShortcuts, genomeCommand, type GenomeCommand } from './GenomeBrowser/genomeBrowserKeys';
 export { ContextLabel, type ContextLabelProps } from './ContextLabel/ContextLabel';
 export { Dialog, type DialogKind, type DialogProps, type DialogSize } from './Dialog/Dialog';
+export { DocsLayout, DOCS_NARROW_QUERY, type DocsLayoutProps } from './Docs/DocsLayout';
+export { DocsMarkdown, type DocsMarkdownProps, type ImageSizes } from './Docs/DocsMarkdown';
+export { docsSections, plainText, type DocsSection, type DocsSectionText } from './Docs/markdownSections';
+export { DocsNav, type DocsNavGroup, type DocsNavItem, type DocsNavProps, type DocsNavSubItem } from './Docs/DocsNav';
+export { OnThisPage, type OnThisPageProps } from './Docs/OnThisPage';
+export { TexMath, type TexMathProps } from './Docs/TexMath';
+export { useCurrentSection } from './Docs/useCurrentSection';
 export { Drawer, DrawerSection, type DrawerPlacement, type DrawerProps, type DrawerSize } from './Drawer/Drawer';
 export { CodeBlock, CopyButton, InlineCode, type CodeBlockProps, type CodeLine, type CodeToken, type CopyButtonProps, type SyntaxRole } from './CodeBlock/CodeBlock';
 export { CodeTabs, type CodeExample, type CodeTabsProps } from './CodeBlock/CodeTabs';
@@ -96,7 +103,7 @@ export { NavMenu, NavPanelContent, type NavMenuProps } from './Navigation/NavMen
 export { TopBar, type TopBarProps } from './Navigation/TopBar';
 export type { NavGroup, NavItemState, NavLink, NavSection } from './Navigation/types';
 export { DataTooltip, type DataTooltipProps } from './Tooltip/DataTooltip';
-export { anchorSupported, placeNearPoint, placeUnder, type Placement } from './Tooltip/placement';
+export { anchorSupported, placeNearPoint, placeUnder, placeUnderBox, type Placement } from './Tooltip/placement';
 export { saveFile } from './utils/saveFile';
 export { bytesOf, cssColor, svgToPng, useExportMenu, useImageFormats, zipFormat, type ExportFormat, type SvgSource } from './utils/exportFiles';
 export { standaloneSvg } from './utils/standaloneSvg';
@@ -136,9 +143,13 @@ export { EffectsControls, MolecularEffects, effectZScale, type EffectsControlsPr
 export { chromosomeColor } from './VariantEffects/ChromosomeColor';
 export { sequenceClassColor, sequenceClassLegend } from './VariantEffects/SequenceClass';
 export { StrongestEffects, type StrongestEffectsProps } from './VariantEffects/StrongestEffects';
-export { byGenomePosition, variantLabel, variantLocation, variantName, type Variant, type VariantScore } from './VariantEffects/Variant';
+export { byGenomePosition, variantLabel, variantLocation, variantName, variantScore, type Variant, type VariantScore } from './VariantEffects/Variant';
 export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFocus';
-export { VariantScorePlot, type PlotBy, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
+export { type PlotColorBy } from './VariantEffects/plotColors';
+export { type PlotBy } from './VariantEffects/ScorePlotLayout';
+export { VariantScorePlot, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
 export { VariantsTable, type VariantsTableProps } from './VariantEffects/VariantsTable';
+export { useCopy } from './hooks/useCopy';
 export { useDebounced } from './hooks/useDebounced';
+export { useWidth } from './hooks/useWidth';
 export { LinkBaseProvider, useLinkHref } from './hooks/useLinkHref';

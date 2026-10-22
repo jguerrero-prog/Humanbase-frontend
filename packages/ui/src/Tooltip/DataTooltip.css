@@ -89,3 +89,55 @@ a.data-tooltip-link:focus-visible {
 .data-tooltip-wide {
   inline-size: 320px;
 }
+
+.data-tooltip-head {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: space-between;
+  margin-block: calc(var(--space-1) * -1);
+}
+
+.data-tooltip-close {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 28px;
+  margin-inline-end: calc(var(--space-1) * -1);
+  padding: 0;
+  color: var(--text-on-brand);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.data-tooltip-close:hover {
+  background: var(--overlay-on-brand-hover);
+}
+
+/* The arrow is the Tooltip's 6px arrow, at the item it points to. */
+.data-tooltip-arrow-top::after,
+.data-tooltip-arrow-bottom::after {
+  position: absolute;
+  inset-inline-start: calc(var(--data-tooltip-arrow) - 6px);
+  content: "";
+  border: 6px solid transparent;
+}
+
+.data-tooltip-arrow-bottom::after {
+  inset-block-end: 100%;
+  border-block-start-width: 0;
+  border-block-end-color: var(--surface-inverse);
+}
+
+.data-tooltip-arrow-top::after {
+  inset-block-start: 100%;
+  border-block-end-width: 0;
+  border-block-start-color: var(--surface-inverse);
+}
+
+.data-tooltip-details {
+  inline-size: 280px;
+}

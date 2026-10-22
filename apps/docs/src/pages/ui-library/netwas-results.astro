@@ -2,7 +2,7 @@
 import { withBase } from '../../withBase';
 import { Code } from 'astro:components';
 import { NetwasResult } from '@humanbase/data';
-import { NetwasGenes } from '@humanbase/hb';
+import { NetwasGenes, netwasCitation as citation } from '@humanbase/hb';
 import { Button, JobDetails, NetwasGuide, ResultHeader, ResultLayout, StatusBadge, TopBar } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -43,7 +43,6 @@ const names = {
   PNPLA8: 'patatin like phospholipase domain containing 8',
   ITGB4: 'integrin subunit beta 4',
 };
-const citation = 'Greene CS, Krishnan A, Wong AK, et al. (2015). Understanding multicellular function and disease with human tissue-specific networks. Nature Genetics.';
 
 const crumbs = [{ label: 'Jobs', href: withBase('/ui-library/job-status-and-queue/') }, { label: title }];
 const context = [

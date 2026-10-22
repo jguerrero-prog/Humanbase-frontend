@@ -1,0 +1,20 @@
+{
+  "name": "@humanbase/docs-import",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p ."
+  },
+  "devDependencies": {
+    "@types/hast": "3.0.5",
+    "@types/mdast": "4.0.4",
+    "hast-util-to-string": "3.0.1",
+    "rehype-parse": "9.0.1",
+    "rehype-remark": "10.0.1",
+    "remark-gfm": "4.0.1",
+    "remark-math": "6.0.0",
+    "remark-stringify": "11.0.0",
+    "unified": "11.0.5"
+  }
+}

@@ -1,6 +1,6 @@
 import { Button } from '../Button/Button';
 import { Cell, HeaderCell, Table } from '../Table/Table';
-import { variantLabel, variantLocation, variantName, type Variant, type VariantScore } from './Variant';
+import { variantLabel, variantLocation, variantName, variantScore, type Variant, type VariantScore } from './Variant';
 import './VariantEffects.css';
 
 export interface VariantsTableProps {
@@ -46,7 +46,7 @@ export function VariantsTable({ variants, scores, sortBy, selected, onSelect, li
                 </Cell>
                 {scores.map((score) => (
                   <Cell key={score.key} type="number">
-                    {(variant.scores[score.key] ?? 0).toFixed(2)}
+                    {variantScore(variant, score.key)}
                   </Cell>
                 ))}
               </tr>

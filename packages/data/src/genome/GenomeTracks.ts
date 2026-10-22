@@ -16,6 +16,8 @@ export interface GeneModel {
   end: number;
   /** The transcript type, such as protein_coding or processed_pseudogene. */
   type: string;
+  /** The file's score for the transcript whose type this is, 0 to 1000. */
+  score: number;
   exons: readonly [number, number][];
   coding: readonly [number, number][];
 }
@@ -34,6 +36,8 @@ export interface Segment {
   name: string;
   /** The file's itemRgb, such as #FF6969. */
   color: string;
+  /** The file's score for the segment, 0 to 1000. */
+  score: number;
 }
 
 /** A stretch of the reference sequence. */
@@ -62,6 +66,7 @@ export interface Transcript {
   thickStart: number;
   thickEnd: number;
   type: string;
+  score: number;
   blocks: [number, number][];
 }
 
@@ -85,12 +90,14 @@ export function geneModels(transcripts: readonly Transcript[]): GeneModel[] {
         : [],
     );
     const strand = group[0]?.strand;
+    const shown = group.find((transcript) => transcript.type === 'protein_coding') ?? group[0];
     return {
       name,
       strand: strand === '+' || strand === '-' ? strand : '',
       start: Math.min(...group.map((transcript) => transcript.start)),
       end: Math.max(...group.map((transcript) => transcript.end)),
-      type: group.some((transcript) => transcript.type === 'protein_coding') ? 'protein_coding' : (group[0]?.type ?? ''),
+      type: shown?.type ?? '',
+      score: shown?.score ?? 0,
       exons: merge(group.flatMap((transcript) => transcript.blocks)),
       coding: merge(coding),
     };
@@ -99,7 +106,7 @@ export function geneModels(transcripts: readonly Transcript[]): GeneModel[] {
 
 /** Reads one bigBed line in the GENCODE layout the Humanbase track files use. */
 export function transcriptOf(feature: { start: number; end: number; rest?: string }): Transcript {
-  const [, , strand = '', thickStart = '0', thickEnd = '0', , , sizes = '', starts = '', , geneName, type = ''] = (feature.rest ?? '').split('\t');
+  const [, score = '0', strand = '', thickStart = '0', thickEnd = '0', , , sizes = '', starts = '', , geneName, type = ''] = (feature.rest ?? '').split('\t');
   const offsets = starts.split(',').filter(Boolean).map(Number);
   const lengths = sizes.split(',').filter(Boolean).map(Number);
   const start = feature.start + 1;
@@ -111,6 +118,7 @@ export function transcriptOf(feature: { start: number; end: number; rest?: strin
     thickStart: Number(thickStart) + 1,
     thickEnd: Number(thickEnd),
     type,
+    score: Number(score),
     blocks: offsets.length ? offsets.map((offset, index) => [start + offset, start + offset + (lengths[index] ?? 0) - 1]) : [[start, feature.end]],
   };
 }
@@ -119,7 +127,7 @@ const hex = (channel: string) => Math.max(0, Math.min(255, Number(channel) || 0)
 
 /** Reads one bed9 line, such as a ChromHMM segment: name, score, strand, thickStart, thickEnd, then itemRgb; 1-based. */
 export function segmentOf(feature: { start: number; end: number; rest?: string }): Segment {
-  const [name = '', , , , , rgb = ''] = (feature.rest ?? '').split('\t');
+  const [name = '', score = '0', , , , rgb = ''] = (feature.rest ?? '').split('\t');
   const [red = '0', green = '0', blue = '0'] = rgb.split(',');
-  return { start: feature.start + 1, end: feature.end, name, color: `#${hex(red)}${hex(green)}${hex(blue)}` };
+  return { start: feature.start + 1, end: feature.end, name, color: `#${hex(red)}${hex(green)}${hex(blue)}`, score: Number(score) };
 }

@@ -38,6 +38,32 @@ describe('GenomeLocation', () => {
     expect(GenomeLocation.geneNotFound('ILB1')).toBe('No gene named “ILB1” on GRCh37/hg19. Check the spelling, or enter a position such as chr2:113,594,867.');
   });
 
+  it('reads the chromosome lengths recorded from UCSC for each assembly', () => {
+    expect(Object.keys(GenomeLocation.chromosomes('hg19'))).toHaveLength(25);
+    expect(GenomeLocation.chromosomes('hg19').chr1).toBe(249_250_621);
+    expect(GenomeLocation.chromosomes('hg38').chr1).toBe(248_956_422);
+    expect(new GenomeLocation('chrM', 1, 10, 'hg38').chromosomeLength).toBe(16_569);
+    expect((GenomeLocation.parse('MT:1-100') as GenomeLocation).chrom).toBe('chrM');
+  });
+
+  it('pans and zooms no further than the ends of the chromosome', () => {
+    const end = new GenomeLocation('chr1', 249_200_000, 249_250_000);
+    expect(end.move(0.5).end).toBe(249_250_621);
+    expect(end.move(0.5).width).toBe(50_000);
+    expect(new GenomeLocation('chr1', 248_900_000, 248_950_000, 'hg38').move(0.5).end).toBe(248_956_422);
+    expect(new GenomeLocation('chrM', 8_000, 8_200).withWidth(500_000)).toEqual(new GenomeLocation('chrM', 0, 16_571));
+    expect(new GenomeLocation('chr1', 10_000, 60_000).move(-1).start).toBe(0);
+  });
+
+  it('keeps a typed position on its chromosome and says why it moved', () => {
+    const typed = GenomeLocation.parse('chr21:50,000,000-50,010,000') as GenomeLocation;
+    const { location, message } = typed.fit();
+    expect(location?.format()).toBe('chr21:48,119,895-48,129,895');
+    expect(message).toBe('chr21 ends at 48,129,895 on GRCh37/hg19. Showing up to the end.');
+    expect(new GenomeLocation('chr21', 1_000, 2_000).fit()).toEqual({ location: new GenomeLocation('chr21', 1_000, 2_000) });
+    expect(new GenomeLocation('chr23', 1_000, 2_000, 'hg38').fit()).toEqual({ message: 'There is no chr23 on GRCh38/hg38. Enter chr1 to chr22, chrX, chrY or chrM.' });
+  });
+
   it('names a range as the chr_and_variant_range parameter and finds the variant nearest its center', () => {
     const view = new GenomeLocation('chr1', 2_230_000, 2_440_000);
     expect(view.variantRange).toBe('1:2230000:2440000');
