@@ -26,6 +26,13 @@ export {
 export { genomeBrowserKeyHelp, genomeBrowserShortcuts, genomeCommand, type GenomeCommand } from './GenomeBrowser/genomeBrowserKeys';
 export { ContextLabel, type ContextLabelProps } from './ContextLabel/ContextLabel';
 export { Dialog, type DialogKind, type DialogProps, type DialogSize } from './Dialog/Dialog';
+export { DocsLayout, DOCS_NARROW_QUERY, type DocsLayoutProps } from './Docs/DocsLayout';
+export { DocsMarkdown, type DocsMarkdownProps, type ImageSizes } from './Docs/DocsMarkdown';
+export { docsSections, plainText, type DocsSection, type DocsSectionText } from './Docs/markdownSections';
+export { DocsNav, type DocsNavGroup, type DocsNavItem, type DocsNavProps } from './Docs/DocsNav';
+export { OnThisPage, type OnThisPageProps } from './Docs/OnThisPage';
+export { TexMath, type TexMathProps } from './Docs/TexMath';
+export { useCurrentSection } from './Docs/useCurrentSection';
 export { Drawer, DrawerSection, type DrawerPlacement, type DrawerProps, type DrawerSize } from './Drawer/Drawer';
 export { CodeBlock, CopyButton, InlineCode, type CodeBlockProps, type CodeLine, type CodeToken, type CopyButtonProps, type SyntaxRole } from './CodeBlock/CodeBlock';
 export { CodeTabs, type CodeExample, type CodeTabsProps } from './CodeBlock/CodeTabs';

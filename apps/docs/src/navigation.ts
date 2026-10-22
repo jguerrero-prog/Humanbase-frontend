@@ -92,6 +92,7 @@ const sections: NavSection[] = [
       { label: 'ASD Browser', href: '/ui-library/asd-browser/' },
       { label: 'NetWAS results', href: '/ui-library/netwas-results/' },
       { label: 'Article template', href: '/ui-library/article-template/' },
+      { label: 'Docs layout', href: '/ui-library/docs-layout/' },
     ],
   },
   {

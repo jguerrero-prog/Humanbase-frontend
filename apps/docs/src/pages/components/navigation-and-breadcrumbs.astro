@@ -12,6 +12,8 @@ import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
 import ProductScreen from '../../components/docs/ProductScreen.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
+import { DocsNavExample, OnThisPageExample } from '../../components/docs/DocsLayoutExample';
+import { withBase } from '../../withBase';
 import { productJobs as jobs, productSections as sections } from '../../data/product-navigation';
 
 const menuSections = sections.filter((section) => section.columns);
@@ -362,6 +364,14 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
       }
     </ul>
     <ul class="points">{crumbRules.map((rule) => <li>{rule}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Docs nav and On this page" lead="The two navigation lists on docs pages. DocsNav is the sidebar: search, then the pages in groups, the open page marked with a 3px action.primary bar. OnThisPage lists the page’s h2 and h3 sections and marks the one being read.">
+    <div class="docs-nav-specimens">
+      <DocsNavExample />
+      <OnThisPageExample />
+    </div>
+    <p class="doc-note">States, specs and the full layout are on <a href={withBase('/ui-library/docs-layout/')}>Docs layout</a>.</p>
   </DocSection>
 
   <DocSection title="Result page header" lead="Where the pieces come together. Breadcrumbs say where the page is, the title says what it shows, settings change it in place, and tabs switch views.">
@@ -971,7 +981,15 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     margin-block-start: var(--space-2);
   }
 
+  .docs-nav-specimens {
+    display: grid;
+    grid-template-columns: 272px 208px;
+    gap: var(--space-16);
+    align-items: start;
+  }
+
   @media (width < 64rem) {
+    .docs-nav-specimens,
     .levels,
     .paths,
     .item-states,

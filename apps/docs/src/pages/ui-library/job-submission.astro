@@ -1,5 +1,5 @@
 ---
-import { deepseaExamples, deepseaModels, readTheDocs } from '@humanbase/data';
+import { deepseaExamples, deepseaModels, docsPage } from '@humanbase/data';
 import { VariantJobForm } from '@humanbase/hb';
 import { AboutPanel, Accordion, AccordionItem, Breadcrumbs, Button, FileDrop, Icon, RemoveButton, SegmentedControl, Select, TextInput } from '@humanbase/ui';
 import { Code } from 'astro:components';
@@ -169,7 +169,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
     <div class="about-specimen">
       <AboutPanel
         tool="NetWAS"
-        docsHref={`${readTheDocs}netwas.html`}
+        docsHref={docsPage('netwas')}
         headingLevel={3}
         examplesTitle="Example files: the same BMI GWAS (Randall 2013)"
         examples={netwasExamples.map(([name, detail]) => ({ name: name ?? '', detail: detail ?? '', onDownload: () => undefined }))}
