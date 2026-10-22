@@ -1,0 +1,44 @@
+.data-sources {
+  inline-size: min(1200px, 100% - 2 * var(--layout-margin-mobile));
+  margin-inline: auto;
+  padding-block: var(--space-12) 112px;
+}
+
+.data-sources-eras {
+  display: grid;
+  gap: 56px;
+  padding-block-start: var(--space-8);
+}
+
+.data-sources-section {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.data-sources-heading {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.data-sources-heading h2 {
+  font: var(--type-h3);
+  letter-spacing: var(--type-h3-tracking);
+}
+
+.data-sources-heading p {
+  font: var(--type-body-lg);
+  color: var(--text-secondary);
+}
+
+/* Long names and descriptions wrap instead of being cut off. */
+.data-sources-section .table-cell-text {
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (width < 40rem) {
+  .data-sources {
+    padding-block: var(--space-8) var(--space-16);
+  }
+}

@@ -1,9 +1,40 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
-import { apiOff } from './apiOff';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { sampleKey } from '../packages/data/src/sample/sampleKey.ts';
+import { apiOff, externalFiles } from './apiOff';
 import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
+const samples = fileURLToPath(new URL('../packages/data/samples/', import.meta.url));
+const sample = async (key: string) => JSON.parse(await readFile(join(samples, `${key}.json`), 'utf8')) as { status: number; body: unknown };
+const chr1Variants = (page: number) => `variants@chromosome=chr1&labels__name=asd&page=${page}&position__gte=2230000&position__lte=2440000`;
+
+/** Turns the API on but answers it from the samples, slowly; any range on chr1 gets the recorded variants that fall in it, so the view can move. */
+async function slowSampleApi(page: Page, delay = 400) {
+  const pages = await Promise.all([1, 2].map(async (number) => ((await sample(chr1Variants(number))).body as { results: { position: number }[] }).results));
+  const variants = pages.flat();
+  const predictions = (await sample('deepsea/DNA_Binding/feature_predictions@chr_and_variant_range=1%3A2230000%3A2440000')).body as { position: string }[];
+  await page.route('**/config.json', (route) => route.fulfill({ json: { api: true, apiBase: '/api' } }));
+  for (const pattern of externalFiles) await page.route(pattern, (route) => route.abort());
+  await page.route('**/api/**', async (route) => {
+    const url = new URL(route.request().url());
+    const query = Object.fromEntries(url.searchParams);
+    const inRange = (position: number, start: number, end: number) => position >= start && position <= end;
+    await new Promise((resolve) => setTimeout(resolve, delay));
+    if (url.pathname === '/api/variants/' && query.position__gte) {
+      const results = variants.filter((variant) => inRange(variant.position, Number(query.position__gte), Number(query.position__lte)));
+      return route.fulfill({ json: { count: results.length, next: null, previous: null, results } });
+    }
+    if (url.pathname.endsWith('/feature_predictions/') && query.chr_and_variant_range) {
+      const [, start, end] = query.chr_and_variant_range.split(':').map(Number);
+      return route.fulfill({ json: predictions.filter((record) => inRange(Number(record.position), start ?? 0, end ?? 0)) });
+    }
+    const recorded = await sample(sampleKey('GET', url.pathname, query)).catch(() => ({ status: 404, body: { detail: 'Not found.' } }));
+    return route.fulfill({ status: recorded.status, json: recorded.body });
+  });
+}
 
 test('the ASD Browser opens on the default range with each effects view, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
@@ -98,6 +129,32 @@ test('the ASD Browser shows and hides its tracks and exports the view as SVG, wi
   expect(apiRequests).toEqual([]);
 });
 
+test('the ASD Browser stops at the end of a chromosome and says when a typed position is past it, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/asd/?location=chr1:249,200,000-249,250,000`);
+  const field = page.getByRole('searchbox', { name: 'Location or gene' });
+  await expect(field).toHaveValue('chr1:249,200,000-249,250,000');
+  for (const press of [1, 2]) {
+    await page.locator('.genome-engine').focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(field, `press ${press}`).toHaveValue('chr1:249,200,621-249,250,621');
+  }
+  await page.locator('.genome-engine').focus();
+  await page.keyboard.press('-');
+  await expect(field).toHaveValue('chr1:248,750,621-249,250,621');
+  await field.fill('chr1:300,000,000-300,010,000');
+  await field.press('Enter');
+  await expect(page.getByText('chr1 ends at 249,250,621 on GRCh37/hg19. Showing up to the end.')).toBeVisible();
+  await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
+  await expect(field).toHaveAttribute('aria-invalid', 'true');
+  await field.fill('chr23:1,000-2,000');
+  await field.press('Enter');
+  await expect(page.getByText('There is no chr23 on GRCh37/hg19. Enter chr1 to chr22, chrX, chrY or chrM.')).toBeVisible();
+  await expect(page).toHaveURL(/location=chr1/);
+  expect(await violationsOf(page)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
 test('the ASD Browser fits a phone without scrolling sideways', async ({ page }) => {
   await apiOff(page);
   await page.setViewportSize({ width: 375, height: 812 });
@@ -106,4 +163,34 @@ test('the ASD Browser fits a phone without scrolling sideways', async ({ page })
     await expect(page.getByRole('heading', { level: 1, name: 'ASD Browser' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
   }
+});
+
+test('a drag on the ASD heatmap moves the view on every step and keeps the heatmap while each range loads', async ({ page }) => {
+  await slowSampleApi(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${web}/asd/`);
+  await page.getByRole('tab', { name: 'Heatmap' }).click();
+  const grid = page.locator('.effects-heatmap [role="grid"]');
+  await expect(grid).toBeVisible();
+  const mounted = await grid.elementHandle();
+  const location = page.getByRole('searchbox', { name: 'Location or gene' });
+  await grid.scrollIntoViewIfNeeded();
+  const card = await page.locator('.effects-heatmap').boundingBox();
+  const cells = await grid.boundingBox();
+  if (!mounted || !card || !cells) throw new Error('The heatmap didn’t draw.');
+  const y = cells.y + 40;
+  let x = card.x + card.width / 2;
+  let shown = await location.inputValue();
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  for (let step = 0; step < 20; step += 1) {
+    x -= 10;
+    await page.mouse.move(x, y);
+    await expect(location).not.toHaveValue(shown);
+    expect(await mounted.evaluate((node) => node.isConnected)).toBe(true);
+    shown = await location.inputValue();
+    await page.waitForTimeout(120);
+  }
+  await page.mouse.up();
+  expect(await mounted.evaluate((node) => node.isConnected)).toBe(true);
 });

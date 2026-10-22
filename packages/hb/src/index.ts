@@ -4,6 +4,7 @@ export { AsdBrowser, type AsdBrowserProps, type AsdView } from './AsdBrowser/Asd
 export { AsdExplorer, type AsdExplorerProps, type AsdState } from './AsdBrowser/AsdExplorer';
 export { AsdHeader, AsdVariantTable, type AsdHeaderProps, type AsdVariantTableProps } from './AsdBrowser/AsdParts';
 export { aboutArticle, type AboutSection } from './content/about/about';
+export { doiLink, humanbaseCitation, humanbaseCitationText, methodCitations, netwasCitation, type MethodCitation, type PlatformCitation } from './content/cite';
 export { DocsLibrary, docsLibrary, docsRoute, parsePage, type DocsGroup, type DocsPage } from './content/docs/DocsLibrary';
 export { DocsSearch, type DocsSearchProps } from './content/docs/DocsSearch';
 export { DocsSearchIndex, snippet, type DocsHit } from './content/docs/DocsSearchIndex';
@@ -29,3 +30,4 @@ export { elapsed, JobWaiting, jobDateTime, syncJobHistory, useJobActions, useJob
 export { JobColumns } from './Jobs/JobColumns';
 export { JobsList, jobLinkFrom, type JobsListProps } from './Jobs/JobsList';
 export { JobWatcher } from './Jobs/JobWatcher';
+export { dataEraFrom, dataEras, dataSourcesFor, dataSourcesPage, reproducibilityHref, type DataColumn, type DataEra, type DataNote, type DataSection } from './content/data-sources';

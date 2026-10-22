@@ -1,5 +1,5 @@
 export { ActionMenu, type ActionMenuItem, type ActionMenuProps } from './ActionMenu/ActionMenu';
-export { ArticleFigure, ArticleLayout, ArticleSection, DropCapParagraph, RefMark, ReferenceList, type ArticleFigureProps, type ArticleImage, type ArticleLayoutProps, type ArticleSectionProps, type ReferenceMark } from './Article/Article';
+export { ArticleFigure, ArticleHero, ArticleLayout, ArticleSection, DropCapParagraph, RefMark, ReferenceList, type ArticleFigureProps, type ArticleHeroProps, type ArticleImage, type ArticleLayoutProps, type ArticleSectionProps, type ReferenceMark } from './Article/Article';
 export { AudioPill, type AudioPillProps, type PlaybackState } from './AudioPlayer/AudioPill';
 export { AudioPlayer, type AudioPlayerProps } from './AudioPlayer/AudioPlayer';
 export { clockTime, spokenTime } from './AudioPlayer/playbackTime';
@@ -143,9 +143,13 @@ export { EffectsControls, MolecularEffects, effectZScale, type EffectsControlsPr
 export { chromosomeColor } from './VariantEffects/ChromosomeColor';
 export { sequenceClassColor, sequenceClassLegend } from './VariantEffects/SequenceClass';
 export { StrongestEffects, type StrongestEffectsProps } from './VariantEffects/StrongestEffects';
-export { byGenomePosition, variantLabel, variantLocation, variantName, type Variant, type VariantScore } from './VariantEffects/Variant';
+export { byGenomePosition, variantLabel, variantLocation, variantName, variantScore, type Variant, type VariantScore } from './VariantEffects/Variant';
 export { VariantFocus, type VariantFocusProps } from './VariantEffects/VariantFocus';
-export { VariantScorePlot, type PlotBy, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
+export { type PlotColorBy } from './VariantEffects/plotColors';
+export { type PlotBy } from './VariantEffects/ScorePlotLayout';
+export { VariantScorePlot, type VariantScorePlotProps } from './VariantEffects/VariantScorePlot';
 export { VariantsTable, type VariantsTableProps } from './VariantEffects/VariantsTable';
+export { useCopy } from './hooks/useCopy';
 export { useDebounced } from './hooks/useDebounced';
+export { useWidth } from './hooks/useWidth';
 export { LinkBaseProvider, useLinkHref } from './hooks/useLinkHref';
