@@ -137,6 +137,22 @@
   color: var(--text-secondary);
 }
 
+.heatmap-frame {
+  position: relative;
+}
+
+/* As on scrolling tabs, a fade at the edge says the cells go on. */
+.heatmap-frame[data-more]::after {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: 2;
+  inline-size: 48px;
+  pointer-events: none;
+  content: "";
+  background: linear-gradient(to right, transparent, var(--surface-page));
+}
+
 .heatmap-plot {
   --heatmap-label: 160px;
 
@@ -158,6 +174,10 @@
   inline-size: 0;
   overflow: visible;
   white-space: nowrap;
+}
+
+.heatmap-position-labels span[data-cut] {
+  visibility: hidden;
 }
 
 .heatmap-column-labels {

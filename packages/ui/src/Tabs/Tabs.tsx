@@ -1,6 +1,7 @@
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from 'react';
+import { useEffect, useId, useMemo, useRef, type KeyboardEvent, type ReactNode } from 'react';
 import { Badge } from '../Badge/Badge';
 import { useControlled } from '../hooks/useControlled';
+import { useMoreToScroll } from '../hooks/useScrollState';
 import { ListNavigator } from '../List/ListNavigator';
 import './Tabs.css';
 
@@ -20,23 +21,6 @@ export interface TabsProps {
   onChange?: (value: string) => void;
   children?: ReactNode;
   className?: string;
-}
-
-function useMoreToScroll(scroller: RefObject<HTMLDivElement | null>) {
-  const [more, setMore] = useState(false);
-  useEffect(() => {
-    const element = scroller.current;
-    if (!element || typeof ResizeObserver === 'undefined') return;
-    const measure = () => setMore(element.scrollLeft + element.clientWidth < element.scrollWidth - 1);
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    element.addEventListener('scroll', measure, { passive: true });
-    return () => {
-      observer.disconnect();
-      element.removeEventListener('scroll', measure);
-    };
-  }, [scroller]);
-  return more;
 }
 
 export function Tabs({ label, tabs, value, defaultValue, onChange, children, className }: TabsProps) {
