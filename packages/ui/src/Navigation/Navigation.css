@@ -205,10 +205,7 @@ a.nav-item,
 }
 
 .nav-menu-divider {
-  inline-size: 100%;
-  margin: var(--space-1) 0;
-  border: 0;
-  border-block-start: var(--border-width-1) solid var(--border-subtle);
+  margin-block: var(--space-1);
 }
 
 .nav-menu-footer {

@@ -18,8 +18,10 @@ const uses: Record<string, string> = {
   '8': 'Between cards and sections',
   '10': 'Between major regions',
   '12': 'Above page headings',
+  '14': 'Between the sections of a long reference page, such as Data sources',
   '16': 'Page margins on desktop',
   '24': 'Hero and footer spacing',
+  '28': 'Below the last block of an article, docs or reference page',
   '32': 'Large hero spacing',
 };
 
@@ -35,8 +37,8 @@ const steps = flattenTokens(primitives.space, ['space'])
 
 <DocsLayout title="Spacing tokens" description="The spacing variables every gap and padding in the components is bound to.">
   <Intro
-    lead="14 spacing variables, from 0px to 128px, hold the scale from the Spacing and layout grid page. Every gap and padding in the components is bound to one of them."
-    status="Updated October 16, 2026 · Tokens · Every bar on this page is bound to its variable"
+    lead="16 spacing variables, from 0px to 128px, hold the scale from the Spacing and layout grid page. Every gap and padding in the components is bound to one of them."
+    status="Updated October 22, 2026 · Tokens · Every bar on this page is bound to its variable"
   >
     <KeyRules
       rules={[
@@ -64,6 +66,7 @@ const steps = flattenTokens(primitives.space, ['space'])
 
   <DocSection title="What was snapped" lead="When the variables were bound on October 16, 2026, off-scale values in components moved up to the next step, then every component set was checked in screenshots.">
     <p>Spacing: 1px → 2px, 5px → 4px, 6px → 8px, 10px → 12px, 14px → 16px, 28px → 32px, 56px → 64px. Corner radius: 6px → 8px.</p>
+    <p>On October 22, 2026, space/14 (56px) and space/28 (112px) were added for page spacing that had been written as literal values: the gap between Data sources sections and the space below articles and docs pages.</p>
   </DocSection>
 </DocsLayout>
 

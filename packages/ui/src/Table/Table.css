@@ -131,6 +131,17 @@
   white-space: nowrap;
 }
 
+.table-cell-wrap {
+  overflow: visible;
+  padding-block: var(--space-3);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.table-compact .table-cell-wrap {
+  padding-block: var(--space-2);
+}
+
 .table-cell-number,
 .table-cell-score {
   font-variant-numeric: tabular-nums;

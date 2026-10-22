@@ -52,10 +52,6 @@
   white-space: nowrap;
 }
 
-.module-drawer-table .table-cell-text {
-  white-space: normal;
-}
-
 .module-drawer-table .table-cell-number {
   white-space: nowrap;
 }
@@ -68,6 +64,3 @@
   vertical-align: top;
 }
 
-.module-gene-table .table-cell-text {
-  white-space: normal;
-}

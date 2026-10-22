@@ -1,4 +1,5 @@
 import { Fragment, type ReactNode } from 'react';
+import { Divider } from '../Divider/Divider';
 import { IconButton } from '../IconButton/IconButton';
 import type { IconName } from '../Icon/Icon';
 import './Results.css';
@@ -28,7 +29,7 @@ export function GraphToolbar({ label, groups, tableHref, onViewTable, tableLabel
     <div className="graph-toolbar" role="toolbar" aria-label={label}>
       {groups.map((group, index) => (
         <Fragment key={index}>
-          {index > 0 && <span className="graph-toolbar-divider" aria-hidden="true" />}
+          {index > 0 && <Divider orientation="vertical" className="graph-toolbar-divider" />}
           {group.map((action) => (
             <IconButton key={action.label} label={action.label} icon={action.icon} aria-pressed={action.pressed} onClick={action.onSelect} />
           ))}
@@ -36,7 +37,7 @@ export function GraphToolbar({ label, groups, tableHref, onViewTable, tableLabel
       ))}
       {children && (
         <>
-          <span className="graph-toolbar-divider" aria-hidden="true" />
+          <Divider orientation="vertical" className="graph-toolbar-divider" />
           {children}
         </>
       )}

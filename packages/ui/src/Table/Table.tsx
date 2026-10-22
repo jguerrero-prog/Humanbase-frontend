@@ -84,10 +84,12 @@ export type CellType = 'text' | 'number' | 'gene' | 'id';
 export interface CellProps extends ComponentProps<'td'> {
   type?: CellType;
   rowHeader?: boolean;
+  /** Text wraps and the row grows, instead of one line cut off with an ellipsis. For descriptions, not names, IDs or numbers. */
+  wrap?: boolean;
 }
 
-export function Cell({ type = 'text', rowHeader = false, className, children, ...rest }: CellProps) {
-  const cellClass = classes('table-cell', `table-cell-${type}`, className);
+export function Cell({ type = 'text', rowHeader = false, wrap = false, className, children, ...rest }: CellProps) {
+  const cellClass = classes('table-cell', `table-cell-${type}`, wrap && 'table-cell-wrap', className);
   return rowHeader ? (
     <th scope="row" className={cellClass} {...rest}>
       {children}

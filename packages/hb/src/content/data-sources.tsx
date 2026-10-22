@@ -1,4 +1,4 @@
-import { docsPage } from '@humanbase/data';
+import { assemblyNames, docsPage, GenomeLocation } from '@humanbase/data';
 import { ValueFormat } from '@humanbase/ui';
 import type { ReactNode } from 'react';
 
@@ -205,6 +205,20 @@ const sections: readonly DataSectionSource[] = [
           <>
             Trained using data from 232 cross-linking immunoprecipitation (CLIP) based RNA binding protein datasets (Supplementary Table 1 of <a href="https://www.nature.com/articles/s41588-020-00761-3">Park et al. 2021</a>).
           </>,
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Genome browser reference',
+    description: 'Reference data used by the Humanbase genome browsers.',
+    columns: versions,
+    rows: [
+      {
+        cells: [
+          <a href="https://genome.ucsc.edu/">Chromosome sizes (UCSC Genome Browser)</a>,
+          `${GenomeLocation.chromosomesRecorded} (${Object.values(assemblyNames).join(', ')})`,
+          'Genome browsers: where each chromosome ends',
         ],
       },
     ],

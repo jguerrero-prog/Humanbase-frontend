@@ -42,8 +42,8 @@ const neighbors: [string, string, string, number][] = [
         <tbody>
           {terms.map(([term, genes, q]) => (
             <tr>
-              <Cell rowHeader>{term}</Cell>
-              <Cell>{genes}</Cell>
+              <Cell rowHeader wrap>{term}</Cell>
+              <Cell wrap>{genes}</Cell>
               <Cell type="number">{q}</Cell>
             </tr>
           ))}
@@ -63,7 +63,7 @@ const neighbors: [string, string, string, number][] = [
           {neighbors.map(([symbol, name, module, score]) => (
             <tr>
               <Cell rowHeader><strong>{symbol}</strong></Cell>
-              <Cell>{name}</Cell>
+              <Cell wrap>{name}</Cell>
               <Cell>{module}</Cell>
               <ScoreCell value={score} />
             </tr>
@@ -81,9 +81,5 @@ const neighbors: [string, string, string, number][] = [
 <style>
   :global(.module-gene-drawer .table-cell) {
     vertical-align: top;
-  }
-
-  :global(.module-gene-drawer .table-cell-text) {
-    white-space: normal;
   }
 </style>

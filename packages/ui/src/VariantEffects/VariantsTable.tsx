@@ -36,7 +36,7 @@ export function VariantsTable({ variants, scores, sortBy, selected, onSelect, li
             const isSelected = variant.id === selected;
             return (
               <tr key={variant.id} className="variants-table-row" data-selected={isSelected || undefined}>
-                <Cell rowHeader>
+                <Cell rowHeader wrap>
                   <button type="button" className="variants-table-pick" aria-pressed={isSelected} aria-label={`${variantLabel(variant)}, ${variantName(variant)}`} onClick={() => onSelect?.(variant.id)}>
                     <span className="variants-table-location">
                       {variantLocation(variant)} <span className="variants-table-change">{variant.change}</span>

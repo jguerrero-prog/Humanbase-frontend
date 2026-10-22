@@ -35,8 +35,10 @@ export function ModuleTermsTable({ terms, caption, genesHeader, symbolOf, withou
           const rest = without === undefined ? ' and more' : ` and ${more} more`;
           return (
             <tr key={term.id}>
-              <Cell rowHeader>{term.title}</Cell>
-              <Cell>
+              <Cell rowHeader wrap>
+                {term.title}
+              </Cell>
+              <Cell wrap>
                 <span className="module-muted">{more > 0 ? `${named}${rest}` : named}</span>
               </Cell>
               <Cell type="number">

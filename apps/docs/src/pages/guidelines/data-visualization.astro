@@ -38,6 +38,11 @@ const categorical = [
   return { name: index < all.length - 1 ? `${index + 1}. ${name}` : name, cssVar: `--viz-${key.replace('.', '-')}`, hex, ratio: ratio(hex) };
 });
 
+const bandItems = [
+  { label: 'Dark #787878', color: '--viz-band-dark' },
+  { label: 'Light #BBBBBB', color: '--viz-band-light' },
+  { label: 'Neutral #D3D3D3', color: '--viz-band-neutral' },
+];
 const chromosomeItems = [...Array.from({ length: 22 }, (_, i) => `chr${i + 1}`), 'chrX', 'chrY'].map((label) => ({ label, color: chromosomeColor(label) ?? '' }));
 const moduleItems = modules.map(({ id, label }) => ({ label, color: `--viz-cat-${id}` }));
 const edgeItems = [...edgeBands].reverse();
@@ -95,7 +100,7 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
 <DocsLayout title="Data visualization" description="Color scales, network diagrams, heatmaps and charts that stay readable for every kind of color vision.">
   <Intro
     lead="Humanbase is mostly charts: functional networks, expression heatmaps, enrichment bars and variant effects along a sequence. These rules keep them honest and readable for everyone, including the roughly 1 in 12 men and 1 in 200 women with a color vision deficiency."
-    status="Updated October 16, 2026 · Usage guideline · Colors checked with simulated protanopia, deuteranopia and tritanopia (Machado 2009)"
+    status="Updated October 22, 2026 · Usage guideline · Colors checked with simulated protanopia, deuteranopia and tritanopia (Machado 2009)"
   >
     <KeyRules
       rules={[
@@ -164,6 +169,16 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
       <ul class="points">
         <li>Only the variant score plot uses them, in every DeepSEA result, and in Sei’s Color style, Chromosome.</li>
         <li>Neighboring chromosomes can look alike, so the axis labels and the variants table carry the chromosome too; color is never the only cue.</li>
+      </ul>
+    </article>
+    <article class="scale-card">
+      <header><h3>Score plot bands</h3><code>viz.band.dark, .light, .neutral</code></header>
+      <p>The greys humanbase.io draws under the variant score plot’s overview, so the strip reads the same on both sites. They mark where each chromosome runs; they carry no value.</p>
+      <KeyLegend title="Overview band" items={bandItems} />
+      <ul class="points">
+        <li>Dark and light alternate by chromosome when Sei’s Color style is Sequence class, since the points then no longer show chromosome colors.</li>
+        <li>Neutral is the single band under Score Rank, where the x axis is rank, not position.</li>
+        <li>With Color style Chromosome, each band takes its chromosome’s viz.chromosome color instead.</li>
       </ul>
     </article>
   </DocSection>
@@ -307,7 +322,7 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
     <ul class="points">
       <li>Manhattan (x titled Genome) joins the chromosomes that have variants, each as long as its variants span, with a gap of 18/800 of the total span between them. Ticks read chromosome:position, such as chr3:12598855. Score Rank (x titled Rank) puts the highest score at 1.</li>
       <li>Points are 12px, colored by chromosome (viz.chromosome) in both plot styles, or by sequence class group (viz.seqclass) on Sei’s Color style. The y axis always includes 0.</li>
-      <li>The overview under the plot shows every variant over its chromosome’s band at half strength: chromosome colors, or dark and light grey in turn while points show sequence classes, or one light grey band for Score Rank. Drag across it, or use the mouse wheel over the plot, to zoom.</li>
+      <li>The overview under the plot shows every variant over its chromosome’s band at half strength: chromosome colors, or viz.band.dark and viz.band.light in turn while points show sequence classes, or one viz.band.neutral band for Score Rank. Drag across it, or use the mouse wheel over the plot, to zoom.</li>
       <li>Hover or arrow keys open the Data tooltip; Enter selects; + and - zoom. The selected variant has a 2px ink ring, and an ink dot in the overview. The variants table beside the plot is its text alternative.</li>
     </ul>
   </DocSection>

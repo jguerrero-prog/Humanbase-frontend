@@ -1400,6 +1400,47 @@
         }
       }
     },
+    "band": {
+      "dark": {
+        "$type": "color",
+        "$description": "The variant score plot’s darker overview band, alternating with viz.band.light by chromosome when Color style is Sequence class, as on humanbase.io",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.4706,
+            0.4706,
+            0.4706
+          ],
+          "hex": "#787878"
+        }
+      },
+      "light": {
+        "$type": "color",
+        "$description": "The variant score plot’s lighter overview band, alternating with viz.band.dark by chromosome when Color style is Sequence class, as on humanbase.io",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7333,
+            0.7333,
+            0.7333
+          ],
+          "hex": "#BBBBBB"
+        }
+      },
+      "neutral": {
+        "$type": "color",
+        "$description": "The single overview band in the variant score plot’s Score Rank plot style, as on humanbase.io",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.8275,
+            0.8275,
+            0.8275
+          ],
+          "hex": "#D3D3D3"
+        }
+      }
+    },
     "edge": {
       "weak": {
         "$type": "dimension",
@@ -1504,6 +1545,14 @@
       },
       "$description": "Between subsections"
     },
+    "14": {
+      "$type": "dimension",
+      "$value": {
+        "value": 56,
+        "unit": "px"
+      },
+      "$description": "Between the sections of a long reference page"
+    },
     "16": {
       "$type": "dimension",
       "$value": {
@@ -1519,6 +1568,14 @@
         "unit": "px"
       },
       "$description": "Between page sections"
+    },
+    "28": {
+      "$type": "dimension",
+      "$value": {
+        "value": 112,
+        "unit": "px"
+      },
+      "$description": "Below the last block of an article, docs or reference page"
     },
     "32": {
       "$type": "dimension",

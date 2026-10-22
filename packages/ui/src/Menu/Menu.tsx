@@ -1,4 +1,5 @@
 import type { ComponentProps, CSSProperties, ReactNode } from 'react';
+import { Divider } from '../Divider/Divider';
 import { Icon, type IconName } from '../Icon/Icon';
 import './Menu.css';
 
@@ -55,5 +56,5 @@ export function MenuGroupLabel({ id, children }: { id: string; children: ReactNo
 }
 
 export function MenuDivider() {
-  return <div className="menu-divider" role="separator" />;
+  return <Divider className="menu-divider" />;
 }
