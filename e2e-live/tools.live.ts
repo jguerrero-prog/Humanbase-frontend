@@ -265,6 +265,11 @@ test('the ASD Browser draws the real track files, finds SCN2A and pages the tabl
   await expect(page.getByRole('dialog', { name: 'Genes' })).toHaveText(/^GenesMethodprotein_codingLocationchr1:2,252,692-2,323,146Score1000$/);
   expect(await violationsOf(page)).toEqual([]);
   await page.keyboard.press('Escape');
+  // humanbase.io shows this bar as chr1:2346202-2346202, 3.6189358234405518 (checked October 22, 2026).
+  await browser.locator('[data-item="DNA disease impact score 2346202"]').click();
+  await expect(page.getByRole('dialog', { name: 'DNA disease impact score' })).toHaveText(/^DNA disease impact scoreLocationchr1:2,346,202-2,346,202Score3\.6189358234405518$/);
+  expect(await violationsOf(page)).toEqual([]);
+  await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Tracks' }).click();
   const drawer = page.getByRole('dialog', { name: 'Tracks' });
   await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
@@ -274,6 +279,10 @@ test('the ASD Browser draws the real track files, finds SCN2A and pages the tabl
   await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'DNA disease impact score', 'Conservation', 'GM12878 ChromHMM', 'Genes']);
   await expect(browser.locator('.genome-tracks-segment')).toHaveCount(108);
   await expect(browser.locator('.genome-tracks-bar.is-selected')).toHaveCount(2);
+  await page.getByRole('group', { name: 'Conservation, items' }).getByRole('button').first().focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog', { name: 'Conservation' })).toHaveText(/^ConservationLocationchr1:[\d,]+-[\d,]+Score[\d.]+$/);
+  await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Tracks' }).click();
   await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
   await drawer.getByRole('button', { name: 'Done' }).click();

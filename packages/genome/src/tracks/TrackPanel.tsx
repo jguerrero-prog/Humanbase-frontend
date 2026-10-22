@@ -3,7 +3,7 @@ import { GenomeTrackView, type GeneShape, type TrackOf } from '@humanbase/ui';
 import { useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { isSegmentTrack, withChr, type Assembly, type GenomeDataTrack, type GenomeRegion, type GenomeScoreTrack } from '../GenomeBrowserEngine';
 import { builtInTracks, genesTrack, sequenceTrack } from '../genomeTrackList';
-import { geneDetails, segmentDetails } from './itemDetails';
+import { geneDetails, scoreDetails, segmentDetails } from './itemDetails';
 import type { DrawnTracks, TrackEngine } from './TrackEngine';
 import { readLimit, useSegmentTracks, useTrackData } from './useTrackData';
 
@@ -84,7 +84,7 @@ export function TrackPanel({ engine, files, assembly, tracks: allTracks, onRegio
     scores: tracks.map((track) => {
       // A track just turned on has no data until its first read lands.
       const values = scores.data?.[track.bigWigUrl];
-      return { name: track.name, meta: track.meta ?? '', state: values || scores.state === 'failed' ? scores.state : 'loading', data: values && { min: track.range?.[0] ?? 0, max: track.range?.[1] ?? 1, values } };
+      return { name: track.name, meta: track.meta ?? '', state: values || scores.state === 'failed' ? scores.state : 'loading', data: values && { min: track.range?.[0] ?? 0, max: track.range?.[1] ?? 1, values: values.map((point) => ({ ...point, details: scoreDetails(chrom, point) })) } };
     }),
     segments,
     genes: showGenes ? geneTrack : undefined,

@@ -156,5 +156,38 @@ describe('GenomeTrackView', () => {
       expect(screen.queryByRole('button')).toBeNull();
       expect(container.querySelector('[data-item]')).toBeNull();
     });
+
+    it('opens a score bar’s details on click or from the keyboard, with the value as given, and nothing between bars', async () => {
+      const values = [
+        { start: 200, end: 200, value: 3.6189358234405518, details: [['Location', 'chr1:200-200'], ['Score', '3.6189358234405518']] as const },
+        { start: 600, end: 600, value: -0.25, details: [['Location', 'chr1:600-600'], ['Score', '-0.25']] as const },
+        { start: 800, end: 900, value: 0.8728139370302611, details: [['Location', 'chr1:800-900'], ['Score', '0.8728139370302611']] as const },
+      ];
+      const { container } = render(<GenomeTrackView start={1} end={1000} width={1000} scores={[{ name: 'DNA disease impact score', meta: 'Model score, −0.4 to 3', state: 'ready', data: { min: -0.4, max: 3, values } }]} />);
+      const bars = [...container.querySelectorAll('.genome-tracks-bar')];
+      expect(bars.map((bar) => bar.getAttribute('data-item'))).toEqual(['DNA disease impact score 200', 'DNA disease impact score 600', 'DNA disease impact score 800']);
+
+      await userEvent.click(container.querySelector('.genome-tracks-area') as Element);
+      expect(screen.queryByRole('dialog')).toBeNull();
+
+      await userEvent.click(bars[0] as Element);
+      const popover = screen.getByRole('dialog', { name: 'DNA disease impact score' });
+      expect([...popover.querySelectorAll('dl > div')].map((row) => row.textContent)).toEqual(['Locationchr1:200-200', 'Score3.6189358234405518']);
+      await userEvent.keyboard('{Escape}');
+
+      const first = screen.getByRole('button', { name: '3.62 at 200' });
+      expect(first).toHaveFocus();
+      expect(within(screen.getByRole('group', { name: 'DNA disease impact score, items' })).getAllByRole('button').map((button) => button.getAttribute('tabindex'))).toEqual(['0', '-1', '-1']);
+      await userEvent.keyboard('{End}');
+      const last = screen.getByRole('button', { name: '0.87 at 800 to 900' });
+      expect(last).toHaveFocus();
+      await userEvent.keyboard('{ArrowLeft}');
+      expect(screen.getByRole('button', { name: '-0.25 at 600' })).toHaveFocus();
+      await userEvent.keyboard('{Home}');
+      expect(first).toHaveFocus();
+      await userEvent.keyboard('{End}{ }');
+      expect(screen.getByRole('dialog', { name: 'DNA disease impact score' })).toHaveTextContent('0.8728139370302611');
+      expect(last).toHaveAttribute('aria-expanded', 'true');
+    });
   });
 });
