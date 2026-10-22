@@ -44,6 +44,7 @@
   --color-grey-800: #262626;
   --color-grey-900: #1A1A1A;
   --color-white: #FFFFFF;
+  --color-cream: #FFFBF9;
   --color-error-50: #FEF3F2;
   --color-error-200: #FECDCA;
   --color-error-700: #B42318;
@@ -161,6 +162,7 @@
   --text-error: var(--color-error-700);
   --surface-page: var(--color-white);
   --surface-subtle: var(--color-grey-50);
+  --surface-cream: var(--color-cream);
   --surface-sunken: var(--color-grey-100);
   --surface-inverse: var(--color-grey-900);
   --surface-brand-deep: var(--color-emerald-900);
