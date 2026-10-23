@@ -8,8 +8,8 @@ test('with the API off, the homepage search answers from sample data and calls n
   await expect(page.getByRole('option', { name: /CASP1/ })).toContainText('Matched on its alias IL1BC');
   await page.getByRole('combobox', { name: 'Search genes' }).fill('AUTS12 IL1B TNF');
   await page.getByRole('combobox', { name: 'Search genes' }).press('Enter');
-  await expect(page.getByText('2 genes will be analyzed in GIANT')).toBeVisible();
+  await expect(page.getByText('2 genes will be analyzed in MAGE')).toBeVisible();
   await page.getByRole('button', { name: 'Show network for 2 genes' }).click();
-  await expect(page).toHaveURL(/\/networks\/\?entrez=3553&entrez=7124&version=v1$/);
+  await expect(page).toHaveURL(/\/networks\/\?entrez=3553&entrez=7124&version=v3$/);
   expect(apiRequests).toEqual([]);
 });

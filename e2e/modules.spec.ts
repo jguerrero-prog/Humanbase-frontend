@@ -16,8 +16,9 @@ test('Modules on the homepage checks an example list and starts a job, with the 
   await expect(page.getByText('468 matched', { exact: true })).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
 
+  await expect(page.getByRole('combobox', { name: 'Data version' })).toHaveText('MAGE');
   await page.getByRole('button', { name: 'Find modules in 504 genes' }).click();
-  await expect(page).toHaveURL(/\/modules\/\?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9/);
+  await expect(page).toHaveURL(/\/modules\/\?body_tag=5906cd20e9242a9c20125f8a660e7fd7be4f11ee/);
   await expect(page.getByRole('heading', { level: 1, name: 'Renal disease panel' })).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   expect(apiRequests).toEqual([]);

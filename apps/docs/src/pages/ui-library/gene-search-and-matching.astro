@@ -127,7 +127,7 @@ const specs = [
 
 const crumbs = [{ label: 'Network analysis', href: '#the-matching-table' }, { label: 'Networks' }];
 const tissues = ['Blood vessel', 'Liver', 'Brain'].map((tissue) => ({ value: tissue, label: tissue }));
-const versions = ['GIANT', 'MAGE (current)'].map((version) => ({ value: version, label: version }));
+const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version, label: version }));
 ---
 
 <DocsLayout title="Gene search and matching" description="One search box for every gene reference, suggestions that explain themselves, and a matching table that shows and fixes each term before anything runs.">
@@ -186,7 +186,7 @@ const versions = ['GIANT', 'MAGE (current)'].map((version) => ({ value: version,
           <GeneList label="Genes" hint="Separate genes with spaces or new lines." defaultValue={'IL1B\np53\nAUTS2\nFOOBAR1\nTNF'} />
           <div class="query-settings">
             <Select label="Tissue" options={tissues} defaultValue="Blood vessel" />
-            <Select label="Data version" options={versions} defaultValue="GIANT" />
+            <Select label="Data version" options={versions} defaultValue="MAGE (current)" />
             <Button>{`Show network for ${GeneMatchList.pluralGenes(query.runnable)}`}</Button>
           </div>
         </div>

@@ -56,8 +56,8 @@ describe('Network', () => {
 
 describe('NetworkQuery', () => {
   it('requests the global network of the chosen version when no tissue is set', () => {
-    expect(new NetworkQuery([3553]).slug).toBe('global');
-    expect(new NetworkQuery([3553], undefined, 'v3').slug).toBe('global-v3');
+    expect(new NetworkQuery([3553]).slug).toBe('global-v3');
+    expect(new NetworkQuery([3553], undefined, 'v1').slug).toBe('global');
     expect(new NetworkQuery([3553], 'kidney-v3', 'v3').slug).toBe('kidney-v3');
   });
 

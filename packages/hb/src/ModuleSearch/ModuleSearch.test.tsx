@@ -32,8 +32,19 @@ describe('ModuleSearch', () => {
     const run = await screen.findByRole('button', { name: 'Find modules in 504 genes' }, { timeout: 3000 });
     await screen.findByRole('combobox', { name: 'Tissue' });
     await userEvent.click(run);
+    await vi.waitFor(() => expect(onStarted).toHaveBeenCalledWith('/modules/?body_tag=5906cd20e9242a9c20125f8a660e7fd7be4f11ee'));
+    expect(new JobHistory().list()[0]).toMatchObject({ tool: 'Modules', status: 'running', title: 'Renal disease panel', detail: 'Modules, Kidney' });
+  });
+
+  it('runs an example on its GIANT tissue once GIANT is chosen', async () => {
+    const { onStarted } = renderSearch('renal');
+    await screen.findByRole('button', { name: 'Find modules in 504 genes' }, { timeout: 3000 });
+    await userEvent.click(screen.getByRole('combobox', { name: 'Data version' }));
+    await userEvent.click(screen.getByRole('option', { name: 'GIANT' }));
+    await userEvent.click(screen.getByRole('button', { name: 'renal disease panel' }));
+    const run = await screen.findByRole('button', { name: 'Find modules in 504 genes' }, { timeout: 3000 });
+    await userEvent.click(run);
     await vi.waitFor(() => expect(onStarted).toHaveBeenCalledWith('/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9'));
-    expect(new JobHistory().list()[0]).toMatchObject({ tool: 'Modules', status: 'running', title: 'Renal disease panel' });
   });
 
   it('removes selected genes from the table and the list, and says so', async () => {
