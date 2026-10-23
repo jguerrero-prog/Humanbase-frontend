@@ -145,10 +145,11 @@ export class ModuleResult {
     return this.edgeList;
   }
 
-  /** Databases with at least one enriched term, Gene Ontology (BP) first, as the live site picks it. */
+  /** Databases with at least one enriched term, Gene Ontology (BP) first, as the live site picks it. MAGE results send it as gene-ontology-bp-ncbi. */
   get databases(): string[] {
     const withTerms = Object.keys(this.record.enrichment).filter((database) => (this.record.enrichment[database]?.length ?? 0) > 0);
-    return withTerms.sort((a, b) => Number(b === 'gene-ontology-bp') - Number(a === 'gene-ontology-bp'));
+    const isGeneOntology = (slug: string) => Number(slug.startsWith('gene-ontology-bp'));
+    return withTerms.sort((a, b) => isGeneOntology(b) - isGeneOntology(a));
   }
 
   moduleOf(entrez: number): Module | undefined {
