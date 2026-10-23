@@ -14,6 +14,11 @@ interface ShadowLayer {
   spread: Length;
 }
 
+interface GradientStop {
+  color: ColorValue;
+  position: number;
+}
+
 const length = ({ value, unit }: Length) => (value === 0 ? '0' : `${value}${unit}`);
 
 const channels = (hex: string) => [1, 3, 5].map((start) => parseInt(hex.slice(start, start + 2), 16)).join(',');
@@ -34,5 +39,6 @@ export function displayValue({ token: { $type, $value } }: TokenEntry): string {
     const layers = $value as ShadowLayer[];
     return layers.length === 0 ? 'none' : layers.map((l) => `${[l.offsetX, l.offsetY, l.blur, l.spread].map(length).join(' ')} ${displayColor(l.color)}`).join(', ');
   }
+  if ($type === 'gradient') return ($value as GradientStop[]).map((stop) => `${displayColor(stop.color)} ${stop.position * 100}%`).join(' to ');
   return String($value);
 }

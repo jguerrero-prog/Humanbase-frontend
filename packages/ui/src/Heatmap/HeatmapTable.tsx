@@ -1,9 +1,12 @@
 import { Icon } from '../Icon/Icon';
 import { Cell, HeaderCell, Table } from '../Table/Table';
+import { ValueFormat } from '../Table/ValueFormat';
 import { ViewAsTable } from '../Table/ViewAsTable';
 import type { HeatmapColumn, HeatmapRow } from './Heatmap';
 import { ScoreScale } from './ScoreScale';
 import './HeatmapTable.css';
+
+const values = new ValueFormat();
 
 export interface HeatmapTableProps {
   summary: string;
@@ -11,12 +14,13 @@ export interface HeatmapTableProps {
   columns: readonly HeatmapColumn[];
   rows: readonly HeatmapRow[];
   rowHeader: string;
-  format: (value: number) => string;
+  decimals: number;
   columnName: (column: HeatmapColumn) => string;
 }
 
-/** The heatmap's values behind View as table: every cell with its row and column, the first column and header row pinned. */
-export function HeatmapTable({ summary, scale, columns, rows, rowHeader, format, columnName }: HeatmapTableProps) {
+/** The heatmap's values behind View as table: every cell with its row and column, the first column and header row pinned, each value to the same decimals. */
+export function HeatmapTable({ summary, scale, columns, rows, rowHeader, decimals, columnName }: HeatmapTableProps) {
+  const format = (value: number) => values.decimal(value, decimals);
   const pastEnd = rows.some((row) => row.values.some((value) => value !== null && scale.pastEnd(value) !== undefined));
   return (
     <ViewAsTable className="heatmap-table">

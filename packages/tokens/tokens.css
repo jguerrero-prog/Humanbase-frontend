@@ -252,6 +252,7 @@
   --shadow-elevation-3: 0 2px 6px 0 #1A1A1A14, 0 8px 24px 0 #1A1A1A1F;
   --shadow-elevation-4: 0 4px 12px 0 #1A1A1A14, 0 16px 48px 0 #1A1A1A2E;
   --shadow-focus-ring: 0 0 0 2px #FFFFFF, 0 0 0 4px #1A1A1A;
+  --shadow-pinned-edge: #1A1A1A1F 0%, #1A1A1A00 100%;
   --z-base: 0;
   --z-sticky: 100;
   --z-dropdown: 200;
