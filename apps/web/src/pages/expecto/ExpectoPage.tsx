@@ -1,5 +1,5 @@
 import { deepseaModels } from '@humanbase/data';
-import { DeepseaAbout, DeepseaForm, GeneFinder, geneExpressionTools, VariantSearch, JobColumns } from '@humanbase/hb';
+import { categoryCrumbs, DeepseaAbout, DeepseaForm, GeneFinder, geneExpressionTools, VariantSearch, JobColumns } from '@humanbase/hb';
 import { Breadcrumbs, Tabs } from '@humanbase/ui';
 import { useNavigate, useSearchParams } from 'react-router';
 import '../ToolPage.css';
@@ -23,7 +23,7 @@ export function ExpectoPage({ tab }: { tab: ExpectoTab }) {
   return (
     <section className="page-section tool-page">
       <title>{`${tab === 'gene' ? '' : `${tabs.find((item) => item.value === tab)?.label} · `}ExPecto · Humanbase`}</title>
-      <Breadcrumbs items={[{ label: 'Sequence analysis', href: '/sequence-tools/' }, { label: info.tool }]} />
+      <Breadcrumbs items={[categoryCrumbs.variants, { label: info.tool }]} />
       <header className="tool-page-title">
         <h1>{info.tool}</h1>
         <p>{info.summary}</p>

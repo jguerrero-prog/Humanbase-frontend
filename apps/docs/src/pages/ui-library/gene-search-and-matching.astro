@@ -125,7 +125,7 @@ const specs = [
   ['run button', 'Primary, full width of the settings column; label carries the gene count'],
 ];
 
-const crumbs = [{ label: 'Network analysis', href: '#the-matching-table' }, { label: 'Networks' }];
+const crumbs = [{ label: 'Genes & gene sets', href: '#the-matching-table' }, { label: 'Networks' }];
 const tissues = ['Blood vessel', 'Liver', 'Brain'].map((tissue) => ({ value: tissue, label: tissue }));
 const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version, label: version }));
 ---
@@ -175,7 +175,7 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
 
   <DocSection title="The matching table" lead="When the genes are checked, every term gets a row. Problems sort to the top, each with its fix in the row, and the button says how many genes will run.">
     <figure class="screen">
-      <TopBar sections={productSections} current="Network analysis" jobs={productJobs} scrolled={false} />
+      <TopBar sections={productSections} current="Genes & gene sets" jobs={productJobs} scrolled={false} />
       <div class="screen-body">
         <Breadcrumbs items={crumbs} />
         <div class="screen-title">

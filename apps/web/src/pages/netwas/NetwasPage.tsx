@@ -1,5 +1,5 @@
 import { docsPage } from '@humanbase/data';
-import { NetwasForm, type NetwasDraft } from '@humanbase/hb';
+import { categoryCrumbs, NetwasForm, type NetwasDraft } from '@humanbase/hb';
 import { Breadcrumbs } from '@humanbase/ui';
 import { useLocation, useNavigate } from 'react-router';
 import '../ToolPage.css';
@@ -14,7 +14,7 @@ export function NetwasPage() {
   return (
     <section className="page-section tool-page">
       <title>NetWAS · Humanbase</title>
-      <Breadcrumbs items={[{ label: 'Network analysis', href: '/' }, { label: 'NetWAS' }]} />
+      <Breadcrumbs items={[categoryCrumbs.genes, { label: 'NetWAS' }]} />
       <header className="tool-page-title">
         <h1>NetWAS</h1>
         <p>Find disease genes your GWAS may have missed. NetWAS reranks your results using a tissue network. Try it with an example study.</p>

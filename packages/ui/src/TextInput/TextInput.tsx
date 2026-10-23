@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes } from 'react';
+import type { InputHTMLAttributes, Ref } from 'react';
 import { Field, type FieldSize } from '../Field/Field';
 import './TextInput.css';
 
@@ -7,6 +7,7 @@ export interface TextInputProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   hint?: string;
   error?: string | undefined;
   size?: FieldSize;
+  ref?: Ref<HTMLInputElement>;
 }
 
 export function TextInput({ label, id, hint, error, size = 'medium', disabled, className, type = 'text', ...rest }: TextInputProps) {

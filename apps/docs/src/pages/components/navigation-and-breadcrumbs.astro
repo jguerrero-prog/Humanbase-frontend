@@ -19,8 +19,8 @@ import { productJobs as jobs, productSections as sections } from '../../data/pro
 const menuSections = sections.filter((section) => section.columns);
 
 const levels = [
-  ['Level 1', 'Section', 'Top bar menu', 'Network analysis, Sequence analysis, Data'],
-  ['Level 2', 'Tool', 'Search or submit', 'Networks, Modules, NetWAS, Sei'],
+  ['Level 1', 'Section', 'Top bar menu', 'Genes & gene sets, Variants & sequences, Resources, About'],
+  ['Level 2', 'Tool', 'Search or submit', 'Networks, Modules, NetWAS, Variant effects'],
   ['Level 3', 'Result', 'Breadcrumbs and tabs', 'IL1B in blood vessel; a job’s results'],
   ['On the result', 'Settings and details', 'Selects and a drawer', 'Tissue, data version; a clicked gene or edge'],
 ];
@@ -42,11 +42,10 @@ const todayMenu = [
   ['Also: “Select an analysis” on the homepage, and a floating Contact us button', 'Two more ways into the same tools.'],
 ];
 const proposedMenu = [
-  ['Network analysis', 'Networks, Modules, NetWAS'],
-  ['Sequence analysis', 'Variant effects: Sei, Beluga, Seqweaver, ExPecto, ExPecto SC. Sequences: In silico mutagenesis. Browsers: ASD Browser. Plus a link to compare the tools.'],
-  ['Data', 'Data sources, Downloads, Humanbase API'],
-  ['Docs', ''],
-  ['About', 'Including the mailing list and contact details'],
+  ['Genes & gene sets', 'Networks, Modules, NetWAS'],
+  ['Variants & sequences', 'Variant effects (Sei and Beluga, with region scan), Seqweaver, Expression effects (ExPecto and ExPecto SC). Plus a link to compare the tools.'],
+  ['Resources', 'Data sources, Downloads, Humanbase API, Docs'],
+  ['About', 'About Humanbase, How to cite, Mailing list'],
   ['Right side: search, and Jobs with a running count', 'The homepage search uses these same tools, with the same names.'],
 ];
 
@@ -54,11 +53,11 @@ const topBarParts = [
   ['Logo', 'Links home. The only way to reach the homepage, so breadcrumbs never start with Home.'],
   ['Current section', 'Bold white with a 3px Simons Yellow bar (4.3:1 on emerald). aria-current="true".'],
   ['Open menu', 'White at 14% behind the item; the chevron flips. Opens on click, not hover.'],
-  ['Tool icons', 'Each tool in the Network analysis and Sequence analysis menus shows its analysis icon at 20px, the same icon as in Select an analysis. A tool without one, such as ASD Browser, keeps the space so names line up.'],
+  ['Tool icons', 'Each tool in the Genes & gene sets and Variants & sequences menus shows its analysis icon at 20px, the same icon as in Select an analysis. A tool without one, such as ASD Browser, keeps the space so names line up.'],
   ['Search', 'Genes, GO terms and diseases. The same search as the homepage, so there is one way in.'],
   ['Jobs', 'Shows how many jobs are running. Humanbase has no accounts, so the list holds jobs submitted from this browser; jobs submitted with an email address also get their link by email.'],
 ];
-const topBarTags = [32, 213, 378, 906, 1190];
+const topBarTags = [32, 221, 390, 906, 1190];
 
 const itemStates = [
   { title: 'Default', text: 'No fill', props: {} },
@@ -67,7 +66,7 @@ const itemStates = [
   { title: 'Open', text: 'White at 14%, chevron up', props: { 'data-state': 'open' as const } },
   { title: 'Focus', text: '2px white ring with a 2px emerald gap', props: { 'data-state': 'focus' as const } },
 ];
-const stateSection: NavSection = { label: 'Network analysis', columns: [[{ links: [] }]] };
+const stateSection: NavSection = { label: 'Genes & gene sets', columns: [[{ links: [] }]] };
 
 const menuRules = [
   ['Open on click', 'Click, Enter, Space or Down Arrow opens the menu. Hover menus open by accident and close when the pointer slips, which is hard for people with tremor.'],
@@ -104,7 +103,7 @@ const headerNotes = [
   'The title names the result in words, including the tissue, so it reads correctly in the browser tab, history and bookmarks.',
   'Changing tissue or version updates the result and the URL in place; it doesn’t add a breadcrumb step or a Back entry.',
   'Tabs follow the Tabs page: one row, each with its own URL.',
-  'The top bar marks Network analysis as the current section.',
+  'The top bar marks Genes & gene sets as the current section.',
 ];
 
 const screenSizes = [
@@ -133,13 +132,14 @@ const densities = [
 const footerNotes = [
   'Link groups use the same names as the top bar sections, in the same order.',
   'The data version in the bottom row says which networks results come from, on every page.',
-  'On phones the groups collapse into compact accordions.',
+  'On phones the groups collapse into compact accordions; the mailing list sign-up stays, above them.',
+  'Mailing list, under About, links to the sign-up (#mailing-list) and moves focus into its email field, so there is no separate page.',
   'The footer is a contentinfo landmark with a nav labeled “Footer”. Group names are headings.',
   'Copy to confirm with Julien and Natalie: the description line and the legal line.',
 ];
 
 const keyboard = [
-  ['Tab order', 'Skip link, logo, the five sections, search, Jobs, then the page. Nine stops at most before the content. The footer comes last.'],
+  ['Tab order', 'Skip link, logo, the four sections, search, Jobs, then the page. Eight stops at most before the content. The footer comes last.'],
   ['Enter, Space or Down Arrow on a section', 'Opens its menu and focuses the first tool.'],
   ['Up and Down Arrow in a menu', 'Move between tools. Home and End jump to the first and last.'],
   ['Escape', 'Closes the menu and returns focus to its section.'],
@@ -149,16 +149,14 @@ const keyboard = [
 ];
 
 const writing = [
-  ['Group by task', 'Network analysis, Sequence analysis', 'Analyses'],
-  ['Keep published tool names', 'Sei, ExPecto, NetWAS', 'Variant predictor, GWAS tool'],
-  ['Explain names in one line', 'Sei: Regulatory and chromatin effects', 'Sei (2021)'],
-  ['Short, plain sections', 'Docs, Data', 'Documentation and Resources'],
+  ['Name sections for what people bring', 'Genes & gene sets, Variants & sequences', 'Network analysis, Sequence analysis'],
+  ['Keep published tool names', 'Seqweaver, NetWAS; Sei and Beluga on Variant effects', 'Variant predictor, GWAS tool'],
+  ['Explain names in one line', 'Variant effects: Sei and Beluga: regulatory and chromatin effects', 'Variant effects (2021)'],
+  ['Short, plain sections', 'Resources, About', 'Data and documentation'],
   ['Name results in words', 'IL1B in blood vessel', 'Query 48213'],
 ];
 
 const questions = [
-  ['Is the ASD Browser still maintained, and where does it belong?', 'It’s a browser of results, not a tool. It could move to Data, or under a disease area.'],
-  ['Do Beluga and Sei both need menu entries?', 'If Sei replaces Beluga, Beluga could move to a “Previous models” note on the Sei page.'],
   ['Should changing tissue add a Back entry?', 'This page assumes not, so Back leaves the result. Planned: see “Research to run” at the bottom of this page.'],
   ['What does search cover?', 'Genes, GO terms and diseases are assumed. If it also finds tools and docs, it can replace the homepage selector entirely.'],
   ['Are SEEK and the non-human collections staying?', 'They are in the API but not linked. If they stay, they need a place in this menu.'],
@@ -223,7 +221,7 @@ const research = [
 const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection } from '@humanbase/ui';
 
 <SkipLink target="#main" />
-<TopBar sections={sections} current="Network analysis" jobs={jobs} />
+<TopBar sections={sections} current="Genes & gene sets" jobs={jobs} />
 <main id="main">
   <Breadcrumbs items={[{ label: 'Networks', href: '/networks/' }, { label: 'IL1B in blood vessel' }]} />
 </main>
@@ -233,7 +231,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
 <DocsLayout title="Navigation and breadcrumbs" description="The navigation model, top bar, section menus, breadcrumbs, footer and skip link.">
   <Intro
     lead="Navigation is how researchers find a tool, keep their place in a result and get back to it later. The audit found ten tools in one flat menu, three different ways into each tool, and gene pages nested five levels deep. This page sets the structure that fixes those problems, and the components that carry it."
-    status="Updated October 16, 2026 · Components: Logo, Top bar, Nav item, Nav menu, Breadcrumbs, Skip link"
+    status="Updated October 23, 2026 · Components: Logo, Top bar, Nav item, Nav menu, Breadcrumbs, Skip link"
   >
     <KeyRules
       rules={[
@@ -275,9 +273,9 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     </ul>
   </DocSection>
 
-  <DocSection title="Top-level menu: a proposal" lead="The docs already group tools into network and sequence analysis. This menu follows them. It is a proposal to test with researchers in a tree test before it ships.">
+  <DocSection title="Top-level menu" lead="Sections are named for what people bring: genes, or variants and sequences. Natalie Sauerwald and Julien proposed this structure on October 23, 2026; Docs moved under Resources and the mailing list under About.">
     <Alert tone="warning">
-      To validate: a tree test with 15 to 20 researchers (from the survey opt-ins), with tasks such as “Find the tool that predicts how a variant changes chromatin”. Review with Julien and Natalie first.
+      To validate: a tree test with 15 to 20 researchers (from the survey opt-ins), with tasks such as “Find the tool that predicts how a variant changes chromatin”.
     </Alert>
     <div class="paths">
       {
@@ -303,7 +301,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
 
   <DocSection title="Top bar" lead="64px, emerald, on every page. It stays at the top when the page scrolls, with elevation 3 once content passes under it.">
     <figure class="stage topbar-stage">
-      <TopBar sections={sections} jobs={jobs} openSection="Sequence analysis" scrolled={false} />
+      <TopBar sections={sections} jobs={jobs} openSection="Variants & sequences" scrolled={false} />
       {topBarTags.map((x, index) => <span class="tag" style={`--x: ${x}px`} aria-hidden="true">{index + 1}</span>)}
       <div class="topbar-legend">
         <ol class="legend">
@@ -314,7 +312,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
           <p>Humanbase has no user profiles. Jobs and display settings, such as motion and table density, are kept in this browser. Display settings are linked from the footer.</p>
         </aside>
       </div>
-      <figcaption class="visually-hidden">The top bar with the Sequence analysis menu open, its parts numbered.</figcaption>
+      <figcaption class="visually-hidden">The top bar with the Variants & sequences menu open, its parts numbered.</figcaption>
     </figure>
   </DocSection>
 
@@ -375,7 +373,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
   </DocSection>
 
   <DocSection title="Result page header" lead="Where the pieces come together. Breadcrumbs say where the page is, the title says what it shows, settings change it in place, and tabs switch views.">
-    <ProductScreen label="A result page header built from the top bar, breadcrumbs, title, selects and tabs" current="Network analysis" padded={false} inert={false}>
+    <ProductScreen label="A result page header built from the top bar, breadcrumbs, title, selects and tabs" current="Genes & gene sets" padded={false} inert={false}>
       <div class="result-header">
         <Breadcrumbs items={networksCrumbs} />
         <div class="result-title-row">
@@ -399,11 +397,11 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     </DocTable>
     <figure class="tablet">
       <figcaption class="variant-label">960 to 1279px</figcaption>
-      <TopBar sections={sections} current="Network analysis" jobs={jobs} scrolled={false} />
+      <TopBar sections={sections} current="Genes & gene sets" jobs={jobs} scrolled={false} />
     </figure>
     <div class="phones">
       <figure class="phone">
-        <TopBar sections={sections} current="Network analysis" jobs={jobs} scrolled={false} />
+        <TopBar sections={sections} current="Genes & gene sets" jobs={jobs} scrolled={false} />
         <div class="phone-page">
           <Breadcrumbs items={networksCrumbs} compact />
           <p class="phone-title">IL1B in blood vessel</p>
@@ -412,14 +410,14 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
         <figcaption class="visually-hidden">A result page on a phone.</figcaption>
       </figure>
       <figure class="phone">
-        <TopBar sections={sections} current="Network analysis" jobs={jobs} menuOpen scrolled={false} />
+        <TopBar sections={sections} current="Genes & gene sets" jobs={jobs} menuOpen scrolled={false} />
         <figcaption class="visually-hidden">The phone menu, open.</figcaption>
       </figure>
       <ul class="points">{phoneNotes.map((note) => <li>{note}</li>)}</ul>
     </div>
   </DocSection>
 
-  <DocSection title="Footer" lead="The backup map, and the home for what left the top bar: the mailing list, contact, how to cite and Display settings. Grey 50 with a 1px line above, on every page.">
+  <DocSection title="Footer" lead="The backup map, and the home of the mailing list sign-up and Display settings. Grey 50 with a 1px line above, on every page.">
     <div class="footer-desktop"><Footer {...footer} /></div>
     <div class="footer-row">
       <div class="phone footer-phone"><Footer {...footer} /></div>
@@ -467,7 +465,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
         <p class="mock-crumbs">Home › Networks › IL1B › Blood vessel › <strong>IL1R1</strong></p>
       </Pair>
       <Pair kind="do" title="Do. One menu entry per tool" text="The homepage search and the menu lead to the same pages." mock>
-        <p class="mock-strong">Sequence analysis › Sei</p>
+        <p class="mock-strong">Variants & sequences › Variant effects</p>
       </Pair>
       <Pair kind="dont" title="Don’t. Duplicate ways in" text="A homepage selector, a menu and section links that each name tools differently." mock>
         <p class="mock-plain">Select an analysis ▾ Analyses ▾ “Try Sei”</p>
