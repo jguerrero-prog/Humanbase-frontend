@@ -3,10 +3,13 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sampleKey } from '../packages/data/src/sample/sampleKey.ts';
+import { asdBrowserRetired } from '../packages/hb/src/content/asdBrowser.ts';
 import { apiOff, externalFiles } from './apiOff';
 import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
+
+test.skip(asdBrowserRetired, 'The ASD Browser is retired; asd-retired.spec.ts tests /asd/ instead.');
 const samples = fileURLToPath(new URL('../packages/data/samples/', import.meta.url));
 const sample = async (key: string) => JSON.parse(await readFile(join(samples, `${key}.json`), 'utf8')) as { status: number; body: unknown };
 const chr1Variants = (page: number) => `variants@chromosome=chr1&labels__name=asd&page=${page}&position__gte=2230000&position__lte=2440000`;
