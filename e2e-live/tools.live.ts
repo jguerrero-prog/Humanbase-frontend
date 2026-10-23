@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { downloadFrom } from '../e2e/downloads';
+import { asdBrowserRetired } from '../packages/hb/src/content/asdBrowser.ts';
 import { violationsOf } from '../e2e/violations';
 import { checkScreen, watch, web } from './live';
 
@@ -258,6 +259,7 @@ test('ExPecto SC shows PTEN by organ', async ({ page }) => {
 });
 
 test('the ASD Browser draws the real track files, finds SCN2A and pages the table', async ({ page }) => {
+  test.skip(asdBrowserRetired, 'The ASD Browser is retired.');
   const problems = watch(page);
   await page.goto(`${web}/asd/`);
   await expect(page.getByRole('heading', { name: /^Molecular effects of chr1:/ })).toBeVisible();
