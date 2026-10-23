@@ -13,6 +13,10 @@
   cursor: pointer;
 }
 
+.button > .icon {
+  flex-shrink: 0;
+}
+
 .button-small {
   gap: 6px;
   padding: var(--space-2) var(--space-4);
