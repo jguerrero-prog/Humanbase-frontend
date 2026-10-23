@@ -542,6 +542,10 @@
 }
 
 @media (width < 48rem) {
+  .result-main {
+    padding: var(--space-4);
+  }
+
   .graph-filters {
     grid-template-columns: minmax(0, 1fr);
   }

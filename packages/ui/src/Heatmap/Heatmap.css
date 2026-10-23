@@ -2,6 +2,7 @@
   --legend-step-size: 44px;
 
   gap: var(--space-1);
+  max-inline-size: 100%;
 }
 
 .legend-stepped-one-sided {
@@ -10,7 +11,7 @@
 
 .legend-step-list {
   display: grid;
-  grid-template-columns: repeat(var(--legend-steps), var(--legend-step-size));
+  grid-template-columns: repeat(var(--legend-steps), minmax(0, var(--legend-step-size)));
   gap: 1px;
   margin: 0;
   padding: 0;
@@ -34,7 +35,7 @@
 
 .legend-edges {
   display: grid;
-  grid-template-columns: repeat(var(--legend-steps), var(--legend-step-size));
+  grid-template-columns: repeat(var(--legend-steps), minmax(0, var(--legend-step-size)));
   font: var(--type-caption);
   color: var(--text-secondary);
 }
@@ -361,34 +362,6 @@
   margin-block-start: var(--space-1);
   font: var(--type-caption);
   color: var(--text-secondary);
-}
-
-.heatmap-table-scroll {
-  overflow-x: auto;
-  margin-block-start: var(--space-3);
-}
-
-.heatmap-table table {
-  border-collapse: collapse;
-  font: var(--type-body-sm);
-}
-
-.heatmap-table caption {
-  padding-block-end: var(--space-2);
-  color: var(--text-secondary);
-  text-align: start;
-}
-
-.heatmap-table th,
-.heatmap-table td {
-  padding: var(--space-2) var(--space-3);
-  text-align: start;
-  border-block-end: var(--border-width-1) solid var(--border-subtle);
-}
-
-.heatmap-table td {
-  font-variant-numeric: tabular-nums;
-  text-align: end;
 }
 
 .heatmap-with-values .heatmap-row {
