@@ -69,6 +69,12 @@ describe('ModuleResult', () => {
     expect(modules.symbol(80000)).toBe('GREB1L');
   });
 
+  it('opens a MAGE result on Gene Ontology BP (NCBI), as the live site does', async () => {
+    const mage = (await samples().modules.poll('5906cd20e9242a9c20125f8a660e7fd7be4f11ee')) as ModuleResult;
+    expect(mage.databases[0]).toBe('gene-ontology-bp-ncbi');
+    expect(mage.databaseName('gene-ontology-bp-ncbi')).toBe('Gene Ontology BP (NCBI)');
+  });
+
   it('lists a gene’s neighbors in any module, strongest first, and the terms of its module that include it', async () => {
     const modules = await result();
     const hnf1b = 6928;

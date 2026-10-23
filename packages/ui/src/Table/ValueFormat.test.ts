@@ -28,6 +28,13 @@ describe('ValueFormat', () => {
     expect(format.percent(35)).toBe('35%');
     expect(format.signed(-2.41, 2)).toBe('−2.41');
     expect(format.signed(1.9, 2)).toBe('+1.90');
+    expect(format.signed(-0.001, 2)).toBe('0.00');
+  });
+
+  it('gives every value in a column the same decimals', () => {
+    expect(format.decimal(0.2, 3)).toBe('0.200');
+    expect(format.decimal(-1.4216, 3)).toBe('−1.422');
+    expect(format.decimal(-0.0001, 3)).toBe('0.000');
   });
 
   it('gives p-values a screen, spoken and raw form, never zero', () => {

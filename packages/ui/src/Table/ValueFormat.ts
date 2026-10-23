@@ -30,10 +30,15 @@ export class ValueFormat {
     return `${this.counts.format(value)}%`;
   }
 
-  signed(value: number, decimals: number): string {
+  /** The same decimals for every value, with a true minus, so a column lines up. */
+  decimal(value: number, decimals: number): string {
     const digits = Math.abs(value).toFixed(decimals);
-    if (Number(digits) === 0) return digits;
-    return `${value < 0 ? '−' : '+'}${digits}`;
+    return value < 0 && Number(digits) !== 0 ? `−${digits}` : digits;
+  }
+
+  signed(value: number, decimals: number): string {
+    const digits = this.decimal(value, decimals);
+    return value > 0 && Number(digits) !== 0 ? `+${digits}` : digits;
   }
 
   // Plain decimals from 0.001 up, scientific notation below, never rounded to zero.
