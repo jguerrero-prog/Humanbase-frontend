@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 import { asdBrowserRetired } from '@humanbase/hb';
-import { createBrowserRouter, type RouteObject } from 'react-router';
+import { createBrowserRouter, Navigate, type RouteObject } from 'react-router';
 import { AppLayout } from './layout/AppLayout';
 import { HomePage } from './pages/HomePage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -57,6 +57,11 @@ export const routes: RouteObject[] = [
           page('expecto-sc', async () => (await import('./pages/expecto/ExpectoScPage')).ExpectoScPage),
           page('expecto-sc/genes/:entrez', geneExpression('expecto-sc')),
           page('data-sources', async () => (await import('./pages/DataSourcesPage')).DataSourcesPage),
+          page('downloads', async () => (await import('./pages/downloads/DownloadsPage')).DownloadsPage),
+          // humanbase.io's download links keep working.
+          { path: 'download/tissue-networks/giant', element: <Navigate to="/downloads/?version=v1" replace /> },
+          { path: 'download/variant-effects', element: <Navigate to="/downloads/?tab=variant-effects" replace /> },
+          { path: 'download/*', element: <Navigate to="/downloads/" replace /> },
           page('about', async () => (await import('./pages/AboutPage')).AboutPage),
           page('cite', async () => (await import('./pages/CitePage')).CitePage),
           page('docs/*', async () => (await import('./pages/DocsPage')).DocsPage),
