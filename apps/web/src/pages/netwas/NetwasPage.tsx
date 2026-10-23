@@ -17,7 +17,7 @@ export function NetwasPage() {
       <Breadcrumbs items={[{ label: 'Network analysis', href: '/' }, { label: 'NetWAS' }]} />
       <header className="tool-page-title">
         <h1>NetWAS</h1>
-        <p>Find disease genes your GWAS may have missed. NetWAS reranks your results using a tissue network. Try the example BMI study.</p>
+        <p>Find disease genes your GWAS may have missed. NetWAS reranks your results using a tissue network. Try it with an example study.</p>
       </header>
       <NetwasForm draft={draft} docsHref={docsPage('netwas')} onStarted={(link) => void navigate(link)} />
     </section>

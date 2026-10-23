@@ -168,7 +168,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
               {...(networks.isError ? { error: 'Tissues couldn’t load. The global network will be used.' } : { hint: 'Leave empty to use the global network.' })}
               onChange={setTissue}
             />
-            <Select label="Data version" options={versionOptions} value={version} hint="GIANT or MAGE." onChange={chooseVersion} />
+            <Select label="Data version" options={versionOptions} value={version} hint="MAGE or GIANT." onChange={chooseVersion} />
             <Button disabled={runnable.length === 0} onClick={() => onShowNetwork(new NetworkQuery(runnable, tissue || undefined, version))}>
               Show network for {genesWord(runnable.length)}
             </Button>

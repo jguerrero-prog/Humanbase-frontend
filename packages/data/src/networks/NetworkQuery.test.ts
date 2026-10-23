@@ -8,14 +8,21 @@ describe('NetworkQuery', () => {
     expect(query.versionName).toBe('MAGE');
   });
 
-  it('ignores IDs that are not genes and defaults to GIANT', () => {
+  it('ignores IDs that are not genes and defaults to MAGE', () => {
     const query = NetworkQuery.fromSearch(new URLSearchParams('entrez=abc&entrez=-2&version=v9'));
     expect(query.isEmpty).toBe(true);
-    expect(query.version).toBe('v1');
+    expect(query.version).toBe('v3');
+    expect(NetworkQuery.fromSearch(new URLSearchParams('entrez=3553')).version).toBe('v3');
+  });
+
+  it('keeps a shared GIANT link on GIANT', () => {
+    const query = NetworkQuery.fromSearch(new URLSearchParams('entrez=3553&tissue=kidney&version=v1'));
+    expect(query.versionName).toBe('GIANT');
+    expect(query.href).toBe('/networks/?entrez=3553&tissue=kidney&version=v1');
   });
 
   it('writes the same URL back', () => {
-    expect(new NetworkQuery([3553, 7124]).href).toBe('/networks/?entrez=3553&entrez=7124&version=v1');
+    expect(new NetworkQuery([3553, 7124]).href).toBe('/networks/?entrez=3553&entrez=7124&version=v3');
   });
 
   it('keeps a compared network in the URL and requests it with the same genes and version', () => {
@@ -24,7 +31,7 @@ describe('NetworkQuery', () => {
     expect(query.compared?.dataTypes).toEqual(['co-expression']);
     expect(query.compared?.entrez).toEqual([3553, 7124]);
     expect(query.href).toBe('/networks/?entrez=3553&entrez=7124&version=v1&compare=mononuclear-phagocyte&compare_datatype=co-expression');
-    expect(NetworkQuery.fromSearch(new URLSearchParams('entrez=3553&compare=global')).compared?.slug).toBe('global');
+    expect(NetworkQuery.fromSearch(new URLSearchParams('entrez=3553&version=v1&compare=global')).compared?.slug).toBe('global');
   });
 
   it('puts the compared network first when the first is removed, and ends a comparison when the version changes', () => {

@@ -98,10 +98,10 @@ AsdVariant.isStrong(1.62); // true: shown bold
 <AsdBrowser {...study} variants={rows} total={127133} defaultView="table" />`;
 ---
 
-<DocsLayout title="ASD Browser" description="The ASD Browser on one page: a genome browser and a table of every variant, sharing one search and the data-use terms.">
+<DocsLayout title="ASD Browser (retired)" description="Retired October 23, 2026. The ASD Browser on one page: a genome browser and a table of every variant, sharing one search and the data-use terms.">
   <Intro
     lead="The ASD Browser explores predicted effects of de novo noncoding variants from Simons Simplex Collection whole-genome sequencing. It isn’t a job: the data is fixed, so the page opens straight on the genome, with a table of every variant one switch away."
-    status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+    status="Retired October 23, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
       rules={[
@@ -111,6 +111,11 @@ AsdVariant.isStrong(1.62); // true: shown bold
       ]}
     />
   </Intro>
+
+  <NoteCard title="Retired">
+    <p>The ASD Browser is retired, and its data is on <a href="https://base.sfari.org">SFARI Base</a>. The app no longer lists it in the top bar or the homepage analysis menu, and <code>/asd/</code> shows an empty state that links to SFARI Base. The code, its tests and this page stay, so it can come back.</p>
+    <p>To bring it back, set <code>asdBrowserRetired</code> to <code>false</code> in <code>asdBrowser.ts</code>, in packages/hb/src/content.</p>
+  </NoteCard>
 
   <DocSection title="What the ASD Browser does today" lead="hb.flatironinstitute.org/asdbrowser and its table view, /dis_asd, captured with Playwright on October 16, 2026, and the ASD Browser docs page.">
     <DocTable caption="What the ASD Browser does today" columns={['Part', 'Today']} widths={['300px']}>

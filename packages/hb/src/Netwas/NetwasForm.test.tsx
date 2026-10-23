@@ -13,19 +13,39 @@ function renderForm() {
   return { onStarted };
 }
 
+async function chooseGiant() {
+  await userEvent.click(screen.getByRole('combobox', { name: 'Data version' }));
+  await userEvent.click(screen.getByRole('option', { name: 'GIANT' }));
+}
+
 describe('NetwasForm', () => {
   beforeEach(() => localStorage.clear());
 
-  it('says what to fix when run without a file', async () => {
+  it('opens on MAGE-WAS, with the MHC choice instead of a threshold', () => {
     renderForm();
-    await userEvent.click(screen.getByRole('button', { name: 'Run NetWAS' }));
-    expect(screen.getByText('1 thing to fix before submitting')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Add a GWAS file.' })).toBeInTheDocument();
-    expect(screen.getByText('Add a GWAS file to run NetWAS: VEGAS, MAGMA or 2-column, tab-separated.')).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Data version' })).toHaveTextContent('MAGE');
+    expect(screen.getByRole('combobox', { name: 'MHC region' })).toBeInTheDocument();
+    expect(screen.queryByRole('textbox', { name: 'p-value threshold' })).not.toBeInTheDocument();
   });
 
-  it('checks the example, then starts the job and saves it in this browser', async () => {
+  it('says what to fix when run without a file', async () => {
+    renderForm();
+    await userEvent.click(screen.getByRole('button', { name: 'Run MAGE-WAS' }));
+    expect(screen.getByText('1 thing to fix before submitting')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Add a GWAS file.' })).toBeInTheDocument();
+    expect(screen.getByText('Add a GWAS file to run MAGE-WAS: VEGAS, MAGMA or 2-column, tab-separated.')).toBeInTheDocument();
+  });
+
+  it('checks the MAGE example, the Alzheimer’s subset', async () => {
+    renderForm();
+    await userEvent.click(screen.getByRole('radio', { name: 'Use the example' }));
+    expect(await screen.findByText('1,008 genes with p-values, VEGAS format, ready to run', {}, { timeout: 5000 })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Run MAGE-WAS on 1,008 genes' })).toBeInTheDocument();
+  });
+
+  it('checks the GIANT example, then starts the job and saves it in this browser', async () => {
     const { onStarted } = renderForm();
+    await chooseGiant();
     await userEvent.click(screen.getByRole('radio', { name: 'Use the example' }));
     expect(await screen.findByText('17,692 genes with p-values, VEGAS format, ready to run', {}, { timeout: 5000 })).toBeInTheDocument();
     await screen.findByRole('combobox', { name: 'Tissue network' });
@@ -36,6 +56,7 @@ describe('NetwasForm', () => {
 
   it('flags a threshold no gene is below', async () => {
     renderForm();
+    await chooseGiant();
     await userEvent.click(screen.getByRole('radio', { name: 'Use the example' }));
     await screen.findByText(/ready to run/, {}, { timeout: 5000 });
     const threshold = screen.getByRole('textbox', { name: 'p-value threshold' });
@@ -43,14 +64,5 @@ describe('NetwasForm', () => {
     await userEvent.type(threshold, '0.0000000000001');
     await userEvent.click(screen.getByRole('button', { name: /^Run NetWAS/ }));
     expect(screen.getAllByText(/No gene in this file is below 0.0000000000001/).length).toBeGreaterThan(0);
-  });
-
-  it('switches to MAGE-WAS with the MHC choice instead of a threshold', async () => {
-    renderForm();
-    await userEvent.click(screen.getByRole('combobox', { name: 'Data version' }));
-    await userEvent.click(screen.getByRole('option', { name: 'MAGE' }));
-    expect(screen.getByRole('button', { name: 'Run MAGE-WAS' })).toBeInTheDocument();
-    expect(screen.getByRole('combobox', { name: 'MHC region' })).toBeInTheDocument();
-    expect(screen.queryByRole('textbox', { name: 'p-value threshold' })).not.toBeInTheDocument();
   });
 });

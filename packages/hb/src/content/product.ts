@@ -7,9 +7,12 @@ import modules from './analysis-icons/modules_fa-certificate.svg?url';
 import networks from './analysis-icons/networks_fa-connectdevelop.svg?url';
 import deepsea from './analysis-icons/sei-and-beluga_deepsea_logo.svg?url';
 import seqweaver from './analysis-icons/seqweaver_seqweaver-icon.svg?url';
+import { asdBrowserRetired } from './asdBrowser';
 
 // Product content shared by the app and the design system site, so both show the same menus.
 export const analysisIcons = { networks, modules, netwas, deepsea, seqweaver, ism, expecto, expectoSc } as const;
+
+const asdBrowser = { label: 'ASD Browser', href: '/asd/', description: 'Predicted effects of ASD proband mutations' };
 
 export const productSections: NavSection[] = [
   {
@@ -43,7 +46,7 @@ export const productSections: NavSection[] = [
       ],
       [
         { label: 'Sequences', links: [{ label: 'In silico mutagenesis', href: '/ism/', description: 'Regulatory features of a sequence', image: ism }] },
-        { label: 'Browsers', links: [{ label: 'ASD Browser', href: '/asd/', description: 'Predicted effects of ASD proband mutations' }] },
+        ...(asdBrowserRetired ? [] : [{ label: 'Browsers', links: [asdBrowser] }]),
       ],
     ],
     footer: { lead: 'Not sure which tool?', link: { label: 'Compare them', href: '/sequence-tools/' } },
@@ -88,7 +91,7 @@ export const analysisOptions: SelectOption[] = [
   { value: 'expecto', label: 'ExPecto', description: 'Tissue-specific expression effects', image: expecto, group: 'Variant effects' },
   { value: 'expecto-sc', label: 'ExPecto SC', description: 'Cell-type-specific expression effects', image: expectoSc, group: 'Variant effects' },
   { value: 'ism', label: 'In silico mutagenesis', description: 'Regulatory features of a sequence', image: ism, group: 'Sequences' },
-  { value: 'asd', label: 'ASD Browser', description: 'Predicted effects of ASD proband mutations', group: 'Browsers' },
+  ...(asdBrowserRetired ? [] : [{ value: 'asd', label: asdBrowser.label, description: asdBrowser.description, group: 'Browsers' }]),
 ];
 
-export const analysisColumns = [['Network analysis'], ['Variant effects'], ['Sequences', 'Browsers']] as const;
+export const analysisColumns = [['Network analysis'], ['Variant effects'], asdBrowserRetired ? ['Sequences'] : ['Sequences', 'Browsers']] as const;

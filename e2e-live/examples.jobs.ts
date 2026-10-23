@@ -34,6 +34,8 @@ for (const [tool, path, run] of [
 test('a NetWAS example job runs and its result renders', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/netwas/`);
+  await page.getByRole('combobox', { name: 'Data version' }).click();
+  await page.getByRole('option', { name: 'GIANT' }).click();
   await page.getByRole('radio', { name: 'Use the example' }).click();
   await expect(page.getByText('17,692 genes with p-values, VEGAS format, ready to run')).toBeVisible();
   await page.getByRole('button', { name: /^Run NetWAS on 17,692 genes$/ }).click();

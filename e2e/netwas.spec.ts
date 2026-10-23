@@ -1,19 +1,30 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { apiOff } from './apiOff';
 import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
 
-test('the NetWAS form checks the example and explains a missing file, with the API off', async ({ page }) => {
+const chooseGiant = async (page: Page) => {
+  await page.getByRole('combobox', { name: 'Data version' }).click();
+  await page.getByRole('option', { name: 'GIANT' }).click();
+};
+
+test('the NetWAS form opens on MAGE-WAS, checks each example and explains a missing file, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/netwas/`);
   await expect(page.getByRole('heading', { level: 1, name: 'NetWAS' })).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
 
-  await page.getByRole('button', { name: 'Run NetWAS' }).click();
+  await page.getByRole('button', { name: 'Run MAGE-WAS' }).click();
   await expect(page.getByText('1 thing to fix before submitting')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
 
+  await page.getByRole('radio', { name: 'Use the example' }).click();
+  await expect(page.getByText('1,008 genes with p-values, VEGAS format, ready to run')).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Tissue network' })).toHaveText(/Global/);
+  expect(await violationsOf(page)).toEqual([]);
+
+  await chooseGiant(page);
   await page.getByRole('radio', { name: 'Use the example' }).click();
   await expect(page.getByText('17,692 genes with p-values, VEGAS format, ready to run')).toBeVisible();
   await expect(page.getByRole('combobox', { name: 'Tissue network' })).toHaveText(/Adipose tissue/);
@@ -34,6 +45,7 @@ const job = (n: number) => `${web}/netwas/00000000-0000-4000-8000-00000000000${n
 test('starting the example opens its job page, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/netwas/`);
+  await chooseGiant(page);
   await page.getByRole('radio', { name: 'Use the example' }).click();
   await page.getByRole('button', { name: 'Run NetWAS on 17,692 genes' }).click();
   await expect(page).toHaveURL(job(1));
