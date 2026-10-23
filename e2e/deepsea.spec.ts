@@ -4,11 +4,11 @@ import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
 
-for (const [path, tool] of [['sei', 'Sei'], ['beluga', 'Beluga'], ['seqweaver', 'Seqweaver']]) {
+for (const [path, tool] of [['/variant-effects/', 'Sei'], ['/variant-effects/?model=beluga', 'Beluga'], ['/seqweaver/', 'Seqweaver']]) {
   test(`the ${tool} form checks its example, with the API off`, async ({ page }) => {
     const apiRequests = await apiOff(page);
-    await page.goto(`${web}/${path}/`);
-    await expect(page.getByRole('heading', { level: 1, name: tool })).toBeVisible();
+    await page.goto(`${web}${path}`);
+    await expect(page.getByRole('heading', { level: 2, name: `About ${tool}` })).toBeVisible();
     expect(await violationsOf(page)).toEqual([]);
     await page.getByRole('radio', { name: 'Use the example' }).click();
     await expect(page.getByRole('button', { name: new RegExp(`^Run ${tool} on \\d+ variants$`) })).toBeVisible();
@@ -17,13 +17,42 @@ for (const [path, tool] of [['sei', 'Sei'], ['beluga', 'Beluga'], ['seqweaver', 
   });
 }
 
-test('choosing another model opens its page', async ({ page }) => {
+test('Variant effects opens on Sei with a variant list, and the model and tab live in the URL', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(`${web}/variant-effects/`);
+  await expect(page.getByRole('heading', { level: 1, name: 'Variant effects' })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Variant list' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('radiogroup', { name: 'What are you submitting?' }).getByRole('radio')).toHaveCount(2);
+  await expect(page.getByText('Variants anywhere in the genome can be scored.')).toBeVisible();
+  await page.getByRole('combobox', { name: 'Model' }).click();
+  await page.getByRole('option', { name: /^Beluga \(DNA, 2019\)/ }).click();
+  await expect(page).toHaveURL(`${web}/variant-effects/?model=beluga`);
+  await expect(page.getByRole('heading', { name: 'About Beluga' })).toBeVisible();
+  await page.getByRole('tab', { name: 'Region scan' }).click();
+  await expect(page).toHaveURL(`${web}/variant-effects/?model=beluga&tab=region-scan`);
+  await expect(page.getByRole('combobox', { name: 'Model' })).toHaveText(/Beluga \(DNA, 2019\)/);
+  await expect(page.getByText('Region scan mutates every base of each sequence. It runs on Beluga.')).toBeVisible();
+  await page.goBack();
+  await expect(page.getByRole('tab', { name: 'Variant list' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('heading', { name: 'About Beluga' })).toBeVisible();
+});
+
+for (const [old, moved] of [['/sei/', '/variant-effects/?model=sei'], ['/beluga/', '/variant-effects/?model=beluga'], ['/ism/', '/variant-effects/?tab=region-scan']]) {
+  test(`${old} still opens its form on Variant effects`, async ({ page }) => {
+    await apiOff(page);
+    await page.goto(`${web}${old}`);
+    await expect(page).toHaveURL(`${web}${moved}`);
+    await expect(page.getByRole('heading', { level: 1, name: 'Variant effects' })).toBeVisible();
+  });
+}
+
+test('choosing Beluga on Seqweaver opens it on Variant effects', async ({ page }) => {
   await apiOff(page);
   await page.goto(`${web}/seqweaver/`);
   await page.getByRole('combobox', { name: 'Model' }).click();
-  await page.getByRole('option', { name: 'Beluga (DNA, 2019)' }).click();
-  await expect(page).toHaveURL(`${web}/beluga/`);
-  await expect(page.getByRole('heading', { level: 1, name: 'Beluga' })).toBeVisible();
+  await page.getByRole('option', { name: /^Beluga \(DNA, 2019\)/ }).click();
+  await expect(page).toHaveURL(`${web}/variant-effects/?model=beluga`);
+  await expect(page.getByRole('heading', { name: 'About Beluga' })).toBeVisible();
 });
 
 test('starting the Seqweaver example opens its job page, with the API off', async ({ page }) => {
@@ -38,8 +67,8 @@ test('starting the Seqweaver example opens its job page, with the API off', asyn
 test('the DeepSEA forms fit a phone without scrolling sideways', async ({ page }) => {
   await apiOff(page);
   await page.setViewportSize({ width: 375, height: 812 });
-  for (const path of ['sei', 'beluga', 'seqweaver']) {
-    await page.goto(`${web}/${path}/`);
+  for (const path of ['/variant-effects/', '/variant-effects/?model=beluga', '/seqweaver/']) {
+    await page.goto(`${web}${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
   }

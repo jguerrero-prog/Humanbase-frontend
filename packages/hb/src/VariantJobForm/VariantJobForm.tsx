@@ -1,5 +1,5 @@
 import { deepseaModels, genomeLabels, variantModels, VariantFileCheck, type FileCheckResult, type Genome, type InputKind, type VariantModel } from '@humanbase/data';
-import { Accordion, AccordionItem, Button, Field, FileDrop, SegmentedControl, saveFile, Select, TextInput, type ChosenFile } from '@humanbase/ui';
+import { Accordion, AccordionItem, Button, Field, FileDrop, SegmentedControl, saveFile, Select, TextInput, type ChosenFile, type SelectOption } from '@humanbase/ui';
 import { useId, useMemo, useState, type ReactNode } from 'react';
 import '../Jobs/JobForm.css';
 import './VariantJobForm.css';
@@ -23,6 +23,10 @@ export interface VariantJobFormProps {
   model: VariantModel;
   /** Choosing another model calls this instead of switching in place, such as to open that tool's page. */
   onModelChange?: ((model: VariantModel) => void) | undefined;
+  /** The models the Model field offers, when not every model. */
+  models?: readonly VariantModel[] | undefined;
+  /** The inputs the form offers, when not every one the model takes. */
+  inputs?: readonly InputKind[] | undefined;
   examples: Record<Genome, Partial<Record<InputKind, string>>>;
   onRun?: ((job: VariantJob) => void | Promise<void>) | undefined;
   /** True while the job is being started. */
@@ -31,9 +35,12 @@ export interface VariantJobFormProps {
   notice?: ReactNode;
 }
 
-const models = variantModels.map((value) => ({ value, label: deepseaModels[value].option }));
+const optionOf = (value: VariantModel): SelectOption => {
+  const { option, optionDetail } = deepseaModels[value];
+  return optionDetail ? { value, label: option, description: optionDetail } : { value, label: option };
+};
 // ExPecto runs on Beluga, so its Model field names Beluga and offers nothing else.
-const modelOptions = (model: VariantModel) => (deepseaModels[model].basedOn ? [{ value: model, label: deepseaModels[model].option }] : models);
+const defaultModels = (model: VariantModel) => (deepseaModels[model].basedOn ? [model] : variantModels);
 const extensions: Record<InputKind, string> = { vcf: '.vcf,.txt', bed: '.bed,.txt', fasta: '.fasta,.fa,.txt' };
 const nouns: Record<InputKind, string> = { vcf: 'variants', bed: 'regions', fasta: 'sequences' };
 
@@ -42,10 +49,15 @@ const bp = (model: VariantModel) => VariantFileCheck.sequenceLength[model].toLoc
 const engineOf = (model: VariantModel) => deepseaModels[deepseaModels[model].basedOn ?? model].tool;
 
 function rulesFor(kind: InputKind, model: VariantModel): string {
-  if (kind === 'fasta') return `Each sequence starts with >. Only A, C, G and T, ${bp(model)} bp each for ${engineOf(model)}.`;
+  if (kind === 'fasta') return `Each sequence starts with >. Only A, C, G, T; lower case becomes upper case. ${engineOf(model)} reads ${bp(model)} bp.`;
   if (kind === 'bed') return 'Tab-separated: chromosome, start, end. Each interval is scored at its center.';
   if (deepseaModels[model].strand) return 'Tab-separated: chromosome, position, ID, REF, ALT, then strand (+ or -). A header line is optional.';
   return 'Tab-separated, at least 5 columns: chromosome, position, ID, reference and alternative allele.';
+}
+
+function genomeHint(model: VariantModel): string {
+  const { genomes } = deepseaModels[model];
+  return genomes.length > 1 ? `${genomes.map((value) => genomeLabels[value]).join(' or ')}. Coordinates in the file must match.` : 'Coordinates in the file must match.';
 }
 
 function downloadProblems(result: FileCheckResult) {
@@ -53,10 +65,11 @@ function downloadProblems(result: FileCheckResult) {
   saveFile(text, 'problems.tsv', 'text/tab-separated-values');
 }
 
-export function VariantJobForm({ model: initialModel, onModelChange, examples, onRun, running, notice }: VariantJobFormProps) {
+export function VariantJobForm({ model: initialModel, onModelChange, models, inputs: offered, examples, onRun, running, notice }: VariantJobFormProps) {
   const id = useId();
   const [model, setModel] = useState(initialModel);
-  const [kind, setKind] = useState<InputKind>(deepseaModels[initialModel].inputs[0] ?? 'vcf');
+  const inputs = offered ?? deepseaModels[model].inputs;
+  const [kind, setKind] = useState<InputKind>(inputs[0] ?? 'vcf');
   const [genome, setGenome] = useState<Genome>(deepseaModels[initialModel].genomes[0] ?? 'hg19');
   const [source, setSource] = useState<Source>('upload');
   const [file, setFile] = useState<ChosenFile>();
@@ -65,6 +78,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
   const [email, setEmail] = useState('');
   const [note, setNote] = useState('');
   const tool = deepseaModels[model].tool;
+  const scored = deepseaModels[model].scored;
   const named = deepseaModels[model].inSentence ?? tool;
   const result = useMemo(() => (text.trim() ? new VariantFileCheck(kind, model).check(text) : undefined), [text, kind, model]);
   const blocking = result?.limit ?? result?.otherKind;
@@ -98,7 +112,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
     <form className="job-form" onSubmit={(event) => { event.preventDefault(); run(); }}>
       {notice}
       <div className="job-form-row">
-        <Select label="Model" options={modelOptions(model)} value={model} onChange={(value) => chooseModel(value as VariantModel)} hint={deepseaModels[model].otherModels} />
+        <Select label="Model" options={(models ?? defaultModels(model)).map(optionOf)} value={model} onChange={(value) => chooseModel(value as VariantModel)} hint={deepseaModels[model].otherModels} />
         {kind !== 'fasta' && (
           <Select
             label="Genome assembly"
@@ -108,17 +122,22 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
               setGenome(value as Genome);
               if (source === 'example') start(kind, examples[value as Genome][kind] ? 'example' : 'upload', value as Genome);
             }}
-            hint="Coordinates in the file must match."
+            hint={genomeHint(model)}
           />
         )}
       </div>
-      {deepseaModels[model].inputs.length > 1 && (
-        <SegmentedControl
-          label="What are you submitting?"
-          value={kind}
-          onChange={(value) => start(value as InputKind, source === 'example' && examples[genome][value as InputKind] ? 'example' : 'upload')}
-          segments={[{ value: 'vcf', label: 'Variants (VCF)' }, { value: 'bed', label: 'Regions (BED)' }, { value: 'fasta', label: 'Sequences (FASTA)' }].filter((segment) => deepseaModels[model].inputs.includes(segment.value as InputKind))}
-        />
+      {(inputs.length > 1 || scored) && (
+        <div className="job-form-choice">
+          {inputs.length > 1 && (
+            <SegmentedControl
+              label="What are you submitting?"
+              value={kind}
+              onChange={(value) => start(value as InputKind, source === 'example' && examples[genome][value as InputKind] ? 'example' : 'upload')}
+              segments={[{ value: 'vcf', label: 'Variants (VCF)' }, { value: 'bed', label: 'Regions (BED)' }, { value: 'fasta', label: 'Sequences (FASTA)' }].filter((segment) => inputs.includes(segment.value as InputKind))}
+            />
+          )}
+          {scored && <p className="job-form-help">{scored}</p>}
+        </div>
       )}
       <SegmentedControl
         label="Add the file"
@@ -159,7 +178,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
           {runLabel}
         </Button>
         <p id={`${id}-help`} className="job-form-help" role="status">
-          {note || (ready ? 'Starts a job; you can leave this page.' : `Add a file to run ${tool}.`)}
+          {note || (ready ? 'Starts a job; you can leave this page.' : `Add a file to run ${named}.`)}
         </p>
       </div>
     </form>
