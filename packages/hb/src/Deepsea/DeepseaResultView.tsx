@@ -3,6 +3,7 @@ import {
   ActionMenu,
   Alert,
   byGenomePosition,
+  defaultEffectsView,
   DocsLink,
   expressionEffects,
   KeyLegend,
@@ -76,7 +77,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
   const [scoreKey, setScoreKey] = useState<string>();
   const [plotBy, setPlotBy] = useState<PlotBy>('genome');
   const [colorStyle, setColorStyle] = useState<ColorStyle>('chr');
-  const [effectsView, setEffectsView] = useState<EffectsView>('strongest');
+  const [effectsView, setEffectsView] = useState<EffectsView>(defaultEffectsView);
   const [filter, setFilter] = useState('');
   const [showAll, setShowAll] = useState(false);
   const [picked, setPicked] = useState(chosen);
