@@ -62,6 +62,34 @@ test('ExPecto SC opens PTEN by organ, with the API off', async ({ page }) => {
   expect(apiRequests).toEqual([]);
 });
 
+test('the PTEN heatmap scrolls inside its card with no cut position label, with the API off', async ({ page }) => {
+  await apiOff(page);
+  const labelsOutside = () =>
+    page.locator('.heatmap-plot').evaluate((plot) => {
+      const box = plot.getBoundingClientRect();
+      return [...plot.querySelectorAll<HTMLElement>('.heatmap-position-labels > span:not([data-cut])')]
+        .filter((label) => label.textContent)
+        .filter((label) => {
+          const left = label.getBoundingClientRect().left;
+          return left < box.left - 0.5 || left + label.scrollWidth > box.right + 0.5;
+        })
+        .map((label) => label.textContent);
+    });
+  for (const width of [1440, 375]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(`${web}/expecto-sc/genes/5728/`);
+    const frame = page.locator('.heatmap-frame');
+    await expect(frame).toHaveAttribute('data-more', 'true', { timeout: 15_000 });
+    const [plotRight, cardRight] = await page.locator('.heatmap-plot').evaluate((plot) => [plot.getBoundingClientRect().right, plot.closest('section')?.getBoundingClientRect().right ?? 0]);
+    expect(plotRight).toBeLessThanOrEqual(cardRight);
+    await expect.poll(labelsOutside).toEqual([]);
+    await page.locator('.heatmap-plot').evaluate((plot) => plot.scrollTo({ left: plot.scrollWidth }));
+    await expect(frame).not.toHaveAttribute('data-more');
+    await expect.poll(labelsOutside).toEqual([]);
+    await expect(page.locator('.heatmap-position-labels > span:not([data-cut])').filter({ hasText: /\d/ }).last()).toHaveText('89,639,918');
+  }
+});
+
 test('the ExPecto Submit variants tab checks its example, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/expecto/variants/`);
@@ -82,6 +110,8 @@ test('running the ExPecto example opens its result, with the API off', async ({ 
   await page.getByRole('table', { name: 'Variants in this job' }).getByRole('button', { name: /NEUROG1/ }).click();
   await page.getByRole('tab', { name: 'Strongest effects' }).click();
   await expect(page.getByText('Fallopian Tube')).toBeVisible();
+  // ExPecto's paper calls these expression effects; the other models keep Molecular effects.
+  await expect(page.getByRole('heading', { name: /^Expression effects of chr5:134,871,851/ })).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   expect(apiRequests).toEqual([]);
 });

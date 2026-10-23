@@ -82,3 +82,41 @@ describe('Heatmap', () => {
     expect(screen.getByRole('table', { name: props.summary })).toHaveTextContent('0.2');
   });
 });
+
+function setBox(element: HTMLElement, box: { scrollLeft?: number; clientWidth: number; scrollWidth: number }) {
+  for (const [key, value] of Object.entries(box)) Object.defineProperty(element, key, { configurable: true, value });
+}
+
+describe('Heatmap in a scrolling plot', () => {
+  const columns = Array.from({ length: 60 }, (_, index) => ({ label: `c${index}`, position: 89_623_000 + index }));
+  const props = {
+    title: 'Cell types by position',
+    summary: 'Predicted effects of 60 positions.',
+    scale: { title: 'Expression effect, z-score', kind: 'diverging' as const, edges: [-100, -30, -10, 10, 30, 100], words: ['Decreases', 'Increases expression'] as const },
+    columns,
+    rows: [{ label: 'Microglia / brain', values: columns.map(() => 1) }],
+    rowHeader: 'Cell type',
+    columnHeader: 'Position',
+    columnWidth: 'narrow' as const,
+  };
+
+  it('fades its edge while there is more, and hides a position label the scroll edge would cut', () => {
+    const { container } = render(<Heatmap {...props} />);
+    const plot = container.querySelector<HTMLElement>('.heatmap-plot');
+    const labels = [...container.querySelectorAll<HTMLElement>('.heatmap-position-labels > span')];
+    if (!plot) throw new Error('no plot');
+    // Labels every 20th column at 160px + 9px per column, each 70px wide; the plot shows 420px of 700.
+    labels.forEach((label, index) => {
+      Object.defineProperty(label, 'offsetLeft', { configurable: true, value: 160 + index * 9 });
+      Object.defineProperty(label, 'scrollWidth', { configurable: true, value: index % 20 === 0 ? 70 : 0 });
+    });
+    setBox(plot, { scrollLeft: 0, clientWidth: 420, scrollWidth: 700 });
+    fireEvent.scroll(plot);
+    expect(container.querySelector('.heatmap-frame')).toHaveAttribute('data-more');
+    expect(labels.filter((label) => label.textContent).map((label) => label.hasAttribute('data-cut'))).toEqual([false, false, true]);
+    setBox(plot, { scrollLeft: 280, clientWidth: 420, scrollWidth: 700 });
+    fireEvent.scroll(plot);
+    expect(container.querySelector('.heatmap-frame')).not.toHaveAttribute('data-more');
+    expect(labels.filter((label) => label.textContent).map((label) => label.hasAttribute('data-cut'))).toEqual([true, false, false]);
+  });
+});

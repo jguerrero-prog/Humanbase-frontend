@@ -305,6 +305,7 @@ function VariantEffectsCard({ job, variant, variants, location, predictions: { f
   return (
     <EffectsCard
       label={label}
+      heading={model.effectsHeading}
       view={view}
       onViewChange={onViewChange}
       inView={{ location, variants: inView, selected, onSelect, onMove }}

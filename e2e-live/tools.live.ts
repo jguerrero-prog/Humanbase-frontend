@@ -199,6 +199,7 @@ test('the real ExPecto result names each variant by its gene and shows tissue ef
   await expect(page.getByRole('table', { name: 'Variants in this job' }).getByRole('button', { name: /NEUROG1/ })).toBeVisible();
   await page.getByRole('tab', { name: 'Strongest effects' }).click();
   await expect(page.getByText('Fallopian Tube')).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Expression effects of chr5:134,871,851/ })).toBeVisible();
   await checkScreen(page, problems);
 });
 
