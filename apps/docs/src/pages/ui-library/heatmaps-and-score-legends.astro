@@ -28,7 +28,7 @@ const parts = [
   ['Gaps', '1px white between cells, so neighbors of the same step still read as separate values.'],
   ['Not available', 'White with a grey outline and a diagonal line, never a color from the legend and never zero.'],
   ['Hover and focus', '2px ink outline and the tooltip with every value for that cell.'],
-  ['Past the legend', 'Takes the end step; the tooltip and View as table give the exact value and say it’s past the end.'],
+  ['Past the legend', 'Takes the end step; the tooltip gives the exact value and says it’s past the end. View as table marks the value with an asterisk, explained in a note under the table, and screen readers hear the full sentence.'],
 ];
 
 const rules = [
@@ -42,7 +42,7 @@ const rules = [
   ['Position axes', 'A horizontal ruler with the shared prefix in the axis title (“150,226,000 +”) and short offsets as ticks; a line links each column to its position; only the hovered or selected column gets its full label. Rotated labels (50°) only for a few columns whose labels differ, such as tissue names. Decided October 16, 2026.'],
   ['Compact', 'Rows shrink to 8px and labels hide; the tooltip still works on every cell.'],
   ['Color vision', 'The scales are the Data visualization ones, checked for protanopia, deuteranopia and tritanopia; steps also differ in lightness, so they read in grey scale.'],
-  ['Text alternative', 'View as table lists every cell’s value with its row and column, and the summary sentence names the strongest values.'],
+  ['Text alternative', 'View as table lists every cell’s value with its row and column, and the summary sentence names the strongest values. It is a compact Table with the first column and header row pinned, so the row and position stay in view while it scrolls; position links show their external link icon on hover and focus.'],
 ];
 
 const words = [
@@ -71,7 +71,7 @@ const titles = [
 const behavior = [
   ['Legend placement', 'Top right of the heatmap, on the same line as its controls; it never scrolls away from the cells.'],
   ['Score switch', 'Changing the score swaps the legend at the same moment as the cells.'],
-  ['Scrolling', 'Cells that can’t fit in the card scroll sideways inside the plot, never past the card’s edge. A white fade at the edge shows there is more, as on scrolling tabs, and a position label the edge would cut stays hidden until it scrolls fully into view.'],
+  ['Scrolling', 'Cells that can’t fit in the card scroll sideways inside the plot, never past the card’s edge. Row labels stay pinned while the cells scroll under them, with the same 8px edge shadow as a table’s pinned first column. A white fade at the edge shows there is more, as on scrolling tabs, and a position label the edge or the pinned labels would cut stays hidden until it scrolls fully into view.'],
   ['Hover', 'Hovering a step in the legend outlines the cells in that step; hovering a cell highlights its step.'],
   ['Values', 'Shown exactly as computed, with the number of decimals from Scientific notation and units; binning is only for color.'],
   ['Downloads', 'Download gives the computed values, never the steps.'],

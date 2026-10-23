@@ -100,7 +100,7 @@ describe('Heatmap in a scrolling plot', () => {
     columnWidth: 'narrow' as const,
   };
 
-  it('fades its edge while there is more, and hides a position label the scroll edge would cut', () => {
+  it('fades its edge while there is more, and hides a position label the scroll edge or the pinned row labels would cut', () => {
     const { container } = render(<Heatmap {...props} />);
     const plot = container.querySelector<HTMLElement>('.heatmap-plot');
     const labels = [...container.querySelectorAll<HTMLElement>('.heatmap-position-labels > span')];
@@ -117,6 +117,7 @@ describe('Heatmap in a scrolling plot', () => {
     setBox(plot, { scrollLeft: 280, clientWidth: 420, scrollWidth: 700 });
     fireEvent.scroll(plot);
     expect(container.querySelector('.heatmap-frame')).not.toHaveAttribute('data-more');
-    expect(labels.filter((label) => label.textContent).map((label) => label.hasAttribute('data-cut'))).toEqual([true, false, false]);
+    // The cells now start at 440px, past the 160px of pinned row labels.
+    expect(labels.filter((label) => label.textContent).map((label) => label.hasAttribute('data-cut'))).toEqual([true, true, false]);
   });
 });

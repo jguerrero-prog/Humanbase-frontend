@@ -62,19 +62,21 @@ test('ExPecto SC opens PTEN by organ, with the API off', async ({ page }) => {
   expect(apiRequests).toEqual([]);
 });
 
-test('the PTEN heatmap scrolls inside its card with no cut position label, with the API off', async ({ page }) => {
+test('the PTEN heatmap scrolls inside its card under pinned row labels, with no cut position label, with the API off', async ({ page }) => {
   await apiOff(page);
   const labelsOutside = () =>
     page.locator('.heatmap-plot').evaluate((plot) => {
       const box = plot.getBoundingClientRect();
+      const cells = plot.querySelector('.heatmap-row-label')?.getBoundingClientRect().right ?? box.left;
       return [...plot.querySelectorAll<HTMLElement>('.heatmap-position-labels > span:not([data-cut])')]
         .filter((label) => label.textContent)
         .filter((label) => {
           const left = label.getBoundingClientRect().left;
-          return left < box.left - 0.5 || left + label.scrollWidth > box.right + 0.5;
+          return left < cells - 0.5 || left + label.scrollWidth > box.right + 0.5;
         })
         .map((label) => label.textContent);
     });
+  const rowLabelLeft = () => page.locator('.heatmap-plot').evaluate((plot) => (plot.querySelector('.heatmap-row-label')?.getBoundingClientRect().left ?? 0) - plot.getBoundingClientRect().left);
   for (const width of [1440, 375]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(`${web}/expecto-sc/genes/5728/`);
@@ -85,6 +87,7 @@ test('the PTEN heatmap scrolls inside its card with no cut position label, with 
     await expect.poll(labelsOutside).toEqual([]);
     await page.locator('.heatmap-plot').evaluate((plot) => plot.scrollTo({ left: plot.scrollWidth }));
     await expect(frame).not.toHaveAttribute('data-more');
+    expect(await rowLabelLeft()).toBeCloseTo(0, 0);
     await expect.poll(labelsOutside).toEqual([]);
     await expect(page.locator('.heatmap-position-labels > span:not([data-cut])').filter({ hasText: /\d/ }).last()).toHaveText('89,639,918');
   }

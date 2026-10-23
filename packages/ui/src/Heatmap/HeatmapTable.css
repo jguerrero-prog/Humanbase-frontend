@@ -1,0 +1,37 @@
+/* A height of its own, so the header row stays in view while the rows scroll. */
+.heatmap-table .table {
+  --table-max-height: min(70vh, 640px);
+
+  margin-block-start: var(--space-3);
+}
+
+/* Long names are cut with an ellipsis, so the pinned column leaves room for values on a phone. */
+.heatmap-table-label {
+  display: block;
+  max-inline-size: min(400px, 45vw);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.heatmap-table-link {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  color: var(--text-default);
+}
+
+.heatmap-table-link .icon {
+  flex: none;
+  opacity: 0;
+}
+
+.heatmap-table-link:hover .icon,
+.heatmap-table-link:focus-visible .icon {
+  opacity: 1;
+}
+
+.heatmap-table-note {
+  margin-block-start: var(--space-4);
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
