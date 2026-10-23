@@ -5,6 +5,7 @@ import {
   IntegrationService,
   JobHistory,
   NetwasService,
+  NetworkQuery,
   useHumanbase,
   useIntegrations,
   type DataVersion,
@@ -47,7 +48,7 @@ const mhcOptions = [
   { value: 'keep', label: 'Keep' },
 ];
 const globalSlug: Record<DataVersion, string> = { v1: 'global', v3: 'global-v3' };
-// The example is the BMI GWAS, so it comes with the tissue the NetWAS docs use for it.
+// The GIANT example is the BMI GWAS, so it comes with the tissue the NetWAS docs use for it.
 const exampleTissue: Record<DataVersion, string> = { v1: 'adipose-tissue', v3: 'global-v3' };
 const rules = 'Tab-separated. VEGAS: gene in column 2, p-value in column 8. MAGMA: column 1 and 9. 2-column: gene and p-value.';
 const formats = 'VEGAS, MAGMA or 2-column, tab-separated.';
@@ -63,8 +64,8 @@ export function NetwasForm({ draft, docsHref, onStarted }: NetwasFormProps) {
   const ids = { file: `${id}-file`, pValue: `${id}-p`, email: `${id}-email` };
   const api = useHumanbase();
   const networks = useIntegrations();
-  const [version, setVersion] = useState<DataVersion>(draft?.version ?? 'v1');
-  const [tissue, setTissue] = useState(draft?.tissue ?? globalSlug[draft?.version ?? 'v1']);
+  const [version, setVersion] = useState<DataVersion>(draft?.version ?? NetworkQuery.defaultVersion);
+  const [tissue, setTissue] = useState(draft?.tissue ?? globalSlug[version]);
   const [source, setSource] = useState<Source>('upload');
   const [file, setFile] = useState<GwasFile>();
   const [refused, setRefused] = useState<string>();
@@ -192,7 +193,7 @@ export function NetwasForm({ draft, docsHref, onStarted }: NetwasFormProps) {
         )}
         {failure === 'off' && (
           <Alert tone="info" title="Jobs can’t start while the API is off" dismissible onDismiss={() => setFailure(undefined)}>
-            This copy of Humanbase shows sample data. Use the example file with Adipose tissue to see a sample job.
+            This copy of Humanbase shows sample data. Choose GIANT and use its example file to see a sample job.
           </Alert>
         )}
         {failure === 'failed' && (
@@ -250,7 +251,7 @@ export function NetwasForm({ draft, docsHref, onStarted }: NetwasFormProps) {
           />
           {submitted && !file && (
             <a className="netwas-file-help" href="#gwas-file-rules" onClick={(event) => { event.preventDefault(); void loadExample(); }}>
-              See the format, or use the example BMI file
+              See the format, or use the example {version === 'v3' ? 'Alzheimer’s' : 'BMI'} file
             </a>
           )}
         </div>

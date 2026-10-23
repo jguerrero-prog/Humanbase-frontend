@@ -11,7 +11,7 @@ async function renalRequest(): Promise<ModuleRequest> {
   if (!renal) throw new Error('The renal disease panel example is missing.');
   const matches = await samples().search.list(renal.genes);
   const entrez = [...new Set(matches.flatMap((term) => term.genes.slice(0, 1).map((gene) => gene.entrez)))];
-  return { entrez, integration: renal.tissue, version: 'v1', title: '' };
+  return { entrez, integration: renal.tissue.v1, version: 'v1', title: '' };
 }
 
 describe('ModuleService', () => {

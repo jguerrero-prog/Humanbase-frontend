@@ -1,4 +1,4 @@
-import { dataVersionNames, IntegrationService, JobHistory, moduleExamples, ModuleService, useGeneListMatches, useHumanbase, useIntegrations, type DataVersion, type ModuleExample } from '@humanbase/data';
+import { dataVersionNames, IntegrationService, JobHistory, moduleExamples, ModuleService, NetworkQuery, useGeneListMatches, useHumanbase, useIntegrations, type DataVersion, type ModuleExample } from '@humanbase/data';
 import {
   Alert,
   Button,
@@ -48,10 +48,10 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
   const [removed, setRemoved] = useState<readonly string[]>([]);
   const [chosen, setChosen] = useState<ReadonlyMap<string, string>>(new Map());
   const [title, setTitle] = useState(preset?.title ?? draft?.title ?? '');
-  const [tissue, setTissue] = useState(preset?.tissue ?? draft?.tissue ?? '');
+  const [version, setVersion] = useState<DataVersion>(draft?.version ?? NetworkQuery.defaultVersion);
+  const [tissue, setTissue] = useState(preset?.tissue[version] ?? draft?.tissue ?? '');
   const [fromExample, setFromExample] = useState(Boolean(preset));
   const [exampleTitle, setExampleTitle] = useState(preset?.title);
-  const [version, setVersion] = useState<DataVersion>(draft?.version ?? 'v1');
   const [submitting, setSubmitting] = useState(false);
   const [failed, setFailed] = useState(false);
   const [toasts] = useState(() => new ToastQueue());
@@ -82,8 +82,7 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
     type(item.genes.join('\n'));
     setTitle(item.title);
     setExampleTitle(item.title);
-    setTissue(item.tissue);
-    setVersion('v1');
+    setTissue(item.tissue[version]);
     setFromExample(true);
   };
 
@@ -179,7 +178,7 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
                 setFromExample(false);
               }}
             />
-            <Select label="Data version" options={versionOptions} value={version} hint="GIANT or MAGE." onChange={chooseVersion} />
+            <Select label="Data version" options={versionOptions} value={version} hint="MAGE or GIANT." onChange={chooseVersion} />
             <Button disabled={!tissue || !inRange} loading={submitting} onClick={() => void start()}>
               Find modules in {genesWord(entrez.length)}
             </Button>

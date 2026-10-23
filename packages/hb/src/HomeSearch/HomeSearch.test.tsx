@@ -27,12 +27,12 @@ describe('HomeSearch', () => {
     const { onShowNetwork } = renderSearch();
     const box = screen.getByRole('combobox', { name: 'Search genes' });
     await userEvent.type(box, 'AUTS12 IL1B TNF{Enter}');
-    expect(await screen.findByText('2 genes will be analyzed in GIANT')).toBeInTheDocument();
+    expect(await screen.findByText('2 genes will be analyzed in MAGE')).toBeInTheDocument();
     expect(screen.getByText(/AUTS12 is a recognized gene, but it is not part of any Humanbase network/)).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Remove AUTS12 from the list' }));
-    expect(screen.queryByText('2 genes will be analyzed in GIANT')).not.toBeInTheDocument();
+    expect(screen.queryByText('2 genes will be analyzed in MAGE')).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Show network for 2 genes' }));
-    expect(onShowNetwork.mock.calls[0]?.[0].href).toBe('/networks/?entrez=3553&entrez=7124&version=v1');
+    expect(onShowNetwork.mock.calls[0]?.[0].href).toBe('/networks/?entrez=3553&entrez=7124&version=v3');
   });
 
   it('suggests genes while typing and says which alias matched', async () => {

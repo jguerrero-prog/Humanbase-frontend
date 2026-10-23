@@ -8,11 +8,12 @@ export interface ComparedNetwork {
 
 const globalSlug = 'global';
 
-export const dataVersionNames: Record<DataVersion, string> = { v1: 'GIANT', v3: 'MAGE' };
+// MAGE comes first, as the current version; GIANT stays for earlier results.
+export const dataVersionNames: Record<DataVersion, string> = { v3: 'MAGE', v1: 'GIANT' };
 
 // What a Networks page requests, read from and written to its URL so a refresh repeats the same request.
 export class NetworkQuery {
-  static readonly defaultVersion: DataVersion = 'v1';
+  static readonly defaultVersion: DataVersion = 'v3';
 
   constructor(
     readonly entrez: readonly number[],
@@ -27,7 +28,9 @@ export class NetworkQuery {
 
   static fromSearch(search: URLSearchParams): NetworkQuery {
     const entrez = [...new Set(search.getAll('entrez').map(Number).filter((id) => Number.isInteger(id) && id > 0))];
-    const version = search.get('version') === 'v3' ? 'v3' : NetworkQuery.defaultVersion;
+    // A shared link keeps the version it names; a link without one opens the default.
+    const named = search.get('version');
+    const version = named === 'v1' || named === 'v3' ? named : NetworkQuery.defaultVersion;
     const compared = search.get('compare');
     const compare = compared ? { tissue: compared === globalSlug ? undefined : compared, dataTypes: [...new Set(search.getAll('compare_datatype'))] } : undefined;
     return new NetworkQuery(entrez, search.get('tissue') || undefined, version, [...new Set(search.getAll('datatype'))], search.get('process') || undefined, compare);
