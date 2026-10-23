@@ -257,6 +257,27 @@ test('the ASD Browser fits a phone without scrolling sideways', async ({ page })
   }
 });
 
+test('on a phone the zoom stops, the location and the effects legend show in full', async ({ page }) => {
+  await apiOff(page);
+  for (const width of [360, 390]) {
+    await page.setViewportSize({ width, height: 812 });
+    await page.goto(`${web}/asd/`);
+    const legend = page.locator('.molecular-effects .legend-stepped');
+    await expect(legend).toBeVisible();
+    const clipped = await page.evaluate(() => {
+      const overflows = (selector: string) => {
+        const element = document.querySelector(selector);
+        return element ? element.scrollWidth > element.clientWidth : true;
+      };
+      const card = document.querySelector('.molecular-effects')?.getBoundingClientRect().right ?? 0;
+      const legendEnd = document.querySelector('.molecular-effects .legend-words')?.getBoundingClientRect().right ?? Infinity;
+      return { stops: overflows('.genome-zoom .segmented-track'), location: overflows('.genome-location input'), legend: legendEnd > card };
+    });
+    expect(clipped).toEqual({ stops: false, location: false, legend: false });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  }
+});
+
 test('the ASD Browser toolbar centers its controls on one line and wraps Next variant with Tracks and Export', async ({ page }) => {
   await apiOff(page);
   const toolbar = page.getByRole('toolbar', { name: 'Genome browser' });
