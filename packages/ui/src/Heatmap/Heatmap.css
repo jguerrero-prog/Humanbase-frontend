@@ -322,34 +322,6 @@
   color: var(--text-secondary);
 }
 
-.heatmap-table-scroll {
-  overflow-x: auto;
-  margin-block-start: var(--space-3);
-}
-
-.heatmap-table table {
-  border-collapse: collapse;
-  font: var(--type-body-sm);
-}
-
-.heatmap-table caption {
-  padding-block-end: var(--space-2);
-  color: var(--text-secondary);
-  text-align: start;
-}
-
-.heatmap-table th,
-.heatmap-table td {
-  padding: var(--space-2) var(--space-3);
-  text-align: start;
-  border-block-end: var(--border-width-1) solid var(--border-subtle);
-}
-
-.heatmap-table td {
-  font-variant-numeric: tabular-nums;
-  text-align: end;
-}
-
 .heatmap-with-values .heatmap-row {
   grid-template-columns: var(--heatmap-label) repeat(var(--heatmap-columns), var(--heatmap-cell)) auto;
 }
