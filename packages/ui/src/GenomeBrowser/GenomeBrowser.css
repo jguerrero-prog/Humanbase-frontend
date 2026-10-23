@@ -1,4 +1,5 @@
 .genome-toolbar {
+  container-type: inline-size;
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
@@ -44,6 +45,7 @@
 /* Tracks, Export and Next variant wrap as one group, never leaving Next variant alone. */
 .genome-end {
   flex: 1 0 auto;
+  flex-wrap: wrap;
   gap: var(--space-3);
 }
 
@@ -53,6 +55,18 @@
 
 .genome-zoom > .segmented {
   min-inline-size: 0;
+}
+
+/* Too narrow for the zoom buttons and every stop on one line: the stops take their own line, in full. */
+@container (inline-size < 22rem) {
+  .genome-zoom {
+    flex-wrap: wrap;
+  }
+
+  .genome-zoom > .segmented {
+    flex-basis: 100%;
+    order: 1;
+  }
 }
 
 .genome-next {
@@ -308,6 +322,10 @@
 }
 
 @media (width < 48rem) {
+  .genome-toolbar {
+    padding-inline: 0;
+  }
+
   .score-tracks {
     grid-template-columns: 120px minmax(0, 1fr);
   }

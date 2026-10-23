@@ -2,6 +2,7 @@
   --legend-step-size: 44px;
 
   gap: var(--space-1);
+  max-inline-size: 100%;
 }
 
 .legend-stepped-one-sided {
@@ -10,7 +11,7 @@
 
 .legend-step-list {
   display: grid;
-  grid-template-columns: repeat(var(--legend-steps), var(--legend-step-size));
+  grid-template-columns: repeat(var(--legend-steps), minmax(0, var(--legend-step-size)));
   gap: 1px;
   margin: 0;
   padding: 0;
@@ -34,7 +35,7 @@
 
 .legend-edges {
   display: grid;
-  grid-template-columns: repeat(var(--legend-steps), var(--legend-step-size));
+  grid-template-columns: repeat(var(--legend-steps), minmax(0, var(--legend-step-size)));
   font: var(--type-caption);
   color: var(--text-secondary);
 }
