@@ -57,11 +57,20 @@
   flex: none;
 }
 
-.accordion-title {
+.accordion-label {
+  display: flex;
   flex: 1;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.accordion-title {
   font: var(--accordion-title);
 }
 
+/* A summary too long to sit beside the title drops below it and wraps. */
 .accordion-summary {
   font: var(--accordion-summary);
   color: var(--text-secondary);

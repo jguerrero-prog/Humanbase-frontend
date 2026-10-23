@@ -89,17 +89,30 @@ test('on a phone the zoom stops, the location and the effects legend show in ful
   }
 });
 
-test('heatmap cells fill rows whose labels wrap, so the grid has no gaps, with the API off', async ({ page }) => {
+test('heatmap row labels take at most 40% of the plot, one line each, cut with an ellipsis but named in full, with the API off', async ({ page }) => {
   await apiOff(page);
   for (const width of [1440, 375]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(example);
     await page.getByRole('tab', { name: 'Heatmap' }).click();
-    const rows = page.locator('.heatmap-row');
-    await expect(rows.first()).toBeVisible();
-    const heights = await rows.evaluateAll((all) => all.map((row) => ({ row: row.getBoundingClientRect().height, cells: [...row.querySelectorAll('.heatmap-cell')].map((cell) => cell.getBoundingClientRect().height) })));
-    expect(heights.some(({ row }) => row > 30), `a label wraps at ${width}px`).toBe(true);
-    for (const { row, cells } of heights) for (const cell of cells) expect(cell).toBeCloseTo(row, 0);
+    await expect(page.locator('.heatmap-row').first()).toBeVisible();
+    const layout = await page.locator('.heatmap-plot').evaluate((plot) => {
+      const labels = [...plot.querySelectorAll<HTMLElement>('.heatmap-row-label')];
+      const cut = labels.filter((label) => {
+        const name = label.querySelector('.heatmap-row-name');
+        return name && name.scrollWidth > name.clientWidth;
+      });
+      return {
+        share: (labels[0]?.getBoundingClientRect().width ?? 0) / plot.clientWidth,
+        heights: [...new Set([...plot.querySelectorAll('.heatmap-row')].map((row) => Math.round(row.getBoundingClientRect().height)))],
+        cutNamedInFull: cut.every((label) => label.title === label.textContent),
+        cut: cut.length,
+      };
+    });
+    expect(layout.share).toBeLessThanOrEqual(0.401);
+    expect(layout.heights).toEqual([26]);
+    expect(layout.cutNamedInFull).toBe(true);
+    if (width === 375) expect(layout.cut, 'a long label is cut on a phone').toBeGreaterThan(0);
   }
 });
 

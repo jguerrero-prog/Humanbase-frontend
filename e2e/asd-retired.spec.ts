@@ -15,6 +15,7 @@ test('old ASD Browser links show the retired notice and point to SFARI Base, wit
       await page.goto(`${web}${path}`);
       await expect(page.getByRole('heading', { level: 1, name: 'ASD Browser' })).toBeAttached();
       await expect(page.getByText('The ASD Browser is retired')).toBeVisible();
+      await expect(page.getByText('For autism genetics data, visit SFARI Base.')).toBeVisible();
       await expect(page.getByRole('link', { name: 'Go to SFARI Base' })).toHaveAttribute('href', 'https://base.sfari.org');
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
       expect(await violationsOf(page)).toEqual([]);

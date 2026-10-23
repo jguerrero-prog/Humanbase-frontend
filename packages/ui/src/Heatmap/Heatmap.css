@@ -225,12 +225,6 @@
   gap: 1px;
 }
 
-/* A wrapped label makes the row taller; the cells grow with it so the grid has no gaps. */
-.heatmap-row .heatmap-cell {
-  block-size: auto;
-  min-block-size: 26px;
-}
-
 .heatmap-row-label {
   position: sticky;
   z-index: 2;
@@ -240,11 +234,17 @@
   font: var(--type-body-sm);
   color: var(--text-default);
   text-align: end;
-  overflow-wrap: anywhere;
   background: var(--surface-page);
 }
 
-/* As on a table's pinned first column, an 8px shadow shows where the cells scroll under the labels. */
+.heatmap-row-name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* As on a table's pinned first column, the edge shadow shows where the cells scroll under the labels. */
 .heatmap-row-label::after {
   content: "";
   position: absolute;
@@ -252,7 +252,7 @@
   inset-inline-start: 100%;
   inline-size: var(--space-2);
   pointer-events: none;
-  background: linear-gradient(to right, color-mix(in srgb, var(--surface-inverse) 12%, transparent), transparent);
+  background: linear-gradient(to right, var(--shadow-pinned-edge));
 }
 
 .heatmap-column-labels::before {

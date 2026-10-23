@@ -56,12 +56,14 @@ export function AccordionItem({ title, summary, headingLevel = 3, open, defaultO
           data-state={dataState}
           onClick={() => !disabled && setOpen(!isOpen)}
         >
-          <span className="accordion-title">{title}</span>
-          {summary && (
-            <span className="accordion-summary">
-              <span className="visually-hidden">,</span> {summary}
-            </span>
-          )}
+          <span className="accordion-label">
+            <span className="accordion-title">{title}</span>
+            {summary && (
+              <span className="accordion-summary">
+                <span className="visually-hidden">,</span> {summary}
+              </span>
+            )}
+          </span>
           <Icon name={isOpen ? 'chevron-up' : 'chevron-down'} size={size === 'compact' ? 16 : 20} />
         </button>
       </Heading>

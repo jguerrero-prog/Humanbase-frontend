@@ -37,6 +37,14 @@ describe('Heatmap', () => {
     expect(screen.getByRole('gridcell', { name: 'integument, 150,226,123: Not available' })).toBeInTheDocument();
   });
 
+  it('keeps the full row name for hover and screen readers when the label is cut', () => {
+    render(<Heatmap {...props} />);
+    const grid = screen.getByRole('grid');
+    const label = screen.getAllByRole('rowheader').find((header) => grid.contains(header));
+    expect(label).toHaveAccessibleName('nervous system');
+    expect(label).toHaveAttribute('title', 'nervous system');
+  });
+
   it('pins the tooltip on click with a genome browser link, ignores hover until Escape', () => {
     const linked = { ...props, columns: props.columns.map((column) => ({ ...column, href: `https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr1:${column.position}` })) };
     render(<Heatmap {...linked} />);

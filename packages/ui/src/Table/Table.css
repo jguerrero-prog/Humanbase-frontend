@@ -210,7 +210,7 @@
   inset-inline-start: 100%;
   inline-size: var(--space-2);
   pointer-events: none;
-  background: linear-gradient(to right, color-mix(in srgb, var(--surface-inverse) 12%, transparent), transparent);
+  background: linear-gradient(to right, var(--shadow-pinned-edge));
 }
 
 .table-toolbar {

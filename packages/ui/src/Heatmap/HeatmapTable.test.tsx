@@ -21,12 +21,12 @@ const props = {
 };
 
 describe('Heatmap as a table', () => {
-  it('lists each value under its row and column headers, the same as the heatmap', () => {
+  it('lists each value under its row and column headers, every one to the same decimals', () => {
     render(<Heatmap {...props} />);
     const table = screen.getByRole('table', { name: props.summary });
     expect(within(table).getAllByRole('columnheader').map((header) => header.textContent)).toEqual(['Tissue system', '150,226,123', '150,226,178']);
     expect(within(table).getByRole('rowheader', { name: 'integument' })).toBeInTheDocument();
-    expect(within(table).getAllByRole('cell').map((cell) => cell.textContent)).toEqual(['−1.42*, past the end of the legend (−1)', '0.05', 'Not available', '0.2']);
+    expect(within(table).getAllByRole('cell').map((cell) => cell.textContent)).toEqual(['−1.42*, past the end of the legend (−1)', '0.05', 'Not available', '0.20']);
   });
 
   it('links a position header to the genome browser and explains the asterisk', () => {

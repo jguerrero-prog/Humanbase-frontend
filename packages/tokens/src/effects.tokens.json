@@ -1,5 +1,5 @@
 {
-  "$description": "Elevation shadows and the focus ring. Exported from the Humanbase Figma file (qc47Wo9Vj5lYjo9U7zdvWa) on 2026-10-18.",
+  "$description": "Elevation shadows, the focus ring and the pinned-edge shadow. Exported from the Humanbase Figma file (qc47Wo9Vj5lYjo9U7zdvWa) on 2026-10-18; pinned-edge added in code.",
   "elevation": {
     "0": {
       "$type": "shadow",
@@ -310,5 +310,37 @@
         }
       ]
     }
+  },
+  "pinned-edge": {
+    "$type": "gradient",
+    "$description": "The 8px shadow on the edge of a pinned table column or heatmap row labels, where content scrolls under them. Use as linear-gradient(to right, var(--shadow-pinned-edge)).",
+    "$value": [
+      {
+        "color": {
+          "colorSpace": "srgb",
+          "components": [
+            0.102,
+            0.102,
+            0.102
+          ],
+          "hex": "#1A1A1A",
+          "alpha": 0.12
+        },
+        "position": 0
+      },
+      {
+        "color": {
+          "colorSpace": "srgb",
+          "components": [
+            0.102,
+            0.102,
+            0.102
+          ],
+          "hex": "#1A1A1A",
+          "alpha": 0
+        },
+        "position": 1
+      }
+    ]
   }
 }
