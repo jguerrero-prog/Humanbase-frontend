@@ -28,7 +28,7 @@ const parts = [
   ['Gaps', '1px white between cells, so neighbors of the same step still read as separate values.'],
   ['Not available', 'White with a grey outline and a diagonal line, never a color from the legend and never zero.'],
   ['Hover and focus', '2px ink outline and the tooltip with every value for that cell.'],
-  ['Past the legend', 'Takes the end step; the tooltip and View as table give the exact value and say it’s past the end.'],
+  ['Past the legend', 'Takes the end step; the tooltip gives the exact value and says it’s past the end. View as table marks the value with an asterisk, explained in a note under the table, and screen readers hear the full sentence.'],
 ];
 
 const rules = [
@@ -42,7 +42,7 @@ const rules = [
   ['Position axes', 'A horizontal ruler with the shared prefix in the axis title (“150,226,000 +”) and short offsets as ticks; a line links each column to its position; only the hovered or selected column gets its full label. Rotated labels (50°) only for a few columns whose labels differ, such as tissue names. Decided October 16, 2026.'],
   ['Compact', 'Rows shrink to 8px and labels hide; the tooltip still works on every cell.'],
   ['Color vision', 'The scales are the Data visualization ones, checked for protanopia, deuteranopia and tritanopia; steps also differ in lightness, so they read in grey scale.'],
-  ['Text alternative', 'View as table lists every cell’s value with its row and column, and the summary sentence names the strongest values.'],
+  ['Text alternative', 'View as table lists every cell’s value with its row and column, and the summary sentence names the strongest values. It is a compact Table with the first column and header row pinned, so the row and position stay in view while it scrolls; position links show their external link icon on hover and focus.'],
 ];
 
 const words = [

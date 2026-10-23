@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type PointerEvent, type RefObject } from 'react';
 import { useMoreToScroll, useScrollState } from '../hooks/useScrollState';
-import { Icon } from '../Icon/Icon';
 import { usePinned } from '../List/useDismiss';
-import { ViewAsTable } from '../Table/ViewAsTable';
 import { BreakableText } from '../Text/BreakableText';
 import { DataTooltip } from '../Tooltip/DataTooltip';
 import { placeNearPoint } from '../Tooltip/placement';
 import { HeatmapCell } from './HeatmapCell';
+import { HeatmapTable } from './HeatmapTable';
 import { LegendStepped } from './LegendStepped';
 import { ScoreScale, type ScaleSpec } from './ScoreScale';
 
@@ -304,41 +303,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
           position={place}
         />
       )}
-      <ViewAsTable className="heatmap-table">
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the table scrolls sideways, so it takes focus for arrow-key scrolling */}
-        <div className="heatmap-table-scroll" role="region" aria-label={`${title}, as a table`} tabIndex={0}>
-          <table>
-            <caption>{summary}</caption>
-            <thead>
-              <tr>
-                <th scope="col">{rowHeader}</th>
-                {columns.map((column) => (
-                  <th scope="col" key={column.label}>
-                    {column.href ? (
-                      <a href={column.href} target="_blank" rel="noopener noreferrer">
-                        {columnName(column)}
-                        <Icon name="external-link" size={16} label="opens in a new tab" />
-                      </a>
-                    ) : (
-                      columnName(column)
-                    )}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={row.label}>
-                  <th scope="row">{row.label}</th>
-                  {row.values.map((value, c) => (
-                    <td key={columns[c]?.label ?? c}>{scale.describe(value, format)}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </ViewAsTable>
+      <HeatmapTable summary={summary} scale={scale} columns={columns} rows={rows} rowHeader={rowHeader} format={format} columnName={columnName} />
     </figure>
   );
 }
