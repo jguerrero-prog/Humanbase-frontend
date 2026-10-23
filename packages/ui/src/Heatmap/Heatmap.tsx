@@ -308,8 +308,10 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   );
 }
 
-const labelsInView = (plot: HTMLElement) =>
-  [...plot.querySelectorAll<HTMLElement>('.heatmap-position-labels > span')].map((label) => (label.offsetLeft >= plot.scrollLeft && label.offsetLeft + label.scrollWidth <= plot.scrollLeft + plot.clientWidth ? '1' : '0')).join('');
+const labelsInView = (plot: HTMLElement) => {
+  const start = plot.scrollLeft + (Number.parseFloat(getComputedStyle(plot).getPropertyValue('--heatmap-label')) || 0);
+  return [...plot.querySelectorAll<HTMLElement>('.heatmap-position-labels > span')].map((label) => (label.offsetLeft >= start && label.offsetLeft + label.scrollWidth <= plot.scrollLeft + plot.clientWidth ? '1' : '0')).join('');
+};
 
 interface PositionLabelsProps {
   plot: RefObject<HTMLDivElement | null>;
@@ -317,7 +319,7 @@ interface PositionLabelsProps {
   labelOf: (column: HeatmapColumn) => string;
 }
 
-// A position every 20th column; one the plot's scroll edge would cut is hidden until it scrolls fully into view.
+// A position every 20th column; one the plot's scroll edge or the pinned row labels would cut is hidden until it scrolls fully into view.
 function PositionLabels({ plot, columns, labelOf }: PositionLabelsProps) {
   const inView = useScrollState(plot, labelsInView, '');
   return (
