@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type PointerEvent, type RefObject } from 'react';
 import { useMoreToScroll, useScrollState } from '../hooks/useScrollState';
 import { usePinned } from '../List/useDismiss';
-import { BreakableText } from '../Text/BreakableText';
 import { DataTooltip } from '../Tooltip/DataTooltip';
 import { placeNearPoint } from '../Tooltip/placement';
 import { HeatmapCell } from './HeatmapCell';
@@ -75,17 +74,17 @@ const labelEvery = 20;
 const hoverGrace = 300;
 const dragStart = 4;
 const switchDelay = 150;
-const labelWidths = { min: 160, max: 360, share: 0.4 };
+const labelWidths = { fallback: 160, max: 360, share: 0.4 };
 
-/** The row label column fits the longest label, within limits; longer labels wrap. */
+/** The row label column fits the longest label, up to 360px and 40% of the plot; longer labels end in an ellipsis. */
 function labelColumn(box: HTMLElement, labels: readonly string[]) {
   const sample = box.querySelector('.heatmap-row-label');
   const context = document.createElement('canvas').getContext('2d');
-  if (!sample || !context) return labelWidths.min;
+  if (!sample || !context) return labelWidths.fallback;
   const style = getComputedStyle(sample);
   context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
   const widest = Math.ceil(Math.max(0, ...labels.map((label) => context.measureText(label).width)) + (Number.parseFloat(style.paddingInlineEnd) || 0));
-  return Math.max(labelWidths.min, Math.min(widest, labelWidths.max, Math.floor(box.clientWidth * labelWidths.share)));
+  return Math.min(widest, labelWidths.max, Math.floor(box.clientWidth * labelWidths.share));
 }
 
 export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', valueLabel, showValues = false, columnWidth = 'full', selectedColumn, onColumnSelect, onDrag }: HeatmapProps) {
@@ -119,7 +118,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   usePinned(tip, pinned, unpin, () => plot.current?.querySelector<HTMLElement>(`[data-cell="${focus[0]}-${focus[1]}"]`));
   const [place, setPlace] = useState<{ x: number; y: number }>();
   const [fits, setFits] = useState(true);
-  const [labelWidth, setLabelWidth] = useState(labelWidths.min);
+  const [labelWidth, setLabelWidth] = useState(labelWidths.fallback);
   const more = useMoreToScroll(plot);
   const narrow = columnWidth === 'narrow' || (columnWidth === 'auto' && !fits);
   const width = narrow ? narrowWidth : cellWidth;
@@ -245,8 +244,8 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
             {selectedColumn !== undefined && selectedColumn >= 0 && <span className="heatmap-selected-column" aria-hidden="true" style={{ '--heatmap-at': selectedColumn } as CSSProperties} />}
             {rows.map((row, r) => (
               <div role="row" key={row.label} className="heatmap-row">
-                <span role="rowheader" className="heatmap-row-label">
-                  <BreakableText>{row.label}</BreakableText>
+                <span role="rowheader" className="heatmap-row-label" title={row.label}>
+                  <span className="heatmap-row-name">{row.label}</span>
                 </span>
                 {row.values.map((value, c) => {
                   const column = columns[c];
@@ -303,7 +302,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
           position={place}
         />
       )}
-      <HeatmapTable summary={summary} scale={scale} columns={columns} rows={rows} rowHeader={rowHeader} format={format} columnName={columnName} />
+      <HeatmapTable summary={summary} scale={scale} columns={columns} rows={rows} rowHeader={rowHeader} decimals={decimals} columnName={columnName} />
     </figure>
   );
 }
