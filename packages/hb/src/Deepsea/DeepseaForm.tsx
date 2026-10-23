@@ -1,6 +1,7 @@
 import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type InputKind, type VariantModel } from '@humanbase/data';
 import { AboutPanel, Alert, saveFile } from '@humanbase/ui';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
+import { expressionEffectsLink } from '../Expecto/geneExpressionTools';
 import '../Jobs/JobForm.css';
 import { VariantJobForm, type VariantJob } from '../VariantJobForm/VariantJobForm';
 
@@ -10,15 +11,19 @@ export interface DeepseaFormProps {
   onModelChange: (model: VariantModel) => void;
   /** Opens the new job's page. */
   onStarted: (link: string) => void;
+  /** Replaces the form's Model field, as the Expression effects page's ExPecto or ExPecto SC choice does. */
+  modelField?: ReactNode;
+  /** What the model can score, from its config. */
+  scoreable?: string;
 }
 
 type Failure = 'busy' | 'off' | 'refused' | 'failed';
 
 const number = new Intl.NumberFormat('en-US');
 
-/** Where a model's job form is: ExPecto's sits on its Submit variants tab, in silico mutagenesis has its own path. */
+/** Where a model's job form is: ExPecto's sits on Expression effects' Submit variants tab, in silico mutagenesis has its own path. */
 export function deepseaFormLink(model: VariantModel): string {
-  if (model === 'expecto') return '/expecto/variants/';
+  if (model === 'expecto') return expressionEffectsLink({ tab: 'submit-variants' });
   return model === 'insilico' ? '/ism/' : `/${model}/`;
 }
 
@@ -27,7 +32,7 @@ export function deepseaJobLink(id: string): string {
 }
 
 /** The Sei, Beluga or Seqweaver form: checks the file in the browser, starts the job and keeps it in this browser's job list. */
-export function DeepseaForm({ model, onModelChange, onStarted }: DeepseaFormProps) {
+export function DeepseaForm({ model, onModelChange, onStarted, modelField, scoreable }: DeepseaFormProps) {
   const api = useHumanbase();
   const [running, setRunning] = useState(false);
   const [failure, setFailure] = useState<Failure>();
@@ -60,7 +65,7 @@ export function DeepseaForm({ model, onModelChange, onStarted }: DeepseaFormProp
 
   return (
     <div className="job-columns">
-      <VariantJobForm key={model} model={model} onModelChange={onModelChange} examples={examples} onRun={run} running={running} notice={notice} />
+      <VariantJobForm key={model} model={model} onModelChange={onModelChange} examples={examples} onRun={run} running={running} notice={notice} modelField={modelField} scoreable={scoreable} />
       <DeepseaAbout model={model} />
     </div>
   );

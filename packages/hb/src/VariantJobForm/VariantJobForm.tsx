@@ -29,6 +29,10 @@ export interface VariantJobFormProps {
   running?: boolean | undefined;
   /** Shown above the form, such as why a job couldn’t start. */
   notice?: ReactNode;
+  /** Replaces the Model field, such as with Expression effects' ExPecto or ExPecto SC choice. */
+  modelField?: ReactNode;
+  /** One line under the model saying what can be scored, from the model's config. */
+  scoreable?: string | undefined;
 }
 
 const models = variantModels.map((value) => ({ value, label: deepseaModels[value].option }));
@@ -53,7 +57,7 @@ function downloadProblems(result: FileCheckResult) {
   saveFile(text, 'problems.tsv', 'text/tab-separated-values');
 }
 
-export function VariantJobForm({ model: initialModel, onModelChange, examples, onRun, running, notice }: VariantJobFormProps) {
+export function VariantJobForm({ model: initialModel, onModelChange, examples, onRun, running, notice, modelField, scoreable }: VariantJobFormProps) {
   const id = useId();
   const [model, setModel] = useState(initialModel);
   const [kind, setKind] = useState<InputKind>(deepseaModels[initialModel].inputs[0] ?? 'vcf');
@@ -98,7 +102,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
     <form className="job-form" onSubmit={(event) => { event.preventDefault(); run(); }}>
       {notice}
       <div className="job-form-row">
-        <Select label="Model" options={modelOptions(model)} value={model} onChange={(value) => chooseModel(value as VariantModel)} hint={deepseaModels[model].otherModels} />
+        {modelField ?? <Select label="Model" options={modelOptions(model)} value={model} onChange={(value) => chooseModel(value as VariantModel)} hint={deepseaModels[model].otherModels} />}
         {kind !== 'fasta' && (
           <Select
             label="Genome assembly"
@@ -112,6 +116,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, examples, o
           />
         )}
       </div>
+      {scoreable && <p className="job-form-help">{scoreable}</p>}
       {deepseaModels[model].inputs.length > 1 && (
         <SegmentedControl
           label="What are you submitting?"

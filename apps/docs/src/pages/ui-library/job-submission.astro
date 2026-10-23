@@ -57,7 +57,7 @@ const tools = [
   ['Beluga', 'Model Beluga (DNA). VCF, BED or FASTA of 2,000 bp.'],
   ['Seqweaver', 'Model Seqweaver (RNA). VCF with a strand column, BED, or FASTA of 1,000 bp.'],
   ['In silico mutagenesis', 'FASTA only, Beluga model, several sequences per job. The sequence and one of 2,002 features are chosen after the job, on the result.'],
-  ['ExPecto', 'VCF only, Beluga model. Keeps its three ways in above the form: Gene, Submit variants, SNP rsID.'],
+  ['ExPecto', 'VCF only, runs on Beluga. Sits on Expression effects (/expression-effects/), whose tabs come before the form: Gene, rsID, Submit variants. The Model field comes first on every tab, ExPecto (tissues) or ExPecto SC (cell types), and the line under it says what can be scored, from the model’s config. ExPecto SC has no job or rsID list in the API yet, so those two tabs show an info Alert with Switch to ExPecto instead of a form.'],
   ['NetWAS', 'Same file drop, title and email. Fields: data version (MAGE, or GIANT for earlier results), GWAS file, tissue network, then the MHC region with MAGE or the p-value threshold (0.01) with GIANT. The live examples list VEGAS, MAGMA and 2-column formats; the docs say VEGAS, FORGE or PSEQ, so the list is on the facts to confirm.'],
 ];
 

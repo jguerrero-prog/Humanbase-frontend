@@ -75,7 +75,7 @@ describe('DeepseaJobView', () => {
   });
 
   it('sends a failed ExPecto job back to its Submit variants tab', () => {
-    expect(deepseaFormLink('expecto')).toBe('/expecto/variants/');
+    expect(deepseaFormLink('expecto')).toBe('/expression-effects/?tab=submit-variants');
     expect(deepseaFormLink('beluga')).toBe('/beluga/');
   });
 
