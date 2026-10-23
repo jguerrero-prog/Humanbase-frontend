@@ -38,8 +38,14 @@ const variants = [at(109_800_000, [0.5, 0.2, 0.1]), at(109_817_590, [1, -5, 3]),
 const rowLabels = () => within(screen.getByRole('grid')).getAllByRole('rowheader').map((cell) => cell.textContent);
 
 describe('EffectsCard', () => {
+  it('opens on Heatmap with one variant in range, as humanbase.io does', () => {
+    renderCard();
+    expect(screen.getByRole('tab', { name: 'Heatmap' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('grid')).toBeInTheDocument();
+  });
+
   it('narrows ExPecto tissues to one resource', async () => {
-    renderCard({ inCellTypes: false });
+    renderCard({ inCellTypes: false, view: 'strongest' });
     const resource = screen.getByRole('combobox', { name: 'Resource' });
     expect(resource).toHaveTextContent('All resources');
     expect(screen.getByText('Liver')).toBeInTheDocument();

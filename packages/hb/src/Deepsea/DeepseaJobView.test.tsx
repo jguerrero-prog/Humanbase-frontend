@@ -4,6 +4,13 @@ import userEvent from '@testing-library/user-event';
 import { deepseaFormLink } from './DeepseaForm';
 import { DeepseaJobView } from './DeepseaJobView';
 
+// The effects card opens on Heatmap, as on humanbase.io.
+async function openStrongest() {
+  const heatmap = await screen.findByRole('tab', { name: 'Heatmap' }, { timeout: 5000 });
+  expect(heatmap).toHaveAttribute('aria-selected', 'true');
+  await userEvent.click(screen.getByRole('tab', { name: 'Strongest effects' }));
+}
+
 const job = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 
 function renderJob(id: string, variant?: string) {
@@ -24,6 +31,7 @@ describe('DeepseaJobView', () => {
     renderJob('76aea8fe-8ec7-4698-a193-a186c7665edb');
     expect(await screen.findByRole('heading', { level: 1, name: 'Untitled Seqweaver job' }, { timeout: 5000 })).toBeInTheDocument();
     expect(await screen.findByText('Molecular effects of chr1:109,817,590 G>T', {}, { timeout: 5000 })).toBeInTheDocument();
+    await openStrongest();
     expect(await screen.findByText('LIN28A', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByText('10 variants, colored by chromosome; position also carries the chromosome.')).toBeInTheDocument();
   });
@@ -31,6 +39,7 @@ describe('DeepseaJobView', () => {
   it('reads Sei effects as sequence classes', async () => {
     renderJob('2e18fedf-3de7-4d08-a894-9a937a2b860b', 'chr7-49813589-G-C');
     expect(await screen.findByText('Molecular effects of chr7:49,813,589 G>C', {}, { timeout: 5000 })).toBeInTheDocument();
+    await openStrongest();
     expect(await screen.findByText('P Promoter', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByText('Raises, 13 sequence classes')).toBeInTheDocument();
     expect(screen.getByText('strong, 2 or more')).toBeInTheDocument();
@@ -59,6 +68,7 @@ describe('DeepseaJobView', () => {
   it('reads ExPecto effects as tissues, with their resource and system', async () => {
     renderJob('e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1', 'chr5-134871851-A-G');
     expect(await screen.findByRole('heading', { level: 1, name: 'Untitled ExPecto job' }, { timeout: 5000 })).toBeInTheDocument();
+    await openStrongest();
     expect(await screen.findByText('Fallopian Tube', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getAllByText('GTEx, reproductive system')[0]).toBeInTheDocument();
     expect(screen.getByText('strong, 0.1 or more')).toBeInTheDocument();

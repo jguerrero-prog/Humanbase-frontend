@@ -9,6 +9,9 @@ import './VariantEffects.css';
 
 export type EffectsView = 'strongest' | 'heatmap' | 'all';
 
+/** The tab the effects card opens on, with one variant in range or many, as on humanbase.io. */
+export const defaultEffectsView: EffectsView = 'heatmap';
+
 export { effectZScale } from './EffectScale';
 
 export interface MolecularEffectsProps {

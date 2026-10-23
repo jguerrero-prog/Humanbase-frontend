@@ -92,7 +92,7 @@ const whyBars = [
   ['Which proteins?', '20 rows, with LARP4 four times → 14 proteins; repeats fold into one row with their range and open on click.'],
   ['Does it lower anything?', 'Only by reversing the sort → a Lowers column that says so even when it’s empty.'],
   ['How much is there?', 'Showing top 20 of 232 → a summary by strength first, and a threshold that keeps the list short for Beluga’s 2,002 features.'],
-  ['Several variants?', 'Both views work. With two or more variants in range the card opens on Heatmap; Strongest effects then follows the selected variant.'],
+  ['Several variants?', 'Both views work. The heatmap compares every variant in range; Strongest effects follows the selected variant.'],
   ['What it costs', 'Nothing new from the API: the same scores, grouped by the feature and cell-type fields the tooltip already has.'],
 ];
 
@@ -123,7 +123,7 @@ const behavior = [
   ['Score type documentation', 'A documentation link (Button / Small, ghost, book icon) sits beside the plot’s Score and the effects’ Score, as humanbase.io’s book icon does. It opens the model’s page at #output: sei.html, beluga.html, seqweaver.html or expecto.html. In silico mutagenesis links in-silico-mutagenesis.html#output as Log-fold change score documentation.'],
   ['Color style (Sei)', 'Every result colors its points by chromosome in humanbase.io’s 24 colors (viz.chromosome). Sei results add Color style: Chromosome, or Sequence class, which colors each variant by the group of the class it changes most, in humanbase.io’s eight colors (viz.seqclass), with Legend / Categorical above the plot. Beluga and Seqweaver have no classes, so no Color style.'],
   ['Card heading', 'Molecular effects of <variant> for Sei, Beluga and Seqweaver; Expression effects of <variant> for ExPecto, as its paper (Zhou et al., Nature Genetics 2018) names what it predicts. The name lives on each model in packages/data.'],
-  ['Effects views', 'Strongest effects opens first with one variant in range; Heatmap opens first with two or more. Score, threshold, cell type and search apply to all three tabs; grouping by protein applies to Strongest effects. The heatmap’s View is Full or Compact, as on humanbase.io: Compact keeps one variant per 15px of its width, the center one or else the higher variant score.'],
+  ['Effects views', 'The card opens on Heatmap, with one variant in range or many, as humanbase.io’s ASD Browser and job results do; Strongest effects and All features are one click away, and the chosen tab stays while you step through variants. Score, threshold, cell type and search apply to all three tabs; grouping by protein applies to Strongest effects. The heatmap’s View is Full or Compact, as on humanbase.io: Compact keeps one variant per 15px of its width, the center one or else the higher variant score.'],
   ['Heatmap columns', 'One per variant in the genome browser’s view, opened with 50 kb either side of the selected variant, as on humanbase.io. Clicking a column’s line selects that variant and centers the browser on it; dragging the cells moves the browser. Moving the browser makes the variant nearest its center the selected one.'],
   ['Downloads', 'Download results lists the files from the job page; the plot’s download gives an image of the plot as shown.'],
   ['URL', 'Selected variant, scores, plot style and heatmap settings are in the URL.'],
@@ -203,7 +203,7 @@ const effects = new EffectGroups(experiments); // feature, cell, context, label,
     <p class="note">The example job lists 10 variants; Figma names 9 of them, so the table here holds those 9.</p>
   </DocSection>
 
-  <DocSection title="A variant in focus" lead="Below the scores, everything follows the selected variant: where it sits in the genome, then which molecular features it changes. The effects card opens on Strongest effects.">
+  <DocSection title="A variant in focus" lead="Below the scores, everything follows the selected variant: where it sits in the genome, then which molecular features it changes. The effects card opens on Heatmap; this is its Strongest effects tab.">
     <ProductScreen label="A Seqweaver result at 1440px: the selected variant" current="Sequence analysis">
       <VariantFocus label={focusLabel} detail={`${focus.name}, disease impact score ${focus.scores.impact?.toFixed(2)}`} />
       <figure class="browser-sketch" data-illustration>
@@ -223,7 +223,7 @@ const effects = new EffectGroups(experiments); // feature, cell, context, label,
     </div>
   </DocSection>
 
-  <DocSection title="Heatmap view" lead="The second tab of the same card: one row per experiment, one column per variant in the genome browser’s range, the value beside each cell, and Show 20 more. With two or more variants in range it opens on this tab, since comparing variants is what a heatmap is for.">
+  <DocSection title="Heatmap view" lead="The second tab of the same card: one row per experiment, one column per variant in the genome browser’s range, the value beside each cell, and Show 20 more. The card opens on this tab, with one variant in range or many, as on humanbase.io.">
     <div class="card-with-notes">
       <MolecularEffects variant={focusLabel} view="heatmap">
         <EffectsControls scores={effectScores} score="z" search="" density="full" lowestFirst={false} />
@@ -248,7 +248,7 @@ const effects = new EffectGroups(experiments); // feature, cell, context, label,
     </MolecularEffects>
   </DocSection>
 
-  <DocSection title="Why Strongest effects is the default" lead="The decision, October 16, 2026: bars by protein open first; the heatmap stays one tab away, and becomes the first tab when variants are compared.">
+  <DocSection title="Why Strongest effects is a tab" lead="Added October 16, 2026: bars by protein answer questions the heatmap leaves hard. The card still opens on Heatmap, as humanbase.io does (checked October 22, 2026, on the ASD Browser and on Seqweaver and ExPecto results).">
     <DocTable caption="Heatmap view against Strongest effects" columns={['Question', 'Heatmap view → Strongest effects view']} widths={['300px']}>
       {whyBars.map(([question, answer]) => <tr><th scope="row">{question}</th><td>{answer}</td></tr>)}
     </DocTable>
