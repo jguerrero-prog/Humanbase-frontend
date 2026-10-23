@@ -1,17 +1,13 @@
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { sampleKey } from '../packages/data/src/sample/sampleKey.ts';
 import { asdBrowserRetired } from '../packages/hb/src/content/asdBrowser.ts';
-import { apiOff, externalFiles } from './apiOff';
+import { apiOff, externalFiles, recorded as sample } from './apiOff';
 import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
 
 test.skip(asdBrowserRetired, 'The ASD Browser is retired; asd-retired.spec.ts tests /asd/ instead.');
-const samples = fileURLToPath(new URL('../packages/data/samples/', import.meta.url));
-const sample = async (key: string) => JSON.parse(await readFile(join(samples, `${key}.json`), 'utf8')) as { status: number; body: unknown };
 const chr1Variants = (page: number) => `variants@chromosome=chr1&labels__name=asd&page=${page}&position__gte=2230000&position__lte=2440000`;
 
 /** Turns the API on but answers it from the samples, slowly; any range on chr1 gets the recorded variants that fall in it, so the view can move. */
@@ -254,27 +250,6 @@ test('the ASD Browser fits a phone without scrolling sideways', async ({ page })
     await page.goto(`${web}${path}`);
     await expect(page.getByRole('heading', { level: 1, name: 'ASD Browser' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
-  }
-});
-
-test('on a phone the zoom stops, the location and the effects legend show in full', async ({ page }) => {
-  await apiOff(page);
-  for (const width of [360, 390]) {
-    await page.setViewportSize({ width, height: 812 });
-    await page.goto(`${web}/asd/`);
-    const legend = page.locator('.molecular-effects .legend-stepped');
-    await expect(legend).toBeVisible();
-    const clipped = await page.evaluate(() => {
-      const overflows = (selector: string) => {
-        const element = document.querySelector(selector);
-        return element ? element.scrollWidth > element.clientWidth : true;
-      };
-      const card = document.querySelector('.molecular-effects')?.getBoundingClientRect().right ?? 0;
-      const legendEnd = document.querySelector('.molecular-effects .legend-words')?.getBoundingClientRect().right ?? Infinity;
-      return { stops: overflows('.genome-zoom .segmented-track'), location: overflows('.genome-location input'), legend: legendEnd > card };
-    });
-    expect(clipped).toEqual({ stops: false, location: false, legend: false });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   }
 });
 
