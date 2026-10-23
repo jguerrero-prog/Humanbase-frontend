@@ -40,6 +40,17 @@ test('the NetWAS form fits a phone without scrolling sideways', async ({ page })
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
 });
 
+test('the GWAS file rules title stays on one line at every width', async ({ page }) => {
+  await apiOff(page);
+  for (const width of [1440, 1024, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(`${web}/netwas/`);
+    const title = page.locator('#gwas-file-rules .accordion-title');
+    await expect(title).toHaveText('GWAS file rules for MAGE-WAS');
+    expect((await title.boundingBox())?.height).toBeLessThan(24);
+  }
+});
+
 const job = (n: number) => `${web}/netwas/00000000-0000-4000-8000-00000000000${n}/`;
 
 test('starting the example opens its job page, with the API off', async ({ page }) => {
