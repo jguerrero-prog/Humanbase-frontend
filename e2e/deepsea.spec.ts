@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { apiOff } from './apiOff';
+import { apiOff, sampleApi } from './apiOff';
 import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
@@ -65,6 +65,28 @@ test('the Seqweaver example result has no WCAG 2.2 AA violations in each view, w
   await expect(page).toHaveURL(/variant=chr10-23508363-A-G/);
   await expect(page.getByRole('heading', { name: 'Molecular effects of chr10:23,508,363 A>G' })).toBeVisible();
   expect(apiRequests).toEqual([]);
+});
+
+test('on a phone the zoom stops, the location and the effects legend show in full on a Seqweaver result, from the samples', async ({ page }) => {
+  await sampleApi(page);
+  for (const width of [360, 390]) {
+    await page.setViewportSize({ width, height: 812 });
+    await page.goto(example);
+    await expect(page.locator('.genome-zoom .segmented-track')).toBeVisible();
+    const legend = page.locator('.molecular-effects .legend-stepped');
+    await expect(legend).toBeVisible();
+    const clipped = await page.evaluate(() => {
+      const overflows = (selector: string) => {
+        const element = document.querySelector(selector);
+        return element ? element.scrollWidth > element.clientWidth : true;
+      };
+      const card = document.querySelector('.molecular-effects')?.getBoundingClientRect().right ?? 0;
+      const legendEnd = document.querySelector('.molecular-effects .legend-words')?.getBoundingClientRect().right ?? Infinity;
+      return { stops: overflows('.genome-zoom .segmented-track'), location: overflows('.genome-location input'), legend: legendEnd > card };
+    });
+    expect(clipped).toEqual({ stops: false, location: false, legend: false });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  }
 });
 
 test('heatmap cells fill rows whose labels wrap, so the grid has no gaps, with the API off', async ({ page }) => {

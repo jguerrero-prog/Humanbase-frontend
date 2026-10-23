@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import { asdBrowserRetired } from '@humanbase/hb';
 import { createBrowserRouter, type RouteObject } from 'react-router';
 import { AppLayout } from './layout/AppLayout';
 import { HomePage } from './pages/HomePage';
@@ -47,7 +48,7 @@ export const routes: RouteObject[] = [
           page('beluga', deepsea('beluga')),
           page('seqweaver', deepsea('seqweaver')),
           page('ism', deepsea('insilico')),
-          page('asd', async () => (await import('./pages/asd/AsdPage')).AsdPage),
+          page('asd', async () => (asdBrowserRetired ? (await import('./pages/asd/AsdRetiredPage')).AsdRetiredPage : (await import('./pages/asd/AsdPage')).AsdPage)),
           page('deepsea/jobs/:id', async () => (await import('./pages/deepsea/DeepseaJobPage')).DeepseaJobPage),
           page('expecto', expecto('gene')),
           page('expecto/variants', expecto('variants')),
