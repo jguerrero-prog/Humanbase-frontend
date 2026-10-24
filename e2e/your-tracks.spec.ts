@@ -44,6 +44,9 @@ test('a track from the person’s own file shows, stays after a reload, exports 
   expect(await violationsOf(page)).toEqual([]);
   await drawer.getByRole('button', { name: 'Done' }).click();
   await expect(headers).toContainText(['H3K27ac']);
+  await page.getByRole('button', { name: 'H3K27ac track options' }).click();
+  await expect(page.getByRole('menuitem', { name: 'Track settings…' })).toBeVisible();
+  await page.keyboard.press('Escape');
   const bars = page.locator('.genome-engine .genome-tracks-bar');
   await expect(bars).not.toHaveCount(0);
 
