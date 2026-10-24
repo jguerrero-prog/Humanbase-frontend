@@ -1,6 +1,6 @@
 ---
 import { assemblyProblem, GenomeLocation, SampleClient, SampleGenomeTracks } from '@humanbase/data';
-import { geneDetails, isSegmentTrack, scoreDetails, segmentDetails, suggestedTracks } from '@humanbase/genome';
+import { geneDetails, isSegmentTrack, scoreDetails, segmentDetails, suggestedTracks, TrackDownload } from '@humanbase/genome';
 import { ActionMenu, BrowserSettingsDialog, DataTooltip, ExportDialog, GenomeBrowserToolbar, GenomeTrackFigure, Heatmap, SegmentTable, TrackHeader, TrackSettingsDialog, TracksDrawer, genomeBrowserKeyHelp, type ActionMenuItem } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
@@ -26,12 +26,13 @@ const tracks = [
   { name: 'Mean −log e-value', source: 'This job', scale: 'scale 0 to 3' },
   { name: 'Genes', source: 'GENCODE 19' },
 ];
-// Only score tracks have Track settings: height and value range are what their bars can change.
+// Only score tracks have Track settings: height and value range are what their bars can change. Only data tracks download.
 const trackMenuOf = (scores: boolean): ActionMenuItem[] => [
   ...(scores ? [{ label: 'Track settings…' }] : []),
   { label: 'Move up', dividerBefore: scores },
   { label: 'Move down' },
-  { label: 'Remove track', destructive: true, dividerBefore: true },
+  ...(scores ? [{ label: 'Download data in view', icon: 'download' as const, description: `bedGraph, ${view.format()}`, dividerBefore: true }, { label: 'Download full file', icon: 'download' as const, description: 'bigWig' }] : []),
+  { label: 'Hide track', dividerBefore: true },
 ];
 const trackMenu = trackMenuOf(true);
 const moreMenu: ActionMenuItem[] = [{ label: 'Browser settings…' }, { label: 'Clear highlights' }];
@@ -95,6 +96,8 @@ const integration = [
   ['Remember choices', 'Tracks, their order and settings are kept in this browser, like other preferences (no accounts). Reset to default tracks puts all three back.'],
 ];
 
+const [conservation, chromHmmTrack] = suggestedTracks.hg19;
+const downloadName = (track: typeof conservation) => (track ? new TrackDownload(track, 'hg19').fileName(view) : '');
 const words = [
   ['Location help', view.help()],
   ['Gene not found', GenomeLocation.geneNotFound('ILB1')],
@@ -112,6 +115,12 @@ const words = [
   ['Server won’t share', 'Humanbase couldn’t read the file at example.org. Its server has to let other sites read it (CORS) and answer byte-range requests, or it may be offline.'],
   ['No byte ranges', 'example.org sent the whole file instead of the parts asked for. Its server has to answer byte-range requests.'],
   ['Already added', 'That address is already in Tracks.'],
+  ['Download data in view', `bedGraph, ${view.format()}: the format, then the stretch it holds. BED for a bigBed track.`],
+  ['Too wide to download', 'Zoom in to under 1 Mb to download'],
+  ['Not in the samples', 'The sample data doesn’t cover this view. Turn the API on to download it.'],
+  ['Download file names', `${downloadName(conservation)} and ${downloadName(chromHmmTrack)}`],
+  ['Download full file', 'bigWig, or bigBed: the file the track reads.'],
+  ['Download failed', 'Conservation data couldn’t download. The track file didn’t answer. Try again.'],
 ];
 
 const yourTracks = [
@@ -132,10 +141,11 @@ const yourTracks = [
 const behavior = [
   ['Follows the selection', 'On a result, selecting a variant centers the browser on it at the current zoom. Moving the browser by hand doesn’t change the selection.'],
   ['Zoom stops', '200 bp, 2 kb, 50 kb and 500 kb, as today; the view can sit between stops, and the field shows the exact width.'],
-  ['Tracks', 'The job’s score tracks and genes are on by default. Suggested tracks are listed off; Your file and By URL add a bigWig or bigBed track of your own. Remove track in a track menu hides a track; Remove beside a track you added, in All tracks, deletes it from this browser.'],
-  ['Track menu', 'Each track header has one. Move up and Move down swap the track with the next shown track, and are off at the top and bottom. Remove track hides it; Tracks turns it back on. Focus stays on the track’s menu button, or goes to the tracks once the track is gone.'],
+  ['Tracks', 'The job’s score tracks and genes are on by default. Suggested tracks are listed off; Your file and By URL add a bigWig or bigBed track of your own. Hide track in a track menu hides a track; Remove beside a track you added, in All tracks, deletes it from this browser.'],
+  ['Track menu', 'Each track header has one. Move up and Move down swap the track with the next shown track, and are off at the top and bottom. Data tracks can download their data. Hide track hides it; Tracks turns it back on. It isn’t red, as nothing is lost. Focus stays on the track’s menu button, or goes to the tracks once the track is gone.'],
+  ['Download track data', 'Data tracks only (score tracks, GM12878 ChromHMM and your own), not Sequence or Genes. Download data in view saves the stretch in view, up to 1 Mb, in the text format of the track’s file: a bigWig as bedGraph, a bigBed as BED9 with each segment’s name, score and color. Positions are 0-based and half-open, as both formats define, and scores keep the file’s full precision. It reads the same file, through the same reader, as the track, at full resolution, so values are never the summary bars drawn when zoomed out; with the API off it reads the recorded sample, and is off, saying why, where the sample doesn’t cover the view. Download full file opens the bigWig or bigBed file the track reads, as humanbase.io’s Download data does; tracks from your own computer don’t have it. The file is named track_assembly_chr-start-end.'],
   ['Track settings', 'Score tracks only: Height, 50 to 300 px (60 by default), and the lowest and highest values the bars span (the track’s own range by default). Apply checks the fields and says what to fix; Reset track goes back to the defaults. Other tracks have nothing their data lets you change, so their menu has no Track settings.'],
-  ['Not yet', 'Today’s Line, Ribbon and Scatter styles, colors, threshold leap, Pin to top, renaming, About this track and Download track data wait for a drawing spec and a download format.'],
+  ['Not yet', 'Today’s Line, Ribbon and Scatter styles, colors, threshold leap, Pin to top, renaming and About this track wait for a drawing spec.'],
   ['Export', `SVG for publication with today’s options; the file is named after the location, such as ${view.fileName()}.`],
   ['Panels', 'Tracks is a drawer over the page; settings and export are dialogs. None of them resizes the tracks.'],
   ['URL', 'Location and tracks are in the URL, so a view can be shared.'],
@@ -493,7 +503,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
 
   .menu-specimen {
     position: relative;
-    block-size: 340px;
+    block-size: 400px;
   }
 
   .menu-specimen :global(.action-menu) {
