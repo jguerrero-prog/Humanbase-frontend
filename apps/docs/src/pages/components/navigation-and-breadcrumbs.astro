@@ -49,11 +49,13 @@ const proposedMenu = [
   ['Right side: search, and Jobs with a running count', 'The homepage search uses these same tools, with the same names.'],
 ];
 
+const toolSections = sections.filter((section) => section.columns?.flat().some((group) => group.links.some((link) => link.image)));
+const toolNames = toolSections.flatMap((section) => section.columns?.flat().flatMap((group) => group.links.map((link) => link.label)) ?? []);
 const topBarParts = [
   ['Logo', 'Links home. The only way to reach the homepage, so breadcrumbs never start with Home.'],
   ['Current section', 'Bold white with a 3px Simons Yellow bar (4.3:1 on emerald). aria-current="true".'],
   ['Open menu', 'White at 14% behind the item; the chevron flips. Opens on click, not hover.'],
-  ['Tool icons', 'Each tool in the Genes & gene sets and Variants & sequences menus shows its analysis icon at 20px, the same icon as in Select an analysis. A tool without one, such as ASD Browser, keeps the space so names line up.'],
+  ['Tool icons', `Each tool in the ${toolSections.map((section) => section.label).join(' and ')} menus (${toolNames.join(', ')}) shows its analysis icon at 20px, the same icon as in the homepage’s Analysis menu.`],
   ['Search', 'Genes, GO terms and diseases. The same search as the homepage, so there is one way in.'],
   ['Jobs', 'Shows how many jobs are running. Humanbase has no accounts, so the list holds jobs submitted from this browser; jobs submitted with an email address also get their link by email.'],
 ];
