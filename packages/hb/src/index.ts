@@ -33,3 +33,20 @@ export { JobColumns } from './Jobs/JobColumns';
 export { JobsList, jobLinkFrom, type JobsListProps } from './Jobs/JobsList';
 export { JobWatcher } from './Jobs/JobWatcher';
 export { dataEraFrom, dataEras, dataSourcesFor, dataSourcesPage, reproducibilityHref, type DataColumn, type DataEra, type DataNote, type DataSection } from './content/data-sources';
+export {
+  downloadCitations,
+  downloadsPage,
+  giantNetworks,
+  mageNetworks,
+  tissueFileName,
+  variantEffectDownloads,
+  variantEffectsIntro,
+  type BulkArchive,
+  type DownloadCitation,
+  type FileFormat,
+  type NetworkScript,
+  type ResourceFile,
+  type ResourceGroup,
+  type TissueFileColumn,
+  type TissueNetworks,
+} from './content/downloads/downloads';

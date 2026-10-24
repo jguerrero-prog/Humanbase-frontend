@@ -44,6 +44,11 @@ describe('ArticleLayout', () => {
     expect(container.querySelector('[data-illustration="reads"]')).toHaveAttribute('alt', '');
   });
 
+  it('leaves the band out when band is null', () => {
+    const { container } = render(<ArticleHero title="Downloads" lead="Files to download." band={null} />);
+    expect(container.querySelector('.article-band')).toBeNull();
+  });
+
   it('keeps the drop cap word whole', () => {
     render(<Example />);
     expect(screen.getByText('Increasing quantities of genomic data.')).toHaveClass('article-drop-cap');

@@ -107,6 +107,12 @@ export function CodeBlock({
   );
 }
 
-export function InlineCode({ children }: { children: ReactNode }) {
-  return <code className="inline-code">{children}</code>;
+export interface InlineCodeProps {
+  children: ReactNode;
+  /** Lets a long line of code, such as a file's columns, wrap at spaces or anywhere on a narrow screen. */
+  wrap?: boolean;
+}
+
+export function InlineCode({ children, wrap = false }: InlineCodeProps) {
+  return <code className={wrap ? 'inline-code inline-code-wrap' : 'inline-code'}>{children}</code>;
 }

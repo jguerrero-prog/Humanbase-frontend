@@ -64,6 +64,11 @@ export const routes: RouteObject[] = [
           page('expecto-sc', expectoMoved('expecto-sc')),
           page('expecto-sc/genes/:entrez', expectoMoved('expecto-sc')),
           page('data-sources', async () => (await import('./pages/DataSourcesPage')).DataSourcesPage),
+          page('downloads', async () => (await import('./pages/downloads/DownloadsPage')).DownloadsPage),
+          // humanbase.io's download links keep working.
+          { path: 'download/tissue-networks/giant', element: <Navigate to="/downloads/?version=v1" replace /> },
+          { path: 'download/variant-effects', element: <Navigate to="/downloads/?tab=variant-effects" replace /> },
+          { path: 'download/*', element: <Navigate to="/downloads/" replace /> },
           page('about', async () => (await import('./pages/AboutPage')).AboutPage),
           page('cite', async () => (await import('./pages/CitePage')).CitePage),
           page('docs/*', async () => (await import('./pages/DocsPage')).DocsPage),
