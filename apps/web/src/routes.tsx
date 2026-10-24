@@ -28,14 +28,9 @@ const seqweaver = async () => {
   return () => <DeepseaPage model="seqweaver" />;
 };
 
-const expecto = (tab: 'gene' | 'variants' | 'snps') => async () => {
-  const { ExpectoPage } = await import('./pages/expecto/ExpectoPage');
-  return () => <ExpectoPage tab={tab} />;
-};
-
-const geneExpression = (tool: 'expecto' | 'expecto-sc') => async () => {
-  const { GeneExpressionPage } = await import('./pages/expecto/GeneExpressionPage');
-  return () => <GeneExpressionPage tool={tool} />;
+const expectoMoved = (model: 'expecto' | 'expecto-sc', tab?: 'rsid' | 'submit-variants') => async () => {
+  const { ExpectoRedirect } = await import('./pages/expecto/ExpectoRedirect');
+  return () => <ExpectoRedirect model={model} tab={tab} />;
 };
 
 export const routes: RouteObject[] = [
@@ -60,12 +55,14 @@ export const routes: RouteObject[] = [
           page('seqweaver', seqweaver),
           page('asd', async () => (asdBrowserRetired ? (await import('./pages/asd/AsdRetiredPage')).AsdRetiredPage : (await import('./pages/asd/AsdPage')).AsdPage)),
           page('deepsea/jobs/:id', async () => (await import('./pages/deepsea/DeepseaJobPage')).DeepseaJobPage),
-          page('expecto', expecto('gene')),
-          page('expecto/variants', expecto('variants')),
-          page('expecto/snps', expecto('snps')),
-          page('expecto/genes/:entrez', geneExpression('expecto')),
-          page('expecto-sc', async () => (await import('./pages/expecto/ExpectoScPage')).ExpectoScPage),
-          page('expecto-sc/genes/:entrez', geneExpression('expecto-sc')),
+          page('expression-effects', async () => (await import('./pages/expecto/ExpressionEffectsPage')).ExpressionEffectsPage),
+          page('expression-effects/genes/:entrez', async () => (await import('./pages/expecto/GeneExpressionPage')).GeneExpressionPage),
+          page('expecto', expectoMoved('expecto')),
+          page('expecto/snps', expectoMoved('expecto', 'rsid')),
+          page('expecto/variants', expectoMoved('expecto', 'submit-variants')),
+          page('expecto/genes/:entrez', expectoMoved('expecto')),
+          page('expecto-sc', expectoMoved('expecto-sc')),
+          page('expecto-sc/genes/:entrez', expectoMoved('expecto-sc')),
           page('data-sources', async () => (await import('./pages/DataSourcesPage')).DataSourcesPage),
           page('about', async () => (await import('./pages/AboutPage')).AboutPage),
           page('cite', async () => (await import('./pages/CitePage')).CitePage),

@@ -22,9 +22,9 @@ export interface VariantJob {
 export interface VariantJobFormProps {
   model: VariantModel;
   /** Choosing another model calls this instead of switching in place, such as to open that tool's page. */
-  onModelChange?: ((model: VariantModel) => void) | undefined;
-  /** The models the Model field offers; without it, only the form's own model. */
-  models?: readonly VariantModel[] | undefined;
+  onModelChange?: ((model: string) => void) | undefined;
+  /** The models the Model field offers; without it, only the form's own model. An option stands for a model with no form here, such as ExPecto SC, and only calls onModelChange. */
+  models?: readonly (VariantModel | SelectOption)[] | undefined;
   /** The inputs the form offers, when not every one the model takes. */
   inputs?: readonly InputKind[] | undefined;
   examples: Record<Genome, Partial<Record<InputKind, string>>>;
@@ -97,7 +97,10 @@ export function VariantJobForm({ model: initialModel, onModelChange, models, inp
     { value: 'paste', label: 'Paste' },
     ...(examples[genome][kind] ? [{ value: 'example', label: 'Use the example' }] : []),
   ];
-  const chooseModel = (next: VariantModel) => (onModelChange ? onModelChange(next) : setModel(next));
+  const chooseModel = (next: string) => {
+    if (onModelChange) onModelChange(next);
+    else if (next in deepseaModels) setModel(next as VariantModel);
+  };
   const choose = async (chosen: File) => {
     setFile({ name: chosen.name, size: chosen.size });
     setText(await chosen.text());
@@ -119,7 +122,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, models, inp
     <form className="job-form" onSubmit={(event) => { event.preventDefault(); run(); }}>
       {notice}
       <div className="job-form-row">
-        <Select label="Model" options={(models ?? [model]).map(optionOf)} value={model} onChange={(value) => chooseModel(value as VariantModel)} hint={<ModelHint model={model} />} />
+        <Select label="Model" options={(models ?? [model]).map((item) => (typeof item === 'string' ? optionOf(item) : item))} value={model} onChange={chooseModel} hint={<ModelHint model={model} />} />
         {kind !== 'fasta' && (
           <Select
             label="Genome assembly"

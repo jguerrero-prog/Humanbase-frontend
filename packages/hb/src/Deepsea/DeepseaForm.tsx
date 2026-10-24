@@ -1,15 +1,16 @@
 import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type InputKind, type VariantModel } from '@humanbase/data';
 import { AboutPanel, Alert, DocsLink, saveFile } from '@humanbase/ui';
 import { useState } from 'react';
+import { expressionEffectsLink } from '../Expecto/geneExpressionTools';
 import '../Jobs/JobForm.css';
-import { VariantJobForm, type VariantJob } from '../VariantJobForm/VariantJobForm';
+import { VariantJobForm, type VariantJob, type VariantJobFormProps } from '../VariantJobForm/VariantJobForm';
 
 export interface DeepseaFormProps {
   model: VariantModel;
   /** Called when the Model field changes, such as to put the model in the URL. */
-  onModelChange?: (model: VariantModel) => void;
+  onModelChange?: (model: string) => void;
   /** The models the Model field offers; without it, only this form's model. */
-  models?: readonly VariantModel[] | undefined;
+  models?: VariantJobFormProps['models'];
   /** The inputs the form offers, when not every one the model takes. */
   inputs?: readonly InputKind[] | undefined;
   /** Opens the new job's page. */
@@ -25,10 +26,10 @@ const formLinks: Record<VariantModel, string> = {
   beluga: '/variant-effects/?model=beluga',
   insilico: '/variant-effects/?tab=region-scan',
   seqweaver: '/seqweaver/',
-  expecto: '/expecto/variants/',
+  expecto: expressionEffectsLink({ tab: 'submit-variants' }),
 };
 
-/** Where a model's job form is: Sei, Beluga and region scan share Variant effects, ExPecto's sits on its Submit variants tab. */
+/** Where a model's job form is: Sei, Beluga and region scan share Variant effects, ExPecto's sits on Expression effects' Submit variants tab. */
 export function deepseaFormLink(model: VariantModel): string {
   return formLinks[model];
 }

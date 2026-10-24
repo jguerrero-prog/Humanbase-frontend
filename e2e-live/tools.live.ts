@@ -76,7 +76,7 @@ for (const [path, tool, run] of [
   ['/variant-effects/', 'Sei', /^Run Sei on \d+ variants$/],
   ['/variant-effects/?model=beluga', 'Beluga', /^Run Beluga on \d+ variants$/],
   ['/seqweaver/', 'Seqweaver', /^Run Seqweaver on \d+ variants$/],
-  ['/expecto/variants/', 'ExPecto', /^Run ExPecto on \d+ variants$/],
+  ['/expression-effects/?tab=submit-variants', 'ExPecto', /^Run ExPecto on \d+ variants$/],
   ['/variant-effects/?tab=region-scan', 'region scan', /^Run region scan on \d+ sequences$/],
 ] as const) {
   test(`the ${tool} form checks its example`, async ({ page }) => {
@@ -227,7 +227,7 @@ test('ExPecto shows IRGM by tissue system and by tissue', async ({ page }) => {
   // Each accessibility scan reads every heatmap cell of IRGM's 113 positions.
   test.setTimeout(400_000);
   const problems = watch(page);
-  await page.goto(`${web}/expecto/genes/345611/`);
+  await page.goto(`${web}/expression-effects/genes/345611/`);
   await expect(page.getByText('Predicted effect on IRGM expression, log fold change')).toBeVisible();
   await expect(page.getByText('hematopoietic system').first()).toBeVisible();
   await checkScreen(page, problems);
@@ -236,9 +236,9 @@ test('ExPecto shows IRGM by tissue system and by tissue', async ({ page }) => {
   await checkScreen(page, problems);
 });
 
-test('the ExPecto SNP rsID tab finds a gene, an rsID and a position', async ({ page }) => {
+test('the ExPecto rsID tab finds a gene, an rsID and a position', async ({ page }) => {
   const problems = watch(page);
-  await page.goto(`${web}/expecto/snps/`);
+  await page.goto(`${web}/expression-effects/?tab=rsid`);
   await page.getByRole('button', { name: 'IRGM' }).click();
   await expect(page.getByRole('heading', { name: '17 variants for IRGM' })).toBeVisible();
   await checkScreen(page, problems);
@@ -252,7 +252,7 @@ test('the ExPecto SNP rsID tab finds a gene, an rsID and a position', async ({ p
 test('ExPecto SC shows PTEN by organ', async ({ page }) => {
   test.setTimeout(400_000);
   const problems = watch(page);
-  await page.goto(`${web}/expecto-sc/genes/5728/`);
+  await page.goto(`${web}/expression-effects/genes/5728/?model=expecto-sc`);
   await expect(page.getByText('Predicted effect on PTEN expression, z-score')).toBeVisible();
   await expect(page.getByText('retina').first()).toBeVisible();
   await checkScreen(page, problems);

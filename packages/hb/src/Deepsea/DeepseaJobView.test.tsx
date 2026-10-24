@@ -75,7 +75,7 @@ describe('DeepseaJobView', () => {
   });
 
   it('sends a failed job back to its form: ExPecto to Submit variants, Beluga and region scan to Variant effects', () => {
-    expect(deepseaFormLink('expecto')).toBe('/expecto/variants/');
+    expect(deepseaFormLink('expecto')).toBe('/expression-effects/?tab=submit-variants');
     expect(deepseaFormLink('beluga')).toBe('/variant-effects/?model=beluga');
     expect(deepseaFormLink('insilico')).toBe('/variant-effects/?tab=region-scan');
   });

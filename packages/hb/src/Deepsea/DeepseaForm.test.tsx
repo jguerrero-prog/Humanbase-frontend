@@ -5,7 +5,7 @@ import { DeepseaForm } from './DeepseaForm';
 
 function renderForm(model: VariantModel, choices: { models?: readonly VariantModel[]; inputs?: readonly InputKind[] } = {}) {
   const onStarted = vi.fn<(link: string) => void>();
-  const onModelChange = vi.fn<(model: VariantModel) => void>();
+  const onModelChange = vi.fn<(model: string) => void>();
   render(
     <HumanbaseProvider api={new Humanbase(SampleClient.bundled())}>
       <DeepseaForm model={model} {...choices} onModelChange={onModelChange} onStarted={onStarted} />

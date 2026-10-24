@@ -15,7 +15,7 @@ async function waitForOutcome(page: Page, result: ReturnType<Page['locator']>) {
 for (const [tool, path, run] of [
   ['Beluga', '/variant-effects/?model=beluga', /^Run Beluga on \d+ variants$/],
   ['Seqweaver', '/seqweaver/', /^Run Seqweaver on \d+ variants$/],
-  ['ExPecto', '/expecto/variants/', /^Run ExPecto on \d+ variants$/],
+  ['ExPecto', '/expression-effects/?tab=submit-variants', /^Run ExPecto on \d+ variants$/],
 ] as const) {
   test(`a ${tool} example job runs and its result renders`, async ({ page }) => {
     const problems = watch(page);
