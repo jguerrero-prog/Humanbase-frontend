@@ -52,7 +52,7 @@ test('Seqweaver offers only its own model and links to Variant effects for DNA e
   await page.getByRole('combobox', { name: 'Model' }).click();
   await expect(page.getByRole('option')).toHaveText(['Seqweaver (RNA)']);
   await page.keyboard.press('Escape');
-  await page.getByRole('link', { name: 'Variant effects', exact: true }).click();
+  await page.getByRole('main').getByRole('link', { name: 'Variant effects', exact: true }).click();
   await expect(page).toHaveURL(`${web}/variant-effects/`);
   await expect(page.getByRole('heading', { name: 'About Sei' })).toBeVisible();
 });

@@ -1,5 +1,5 @@
 import { variantEffectsModels, type InputKind, type VariantModel } from '@humanbase/data';
-import { DeepseaForm } from '@humanbase/hb';
+import { categoryCrumbs, DeepseaForm } from '@humanbase/hb';
 import { Breadcrumbs, Tabs } from '@humanbase/ui';
 import { useNavigate, useSearchParams } from 'react-router';
 import '../ToolPage.css';
@@ -31,7 +31,7 @@ export function VariantEffectsPage() {
   return (
     <section className="page-section tool-page">
       <title>{`${regionScan ? 'Region scan · ' : ''}Variant effects · Humanbase`}</title>
-      <Breadcrumbs items={[{ label: 'Variants & sequences', href: '/sequence-tools/' }, { label: 'Variant effects' }]} />
+      <Breadcrumbs items={[categoryCrumbs.variants, { label: 'Variant effects' }]} />
       <header className="tool-page-title">
         <h1>Variant effects</h1>
         <p>Predict how variants change regulatory activity and chromatin. Choose a model, then add a list of variants or scan a region base by base.</p>

@@ -1,6 +1,7 @@
 import { ApiError, GenomeLocation, useGene, useHumanbase, useTissueVariants, type EffectRow, type GenePosition, type TissueDatabase, type TissueEffects, type TissueVariants } from '@humanbase/data';
 import { Alert, Button, EmptyState, Heatmap, ResultHeader, saveFile, ScoreScale, SearchField, SegmentedControl, Select, Skeleton, type HeatmapCellDetail, type ScaleSpec, useLinkHref } from '@humanbase/ui';
 import { useMemo } from 'react';
+import { categoryCrumbs } from '../content/product';
 import { useCopyLink } from '../Jobs/useCopyLink';
 import { expressionEffectsLink, geneExpressionTools, type GeneExpressionTool } from './geneExpressionTools';
 import './Expecto.css';
@@ -89,7 +90,7 @@ export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: G
 
   const header = (
     <ResultHeader
-      crumbs={[{ label: 'Sequence analysis', href: '/sequence-tools/' }, { label: 'Expression effects', href: expressionEffectsLink({ model: toolId }) }, { label: symbol }]}
+      crumbs={[categoryCrumbs.variants, { label: 'Expression effects', href: expressionEffectsLink({ model: toolId }) }, { label: symbol }]}
       title={symbol}
       context={[
         { name: 'Name', value: gene.data?.name ?? '…' },

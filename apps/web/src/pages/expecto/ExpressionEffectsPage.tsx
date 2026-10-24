@@ -1,4 +1,4 @@
-import { ExpressionEffects, expressionEffectsLink, expressionTabs, geneExpressionTools, type ExpressionTab, type GeneExpressionTool } from '@humanbase/hb';
+import { categoryCrumbs, ExpressionEffects, expressionEffectsLink, expressionTabs, geneExpressionTools, type ExpressionTab, type GeneExpressionTool } from '@humanbase/hb';
 import { Breadcrumbs, Tabs } from '@humanbase/ui';
 import { useNavigate, useSearchParams } from 'react-router';
 import '../ToolPage.css';
@@ -21,7 +21,7 @@ export function ExpressionEffectsPage() {
   return (
     <section className="page-section tool-page">
       <title>{`${tab.value === 'gene' ? '' : `${tab.label} · `}Expression effects · Humanbase`}</title>
-      <Breadcrumbs items={[{ label: 'Sequence analysis', href: '/sequence-tools/' }, { label: 'Expression effects' }]} />
+      <Breadcrumbs items={[categoryCrumbs.variants, { label: 'Expression effects' }]} />
       <header className="tool-page-title">
         <h1>Expression effects</h1>
         <p>Predict how variants change gene expression, across tissues with ExPecto or primary cell types with ExPecto SC.</p>

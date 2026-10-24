@@ -1,4 +1,4 @@
-import type { FooterProps, NavSection, SelectOption } from '@humanbase/ui';
+import { mailingListHref, type Crumb, type FooterProps, type NavLink, type NavSection, type SelectOption } from '@humanbase/ui';
 import expecto from './analysis-icons/expecto_fa-magic.svg?url';
 import expectoSc from './analysis-icons/expecto-sc_dendritic_cell.png?url';
 import netwas from './analysis-icons/gwas-netwas_fa-list-ol.svg?url';
@@ -12,84 +12,87 @@ import { asdBrowserRetired } from './asdBrowser';
 // Product content shared by the app and the design system site, so both show the same menus.
 export const analysisIcons = { networks, modules, netwas, deepsea, seqweaver, ism, expecto, expectoSc } as const;
 
+/** The top bar's sections, named for what people bring: genes, or variants and sequences. */
+export const productCategories = {
+  genes: 'Genes & gene sets',
+  variants: 'Variants & sequences',
+  resources: 'Resources',
+  about: 'About',
+} as const;
+
+/** The first breadcrumb on a tool page, naming the category it sits in. */
+export const categoryCrumbs = {
+  genes: { label: productCategories.genes, href: '/' },
+  variants: { label: productCategories.variants, href: '/sequence-tools/' },
+} as const satisfies Record<string, Crumb>;
+
+const tools = {
+  networks: { label: 'Networks', href: '/networks/', description: 'Tissue-specific gene networks, MAGE and GIANT', image: networks },
+  modules: { label: 'Modules', href: '/modules/', description: 'Functional modules in large gene lists', image: modules },
+  netwas: { label: 'NetWAS', href: '/netwas/', description: 'Reprioritize GWAS results with networks', image: netwas },
+  variantEffects: { label: 'Variant effects', href: '/variant-effects/', description: 'Sei and Beluga: regulatory and chromatin effects', image: deepsea },
+  seqweaver: { label: 'Seqweaver', href: '/seqweaver/', description: 'Post-transcriptional effects', image: seqweaver },
+  expressionEffects: { label: 'Expression effects', href: '/expression-effects/', description: 'ExPecto and ExPecto SC: tissue and cell-type effects', image: expecto },
+} as const satisfies Record<string, NavLink>;
+
 const asdBrowser = { label: 'ASD Browser', href: '/asd/', description: 'Predicted effects of ASD proband mutations' };
+const variantTools: NavLink[] = [tools.variantEffects, tools.seqweaver, tools.expressionEffects, ...(asdBrowserRetired ? [] : [asdBrowser])];
+
+const resources: NavLink[] = [
+  { label: 'Data sources', href: '/data-sources/', description: 'Datasets behind each network' },
+  { label: 'Downloads', href: '/downloads/', description: 'Networks and models to download' },
+  { label: 'Humanbase API', href: '/api/docs/', description: 'Query Humanbase from code' },
+  { label: 'Docs', href: '/docs/', description: 'How to use each tool' },
+];
+
+const about: NavLink[] = [
+  { label: 'About Humanbase', href: '/about/', description: 'The platform and the paper' },
+  { label: 'How to cite', href: '/cite/', description: 'Papers to cite for Humanbase and each tool' },
+  { label: 'Mailing list', href: mailingListHref, description: 'Release notes by email' },
+];
 
 export const productSections: NavSection[] = [
+  { label: productCategories.genes, columns: [[{ links: [tools.networks, tools.modules, tools.netwas] }]] },
   {
-    label: 'Network analysis',
-    columns: [
-      [
-        {
-          links: [
-            { label: 'Networks', href: '/networks/', description: 'Tissue-specific gene networks, MAGE and GIANT', image: networks },
-            { label: 'Modules', href: '/modules/', description: 'Functional modules in large gene lists', image: modules },
-            { label: 'NetWAS', href: '/netwas/', description: 'Reprioritize GWAS results with networks', image: netwas },
-          ],
-        },
-      ],
-    ],
-  },
-  {
-    label: 'Sequence analysis',
-    columns: [
-      [
-        {
-          label: 'Variant effects',
-          links: [
-            { label: 'Sei', href: '/sei/', description: 'Regulatory and chromatin effects', image: deepsea },
-            { label: 'Beluga', href: '/beluga/', description: 'Chromatin effects (2019 model)', image: deepsea },
-            { label: 'Seqweaver', href: '/seqweaver/', description: 'Post-transcriptional effects', image: seqweaver },
-            { label: 'ExPecto', href: '/expecto/', description: 'Tissue-specific expression effects', image: expecto },
-            { label: 'ExPecto SC', href: '/expecto-sc/', description: 'Cell-type-specific expression effects', image: expectoSc },
-          ],
-        },
-      ],
-      [
-        { label: 'Sequences', links: [{ label: 'In silico mutagenesis', href: '/ism/', description: 'Regulatory features of a sequence', image: ism }] },
-        ...(asdBrowserRetired ? [] : [{ label: 'Browsers', links: [asdBrowser] }]),
-      ],
-    ],
+    label: productCategories.variants,
+    columns: [[{ links: variantTools }]],
     footer: { lead: 'Not sure which tool?', link: { label: 'Compare them', href: '/sequence-tools/' } },
   },
-  {
-    label: 'Data',
-    columns: [
-      [
-        {
-          links: [
-            { label: 'Data sources', href: '/data-sources/', description: 'Datasets behind each network' },
-            { label: 'Downloads', href: '/downloads/', description: 'Networks and models to download' },
-            { label: 'Humanbase API', href: '/api/docs/', description: 'Query Humanbase from code' },
-          ],
-        },
-      ],
-    ],
-  },
-  { label: 'Docs', href: '/docs/' },
-  { label: 'About', href: '/about/' },
+  { label: productCategories.resources, columns: [[{ links: resources }]] },
+  { label: productCategories.about, columns: [[{ links: about }]] },
 ];
+
+/** Job results served outside their tool's path. */
+const jobPaths: Partial<Record<string, readonly string[]>> = { [productCategories.variants]: ['/deepsea/jobs/'] };
+
+/** The top bar section holding the page at this path, so the bar can mark it as current. */
+export function productSectionFor(pathname: string): string | undefined {
+  const path = pathname.endsWith('/') ? pathname : `${pathname}/`;
+  const holds = (link: NavLink) => link.href.startsWith('/') && path.startsWith(link.href);
+  const holdsJob = (section: NavSection) => (jobPaths[section.label] ?? []).some((prefix) => path.startsWith(prefix));
+  return productSections.find((section) => holdsJob(section) || section.columns?.flat().some((group) => group.links.some(holds)))?.label;
+}
+
+const footerLinks = (links: readonly NavLink[]) => links.map(({ label, href }) => ({ label, href }));
 
 export const productFooter: Omit<FooterProps, 'onDisplaySettings'> = {
   description: 'Humanbase is developed at the Flatiron Institute’s Center for Computational Biology to study gene function, regulation and disease.',
-  groups: [
-    { heading: 'Network analysis', links: [{ label: 'Networks', href: '/networks/' }, { label: 'Modules', href: '/modules/' }, { label: 'NetWAS', href: '/netwas/' }] },
-    { heading: 'Sequence analysis', links: [{ label: 'Sei', href: '/sei/' }, { label: 'ExPecto', href: '/expecto/' }, { label: 'All sequence tools', href: '/sequence-tools/' }] },
-    { heading: 'Data', links: [{ label: 'Data sources', href: '/data-sources/' }, { label: 'Downloads', href: '/downloads/' }, { label: 'Humanbase API', href: '/api/docs/' }] },
-    { heading: 'About', links: [{ label: 'About Humanbase', href: '/about/' }, { label: 'Docs', href: '/docs/' }, { label: 'Contact us', href: '/contact/' }, { label: 'How to cite', href: '/cite/' }] },
-  ],
+  groups: productSections.map((section) => ({ heading: section.label, links: footerLinks(section.columns?.flat().flatMap((group) => group.links) ?? []) })),
   legal: '© 2026 Simons Foundation. Flatiron Institute.',
   dataVersion: 'Data: MAGE, June 2026',
 };
 
+const optionOf = (link: NavLink, group: string): SelectOption => ({
+  value: link.href.replaceAll('/', ''),
+  label: link.label,
+  ...(link.description && { description: link.description }),
+  ...(link.image && { image: link.image }),
+  group,
+});
+
 export const analysisOptions: SelectOption[] = [
-  { value: 'networks', label: 'Networks', description: 'Tissue-specific gene networks, MAGE and GIANT', image: networks, group: 'Network analysis' },
-  { value: 'modules', label: 'Modules', description: 'Functional modules in large gene lists', image: modules, group: 'Network analysis' },
-  { value: 'netwas', label: 'NetWAS', description: 'Reprioritize GWAS results with networks', image: netwas, group: 'Network analysis' },
-  { value: 'variant-effects', label: 'Variant effects', description: 'Sei and Beluga: regulatory and chromatin effects', image: deepsea, group: 'Variant effects' },
-  { value: 'seqweaver', label: 'Seqweaver', description: 'Post-transcriptional effects', image: seqweaver, group: 'Variant effects' },
-  { value: 'expecto', label: 'ExPecto', description: 'Tissue-specific expression effects', image: expecto, group: 'Variant effects' },
-  { value: 'expecto-sc', label: 'ExPecto SC', description: 'Cell-type-specific expression effects', image: expectoSc, group: 'Variant effects' },
-  ...(asdBrowserRetired ? [] : [{ value: 'asd', label: asdBrowser.label, description: asdBrowser.description, group: 'Browsers' }]),
+  ...[tools.networks, tools.modules, tools.netwas].map((link) => optionOf(link, productCategories.genes)),
+  ...variantTools.map((link) => optionOf(link, productCategories.variants)),
 ];
 
-export const analysisColumns = [['Network analysis'], ['Variant effects'], ...(asdBrowserRetired ? [] : [['Browsers']])] as const;
+export const analysisColumns = [[productCategories.genes], [productCategories.variants]] as const;

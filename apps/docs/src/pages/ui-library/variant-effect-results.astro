@@ -177,7 +177,7 @@ const effects = new EffectGroups(experiments); // feature, cell, context, label,
   </DocSection>
 
   <DocSection title="The results page" lead="The top of a Seqweaver result on the Results layout: the score plot as the main view and the variants table beside it. The example job’s real values.">
-    <ProductScreen label="A Seqweaver result at 1440px: scores" current="Sequence analysis">
+    <ProductScreen label="A Seqweaver result at 1440px: scores" current="Variants & sequences">
       <ResultLayout mainLabel="Variants plotted by disease impact score" companionLabel="Variants">
         <ResultHeader slot="header" headingLevel={3} crumbs={crumbs} title="Example variants" context={context} settingsLabel="Job actions">
           <Fragment slot="settings">
@@ -204,7 +204,7 @@ const effects = new EffectGroups(experiments); // feature, cell, context, label,
   </DocSection>
 
   <DocSection title="A variant in focus" lead="Below the scores, everything follows the selected variant: where it sits in the genome, then which molecular features it changes. The effects card opens on Heatmap; this is its Strongest effects tab.">
-    <ProductScreen label="A Seqweaver result at 1440px: the selected variant" current="Sequence analysis">
+    <ProductScreen label="A Seqweaver result at 1440px: the selected variant" current="Variants & sequences">
       <VariantFocus label={focusLabel} detail={`${focus.name}, disease impact score ${focus.scores.impact?.toFixed(2)}`} />
       <figure class="browser-sketch" data-illustration>
         <figcaption><strong>Genome browser, GRCh37/hg19</strong> chr1:109,767,590-109,867,590 (100 kb)</figcaption>

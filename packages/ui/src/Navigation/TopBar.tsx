@@ -93,7 +93,7 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
                     {section.columns.flat().flatMap((group) =>
                       group.links.map((link) => (
                         <li key={link.href}>
-                          <a href={linkHref(link.href)}>
+                          <a href={linkHref(link.href)} onClick={() => setPhoneMenu(false)}>
                             <NavLinkContent link={link} reserveImage={sectionHasImages(section)} />
                           </a>
                         </li>

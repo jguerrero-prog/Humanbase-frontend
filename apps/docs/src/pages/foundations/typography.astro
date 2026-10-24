@@ -19,7 +19,7 @@ const samples: Record<string, string> = {
   caption: 'Source: GEO, BioGRID, IntAct',
   label: 'Search',
   'label-sm': 'Show 20 more',
-  eyebrow: 'Network analysis',
+  eyebrow: 'Genes & gene sets',
   code: 'curl "https://humanbase.io/api/genes/3553/"',
   'code-sm': 'ENSG00000125538 IL1B',
 };
@@ -237,7 +237,7 @@ const specs = (type: (typeof typeScale)[number]) =>
   <DocSection title="The scale in use" lead="A gene result card built only from styles on this page.">
     <figure class="gene-card-figure">
       <div class="gene-card" aria-hidden="true">
-        <p class="gene-card-eyebrow">Network analysis</p>
+        <p class="gene-card-eyebrow">Genes &amp; gene sets</p>
         <p class="gene-card-title"><i>IL1B</i> interleukin 1 beta</p>
         <p class="gene-card-text">Top functional partners of IL1B in the global network, ranked by how likely each pair shares a biological process.</p>
         <table class="gene-card-table">
