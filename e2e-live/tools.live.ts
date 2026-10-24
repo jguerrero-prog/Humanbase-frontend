@@ -136,7 +136,7 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await expect(segments.first()).toHaveAttribute('fill', '#CF0BC6');
   await segments.nth(11).hover();
   await expect(page.getByRole('tooltip')).toHaveText(/^QuiesGM12878 ChromHMMStart109,806,801Length9,600 bp$/);
-  await page.getByText('View as table').click();
+  await page.getByRole('region', { name: /^Genome around / }).getByText('View as table').click();
   const table = page.getByRole('table', { name: 'GM12878 ChromHMM segments in chr1:109,792,590-109,842,590, GRCh37/hg19' });
   await expect(table.getByRole('row')).toHaveCount(40);
   await expect(table.getByRole('row').filter({ hasText: '109,816,601' })).toHaveText(/^ReprW\s*109,816,601\s*109,818,400\s*1,800 bp$/);
@@ -182,6 +182,32 @@ test('the real Seqweaver result’s genome browser stops at the end of chr1 and 
   await page.keyboard.press('ArrowRight');
   await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
   await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Genes']);
+  await checkScreen(page, problems);
+});
+
+test('the real Seqweaver result’s genome browser finds genes in each assembly’s own GENCODE index', async ({ page }) => {
+  const problems = watch(page);
+  const job = `${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`;
+  const field = page.getByRole('searchbox', { name: 'Location or gene' });
+  const find = async (gene: string) => {
+    await expect(page.locator('.genome-engine .track-header-name').first()).toBeVisible();
+    await field.fill(gene);
+    await field.press('Enter');
+  };
+  await page.goto(job);
+  await find('CHD8');
+  await expect(field).toHaveValue('chr14:21,853,352-21,905,457');
+  // No hg38 job is on record, so the same real job is read as hg38; the gene still comes from the real GENCODE 21 files.
+  await page.route('**/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/', async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({ response, json: { ...(await response.json()), genome_assembly: 'hg38' } });
+  });
+  await page.goto(job);
+  await find('CHD8');
+  await expect(field).toHaveValue('chr14:21,385,193-21,437,298');
+  await expect(page.locator('.genome-location-help')).toContainText('A gene name works too.');
+  await find('NOTAGENE9');
+  await expect(page.getByText('No gene named “NOTAGENE9” on GRCh38/hg38.', { exact: false })).toBeVisible();
   await checkScreen(page, problems);
 });
 

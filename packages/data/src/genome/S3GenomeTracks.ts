@@ -2,12 +2,7 @@
 import type { BigBed, BigWig } from '@gmod/bbi';
 import type { TwoBitFile } from '@gmod/twobit';
 import type { Assembly } from './GenomeLocation';
-import { geneModels, segmentOf, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type Segment, type SequenceSpan } from './GenomeTracks.ts';
-
-const files: Record<Assembly, { genes: string; sequence: string }> = {
-  hg19: { genes: 'gencode.bb', sequence: 'hg19.2bit' },
-  hg38: { genes: 'GRCh38/gencode.v21.annotation.bb', sequence: 'GRCh38/hg38.2bit' },
-};
+import { geneModels, segmentOf, trackFiles, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type Segment, type SequenceSpan } from './GenomeTracks.ts';
 
 // The readers load only when a genome browser first draws.
 const readers = () => Promise.all([import('@gmod/bbi'), import('@gmod/twobit'), import('generic-filehandle2')]);
@@ -23,7 +18,7 @@ export class S3GenomeTracks implements GenomeTracks {
   }
 
   async genes(assembly: Assembly, span: GenomeSpan): Promise<GeneModel[]> {
-    const file = (await this.open(`${this.tracks}${files[assembly].genes}`, 'bigBed')) as BigBed;
+    const file = (await this.open(`${this.tracks}${trackFiles[assembly].genes}`, 'bigBed')) as BigBed;
     const features = await file.getFeatures(span.chrom, span.start - 1, span.end);
     return geneModels(features.map(transcriptOf));
   }
@@ -61,7 +56,7 @@ export class S3GenomeTracks implements GenomeTracks {
   }
 
   async sequence(assembly: Assembly, span: GenomeSpan): Promise<SequenceSpan | undefined> {
-    const file = (await this.open(`${this.tracks}${files[assembly].sequence}`, 'twoBit')) as TwoBitFile;
+    const file = (await this.open(`${this.tracks}${trackFiles[assembly].sequence}`, 'twoBit')) as TwoBitFile;
     const bases = await file.getSequence(span.chrom, span.start - 1, span.end);
     return bases ? { start: span.start, bases: bases.toUpperCase() } : undefined;
   }
