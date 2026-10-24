@@ -1,4 +1,5 @@
 import { Humanbase, HumanbaseProvider, JobHistory, ModuleView, SampleClient } from '@humanbase/data';
+import type { GraphRenderer } from '@humanbase/graph';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
@@ -6,9 +7,25 @@ import { ModuleExplorer, type ModuleDraft } from './ModuleExplorer';
 
 const renal = '2339dc3cd05964ab3f691a8f4851c7a9aab78ad9';
 
+// Laying out the renal result's 369 genes takes most of this suite's time, and ForceGraphRenderer has its own tests.
+class BlankRenderer implements GraphRenderer {
+  mount() {}
+  render() {}
+  select() {}
+  hover() {}
+  highlight() {}
+  zoomBy() {}
+  fit() {}
+  exportSvg() {
+    return new Blob([], { type: 'image/svg+xml' });
+  }
+  destroy() {}
+}
+const blankRenderer = () => new BlankRenderer();
+
 function Explorer({ bodyTag, onEditGenes }: { bodyTag: string; onEditGenes: (draft: ModuleDraft) => void }) {
   const [view, setView] = useState(new ModuleView());
-  return <ModuleExplorer bodyTag={bodyTag} view={view} onViewChange={setView} onEditGenes={onEditGenes} onStarted={vi.fn()} />;
+  return <ModuleExplorer bodyTag={bodyTag} view={view} onViewChange={setView} onEditGenes={onEditGenes} onStarted={vi.fn()} renderer={blankRenderer} />;
 }
 
 function renderExplorer(bodyTag = renal) {
@@ -81,7 +98,7 @@ describe('ModuleExplorer', () => {
     await userEvent.click(within(next).getByRole('button', { name: 'Back to M1' }));
     expect(await screen.findByRole('dialog', { name: 'M1, renal system development' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Back to M1' })).not.toBeInTheDocument();
-  }, 15_000);
+  });
 
   it('lists genes by module and shows modules with no enriched terms on request', async () => {
     renderExplorer();
@@ -92,7 +109,6 @@ describe('ModuleExplorer', () => {
     expect(screen.getByText('Showing 20 modules of 2 genes or more. Edges hidden.')).toBeInTheDocument();
   });
 
-  // The real renal result lays out 369 genes, which takes over 5 seconds when the whole suite runs at once.
   it('renames the result in this browser and hands its list to Edit genes', async () => {
     new JobHistory().add({ id: renal, tool: 'Modules', status: 'running', startedAt: '2026-10-19T00:00:00Z', link: `/modules/?body_tag=${renal}`, title: 'Renal disease panel' });
     const { onEditGenes } = renderExplorer();
@@ -106,7 +122,7 @@ describe('ModuleExplorer', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Edit genes' }));
     expect(onEditGenes).toHaveBeenCalledWith(expect.objectContaining({ title: 'Kidney panel', tissue: 'kidney', version: 'v1' }));
     expect(onEditGenes.mock.calls[0]?.[0].entrez).toHaveLength(504);
-  }, 15_000);
+  });
 
   it('explains a result that no longer exists', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
