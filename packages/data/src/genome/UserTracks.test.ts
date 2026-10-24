@@ -23,6 +23,7 @@ const base: GenomeTracks = {
   scores: () => Promise.reject(new Error('base')),
   segments: () => Promise.reject(new Error('base')),
   sequence: () => Promise.resolve(undefined),
+  covers: () => Promise.resolve(false),
 };
 
 describe('assemblyProblem', () => {
@@ -52,6 +53,8 @@ describe('UserTracks', () => {
       { start: 1_001, end: 1_010, value: 2.5 },
       { start: 1_011, end: 1_020, value: -1 },
     ]);
+    expect(await tracks.covers('hg19', { chrom: 'chr3', start: 1, end: 5_000 }, track.key)).toBe(true);
+    expect(await tracks.covers('hg19', { chrom: 'chr3', start: 1, end: 5_000 })).toBe(false);
     expect((await tracks.list('asd:hg19')).map((one) => one.key)).toEqual([track.key]);
     expect(await tracks.list('variant-results:hg19')).toEqual([]);
     await tracks.remove('asd:hg19', track.key);
