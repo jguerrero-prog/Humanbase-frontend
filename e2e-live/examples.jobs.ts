@@ -13,13 +13,13 @@ async function waitForOutcome(page: Page, result: ReturnType<Page['locator']>) {
 }
 
 for (const [tool, path, run] of [
-  ['Beluga', 'beluga', /^Run Beluga on \d+ variants$/],
-  ['Seqweaver', 'seqweaver', /^Run Seqweaver on \d+ variants$/],
-  ['ExPecto', 'expecto/variants', /^Run ExPecto on \d+ variants$/],
+  ['Beluga', '/variant-effects/?model=beluga', /^Run Beluga on \d+ variants$/],
+  ['Seqweaver', '/seqweaver/', /^Run Seqweaver on \d+ variants$/],
+  ['ExPecto', '/expression-effects/?tab=submit-variants', /^Run ExPecto on \d+ variants$/],
 ] as const) {
   test(`a ${tool} example job runs and its result renders`, async ({ page }) => {
     const problems = watch(page);
-    await page.goto(`${web}/${path}/`);
+    await page.goto(`${web}${path}`);
     await page.getByRole('radio', { name: 'Use the example' }).click();
     await page.getByRole('button', { name: run }).click();
     await expect(page).toHaveURL(/\/deepsea\/jobs\/[0-9a-f-]{36}\//);
@@ -46,14 +46,14 @@ test('a NetWAS example job runs and its result renders', async ({ page }) => {
   await checkScreen(page, problems);
 });
 
-test('an in silico mutagenesis example job runs and its substitution map renders', async ({ page }) => {
+test('a region scan example job runs and its substitution map renders', async ({ page }) => {
   const problems = watch(page);
-  await page.goto(`${web}/ism/`);
+  await page.goto(`${web}/variant-effects/?tab=region-scan`);
   await page.getByRole('radio', { name: 'Use the example' }).click();
-  await page.getByRole('button', { name: /^Run in silico mutagenesis on \d+ sequences$/ }).click();
+  await page.getByRole('button', { name: /^Run region scan on \d+ sequences$/ }).click();
   await expect(page).toHaveURL(/\/deepsea\/jobs\/[0-9a-f-]{36}\//);
-  test.info().annotations.push({ type: 'job', description: `In silico mutagenesis ${page.url()}` });
-  console.warn(`In silico mutagenesis job: ${page.url()}`);
+  test.info().annotations.push({ type: 'job', description: `Region scan ${page.url()}` });
+  console.warn(`Region scan job: ${page.url()}`);
   await waitForOutcome(page, page.getByRole('grid', { name: /^Substitutions at positions/ }));
   await checkScreen(page, problems);
 });

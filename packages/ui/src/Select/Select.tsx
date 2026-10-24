@@ -26,7 +26,7 @@ export interface SelectProps {
   defaultValue?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
-  hint?: string;
+  hint?: ReactNode;
   error?: string | undefined;
   size?: SelectSize;
   disabled?: boolean;

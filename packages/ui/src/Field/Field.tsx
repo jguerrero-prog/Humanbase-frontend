@@ -13,7 +13,7 @@ export interface ControlProps {
 export interface FieldProps {
   label: string;
   id?: string | undefined;
-  hint?: string | undefined;
+  hint?: ReactNode;
   error?: string | undefined;
   size?: FieldSize;
   disabled?: boolean | undefined;

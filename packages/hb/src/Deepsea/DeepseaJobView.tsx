@@ -40,7 +40,7 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
         title="This job isn’t available"
         text="No job has this link. Check that it was copied whole, or run Sei, Beluga or Seqweaver again."
         actions={
-          <a className="button button-secondary" href={linkHref('/sei/')}>
+          <a className="button button-secondary" href={linkHref(deepseaFormLink('sei'))}>
             Run a sequence model
           </a>
         }

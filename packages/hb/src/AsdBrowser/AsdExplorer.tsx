@@ -5,6 +5,7 @@ import {
 import { defaultGenomeEngine, GenomeEngineView, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
 import { Alert, GenomeBrowserToolbar, ResultLayout, Skeleton, asdEffects, defaultEffectsView, type EffectsView } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
+import { categoryCrumbs } from '../content/product';
 import { EffectsCard } from '../Deepsea/EffectsCard';
 import { useGenomeBrowserTools } from '../GenomeBrowser/useGenomeBrowserTools';
 import { AsdHeader, AsdVariantTable, type AsdView } from './AsdParts';
@@ -95,7 +96,7 @@ export function AsdExplorer({ state, onStateChange, engine = defaultGenomeEngine
       mainLabel={state.view === 'browser' ? 'Genome browser and molecular effects' : 'Every variant'}
       header={
         <AsdHeader
-          crumbs={[{ label: 'Sequence analysis', href: '/sequence-tools/' }, { label: 'ASD Browser' }]}
+          crumbs={[categoryCrumbs.variants, { label: 'ASD Browser' }]}
           subtitle="Predicted effects of de novo noncoding variants in autism, from Simons Simplex Collection whole-genome sequencing."
           context={[
             { name: 'Study', value: 'Simons Simplex Collection' },

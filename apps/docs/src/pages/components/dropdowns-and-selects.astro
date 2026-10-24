@@ -1,6 +1,6 @@
 ---
 import { ActionMenu, MenuItem, MenuPanel, MultiSelect, SearchField, Select, SuggestionsEmpty, SuggestionsLoading, type SelectOption } from '@humanbase/ui';
-import { analysisOptions } from '@humanbase/hb';
+import { analysisColumns, analysisOptions } from '@humanbase/hb';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -80,8 +80,8 @@ const tables = {
   ],
   grouped: [
     ['When to use', 'A select with groups whose one-column list would pass about 600px. Below that, keep the single column from Anatomy.'],
-    ['Columns are groups', 'One column per group, in the order of the single-column list. A short group can share a column with the next one, under a divider (Sequences, then Browsers). Never split a group across columns.'],
-    ['Width and place', 'Opens 4px below the field with left edges aligned, as wide as the row it belongs to: 880px on the homepage, three columns of 280px. In the top bar, the Sequence analysis menu uses two columns of 280px (584px) under its nav item. These are the only exceptions to the panel matching its field’s width.'],
+    ['Columns are groups', 'One column per group, in the order of the single-column list. A short group can share a column with the next one, under a divider. Never split a group across columns.'],
+    ['Width and place', 'Opens 4px below the field with left edges aligned, as wide as its columns: on the homepage, two columns of 272px (566px). This is the only exception to the panel matching its field’s width.'],
     ['Height', 'Set by the tallest column. Columns stay top-aligned; short columns leave empty space rather than borrowing options.'],
     ['Keyboard', 'Still one listbox in the combobox pattern. Down and Up read through a column and continue into the next, in reading order; Left and Right move to the nearest option in the neighboring column; Home and End go to the first and last option; typing jumps to a match. Each group is announced with its label.'],
     ['Footer', 'A footer, such as Not sure which tool? Compare them, spans all columns.'],
@@ -316,14 +316,14 @@ const multiSelectRules = [
 
   <DocSection
     title="Grouped select, multi-column"
-    lead="For a grouped select whose single-column list would run past the fold. Each group becomes a column, so every option shows at once. Today it is Select an analysis on the homepage: 10 analyses in 4 groups, which ran 941px as one column and now ends at 874px on a 1440 by 900 window. The Sequence analysis menu in the top bar uses it too: 7 tools in 3 groups, which ran 684px as one column and now ends at 582px."
+    lead="For a grouped select whose single-column list would run past the fold. Each group becomes a column, so every option shows at once. Today it is Select an analysis on the homepage: 6 analyses in 2 groups, Genes & gene sets and Variants & sequences, side by side."
   >
     <div class="grouped-specimen">
       <Select
         label="Analysis"
         placeholder="Select an analysis"
         options={analyses}
-        columns={[['Network analysis'], ['Variant effects'], ['Sequences', 'Browsers']]}
+        columns={analysisColumns}
         open
       >
         <p slot="footer">Not sure which tool? <a href="#grouped-select-multi-column">Compare them</a></p>

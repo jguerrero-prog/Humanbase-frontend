@@ -28,12 +28,13 @@ test('the top bar and the homepage analysis menu no longer offer the ASD Browser
   await apiOff(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${web}/`);
-  await page.getByRole('button', { name: 'Sequence analysis' }).click();
-  await expect(page.getByRole('link', { name: /^In silico mutagenesis/ })).toBeVisible();
-  await expect(page.getByRole('link', { name: /ASD Browser/ })).toHaveCount(0);
+  const main = page.getByRole('navigation', { name: 'Main' });
+  await main.getByRole('button', { name: 'Variants & sequences' }).click();
+  await expect(main.getByRole('link', { name: /^Variant effects/ })).toBeVisible();
+  await expect(main.getByRole('link', { name: /ASD Browser/ })).toHaveCount(0);
   await page.keyboard.press('Escape');
   await page.getByRole('combobox', { name: 'Analysis' }).click();
-  await expect(page.getByRole('option', { name: /^In silico mutagenesis/ })).toBeVisible();
+  await expect(page.getByRole('option', { name: /^Variant effects/ })).toBeVisible();
   await expect(page.getByRole('option', { name: /ASD Browser/ })).toHaveCount(0);
   await expect(page.getByRole('contentinfo').getByRole('link', { name: /ASD Browser/ })).toHaveCount(0);
 });

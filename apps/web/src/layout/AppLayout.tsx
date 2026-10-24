@@ -1,4 +1,4 @@
-import { JobWatcher, productFooter, productSections, useJobsMenuSummary } from '@humanbase/hb';
+import { JobWatcher, productFooter, productSectionFor, productSections, useJobsMenuSummary } from '@humanbase/hb';
 import { Banner, Footer, SkipLink, TopBar } from '@humanbase/ui';
 import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router';
@@ -8,11 +8,13 @@ import './AppLayout.css';
 
 const whatsNew = new BrowserSetting<'shown' | 'dismissed'>('humanbase:whats-new', 'shown', ['shown', 'dismissed']);
 
-export function AppLayout({ current }: { current?: string }) {
+export function AppLayout() {
   const [bannerShown, setBannerShown] = useState(() => whatsNew.get() === 'shown');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const jobs = useJobsMenuSummary();
-  const onHomepage = useLocation().pathname === '/';
+  const { pathname } = useLocation();
+  const onHomepage = pathname === '/';
+  const current = productSectionFor(pathname);
   const dismissBanner = () => {
     whatsNew.set('dismissed');
     setBannerShown(false);
