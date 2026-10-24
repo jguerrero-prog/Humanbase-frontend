@@ -36,6 +36,7 @@ describe('GenomeTrackView', () => {
     const segments = [
       { start: 101, end: 300, name: 'ReprW', color: '#7F7F7F' },
       { start: 301, end: 400, name: 'Tss', color: '#FF0000' },
+      { start: 401, end: 450, name: 'Peak1', color: '' },
     ];
     const { container } = render(<GenomeTrackView start={1} end={1000} width={1000} segments={[{ name: 'GM12878 ChromHMM', meta: 'Genome segmentation', state: 'ready', data: segments }]} />);
     expect(screen.getByText('Genome segmentation')).toBeInTheDocument();
@@ -43,6 +44,7 @@ describe('GenomeTrackView', () => {
     expect(boxes.map((box) => [box.getAttribute('fill'), box.getAttribute('width'), box.getAttribute('height')])).toEqual([
       ['#7F7F7F', '200', '8'],
       ['#FF0000', '100', '8'],
+      [null, '50', '8'],
     ]);
     fireEvent.pointerEnter(boxes[0] as Element, { clientX: 150 });
     const tip = screen.getByRole('tooltip');

@@ -37,20 +37,31 @@ export function useTrackData<T>(read: (() => Promise<T>) | undefined, key: strin
   return loaded;
 }
 
+/** Reads each file on its own, so one that fails leaves the others drawn; a failed file maps to null. */
+export async function readEach<T>(urls: readonly string[], read: (url: string) => Promise<T>): Promise<Record<string, T | null>> {
+  return Object.fromEntries(await Promise.all(urls.map(async (url) => [url, await read(url).catch(() => null)] as const)));
+}
+
+/** One file's state in a readEach result; a track just turned on has no data until its first read lands. */
+export function fileState<T>(loaded: Loaded<Record<string, T | null>>, url: string): Loaded<T> {
+  const data = loaded.data?.[url];
+  if (data === null) return { state: 'failed' };
+  return { state: data || loaded.state === 'failed' ? loaded.state : 'loading', data };
+}
+
 /** The segment tracks among these, with their segments in the span. */
 export function useSegmentTracks(files: GenomeTracks, tracks: readonly GenomeDataTrack[], span: GenomeSpan): TrackOf<readonly Segment[]>[] {
   const shown = tracks.filter(isSegmentTrack);
   const near = shown.length > 0 && span.end - span.start + 1 <= readLimit;
   const urls = shown.map((track) => track.bigBedUrl).join(' ');
-  const loaded = useTrackData<Record<string, Segment[]>>(
-    near ? async () => Object.fromEntries(await Promise.all(shown.map(async (track) => [track.bigBedUrl, await files.segments(track.bigBedUrl, span)] as const))) : undefined,
+  const loaded = useTrackData<Record<string, Segment[] | null>>(
+    near ? () => readEach(shown.map((track) => track.bigBedUrl), (url) => files.segments(url, span)) : undefined,
     near ? `${span.chrom}:${span.start}-${span.end} ${urls}` : 'far',
   );
   return shown.map((track) => {
     const named = { name: track.name, meta: track.meta ?? '' };
     if (!near) return { ...named, state: 'ready', data: [], empty: `Zoom in to under ${readLimit / 1_000_000} Mb to see ${track.name}.` };
-    // A track just turned on has no data until its first read lands.
-    const data = loaded.data?.[track.bigBedUrl];
-    return { ...named, state: data || loaded.state === 'failed' ? loaded.state : 'loading', data };
+    const { state, data } = fileState(loaded, track.bigBedUrl);
+    return { ...named, state, data };
   });
 }

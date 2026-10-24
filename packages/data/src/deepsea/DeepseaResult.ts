@@ -97,6 +97,9 @@ export function variantScoreTypes(model: DeepseaModel, types: readonly ScoreType
   return types.filter((type) => type.level === 'VARIANT' && (!model.variantScores || model.variantScores.includes(type.short_name)));
 }
 
+/** A score type's name for display, with a true minus sign, such as Mean −log e-value. */
+export const scoreTypeLabel = (type: Pick<ScoreType, 'name'>) => type.name.replace('-log', '−log');
+
 export function variantRows(sets: readonly VariantScoresRecord[]): VariantRow[] {
   const rows = new Map<string, VariantRow>();
   for (const set of sets) {

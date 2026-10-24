@@ -19,7 +19,7 @@ export { GwasFileCheck, type GwasCheckResult, type GwasFormat } from './jobs/Gwa
 export { useNetwasExample, useNetwasJob, useNetwasResult } from './react/useNetwasJob';
 export { deepseaModels, genomeLabels, docsPage, modelOf, variantEffectsModels, variantListInputs, variantModels, type DeepseaModel, type EffectBins, type Genome } from './deepsea/DeepseaModel';
 export { DeepseaJob, type DeepseaFile, type DeepseaJobRecord, type ResultFile } from './deepsea/DeepseaJob';
-export { featureEffects, featureLabel, variantIdOf, variantRows, variantScoreTypes, type FeatureEffect, type FeaturePredictionRecord, type FeaturesRecord, type ModelFeature, type ScoreType, type VariantRow, type VariantScoresRecord, type VariantSequence } from './deepsea/DeepseaResult';
+export { featureEffects, featureLabel, scoreTypeLabel, variantIdOf, variantRows, variantScoreTypes, type FeatureEffect, type FeaturePredictionRecord, type FeaturesRecord, type ModelFeature, type ScoreType, type VariantRow, type VariantScoresRecord, type VariantSequence } from './deepsea/DeepseaResult';
 export { DeepseaService, type DeepseaRequest } from './deepsea/DeepseaService';
 export { deepseaExamples } from './deepsea/deepseaExamples';
 export { InsilicoResult, sequenceSpan, type InsilicoRecord, type Substitution } from './deepsea/InsilicoResult';
@@ -33,7 +33,9 @@ export { AsdService, type AsdFeatureSet, type AsdPage, type AsdWhere } from './a
 export { S3GeneLocator, type GeneLocator, type GeneSpan } from './genome/S3GeneLocator';
 export { SampleGeneLocator } from './genome/SampleGeneLocator';
 export { geneModels, segmentOf, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type Segment, type SequenceSpan, type Transcript } from './genome/GenomeTracks';
-export { S3GenomeTracks } from './genome/S3GenomeTracks';
+export { S3GenomeTracks, type TrackFileHeader } from './genome/S3GenomeTracks';
+export { UserTracks, UserTrackError, assemblyProblem, yourFile, type UserTrack } from './genome/UserTracks';
+export { UserTrackStore, type StoredTrack } from './genome/UserTrackStore';
 export { SampleGenomeTracks, type RecordedWindow } from './genome/SampleGenomeTracks';
 export { useAsdColumns, useAsdEffects, useAsdPage, useAsdRange } from './react/useAsd';
 export { NetworkQuery, dataVersionNames, type ComparedNetwork } from './networks/NetworkQuery';

@@ -20,33 +20,52 @@ export interface SuggestedTrack {
   label: string;
   source: string;
   shown: boolean;
+  /** A track the person added, which they can remove. */
+  removable?: boolean | undefined;
 }
 
 export type TrackSource = 'suggested' | 'file' | 'url';
 
 export interface TracksDrawerProps extends LayerProps {
   tracks: readonly SuggestedTrack[];
-  /** Where tracks can come from; a browser that can't read your own files offers only suggested. */
+  /** Where tracks can come from; a browser that can't read your own files offers only the list. */
   sources?: readonly TrackSource[];
+  /** The browser's assembly in words, such as GRCh37/hg19, which added files have to be on. */
+  assembly?: string | undefined;
+  /** A file or address is being read. */
+  adding?: boolean | undefined;
+  /** Why the last file or address couldn't be added. */
+  addError?: string | undefined;
+  /** Said once a track is added or removed. */
+  status?: string | undefined;
   onToggle?: (id: string, shown: boolean) => void;
-  onAddFile?: (file: File) => void;
-  onAddUrl?: (url: string) => void;
+  /** Resolves true once the track is added, and the drawer goes back to the list. */
+  onAddFile?: (file: File) => Promise<boolean>;
+  onAddUrl?: (url: string) => Promise<boolean>;
+  onRemove?: (id: string) => void;
   onReset?: () => void;
 }
 
 const allSources: readonly { value: TrackSource; label: string }[] = [
-  { value: 'suggested', label: 'Suggested' },
+  { value: 'suggested', label: 'All tracks' },
   { value: 'file', label: 'Your file' },
   { value: 'url', label: 'By URL' },
 ];
 
-export function TracksDrawer({ tracks, sources = ['suggested', 'file', 'url'], onToggle, onAddFile, onAddUrl, onReset, open = false, inline = false, onClose = () => {} }: TracksDrawerProps) {
+export function TracksDrawer({ tracks, sources = ['suggested', 'file', 'url'], assembly = 'the browser’s assembly', adding = false, addError, status, onToggle, onAddFile, onAddUrl, onRemove, onReset, open = false, inline = false, onClose = () => {} }: TracksDrawerProps) {
   const offered = allSources.filter((option) => sources.includes(option.value));
   const [source, setSource] = useState('suggested');
   const [url, setUrl] = useState('');
+  const backToList = async (adding: Promise<boolean> | undefined) => {
+    if (!(await adding)) return;
+    setUrl('');
+    setSource('suggested');
+  };
   const chooseFile = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) onAddFile?.(file);
+    // Cleared so the same file can be chosen again after a fix.
+    event.target.value = '';
+    if (file) void backToList(onAddFile?.(file));
   };
 
   return (
@@ -66,69 +85,110 @@ export function TracksDrawer({ tracks, sources = ['suggested', 'file', 'url'], o
       }
     >
       <div className="tracks-panel">
-        {offered.length > 1 && <SegmentedControl label="Add tracks from" hideLabel size="small" segments={offered} value={source} onChange={setSource} />}
+        {offered.length > 1 && <SegmentedControl label="Show tracks, or add them from" hideLabel size="small" segments={offered} value={source} onChange={setSource} />}
+        {status && (
+          <p className="tracks-status" role="status">
+            {status}
+          </p>
+        )}
         {source === 'suggested' && (
           <ul className="tracks-list">
             {tracks.map((track) => (
-              <li key={track.id}>
+              <li key={track.id} className={track.removable ? 'is-removable' : undefined}>
                 <Checkbox label={track.label} checked={track.shown} onChange={(event) => onToggle?.(track.id, event.target.checked)} />
+                {track.removable && (
+                  <Button variant="ghost" size="small" aria-label={`Remove ${track.label}`} onClick={() => onRemove?.(track.id)}>
+                    Remove
+                  </Button>
+                )}
                 <span className="tracks-source">{track.source}</span>
               </li>
             ))}
           </ul>
         )}
-        {source === 'file' && <FileField label="Indexed file" hint="bigWig, bigBed, BAM or tabix VCF." accept=".bw,.bigwig,.bb,.bigbed,.bam,.vcf.gz,.tbi,.bai" onChange={chooseFile} />}
+        {source === 'file' && (
+          <FileField
+            label="bigWig or bigBed file"
+            hint={`On ${assembly}. It’s read in this browser and never uploaded.`}
+            accept=".bw,.bigwig,.bb,.bigbed"
+            error={addError}
+            disabled={adding}
+            onChange={chooseFile}
+          />
+        )}
         {source === 'url' && (
           <form
             className="tracks-url"
             onSubmit={(event) => {
               event.preventDefault();
-              onAddUrl?.(url);
+              void backToList(onAddUrl?.(url));
             }}
           >
-            <TextInput label="Track or DAS source address" type="url" value={url} onChange={(event) => setUrl(event.target.value)} />
-            <Button type="submit" variant="secondary" size="small">
+            <TextInput label="Address of a bigWig or bigBed file" hint={`On ${assembly}, from a server that lets other sites read it (CORS).`} type="url" required value={url} error={addError} onChange={(event) => setUrl(event.target.value)} />
+            <Button type="submit" variant="secondary" size="small" loading={adding}>
               Add track
             </Button>
           </form>
         )}
-        {offered.length > 1 && <p className="tracks-note">Your file adds an indexed file (bigWig, bigBed, BAM or tabix VCF). By URL adds a track or a DAS source by its address, as + does today.</p>}
+        {source !== 'suggested' && (
+          <p className="tracks-note">bigWig holds scores and bigBed holds segments. Both are read in parts, so any size works. Text files need converting first: BED with bedToBigBed, bedGraph with bedGraphToBigWig, WIG with wigToBigWig.</p>
+        )}
       </div>
     </Drawer>
   );
 }
 
-export type TrackStyle = 'bars' | 'line' | 'ribbon' | 'points';
-
+/** A score track's settings as typed: its height in pixels and the range of values its bars span. */
 export interface TrackSettings {
   name: string;
-  style: TrackStyle;
+  height: string;
   min: string;
   max: string;
-  height: string;
-  thresholdLeap: string;
-  pinned: boolean;
+}
+
+export interface TrackSettingsValues {
+  height: number;
+  min: number;
+  max: number;
+}
+
+type TrackSettingsField = 'height' | 'min' | 'max';
+
+export const trackHeightLimits = [50, 300] as const;
+
+const numberOf = (text: string) => (text.trim() === '' ? Number.NaN : Number(text.trim().replace('−', '-')));
+
+/** The settings as numbers, or what to fix in each field. */
+export function readTrackSettings({ height, min, max }: TrackSettings): { values?: TrackSettingsValues; errors: Partial<Record<TrackSettingsField, string>> } {
+  const [low, high] = trackHeightLimits;
+  const values = { height: Number.parseFloat(height), min: numberOf(min), max: numberOf(max) };
+  const errors: Partial<Record<TrackSettingsField, string>> = {};
+  if (!(values.height >= low && values.height <= high)) errors.height = `Enter a height from ${low} to ${high} pixels.`;
+  if (!Number.isFinite(values.min)) errors.min = 'Enter a number, such as 0.';
+  if (!Number.isFinite(values.max)) errors.max = 'Enter a number, such as 3.';
+  else if (Number.isFinite(values.min) && values.max <= values.min) errors.max = 'Enter a number above the lowest value.';
+  return Object.keys(errors).length ? { errors } : { values: { ...values, height: Math.round(values.height) }, errors };
 }
 
 export interface TrackSettingsDialogProps extends LayerProps {
   settings: TrackSettings;
-  onApply?: (settings: TrackSettings) => void;
+  onApply?: (values: TrackSettingsValues) => void;
   onReset?: () => void;
 }
 
-const styles = [
-  { value: 'bars', label: 'Bars' },
-  { value: 'line', label: 'Line' },
-  { value: 'ribbon', label: 'Ribbon' },
-  { value: 'points', label: 'Points' },
-];
-
 export function TrackSettingsDialog({ settings, onApply, onReset, open = false, inline = false, onClose = () => {} }: TrackSettingsDialogProps) {
   const [draft, setDraft] = useState(settings);
-  const field = (key: 'name' | 'min' | 'max' | 'height' | 'thresholdLeap') => ({
+  const [checked, setChecked] = useState(false);
+  const { values, errors } = readTrackSettings(draft);
+  const field = (key: TrackSettingsField) => ({
     value: draft[key],
+    error: checked ? errors[key] : undefined,
     onChange: (event: ChangeEvent<HTMLInputElement>) => setDraft({ ...draft, [key]: event.target.value }),
   });
+  const apply = () => {
+    setChecked(true);
+    if (values) onApply?.(values);
+  };
 
   return (
     <Dialog
@@ -143,22 +203,16 @@ export function TrackSettingsDialog({ settings, onApply, onReset, open = false, 
           <Button variant="ghost" onClick={onReset}>
             Reset track
           </Button>
-          <Button onClick={() => onApply?.(draft)}>Apply</Button>
+          <Button onClick={apply}>Apply</Button>
         </>
       }
     >
       <div className="genome-form">
-        <TextInput label="Name" {...field('name')} />
-        <SegmentedControl label="Draw as" size="small" segments={styles} value={draft.style} onChange={(style) => setDraft({ ...draft, style: style as TrackStyle })} />
+        <TextInput label="Height" hint={`In pixels, ${trackHeightLimits[0]} to ${trackHeightLimits[1]}.`} inputMode="numeric" {...field('height')} />
         <div className="genome-form-row">
           <TextInput label="Lowest value shown" inputMode="decimal" {...field('min')} />
           <TextInput label="Highest value shown" inputMode="decimal" {...field('max')} />
         </div>
-        <div className="genome-form-row">
-          <TextInput label="Height" {...field('height')} />
-          <TextInput label="Threshold leap" hint="As today; off by default" {...field('thresholdLeap')} />
-        </div>
-        <Checkbox label="Keep at the top" checked={draft.pinned} onChange={(event) => setDraft({ ...draft, pinned: event.target.checked })} />
       </div>
     </Dialog>
   );

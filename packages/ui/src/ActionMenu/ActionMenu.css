@@ -35,6 +35,17 @@
   animation: menu-open var(--motion-duration-base) var(--motion-easing-enter);
 }
 
+.action-menu-panel[popover] {
+  position: fixed;
+  inset: auto;
+  inset-block-start: anchor(bottom);
+  inset-inline-end: anchor(right);
+  margin: var(--space-1) 0;
+  overflow: visible;
+  color: inherit;
+  position-try-fallbacks: flip-inline, flip-block;
+}
+
 .action-menu-panel .menu-item:focus {
   outline: none;
   background: var(--surface-sunken);

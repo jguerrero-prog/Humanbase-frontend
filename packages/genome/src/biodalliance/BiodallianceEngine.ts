@@ -1,5 +1,5 @@
-import { isSegmentTrack, trackFile, withChr, type GenomeBrowserEngine, type GenomeExportOptions, type GenomeMountOptions, type GenomeRegion, type GenomeTrackLayout } from '../GenomeBrowserEngine';
-import { genesTrack, sequenceTrack } from '../genomeTrackList';
+import { isSegmentTrack, trackFile, withChr, type GenomeBrowserEngine, type GenomeExportOptions, type GenomeMountOptions, type GenomeRegion, type GenomeTrackArrangement, type GenomeTrackLayout } from '../GenomeBrowserEngine';
+import { genesTrack, genomeTrackList, inOrder, noArrangement, sequenceTrack } from '../genomeTrackList';
 import { humanbaseAssemblies, humanbaseBrowserOptions, type BiodallianceAssembly } from './humanbaseConfig';
 
 /** The parts of Biodalliance's Browser this engine calls. */
@@ -14,7 +14,17 @@ interface DallianceBrowser {
   addTier(source: Record<string, unknown>): void;
   removeTier(source: Record<string, unknown>): void;
   makeSVG(options: { highlights: boolean; ruler: string; width: number; banner: boolean; region: boolean }): Blob;
-  tiers: readonly { row: HTMLElement; dasSource: { name?: string; title?: string; desc?: string } }[];
+  reorderTiers(): void;
+  tiers: DallianceTier[];
+}
+
+interface DallianceTier {
+  row: HTMLElement;
+  dasSource: { name?: string; title?: string; desc?: string };
+  /** Pinned tiers are drawn first, in the tiers' order. */
+  pinned: boolean;
+  /** height, forceMin and forceMax override the source's; undefined puts the source's back. */
+  mergeConfig(config: { height?: number | undefined; forceMin?: number | undefined; forceMax?: number | undefined }): void;
 }
 
 type DallianceConstructor = new (options: Record<string, unknown>) => DallianceBrowser;
@@ -94,11 +104,14 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
   /** The sources a page can show or hide, by track id, and the ids shown now. */
   readonly #toggled = new Map<string, Record<string, unknown>>();
   readonly #shownTracks = new Set<string>();
+  #arrangement = noArrangement;
+  /** Track ids in their usual order: sequence, the page's tracks, then genes. */
+  #usualOrder: readonly string[] = [];
   #destroyed = false;
 
   constructor(private readonly options: BiodallianceOptions = {}) {}
 
-  async mount(container: HTMLElement, { label, assembly, region, tracks, hidden = [], onRegionChange, onTrackLayout }: GenomeMountOptions): Promise<void> {
+  async mount(container: HTMLElement, { label, assembly, region, tracks, hidden = [], arrangement = noArrangement, onRegionChange, onTrackLayout }: GenomeMountOptions): Promise<void> {
     // Biodalliance drops the port from a path-only prefix, so give it an absolute URL.
     const baseUrl = new URL(this.options.baseUrl ?? biodallianceBaseUrl, document.baseURI).href;
     const Browser = await loadBiodalliance(baseUrl);
@@ -136,6 +149,8 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
         resolve();
       });
     });
+    this.#usualOrder = genomeTrackList(assembly, tracks).map((track) => track.id);
+    this.arrangeTracks(arrangement);
     if (onTrackLayout) this.#reportLayout(browser, holder, tracks, onTrackLayout);
     // Biodalliance's own shortcuts run only while its root has focus; a focusable page element keeps focus instead.
     if (container.tabIndex >= 0) holder.querySelector<HTMLElement>('.dalliance-root')?.addEventListener('focus', () => container.focus());
@@ -170,7 +185,7 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
           .map((tier) => {
             const box = tier.row.getBoundingClientRect();
             const name = tier.dasSource.name ?? '';
-            return { name: tier.dasSource.title ?? name, meta: metaOf.get(name) ?? tier.dasSource.desc, top: Math.round(box.top - origin), height: Math.round(box.height) };
+            return { id: this.#idOf(tier) ?? name, name: tier.dasSource.title ?? name, meta: metaOf.get(name) ?? tier.dasSource.desc, top: Math.round(box.top - origin), height: Math.round(box.height) };
           })
           .sort((a, b) => a.top - b.top);
         report(layout);
@@ -204,6 +219,34 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
     });
   }
 
+  /** The page's id for a tier, matched by its source's name. */
+  #idOf(tier: DallianceTier): string | undefined {
+    for (const [id, source] of this.#toggled) if (source.name === tier.dasSource.name) return id;
+    return undefined;
+  }
+
+  arrangeTracks(arrangement: GenomeTrackArrangement): void {
+    this.#arrangement = arrangement;
+    const browser = this.#browser;
+    if (!browser) return;
+    const order = inOrder(this.#usualOrder, arrangement.order);
+    const rank = (tier: DallianceTier, index: number) => {
+      const at = order.indexOf(this.#idOf(tier) ?? '');
+      return at === -1 ? order.length + index : at;
+    };
+    const ordered = browser.tiers.map((tier, index) => ({ tier, rank: rank(tier, index) })).sort((a, b) => a.rank - b.rank).map(({ tier }) => tier);
+    const moved = ordered.some((tier, index) => tier !== browser.tiers[index] || !tier.pinned);
+    for (const tier of ordered) {
+      const { height, range } = arrangement.settings[this.#idOf(tier) ?? ''] ?? {};
+      tier.mergeConfig({ height, forceMin: range?.[0], forceMax: range?.[1] });
+    }
+    if (!moved) return;
+    browser.tiers.splice(0, browser.tiers.length, ...ordered);
+    // Biodalliance draws pinned tiers first, so every tier is pinned to keep the page's order.
+    ordered.forEach((tier) => (tier.pinned = true));
+    browser.reorderTiers();
+  }
+
   showTracks(hidden: readonly string[]): void {
     const browser = this.#browser;
     if (!browser) return;
@@ -218,6 +261,7 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
         this.#shownTracks.delete(id);
       }
     }
+    this.arrangeTracks(this.#arrangement);
   }
 
   exportSvg({ width, highlights, guideline, title }: GenomeExportOptions): Promise<Blob> {

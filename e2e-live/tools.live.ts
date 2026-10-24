@@ -114,11 +114,11 @@ for (const [tool, id, heading] of [
   });
 }
 
-test('the real Seqweaver result shows and hides genome tracks from the real files and exports the view', async ({ page }) => {
+test('the real Seqweaver result shows its own score tracks, shows and hides genome tracks from the real files and exports the view', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);
   const headers = page.locator('.genome-engine .track-header-name');
-  await expect(headers).toHaveText(['Sequence', 'Genes']);
+  await expect(headers).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
   await expect(page.locator('.genome-engine').getByText('CELSR2 →')).toBeVisible();
   await page.getByRole('button', { name: 'Tracks' }).click();
   const drawer = page.getByRole('dialog', { name: 'Tracks' });
@@ -126,7 +126,10 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' }).check();
   await drawer.getByRole('checkbox', { name: 'Sequence' }).uncheck();
   await drawer.getByRole('button', { name: 'Done' }).click();
-  await expect(headers).toHaveText(['Conservation', 'GM12878 ChromHMM', 'Genes']);
+  await expect(headers).toHaveText(['Disease impact score', 'Mean −log e-value', 'Conservation', 'GM12878 ChromHMM', 'Genes']);
+  // The job's own files, read from S3: one score per variant, 1.0026 and 0.9013 at chr1:109,817,590.
+  await expect(page.locator('.genome-engine').getByRole('button', { name: '1.00 at 109,817,590' })).toBeVisible();
+  await expect(page.locator('.genome-engine').getByRole('button', { name: '0.90 at 109,817,590' })).toBeVisible();
   // Results open at 100 kb; the counts below are for the 50 kb view around the variant.
   await page.getByRole('radio', { name: '50 kb' }).check();
   await expect(page.locator('.genome-engine .genome-tracks-bar')).not.toHaveCount(0);
@@ -136,7 +139,7 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await expect(segments.first()).toHaveAttribute('fill', '#CF0BC6');
   await segments.nth(11).hover();
   await expect(page.getByRole('tooltip')).toHaveText(/^QuiesGM12878 ChromHMMStart109,806,801Length9,600 bp$/);
-  await page.getByText('View as table').click();
+  await page.getByRole('region', { name: /^Genome around / }).getByText('View as table').click();
   const table = page.getByRole('table', { name: 'GM12878 ChromHMM segments in chr1:109,792,590-109,842,590, GRCh37/hg19' });
   await expect(table.getByRole('row')).toHaveCount(40);
   await expect(table.getByRole('row').filter({ hasText: '109,816,601' })).toHaveText(/^ReprW\s*109,816,601\s*109,818,400\s*1,800 bp$/);
@@ -160,13 +163,67 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   expect(download.suggestedFilename()).toMatch(/^chr1_\d+-\d+_hg19\.svg$/);
   const svg = await readFile(await download.path(), 'utf8');
   expect(svg).toContain('Conservation');
+  expect(svg).toContain('Disease impact score');
   expect(svg).toContain('CELSR2 →');
   expect(svg).toContain('genome-tracks-bar');
   expect(svg.match(/class="genome-tracks-segment"/g)).toHaveLength(39);
   await page.getByRole('button', { name: 'Tracks' }).click();
   await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
   await drawer.getByRole('button', { name: 'Done' }).click();
-  await expect(headers).toHaveText(['Sequence', 'Genes']);
+  await expect(headers).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
+});
+
+test('the real Seqweaver result’s track menus move, remove and set up tracks, and remember it', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);
+  const headers = page.locator('.genome-engine .track-header-name');
+  await expect(page.locator('.genome-engine').getByText('CELSR2 →')).toBeVisible();
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Tracks' });
+  await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
+  // The job's own score tracks are left out here, so the moves below are easy to follow.
+  await drawer.getByRole('checkbox', { name: 'Disease impact score' }).uncheck();
+  await drawer.getByRole('checkbox', { name: 'Mean −log e-value' }).uncheck();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(headers).toHaveText(['Sequence', 'Conservation', 'Genes']);
+  // Only a score track has settings; the genes track can only move or go.
+  await page.getByRole('button', { name: 'Genes track options' }).click();
+  await expect(page.getByRole('menuitem')).toHaveText(['Move up', 'Move down', 'Remove track']);
+  await expect(page.getByRole('menuitem', { name: 'Move down' })).toHaveAttribute('aria-disabled', 'true');
+  await page.keyboard.press('Escape');
+  const conservation = page.getByRole('button', { name: 'Conservation track options' });
+  await conservation.click();
+  expect(await violationsOf(page)).toEqual([]);
+  await page.getByRole('menuitem', { name: 'Move up' }).click();
+  await expect(headers).toHaveText(['Conservation', 'Sequence', 'Genes']);
+  await expect(conservation).toBeFocused();
+  await conservation.click();
+  await page.getByRole('menuitem', { name: 'Track settings…' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Track settings: Conservation' });
+  await expect(dialog.getByRole('textbox', { name: 'Lowest value shown' })).toHaveValue('0');
+  await expect(dialog.getByRole('textbox', { name: 'Highest value shown' })).toHaveValue('1');
+  await dialog.getByRole('textbox', { name: 'Height' }).fill('20');
+  await dialog.getByRole('button', { name: 'Apply' }).click();
+  await expect(dialog.getByText('Enter a height from 50 to 300 pixels.')).toBeVisible();
+  expect(await violationsOf(page)).toEqual([]);
+  await dialog.getByRole('textbox', { name: 'Height' }).fill('120');
+  await dialog.getByRole('textbox', { name: 'Highest value shown' }).fill('0.5');
+  await dialog.getByRole('button', { name: 'Apply' }).click();
+  await expect(dialog).toBeHidden();
+  const rows = page.locator('.genome-engine .score-tracks-column');
+  await expect(rows).toHaveAttribute('style', /30px 120px 60px/);
+  await page.reload();
+  await expect(headers).toHaveText(['Conservation', 'Sequence', 'Genes']);
+  await expect(rows).toHaveAttribute('style', /30px 120px 60px/);
+  await page.getByRole('button', { name: 'Genes track options' }).click();
+  await page.getByRole('menuitem', { name: 'Remove track' }).click();
+  await expect(headers).toHaveText(['Conservation', 'Sequence']);
+  await expect(page.locator('.genome-engine')).toBeFocused();
+  await checkScreen(page, problems);
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(headers).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
 });
 
 test('the real Seqweaver result’s genome browser stops at the end of chr1 and says so', async ({ page }) => {
@@ -181,7 +238,33 @@ test('the real Seqweaver result’s genome browser stops at the end of chr1 and 
   await page.locator('.genome-engine').focus();
   await page.keyboard.press('ArrowRight');
   await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
-  await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Genes']);
+  await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
+  await checkScreen(page, problems);
+});
+
+test('the real Seqweaver result’s genome browser finds genes in each assembly’s own GENCODE index', async ({ page }) => {
+  const problems = watch(page);
+  const job = `${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`;
+  const field = page.getByRole('searchbox', { name: 'Location or gene' });
+  const find = async (gene: string) => {
+    await expect(page.locator('.genome-engine .track-header-name').first()).toBeVisible();
+    await field.fill(gene);
+    await field.press('Enter');
+  };
+  await page.goto(job);
+  await find('CHD8');
+  await expect(field).toHaveValue('chr14:21,853,352-21,905,457');
+  // No hg38 job is on record, so the same real job is read as hg38; the gene still comes from the real GENCODE 21 files.
+  await page.route('**/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/', async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({ response, json: { ...(await response.json()), genome_assembly: 'hg38' } });
+  });
+  await page.goto(job);
+  await find('CHD8');
+  await expect(field).toHaveValue('chr14:21,385,193-21,437,298');
+  await expect(page.locator('.genome-location-help')).toContainText('A gene name works too.');
+  await find('NOTAGENE9');
+  await expect(page.getByText('No gene named “NOTAGENE9” on GRCh38/hg38.', { exact: false })).toBeVisible();
   await checkScreen(page, problems);
 });
 
