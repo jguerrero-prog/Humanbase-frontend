@@ -17,7 +17,7 @@ import {
   useLinkHref,
 } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
-import { analysisColumns, analysisOptions } from '../content/product';
+import { analysisColumns, analysisOptions, categoryCrumbs } from '../content/product';
 import { matchOf } from '../HomeSearch/geneMatches';
 import type { ModuleDraft } from '../Modules/ModuleExplorer';
 import '../HomeSearch/HomeSearch.css';
@@ -131,7 +131,7 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
           size="large"
           footer={
             <p>
-              Not sure which tool? <a href={linkHref('/sequence-tools/')}>Compare them</a>
+              Not sure which tool? <a href={linkHref(categoryCrumbs.variants.href)}>Compare them</a>
             </p>
           }
           onChange={(value) => value !== 'modules' && onChooseAnalysis(value)}
