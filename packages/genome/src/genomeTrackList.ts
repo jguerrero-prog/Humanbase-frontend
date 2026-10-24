@@ -1,4 +1,4 @@
-import { assemblyNames } from '@humanbase/data';
+import { assemblyNames, type UserTrack } from '@humanbase/data';
 import { chromHmm, humanbaseTracks } from './biodalliance/humanbaseConfig';
 import type { Assembly, GenomeDataTrack, GenomeTrackArrangement } from './GenomeBrowserEngine';
 import { scoreTrack } from './scoreTrack';
@@ -25,6 +25,11 @@ export function genomeTrackList(assembly: Assembly, tracks: readonly GenomeDataT
   const { sequence, genes } = builtInTracks(assembly);
   return [sequence, ...tracks.map((track) => ({ id: track.name, name: track.name, meta: track.meta ?? '' })), genes];
 }
+
+// Biodalliance falls back to BGCOLOR for a segment without itemRgb, so it gets the browser's track color too.
+const userSegmentStyle = chromHmm.style.map((rule) => ({ ...rule, style: { ...rule.style, BGCOLOR: 'var(--viz-seq-6)' } }));
+// A file's summary gives full float precision; four significant digits keep the header readable.
+const rounded = (value: number) => Number(value.toPrecision(4));
 
 /** Every track in its usual place, drawn as usual. */
 export const noArrangement: GenomeTrackArrangement = { order: [], settings: {} };
@@ -59,3 +64,10 @@ export const suggestedTracks: Record<Assembly, readonly GenomeDataTrack[]> = {
 
 /** Suggested tracks start hidden, as on the live site. */
 export const hiddenByDefault = (assembly: Assembly): string[] => suggestedTracks[assembly].map((track) => track.name);
+
+/** A track someone added: a bigWig drawn as bars over the file's own range, or a bigBed drawn as ChromHMM is, in the file's colors. */
+export function userDataTrack(track: UserTrack): GenomeDataTrack {
+  if (track.kind === 'bigBed') return { name: track.name, meta: track.source, bigBedUrl: track.key, style: userSegmentStyle };
+  const [min, max] = track.range ?? [0, 1];
+  return scoreTrack({ name: track.name, source: track.source, bigWigUrl: track.key, range: [rounded(min), rounded(max)] });
+}

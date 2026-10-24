@@ -5,7 +5,7 @@ import { isSegmentTrack, withChr, type Assembly, type GenomeDataTrack, type Geno
 import { builtInTracks, genesTrack, genomeTrackList, sequenceTrack } from '../genomeTrackList';
 import { geneDetails, scoreDetails, segmentDetails } from './itemDetails';
 import type { DrawnTracks, TrackEngine } from './TrackEngine';
-import { readLimit, useSegmentTracks, useTrackData } from './useTrackData';
+import { fileState, readEach, readLimit, useSegmentTracks, useTrackData } from './useTrackData';
 
 interface TrackPanelProps {
   engine: TrackEngine;
@@ -59,8 +59,8 @@ export function TrackPanel({ engine, files, assembly, tracks: allTracks, trackMe
   const nearGenes = showGenes && bases <= readLimit;
   const genes = useTrackData<GeneModel[]>(nearGenes ? () => files.genes(assembly, span) : undefined, nearGenes ? where : 'far');
   const urls = tracks.map((track) => track.bigWigUrl).join(' ');
-  const scores = useTrackData<Record<string, ScorePoint[]>>(
-    width > 0 && tracks.length > 0 ? async () => Object.fromEntries(await Promise.all(tracks.map(async (track) => [track.bigWigUrl, await files.scores(track.bigWigUrl, span, bins)] as const))) : undefined,
+  const scores = useTrackData<Record<string, ScorePoint[] | null>>(
+    width > 0 && tracks.length > 0 ? () => readEach(tracks.map((track) => track.bigWigUrl), (url) => files.scores(url, span, bins)) : undefined,
     `${where} ${bins} ${urls}`,
   );
 
@@ -86,11 +86,10 @@ export function TrackPanel({ engine, files, assembly, tracks: allTracks, trackMe
     width,
     sequence: showSequence ? { name: named.sequence.name, meta: named.sequence.meta, state: readable ? sequence.state : 'ready', data: readable ? sequence.data : undefined, ...menu(sequenceTrack) } : undefined,
     scores: tracks.map((track) => {
-      // A track just turned on has no data until its first read lands.
-      const values = scores.data?.[track.bigWigUrl];
+      const { state, data: values } = fileState(scores, track.bigWigUrl);
       const { height, range = track.range } = arrangement.settings[track.name] ?? {};
       const data = values && { min: range?.[0] ?? 0, max: range?.[1] ?? 1, values: values.map((point) => ({ ...point, details: scoreDetails(chrom, point) })) };
-      return { name: track.name, meta: track.meta ?? '', state: values || scores.state === 'failed' ? scores.state : 'loading', data, height, ...menu(track.name) };
+      return { name: track.name, meta: track.meta ?? '', state, data, height, ...menu(track.name) };
     }),
     segments: segments.map((track) => ({ ...track, ...menu(track.name) })),
     genes: showGenes ? { ...geneTrack, ...menu(genesTrack) } : undefined,

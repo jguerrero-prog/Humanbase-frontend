@@ -75,7 +75,7 @@ describe('AsdExplorer', () => {
     const drawer = within(screen.getByRole('dialog', { name: 'Tracks' }));
     expect(drawer.getAllByRole('checkbox').map((box) => (box as HTMLInputElement).labels?.[0]?.textContent)).toEqual(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Conservation', 'GM12878 ChromHMM', 'Genes']);
     expect(drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' })).not.toBeChecked();
-    expect(drawer.queryByRole('radio', { name: 'By URL' })).toBeNull();
+    expect(drawer.getByRole('radio', { name: 'By URL' })).toBeInTheDocument();
     expect(drawer.getByRole('checkbox', { name: 'Conservation' })).not.toBeChecked();
     await userEvent.click(drawer.getByRole('checkbox', { name: 'Conservation' }));
     expect(screen.getByRole('application', { name: /5 tracks$/, hidden: true })).toBeInTheDocument();

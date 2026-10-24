@@ -20,33 +20,52 @@ export interface SuggestedTrack {
   label: string;
   source: string;
   shown: boolean;
+  /** A track the person added, which they can remove. */
+  removable?: boolean | undefined;
 }
 
 export type TrackSource = 'suggested' | 'file' | 'url';
 
 export interface TracksDrawerProps extends LayerProps {
   tracks: readonly SuggestedTrack[];
-  /** Where tracks can come from; a browser that can't read your own files offers only suggested. */
+  /** Where tracks can come from; a browser that can't read your own files offers only the list. */
   sources?: readonly TrackSource[];
+  /** The browser's assembly in words, such as GRCh37/hg19, which added files have to be on. */
+  assembly?: string | undefined;
+  /** A file or address is being read. */
+  adding?: boolean | undefined;
+  /** Why the last file or address couldn't be added. */
+  addError?: string | undefined;
+  /** Said once a track is added or removed. */
+  status?: string | undefined;
   onToggle?: (id: string, shown: boolean) => void;
-  onAddFile?: (file: File) => void;
-  onAddUrl?: (url: string) => void;
+  /** Resolves true once the track is added, and the drawer goes back to the list. */
+  onAddFile?: (file: File) => Promise<boolean>;
+  onAddUrl?: (url: string) => Promise<boolean>;
+  onRemove?: (id: string) => void;
   onReset?: () => void;
 }
 
 const allSources: readonly { value: TrackSource; label: string }[] = [
-  { value: 'suggested', label: 'Suggested' },
+  { value: 'suggested', label: 'All tracks' },
   { value: 'file', label: 'Your file' },
   { value: 'url', label: 'By URL' },
 ];
 
-export function TracksDrawer({ tracks, sources = ['suggested', 'file', 'url'], onToggle, onAddFile, onAddUrl, onReset, open = false, inline = false, onClose = () => {} }: TracksDrawerProps) {
+export function TracksDrawer({ tracks, sources = ['suggested', 'file', 'url'], assembly = 'the browser’s assembly', adding = false, addError, status, onToggle, onAddFile, onAddUrl, onRemove, onReset, open = false, inline = false, onClose = () => {} }: TracksDrawerProps) {
   const offered = allSources.filter((option) => sources.includes(option.value));
   const [source, setSource] = useState('suggested');
   const [url, setUrl] = useState('');
+  const backToList = async (adding: Promise<boolean> | undefined) => {
+    if (!(await adding)) return;
+    setUrl('');
+    setSource('suggested');
+  };
   const chooseFile = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) onAddFile?.(file);
+    // Cleared so the same file can be chosen again after a fix.
+    event.target.value = '';
+    if (file) void backToList(onAddFile?.(file));
   };
 
   return (
@@ -66,33 +85,54 @@ export function TracksDrawer({ tracks, sources = ['suggested', 'file', 'url'], o
       }
     >
       <div className="tracks-panel">
-        {offered.length > 1 && <SegmentedControl label="Add tracks from" hideLabel size="small" segments={offered} value={source} onChange={setSource} />}
+        {offered.length > 1 && <SegmentedControl label="Show tracks, or add them from" hideLabel size="small" segments={offered} value={source} onChange={setSource} />}
+        {status && (
+          <p className="tracks-status" role="status">
+            {status}
+          </p>
+        )}
         {source === 'suggested' && (
           <ul className="tracks-list">
             {tracks.map((track) => (
-              <li key={track.id}>
+              <li key={track.id} className={track.removable ? 'is-removable' : undefined}>
                 <Checkbox label={track.label} checked={track.shown} onChange={(event) => onToggle?.(track.id, event.target.checked)} />
+                {track.removable && (
+                  <Button variant="ghost" size="small" aria-label={`Remove ${track.label}`} onClick={() => onRemove?.(track.id)}>
+                    Remove
+                  </Button>
+                )}
                 <span className="tracks-source">{track.source}</span>
               </li>
             ))}
           </ul>
         )}
-        {source === 'file' && <FileField label="Indexed file" hint="bigWig, bigBed, BAM or tabix VCF." accept=".bw,.bigwig,.bb,.bigbed,.bam,.vcf.gz,.tbi,.bai" onChange={chooseFile} />}
+        {source === 'file' && (
+          <FileField
+            label="bigWig or bigBed file"
+            hint={`On ${assembly}. It’s read in this browser and never uploaded.`}
+            accept=".bw,.bigwig,.bb,.bigbed"
+            error={addError}
+            disabled={adding}
+            onChange={chooseFile}
+          />
+        )}
         {source === 'url' && (
           <form
             className="tracks-url"
             onSubmit={(event) => {
               event.preventDefault();
-              onAddUrl?.(url);
+              void backToList(onAddUrl?.(url));
             }}
           >
-            <TextInput label="Track or DAS source address" type="url" value={url} onChange={(event) => setUrl(event.target.value)} />
-            <Button type="submit" variant="secondary" size="small">
+            <TextInput label="Address of a bigWig or bigBed file" hint={`On ${assembly}, from a server that lets other sites read it (CORS).`} type="url" required value={url} error={addError} onChange={(event) => setUrl(event.target.value)} />
+            <Button type="submit" variant="secondary" size="small" loading={adding}>
               Add track
             </Button>
           </form>
         )}
-        {offered.length > 1 && <p className="tracks-note">Your file adds an indexed file (bigWig, bigBed, BAM or tabix VCF). By URL adds a track or a DAS source by its address, as + does today.</p>}
+        {source !== 'suggested' && (
+          <p className="tracks-note">bigWig holds scores and bigBed holds segments. Both are read in parts, so any size works. Text files need converting first: BED with bedToBigBed, bedGraph with bedGraphToBigWig, WIG with wigToBigWig.</p>
+        )}
       </div>
     </Drawer>
   );

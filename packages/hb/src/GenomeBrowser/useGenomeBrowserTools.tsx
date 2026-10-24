@@ -1,13 +1,13 @@
-import type { GenomeLocation } from '@humanbase/data';
-import { genomeTrackList, hiddenByDefault, inOrder, isSegmentTrack, moveTrack, noArrangement, suggestedTracks, type Assembly, type GenomeDataTrack, type GenomeEngineHandle, type GenomeScoreTrack, type GenomeTrackArrangement, type GenomeTrackSetting } from '@humanbase/genome';
+import { assemblyNames, useHumanbase, UserTrackError, type GenomeLocation, type UserTrack } from '@humanbase/data';
+import { genomeTrackList, hiddenByDefault, inOrder, isSegmentTrack, moveTrack, noArrangement, suggestedTracks, userDataTrack, type Assembly, type GenomeDataTrack, type GenomeEngineHandle, type GenomeScoreTrack, type GenomeTrackArrangement, type GenomeTrackSetting } from '@humanbase/genome';
 import { Alert, ExportDialog, saveFile, scoreTrackHeight, StoredChoice, TrackSettingsDialog, TracksDrawer, type ActionMenuItem, type ExportSettings, type GenomeCommand, type TrackSettingsValues } from '@humanbase/ui';
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 
 export interface GenomeBrowserToolsOptions {
   /** Names the browser whose track choices are remembered, such as asd or variant-results. */
   browser: string;
   assembly: Assembly;
-  /** The page's own data tracks; suggested tracks for the assembly are added after them. */
+  /** The page's own data tracks; suggested tracks for the assembly, then the person's own, come after them. */
   tracks: readonly GenomeDataTrack[];
   location: GenomeLocation;
 }
@@ -39,6 +39,8 @@ function parsed(stored: string | undefined): unknown {
   }
 }
 
+const noTracks: readonly UserTrack[] = [];
+
 const idsOf = (value: unknown) => (Array.isArray(value) ? value.filter((id): id is string => typeof id === 'string') : undefined);
 
 function readHidden(stored: string | undefined, fallback: readonly string[]): readonly string[] {
@@ -64,12 +66,35 @@ const exportWidth = (text: string) => {
   return Number.isFinite(pixels) ? Math.min(4000, Math.max(200, pixels)) : 800;
 };
 
+/** The tracks someone added to this browser from their own files or by address, read back from where the browser keeps them. */
+function useAddedTracks(group: string) {
+  const { userTracks } = useHumanbase();
+  const [added, setAdded] = useState<{ group: string; tracks: readonly UserTrack[] }>({ group, tracks: noTracks });
+  useEffect(() => {
+    let live = true;
+    userTracks.list(group).then(
+      (tracks) => live && setAdded({ group, tracks }),
+      () => undefined,
+    );
+    return () => {
+      live = false;
+    };
+  }, [userTracks, group]);
+  const tracks = added.group === group ? added.tracks : noTracks;
+  return { userTracks, tracks, change: (next: readonly UserTrack[]) => setAdded({ group, tracks: next }) };
+}
+
 /** Tracks, track menus and Export for a genome browser: which tracks show, their order and settings, remembered in this browser, and the panels that change them. */
 export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, location }: GenomeBrowserToolsOptions) {
   const [engine, setEngine] = useState<GenomeEngineHandle | null>(null);
   const [panel, setPanel] = useState<Panel>();
   const [exportError, setExportError] = useState<string>();
-  const tracks = useMemo(() => [...pageTracks, ...suggestedTracks[assembly]], [pageTracks, assembly]);
+  const [adding, setAdding] = useState(false);
+  const [addError, setAddError] = useState<string>();
+  const [status, setStatus] = useState<string>();
+  const group = `${browser}:${assembly}`;
+  const added = useAddedTracks(group);
+  const tracks = useMemo(() => [...pageTracks, ...suggestedTracks[assembly], ...added.tracks.map(userDataTrack)], [pageTracks, assembly, added.tracks]);
   const defaults = useMemo(() => hiddenByDefault(assembly), [assembly]);
   const shown = useStored(`humanbase:genome-tracks:${browser}:${assembly}`);
   const arranged = useStored(`humanbase:genome-track-layout:${browser}:${assembly}`);
@@ -77,8 +102,12 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
   const arrangement = useMemo(() => readArrangement(arranged.stored), [arranged.stored]);
   const listed = new Map(genomeTrackList(assembly, tracks).map((track) => [track.id, track]));
   const order = inOrder([...listed.keys()], arrangement.order);
-  const entries = order.flatMap((id) => listed.get(id) ?? []).map((track) => ({ id: track.id, label: track.name, source: track.meta, shown: !hidden.includes(track.id) }));
-  const close = () => setPanel(undefined);
+  const entries = order.flatMap((id) => listed.get(id) ?? []).map((track) => ({ id: track.id, label: track.name, source: track.meta, shown: !hidden.includes(track.id), removable: added.tracks.some((mine) => mine.name === track.id) }));
+  const close = () => {
+    setPanel(undefined);
+    setAddError(undefined);
+    setStatus(undefined);
+  };
   const hide = (id: string) => shown.write(hidden.includes(id) ? hidden : [...hidden, id]);
   const arrange = (change: Partial<GenomeTrackArrangement>) => arranged.write({ ...arrangement, ...change });
   const settle = (id: string, setting: GenomeTrackSetting | undefined) => {
@@ -112,6 +141,38 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
     close();
   };
 
+  const add = async (source: File | string) => {
+    setAddError(undefined);
+    setStatus(undefined);
+    if (typeof source === 'string' && added.tracks.some((track) => track.key === URL.parse(source.trim())?.href)) {
+      setAddError('That address is already in Tracks.');
+      return false;
+    }
+    setAdding(true);
+    try {
+      const { track, remembered } = await added.userTracks.add(group, source, assembly, entries.map((entry) => entry.id));
+      added.change([...added.tracks, track]);
+      if (hidden.includes(track.name)) shown.write(hidden.filter((id) => id !== track.name));
+      setStatus(remembered ? `${track.name} is added and shown.` : `${track.name} is added for this visit only. This browser wouldn’t store it, so add it again next time.`);
+      return true;
+    } catch (error) {
+      setAddError(error instanceof UserTrackError ? error.message : 'The track couldn’t be added. Try again.');
+      return false;
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const remove = (id: string) => {
+    const track = added.tracks.find((mine) => mine.name === id);
+    if (!track) return;
+    added.change(added.tracks.filter((mine) => mine !== track));
+    if (hidden.includes(id)) shown.write(hidden.filter((other) => other !== id));
+    if (arrangement.settings[id]) settle(id, undefined);
+    void added.userTracks.remove(group, track.key);
+    setStatus(`${id} is removed.`);
+  };
+
   const exportView = async (settings: ExportSettings) => {
     setExportError(undefined);
     try {
@@ -138,8 +199,14 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
       <TracksDrawer
         open={panel === 'tracks'}
         onClose={close}
-        sources={['suggested']}
         tracks={entries}
+        assembly={assemblyNames[assembly]}
+        adding={adding}
+        addError={addError}
+        status={status}
+        onAddFile={add}
+        onAddUrl={add}
+        onRemove={remove}
         onToggle={(id, on) => (on ? shown.write(hidden.filter((other) => other !== id)) : hide(id))}
         onReset={() => {
           shown.write(defaults);

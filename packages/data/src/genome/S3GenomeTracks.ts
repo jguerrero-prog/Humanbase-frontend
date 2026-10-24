@@ -1,8 +1,18 @@
 // Also imported by scripts/record-samples.mjs, so it imports only packages and uses only syntax Node can strip.
 import type { BigBed, BigWig } from '@gmod/bbi';
 import type { TwoBitFile } from '@gmod/twobit';
+import type { GenericFilehandle } from 'generic-filehandle2';
 import type { Assembly } from './GenomeLocation';
 import { geneModels, segmentOf, trackFiles, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type Segment, type SequenceSpan } from './GenomeTracks.ts';
+
+/** What a bigWig or bigBed file says about itself before any data is read. */
+export interface TrackFileHeader {
+  kind: 'bigWig' | 'bigBed';
+  chromosomes: { name: string; length: number }[];
+  /** The lowest and highest values in the whole file. */
+  scoreMin: number;
+  scoreMax: number;
+}
 
 // The readers load only when a genome browser first draws.
 const readers = () => Promise.all([import('@gmod/bbi'), import('@gmod/twobit'), import('generic-filehandle2')]);
@@ -12,9 +22,26 @@ export class S3GenomeTracks implements GenomeTracks {
   private readonly tracks: string;
   private readonly opened = new Map<string, Promise<BigBed | BigWig | TwoBitFile>>();
   private readonly segmentReads = new Map<string, Promise<Segment[]>>();
+  private readonly blobs = new Map<string, Blob>();
 
   constructor(tracks = 'https://humanbase.s3.amazonaws.com/tracks/') {
     this.tracks = tracks;
+  }
+
+  /** Reads the file under this key from the person's own computer instead of an address. */
+  addFile(key: string, file: Blob): void {
+    this.blobs.set(key, file);
+  }
+
+  async header(url: string): Promise<TrackFileHeader> {
+    const [{ BigWig }, , handles] = await readers();
+    const header = await new BigWig({ filehandle: this.handle(url, handles) }).getHeader();
+    return {
+      kind: header.fileType === 'bigbed' ? 'bigBed' : 'bigWig',
+      chromosomes: Object.values(header.refsByNumber).map(({ name, length }) => ({ name, length })),
+      scoreMin: header.totalSummary.scoreMin,
+      scoreMax: header.totalSummary.scoreMax,
+    };
   }
 
   async genes(assembly: Assembly, span: GenomeSpan): Promise<GeneModel[]> {
@@ -64,13 +91,19 @@ export class S3GenomeTracks implements GenomeTracks {
   private open(url: string, kind: 'bigBed' | 'bigWig' | 'twoBit'): Promise<BigBed | BigWig | TwoBitFile> {
     let file = this.opened.get(url);
     if (!file) {
-      file = readers().then(([{ BigBed, BigWig }, { TwoBitFile }, { RemoteFile }]) => {
-        const filehandle = new RemoteFile(url);
+      file = readers().then(([{ BigBed, BigWig }, { TwoBitFile }, handles]) => {
+        const filehandle = this.handle(url, handles);
         if (kind === 'twoBit') return new TwoBitFile({ filehandle });
         return kind === 'bigBed' ? new BigBed({ filehandle }) : new BigWig({ filehandle });
       });
       this.opened.set(url, file);
     }
     return file;
+  }
+
+  private handle(url: string, { BlobFile, RemoteFile }: typeof import('generic-filehandle2')): GenericFilehandle {
+    const blob = this.blobs.get(url);
+    // BlobFile types its source as undefined, which exactOptionalPropertyTypes won't match to an optional string.
+    return blob ? (new BlobFile(blob) as unknown as GenericFilehandle) : new RemoteFile(url);
   }
 }

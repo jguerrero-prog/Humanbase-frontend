@@ -22,6 +22,11 @@ describe('segmentOf', () => {
     expect(segmentOf({ start: 109_816_600, end: 109_818_400, rest: 'ReprW\t1000\t.\t109816600\t109818400\t127,127,127' })).toEqual({ start: 109_816_601, end: 109_818_400, name: 'ReprW', color: '#7F7F7F', score: 1000 });
     expect(segmentOf({ start: 0, end: 200, rest: 'Tss\t1000\t.\t0\t200\t255,0,0' }).color).toBe('#FF0000');
   });
+
+  it('leaves the color empty for a file with no itemRgb, so the browser draws its own track color', () => {
+    expect(segmentOf({ start: 0, end: 200, rest: 'Peak1\t500\t+' }).color).toBe('');
+    expect(segmentOf({ start: 0, end: 200, rest: 'Peak1\t500\t+\t0\t200\t0' }).color).toBe('');
+  });
 });
 
 describe('SampleGenomeTracks', () => {

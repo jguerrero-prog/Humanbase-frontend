@@ -58,7 +58,7 @@ export interface ScoreTrackOf extends TrackOf<ScoreTrackData> {
   height?: number | undefined;
 }
 
-/** One segment of a segment track, such as a chromatin state, 1-based and inclusive, in the file's own color. */
+/** One segment of a segment track, such as a chromatin state, 1-based and inclusive, in the file's own color or viz-seq-6 without one. */
 export interface SegmentShape {
   start: number;
   end: number;
@@ -362,7 +362,7 @@ function TrackDrawing({ props, layout, marks = true, guide = true, onSegment, in
                   y={top + (segmentHeight - segmentBox) / 2}
                   width={Math.max(1, x(segment.end + 1) - x(segment.start))}
                   height={segmentBox}
-                  fill={segment.color}
+                  fill={segment.color || undefined}
                   data-item={interactive && segment.details ? spanKey(track.name, segment) : undefined}
                   onPointerEnter={onSegment && ((event) => onSegment({ segment, track: track.name, box: event.currentTarget, pointer: event.clientX }))}
                   onPointerLeave={onSegment && (() => onSegment(undefined))}

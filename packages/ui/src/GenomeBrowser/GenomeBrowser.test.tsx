@@ -69,4 +69,24 @@ describe('TracksDrawer', () => {
     fireEvent.click(screen.getByRole('checkbox', { name: 'Conservation' }));
     expect(onToggle).toHaveBeenCalledWith('cons', true);
   });
+
+  it('adds a track from a file, goes back to the list, and removes tracks the person added', async () => {
+    const onAddFile = vi.fn(() => Promise.resolve(true));
+    const onRemove = vi.fn();
+    render(<TracksDrawer inline open assembly="GRCh37/hg19" tracks={[{ id: 'H3K27ac', label: 'H3K27ac', source: 'Your file, 0 to 40', shown: true, removable: true }]} onAddFile={onAddFile} onRemove={onRemove} />);
+    fireEvent.click(screen.getByRole('radio', { name: 'Your file' }));
+    const field = screen.getByLabelText('bigWig or bigBed file');
+    expect(screen.getByText('On GRCh37/hg19. It’s read in this browser and never uploaded.')).toBeInTheDocument();
+    const file = new File(['x'], 'signal.bw');
+    fireEvent.change(field, { target: { files: [file] } });
+    expect(onAddFile).toHaveBeenCalledWith(file);
+    fireEvent.click(await screen.findByRole('button', { name: 'Remove H3K27ac' }));
+    expect(onRemove).toHaveBeenCalledWith('H3K27ac');
+  });
+
+  it('shows why an address couldn’t be added', () => {
+    render(<TracksDrawer inline open tracks={[]} addError="example.org answered HTTP 404. Check the address." />);
+    fireEvent.click(screen.getByRole('radio', { name: 'By URL' }));
+    expect(screen.getByRole('textbox', { name: 'Address of a bigWig or bigBed file' })).toHaveAccessibleDescription(/HTTP 404/);
+  });
 });
