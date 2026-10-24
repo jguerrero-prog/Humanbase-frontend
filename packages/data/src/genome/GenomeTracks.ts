@@ -1,6 +1,12 @@
 // Also imported by scripts/record-samples.mjs, so it imports only packages and uses only syntax Node can strip.
 import type { Assembly } from './GenomeLocation';
 
+/** Each assembly's files on the Humanbase tracks bucket, as the live genome browser reads them. */
+export const trackFiles: Record<Assembly, { genes: string; geneIndex: string; sequence: string }> = {
+  hg19: { genes: 'gencode.bb', geneIndex: 'geneIndex', sequence: 'hg19.2bit' },
+  hg38: { genes: 'GRCh38/gencode.v21.annotation.bb', geneIndex: 'GRCh38/gencode.v21.annotation', sequence: 'GRCh38/hg38.2bit' },
+};
+
 /** A stretch of one chromosome, 1-based and inclusive, with the chr prefix. */
 export interface GenomeSpan {
   chrom: string;

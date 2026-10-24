@@ -1,4 +1,6 @@
 // Also imported by scripts/record-samples.mjs, so it imports only packages and uses only syntax Node can strip.
+import type { Assembly } from './GenomeLocation';
+import { trackFiles } from './GenomeTracks.ts';
 
 /** Where a gene sits on the genome: the span of its transcripts. */
 export interface GeneSpan {
@@ -7,14 +9,14 @@ export interface GeneSpan {
   end: number;
 }
 
-/** Finds a gene's span by name. */
+/** Finds a gene's span by name on an assembly, hg19 unless named. */
 export interface GeneLocator {
-  locate(name: string): Promise<GeneSpan | undefined>;
+  locate(name: string, assembly?: Assembly): Promise<GeneSpan | undefined>;
 }
 
 const transcriptsRead = 10;
 
-/** Looks genes up in the static files the live genome browser reads: the gene name index, then GENCODE transcripts. */
+/** Looks genes up in the static files the live genome browser reads: the assembly's gene name index, then its GENCODE transcripts. */
 export class S3GeneLocator implements GeneLocator {
   private readonly tracks: string;
 
@@ -22,14 +24,15 @@ export class S3GeneLocator implements GeneLocator {
     this.tracks = tracks;
   }
 
-  async locate(name: string): Promise<GeneSpan | undefined> {
+  async locate(name: string, assembly: Assembly = 'hg19'): Promise<GeneSpan | undefined> {
     // The readers load only when someone searches a gene.
     const [{ default: Trix }, { BigBed }, { RemoteFile }] = await Promise.all([import('@gmod/trix'), import('@gmod/bbi'), import('generic-filehandle2')]);
     const word = name.trim().toLowerCase();
-    const index = new Trix(new RemoteFile(`${this.tracks}geneIndex.ixx`), new RemoteFile(`${this.tracks}geneIndex.ix`));
+    const files = trackFiles[assembly];
+    const index = new Trix(new RemoteFile(`${this.tracks}${files.geneIndex}.ixx`), new RemoteFile(`${this.tracks}${files.geneIndex}.ix`));
     const transcripts = (await index.search(word)).filter(([found]) => found === word).map(([, id]) => id.split(',')[0] ?? id);
     if (!transcripts.length) return undefined;
-    const genes = new BigBed({ filehandle: new RemoteFile(`${this.tracks}gencode.bb`) });
+    const genes = new BigBed({ filehandle: new RemoteFile(`${this.tracks}${files.genes}`) });
     const { refsByNumber } = await genes.getHeader();
     const found = (await Promise.all(transcripts.slice(0, transcriptsRead).map((id) => genes.searchExtraIndex(id)))).flat();
     const chromId = found[0]?.chromId;

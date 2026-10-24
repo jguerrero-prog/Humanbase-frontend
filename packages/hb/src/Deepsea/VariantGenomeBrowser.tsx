@@ -34,7 +34,7 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
     onLocationChange(to);
   };
   const example = `${chrom}:${(position - 1000).toLocaleString('en-US')}-${(position + 1000).toLocaleString('en-US')}`;
-  // Gene names come from the hg19 GENCODE index; hg38 results take regions only.
+  // Gene names come from the assembly's own GENCODE index: GENCODE 19 on hg19, GENCODE 21 on hg38.
   const onLocation = async (text: string) => {
     const typed = GenomeLocation.parse(text, assembly);
     if (typed instanceof GenomeLocation) {
@@ -42,10 +42,10 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
       if (kept) move(kept);
       return setLocationError(message);
     }
-    if (!typed || assembly !== 'hg19') return setLocationError(`Enter a region such as ${example}.`);
+    if (!typed) return setLocationError(`Enter a region such as ${example}, or a gene name.`);
     try {
-      const found = await api.asd.find(text);
-      if (found) move(new GenomeLocation(found.location.chrom, found.location.start, found.location.end, assembly));
+      const found = await api.geneLocator.locate(typed.gene, assembly);
+      if (found) move(new GenomeLocation(found.chrom, found.start, found.end, assembly));
       else setLocationError(GenomeLocation.geneNotFound(typed.gene, assembly));
     } catch {
       setLocationError(`The gene index didn’t answer. Try again, or enter a region such as ${example}.`);
@@ -60,7 +60,7 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
       <GenomeBrowserToolbar
         location={location.format()}
         assembly={location.assemblyName}
-        widthHelp={`${GenomeLocation.widthInWords(location.width)} shown.${assembly === 'hg19' ? ' A gene name works too.' : ''}`}
+        widthHelp={`${GenomeLocation.widthInWords(location.width)} shown. A gene name works too.`}
         locationError={locationError}
         zoomStop={zoomStop}
         onLocation={(text) => void onLocation(text)}
