@@ -1,9 +1,9 @@
 import { GenomeLocation, type GenomeTracks } from '@humanbase/data';
-import { genomeCommand, SegmentTable, TrackHeader, type ActionMenuItem, type GenomeCommand } from '@humanbase/ui';
+import { Alert, genomeCommand, SegmentTable, TrackHeader, type ActionMenuItem, type GenomeCommand } from '@humanbase/ui';
 import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState, type Ref } from 'react';
-import { sameRegion, withChr, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeExportOptions, type GenomeRegion, type GenomeTrackArrangement, type GenomeTrackLayout } from './GenomeBrowserEngine';
+import { sameRegion, trackFile, withChr, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeExportOptions, type GenomeRegion, type GenomeTrackArrangement, type GenomeTrackLayout } from './GenomeBrowserEngine';
 import { noArrangement } from './genomeTrackList';
-import { useSegmentTracks } from './tracks/useTrackData';
+import { useOutside, useSegmentTracks } from './tracks/useTrackData';
 import './genome.css';
 
 export type EngineStatus = 'loading' | 'ready' | 'failed';
@@ -147,7 +147,9 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
 
   // Segment tracks are listed as tables under any engine, so their states never rest on color alone.
   const span = { chrom: withChr(region.chrom), start: Math.round(region.start), end: Math.round(region.end) };
-  const segmentTracks = useSegmentTracks(files, tracks.filter((track) => !hidden.includes(track.name)), span);
+  const shownTracks = tracks.filter((track) => !hidden.includes(track.name));
+  const outside = useOutside(files, assembly, span, shownTracks.map(trackFile));
+  const segmentTracks = useSegmentTracks(files, shownTracks, span, outside);
   const location = new GenomeLocation(span.chrom, span.start, span.end, assembly);
 
   // An engine that reports its tracks gets the design system's headers beside them; others keep their own labels.
@@ -186,6 +188,12 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
           <div {...surface} role="region" />
         )}
       </div>
+      {/* Under the tracks rather than above, so crossing a window's edge never shifts what's being dragged. */}
+      {outside.size > 0 && (
+        <Alert tone="info" title="Sample data covers only the area around each example variant" className="genome-outside-note">
+          Turn the API on to browse the whole genome.
+        </Alert>
+      )}
       {segmentTracks.map((track) => (
         <SegmentTable key={track.name} track={track} where={`${location.format()}, ${location.assemblyName}`} />
       ))}

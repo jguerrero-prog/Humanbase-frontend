@@ -7,8 +7,8 @@ import { TrackHeader } from './GenomeBrowserToolbar';
 import { ticksOf } from './ScoreTracks';
 import './GenomeBrowser.css';
 
-/** Whether a track's data is in: loading, ready, or failed to load. */
-export type TrackState = 'loading' | 'ready' | 'failed';
+/** Whether a track's data is in: loading, ready, failed to load, or outside the data there is, which the page says once for every track. */
+export type TrackState = 'loading' | 'ready' | 'failed' | 'outside';
 
 /** The label and value rows an item's details popover lists. */
 export type ItemDetails = DataTooltipProps['rows'];

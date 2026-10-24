@@ -33,6 +33,8 @@ export interface VariantJobFormProps {
   running?: boolean | undefined;
   /** Shown above the form, such as why a job couldn’t start. */
   notice?: ReactNode;
+  /** Where the file comes from at first; the example loads the tool's example file. */
+  defaultSource?: Source | undefined;
 }
 
 const optionOf = (value: VariantModel): SelectOption => {
@@ -72,15 +74,16 @@ function downloadProblems(result: FileCheckResult) {
   saveFile(text, 'problems.tsv', 'text/tab-separated-values');
 }
 
-export function VariantJobForm({ model: initialModel, onModelChange, models, inputs: offered, examples, onRun, running, notice }: VariantJobFormProps) {
+export function VariantJobForm({ model: initialModel, onModelChange, models, inputs: offered, examples, onRun, running, notice, defaultSource = 'upload' }: VariantJobFormProps) {
   const id = useId();
   const [model, setModel] = useState(initialModel);
   const inputs = offered ?? deepseaModels[model].inputs;
   const [kind, setKind] = useState<InputKind>(inputs[0] ?? 'vcf');
   const [genome, setGenome] = useState<Genome>(deepseaModels[initialModel].genomes[0] ?? 'hg19');
-  const [source, setSource] = useState<Source>('upload');
-  const [file, setFile] = useState<ChosenFile>();
-  const [text, setText] = useState('');
+  const initialExample = defaultSource === 'example' ? examples[genome][kind] : undefined;
+  const [source, setSource] = useState<Source>(initialExample ? 'example' : defaultSource);
+  const [file, setFile] = useState<ChosenFile | undefined>(initialExample ? { name: `example.${kind}`, size: initialExample.length } : undefined);
+  const [text, setText] = useState(initialExample ?? '');
   const [title, setTitle] = useState('');
   const [email, setEmail] = useState('');
   const [note, setNote] = useState('');

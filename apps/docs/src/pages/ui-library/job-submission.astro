@@ -1,7 +1,7 @@
 ---
-import { deepseaExamples, deepseaModels, docsPage } from '@humanbase/data';
-import { categoryCrumbs, VariantJobForm } from '@humanbase/hb';
-import { AboutPanel, Accordion, AccordionItem, Breadcrumbs, Button, FileDrop, Icon, RemoveButton, SegmentedControl, Select, TextInput } from '@humanbase/ui';
+import { deepseaExamples, docsPage } from '@humanbase/data';
+import { categoryCrumbs, DeepseaAbout, VariantJobForm } from '@humanbase/hb';
+import { AboutPanel, Breadcrumbs, Button, FileDrop, Icon, RemoveButton, SegmentedControl, Select, TextInput } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -9,7 +9,6 @@ import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import ProductScreen from '../../components/docs/ProductScreen.astro';
-import { SeqweaverModelField } from '../../components/docs/SeqweaverModelField';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const inputTypes = [
@@ -28,12 +27,6 @@ const problems = [
   { line: 14, rule: 'REF is N. Use A, C, G or T.' },
   { line: 220, rule: 'No strand column. Seqweaver needs + or - in column 6.' },
   { line: 1031, rule: 'Position 249,250,622 is past the end of chr1 on GRCh37/hg19.' },
-];
-const examples = [
-  ['example.vcf', 'Variants, 5 columns'],
-  ['example_strand.vcf', 'Variants with strand, for Seqweaver'],
-  ['example.bed', 'Regions'],
-  ['example.fasta', 'Sequences, 1,000 bp for Seqweaver'],
 ];
 
 const checks = [
@@ -128,7 +121,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
     />
   </Intro>
 
-  <DocSection title="The variant form" lead="Seqweaver with a VCF that passed its check. Fields run top to bottom in the order people decide them: what model, what kind of input, which genome, then the file.">
+  <DocSection title="The variant form" lead="The real Seqweaver form, with its example file loaded and checked. Fields run top to bottom in the order people decide them: what model, what kind of input, which genome, then the file.">
     <ProductScreen label="Seqweaver job form" current="Variants & sequences" padded={false}>
       <div class="screen-body">
         <Breadcrumbs items={[categoryCrumbs.variants, { label: 'Seqweaver' }]} />
@@ -136,33 +129,9 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
           <h3>Seqweaver</h3>
           <p>Predict how variants change RNA-binding protein targets and post-transcriptional regulation.</p>
         </div>
-        <div class="screen-columns">
-          <div class="form-column">
-            <div class="form-row">
-              <SeqweaverModelField />
-              <Select label="Genome assembly" options={assemblies} defaultValue="hg19" hint="GRCh37/hg19 or GRCh38/hg38. Coordinates in the file must match." />
-            </div>
-            <div class="choice">
-              <SegmentedControl label="What are you submitting?" segments={inputTypes} defaultValue="vcf" />
-              <p>{deepseaModels.seqweaver.scored}</p>
-            </div>
-            <SegmentedControl label="Add the file" segments={sources} defaultValue="upload" />
-            <FileDrop label="VCF file" hideLabel prompt="Drop a VCF file here, or" hint={dropHint} file={{ name: 'variants.vcf', size: 63488 }} result="1,284 variants on chromosomes 1 to 22 and X, ready to run" />
-            <Accordion size="compact">
-              <AccordionItem title="VCF rules for Seqweaver">
-                <p>Tab-separated: chromosome, position, ID, REF, ALT, then strand (+ or -). A header line is optional.</p>
-              </AccordionItem>
-            </Accordion>
-            <TextInput label="Job title (optional)" placeholder="Untitled" hint="Shown on the job page and in this browser’s job list." />
-            <TextInput label="Email (optional)" type="email" placeholder="name@institution.edu" hint="We’ll send a link when it finishes. The job is saved in this browser either way." />
-            <div class="run">
-              <Button>Run Seqweaver on 1,284 variants</Button>
-              <p>Starts a job; you can leave this page.</p>
-            </div>
-          </div>
-          <AboutPanel tool="Seqweaver" docsHref={deepseaModels.seqweaver.docsHref} headingLevel={4} examples={examples.map(([name, detail]) => ({ name: name ?? '', detail: detail ?? '', onDownload: () => undefined }))}>
-            A deep learning framework for predicting RNA-binding protein target site dysregulation and RNA sequence variant effects.
-          </AboutPanel>
+        <div class="job-columns">
+          <VariantJobForm model="seqweaver" examples={deepseaExamples.seqweaver} defaultSource="example" />
+          <DeepseaAbout model="seqweaver" headingLevel={4} />
         </div>
       </div>
     </ProductScreen>
@@ -215,7 +184,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
 
   <DocSection title="Getting a sequence from the genome" lead="New. FASTA input needs sequences of an exact length, so people leave for NCBI to cut them. Here they enter a position, and Humanbase cuts a sequence of the right length, centered on it.">
     <div class="sequence">
-      <div class="sequence-form" inert>
+      <div class="sequence-form job-form" inert>
         <SegmentedControl label="What are you submitting?" segments={inputTypes} defaultValue="fasta" />
         <SegmentedControl label="Add the sequences" segments={[...sources.slice(0, 2), { value: 'genome', label: 'From the genome' }, sources[2]!]} defaultValue="genome" />
         <div class="position-row">
@@ -306,61 +275,21 @@ ACGTTGCAGGTCCATGACTTGCAATCGGATCCTAGGCTTACGATCGATTGCCAGTACGGTTAACCGTAGCTAGGCATTCG
   }
 
   .screen-title p,
-  .choice p,
-  .run p,
   .check-states p {
     font: var(--type-body-sm);
     color: var(--text-secondary);
   }
 
-  .screen-columns {
-    display: grid;
-    grid-template-columns: minmax(0, 813fr) minmax(0, 384fr);
-    gap: 61px;
-    align-items: start;
-  }
-
-  .choice {
-    display: grid;
-    gap: var(--space-2);
-  }
-
-  .form-column,
-  .sequence-form {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-6);
-  }
-
-  .form-row,
   .position-row {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6);
-  }
-
-  .position-row {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--space-6);
   }
 
   .about-specimen {
     inline-size: min(400px, 100%);
     margin-block-end: var(--space-6);
   }
-
-  .run {
-    display: flex;
-    gap: var(--space-4);
-    align-items: center;
-  }
-
-
-
-
-
-
-
-
 
   .check-states {
     display: grid;
@@ -482,8 +411,9 @@ ACGTTGCAGGTCCATGACTTGCAATCGGATCCTAGGCTTACGATCGATTGCCAGTACGGTTAACCGTAGCTAGGCATTCG
     border-radius: var(--radius-md);
   }
 
+  /* The docs column is narrower than the product page, so the About panel goes under the form. */
   @media (width < 90rem) {
-    .screen-columns,
+    .screen-body :global(.job-columns),
     .sequence {
       grid-template-columns: minmax(0, 1fr);
     }
@@ -491,9 +421,14 @@ ACGTTGCAGGTCCATGACTTGCAATCGGATCCTAGGCTTACGATCGATTGCCAGTACGGTTAACCGTAGCTAGGCATTCG
 
   @media (width < 64rem) {
     .check-states,
-    .form-row,
     .position-row {
       grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (width < 48rem) {
+    .screen-body {
+      padding: var(--space-6) var(--space-4) var(--space-8);
     }
   }
 </style>

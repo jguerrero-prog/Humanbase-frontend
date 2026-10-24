@@ -61,6 +61,8 @@ export interface GenomeTracks {
   segments(bigBedUrl: string, span: GenomeSpan): Promise<Segment[]>;
   /** The bases in the span, or undefined where none are available. */
   sequence(assembly: Assembly, span: GenomeSpan): Promise<SequenceSpan | undefined>;
+  /** Whether reads in the span can be answered, for one file or, without one, the genes and sequence. False only past the recorded sample windows. */
+  covers(assembly: Assembly, span: GenomeSpan, file?: string): Promise<boolean>;
 }
 
 /** One GENCODE transcript as the gene model files store it, 1-based. */
