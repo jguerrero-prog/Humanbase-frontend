@@ -12,18 +12,18 @@ export interface VariantGenomeBrowserProps {
   label: string;
   /** The view, kept by the page so the molecular effects can follow it. */
   location: GenomeLocation;
+  /** The job's own score tracks, drawn above the suggested ones. */
+  tracks: readonly GenomeDataTrack[];
   onLocationChange: (location: GenomeLocation) => void;
   onPreviousVariant?: (() => void) | undefined;
   onNextVariant?: (() => void) | undefined;
   engine?: GenomeBrowserEngineFactory | undefined;
 }
 
-const noTracks: readonly GenomeDataTrack[] = [];
-
-/** The genome around the selected variant, with the system toolbar. With the API off nothing loads, so the section is left out. */
-export function VariantGenomeBrowser({ assembly, chromosome, position, label, location, onLocationChange, onPreviousVariant, onNextVariant, engine = defaultGenomeEngine }: VariantGenomeBrowserProps) {
+/** The genome around the selected variant, with the system toolbar and the job's score tracks. With the API off it draws from the recorded track windows. */
+export function VariantGenomeBrowser({ assembly, chromosome, position, label, location, tracks, onLocationChange, onPreviousVariant, onNextVariant, engine = defaultGenomeEngine }: VariantGenomeBrowserProps) {
   const api = useHumanbase();
-  const { showsSamples, genomeTracks } = api;
+  const { genomeTracks } = api;
   const [failure, setFailure] = useState<Error>();
   const [locationError, setLocationError] = useState<string>();
   const chrom = withChr(chromosome);
@@ -53,9 +53,8 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
   };
   const onRegionChange = (moved: GenomeRegion) => move(new GenomeLocation(moved.chrom, moved.start, moved.end, assembly).fit().location ?? location);
   const zoomStop = (GenomeLocation.zoomStops as readonly number[]).includes(location.width) ? location.width : undefined;
-  const { attach, ...tools } = useGenomeBrowserTools({ browser: 'variant-results', assembly, tracks: noTracks, location });
+  const { attach, ...tools } = useGenomeBrowserTools({ browser: 'variant-results', assembly, tracks, location });
 
-  if (showsSamples) return null;
   return (
     <section className="variant-genome-browser" aria-label={`Genome around ${label}`}>
       <GenomeBrowserToolbar

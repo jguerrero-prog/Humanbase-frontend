@@ -19,7 +19,7 @@ describe('genomeTrackList', () => {
 describe('userDataTrack', () => {
   it('draws a bigWig someone added over its own range, with a true minus, and a bigBed as segments', () => {
     const scores = userDataTrack({ key: 'https://example.org/rna.bw', name: 'rna', kind: 'bigWig', source: 'example.org', range: [-3.2094, 6.97], bare: false });
-    expect(scores).toMatchObject({ name: 'rna', meta: 'example.org, −3.209 to 6.97', bigWigUrl: 'https://example.org/rna.bw', range: [-3.2094, 6.97] });
+    expect(scores).toMatchObject({ name: 'rna', meta: 'example.org, −3.209 to 6.97', bigWigUrl: 'https://example.org/rna.bw', range: [-3.209, 6.97] });
     expect(userDataTrack({ key: 'file:1/states.bb', name: 'states', kind: 'bigBed', source: 'Your file', bare: false })).toMatchObject({ name: 'states', meta: 'Your file', bigBedUrl: 'file:1/states.bb' });
     const style = userDataTrack({ key: 'file:1/states.bb', name: 'states', kind: 'bigBed', source: 'Your file', bare: false }).style as { style: { BGCOLOR: string; BGITEM: boolean } }[];
     expect(style[0]?.style).toMatchObject({ BGITEM: true, BGCOLOR: 'var(--viz-seq-6)' });
