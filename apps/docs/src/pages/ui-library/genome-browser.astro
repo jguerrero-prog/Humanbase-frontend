@@ -1,5 +1,5 @@
 ---
-import { GenomeLocation, SampleClient, SampleGenomeTracks } from '@humanbase/data';
+import { assemblyProblem, GenomeLocation, SampleClient, SampleGenomeTracks } from '@humanbase/data';
 import { geneDetails, isSegmentTrack, scoreDetails, segmentDetails, suggestedTracks } from '@humanbase/genome';
 import { ActionMenu, BrowserSettingsDialog, DataTooltip, ExportDialog, GenomeBrowserToolbar, GenomeTrackFigure, Heatmap, SegmentTable, TrackHeader, TrackSettingsDialog, TracksDrawer, genomeBrowserKeyHelp, type ActionMenuItem } from '@humanbase/ui';
 import { Code } from 'astro:components';
@@ -42,6 +42,7 @@ const suggested = [
   { id: 'sequence', label: 'Genome sequence', source: 'Bases appear from about 200 bp', shown: true },
   { id: 'conservation', label: 'Conservation', source: 'Suggested track, as today', shown: false },
   { id: 'chromhmm', label: 'GM12878 ChromHMM', source: 'Genome segmentation', shown: false },
+  { id: 'yours', label: 'H3K27ac', source: 'Your file, 0 to 40', shown: true, removable: true },
 ];
 const trackSettings = { name: 'Disease impact score', style: 'bars' as const, min: '0', max: '3', height: '50 px', thresholdLeap: 'Off', pinned: true };
 const browserSettings = { reverseTrackpad: false, reverseButtons: false, highlightLocation: false, guideline: 'left' };
@@ -101,12 +102,36 @@ const words = [
   ['Track loading', 'Loading GENCODE 19…'],
   ['Track failed', 'GM12878 ChromHMM didn’t load. Try again, or remove it from Tracks.'],
   ['Nothing in view', 'No variants in this range. Previous variant and Next variant jump to the nearest ones.'],
+  ['Track added', 'H3K27ac is added and shown.'],
+  ['Added, not kept', 'H3K27ac is added for this visit only. This browser wouldn’t store it, so add it again next time.'],
+  ['Wrong assembly', assemblyProblem(['chr1', 'chr2'].map((name) => ({ name, length: GenomeLocation.chromosomes('hg38')[name] ?? 0 })), 'hg19', 'H3K27ac.bw') ?? ''],
+  ['Not an indexed file', '“peaks.bed” is a text file. Convert BED to bigBed with bedToBigBed, or bedGraph and WIG to bigWig with bedGraphToBigWig or wigToBigWig, then add that file.'],
+  ['Not a track file', '“signal.bw” isn’t a bigWig or bigBed file.'],
+  ['Not shown yet', '“reads.bam” can’t be shown here yet. Add a bigWig or bigBed file.'],
+  ['Server won’t share', 'Humanbase couldn’t read the file at example.org. Its server has to let other sites read it (CORS) and answer byte-range requests, or it may be offline.'],
+  ['No byte ranges', 'example.org sent the whole file instead of the parts asked for. Its server has to answer byte-range requests.'],
+  ['Already added', 'That address is already in Tracks.'],
+];
+
+const yourTracks = [
+  ['Formats', 'bigWig for scores and bigBed for segments: indexed files that the browser reads in parts, as it reads Humanbase’s own tracks. Text formats (BED, bedGraph, WIG) need converting with UCSC’s bedToBigBed, bedGraphToBigWig or wigToBigWig first. BAM, CRAM, VCF and GFF would need new track types, so they say so instead of loading.'],
+  ['Size', 'No limit. Only the bytes for the view are read, so large files work.'],
+  ['Your file', 'Read in this browser with the File API and never uploaded; Humanbase has no accounts and no server copy.'],
+  ['By URL', 'An http or https address whose server allows other sites to read it (CORS, with the Range header allowed and Content-Range exposed) and answers byte-range requests with 206. Humanbase’s own track files on S3 do.'],
+  ['Assembly check', 'The file’s chromosome lengths are compared with the browser’s assembly (chromosomeSizes.json, from UCSC). A file on the other assembly says which one it is on; any other mismatch names the chromosome. Files that name chromosomes 1, 2 and X instead of chr1 are read with those names.'],
+  ['Drawing', 'A bigWig draws as viz.seq step 6 bars, as Conservation does, from the file’s lowest value (or 0) to its highest, read from the file’s summary; the header says the range. A bigBed draws as GM12878 ChromHMM does: boxes in the file’s own itemRgb colors, listed under View as table.'],
+  ['Name and source', 'The file’s name without .bw or .bb, numbered when it repeats one in the list. The line under it says Your file, or the address’s host, then the range.'],
+  ['Listed', 'In All tracks after the suggested tracks, on when added, with a Remove button. The drawer goes back to All tracks once a track is added and says so.'],
+  ['Remembered', 'In this browser’s IndexedDB, files included, for each genome browser and assembly. If the browser won’t store a file, such as when it’s larger than the browser allows, the track lasts for this visit and the drawer says so.'],
+  ['Export', 'Shown tracks you added are in the SVG export like any other track.'],
+  ['Reset to default tracks', 'Resets which tracks show. It doesn’t remove tracks you added; Remove does.'],
+  ['Biodalliance', 'The alternative engine reads tracks added by URL itself. Files from your computer are read only by the default engine.'],
 ];
 
 const behavior = [
   ['Follows the selection', 'On a result, selecting a variant centers the browser on it at the current zoom. Moving the browser by hand doesn’t change the selection.'],
   ['Zoom stops', '200 bp, 2 kb, 50 kb and 500 kb, as today; the view can sit between stops, and the field shows the exact width.'],
-  ['Tracks', 'The job’s score tracks and genes are on by default. Suggested tracks, your file and By URL add more; Remove track is in each track menu.'],
+  ['Tracks', 'The job’s score tracks and genes are on by default. Suggested tracks are listed off; Your file and By URL add a bigWig or bigBed track of your own, which has Remove beside it in All tracks.'],
   ['Export', `SVG for publication with today’s options; the file is named after the location, such as ${view.fileName()}.`],
   ['Panels', 'Tracks is a drawer over the page; settings and export are dialogs. None of them resizes the tracks.'],
   ['URL', 'Location and tracks are in the URL, so a view can be shared.'],
@@ -186,7 +211,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
 <DocsLayout title="Genome browser" description="The genome browser: the design system draws its tracks, toolbar, track headers, panels and words; Biodalliance stays available as an alternative engine.">
   <Intro
     lead="Variant results and the ASD Browser show variants in their genomic context. The design system draws the tracks itself from the same Humanbase track files the live site reads, and replaces what people see and touch around them: the toolbar, track headers, panels and words. Biodalliance, the open-source browser the live site uses, stays available as an alternative engine."
-    status="Updated October 22, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+    status="Updated October 23, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
       rules={[
@@ -249,6 +274,12 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
         <BrowserSettingsDialog inline settings={browserSettings} />
       </figure>
     </div>
+  </DocSection>
+
+  <DocSection title="Your tracks" lead="Your file and By URL in the Tracks drawer add a bigWig or bigBed track of your own beside Humanbase’s, as the live site’s Files and + do. Everything stays in your browser.">
+    <DocTable caption="Your tracks rules" columns={['Rule', 'Detail']} widths={['240px']}>
+      {yourTracks.map(([rule, detail]) => <tr><th scope="row">{rule}</th><td>{detail}</td></tr>)}
+    </DocTable>
   </DocSection>
 
   <DocSection title="Browser and heatmap together (ASD Browser)" lead="With many variants in view, the heatmap sits under the browser: one column per variant in genomic order, rows sorted by the size of the center variant’s effect. Clicking a column, or dragging the heatmap, changes the center, and both views follow, as today.">

@@ -4,7 +4,7 @@ import { Field } from '../Field/Field';
 export interface FileFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> {
   label: string;
   hint?: string;
-  error?: string;
+  error?: string | undefined;
 }
 
 export function FileField({ label, id, hint, error, disabled, ...rest }: FileFieldProps) {

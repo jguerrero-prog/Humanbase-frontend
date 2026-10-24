@@ -11,6 +11,7 @@ import { S3GeneLocator } from './genome/S3GeneLocator';
 import type { GenomeTracks } from './genome/GenomeTracks';
 import { SampleGenomeTracks } from './genome/SampleGenomeTracks';
 import { S3GenomeTracks } from './genome/S3GenomeTracks';
+import { UserTracks } from './genome/UserTracks';
 import { DeepseaService } from './deepsea/DeepseaService';
 import { ExpectoService } from './expecto/ExpectoService';
 import { NetwasService } from './jobs/NetwasService';
@@ -34,6 +35,8 @@ export class Humanbase {
   readonly expecto: ExpectoService;
   readonly asd: AsdService;
   readonly genomeTracks: GenomeTracks;
+  /** The tracks people add from their own files or by address; also what genomeTracks reads through. */
+  readonly userTracks: UserTracks;
 
   constructor(
     readonly client: DataClient,
@@ -52,7 +55,9 @@ export class Humanbase {
     this.expecto = new ExpectoService(client);
     // Gene lookups and genome tracks read static files on S3, which also stay off while the API is off.
     this.asd = new AsdService(client, showsSamples ? new SampleGeneLocator(client) : new S3GeneLocator());
-    this.genomeTracks = showsSamples ? new SampleGenomeTracks(client) : new S3GenomeTracks();
+    const files = new S3GenomeTracks();
+    this.userTracks = new UserTracks(showsSamples ? new SampleGenomeTracks(client) : files, files);
+    this.genomeTracks = this.userTracks;
   }
 
   static fromConfig(config: AppConfig): Humanbase {

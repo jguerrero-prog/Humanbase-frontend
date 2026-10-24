@@ -33,7 +33,9 @@ export { AsdService, type AsdFeatureSet, type AsdPage, type AsdWhere } from './a
 export { S3GeneLocator, type GeneLocator, type GeneSpan } from './genome/S3GeneLocator';
 export { SampleGeneLocator } from './genome/SampleGeneLocator';
 export { geneModels, segmentOf, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type Segment, type SequenceSpan, type Transcript } from './genome/GenomeTracks';
-export { S3GenomeTracks } from './genome/S3GenomeTracks';
+export { S3GenomeTracks, type TrackFileHeader } from './genome/S3GenomeTracks';
+export { UserTracks, UserTrackError, assemblyProblem, yourFile, type UserTrack } from './genome/UserTracks';
+export { UserTrackStore, type StoredTrack } from './genome/UserTrackStore';
 export { SampleGenomeTracks, type RecordedWindow } from './genome/SampleGenomeTracks';
 export { useAsdColumns, useAsdEffects, useAsdPage, useAsdRange } from './react/useAsd';
 export { NetworkQuery, dataVersionNames, type ComparedNetwork } from './networks/NetworkQuery';
