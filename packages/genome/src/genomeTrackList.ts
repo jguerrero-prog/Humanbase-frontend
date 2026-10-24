@@ -30,6 +30,8 @@ const conservationRange = [0, 1] as const;
 /** Bars in viz-seq-6 from the range's bottom to its top, as the live site draws Conservation. */
 const barStyle = ([min, max]: readonly [number, number]) => ({ type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 50, MIN: min, MAX: max } });
 const number = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 4 });
+// Biodalliance falls back to BGCOLOR for a segment without itemRgb, so it gets the browser's track color too.
+const userSegmentStyle = chromHmm.style.map((rule) => ({ ...rule, style: { ...rule.style, BGCOLOR: 'var(--viz-seq-6)' } }));
 const withMinus = (value: number) => number.format(value).replace('-', '−');
 
 /** Tracks the live site offers beside the page's own, from the same files; hg19 only, as no GRCh38 copies exist. */
@@ -52,7 +54,7 @@ export const hiddenByDefault = (assembly: Assembly): string[] => suggestedTracks
 
 /** A track someone added: a bigWig drawn as bars over the file's own range, or a bigBed drawn as ChromHMM is, in the file's colors. */
 export function userDataTrack(track: UserTrack): GenomeDataTrack {
-  if (track.kind === 'bigBed') return { name: track.name, meta: track.source, bigBedUrl: track.key, style: chromHmm.style };
+  if (track.kind === 'bigBed') return { name: track.name, meta: track.source, bigBedUrl: track.key, style: userSegmentStyle };
   const range = track.range ?? [0, 1];
   return { name: track.name, meta: `${track.source}, ${withMinus(range[0])} to ${withMinus(range[1])}`, bigWigUrl: track.key, range, style: barStyle(range) };
 }

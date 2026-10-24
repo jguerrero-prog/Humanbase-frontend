@@ -295,6 +295,10 @@
   stroke-width: 1;
 }
 
+.genome-tracks-segment:not([fill]) {
+  fill: var(--viz-seq-6);
+}
+
 .genome-tracks-value {
   font: 700 11px Lato, sans-serif;
   fill: var(--text-default);

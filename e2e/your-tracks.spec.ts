@@ -101,3 +101,28 @@ test('a track by URL reads the file in byte ranges, and says when the server won
   await expect(page.locator('.genome-engine .track-header-name')).toContainText(['ChIP signal']);
   await expect(page.locator('.genome-engine .genome-tracks-bar')).not.toHaveCount(0);
 });
+
+test('a bigBed without itemRgb draws its segments in the browser’s track color, viz-seq-6, in both themes', async ({ page }) => {
+  await sampleApi(page);
+  const peaks = bbiTestFile({ kind: 'bigBed', chromosomes: [{ name: 'chr1', length: sizes('hg19').chr1 ?? 0 }], items: [{ chrom: 'chr1', start: 109_780_000, end: 109_800_000, rest: 'Peak1\t500\t+' }] });
+  for (const scheme of ['light', 'dark'] as const) {
+    await page.emulateMedia({ colorScheme: scheme });
+    await page.goto(example);
+    const drawer = await openTracks(page);
+    await drawer.getByRole('radio', { name: 'Your file' }).check();
+    await drawer.getByLabel('bigWig or bigBed file').setInputFiles({ name: `peaks-${scheme}.bb`, mimeType: 'application/octet-stream', buffer: Buffer.from(peaks) });
+    await expect(drawer.getByRole('status')).toHaveText(`peaks-${scheme} is added and shown.`);
+    await drawer.getByRole('button', { name: 'Done' }).click();
+    const box = page.locator('.genome-engine .genome-tracks-segment').first();
+    await expect(box).not.toHaveAttribute('fill');
+    const [fill, token] = await box.evaluate((element) => {
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--viz-seq-6)';
+      document.body.append(probe);
+      const expected = getComputedStyle(probe).color;
+      probe.remove();
+      return [getComputedStyle(element).fill, expected];
+    });
+    expect(fill).toBe(token);
+  }
+});
