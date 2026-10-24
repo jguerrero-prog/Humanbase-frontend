@@ -57,7 +57,6 @@ const topBarParts = [
   ['Search', 'Genes, GO terms and diseases. The same search as the homepage, so there is one way in.'],
   ['Jobs', 'Shows how many jobs are running. Humanbase has no accounts, so the list holds jobs submitted from this browser; jobs submitted with an email address also get their link by email.'],
 ];
-const topBarTags = [32, 221, 390, 906, 1190];
 
 const itemStates = [
   { title: 'Default', text: 'No fill', props: {} },
@@ -301,9 +300,14 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
   </DocSection>
 
   <DocSection title="Top bar" lead="64px, emerald, on every page. It stays at the top when the page scrolls, with elevation 3 once content passes under it.">
-    <figure class="stage topbar-stage">
-      <TopBar sections={sections} jobs={jobs} openSection="Variants & sequences" scrolled={false} />
-      {topBarTags.map((x, index) => <span class="tag" style={`--x: ${x}px`} aria-hidden="true">{index + 1}</span>)}
+    <figure class="topbar-specimen">
+      <figcaption class="variant-label">1280px and up, with the Variants & sequences menu open. Scroll sideways for search and Jobs.</figcaption>
+      <div class="topbar-frame">
+        <div class="topbar-stage">
+          <TopBar sections={sections} current="Genes & gene sets" jobs={jobs} openSection="Variants & sequences" scrolled={false} />
+          {topBarParts.map((_, index) => <span class="tag" style={`position-anchor: --topbar-part-${index + 1}`} aria-hidden="true">{index + 1}</span>)}
+        </div>
+      </div>
       <div class="topbar-legend">
         <ol class="legend">
           {topBarParts.map(([title, text], index) => <li><span class="tag-number">{index + 1}</span><div><strong>{title}</strong><p>{text}</p></div></li>)}
@@ -313,7 +317,6 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
           <p>Humanbase has no user profiles. Jobs and display settings, such as motion and table density, are kept in this browser. Display settings are linked from the footer.</p>
         </aside>
       </div>
-      <figcaption class="visually-hidden">The top bar with the Variants & sequences menu open, its parts numbered.</figcaption>
     </figure>
   </DocSection>
 
@@ -654,30 +657,61 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     color: var(--text-secondary);
   }
 
-  .stage,
   .tablet {
     position: relative;
     margin: 0;
   }
 
-  .stage :global(.top-bar),
+  .topbar-stage :global(.top-bar),
   .tablet :global(.top-bar),
   .phone :global(.top-bar) {
     position: relative;
   }
 
-  .topbar-stage {
+  .topbar-specimen {
     display: grid;
-    overflow: clip;
-    min-block-size: 755px;
-    padding-block-start: var(--space-14);
+    gap: 10px;
+    margin: 0;
+  }
+
+  /* The full bar at its own width, so the column scrolls instead of the bar switching to its phone layout. */
+  .topbar-frame {
+    overflow-x: auto;
     background: var(--surface-subtle);
     border-radius: var(--radius-md);
   }
 
+  .topbar-stage {
+    position: relative;
+    inline-size: 1440px;
+    min-block-size: 480px;
+    padding-block-start: var(--space-14);
+  }
+
+  /* Each tag is anchored to the part it numbers, so it follows the real bar. */
+  .topbar-stage :global(.top-bar-home) { anchor-name: --topbar-part-1; }
+  .topbar-stage :global(.top-bar-sections .nav-item[aria-current]) { anchor-name: --topbar-part-2; }
+  .topbar-stage :global(.top-bar-sections .nav-item[aria-expanded="true"]) { anchor-name: --topbar-part-3; }
+  .topbar-stage :global(.nav-menu-panel:not([hidden]) .nav-menu-group:first-child li:first-child .nav-menu-link-image) { anchor-name: --topbar-part-4; }
+  .topbar-stage :global(.top-bar-search) { anchor-name: --topbar-part-5; }
+  .topbar-stage :global(.jobs-menu .top-bar-jobs) { anchor-name: --topbar-part-6; }
+
   .topbar-stage .tag {
     position: absolute;
-    inset: 20px auto auto var(--x);
+    z-index: 1;
+    inset-block-end: calc(anchor(top) + var(--space-3));
+    justify-self: anchor-center;
+  }
+
+  .topbar-stage .tag:nth-of-type(4) {
+    inset-block: anchor(top) auto;
+    inset-inline: auto calc(anchor(left) + var(--space-2));
+  }
+
+  @supports not (anchor-name: --a) {
+    .topbar-stage .tag {
+      display: none;
+    }
   }
 
   .tag,
@@ -691,16 +725,16 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
 
   .topbar-legend {
     display: grid;
-    gap: var(--space-4);
-    align-content: start;
-    justify-self: end;
-    inline-size: 373px;
-    margin: 12px var(--space-6) var(--space-6) 0;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: start;
+    margin-block-start: var(--space-4);
   }
 
   .legend {
     display: grid;
-    gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--space-4) var(--space-6);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -1011,8 +1045,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     }
 
     .topbar-legend {
-      inline-size: auto;
-      margin-inline-start: var(--space-6);
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .levels li:not(:last-child)::after {
