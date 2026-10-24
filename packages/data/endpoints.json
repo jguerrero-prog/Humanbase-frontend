@@ -515,7 +515,7 @@
       "path": "/api/deepsea/{name}/feature_predictions/",
       "documented": true,
       "example": "/api/deepsea/DNA_Binding/feature_predictions/?chr_and_variant_range=1:2230000:2440000",
-      "$note": "Precomputed predictions for every ASD variant in a range: DNA_Binding has 2,002 features, RNA_Binding fewer. Samples round to two decimals: DNA for the default range, CHD8 and SCN2A; RNA for the default range.",
+      "$note": "Precomputed predictions for every variant in a range: the ASD variants on DNA_Binding (2,002 features) and RNA_Binding, and Seqweaver's gnomAD variants with score_type=seqweaver (232 features, each record with its variant_score). Samples round to two decimals: DNA for the default range, CHD8 and SCN2A; RNA for the default range; Seqweaver gnomAD for 2 kb at the default range's center, since the whole 210 kb range is 13.7 MB.",
       "samples": [
         {
           "path": "/api/deepsea/DNA_Binding/feature_predictions/?chr_and_variant_range=1:2230000:2440000",
@@ -532,10 +532,15 @@
         {
           "path": "/api/deepsea/RNA_Binding/feature_predictions/?chr_and_variant_range=1:2230000:2440000",
           "digits": 2
+        },
+        {
+          "path": "/api/deepsea/SeqWeaver/feature_predictions/?score_type=seqweaver&chr_and_variant_range=1:2334000:2336000",
+          "digits": 2
         }
       ],
       "usedBy": [
-        "AsdService.predictions"
+        "AsdService.predictions",
+        "DeepseaService.precomputedPredictions"
       ]
     },
     {
@@ -615,9 +620,10 @@
     ]
   },
   "genomeTracks": {
-    "$note": "Not the API: the genome browser reads gene models, scores, segments and sequence from the static track files on S3. pnpm samples:record saves each window padded by its own width on both sides, the listed score files over it (a file with bins, such as per-base conservation, summarised to about that many values), the listed segment files (bigBed, such as GM12878 ChromHMM) over it, and 2 kb of sequence around its center, into genome/tracks.json. The windows from chr1:109792590 on cover the variants whose effects the Seqweaver, Sei, Beluga and ExPecto sample jobs record, with each job's own score files. The windows from chr2:113587327 on cover the genome browser page (/genome/) for the genes and variants its sample links open: IL1B in Networks, IRGM and its rsID results, PTEN, KRT6B in the NetWAS sample, rs531708574 and chr1:877047, with humanbase.io's /genome tracks.",
+    "$note": "Not the API: the genome browser reads gene models, scores, segments and sequence from the static track files on S3. pnpm samples:record saves each window padded by its own width on both sides, the listed score files over it (a file with bins, such as per-base conservation, summarised to about that many values), the listed segment files (bigBed, such as GM12878 ChromHMM) over it, and 2 kb of sequence around its center, into genome/tracks.json. The windows from chr1:109792590 on cover the variants whose effects the Seqweaver, Sei, Beluga and ExPecto sample jobs record, with each job's own score files. The windows from chr2:113587327 on, and the gnomAD scores in the chr1:2230000 and CHD8, SCN2A and CHD9 windows, cover the genome browser page (/genome/) for the genes and variants its sample links open: IL1B in Networks, IRGM and its rsID results, PTEN, KRT6B in the NetWAS sample, rs531708574 and chr1:877047, with humanbase.io's /genome tracks, gnomAD summarised as conservation is. chr1:2334000-2336000 covers the Seqweaver gnomAD browser's sample view with its gnomAD track; it comes first, so that view reads every gnomAD score rather than a summary.",
     "tracks": "https://humanbase.s3.amazonaws.com/tracks/",
     "windows": [
+      { "assembly": "hg19", "region": "chr1:2334000-2336000", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/seqweaver_gnomad.diff.meanlog.bw"] },
       { "assembly": "hg19", "region": "chr1:2230000-2440000", "scores": [{ "url": "https://s3-us-west-2.amazonaws.com/humanbase/tracks/seqweaver_gnomad.diff.meanlog.bw", "bins": 1000 }, "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
       { "assembly": "hg19", "region": "chr14:21853352-21905457", "scores": [{ "url": "https://s3-us-west-2.amazonaws.com/humanbase/tracks/seqweaver_gnomad.diff.meanlog.bw", "bins": 1000 }, "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
       { "assembly": "hg19", "region": "chr2:166095911-166248818", "scores": [{ "url": "https://s3-us-west-2.amazonaws.com/humanbase/tracks/seqweaver_gnomad.diff.meanlog.bw", "bins": 1000 }, "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },

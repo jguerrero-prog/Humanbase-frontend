@@ -14,5 +14,7 @@ export function diseaseImpactTracks(trainedOn?: string): GenomeScoreTrack[] {
   );
 }
 
-/** Seqweaver's precomputed effect for gnomAD variants (log e-value, GRCh37/hg19), drawn over 0 to 3 as on humanbase.io. */
-export const seqweaverGnomadTrack: GenomeScoreTrack = scoreTrack({ name: 'Seqweaver gnomAD', source: 'Model score', bigWigUrl: `${tracks}/seqweaver_gnomad.diff.meanlog.bw`, range: [0, 3] });
+/** Seqweaver's precomputed effect for gnomAD variants (log e-value, GRCh37/hg19), over the range the page draws: humanbase.io's /seqweaver 1.5 to 3, its /genome 0 to 3. */
+export function seqweaverGnomadTrack(range: readonly [number, number]): GenomeScoreTrack {
+  return scoreTrack({ name: 'Seqweaver gnomAD', source: 'Model score', bigWigUrl: `${tracks}/seqweaver_gnomad.diff.meanlog.bw`, range });
+}

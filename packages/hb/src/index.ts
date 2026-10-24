@@ -53,3 +53,5 @@ export {
   type TissueFileColumn,
   type TissueNetworks,
 } from './content/downloads/downloads';
+export { PrecomputedVariantBrowser, type PrecomputedVariantBrowserProps, type PrecomputedVariantSet, type PrecomputedVariantState } from './PrecomputedVariants/PrecomputedVariantBrowser';
+export { seqweaverGnomad, seqweaverGnomadHref } from './PrecomputedVariants/seqweaverGnomad';

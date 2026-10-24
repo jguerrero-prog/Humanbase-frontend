@@ -188,13 +188,18 @@ function geneBox({ gene, row, labelAt, label }: PlacedGene, geneTop: number, x: 
 }
 
 /** Each bar from 0 to its value: at least 2px wide and 1px tall, centered on its bases. */
-function scoreBarsOf({ min, max, values }: ScoreTrackData, top: number, height: number, x: (position: number) => number, perBase: number) {
+function scoreBarsOf(track: string, { min, max, values }: ScoreTrackData, top: number, height: number, x: (position: number) => number, perBase: number) {
   const yOf = (value: number) => top + ((max - Math.max(min, Math.min(max, value))) / (max - min)) * (height - 8) + 4;
   const zero = yOf(0);
+  // A file may score one position more than once, such as once per allele; each repeat gets its own key.
+  const seen = new Map<number, number>();
   const bars = values.map((point) => {
     const [y1, y2] = [zero, yOf(point.value)].sort((a, b) => a - b) as [number, number];
     const width = Math.max(2, x(point.end + 1) - x(point.start));
-    return { point, box: { left: x(point.start) + (perBase - width) / 2, top: y1, width, height: Math.max(1, y2 - y1) } };
+    const repeat = seen.get(point.start) ?? 0;
+    seen.set(point.start, repeat + 1);
+    const key = repeat ? `${spanKey(track, point)} ${repeat + 1}` : spanKey(track, point);
+    return { point, key, box: { left: x(point.start) + (perBase - width) / 2, top: y1, width, height: Math.max(1, y2 - y1) } };
   });
   return { yOf, zero, bars };
 }
@@ -227,8 +232,8 @@ function itemGroupsOf({ width, scores = [], segments = [], genes }: GenomeTrackV
       top,
       items:
         track.state === 'ready' && track.data
-          ? scoreBarsOf(track.data, top, height, x, width / span).bars.flatMap(({ point, box }) =>
-              point.details ? [{ key: spanKey(track.name, point), label: `${point.value.toFixed(2)} at ${spanWords(point)}`, details: point.details, box: scoreTarget(box, top, height) }] : [],
+          ? scoreBarsOf(track.name, track.data, top, height, x, width / span).bars.flatMap(({ point, key, box }) =>
+              point.details ? [{ key, label: `${point.value.toFixed(2)} at ${spanWords(point)}`, details: point.details, box: scoreTarget(box, top, height) }] : [],
             )
           : [],
     };
@@ -323,20 +328,20 @@ function TrackDrawing({ props, layout, marks = true, guide = true, onSegment, in
         {scores.map((track) => {
           const [top, height] = [topOf(`score-${track.name}`), track.height ?? scoreTrackHeight];
           if (track.state !== 'ready' || !track.data) return <g key={track.name}>{stateNote(track, top, height)}</g>;
-          const { yOf, zero, bars } = scoreBarsOf(track.data, top, height, x, perBase);
+          const { yOf, zero, bars } = scoreBarsOf(track.name, track.data, top, height, x, perBase);
           const chosen = marked && track.data.values.find((point) => point.start <= marked.position && point.end >= marked.position);
           return (
             <g key={track.name}>
               <line className="score-tracks-baseline" x1={-width} y1={zero} x2={2 * width} y2={zero} />
-              {bars.map(({ point, box }) => (
+              {bars.map(({ point, key, box }) => (
                 <rect
-                  key={point.start}
+                  key={key}
                   className={point === chosen ? 'genome-tracks-bar is-selected' : 'genome-tracks-bar'}
                   x={box.left}
                   y={box.top}
                   width={box.width}
                   height={box.height}
-                  data-item={interactive && point.details ? spanKey(track.name, point) : undefined}
+                  data-item={interactive && point.details ? key : undefined}
                 />
               ))}
               {chosen && (

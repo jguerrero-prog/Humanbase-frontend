@@ -17,7 +17,7 @@ export interface GenomeBrowserPreviewProps {
 
 // humanbase.io's /genome tracks, in its order; Conservation and GM12878 ChromHMM are offered in Tracks, hidden, as there.
 const tracks: Record<GenomeBrowserView['assembly'], readonly GenomeDataTrack[]> = {
-  hg19: [seqweaverGnomadTrack, ...diseaseImpactTracks('de novo ASD')],
+  hg19: [seqweaverGnomadTrack([0, 3]), ...diseaseImpactTracks('de novo ASD')],
   hg38: [],
 };
 
