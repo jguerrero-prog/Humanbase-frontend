@@ -47,7 +47,7 @@ export const genomeBrowserKeyHelp: readonly (readonly [string, string])[] = [
   ['+ and -', 'Zoom in and out one step.'],
   ['Space', 'Toggles between the last two zoom levels, as today.'],
   ['Ctrl and arrows', 'Previous or next variant; the buttons say the same.'],
-  ['A, E, X', 'Open Tracks, track settings for the selected track, and Export.'],
+  ['A, X', 'Open Tracks and Export.'],
   ['C', 'Clear highlights.'],
 ];
 

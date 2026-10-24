@@ -36,7 +36,7 @@ const featureSets = [
   { value: 'rna', label: 'RNA features' },
 ];
 const sampleHelp = 'With the API off, the sample data covers chr1:2,230,000-2,440,000 and the CHD8, SCN2A and CHD9 examples. Search one of those, or turn the API on.';
-// The live ASD page's two impact tracks, with the style Biodalliance reads; 50px tall, per the genome browser docs.
+// The live ASD page's two impact tracks, with the style Biodalliance reads.
 const impactRange = [-0.4, 3] as const;
 const impactStyle = { type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 50, MIN: impactRange[0], MAX: impactRange[1] } };
 const impactTracks: readonly GenomeDataTrack[] = [
