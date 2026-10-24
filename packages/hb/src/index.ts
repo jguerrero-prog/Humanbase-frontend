@@ -1,4 +1,4 @@
-export { VariantJobForm, type VariantJob, type VariantJobFormProps } from './VariantJobForm/VariantJobForm';
+export { ModelHint, VariantJobForm, type VariantJob, type VariantJobFormProps } from './VariantJobForm/VariantJobForm';
 export { NetwasGenes, type NetwasGenesProps } from './NetwasGenes/NetwasGenes';
 export { AsdBrowser, type AsdBrowserProps, type AsdView } from './AsdBrowser/AsdBrowser';
 export { AsdExplorer, type AsdExplorerProps, type AsdState } from './AsdBrowser/AsdExplorer';

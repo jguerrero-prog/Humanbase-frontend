@@ -1,30 +1,37 @@
 import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type InputKind, type VariantModel } from '@humanbase/data';
-import { AboutPanel, Alert, saveFile } from '@humanbase/ui';
-import { useState, type ReactNode } from 'react';
+import { AboutPanel, Alert, DocsLink, saveFile } from '@humanbase/ui';
+import { useState } from 'react';
 import { expressionEffectsLink } from '../Expecto/geneExpressionTools';
 import '../Jobs/JobForm.css';
-import { VariantJobForm, type VariantJob } from '../VariantJobForm/VariantJobForm';
+import { VariantJobForm, type VariantJob, type VariantJobFormProps } from '../VariantJobForm/VariantJobForm';
 
 export interface DeepseaFormProps {
   model: VariantModel;
-  /** Opens another model's page when the Model field changes. */
-  onModelChange: (model: VariantModel) => void;
+  /** Called when the Model field changes, such as to put the model in the URL. */
+  onModelChange?: (model: string) => void;
+  /** The models the Model field offers; without it, only this form's model. */
+  models?: VariantJobFormProps['models'];
+  /** The inputs the form offers, when not every one the model takes. */
+  inputs?: readonly InputKind[] | undefined;
   /** Opens the new job's page. */
   onStarted: (link: string) => void;
-  /** Replaces the form's Model field, as the Expression effects page's ExPecto or ExPecto SC choice does. */
-  modelField?: ReactNode;
-  /** What the model can score, from its config. */
-  scoreable?: string;
 }
 
 type Failure = 'busy' | 'off' | 'refused' | 'failed';
 
 const number = new Intl.NumberFormat('en-US');
 
-/** Where a model's job form is: ExPecto's sits on Expression effects' Submit variants tab, in silico mutagenesis has its own path. */
+const formLinks: Record<VariantModel, string> = {
+  sei: '/variant-effects/',
+  beluga: '/variant-effects/?model=beluga',
+  insilico: '/variant-effects/?tab=region-scan',
+  seqweaver: '/seqweaver/',
+  expecto: expressionEffectsLink({ tab: 'submit-variants' }),
+};
+
+/** Where a model's job form is: Sei, Beluga and region scan share Variant effects, ExPecto's sits on Expression effects' Submit variants tab. */
 export function deepseaFormLink(model: VariantModel): string {
-  if (model === 'expecto') return expressionEffectsLink({ tab: 'submit-variants' });
-  return model === 'insilico' ? '/ism/' : `/${model}/`;
+  return formLinks[model];
 }
 
 export function deepseaJobLink(id: string): string {
@@ -32,7 +39,7 @@ export function deepseaJobLink(id: string): string {
 }
 
 /** The Sei, Beluga or Seqweaver form: checks the file in the browser, starts the job and keeps it in this browser's job list. */
-export function DeepseaForm({ model, onModelChange, onStarted, modelField, scoreable }: DeepseaFormProps) {
+export function DeepseaForm({ model, onModelChange, models, inputs, onStarted }: DeepseaFormProps) {
   const api = useHumanbase();
   const [running, setRunning] = useState(false);
   const [failure, setFailure] = useState<Failure>();
@@ -65,7 +72,7 @@ export function DeepseaForm({ model, onModelChange, onStarted, modelField, score
 
   return (
     <div className="job-columns">
-      <VariantJobForm key={model} model={model} onModelChange={onModelChange} examples={examples} onRun={run} running={running} notice={notice} modelField={modelField} scoreable={scoreable} />
+      <VariantJobForm key={model} model={model} onModelChange={onModelChange} models={models} inputs={inputs} examples={examples} onRun={run} running={running} notice={notice} />
       <DeepseaAbout model={model} />
     </div>
   );
@@ -77,7 +84,8 @@ export function DeepseaAbout({ model }: { model: VariantModel }) {
   return (
     <AboutPanel
       tool={info.inSentence ?? info.tool}
-      docsHref={info.docsHref}
+      docsHref={info.docsName ? undefined : info.docsHref}
+      links={info.docsName && <DocsLink href={info.docsHref}>Read the {info.docsName} documentation</DocsLink>}
       examples={Object.entries(deepseaExamples[model].hg19).map(([kind, text]) => ({
         name: `example.${kind}`,
         detail: exampleDetail(kind as InputKind, model),

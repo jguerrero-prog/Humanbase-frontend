@@ -18,18 +18,25 @@ export interface DeepseaModel {
   /** The ds_model name the API uses. */
   apiName: 'Sei' | 'Beluga' | 'SeqWeaver';
   tool: string;
-  /** The tool's name mid-sentence, when it differs, as in Run in silico mutagenesis. */
+  /** The tool's name mid-sentence, when it differs, as in Run region scan. */
   inSentence?: string;
   /** The genomes the API accepts for this tool; the first is the default. */
   genomes: readonly Genome[];
   /** The inputs the tool takes; the first is where its form opens. */
   inputs: readonly InputKind[];
   option: string;
+  /** Under the option in the Model menu, such as Earlier model: 2,002 chromatin features. */
+  optionDetail?: string;
   /** The model field's label on a result, such as Seqweaver (RNA). */
   kind: string;
   summary: string;
   about: string;
+  /** The Model field's hint: how this model sits beside the others. */
   otherModels: string;
+  /** A phrase of that hint that links to another page, as Variant effects for Seqweaver. */
+  otherModelsLink?: { text: string; href: string };
+  /** What the form can score, shown under its input choice. */
+  scored?: string;
   /** What each feature is: an RNA-binding protein, a chromatin feature or a sequence class. */
   featureNoun: string;
   featurePlural: string;
@@ -47,6 +54,8 @@ export interface DeepseaModel {
   threshold: number;
   bins: EffectBins;
   docsHref: string;
+  /** The documentation's name mid-sentence when the form uses another, as in Read the in silico mutagenesis documentation. */
+  docsName?: string;
   /** ExPecto runs as a Beluga job with expecto turned on; it has no Model choice of its own. */
   basedOn?: VariantModel;
   expecto?: boolean;
@@ -67,10 +76,12 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     genomes: ['hg19', 'hg38'],
     inputs: ['vcf', 'bed', 'fasta'],
     option: 'Sei (DNA, 2021)',
+    optionDetail: 'Current model: 40 sequence classes from 21,907 chromatin profiles',
     kind: 'Sei (DNA)',
     summary: 'Predict how variants change regulatory activity, across 40 sequence classes built from 21,907 chromatin profiles.',
     about: 'Sei is a deep-learning-based framework for systematically predicting sequence regulatory activities and applying sequence information to understand human genetics data.',
-    otherModels: 'Beluga also predicts DNA effects; Seqweaver predicts RNA effects.',
+    otherModels: 'Sei is the current model. Beluga, from 2019, is still available.',
+    scored: 'Variants anywhere in the genome can be scored.',
     featureNoun: 'sequence class',
     featurePlural: 'sequence classes',
     verb: '',
@@ -88,10 +99,12 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     genomes: ['hg19', 'hg38'],
     inputs: ['vcf', 'bed', 'fasta'],
     option: 'Beluga (DNA, 2019)',
+    optionDetail: 'Earlier model: 2,002 chromatin features',
     kind: 'Beluga (DNA)',
     summary: 'Predict how variants change chromatin features: transcription factor binding, histone marks and DNase sensitivity across cell types.',
     about: 'Beluga is a deep learning framework for predicting genomic variant effects on regulatory features using a convolutional neural network trained on chromatin profiling data.',
-    otherModels: 'Sei also predicts DNA effects; Seqweaver predicts RNA effects.',
+    otherModels: 'Beluga is the earlier model, from 2019. Sei, from 2021, is the current model.',
+    scored: 'Variants anywhere in the genome can be scored.',
     featureNoun: 'chromatin feature',
     featurePlural: 'chromatin features',
     verb: '',
@@ -110,7 +123,9 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     kind: 'Seqweaver (RNA)',
     summary: 'Predict how variants change RNA-binding protein targets and post-transcriptional regulation.',
     about: 'Seqweaver is a deep learning framework for predicting RNA-binding protein target site dysregulation and RNA sequence variant effects.',
-    otherModels: 'Sei and Beluga predict DNA effects.',
+    otherModels: 'Seqweaver predicts RNA effects. For DNA effects, use Variant effects.',
+    otherModelsLink: { text: 'Variant effects', href: '/variant-effects/' },
+    scored: 'Variants near genes and splice junctions can be scored.',
     featureNoun: 'protein',
     featurePlural: 'proteins',
     verb: 'binding',
@@ -125,12 +140,13 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     tool: 'ExPecto',
     genomes: ['hg19'],
     inputs: ['vcf'],
-    option: 'Beluga (DNA, 2019)',
+    option: 'ExPecto (tissues)',
     kind: 'ExPecto (Beluga model)',
     summary: 'Predict how variants change gene expression across tissues.',
     about:
       'ExPecto leverages deep learning-based sequence models trained on chromatin profiling data, and integrated with spatial transformation and regularized linear models. This framework does not use any variant information, enabling prediction of the expression effect for any variant, even those that are rare or have never been previously observed.',
-    otherModels: 'ExPecto builds on Beluga’s chromatin predictions.',
+    otherModels: 'ExPecto is the tissue model; ExPecto SC covers primary cell types.',
+    scored: 'Variants within 20 kb of a gene’s start can be scored.',
     // ExPecto jobs also list Beluga's dis and mean-evalue scores, but the API answers 500 for them.
     variantScores: ['expecto'],
     featureNoun: 'tissue',
@@ -147,16 +163,16 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
   insilico: {
     id: 'insilico',
     apiName: 'Beluga',
-    tool: 'In silico mutagenesis',
+    tool: 'Region scan',
     genomes: ['hg19', 'hg38'],
-    inSentence: 'in silico mutagenesis',
+    inSentence: 'region scan',
     inputs: ['fasta'],
     option: 'Beluga (DNA, 2019)',
     kind: 'Beluga (DNA)',
     summary: 'Mutate every base of a sequence and see which changes move each of Beluga’s 2,002 chromatin features.',
     about:
-      'Perform in silico saturated mutagenesis to discover informative regulatory features within any sequence: it predicts the regulatory effect of mutating every base of the sequence, for each chromatin feature.',
-    otherModels: 'In silico mutagenesis runs on Beluga.',
+      'Perform in silico saturated mutagenesis to discover informative regulatory features within any sequence: it predicts the regulatory effect of mutating every base of the input sequence.',
+    otherModels: 'Region scan mutates every base of each sequence. It runs on Beluga.',
     featureNoun: 'chromatin feature',
     featurePlural: 'chromatin features',
     verb: '',
@@ -164,12 +180,16 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     threshold: 0.5,
     bins: { strong: 0.5, moderate: 0.25, weak: 0.1 },
     docsHref: docsPage('in-silico-mutagenesis'),
+    docsName: 'in silico mutagenesis',
     basedOn: 'beluga',
     insilico: true,
   },
 };
 
-/** The models a Model field offers; ExPecto has its own page. */
+/** The Variant effects page's models, newest first; the first is the default. */
+export const variantEffectsModels: readonly VariantModel[] = ['sei', 'beluga'];
+
+/** Sei, Beluga and Seqweaver: the models that aren't another tool run on Beluga. */
 export const variantModels = (Object.keys(deepseaModels) as VariantModel[]).filter((model) => !deepseaModels[model].basedOn);
 
 export function modelOf(apiName: string): DeepseaModel | undefined {

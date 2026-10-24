@@ -95,10 +95,13 @@ describe('ExpressionEffects', () => {
     expect(props.onModelChange).toHaveBeenCalledWith('expecto');
   });
 
-  it('puts the model first on the ExPecto form, with what it can score', () => {
+  it('puts the model first on the ExPecto form, with what it can score, and offers ExPecto SC', async () => {
     withSamples(<ExpressionEffects {...props} tab="submit-variants" model="expecto" />);
     expect(screen.getByRole('combobox', { name: 'Model' })).toHaveTextContent('ExPecto (tissues)');
-    expect(screen.getByText('Variants within 20 kb of a gene’s start can be scored.')).toBeInTheDocument();
+    expect(screen.getAllByText('Variants within 20 kb of a gene’s start can be scored.')).toHaveLength(1);
+    await userEvent.click(screen.getByRole('combobox', { name: 'Model' }));
+    await userEvent.click(screen.getByRole('option', { name: 'ExPecto SC (cell types)' }));
+    expect(props.onModelChange).toHaveBeenCalledWith('expecto-sc');
   });
 
   it('links each tab, model and gene, leaving the defaults out', () => {

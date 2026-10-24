@@ -20,6 +20,9 @@ export interface ExpressionEffectsProps {
 }
 
 const models = (Object.keys(geneExpressionTools) as GeneExpressionTool[]).map((value) => ({ value, label: geneExpressionTools[value].option }));
+// The job form offers ExPecto from its own config and ExPecto SC, which has no form, as a plain option.
+const formModels = ['expecto', { value: 'expecto-sc', label: geneExpressionTools['expecto-sc'].option }] as const;
+const isModel = (value: string): value is GeneExpressionTool => value in geneExpressionTools;
 
 const unavailable: Record<Exclude<ExpressionTab, 'gene'>, { title: string; text: string }> = {
   rsid: { title: 'rsID search isn’t available for ExPecto SC yet', text: 'Humanbase has no list of ExPecto SC variants to search yet. ExPecto’s tissue predictions can be searched now.' },
@@ -29,10 +32,11 @@ const unavailable: Record<Exclude<ExpressionTab, 'gene'>, { title: string; text:
 /** One tab of Expression effects: the model first, then a gene, an rsID search or a variant job. */
 export function ExpressionEffects({ tab, model, onModelChange, query, onQueryChange, onOpen }: ExpressionEffectsProps) {
   const tool = geneExpressionTools[model];
-  const modelField = <Select label="Model" options={models} value={model} onChange={(value) => onModelChange(value as GeneExpressionTool)} hint={tool.modelHint} />;
+  const choose = (value: string) => isModel(value) && onModelChange(value);
+  const modelField = <Select label="Model" options={models} value={model} onChange={choose} hint={tool.modelHint} />;
 
   if (tab === 'submit-variants' && tool.tabs.includes(tab)) {
-    return <DeepseaForm model="expecto" onModelChange={() => undefined} onStarted={onOpen} modelField={modelField} scoreable={tool.scoreable} />;
+    return <DeepseaForm model="expecto" models={formModels} onModelChange={choose} onStarted={onOpen} />;
   }
 
   return (

@@ -74,9 +74,10 @@ describe('DeepseaJobView', () => {
     expect(screen.getByText('strong, 0.1 or more')).toBeInTheDocument();
   });
 
-  it('sends a failed ExPecto job back to its Submit variants tab', () => {
+  it('sends a failed job back to its form: ExPecto to Submit variants, Beluga and region scan to Variant effects', () => {
     expect(deepseaFormLink('expecto')).toBe('/expression-effects/?tab=submit-variants');
-    expect(deepseaFormLink('beluga')).toBe('/beluga/');
+    expect(deepseaFormLink('beluga')).toBe('/variant-effects/?model=beluga');
+    expect(deepseaFormLink('insilico')).toBe('/variant-effects/?tab=region-scan');
   });
 
   it('lists the files a running job will write', async () => {
@@ -88,7 +89,7 @@ describe('DeepseaJobView', () => {
   it('says why a job failed', async () => {
     renderJob(job(121));
     expect(await screen.findByText('Failed: chr23 is not a chromosome on GRCh37/hg19', {}, { timeout: 5000 })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Run Beluga again' })).toHaveAttribute('href', '/beluga/');
+    expect(screen.getByRole('link', { name: 'Run Beluga again' })).toHaveAttribute('href', '/variant-effects/?model=beluga');
   });
 
   it('explains a link to no job', async () => {
@@ -98,7 +99,7 @@ describe('DeepseaJobView', () => {
 
   it('shows every substitution of the in silico mutagenesis example for HepG2 / CEBPB', async () => {
     renderJob('0576e894-a2c5-48bb-9bdf-227962495d5f');
-    expect(await screen.findByRole('heading', { level: 1, name: 'Untitled in silico mutagenesis job' }, { timeout: 5000 })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: 'Untitled region scan job' }, { timeout: 5000 })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: 'Effect of every substitution on HepG2 / CEBPB' }, { timeout: 5000 })).toBeInTheDocument();
     // Opens on the strongest position, 999, with the 91-position window centered on it.
     expect(await screen.findByRole('grid', { name: 'Substitutions at positions 954 to 1,044' }, { timeout: 5000 })).toBeInTheDocument();

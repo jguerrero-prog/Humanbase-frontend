@@ -1,4 +1,4 @@
-import type { TissueDatabase } from '@humanbase/data';
+import { deepseaModels, type TissueDatabase } from '@humanbase/data';
 import type { ScaleSpec } from '@humanbase/ui';
 
 export type GeneExpressionTool = 'expecto' | 'expecto-sc';
@@ -22,12 +22,9 @@ interface Noun {
 
 export interface GeneExpressionToolInfo {
   name: string;
-  /** The Model field's option, such as ExPecto (tissues). */
+  /** The Model field's option and hint; ExPecto's come from its job form config. */
   option: string;
-  /** The Model field's hint while this model is chosen. */
   modelHint: string;
-  /** What the job form says can be scored. */
-  scoreable: string;
   /** The tabs the API can answer for this model; the others say so and offer ExPecto. */
   tabs: readonly ExpressionTab[];
   database: TissueDatabase;
@@ -50,9 +47,8 @@ export const expectoScGeneScale: ScaleSpec = { title: 'Expression effect, z-scor
 export const geneExpressionTools: Record<GeneExpressionTool, GeneExpressionToolInfo> = {
   expecto: {
     name: 'ExPecto',
-    option: 'ExPecto (tissues)',
-    modelHint: 'ExPecto is the tissue model; ExPecto SC covers primary cell types.',
-    scoreable: 'Variants within 20 kb of a gene’s start can be scored.',
+    option: deepseaModels.expecto.option,
+    modelHint: deepseaModels.expecto.otherModels,
     tabs: ['gene', 'rsid', 'submit-variants'],
     database: 'expecto-tissues',
     groups: { label: 'Tissue systems', single: 'Tissue system', singular: 'tissue system', plural: 'tissue systems' },
@@ -67,7 +63,6 @@ export const geneExpressionTools: Record<GeneExpressionTool, GeneExpressionToolI
     name: 'ExPecto SC',
     option: 'ExPecto SC (cell types)',
     modelHint: 'ExPecto SC covers primary cell types; ExPecto covers tissues.',
-    scoreable: 'Variants within 20 kb of a gene’s start can be scored.',
     // The API has no ExPecto SC variant list (/api/variants/ is ExPecto's) and no job that scores a file with it.
     tabs: ['gene'],
     database: 'clever-tissues',
