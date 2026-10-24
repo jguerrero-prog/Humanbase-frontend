@@ -26,13 +26,15 @@ export interface GraphPanelProps {
   loading: ReactNode;
   /** Off when two networks are compared, since neither can take the full width. */
   canExpand?: boolean;
+  /** Starred sets use cross-organism annotation counts, for extended_universe on GIANT. */
+  extendedUniverse?: boolean;
   onViewChange: (view: NetworkView) => void;
   onSelectGene: (entrez: number) => void;
   onSelectConnection: (source: number, target: number) => void;
   renderer?: GraphRendererFactory | undefined;
 }
 
-export function GraphPanel({ network, subset, view, minConfidence, label, tableCaption, networkTitle, selection, loading, canExpand = true, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
+export function GraphPanel({ network, subset, view, minConfidence, label, tableCaption, networkTitle, selection, loading, canExpand = true, extendedUniverse = false, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
   const graph = useRef<NetworkGraphHandle>(null);
   const data = useMemo<GraphData | undefined>(
     () =>
@@ -42,7 +44,7 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
       },
     [subset],
   );
-  const highlights = useStarredHighlights(network, subset?.genes, view.starred);
+  const highlights = useStarredHighlights(network, subset?.genes, view.starred, extendedUniverse);
   const starredItems: ActionMenuItem[] = highlights.length
     ? [
         ...highlights.map((set) => ({

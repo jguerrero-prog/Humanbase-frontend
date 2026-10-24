@@ -1,3 +1,4 @@
+import { ExtendedUniverse, type ExtendedUniverseStatus } from '../functions/ExtendedUniverse';
 import type { DataVersion } from '../genes/Gene';
 
 /** A second network drawn beside the first: same genes and data version, its own tissue and data types. */
@@ -24,6 +25,8 @@ export class NetworkQuery {
     /** The biological process network chosen in the Process network tab. */
     readonly process: string | undefined = undefined,
     readonly compare: ComparedNetwork | undefined = undefined,
+    /** extended_universe=true in the URL; it changes term annotation counts on GIANT pages only. */
+    readonly extendedUniverse: boolean = false,
   ) {}
 
   static fromSearch(search: URLSearchParams): NetworkQuery {
@@ -33,7 +36,12 @@ export class NetworkQuery {
     const version = named === 'v1' || named === 'v3' ? named : NetworkQuery.defaultVersion;
     const compared = search.get('compare');
     const compare = compared ? { tissue: compared === globalSlug ? undefined : compared, dataTypes: [...new Set(search.getAll('compare_datatype'))] } : undefined;
-    return new NetworkQuery(entrez, search.get('tissue') || undefined, version, [...new Set(search.getAll('datatype'))], search.get('process') || undefined, compare);
+    const dataTypes = [...new Set(search.getAll('datatype'))];
+    return new NetworkQuery(entrez, search.get('tissue') || undefined, version, dataTypes, search.get('process') || undefined, compare, ExtendedUniverse.requested(search));
+  }
+
+  get extendedUniverseStatus(): ExtendedUniverseStatus {
+    return ExtendedUniverse.status(this.extendedUniverse, this.version);
   }
 
   get isEmpty(): boolean {
@@ -49,7 +57,15 @@ export class NetworkQuery {
     return this.tissue ?? (this.version === 'v3' ? 'global-v3' : 'global');
   }
 
-  with(changes: { entrez?: readonly number[]; tissue?: string | undefined; version?: DataVersion; dataTypes?: readonly string[]; process?: string | undefined; compare?: ComparedNetwork | undefined }): NetworkQuery {
+  with(changes: {
+    entrez?: readonly number[];
+    tissue?: string | undefined;
+    version?: DataVersion;
+    dataTypes?: readonly string[];
+    process?: string | undefined;
+    compare?: ComparedNetwork | undefined;
+    extendedUniverse?: boolean;
+  }): NetworkQuery {
     const version = changes.version ?? this.version;
     return new NetworkQuery(
       changes.entrez ?? this.entrez,
@@ -59,17 +75,18 @@ export class NetworkQuery {
       'process' in changes ? changes.process : this.process,
       // Tissue slugs belong to one data version, so changing the version ends a comparison.
       'compare' in changes ? changes.compare : version === this.version ? this.compare : undefined,
+      changes.extendedUniverse ?? this.extendedUniverse,
     );
   }
 
   /** The request for the compared network, made with the same genes and data version. */
   get compared(): NetworkQuery | undefined {
-    return this.compare && new NetworkQuery(this.entrez, this.compare.tissue, this.version, this.compare.dataTypes);
+    return this.compare && new NetworkQuery(this.entrez, this.compare.tissue, this.version, this.compare.dataTypes, undefined, undefined, this.extendedUniverse);
   }
 
   /** Removes the first network, so the compared one takes its place. */
   withoutFirst(): NetworkQuery {
-    return this.compare ? new NetworkQuery(this.entrez, this.compare.tissue, this.version, this.compare.dataTypes, this.process) : this;
+    return this.compare ? new NetworkQuery(this.entrez, this.compare.tissue, this.version, this.compare.dataTypes, this.process, undefined, this.extendedUniverse) : this;
   }
 
   /** The request for the chosen process network. Process networks exist for GIANT only. */
@@ -88,6 +105,7 @@ export class NetworkQuery {
       search.set('compare', this.compare.tissue ?? globalSlug);
       for (const type of this.compare.dataTypes) search.append('compare_datatype', type);
     }
+    if (this.extendedUniverse) search.set(ExtendedUniverse.param, 'true');
     return search;
   }
 

@@ -1,9 +1,11 @@
-import { NetworkQuery, NetworkView } from '@humanbase/data';
+import { ExtendedUniverse, NetworkQuery, NetworkView } from '@humanbase/data';
 import { EmptyNetworkQuery, NetworkExplorer } from '@humanbase/hb';
+import { useEffect } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 
 export interface NetworksLocationState {
   fromSearch?: boolean;
+  extendedUniverseIgnored?: boolean;
 }
 
 export function NetworksPage() {
@@ -13,7 +15,15 @@ export function NetworksPage() {
   const query = NetworkQuery.fromSearch(search);
   const view = NetworkView.fromSearch(search);
   const compareView = NetworkView.fromSearch(search, 'compare');
-  const fromSearch = (location.state as NetworksLocationState | null)?.fromSearch ?? false;
+  const state = location.state as NetworksLocationState | null;
+  // As on humanbase.io, a MAGE page drops extended_universe from its URL and says why until the next request.
+  const ignoresFlag = query.extendedUniverseStatus === 'ignored';
+  useEffect(() => {
+    if (!ignoresFlag) return;
+    const next = new URLSearchParams(search);
+    next.delete(ExtendedUniverse.param);
+    void navigate(`?${next}`, { replace: true, state: { ...state, extendedUniverseIgnored: true } satisfies NetworksLocationState });
+  }, [ignoresFlag, search, state, navigate]);
 
   return (
     <section className="page-section">
@@ -28,7 +38,8 @@ export function NetworksPage() {
           query={query}
           view={view}
           compareView={compareView}
-          fromSearch={fromSearch}
+          fromSearch={state?.fromSearch ?? false}
+          extendedUniverseIgnored={state?.extendedUniverseIgnored ?? false}
           onQueryChange={(next) => {
             const kept = view.with({ selection: undefined, ...(next.compare ? {} : { focus: 'main' as const }) }).applyTo(next.toSearch());
             void navigate(`/networks/?${next.compare ? compareView.with({ selection: undefined }).applyTo(kept, 'compare') : kept}`);
