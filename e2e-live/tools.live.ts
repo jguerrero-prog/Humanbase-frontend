@@ -19,6 +19,19 @@ test('the Modules renal panel result shows real modules, a module drawer and the
   await checkScreen(page, problems);
 });
 
+test('extended_universe reruns the GIANT renal panel with extended annotations, which can run again with human-only ones', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&extended_universe=true`);
+  await expect(page).toHaveURL(/body_tag=af5b37885800bae6803f59e071fdcfdf84cb405c&extended_universe=true/);
+  const notice = page.getByRole('status').filter({ hasText: 'Extended annotations' });
+  await expect(notice).toContainText('This module was computed with extended (cross-organism) annotations.');
+  await checkScreen(page, problems);
+  await notice.getByRole('button', { name: 'Run with human-only annotations' }).click();
+  await expect(page).toHaveURL(/body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9$/);
+  await expect(page.getByText(/Showing \d+ enriched modules/)).toBeVisible();
+  await expect(page.getByText('Human-only annotations')).toHaveCount(0);
+});
+
 test('a Modules gene shows its live terms and neighbors, and chains to a neighbor', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&module=1&gene=6928`);

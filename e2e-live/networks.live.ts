@@ -60,6 +60,20 @@ test('the Processes and Tissues panels list real terms, and a star rings the rig
   await checkScreen(page, problems);
 });
 
+test('extended_universe ranks GIANT terms with cross-organism counts, and a MAGE page drops it and says why', async ({ page }) => {
+  const problems = watch(page);
+  const extended = page.waitForRequest((request) => request.url().includes('/api/terms/annotated/') && request.url().includes('extended_universe=true'));
+  await page.goto(`${il1bTnf}&version=v1&extended_universe=true`);
+  await expect(page.getByText('Showing legacy extended universe (cross-organism) annotation counts.')).toBeVisible();
+  await extended;
+  await page.getByRole('tab', { name: /^Processes/ }).click();
+  await expect(page.getByRole('table', { name: /Biological processes over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
+  await checkScreen(page, problems);
+  await page.goto(`${il1bTnf}&version=v3&extended_universe=true`);
+  await expect(page.getByText('Extended universe not applied')).toBeVisible();
+  await expect(page).not.toHaveURL(/extended_universe/);
+});
+
 test('the gene drawer shows ICAM1 with its annotations', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${il1bTnf}&version=v1&gene=3383`);

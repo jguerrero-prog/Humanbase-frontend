@@ -1,7 +1,7 @@
-import { ApiError, IntegrationService, JobHistory, useHumanbase, useIntegrations, useModuleResult, type DataVersion, type ModuleView } from '@humanbase/data';
+import { ApiError, ExtendedUniverse, IntegrationService, JobHistory, useHumanbase, useIntegrations, useModuleResult, type DataVersion, type ModuleView } from '@humanbase/data';
 import type { GraphRendererFactory } from '@humanbase/graph';
 import { Alert, Button, Dialog, EmptyState, TextInput, useLinkHref } from '@humanbase/ui';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { GraphLoading } from '../Networks/GraphPanel';
 import { ModuleResultView } from './ModuleResultView';
 
@@ -18,13 +18,30 @@ export interface ModuleExplorerProps {
   view: ModuleView;
   onViewChange: (view: ModuleView) => void;
   onEditGenes: (draft: ModuleDraft) => void;
-  /** Called with a new result's link, after changing the tissue starts another job. */
-  onStarted: (link: string) => void;
+  /** Called with a new result's link after another job starts; replace is true when the page started it on its own. */
+  onStarted: (link: string, replace: boolean) => void;
+  /** extended_universe=true in the URL: new GIANT jobs use cross-organism annotations, as on humanbase.io. */
+  extendedUniverse?: boolean;
   renderer?: GraphRendererFactory | undefined;
 }
 
+interface Start {
+  tissue?: string;
+  extendedUniverse?: boolean;
+  /** An automatic rerun hides the annotations notice and replaces this page in history. */
+  automatic?: boolean;
+  failure: { title: string; text: string };
+}
+
+const annotationsName = (extended: boolean) => (extended ? 'extended (cross-organism)' : 'human-only');
+const annotationsRun = (extended: boolean, automatic = false): Start => ({
+  extendedUniverse: extended,
+  automatic,
+  failure: { title: `Modules with ${annotationsName(extended)} annotations couldn’t start`, text: 'Humanbase didn’t answer. This result is unchanged; try again in a moment.' },
+});
+
 /** A module job: waiting while it runs, then its result, or why there is none. */
-export function ModuleExplorer({ bodyTag, view, onViewChange, onEditGenes, onStarted, renderer }: ModuleExplorerProps) {
+export function ModuleExplorer({ bodyTag, view, onViewChange, onEditGenes, onStarted, extendedUniverse = false, renderer }: ModuleExplorerProps) {
   const linkHref = useLinkHref();
   const api = useHumanbase();
   const result = useModuleResult(bodyTag);
@@ -34,8 +51,9 @@ export function ModuleExplorer({ bodyTag, view, onViewChange, onEditGenes, onSta
   const [draftTitle, setDraftTitle] = useState('');
   // Renaming has no endpoint, so the new title is kept in this browser's job history.
   const [title, setTitle] = useState(() => new JobHistory().list().find((job) => job.id === bodyTag)?.title);
-  const [starting, setStarting] = useState(false);
-  const [startFailed, setStartFailed] = useState(false);
+  const [starting, setStarting] = useState<Start>();
+  const [failure, setFailure] = useState<Start['failure']>();
+  const autoStarted = useRef(false);
 
   useEffect(() => {
     const history = new JobHistory();
@@ -44,6 +62,38 @@ export function ModuleExplorer({ bodyTag, view, onViewChange, onEditGenes, onSta
     if (data && job.status !== 'finished') history.add({ ...job, status: 'finished' });
     if (result.isError && job.status !== 'failed') history.add({ ...job, status: 'failed' });
   }, [bodyTag, data, result.isError]);
+
+  const shownTitle = title || data?.title || 'Untitled module search';
+  const tissues = integrations.data && data ? IntegrationService.pick(integrations.data, 'tissue', data.version) : [];
+
+  const start = async (request: Start) => {
+    if (!data || starting) return;
+    const tissue = request.tissue ?? data.integration;
+    const extended = (request.extendedUniverse ?? extendedUniverse) && ExtendedUniverse.supports(data.version);
+    setStarting(request);
+    setFailure(undefined);
+    try {
+      // The annotations rerun keeps the result's own title, so its body_tag matches the one humanbase.io makes.
+      const { bodyTag: next } = await api.modules.submit({ entrez: data.entrez, integration: tissue, version: data.version, title: request.tissue ? shownTitle : data.title, extendedUniverse: extended });
+      const link = ExtendedUniverse.link(`/modules/?body_tag=${next}`, extended);
+      const network = tissues.find((item) => item.slug === tissue)?.name ?? tissue;
+      new JobHistory().add({ id: next, tool: 'Modules', status: 'running', startedAt: new Date().toISOString(), link, title: shownTitle, detail: `Modules, ${network}` });
+      onStarted(link, request.automatic ?? false);
+    } catch {
+      setFailure(request.failure);
+    } finally {
+      setStarting(undefined);
+    }
+  };
+
+  // As on humanbase.io, extended_universe=true on a human-only GIANT result reruns it with extended annotations.
+  const rerunExtended = useEffectEvent(() => void start(annotationsRun(true, true)));
+  const needsExtended = extendedUniverse && !!data && ExtendedUniverse.supports(data.version) && data.extendedUniverse === false;
+  useEffect(() => {
+    if (!needsExtended || autoStarted.current) return;
+    autoStarted.current = true;
+    rerunExtended();
+  }, [needsExtended]);
 
   if (result.isError) {
     const missing = result.error instanceof ApiError && (result.error.isNotFound || result.error.status === 400);
@@ -68,8 +118,6 @@ export function ModuleExplorer({ bodyTag, view, onViewChange, onEditGenes, onSta
     return <GraphLoading title="Finding modules" text="Module detection usually takes a minute or two for a few hundred genes." note="You can leave this page. The job is in your Jobs menu, and this link opens the result when it’s ready." />;
   }
 
-  const shownTitle = title || data.title || 'Untitled module search';
-  const tissues = integrations.data ? IntegrationService.pick(integrations.data, 'tissue', data.version) : [];
 
   const rename = () => {
     const next = draftTitle.trim();
@@ -80,27 +128,14 @@ export function ModuleExplorer({ bodyTag, view, onViewChange, onEditGenes, onSta
     setRenaming(false);
   };
 
-  const changeTissue = async (tissue: string) => {
-    setStarting(true);
-    setStartFailed(false);
-    try {
-      const { bodyTag: next } = await api.modules.submit({ entrez: data.entrez, integration: tissue, version: data.version, title: shownTitle });
-      const link = `/modules/?body_tag=${next}`;
-      const network = tissues.find((item) => item.slug === tissue)?.name ?? tissue;
-      new JobHistory().add({ id: next, tool: 'Modules', status: 'running', startedAt: new Date().toISOString(), link, title: shownTitle, detail: `Modules, ${network}` });
-      onStarted(link);
-    } catch {
-      setStartFailed(true);
-    } finally {
-      setStarting(false);
-    }
-  };
+  const extendedResult = data.extendedUniverse === true;
+  const showsAnnotations = ExtendedUniverse.supports(data.version) && data.extendedUniverse !== undefined && (extendedResult || extendedUniverse) && !starting?.automatic;
 
   return (
     <>
-      {startFailed && (
-        <Alert tone="error" title="Modules for that tissue couldn’t start" dismissible onDismiss={() => setStartFailed(false)}>
-          Humanbase didn’t answer. This result is unchanged; try the tissue again in a moment.
+      {failure && (
+        <Alert tone="error" title={failure.title} dismissible onDismiss={() => setFailure(undefined)}>
+          {failure.text}
         </Alert>
       )}
       <ModuleResultView
@@ -108,7 +143,17 @@ export function ModuleExplorer({ bodyTag, view, onViewChange, onEditGenes, onSta
         title={shownTitle}
         view={view}
         tissues={tissues}
-        starting={starting}
+        starting={starting !== undefined}
+        notice={
+          showsAnnotations && (
+            <Alert
+              title={extendedResult ? 'Extended annotations' : 'Human-only annotations'}
+              action={{ label: extendedResult ? 'Run with human-only annotations' : 'Run with extended (cross-organism) annotations', onSelect: () => void start(annotationsRun(!extendedResult)) }}
+            >
+              This module was computed with {annotationsName(extendedResult)} annotations.
+            </Alert>
+          )
+        }
         renderer={renderer}
         onViewChange={onViewChange}
         onRename={() => {
@@ -116,7 +161,9 @@ export function ModuleExplorer({ bodyTag, view, onViewChange, onEditGenes, onSta
           setRenaming(true);
         }}
         onEditGenes={() => onEditGenes({ entrez: data.entrez, title: title || data.title, tissue: data.integration, version: data.version })}
-        onTissueChange={(tissue) => void changeTissue(tissue)}
+        onTissueChange={(tissue) =>
+          void start({ tissue, failure: { title: 'Modules for that tissue couldn’t start', text: 'Humanbase didn’t answer. This result is unchanged; try the tissue again in a moment.' } })
+        }
       />
       <Dialog
         title="Rename this result"
