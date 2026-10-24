@@ -2,7 +2,7 @@ import {
   ApiError, AsdVariant, featureEffects, GenomeLocation, useAsdColumns, useAsdEffects, useAsdPage, docsPage, useAsdRange, useHumanbase,
   type AsdFeatureSet, type AsdVariantRow, type FeaturePredictionRecord,
 } from '@humanbase/data';
-import { defaultGenomeEngine, GenomeEngineView, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
+import { defaultGenomeEngine, GenomeEngineView, scoreTrack, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
 import { Alert, GenomeBrowserToolbar, ResultLayout, Skeleton, asdEffects, defaultEffectsView, type EffectsView } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 import { categoryCrumbs } from '../content/product';
@@ -36,12 +36,11 @@ const featureSets = [
   { value: 'rna', label: 'RNA features' },
 ];
 const sampleHelp = 'With the API off, the sample data covers chr1:2,230,000-2,440,000 and the CHD8, SCN2A and CHD9 examples. Search one of those, or turn the API on.';
-// The live ASD page's two impact tracks, with the style Biodalliance reads; 50px tall, per the genome browser docs.
+// The live ASD page's two impact tracks.
 const impactRange = [-0.4, 3] as const;
-const impactStyle = { type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 50, MIN: impactRange[0], MAX: impactRange[1] } };
 const impactTracks: readonly GenomeDataTrack[] = [
-  { name: 'DNA disease impact score', meta: 'Model score, −0.4 to 3', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw', range: impactRange, style: impactStyle },
-  { name: 'RNA disease impact score', meta: 'Model score, −0.4 to 3', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw', range: impactRange, style: impactStyle },
+  scoreTrack({ name: 'DNA disease impact score', source: 'Model score', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw', range: impactRange }),
+  scoreTrack({ name: 'RNA disease impact score', source: 'Model score', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw', range: impactRange }),
 ];
 const notice = 'Simons Simplex Collection (and Simons VIP) data may only be used for projects that advance autism and related developmental disorder research. Questions about the data go to collections@sfari.org.';
 

@@ -115,6 +115,12 @@ export class DeepseaJob {
     return [...nested, ...flat];
   }
 
+  /** The bigWig file of one variant-level score, such as dis, which genome browsers draw as a track. */
+  scoreTrackFile(scoreType: string): DeepseaFile | undefined {
+    const file = this.record.files?.[`variant_${scoreType}`];
+    return file && isFile(file) ? file : undefined;
+  }
+
   get archive(): DeepseaFile | undefined {
     const file = this.record.files?.gz_file;
     return file && isFile(file) ? file : undefined;

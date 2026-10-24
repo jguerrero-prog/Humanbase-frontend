@@ -1,6 +1,7 @@
 import { assemblyNames } from '@humanbase/data';
 import { chromHmm, humanbaseTracks } from './biodalliance/humanbaseConfig';
 import type { Assembly, GenomeDataTrack } from './GenomeBrowserEngine';
+import { scoreTrack } from './scoreTrack';
 
 /** One track a browser can show or hide; data tracks use their name as id. */
 export interface GenomeTrackEntry {
@@ -25,18 +26,10 @@ export function genomeTrackList(assembly: Assembly, tracks: readonly GenomeDataT
   return [sequence, ...tracks.map((track) => ({ id: track.name, name: track.name, meta: track.meta ?? '' })), genes];
 }
 
-const conservationRange = [0, 1] as const;
-
 /** Tracks the live site offers beside the page's own, from the same files; hg19 only, as no GRCh38 copies exist. */
 export const suggestedTracks: Record<Assembly, readonly GenomeDataTrack[]> = {
   hg19: [
-    {
-      name: 'Conservation',
-      meta: 'phastCons 46-way, 0 to 1',
-      bigWigUrl: `${humanbaseTracks}/phastCons46way.bw`,
-      range: conservationRange,
-      style: { type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 50, MIN: conservationRange[0], MAX: conservationRange[1] } },
-    },
+    scoreTrack({ name: 'Conservation', source: 'phastCons 46-way', bigWigUrl: `${humanbaseTracks}/phastCons46way.bw`, range: [0, 1] }),
     { name: chromHmm.name, meta: 'Genome segmentation', bigBedUrl: chromHmm.bigBedUrl, style: chromHmm.style },
   ],
   hg38: [],
