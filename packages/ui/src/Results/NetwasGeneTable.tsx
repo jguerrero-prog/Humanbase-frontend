@@ -13,6 +13,8 @@ export interface NetwasGeneRow {
   score: number;
   /** null when the gene isn't in Humanbase, so there is no network to open; undefined while that is still being looked up. */
   href?: string | null | undefined;
+  /** The gene in the genome browser, where the page links there. */
+  genomeHref?: string | undefined;
 }
 
 export interface NetwasGeneTableProps {
@@ -39,8 +41,9 @@ export function NetwasScore({ score }: { score: number }) {
 
 export function NetwasGeneTable({ caption, rows, empty = { title: 'No genes to show' } }: NetwasGeneTableProps) {
   const linkHref = useLinkHref();
+  const genome = rows.some((row) => row.genomeHref);
   return (
-    <Table caption={caption} density="compact" columnWidths={['64px', 'auto', '168px', '216px', '152px']}>
+    <Table caption={caption} density="compact" columnWidths={['64px', 'auto', '168px', '216px', genome ? '192px' : '152px']}>
       <thead>
         <tr>
           <HeaderCell align="end">Rank</HeaderCell>
@@ -48,7 +51,7 @@ export function NetwasGeneTable({ caption, rows, empty = { title: 'No genes to s
           <HeaderCell>In the GWAS</HeaderCell>
           <HeaderCell sort="descending">NetWAS score</HeaderCell>
           <HeaderCell>
-            <span className="visually-hidden">Open in Networks</span>
+            <span className="visually-hidden">{genome ? 'Links' : 'Open in Networks'}</span>
           </HeaderCell>
         </tr>
       </thead>
@@ -72,13 +75,20 @@ export function NetwasGeneTable({ caption, rows, empty = { title: 'No genes to s
                 <NetwasScore score={row.score} />
               </Cell>
               <Cell>
-                {row.href ? (
-                  <a href={linkHref(row.href)}>
-                    Open in Networks <span className="visually-hidden">for {row.symbol}</span>
-                  </a>
-                ) : (
-                  row.href === null && <span className="netwas-no-network">Not in Humanbase</span>
-                )}
+                <span className="netwas-gene-links">
+                  {row.href ? (
+                    <a href={linkHref(row.href)}>
+                      Open in Networks <span className="visually-hidden">for {row.symbol}</span>
+                    </a>
+                  ) : (
+                    row.href === null && <span className="netwas-no-network">Not in Humanbase</span>
+                  )}
+                  {row.genomeHref && (
+                    <a href={linkHref(row.genomeHref)}>
+                      View in genome browser <span className="visually-hidden">for {row.symbol}</span>
+                    </a>
+                  )}
+                </span>
               </Cell>
             </tr>
           ))
