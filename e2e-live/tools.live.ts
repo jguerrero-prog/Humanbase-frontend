@@ -173,6 +173,59 @@ test('the real Seqweaver result shows its own score tracks, shows and hides geno
   await expect(headers).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
 });
 
+test('the real Seqweaver result’s track menus move, remove and set up tracks, and remember it', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);
+  const headers = page.locator('.genome-engine .track-header-name');
+  await expect(page.locator('.genome-engine').getByText('CELSR2 →')).toBeVisible();
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Tracks' });
+  await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
+  // The job's own score tracks are left out here, so the moves below are easy to follow.
+  await drawer.getByRole('checkbox', { name: 'Disease impact score' }).uncheck();
+  await drawer.getByRole('checkbox', { name: 'Mean −log e-value' }).uncheck();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(headers).toHaveText(['Sequence', 'Conservation', 'Genes']);
+  // Only a score track has settings; the genes track can only move or go.
+  await page.getByRole('button', { name: 'Genes track options' }).click();
+  await expect(page.getByRole('menuitem')).toHaveText(['Move up', 'Move down', 'Remove track']);
+  await expect(page.getByRole('menuitem', { name: 'Move down' })).toHaveAttribute('aria-disabled', 'true');
+  await page.keyboard.press('Escape');
+  const conservation = page.getByRole('button', { name: 'Conservation track options' });
+  await conservation.click();
+  expect(await violationsOf(page)).toEqual([]);
+  await page.getByRole('menuitem', { name: 'Move up' }).click();
+  await expect(headers).toHaveText(['Conservation', 'Sequence', 'Genes']);
+  await expect(conservation).toBeFocused();
+  await conservation.click();
+  await page.getByRole('menuitem', { name: 'Track settings…' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Track settings: Conservation' });
+  await expect(dialog.getByRole('textbox', { name: 'Lowest value shown' })).toHaveValue('0');
+  await expect(dialog.getByRole('textbox', { name: 'Highest value shown' })).toHaveValue('1');
+  await dialog.getByRole('textbox', { name: 'Height' }).fill('20');
+  await dialog.getByRole('button', { name: 'Apply' }).click();
+  await expect(dialog.getByText('Enter a height from 50 to 300 pixels.')).toBeVisible();
+  expect(await violationsOf(page)).toEqual([]);
+  await dialog.getByRole('textbox', { name: 'Height' }).fill('120');
+  await dialog.getByRole('textbox', { name: 'Highest value shown' }).fill('0.5');
+  await dialog.getByRole('button', { name: 'Apply' }).click();
+  await expect(dialog).toBeHidden();
+  const rows = page.locator('.genome-engine .score-tracks-column');
+  await expect(rows).toHaveAttribute('style', /30px 120px 60px/);
+  await page.reload();
+  await expect(headers).toHaveText(['Conservation', 'Sequence', 'Genes']);
+  await expect(rows).toHaveAttribute('style', /30px 120px 60px/);
+  await page.getByRole('button', { name: 'Genes track options' }).click();
+  await page.getByRole('menuitem', { name: 'Remove track' }).click();
+  await expect(headers).toHaveText(['Conservation', 'Sequence']);
+  await expect(page.locator('.genome-engine')).toBeFocused();
+  await checkScreen(page, problems);
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(headers).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
+});
+
 test('the real Seqweaver result’s genome browser stops at the end of chr1 and says so', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);

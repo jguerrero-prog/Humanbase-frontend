@@ -1,6 +1,6 @@
 import { assemblyNames, useHumanbase, UserTrackError, type GenomeLocation, type UserTrack } from '@humanbase/data';
-import { genomeTrackList, hiddenByDefault, suggestedTracks, userDataTrack, type Assembly, type GenomeDataTrack, type GenomeEngineHandle } from '@humanbase/genome';
-import { Alert, ExportDialog, saveFile, StoredChoice, TracksDrawer, type ExportSettings, type GenomeCommand } from '@humanbase/ui';
+import { genomeTrackList, hiddenByDefault, inOrder, isSegmentTrack, moveTrack, noArrangement, suggestedTracks, userDataTrack, type Assembly, type GenomeDataTrack, type GenomeEngineHandle, type GenomeScoreTrack, type GenomeTrackArrangement, type GenomeTrackSetting } from '@humanbase/genome';
+import { Alert, ExportDialog, saveFile, scoreTrackHeight, StoredChoice, TrackSettingsDialog, TracksDrawer, type ActionMenuItem, type ExportSettings, type GenomeCommand, type TrackSettingsValues } from '@humanbase/ui';
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 
 export interface GenomeBrowserToolsOptions {
@@ -12,7 +12,7 @@ export interface GenomeBrowserToolsOptions {
   location: GenomeLocation;
 }
 
-type Panel = 'tracks' | 'export';
+type Panel = 'tracks' | 'export' | { settings: string };
 
 const choices = new Map<string, StoredChoice>();
 const choiceFor = (key: string) => {
@@ -21,16 +21,45 @@ const choiceFor = (key: string) => {
   return choice;
 };
 
-function readHidden(stored: string | undefined, fallback: readonly string[]): readonly string[] {
+function useStored(key: string) {
+  const choice = choiceFor(key);
+  const stored = useSyncExternalStore(
+    (listener) => choice.subscribe(listener),
+    () => choice.read(),
+    () => undefined,
+  );
+  return { stored, write: (value: unknown) => choice.write(JSON.stringify(value)) };
+}
+
+function parsed(stored: string | undefined): unknown {
   try {
-    const parsed: unknown = stored === undefined ? fallback : JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : fallback;
+    return stored === undefined ? undefined : JSON.parse(stored);
   } catch {
-    return fallback;
+    return undefined;
   }
 }
 
 const noTracks: readonly UserTrack[] = [];
+
+const idsOf = (value: unknown) => (Array.isArray(value) ? value.filter((id): id is string => typeof id === 'string') : undefined);
+
+function readHidden(stored: string | undefined, fallback: readonly string[]): readonly string[] {
+  return idsOf(parsed(stored)) ?? fallback;
+}
+
+const isNumber = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
+
+function readArrangement(stored: string | undefined): GenomeTrackArrangement {
+  const value = parsed(stored) as { order?: unknown; settings?: unknown } | undefined;
+  if (!value || typeof value !== 'object') return noArrangement;
+  const settings = Object.entries(value.settings && typeof value.settings === 'object' ? value.settings : {}).flatMap(([id, setting]: [string, { height?: unknown; range?: unknown }]) => {
+    const height = isNumber(setting?.height) ? setting.height : undefined;
+    const [min, max] = Array.isArray(setting?.range) ? (setting.range as unknown[]) : [];
+    const range = isNumber(min) && isNumber(max) ? ([min, max] as const) : undefined;
+    return height === undefined && range === undefined ? [] : [[id, { height, range }] as const];
+  });
+  return { order: idsOf(value.order) ?? [], settings: Object.fromEntries(settings) };
+}
 
 const exportWidth = (text: string) => {
   const pixels = Number.parseInt(text, 10);
@@ -55,7 +84,7 @@ function useAddedTracks(group: string) {
   return { userTracks, tracks, change: (next: readonly UserTrack[]) => setAdded({ group, tracks: next }) };
 }
 
-/** Tracks and Export for a genome browser: which tracks show, remembered in this browser, and the drawer and dialog that change them. */
+/** Tracks, track menus and Export for a genome browser: which tracks show, their order and settings, remembered in this browser, and the panels that change them. */
 export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, location }: GenomeBrowserToolsOptions) {
   const [engine, setEngine] = useState<GenomeEngineHandle | null>(null);
   const [panel, setPanel] = useState<Panel>();
@@ -67,19 +96,49 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
   const added = useAddedTracks(group);
   const tracks = useMemo(() => [...pageTracks, ...suggestedTracks[assembly], ...added.tracks.map(userDataTrack)], [pageTracks, assembly, added.tracks]);
   const defaults = useMemo(() => hiddenByDefault(assembly), [assembly]);
-  const choice = choiceFor(`humanbase:genome-tracks:${browser}:${assembly}`);
-  const stored = useSyncExternalStore(
-    (listener) => choice.subscribe(listener),
-    () => choice.read(),
-    () => undefined,
-  );
-  const hidden = useMemo(() => readHidden(stored, defaults), [stored, defaults]);
-  const entries = genomeTrackList(assembly, tracks).map((track) => ({ id: track.id, label: track.name, source: track.meta, shown: !hidden.includes(track.id), removable: added.tracks.some((mine) => mine.name === track.id) }));
-  const showOnly = (next: readonly string[]) => choice.write(JSON.stringify(next));
+  const shown = useStored(`humanbase:genome-tracks:${browser}:${assembly}`);
+  const arranged = useStored(`humanbase:genome-track-layout:${browser}:${assembly}`);
+  const hidden = useMemo(() => readHidden(shown.stored, defaults), [shown.stored, defaults]);
+  const arrangement = useMemo(() => readArrangement(arranged.stored), [arranged.stored]);
+  const listed = new Map(genomeTrackList(assembly, tracks).map((track) => [track.id, track]));
+  const order = inOrder([...listed.keys()], arrangement.order);
+  const entries = order.flatMap((id) => listed.get(id) ?? []).map((track) => ({ id: track.id, label: track.name, source: track.meta, shown: !hidden.includes(track.id), removable: added.tracks.some((mine) => mine.name === track.id) }));
   const close = () => {
     setPanel(undefined);
     setAddError(undefined);
     setStatus(undefined);
+  };
+  const hide = (id: string) => shown.write(hidden.includes(id) ? hidden : [...hidden, id]);
+  const arrange = (change: Partial<GenomeTrackArrangement>) => arranged.write({ ...arrangement, ...change });
+  const settle = (id: string, setting: GenomeTrackSetting | undefined) => {
+    const others = Object.entries(arrangement.settings).filter(([other]) => other !== id);
+    arrange({ settings: Object.fromEntries(setting ? [...others, [id, setting]] : others) });
+  };
+
+  // Height and range only mean something for a score track's bars, so only score tracks have settings.
+  const scoreTrack = (id: string) => tracks.find((track): track is GenomeScoreTrack => track.name === id && !isSegmentTrack(track));
+  const trackMenu = (id: string): ActionMenuItem[] => {
+    const visible = order.filter((other) => !hidden.includes(other));
+    const settings: ActionMenuItem[] = scoreTrack(id) ? [{ label: 'Track settings…', onSelect: () => setPanel({ settings: id }) }] : [];
+    return [
+      ...settings,
+      { label: 'Move up', dividerBefore: settings.length > 0, disabled: visible[0] === id, onSelect: () => arrange({ order: moveTrack(order, hidden, id, -1) }) },
+      { label: 'Move down', disabled: visible.at(-1) === id, onSelect: () => arrange({ order: moveTrack(order, hidden, id, 1) }) },
+      { label: 'Remove track', destructive: true, dividerBefore: true, onSelect: () => hide(id) },
+    ];
+  };
+
+  const editing = typeof panel === 'object' ? panel : undefined;
+  const edited = editing && scoreTrack(editing.settings);
+  const ownRange = edited?.range ?? ([0, 1] as const);
+  const editedSetting = editing && arrangement.settings[editing.settings];
+  const [min, max] = editedSetting?.range ?? ownRange;
+  // Only what differs from the track's own drawing is kept, so a later change to a track's range still reaches it.
+  const apply = (id: string, values: TrackSettingsValues) => {
+    const height = values.height === scoreTrackHeight ? undefined : values.height;
+    const range = values.min === ownRange[0] && values.max === ownRange[1] ? undefined : ([values.min, values.max] as const);
+    settle(id, height === undefined && range === undefined ? undefined : { height, range });
+    close();
   };
 
   const add = async (source: File | string) => {
@@ -93,7 +152,7 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
     try {
       const { track, remembered } = await added.userTracks.add(group, source, assembly, entries.map((entry) => entry.id));
       added.change([...added.tracks, track]);
-      if (hidden.includes(track.name)) showOnly(hidden.filter((id) => id !== track.name));
+      if (hidden.includes(track.name)) shown.write(hidden.filter((id) => id !== track.name));
       setStatus(remembered ? `${track.name} is added and shown.` : `${track.name} is added for this visit only. This browser wouldn’t store it, so add it again next time.`);
       return true;
     } catch (error) {
@@ -108,7 +167,8 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
     const track = added.tracks.find((mine) => mine.name === id);
     if (!track) return;
     added.change(added.tracks.filter((mine) => mine !== track));
-    if (hidden.includes(id)) showOnly(hidden.filter((other) => other !== id));
+    if (hidden.includes(id)) shown.write(hidden.filter((other) => other !== id));
+    if (arrangement.settings[id]) settle(id, undefined);
     void added.userTracks.remove(group, track.key);
     setStatus(`${id} is removed.`);
   };
@@ -144,12 +204,27 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
         adding={adding}
         addError={addError}
         status={status}
-        onToggle={(id, shown) => showOnly(shown ? hidden.filter((other) => other !== id) : [...hidden, id])}
         onAddFile={add}
         onAddUrl={add}
         onRemove={remove}
-        onReset={() => showOnly(defaults)}
+        onToggle={(id, on) => (on ? shown.write(hidden.filter((other) => other !== id)) : hide(id))}
+        onReset={() => {
+          shown.write(defaults);
+          arranged.write(noArrangement);
+        }}
       />
+      {editing && edited && (
+        <TrackSettingsDialog
+          open
+          onClose={close}
+          settings={{ name: edited.name, height: String(editedSetting?.height ?? scoreTrackHeight), min: String(min), max: String(max) }}
+          onApply={(values) => apply(editing.settings, values)}
+          onReset={() => {
+            settle(editing.settings, undefined);
+            close();
+          }}
+        />
+      )}
       <ExportDialog open={panel === 'export'} onClose={close} onExport={(settings) => void exportView(settings)} />
     </>
   );
@@ -159,6 +234,9 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
     attach: setEngine,
     tracks,
     hidden,
+    /** The tracks' order and settings, and each track header's menu, for the engine view. */
+    arrangement,
+    trackMenu,
     shownCount: entries.filter((entry) => entry.shown).length,
     toolbar: { onTracks: () => setPanel('tracks'), onExport: () => setPanel('export') },
     /** Opens Tracks or Export from the browser's keys; false for any other command. */

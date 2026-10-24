@@ -9,9 +9,9 @@ interface AxeWindow {
   axe?: { run: (context: unknown, options: unknown) => Promise<{ violations: { id: string; help: string; nodes: { target: string[] }[] }[] }> };
 }
 
-/** WCAG 2.2 AA problems on the page once its animations settle; decorative illustrations are skipped. */
+/** WCAG 2.2 AA problems on the page once its animations settle (a cancelled one counts as settled); decorative illustrations are skipped. */
 export async function violationsOf(page: Page): Promise<string[]> {
-  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
+  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished.catch(() => undefined))));
   if (!(await page.evaluate(() => Boolean((window as AxeWindow).axe)))) await page.addScriptTag({ content: axeSource });
   // Axe runs in the page and sends back only the violations: on a 23,000-cell heatmap its passing nodes alone exhaust the runner's memory.
   return page.evaluate(async (tags) => {

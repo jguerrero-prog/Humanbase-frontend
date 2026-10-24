@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { genomeCommand } from './genomeBrowserKeys';
-import { TracksDrawer } from './GenomeBrowserPanels';
+import { readTrackSettings, TrackSettingsDialog, TracksDrawer } from './GenomeBrowserPanels';
 import { GenomeBrowserToolbar, TrackHeader } from './GenomeBrowserToolbar';
 
 const press = (key: string, ctrlKey = false) => genomeCommand({ key, ctrlKey, metaKey: false, altKey: false });
@@ -38,6 +38,27 @@ describe('GenomeBrowserToolbar', () => {
     render(<TrackHeader name="Genes" source="GENCODE 19" menuItems={[{ label: 'Remove track' }]} />);
     expect(screen.getByRole('button', { name: 'Genes track options' })).toBeInTheDocument();
     expect(screen.getByText('GENCODE 19')).toBeInTheDocument();
+  });
+});
+
+describe('TrackSettingsDialog', () => {
+  it('reads the height and range, and says what to fix', () => {
+    expect(readTrackSettings({ name: 'DNA', height: '120 px', min: '−0.4', max: '3' })).toEqual({ values: { height: 120, min: -0.4, max: 3 }, errors: {} });
+    expect(readTrackSettings({ name: 'DNA', height: '20', min: '', max: '3' }).errors).toEqual({ height: 'Enter a height from 50 to 300 pixels.', min: 'Enter a number, such as 0.' });
+    expect(readTrackSettings({ name: 'DNA', height: '60', min: '3', max: '1' }).errors).toEqual({ max: 'Enter a number above the lowest value.' });
+  });
+
+  it('applies only settings that read, and shows the errors after Apply', () => {
+    const onApply = vi.fn();
+    render(<TrackSettingsDialog inline open settings={{ name: 'DNA', height: '60', min: '0', max: '3' }} onApply={onApply} />);
+    fireEvent.change(screen.getByRole('textbox', { name: 'Highest value shown' }), { target: { value: '-1' } });
+    expect(screen.queryByText('Enter a number above the lowest value.')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
+    expect(onApply).not.toHaveBeenCalled();
+    expect(screen.getByRole('textbox', { name: 'Highest value shown' })).toHaveAccessibleDescription('Error: Enter a number above the lowest value.');
+    fireEvent.change(screen.getByRole('textbox', { name: 'Highest value shown' }), { target: { value: '4' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
+    expect(onApply).toHaveBeenCalledWith({ height: 60, min: 0, max: 4 });
   });
 });
 

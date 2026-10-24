@@ -223,6 +223,8 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
         region={region}
         tracks={tools.tracks}
         hidden={tools.hidden}
+        arrangement={tools.arrangement}
+        trackMenu={tools.trackMenu}
         selected={selected ? { chrom: selected.chromosome, position: selected.position } : undefined}
         onRegionChange={onRegionChange}
         onStatusChange={(status, error) => setEngineStatus({ status, error })}

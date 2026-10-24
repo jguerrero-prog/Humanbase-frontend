@@ -1,6 +1,6 @@
 import { assemblyNames, type UserTrack } from '@humanbase/data';
 import { chromHmm, humanbaseTracks } from './biodalliance/humanbaseConfig';
-import type { Assembly, GenomeDataTrack } from './GenomeBrowserEngine';
+import type { Assembly, GenomeDataTrack, GenomeTrackArrangement } from './GenomeBrowserEngine';
 import { scoreTrack } from './scoreTrack';
 
 /** One track a browser can show or hide; data tracks use their name as id. */
@@ -30,6 +30,28 @@ export function genomeTrackList(assembly: Assembly, tracks: readonly GenomeDataT
 const userSegmentStyle = chromHmm.style.map((rule) => ({ ...rule, style: { ...rule.style, BGCOLOR: 'var(--viz-seq-6)' } }));
 // A file's summary gives full float precision; four significant digits keep the header readable.
 const rounded = (value: number) => Number(value.toPrecision(4));
+
+/** Every track in its usual place, drawn as usual. */
+export const noArrangement: GenomeTrackArrangement = { order: [], settings: {} };
+
+/** Ids in the stored order; ids it doesn't list, such as a new track, keep their place after the track before them. */
+export function inOrder(ids: readonly string[], order: readonly string[]): string[] {
+  const placed = order.filter((id) => ids.includes(id));
+  ids.forEach((id, index) => {
+    if (placed.includes(id)) return;
+    const before = ids.slice(0, index).findLast((other) => placed.includes(other));
+    placed.splice(before === undefined ? 0 : placed.indexOf(before) + 1, 0, id);
+  });
+  return placed;
+}
+
+/** A track's place among the shown tracks moved by one, skipping hidden ones; the order is unchanged at either end. */
+export function moveTrack(order: readonly string[], hidden: readonly string[], id: string, by: -1 | 1): string[] {
+  const shown = order.filter((other) => !hidden.includes(other));
+  const neighbor = shown[shown.indexOf(id) + by];
+  if (!shown.includes(id) || neighbor === undefined) return [...order];
+  return order.map((other) => (other === id ? neighbor : other === neighbor ? id : other));
+}
 
 /** Tracks the live site offers beside the page's own, from the same files; hg19 only, as no GRCh38 copies exist. */
 export const suggestedTracks: Record<Assembly, readonly GenomeDataTrack[]> = {

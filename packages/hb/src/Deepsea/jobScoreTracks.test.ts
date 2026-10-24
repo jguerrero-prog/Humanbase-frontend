@@ -16,7 +16,7 @@ describe('jobScoreTracks', () => {
       { name: 'Disease impact score', meta: 'This job, 0 to 3', bigWigUrl: file(id, 'dis'), range: [0, 3] },
       { name: 'Mean −log e-value', meta: 'This job, 0 to 3', bigWigUrl: file(id, 'mean-evalue'), range: [0, 3] },
     ]);
-    expect(tracks[0]?.style).toEqual({ type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 50, MIN: 0, MAX: 3 } });
+    expect(tracks[0]?.style).toEqual({ type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 60, MIN: 0, MAX: 3 } });
   });
 
   it('draws only Sei’s summary score and only ExPecto’s signed expression effect', async () => {
