@@ -46,13 +46,15 @@ for (const [old, moved] of [['/sei/', '/variant-effects/?model=sei'], ['/beluga/
   });
 }
 
-test('choosing Beluga on Seqweaver opens it on Variant effects', async ({ page }) => {
+test('Seqweaver offers only its own model and links to Variant effects for DNA effects', async ({ page }) => {
   await apiOff(page);
   await page.goto(`${web}/seqweaver/`);
   await page.getByRole('combobox', { name: 'Model' }).click();
-  await page.getByRole('option', { name: /^Beluga \(DNA, 2019\)/ }).click();
-  await expect(page).toHaveURL(`${web}/variant-effects/?model=beluga`);
-  await expect(page.getByRole('heading', { name: 'About Beluga' })).toBeVisible();
+  await expect(page.getByRole('option')).toHaveText(['Seqweaver (RNA)']);
+  await page.keyboard.press('Escape');
+  await page.getByRole('link', { name: 'Variant effects', exact: true }).click();
+  await expect(page).toHaveURL(`${web}/variant-effects/`);
+  await expect(page.getByRole('heading', { name: 'About Sei' })).toBeVisible();
 });
 
 test('starting the Seqweaver example opens its job page, with the API off', async ({ page }) => {

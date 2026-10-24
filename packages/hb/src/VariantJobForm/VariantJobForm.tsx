@@ -1,5 +1,5 @@
-import { deepseaModels, genomeLabels, variantModels, VariantFileCheck, type FileCheckResult, type Genome, type InputKind, type VariantModel } from '@humanbase/data';
-import { Accordion, AccordionItem, Button, Field, FileDrop, SegmentedControl, saveFile, Select, TextInput, type ChosenFile, type SelectOption } from '@humanbase/ui';
+import { deepseaModels, genomeLabels, VariantFileCheck, type FileCheckResult, type Genome, type InputKind, type VariantModel } from '@humanbase/data';
+import { Accordion, AccordionItem, Button, Field, FileDrop, SegmentedControl, saveFile, Select, TextInput, useLinkHref, type ChosenFile, type SelectOption } from '@humanbase/ui';
 import { useId, useMemo, useState, type ReactNode } from 'react';
 import '../Jobs/JobForm.css';
 import './VariantJobForm.css';
@@ -23,7 +23,7 @@ export interface VariantJobFormProps {
   model: VariantModel;
   /** Choosing another model calls this instead of switching in place, such as to open that tool's page. */
   onModelChange?: ((model: VariantModel) => void) | undefined;
-  /** The models the Model field offers, when not every model. */
+  /** The models the Model field offers; without it, only the form's own model. */
   models?: readonly VariantModel[] | undefined;
   /** The inputs the form offers, when not every one the model takes. */
   inputs?: readonly InputKind[] | undefined;
@@ -39,8 +39,6 @@ const optionOf = (value: VariantModel): SelectOption => {
   const { option, optionDetail } = deepseaModels[value];
   return optionDetail ? { value, label: option, description: optionDetail } : { value, label: option };
 };
-// ExPecto runs on Beluga, so its Model field names Beluga and offers nothing else.
-const defaultModels = (model: VariantModel) => (deepseaModels[model].basedOn ? [model] : variantModels);
 const extensions: Record<InputKind, string> = { vcf: '.vcf,.txt', bed: '.bed,.txt', fasta: '.fasta,.fa,.txt' };
 const nouns: Record<InputKind, string> = { vcf: 'variants', bed: 'regions', fasta: 'sequences' };
 
@@ -53,6 +51,15 @@ function rulesFor(kind: InputKind, model: VariantModel): string {
   if (kind === 'bed') return 'Tab-separated: chromosome, start, end. Each interval is scored at its center.';
   if (deepseaModels[model].strand) return 'Tab-separated: chromosome, position, ID, REF, ALT, then strand (+ or -). A header line is optional.';
   return 'Tab-separated, at least 5 columns: chromosome, position, ID, reference and alternative allele.';
+}
+
+/** The Model field's hint, with its link when the model has one. */
+export function ModelHint({ model }: { model: VariantModel }) {
+  const linkHref = useLinkHref();
+  const { otherModels, otherModelsLink: link } = deepseaModels[model];
+  if (!link) return otherModels;
+  const [before, after] = otherModels.split(link.text);
+  return <>{before}<a href={linkHref(link.href)}>{link.text}</a>{after}</>;
 }
 
 function genomeHint(model: VariantModel): string {
@@ -112,7 +119,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, models, inp
     <form className="job-form" onSubmit={(event) => { event.preventDefault(); run(); }}>
       {notice}
       <div className="job-form-row">
-        <Select label="Model" options={(models ?? defaultModels(model)).map(optionOf)} value={model} onChange={(value) => chooseModel(value as VariantModel)} hint={deepseaModels[model].otherModels} />
+        <Select label="Model" options={(models ?? [model]).map(optionOf)} value={model} onChange={(value) => chooseModel(value as VariantModel)} hint={<ModelHint model={model} />} />
         {kind !== 'fasta' && (
           <Select
             label="Genome assembly"

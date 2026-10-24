@@ -9,6 +9,7 @@ import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import ProductScreen from '../../components/docs/ProductScreen.astro';
+import { SeqweaverModelField } from '../../components/docs/SeqweaverModelField';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const inputTypes = [
@@ -21,7 +22,6 @@ const sources = [
   { value: 'paste', label: 'Paste' },
   { value: 'example', label: 'Use the example' },
 ];
-const models = [{ value: 'seqweaver', label: 'Seqweaver (RNA)' }];
 const assemblies = [{ value: 'hg19', label: 'GRCh37/hg19' }];
 const dropHint = 'Up to 20,000 variants; 10,000 or fewer finish fastest.';
 const problems = [
@@ -54,8 +54,8 @@ const sequenceNotes = [
 
 const tools = [
   ['Variant effects: Variant list', 'One page at /variant-effects/ for Sei and Beluga. Model Sei (DNA, 2021) by default, or Beluga (DNA, 2019); each option says what it is in the menu. VCF or BED. Sei and Beluga also read FASTA (4,096 and 2,000 bp); the form keeps that input in code but doesn’t offer it until the team decides whether it moves to Region scan.'],
-  ['Variant effects: Region scan', 'Today’s in silico mutagenesis, on the Region scan tab. FASTA only, several sequences per job. The model stays Beluga, and its hint says so. The sequence and one of 2,002 features are chosen after the job, on the result.'],
-  ['Seqweaver', 'Its own page. Model Seqweaver (RNA). VCF with a strand column, BED, or FASTA of 1,000 bp.'],
+  ['Variant effects: Region scan', 'Today’s in silico mutagenesis, on the Region scan tab, named Region scan on the form, the job page and the job list. FASTA only, several sequences per job. The model stays Beluga, and its hint says so. The sequence and one of 2,002 features are chosen after the job, on the result.'],
+  ['Seqweaver', 'Its own page. Model Seqweaver (RNA) only; the hint links to Variant effects for DNA effects. VCF with a strand column, BED, or FASTA of 1,000 bp.'],
   ['ExPecto', 'VCF only, Beluga model. Keeps its three ways in above the form: Gene, Submit variants, SNP rsID.'],
   ['NetWAS', 'Same file drop, title and email. Fields: data version (MAGE, or GIANT for earlier results), GWAS file, tissue network, then the MHC region with MAGE or the p-value threshold (0.01) with GIANT. The live examples list VEGAS, MAGMA and 2-column formats; the docs say VEGAS, FORGE or PSEQ, so the list is on the facts to confirm.'],
 ];
@@ -77,7 +77,7 @@ const behavior = [
   ['The button counts', 'It names the tool and what will run, such as Run Seqweaver on 1,284 variants, and looks off until every line passes, but stays focusable.'],
   ['After Run', 'The job page opens straight away. The job, its title and its link are saved in this browser; email is optional and only sends the link.'],
   ['Leaving early', 'Leaving with a checked file asks once whether to leave without starting the job.'],
-  ['Model choice', 'The newer model is the default and the earlier one sits beside it. On Variant effects the model and tab are in the URL (?model=beluga, ?tab=region-scan), so each can be linked and Back works. Old /sei/, /beluga/ and /ism/ links open the matching model or tab.'],
+  ['Model choice', 'A Model field only offers models that run on the same page, so choosing one never opens another page. The newer model is the default and the earlier one sits beside it. On Variant effects the model and tab are in the URL (?model=beluga, ?tab=region-scan), so each can be linked and Back works. Old /sei/, /beluga/ and /ism/ links open the matching model or tab.'],
   ['What can be scored', 'One line under the input choice, from the model’s config: Variants anywhere in the genome can be scored (Sei, Beluga), Variants near genes and splice junctions can be scored (Seqweaver).'],
 ];
 
@@ -139,7 +139,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
         <div class="screen-columns">
           <div class="form-column">
             <div class="form-row">
-              <Select label="Model" options={models} defaultValue="seqweaver" hint="Sei and Beluga predict DNA effects." />
+              <SeqweaverModelField />
               <Select label="Genome assembly" options={assemblies} defaultValue="hg19" hint="GRCh37/hg19 or GRCh38/hg38. Coordinates in the file must match." />
             </div>
             <div class="choice">

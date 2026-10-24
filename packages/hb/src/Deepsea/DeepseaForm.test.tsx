@@ -25,8 +25,16 @@ describe('DeepseaForm', () => {
     expect(new JobHistory().list()[0]).toMatchObject({ tool: 'Beluga', detail: 'Beluga, 12 variants', status: 'queued' });
   });
 
-  it('opens another tool when the model changes', async () => {
-    const { onModelChange } = renderForm('seqweaver');
+  it('offers Seqweaver alone and points to Variant effects for DNA effects', async () => {
+    renderForm('seqweaver');
+    expect(screen.getByRole('link', { name: 'Variant effects' })).toHaveAttribute('href', '/variant-effects/');
+    expect(screen.getByRole('combobox', { name: 'Model' })).toHaveAccessibleDescription('Seqweaver predicts RNA effects. For DNA effects, use Variant effects.');
+    await userEvent.click(screen.getByRole('combobox', { name: 'Model' }));
+    expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual(['Seqweaver (RNA)']);
+  });
+
+  it('tells the page when another model is chosen', async () => {
+    const { onModelChange } = renderForm('beluga', { models: ['sei', 'beluga'] });
     await userEvent.click(screen.getByRole('combobox', { name: 'Model' }));
     await userEvent.click(screen.getByRole('option', { name: /^Sei \(DNA, 2021\)/ }));
     expect(onModelChange).toHaveBeenCalledWith('sei');
@@ -61,6 +69,6 @@ describe('DeepseaForm', () => {
     await userEvent.click(screen.getByRole('radio', { name: 'Use the example' }));
     await userEvent.click(screen.getByRole('button', { name: 'Run region scan on 4 sequences' }));
     await waitFor(() => expect(onStarted).toHaveBeenCalledWith('/deepsea/jobs/00000000-0000-4000-8000-000000000151/'));
-    expect(new JobHistory().list()[0]).toMatchObject({ tool: 'In silico mutagenesis', detail: 'In silico mutagenesis, 4 sequences' });
+    expect(new JobHistory().list()[0]).toMatchObject({ tool: 'Region scan', detail: 'Region scan, 4 sequences' });
   });
 });

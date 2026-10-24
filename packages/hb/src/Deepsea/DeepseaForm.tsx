@@ -6,9 +6,9 @@ import { VariantJobForm, type VariantJob } from '../VariantJobForm/VariantJobFor
 
 export interface DeepseaFormProps {
   model: VariantModel;
-  /** Opens another model's page when the Model field changes. */
-  onModelChange: (model: VariantModel) => void;
-  /** The models the Model field offers, when not every model. */
+  /** Called when the Model field changes, such as to put the model in the URL. */
+  onModelChange?: (model: VariantModel) => void;
+  /** The models the Model field offers; without it, only this form's model. */
   models?: readonly VariantModel[] | undefined;
   /** The inputs the form offers, when not every one the model takes. */
   inputs?: readonly InputKind[] | undefined;

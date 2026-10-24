@@ -13,7 +13,7 @@ describe('in silico mutagenesis', () => {
 
   it('reads the example job as a Beluga job over four sequences', async () => {
     const job = await service.get(exampleJob);
-    expect(job.model.tool).toBe('In silico mutagenesis');
+    expect(job.model.tool).toBe('Region scan');
     expect(job.kind).toBe('fasta');
     expect(job.status).toBe('finished');
     expect(job.sequenceNames).toHaveLength(4);

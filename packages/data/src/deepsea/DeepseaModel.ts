@@ -33,6 +33,8 @@ export interface DeepseaModel {
   about: string;
   /** The Model field's hint: how this model sits beside the others. */
   otherModels: string;
+  /** A phrase of that hint that links to another page, as Variant effects for Seqweaver. */
+  otherModelsLink?: { text: string; href: string };
   /** What the form can score, shown under its input choice. */
   scored?: string;
   /** What each feature is: an RNA-binding protein, a chromatin feature or a sequence class. */
@@ -121,7 +123,8 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     kind: 'Seqweaver (RNA)',
     summary: 'Predict how variants change RNA-binding protein targets and post-transcriptional regulation.',
     about: 'Seqweaver is a deep learning framework for predicting RNA-binding protein target site dysregulation and RNA sequence variant effects.',
-    otherModels: 'Sei and Beluga predict DNA effects.',
+    otherModels: 'Seqweaver predicts RNA effects. For DNA effects, use Variant effects.',
+    otherModelsLink: { text: 'Variant effects', href: '/variant-effects/' },
     scored: 'Variants near genes and splice junctions can be scored.',
     featureNoun: 'protein',
     featurePlural: 'proteins',
@@ -159,7 +162,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
   insilico: {
     id: 'insilico',
     apiName: 'Beluga',
-    tool: 'In silico mutagenesis',
+    tool: 'Region scan',
     genomes: ['hg19', 'hg38'],
     inSentence: 'region scan',
     inputs: ['fasta'],
@@ -185,7 +188,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
 /** The Variant effects page's models, newest first; the first is the default. */
 export const variantEffectsModels: readonly VariantModel[] = ['sei', 'beluga'];
 
-/** The models a Model field offers; ExPecto has its own page. */
+/** Sei, Beluga and Seqweaver: the models that aren't another tool run on Beluga. */
 export const variantModels = (Object.keys(deepseaModels) as VariantModel[]).filter((model) => !deepseaModels[model].basedOn);
 
 export function modelOf(apiName: string): DeepseaModel | undefined {
