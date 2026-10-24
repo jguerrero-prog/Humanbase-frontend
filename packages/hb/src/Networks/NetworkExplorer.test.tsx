@@ -111,9 +111,10 @@ describe('NetworkExplorer', () => {
     await screen.findByRole('table', { name: /Genes functionally related/ });
     await userEvent.click(await screen.findByRole('tab', { name: /^Processes \d+$/ }));
     const processes = await screen.findByRole('table', { name: /Biological processes over-represented/ });
-    const [, first] = await within(processes).findAllByRole('row');
-    expect(first).toHaveTextContent(/Gene Ontology \(BP\), \d+ genes/);
-    expect(first).toHaveTextContent(/× 10⁻/);
+    // Hundreds of terms are listed, and finding every row by role takes longer than the rest of the test.
+    const first = () => processes.querySelector('tbody tr');
+    await vi.waitFor(() => expect(first()).toHaveTextContent(/Gene Ontology \(BP\), \d+ genes/));
+    expect(first()).toHaveTextContent(/× 10⁻/);
     await userEvent.click(screen.getByRole('tab', { name: /^Tissues \d+$/ }));
     const tissues = await screen.findByRole('table', { name: /Tissues and cell types/ });
     expect(await within(tissues).findAllByText('BRENDA Ontology')).not.toHaveLength(0);

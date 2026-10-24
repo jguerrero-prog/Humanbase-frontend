@@ -41,11 +41,12 @@ const tickSteps = [1_000, 2_000, 5_000, 10_000, 20_000, 50_000, 100_000, 200_000
 // humanbase.io gives each variant a 15px slot across the heatmap's width and ignores drag moves over 100px.
 const slotWidth = 15;
 const longestMove = 100;
+// Before the heatmap is measured, humanbase.io assumes its 1170px page width.
+const slotsIn = (width: number) => Math.floor((width > 0 ? width : 1170) / slotWidth);
 
 /** humanbase.io's Compact View: one variant per slot; the center variant, or else the higher variant score, keeps a shared slot. */
 function compactColumns(variants: readonly VariantInView[], selected: number, location: GenomeLocation, width: number): number[] {
-  const slots = Math.floor(width / slotWidth);
-  if (slots < 1) return variants.map((_, index) => index);
+  const slots = slotsIn(width);
   const size = location.width / slots;
   const kept = new Map<number, number>();
   variants.forEach((variant, index) => {
@@ -57,10 +58,21 @@ function compactColumns(variants: readonly VariantInView[], selected: number, lo
   return [...kept.values()].sort((a, b) => a - b);
 }
 
+/** humanbase.io's Full View: every variant while they fit one slot each; past that, the run of variants that keeps the center one at its own slot. */
+function fullColumns(variants: readonly VariantInView[], selected: number, location: GenomeLocation, width: number): number[] {
+  const slots = slotsIn(width);
+  const all = variants.map((_, index) => index);
+  const center = variants[selected];
+  if (variants.length <= slots || !center) return all;
+  const home = Math.min(slots - 1, Math.max(0, Math.floor((center.position - location.start) / (location.width / slots))));
+  const first = Math.min(variants.length - slots, Math.max(0, selected - home));
+  return all.slice(first, first + slots);
+}
+
 /** One column per variant in view, in genome order; rows ranked by the size of the center variant's effect, as on humanbase.io. */
 export function InViewHeatmap({ location, variants: all, selected: center, shown, limit, reversed, compact, scale, scoreName, featurePlural, onShowMore, onSelect, onMove }: InViewHeatmapProps) {
   const [box, width] = useWidth();
-  const kept = compact ? compactColumns(all, center, location, width) : all.map((_, index) => index);
+  const kept = (compact ? compactColumns : fullColumns)(all, center, location, width);
   const variants = kept.flatMap((index) => all[index] ?? []);
   const selected = kept.indexOf(center);
   const centerVariant = all[center];

@@ -1,12 +1,27 @@
 import { Humanbase, HumanbaseProvider, SampleClient } from '@humanbase/data';
+import type { GenomeBrowserEngine } from '@humanbase/genome';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { AsdExplorer, type AsdState } from './AsdExplorer';
 
+// Drawing the tracks reads the genome samples in the background; TrackEngine has its own tests.
+class BlankEngine implements GenomeBrowserEngine {
+  async mount() {}
+  showRegion() {}
+  highlight() {}
+  showTracks() {}
+  arrangeTracks() {}
+  async exportSvg() {
+    return new Blob([], { type: 'image/svg+xml' });
+  }
+  destroy() {}
+}
+const blankEngine = () => new BlankEngine();
+
 function Page({ start }: { start: AsdState }) {
   const [state, setState] = useState(start);
-  return <AsdExplorer state={state} onStateChange={(next) => setState((current) => ({ ...current, ...next }))} />;
+  return <AsdExplorer state={state} engine={blankEngine} onStateChange={(next) => setState((current) => ({ ...current, ...next }))} />;
 }
 
 function renderPage(start: AsdState = { view: 'browser', set: 'dna' }) {
