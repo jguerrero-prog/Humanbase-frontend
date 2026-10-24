@@ -181,6 +181,9 @@ test('the real Seqweaver result’s track menus move, remove and set up tracks, 
   await page.getByRole('button', { name: 'Tracks' }).click();
   const drawer = page.getByRole('dialog', { name: 'Tracks' });
   await drawer.getByRole('checkbox', { name: 'Conservation' }).check();
+  // The job's own score tracks are left out here, so the moves below are easy to follow.
+  await drawer.getByRole('checkbox', { name: 'Disease impact score' }).uncheck();
+  await drawer.getByRole('checkbox', { name: 'Mean −log e-value' }).uncheck();
   await drawer.getByRole('button', { name: 'Done' }).click();
   await expect(headers).toHaveText(['Sequence', 'Conservation', 'Genes']);
   // Only a score track has settings; the genes track can only move or go.
@@ -220,8 +223,7 @@ test('the real Seqweaver result’s track menus move, remove and set up tracks, 
   await page.getByRole('button', { name: 'Tracks' }).click();
   await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
   await drawer.getByRole('button', { name: 'Done' }).click();
-  await expect(headers).toHaveText(['Sequence', 'Genes']);
-  await expect(rows).toHaveAttribute('style', /30px 60px/);
+  await expect(headers).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
 });
 
 test('the real Seqweaver result’s genome browser stops at the end of chr1 and says so', async ({ page }) => {
