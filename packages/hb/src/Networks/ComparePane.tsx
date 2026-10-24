@@ -58,6 +58,7 @@ export function ComparePane({ query, view, title, integrations, queryNames, sele
           selection={selection}
           loading={<GraphLoading />}
           canExpand={false}
+          extendedUniverse={query.extendedUniverseStatus === 'active'}
           onViewChange={onViewChange}
           onSelectGene={(entrez) => onSelect({ kind: 'gene', entrez })}
           onSelectConnection={(source, target) => onSelect({ kind: 'connection', source, target })}

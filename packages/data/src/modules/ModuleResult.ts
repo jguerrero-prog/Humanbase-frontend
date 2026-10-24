@@ -120,6 +120,11 @@ export class ModuleResult {
     return this.record.query.title ?? '';
   }
 
+  /** Whether term enrichment used cross-organism annotations; undefined for results that don't say. */
+  get extendedUniverse(): boolean | undefined {
+    return this.record.query.extended_universe;
+  }
+
   /** Every query gene's symbol and name, when the result carries them, shaped like a gene search hit. */
   geneRecords(): GeneHitRecord[] | undefined {
     const genes = this.record.query_entrez;

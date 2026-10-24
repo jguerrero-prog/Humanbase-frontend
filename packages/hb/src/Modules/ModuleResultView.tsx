@@ -1,7 +1,7 @@
 import { dataVersionNames, useModuleGenes, type GeneHit, type Integration, type ModuleResult, type ModuleView } from '@humanbase/data';
 import { NetworkGraph, type GraphData, type GraphFocus, type GraphLink, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
 import { ActionMenu, Button, Cell, Checkbox, DataTooltip, GraphToolbar, HeaderCell, KeyLegend, placeNearPoint, ResultHeader, ResultLayout, SearchField, Select, Table, TextInput, type GraphAction } from '@humanbase/ui';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { ModuleDrawer } from './ModuleDrawer';
 import { moduleColors } from './moduleColors';
 import { useModuleDownloads } from './moduleExport';
@@ -17,6 +17,8 @@ export interface ModuleResultViewProps {
   /** Tissue networks for the result's data version; changing the tissue starts a new job. */
   tissues: readonly Integration[];
   starting: boolean;
+  /** Shown under the header, such as which annotations the result used. */
+  notice?: ReactNode;
   onViewChange: (view: ModuleView) => void;
   onRename: () => void;
   onEditGenes: () => void;
@@ -29,7 +31,7 @@ const tooltipSize = { width: 240, height: 120 };
 const linksOf = (result: ModuleResult, entrez: number): GraphLink[] => result.neighbors(entrez).map((neighbor) => ({ source: String(entrez), target: String(neighbor.entrez), weight: neighbor.weight }));
 const genesWord = (count: number) => (count === 1 ? '1 gene' : `${count} genes`);
 
-export function ModuleResultView({ result, title, view, tissues, starting, onViewChange, onRename, onEditGenes, onTissueChange, renderer }: ModuleResultViewProps) {
+export function ModuleResultView({ result, title, view, tissues, starting, notice, onViewChange, onRename, onEditGenes, onTissueChange, renderer }: ModuleResultViewProps) {
   const graph = useRef<NetworkGraphHandle>(null);
   const [find, setFind] = useState('');
   const names = useModuleGenes(result);
@@ -95,61 +97,64 @@ export function ModuleResultView({ result, title, view, tissues, starting, onVie
   const summary = `Showing ${shown.length} ${view.hideUnenriched ? 'enriched ' : ''}${shown.length === 1 ? 'module' : 'modules'} of ${view.minimumSize === 1 ? '1 gene' : `${view.minimumSize} genes`} or more. ${view.showEdges ? 'Edges shown.' : 'Edges hidden.'}`;
 
   const header = (
-    <ResultHeader
-      crumbs={[{ label: 'Modules', href: '/?analysis=modules' }, { label: title }]}
-      title={title}
-      context={[
-        { name: 'Data version', value: dataVersionNames[result.version] },
-        { name: 'Modules', value: `${enriched} enriched` },
-      ]}
-      actions={
-        <>
-          <Button variant="ghost" size="small" onClick={onRename}>
-            Rename
-          </Button>
-          <Button variant="ghost" size="small" icon="plus" onClick={onEditGenes}>
-            Edit genes
-          </Button>
-        </>
-      }
-      settingsLabel="Module settings"
-      settings={
-        <>
-          <Select
-            label="Tissue"
-            options={tissues.map((network) => ({ value: network.slug, label: network.name }))}
-            value={result.integration}
-            searchable
-            filterLabel="Filter tissues"
-            disabled={starting}
-            onChange={(slug) => slug !== result.integration && onTissueChange(slug)}
-          />
-          <SearchField
-            label="Find a gene"
-            placeholder="Symbol, shows its module"
-            size="medium"
-            value={find}
-            disabled={!names.data}
-            onChange={(event) => setFind(event.target.value)}
-            onClear={() => setFind('')}
-            suggestions={suggestions.map((gene: GeneHit) => ({ id: String(gene.entrez), label: gene.symbol, description: gene.name, details: result.moduleOf(gene.entrez)?.label ?? '' }))}
-            onSuggestionSelect={(suggestion) => {
-              const module = result.moduleOf(Number(suggestion.id));
-              setFind('');
-              if (module) onViewChange(view.with({ module: module.id, hideUnenriched: view.hideUnenriched && result.isEnriched(module.id, database), minimumSize: Math.min(view.minimumSize, module.genes.length) }));
-            }}
-          />
-          <ActionMenu label="Download" trigger="text" items={downloads} />
-        </>
-      }
-      tabs={[
-        { value: 'modules', label: 'Modules' },
-        { value: 'genes', label: 'Genes' },
-      ]}
-      tabsLabel={`Views of ${title}`}
-      tab={view.tab}
-      onTabChange={(tab) => onViewChange(view.with({ tab: tab === 'genes' ? 'genes' : 'modules' }))}
-    />
+    <>
+      <ResultHeader
+        crumbs={[{ label: 'Modules', href: '/?analysis=modules' }, { label: title }]}
+        title={title}
+        context={[
+          { name: 'Data version', value: dataVersionNames[result.version] },
+          { name: 'Modules', value: `${enriched} enriched` },
+        ]}
+        actions={
+          <>
+            <Button variant="ghost" size="small" onClick={onRename}>
+              Rename
+            </Button>
+            <Button variant="ghost" size="small" icon="plus" onClick={onEditGenes}>
+              Edit genes
+            </Button>
+          </>
+        }
+        settingsLabel="Module settings"
+        settings={
+          <>
+            <Select
+              label="Tissue"
+              options={tissues.map((network) => ({ value: network.slug, label: network.name }))}
+              value={result.integration}
+              searchable
+              filterLabel="Filter tissues"
+              disabled={starting}
+              onChange={(slug) => slug !== result.integration && onTissueChange(slug)}
+            />
+            <SearchField
+              label="Find a gene"
+              placeholder="Symbol, shows its module"
+              size="medium"
+              value={find}
+              disabled={!names.data}
+              onChange={(event) => setFind(event.target.value)}
+              onClear={() => setFind('')}
+              suggestions={suggestions.map((gene: GeneHit) => ({ id: String(gene.entrez), label: gene.symbol, description: gene.name, details: result.moduleOf(gene.entrez)?.label ?? '' }))}
+              onSuggestionSelect={(suggestion) => {
+                const module = result.moduleOf(Number(suggestion.id));
+                setFind('');
+                if (module) onViewChange(view.with({ module: module.id, hideUnenriched: view.hideUnenriched && result.isEnriched(module.id, database), minimumSize: Math.min(view.minimumSize, module.genes.length) }));
+              }}
+            />
+            <ActionMenu label="Download" trigger="text" items={downloads} />
+          </>
+        }
+        tabs={[
+          { value: 'modules', label: 'Modules' },
+          { value: 'genes', label: 'Genes' },
+        ]}
+        tabsLabel={`Views of ${title}`}
+        tab={view.tab}
+        onTabChange={(tab) => onViewChange(view.with({ tab: tab === 'genes' ? 'genes' : 'modules' }))}
+      />
+      {notice}
+    </>
   );
 
   const hoverNode = (id: string | null, anchor?: DOMRect) => {
