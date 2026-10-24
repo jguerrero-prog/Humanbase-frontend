@@ -27,7 +27,7 @@ export async function recorded(key: string): Promise<{ status: number; body: unk
   return JSON.parse(await readFile(join(samples, `${key}.json`), 'utf8')) as { status: number; body: unknown };
 }
 
-/** Runs the web app with the API on but answers each GET from the samples, for parts such as the genome browser that only show with the API on. */
+/** Runs the web app with the API on but answers each GET from the samples, so screens take their API-on paths without the network. */
 export async function sampleApi(page: Page) {
   await page.route('**/config.json', (route) => route.fulfill({ json: { api: true, apiBase: '/api' } }));
   for (const pattern of externalFiles) await page.route(pattern, (route) => route.abort());

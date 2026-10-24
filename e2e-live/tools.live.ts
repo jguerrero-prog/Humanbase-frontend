@@ -114,11 +114,11 @@ for (const [tool, id, heading] of [
   });
 }
 
-test('the real Seqweaver result shows and hides genome tracks from the real files and exports the view', async ({ page }) => {
+test('the real Seqweaver result shows its own score tracks, shows and hides genome tracks from the real files and exports the view', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);
   const headers = page.locator('.genome-engine .track-header-name');
-  await expect(headers).toHaveText(['Sequence', 'Genes']);
+  await expect(headers).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
   await expect(page.locator('.genome-engine').getByText('CELSR2 →')).toBeVisible();
   await page.getByRole('button', { name: 'Tracks' }).click();
   const drawer = page.getByRole('dialog', { name: 'Tracks' });
@@ -126,7 +126,10 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' }).check();
   await drawer.getByRole('checkbox', { name: 'Sequence' }).uncheck();
   await drawer.getByRole('button', { name: 'Done' }).click();
-  await expect(headers).toHaveText(['Conservation', 'GM12878 ChromHMM', 'Genes']);
+  await expect(headers).toHaveText(['Disease impact score', 'Mean −log e-value', 'Conservation', 'GM12878 ChromHMM', 'Genes']);
+  // The job's own files, read from S3: one score per variant, 1.0026 and 0.9013 at chr1:109,817,590.
+  await expect(page.locator('.genome-engine').getByRole('button', { name: '1.00 at 109,817,590' })).toBeVisible();
+  await expect(page.locator('.genome-engine').getByRole('button', { name: '0.90 at 109,817,590' })).toBeVisible();
   // Results open at 100 kb; the counts below are for the 50 kb view around the variant.
   await page.getByRole('radio', { name: '50 kb' }).check();
   await expect(page.locator('.genome-engine .genome-tracks-bar')).not.toHaveCount(0);
@@ -160,13 +163,14 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   expect(download.suggestedFilename()).toMatch(/^chr1_\d+-\d+_hg19\.svg$/);
   const svg = await readFile(await download.path(), 'utf8');
   expect(svg).toContain('Conservation');
+  expect(svg).toContain('Disease impact score');
   expect(svg).toContain('CELSR2 →');
   expect(svg).toContain('genome-tracks-bar');
   expect(svg.match(/class="genome-tracks-segment"/g)).toHaveLength(39);
   await page.getByRole('button', { name: 'Tracks' }).click();
   await drawer.getByRole('button', { name: 'Reset to default tracks' }).click();
   await drawer.getByRole('button', { name: 'Done' }).click();
-  await expect(headers).toHaveText(['Sequence', 'Genes']);
+  await expect(headers).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
 });
 
 test('the real Seqweaver result’s track menus move, remove and set up tracks, and remember it', async ({ page }) => {
@@ -232,7 +236,7 @@ test('the real Seqweaver result’s genome browser stops at the end of chr1 and 
   await page.locator('.genome-engine').focus();
   await page.keyboard.press('ArrowRight');
   await expect(field).toHaveValue('chr1:249,240,621-249,250,621');
-  await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Genes']);
+  await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
   await checkScreen(page, problems);
 });
 

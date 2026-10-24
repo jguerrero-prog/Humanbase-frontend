@@ -92,9 +92,30 @@ test('the Seqweaver example result has no WCAG 2.2 AA violations in each view, w
     await expect(page.getByRole('tab', { name: tab })).toHaveAttribute('aria-selected', 'true');
     expect(await violationsOf(page)).toEqual([]);
   }
-  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
   await expect(page).toHaveURL(/variant=chr10-23508363-A-G/);
   await expect(page.getByRole('heading', { name: 'Molecular effects of chr10:23,508,363 A>G' })).toBeVisible();
+  expect(apiRequests).toEqual([]);
+});
+
+test('the Seqweaver example result draws the job’s own score tracks, on by default and in the Tracks drawer, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(example);
+  const browser = page.locator('.genome-engine');
+  await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
+  await expect(browser.locator('.track-header').filter({ hasText: 'Disease impact score' })).toContainText('This job, 0 to 3');
+  // The job's files hold one score per variant: 1.0026 and 0.9013 at chr1:109,817,590, as its variant scores say.
+  await expect(browser.getByRole('button', { name: '1.00 at 109,817,590' })).toBeVisible();
+  await expect(browser.getByRole('button', { name: '0.90 at 109,817,590' })).toBeVisible();
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Tracks' });
+  await expect(drawer.getByRole('checkbox', { name: 'Disease impact score' })).toBeChecked();
+  await drawer.getByRole('checkbox', { name: 'Mean −log e-value' }).uncheck();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  await expect(browser.locator('.track-header-name')).toHaveText(['Sequence', 'Disease impact score', 'Genes']);
+  await page.getByRole('button', { name: 'Next variant' }).click();
+  await expect(browser.getByRole('button', { name: '0.59 at 23,508,363' })).toBeVisible();
+  expect(await violationsOf(page)).toEqual([]);
   expect(apiRequests).toEqual([]);
 });
 

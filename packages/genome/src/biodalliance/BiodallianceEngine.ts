@@ -1,5 +1,4 @@
 import { isSegmentTrack, trackFile, withChr, type GenomeBrowserEngine, type GenomeExportOptions, type GenomeMountOptions, type GenomeRegion, type GenomeTrackArrangement, type GenomeTrackLayout } from '../GenomeBrowserEngine';
-import { scoreTrackHeight } from '@humanbase/ui';
 import { genesTrack, genomeTrackList, inOrder, noArrangement, sequenceTrack } from '../genomeTrackList';
 import { humanbaseAssemblies, humanbaseBrowserOptions, type BiodallianceAssembly } from './humanbaseConfig';
 
@@ -205,8 +204,7 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
       name: track.name,
       bwgURI: trackFile(track),
       pinned: true,
-      // Score tracks start at the same height in both engines, the Track settings default.
-      ...(!isSegmentTrack(track) && { zeroLine: 'var(--border-subtle)', forceHeight: scoreTrackHeight }),
+      ...(!isSegmentTrack(track) && { zeroLine: 'var(--border-subtle)' }),
       ...(track.style && { style: Array.isArray(track.style) ? track.style : [track.style] }),
     }));
     const idOf = (source: Record<string, unknown>) =>

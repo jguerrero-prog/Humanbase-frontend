@@ -140,7 +140,6 @@ describe('BiodallianceEngine', () => {
     const engine = new BiodallianceEngine();
     await engine.mount(document.createElement('div'), { label: 'Genome browser', assembly: 'hg19', region, tracks: [dna] });
     const { tiers, orders } = FakeBrowser.last;
-    expect((FakeBrowser.last.options.sources as Record<string, unknown>[]).find((source) => source.name === 'DNA Disease Impact Score')).toMatchObject({ forceHeight: 60 });
     expect(orders).toEqual(['Genome, DNA Disease Impact Score, GENCODE 19']);
     expect(tiers.every((tier) => tier.pinned)).toBe(true);
     engine.arrangeTracks({ order: ['genes', 'sequence'], settings: { 'DNA Disease Impact Score': { height: 120, range: [-1, 4] } } });
