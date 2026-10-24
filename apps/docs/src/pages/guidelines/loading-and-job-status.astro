@@ -1,4 +1,5 @@
 ---
+import { categoryCrumbs, productTools } from '@humanbase/hb';
 import { Breadcrumbs, Button, ContextLabel, HeaderCell, JobSteps, Skeleton, Spinner, StatusBadge, Table, TableSkeleton, Tabs, type JobStep } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -202,7 +203,7 @@ const writing = [
       {
         jobsShown.map((job) => (
           <article class="job-page" aria-label={`${job.name} job`}>
-            <Breadcrumbs items={[{ label: 'Jobs', href: '#the-job-status-page' }, { label: 'BMI GWAS, adipose tissue' }]} />
+            <Breadcrumbs items={[categoryCrumbs.genes, productTools.netwas, { label: 'BMI GWAS, adipose tissue' }]} />
             <p class="job-title">BMI GWAS, adipose tissue</p>
             <StatusBadge status={job.badge.status}>{job.badge.text}</StatusBadge>
             <JobSteps label="Job progress" steps={job.steps} />

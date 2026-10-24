@@ -25,6 +25,10 @@ export interface GeneExpressionToolInfo {
   /** The Model field's option and hint; ExPecto's come from its job form config. */
   option: string;
   modelHint: string;
+  /** What the model predicts; ExPecto's comes from its job form config. */
+  summary: string;
+  /** What the model can score, as the variant forms say it; ExPecto's comes from its job form config. */
+  scored: string;
   /** The tabs the API can answer for this model; the others say so and offer ExPecto. */
   tabs: readonly ExpressionTab[];
   database: TissueDatabase;
@@ -49,6 +53,8 @@ export const geneExpressionTools: Record<GeneExpressionTool, GeneExpressionToolI
     name: 'ExPecto',
     option: deepseaModels.expecto.option,
     modelHint: deepseaModels.expecto.otherModels,
+    summary: deepseaModels.expecto.summary,
+    scored: deepseaModels.expecto.scored ?? '',
     tabs: ['gene', 'rsid', 'submit-variants'],
     database: 'expecto-tissues',
     groups: { label: 'Tissue systems', single: 'Tissue system', singular: 'tissue system', plural: 'tissue systems' },
@@ -63,6 +69,8 @@ export const geneExpressionTools: Record<GeneExpressionTool, GeneExpressionToolI
     name: 'ExPecto SC',
     option: 'ExPecto SC (cell types)',
     modelHint: 'ExPecto SC covers primary cell types; ExPecto covers tissues.',
+    summary: 'Predict how variants change gene expression across primary cell types.',
+    scored: 'Precomputed variants within 20 kb of a gene’s start.',
     // The API has no ExPecto SC variant list (/api/variants/ is ExPecto's) and no job that scores a file with it.
     tabs: ['gene'],
     database: 'clever-tissues',

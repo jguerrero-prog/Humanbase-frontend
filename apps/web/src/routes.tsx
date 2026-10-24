@@ -48,6 +48,7 @@ export const routes: RouteObject[] = [
           page('modules', async () => (await import('./pages/ModulesPage')).ModulesPage),
           page('netwas', async () => (await import('./pages/netwas/NetwasPage')).NetwasPage),
           page('netwas/:id', async () => (await import('./pages/netwas/NetwasJobPage')).NetwasJobPage),
+          page('sequence-tools', async () => (await import('./pages/SequenceToolsPage')).SequenceToolsPage),
           page('variant-effects', async () => (await import('./pages/deepsea/VariantEffectsPage')).VariantEffectsPage),
           moved('sei', '/variant-effects/', { model: 'sei' }),
           moved('beluga', '/variant-effects/', { model: 'beluga' }),

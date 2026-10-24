@@ -2,6 +2,7 @@ import { ApiError, NetworkQuery, useGeneListMatches, useIntegrations, useNetwasJ
 import { Alert, Button, ContextLabel, EmptyState, JobDetails, NetwasGuide, ResultHeader, ResultLayout, saveFile, Skeleton, StatusBadge, type JobStep, useLinkHref } from '@humanbase/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { netwasCitation as citation } from '../content/cite';
+import { categoryCrumbs, productTools } from '../content/product';
 import { elapsed, jobDateTime as dateTime, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
 import { NetwasGenes } from '../NetwasGenes/NetwasGenes';
 import type { NetwasDraft } from './NetwasForm';
@@ -101,7 +102,7 @@ export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {
   const tissueName = integrations.data?.find((network) => network.slug === data.tissue)?.name ?? data.tissue;
   const network = `${tissueName}, ${data.version === 'v3' ? 'MAGE' : 'GIANT'}`;
   const gwasFile = [data.gwasFileName, data.gwasFormat].filter(Boolean).join(', ');
-  const crumbs = [{ label: 'Jobs', href: '/jobs/' }, { label: title }];
+  const crumbs = [categoryCrumbs.genes, productTools.netwas, { label: title }];
   if (data.status === 'finished') {
     const fileName = data.resultsFile?.split('/').pop() ?? `${data.id}.txt`;
     const threshold = data.pValue === null ? undefined : String(data.pValue);
@@ -183,6 +184,7 @@ export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {
       <title>{`${badge} · ${title} · Humanbase`}</title>
       <JobWaiting
         title={title}
+        crumbs={crumbs}
         status={data.status}
         badge={badge}
         note={data.status === 'running' ? `${elapsed(data.created, now)} so far. ${usualTime}` : data.status === 'queued' ? 'Waiting for a worker to start it.' : undefined}

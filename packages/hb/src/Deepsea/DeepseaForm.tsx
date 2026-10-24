@@ -1,6 +1,7 @@
-import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type InputKind, type VariantModel } from '@humanbase/data';
-import { AboutPanel, Alert, DocsLink, saveFile } from '@humanbase/ui';
+import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type DeepseaModel, type InputKind, type VariantModel } from '@humanbase/data';
+import { AboutPanel, Alert, DocsLink, saveFile, type Crumb } from '@humanbase/ui';
 import { useState } from 'react';
+import { categoryCrumbs } from '../content/product';
 import { expressionEffectsLink } from '../Expecto/geneExpressionTools';
 import '../Jobs/JobForm.css';
 import { VariantJobForm, type VariantJob, type VariantJobFormProps } from '../VariantJobForm/VariantJobForm';
@@ -32,6 +33,11 @@ const formLinks: Record<VariantModel, string> = {
 /** Where a model's job form is: Sei, Beluga and region scan share Variant effects, ExPecto's sits on Expression effects' Submit variants tab. */
 export function deepseaFormLink(model: VariantModel): string {
   return formLinks[model];
+}
+
+/** A job page's breadcrumbs: Variants & sequences, the model's form, then the job's title. */
+export function deepseaJobCrumbs(model: DeepseaModel, title: string): Crumb[] {
+  return [categoryCrumbs.variants, { label: model.tool, href: deepseaFormLink(model.id) }, { label: title }];
 }
 
 export function deepseaJobLink(id: string): string {

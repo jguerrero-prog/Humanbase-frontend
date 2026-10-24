@@ -1,6 +1,6 @@
 ---
 import { deepseaExamples, deepseaModels, docsPage } from '@humanbase/data';
-import { VariantJobForm } from '@humanbase/hb';
+import { categoryCrumbs, VariantJobForm } from '@humanbase/hb';
 import { AboutPanel, Accordion, AccordionItem, Breadcrumbs, Button, FileDrop, Icon, RemoveButton, SegmentedControl, Select, TextInput } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
@@ -131,7 +131,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
   <DocSection title="The variant form" lead="Seqweaver with a VCF that passed its check. Fields run top to bottom in the order people decide them: what model, what kind of input, which genome, then the file.">
     <ProductScreen label="Seqweaver job form" current="Variants & sequences" padded={false}>
       <div class="screen-body">
-        <Breadcrumbs items={[{ label: 'Variants & sequences', href: '/sequence-tools/' }, { label: 'Seqweaver' }]} />
+        <Breadcrumbs items={[categoryCrumbs.variants, { label: 'Seqweaver' }]} />
         <div class="screen-title">
           <h3>Seqweaver</h3>
           <p>Predict how variants change RNA-binding protein targets and post-transcriptional regulation.</p>

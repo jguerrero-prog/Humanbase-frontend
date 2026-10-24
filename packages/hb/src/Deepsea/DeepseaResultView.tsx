@@ -26,9 +26,8 @@ import {
   type PlotBy,
 } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
-import { categoryCrumbs } from '../content/product';
 import { jobDateTime } from '../Jobs/JobPage';
-import { deepseaFormLink } from './DeepseaForm';
+import { deepseaJobCrumbs } from './DeepseaForm';
 import { EffectsCard } from './EffectsCard';
 import { jobScoreTracks } from './jobScoreTracks';
 import { VariantGenomeBrowser } from './VariantGenomeBrowser';
@@ -116,7 +115,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
   const files = job.resultFiles;
   const header = (
     <ResultHeader
-      crumbs={[categoryCrumbs.variants, { label: model.tool, href: deepseaFormLink(model.id) }, { label: title }]}
+      crumbs={deepseaJobCrumbs(model, title)}
       title={title}
       context={[
         { name: 'Model', value: model.kind },

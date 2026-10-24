@@ -1,4 +1,4 @@
-import { variantEffectsModels, type InputKind, type VariantModel } from '@humanbase/data';
+import { variantEffectsModels, variantListInputs, type VariantModel } from '@humanbase/data';
 import { categoryCrumbs, DeepseaForm } from '@humanbase/hb';
 import { Breadcrumbs, Tabs } from '@humanbase/ui';
 import { useNavigate, useSearchParams } from 'react-router';
@@ -8,8 +8,6 @@ const tabs = [
   { value: 'variant-list', label: 'Variant list' },
   { value: 'region-scan', label: 'Region scan' },
 ];
-// Sei and Beluga also read sequences; that input waits on whether it moves to Region scan (#398).
-const variantListInputs: readonly InputKind[] = ['vcf', 'bed'];
 const regionScanModels: readonly VariantModel[] = ['insilico'];
 const defaultModel = variantEffectsModels[0] ?? 'sei';
 

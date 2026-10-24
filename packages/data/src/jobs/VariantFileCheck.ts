@@ -15,7 +15,7 @@ export interface FileCheckResult {
 }
 
 const modelNames: Record<VariantModel, string> = { sei: 'Sei', beluga: 'Beluga', seqweaver: 'Seqweaver', expecto: 'ExPecto', insilico: 'Beluga' };
-const kindNames: Record<InputKind, string> = { vcf: 'Variants (VCF)', bed: 'Regions (BED)', fasta: 'Sequences (FASTA)' };
+export const inputKindNames: Record<InputKind, string> = { vcf: 'Variants (VCF)', bed: 'Regions (BED)', fasta: 'Sequences (FASTA)' };
 const nouns: Record<InputKind, [string, string]> = { vcf: ['variant', 'variants'], bed: ['region', 'regions'], fasta: ['sequence', 'sequences'] };
 const bases = /^[ACGT]+$/;
 const whole = /^\d+$/;
@@ -39,7 +39,7 @@ export class VariantFileCheck {
     if (count > VariantFileCheck.maxVariants) {
       result.limit = `This file has ${number.format(count)} ${nouns[this.kind][1]}; Humanbase runs up to ${number.format(VariantFileCheck.maxVariants)} per job. Split it into two files.`;
     }
-    if (otherKind && otherKind !== this.kind) result.otherKind = `This looks like a ${otherKind.toUpperCase()} file. Switch to ${kindNames[otherKind]} to use it.`;
+    if (otherKind && otherKind !== this.kind) result.otherKind = `This looks like a ${otherKind.toUpperCase()} file. Switch to ${inputKindNames[otherKind]} to use it.`;
     return result;
   }
 
