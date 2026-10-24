@@ -203,14 +203,17 @@
   background: var(--surface-subtle);
 }
 
-.table-pinned :is(.table-header, .table-cell):first-child::after {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 100%;
-  inline-size: var(--space-2);
-  pointer-events: none;
-  background: linear-gradient(to right, var(--shadow-pinned-edge));
+/* Clips like hidden, short of the edge shadow outside the cell. */
+.table-pinned .table-cell-text:first-child {
+  overflow: clip;
+  overflow-clip-margin: var(--space-2);
+}
+
+/* Where the margin is unsupported the clipped cells would cut their shadow, so the column shows none rather than half of one. */
+@supports not (overflow-clip-margin: content-box) {
+  .table-pinned:has(.table-cell-text:first-child) :is(.table-header, .table-cell):first-child::after {
+    display: none;
+  }
 }
 
 .table-toolbar {

@@ -104,7 +104,7 @@ const [pinnedEdge] = flattenTokens({ 'pinned-edge': effects['pinned-edge'] }, ['
     </div>
   </DocSection>
 
-  <DocSection title="Pinned edge" lead="shadow/pinned-edge is the 8px shadow on the edge of a pinned column, where content scrolls under it: ink from 12% to 0%. A table’s pinned first column and a heatmap’s row labels use it.">
+  <DocSection title="Pinned edge" lead="shadow/pinned-edge is the 8px shadow on the edge of a pinned column, where content scrolls under it: ink from 12% to 0%. A table’s pinned first column and a heatmap’s row labels use it through the shared pinned-edge styles, which show it only while content is scrolled under the column.">
     {
       pinnedEdge && (
         <figure class="pinned-stage">
