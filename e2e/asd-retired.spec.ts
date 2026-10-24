@@ -33,7 +33,7 @@ test('the top bar and the homepage analysis menu no longer offer the ASD Browser
   await expect(page.getByRole('link', { name: /ASD Browser/ })).toHaveCount(0);
   await page.keyboard.press('Escape');
   await page.getByRole('combobox', { name: 'Analysis' }).click();
-  await expect(page.getByRole('option', { name: /^In silico mutagenesis/ })).toBeVisible();
+  await expect(page.getByRole('option', { name: /^Variant effects/ })).toBeVisible();
   await expect(page.getByRole('option', { name: /ASD Browser/ })).toHaveCount(0);
   await expect(page.getByRole('contentinfo').getByRole('link', { name: /ASD Browser/ })).toHaveCount(0);
 });

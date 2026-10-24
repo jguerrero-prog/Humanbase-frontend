@@ -85,13 +85,11 @@ export const analysisOptions: SelectOption[] = [
   { value: 'networks', label: 'Networks', description: 'Tissue-specific gene networks, MAGE and GIANT', image: networks, group: 'Network analysis' },
   { value: 'modules', label: 'Modules', description: 'Functional modules in large gene lists', image: modules, group: 'Network analysis' },
   { value: 'netwas', label: 'NetWAS', description: 'Reprioritize GWAS results with networks', image: netwas, group: 'Network analysis' },
-  { value: 'sei', label: 'Sei', description: 'Regulatory and chromatin effects', image: deepsea, group: 'Variant effects' },
-  { value: 'beluga', label: 'Beluga', description: 'Chromatin effects (2019 model)', image: deepsea, group: 'Variant effects' },
+  { value: 'variant-effects', label: 'Variant effects', description: 'Sei and Beluga: regulatory and chromatin effects', image: deepsea, group: 'Variant effects' },
   { value: 'seqweaver', label: 'Seqweaver', description: 'Post-transcriptional effects', image: seqweaver, group: 'Variant effects' },
   { value: 'expecto', label: 'ExPecto', description: 'Tissue-specific expression effects', image: expecto, group: 'Variant effects' },
   { value: 'expecto-sc', label: 'ExPecto SC', description: 'Cell-type-specific expression effects', image: expectoSc, group: 'Variant effects' },
-  { value: 'ism', label: 'In silico mutagenesis', description: 'Regulatory features of a sequence', image: ism, group: 'Sequences' },
   ...(asdBrowserRetired ? [] : [{ value: 'asd', label: asdBrowser.label, description: asdBrowser.description, group: 'Browsers' }]),
 ];
 
-export const analysisColumns = [['Network analysis'], ['Variant effects'], asdBrowserRetired ? ['Sequences'] : ['Sequences', 'Browsers']] as const;
+export const analysisColumns = [['Network analysis'], ['Variant effects'], ...(asdBrowserRetired ? [] : [['Browsers']])] as const;

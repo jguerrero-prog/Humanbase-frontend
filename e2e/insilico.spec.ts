@@ -5,13 +5,13 @@ import { violationsOf } from './violations';
 const web = 'http://localhost:4173';
 const example = `${web}/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/`;
 
-test('the in silico mutagenesis form runs its example into the job page, with the API off', async ({ page }) => {
+test('the region scan form runs its example into the job page, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
-  await page.goto(`${web}/ism/`);
-  await expect(page.getByRole('heading', { level: 1, name: 'In silico mutagenesis' })).toBeVisible();
+  await page.goto(`${web}/variant-effects/?tab=region-scan`);
+  await expect(page.getByRole('tab', { name: 'Region scan' })).toHaveAttribute('aria-selected', 'true');
   expect(await violationsOf(page)).toEqual([]);
   await page.getByRole('radio', { name: 'Use the example' }).click();
-  await page.getByRole('button', { name: 'Run in silico mutagenesis on 4 sequences' }).click();
+  await page.getByRole('button', { name: 'Run region scan on 4 sequences' }).click();
   await expect(page).toHaveURL(`${web}/deepsea/jobs/00000000-0000-4000-8000-000000000151/`);
   await expect(page.getByText('4 sequences, FASTA')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
@@ -35,10 +35,10 @@ test('the in silico mutagenesis result moves its window and explains choices the
   expect(apiRequests).toEqual([]);
 });
 
-test('the in silico mutagenesis pages fit a phone without scrolling sideways', async ({ page }) => {
+test('the region scan form and result fit a phone without scrolling sideways', async ({ page }) => {
   await apiOff(page);
   await page.setViewportSize({ width: 375, height: 812 });
-  for (const path of [`${web}/ism/`, example]) {
+  for (const path of [`${web}/variant-effects/?tab=region-scan`, example]) {
     await page.goto(path);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);

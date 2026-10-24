@@ -73,16 +73,16 @@ test('the NetWAS form loads the real example file', async ({ page }) => {
 });
 
 for (const [path, tool, run] of [
-  ['sei', 'Sei', /^Run Sei on \d+ variants$/],
-  ['beluga', 'Beluga', /^Run Beluga on \d+ variants$/],
-  ['seqweaver', 'Seqweaver', /^Run Seqweaver on \d+ variants$/],
-  ['expecto/variants', 'ExPecto', /^Run ExPecto on \d+ variants$/],
-  ['ism', 'In silico mutagenesis', /^Run in silico mutagenesis on \d+ sequences$/],
+  ['/variant-effects/', 'Sei', /^Run Sei on \d+ variants$/],
+  ['/variant-effects/?model=beluga', 'Beluga', /^Run Beluga on \d+ variants$/],
+  ['/seqweaver/', 'Seqweaver', /^Run Seqweaver on \d+ variants$/],
+  ['/expecto/variants/', 'ExPecto', /^Run ExPecto on \d+ variants$/],
+  ['/variant-effects/?tab=region-scan', 'region scan', /^Run region scan on \d+ sequences$/],
 ] as const) {
   test(`the ${tool} form checks its example`, async ({ page }) => {
     const problems = watch(page);
-    await page.goto(`${web}/${path}/`);
-    await expect(page.getByRole('heading', { level: 1, name: tool === 'In silico mutagenesis' ? tool : new RegExp(`^${tool}`) })).toBeVisible();
+    await page.goto(`${web}${path}`);
+    await expect(page.getByRole('heading', { name: `About ${tool}` })).toBeVisible();
     await page.getByRole('radio', { name: 'Use the example' }).click();
     await expect(page.getByRole('button', { name: run })).toBeVisible();
     await checkScreen(page, problems);
