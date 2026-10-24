@@ -27,7 +27,7 @@ export function ModulesTable({ result, modules, database, colors, selected, onSe
 
   return (
     <>
-      <Table className="modules-table" caption="Modules and their top terms" density="compact" columnWidths={['88px', 'auto', '96px', '104px']} minWidth="400px">
+      <Table className="modules-table" caption="Modules and their top terms" density="compact" columnWidths={['88px', 'auto', '96px', '104px']} minWidth="400px" pinFirstColumn>
         <thead>
           <tr>
             <HeaderCell>Module</HeaderCell>

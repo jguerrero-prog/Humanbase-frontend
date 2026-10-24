@@ -88,6 +88,11 @@ export class S3GenomeTracks implements GenomeTracks {
     return bases ? { start: span.start, bases: bases.toUpperCase() } : undefined;
   }
 
+  /** The files themselves cover the whole genome. */
+  covers(): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+
   private open(url: string, kind: 'bigBed' | 'bigWig' | 'twoBit'): Promise<BigBed | BigWig | TwoBitFile> {
     let file = this.opened.get(url);
     if (!file) {

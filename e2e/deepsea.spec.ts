@@ -146,6 +146,16 @@ test('a data track’s menu downloads the data in view as bedGraph or BED, read 
   const lines = segments.bytes.toString('utf8').trim().split('\n');
   expect(lines.length).toBeGreaterThan(1);
   for (const line of lines) expect(line).toMatch(/^chr1\t\d+\t\d+\t\S+\t\d+\t\.\t\d+\t\d+\t(\d+,\d+,\d+|0)$/);
+  // Away from the example variant the samples hold no data, so there is nothing to save.
+  const field = page.getByRole('searchbox', { name: 'Location or gene' });
+  await field.fill('chr1:2,600,000-2,700,000');
+  await field.press('Enter');
+  await expect(page.getByText('Sample data covers only the area around each example variant')).toBeVisible();
+  await page.getByRole('button', { name: 'Disease impact score track options' }).click();
+  const away = page.getByRole('menuitem', { name: /Download data in view/ });
+  await expect(away).toHaveAttribute('aria-disabled', 'true');
+  await expect(away).toContainText('The sample data doesn’t cover this view. Turn the API on to download it.');
+  await page.keyboard.press('Escape');
   expect(apiRequests).toEqual([]);
 });
 

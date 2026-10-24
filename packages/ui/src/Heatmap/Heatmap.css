@@ -244,17 +244,6 @@
   white-space: nowrap;
 }
 
-/* As on a table's pinned first column, the edge shadow shows where the cells scroll under the labels. */
-.heatmap-row-label::after {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: 100%;
-  inline-size: var(--space-2);
-  pointer-events: none;
-  background: linear-gradient(to right, var(--shadow-pinned-edge));
-}
-
 .heatmap-column-labels::before {
   content: "";
   position: sticky;

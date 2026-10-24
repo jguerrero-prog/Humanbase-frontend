@@ -92,6 +92,33 @@ svg {
   white-space: nowrap;
 }
 
+/* The edge of a pinned column shows only while content is scrolled under it.
+   Browsers without scroll-driven animations leave it hidden rather than always on. */
+:is(.pinned-edge, .pinned-edge-column :is(th, td):first-child)::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 100%;
+  inline-size: var(--space-2);
+  pointer-events: none;
+  background: linear-gradient(to right, var(--shadow-pinned-edge));
+  opacity: 0;
+}
+
+@supports (animation-timeline: scroll()) {
+  :is(.pinned-edge, .pinned-edge-column :is(th, td):first-child)::after {
+    animation: pinned-edge-reveal linear both;
+    animation-timeline: scroll(nearest inline);
+    animation-range: 0 var(--space-2);
+  }
+}
+
+@keyframes pinned-edge-reveal {
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes menu-open {
   from {
     opacity: 0;

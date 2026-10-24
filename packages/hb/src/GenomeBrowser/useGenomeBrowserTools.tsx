@@ -1,5 +1,5 @@
 import { assemblyNames, useHumanbase, UserTrackError, type GenomeLocation, type UserTrack } from '@humanbase/data';
-import { genomeTrackList, hiddenByDefault, inOrder, isSegmentTrack, moveTrack, noArrangement, suggestedTracks, TrackDownload, userDataTrack, type Assembly, type GenomeDataTrack, type GenomeEngineHandle, type GenomeScoreTrack, type GenomeTrackArrangement, type GenomeTrackSetting } from '@humanbase/genome';
+import { genomeTrackList, hiddenByDefault, inOrder, isSegmentTrack, moveTrack, noArrangement, suggestedTracks, TrackDownload, trackFile, useOutside, userDataTrack, type Assembly, type GenomeDataTrack, type GenomeEngineHandle, type GenomeScoreTrack, type GenomeTrackArrangement, type GenomeTrackSetting } from '@humanbase/genome';
 import { Alert, ExportDialog, saveFile, scoreTrackHeight, StoredChoice, TrackSettingsDialog, TracksDrawer, type ActionMenuItem, type ExportSettings, type GenomeCommand, type TrackSettingsValues } from '@humanbase/ui';
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 
@@ -126,6 +126,8 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
   // Height and range only mean something for a score track's bars, so only score tracks have settings.
   const scoreTrack = (id: string) => tracks.find((track): track is GenomeScoreTrack => track.name === id && !isSegmentTrack(track));
   const span = { chrom: location.chrom, start: location.start, end: location.end };
+  // With the API off, a file the samples don't hold here has no data in view to save.
+  const outside = useOutside(genomeTracks, assembly, span, tracks.map(trackFile));
   const saveView = async (download: TrackDownload, name: string) => {
     setFailure(undefined);
     try {
@@ -140,14 +142,14 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
     if (!track) return [];
     const download = new TrackDownload(track, assembly);
     const { sourceUrl } = download;
-    const fits = download.fits(span);
+    const unavailable = outside.has(trackFile(track)) ? 'The sample data doesn’t cover this view. Turn the API on to download it.' : !download.fits(span) ? `Zoom in to under ${megabases(TrackDownload.limit)} to download` : undefined;
     return [
       {
         label: 'Download data in view',
         icon: 'download',
         dividerBefore: true,
-        description: fits ? `${download.format}, ${location.format()}` : `Zoom in to under ${megabases(TrackDownload.limit)} to download`,
-        disabled: !fits,
+        description: unavailable ?? `${download.format}, ${location.format()}`,
+        disabled: Boolean(unavailable),
         onSelect: () => void saveView(download, id),
       },
       ...(sourceUrl ? [{ label: 'Download full file', icon: 'download' as const, description: download.fileType, onSelect: () => window.open(sourceUrl, '_blank', 'noopener') }] : []),

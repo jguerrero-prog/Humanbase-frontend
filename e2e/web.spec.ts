@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { apiOff } from './apiOff';
 import { downloadFrom } from './downloads';
+import { settleAnimations } from './violations';
 
 const web = 'http://localhost:4173';
 const pages = ['/', '/networks/?entrez=3553&entrez=7124&version=v1', '/jobs/', '/not-built-yet/'];
@@ -11,7 +12,7 @@ for (const path of pages) {
     const apiRequests = await apiOff(page);
     await page.goto(web + path);
     await expect(page.locator('h1')).toBeAttached();
-    await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
+    await settleAnimations(page);
     const { violations } = await new AxeBuilder({ page }).exclude('[data-illustration]').withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
     expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
     expect(apiRequests).toEqual([]);
@@ -32,7 +33,7 @@ test('a running job that finishes is announced on any page and listed on the Job
   await expect(toast).toHaveText(/Seqweaver finished: IL1B region variants/);
   await expect(page.getByRole('link', { name: 'View results: IL1B region variants' })).toBeVisible();
   // The toast fades in; axe reads colors mid-fade otherwise.
-  await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished)));
+  await settleAnimations(page);
   const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
   expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
   expect(apiRequests).toEqual([]);
@@ -95,7 +96,7 @@ test('the homepage with genes matched has no WCAG 2.2 AA violations', async ({ p
 test('the Processes panel and both drawers have no WCAG 2.2 AA violations with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   const scan = async () => {
-    await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
+    await settleAnimations(page);
     const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
     expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
   };
@@ -137,7 +138,7 @@ for (const [tab, ready] of [
     await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&tab=${tab}`);
     await expect(page.getByText(ready).first()).toBeVisible();
     await page.waitForLoadState('networkidle');
-    await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
+    await settleAnimations(page);
     const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
     expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
     await page.setViewportSize({ width: 390, height: 844 });
@@ -210,7 +211,7 @@ test('starring a tissue rings its genes, keeps the star in the URL and has no WC
   expect((await ringed.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('aria-label')?.split(',')[0]))).sort()).toEqual(['CCL20', 'RELB', 'TNFRSF1B']);
   await page.getByRole('button', { name: 'Starred sets, 1' }).click();
   await expect(page.getByRole('menuitem', { name: /Remove peripheral blood/ })).toBeVisible();
-  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished)));
+  await settleAnimations(page);
   const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
   expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
   await page.keyboard.press('Escape');
