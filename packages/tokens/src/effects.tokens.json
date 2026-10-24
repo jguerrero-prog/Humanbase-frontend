@@ -313,7 +313,7 @@
   },
   "pinned-edge": {
     "$type": "gradient",
-    "$description": "The 8px shadow on the edge of a pinned table column or heatmap row labels, where content scrolls under them. Use as linear-gradient(to right, var(--shadow-pinned-edge)).",
+    "$description": "The 8px shadow on the edge of a pinned table column or heatmap row labels, where content scrolls under them. Drawn by the pinned-edge styles in packages/ui/src/root.css, which show it only while content is scrolled under the column.",
     "$value": [
       {
         "color": {
