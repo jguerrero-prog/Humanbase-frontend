@@ -397,3 +397,15 @@
   min-block-size: 22px;
 }
 
+
+.heatmap-grid[data-windowed] {
+  display: block;
+  inline-size: calc(var(--heatmap-label) + var(--heatmap-columns) * (var(--heatmap-cell) + 1px));
+  block-size: calc(var(--heatmap-rows) * var(--heatmap-row-step));
+}
+
+.heatmap-grid[data-windowed] > .heatmap-row {
+  position: absolute;
+  inset-block-start: calc(var(--heatmap-row-at) * var(--heatmap-row-step));
+  inset-inline-start: 0;
+}

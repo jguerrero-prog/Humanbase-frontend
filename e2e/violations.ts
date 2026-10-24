@@ -14,15 +14,15 @@ export async function settleAnimations(page: Page): Promise<void> {
   await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.timeline === document.timeline && a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished.catch(() => undefined))));
 }
 
-/** WCAG 2.2 AA problems on the page once its animations settle; decorative illustrations, and any parts named in skip, are skipped. */
-export async function violationsOf(page: Page, skip: readonly string[] = []): Promise<string[]> {
+/** WCAG 2.2 AA problems on the page once its animations settle; decorative illustrations are skipped. */
+export async function violationsOf(page: Page): Promise<string[]> {
   await settleAnimations(page);
   if (!(await page.evaluate(() => Boolean((window as AxeWindow).axe)))) await page.addScriptTag({ content: axeSource });
   // Axe runs in the page and sends back only the violations: on a 23,000-cell heatmap its passing nodes alone exhaust the runner's memory.
-  return page.evaluate(async ([tags, skipped]) => {
+  return page.evaluate(async (tags) => {
     const axe = (window as AxeWindow).axe;
     if (!axe) throw new Error('axe-core did not load');
-    const result = await axe.run({ exclude: [['[data-illustration]'], ...skipped.map((selector) => [selector])] }, { runOnly: { type: 'tag', values: tags } });
+    const result = await axe.run({ exclude: [['[data-illustration]']] }, { runOnly: { type: 'tag', values: tags } });
     return result.violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`);
-  }, [axeTags, skip] as const);
+  }, axeTags);
 }

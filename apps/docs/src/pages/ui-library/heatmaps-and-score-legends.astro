@@ -78,6 +78,7 @@ const behavior = [
   ['Selected column', 'A heatmap of variants in a genome browser’s view outlines the center variant’s column in 2px ink and darkens its line to the ruler.'],
   ['Column lines', 'Where a page passes onColumnSelect, each column’s line to the ruler is a button named “Center on” and the column; the selected column has none.'],
   ['Row labels as buttons', 'Where a page passes onRowSelect, each row label is a button in the link color, underlined on hover, such as one that opens that variant in the genome browser on Sei HGMD variants. Rows that share a label pass an id.'],
+  ['Long heatmaps', 'Where a page passes windowRows, only the rows near the screen are drawn, so hundreds of rows stay quick to show and sort (Sei HGMD variants, 853 rows). The grid still gives screen readers every row’s number and the total; the arrow keys reach rows not yet drawn, which scroll into view; the focused and hovered rows stay drawn; and View as table builds its table when opened.'],
   ['Rotated labels', 'The column label band is as tall as the longest label needs at 50°, 96px at least, so no label is cut off.'],
   ['Drag', 'Where a page passes onDrag, dragging across the cells reports each move in pixels and never pins a tooltip; the cursor is a grab hand.'],
 ];

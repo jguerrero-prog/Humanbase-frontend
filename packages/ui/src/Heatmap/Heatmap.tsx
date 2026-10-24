@@ -6,6 +6,7 @@ import { placeNearPoint } from '../Tooltip/placement';
 import { HeatmapCell } from './HeatmapCell';
 import { HeatmapTable } from './HeatmapTable';
 import { LegendStepped } from './LegendStepped';
+import { useRowWindow } from './useRowWindow';
 import { ScoreScale, type ScaleSpec } from './ScoreScale';
 
 export interface HeatmapColumn {
@@ -65,6 +66,8 @@ export interface HeatmapProps {
   onColumnSelect?: ((column: number) => void) | undefined;
   /** Makes each row label a button, such as one that shows that variant in the genome browser. */
   onRowSelect?: ((row: number) => void) | undefined;
+  /** Draws only the rows near the screen, for heatmaps of hundreds of rows; View as table builds its table when opened. */
+  windowRows?: boolean | undefined;
   /** Dragging across the cells reports each move's horizontal change in pixels; a drag never pins a tooltip. */
   onDrag?: ((dx: number) => void) | undefined;
 }
@@ -98,7 +101,7 @@ function labelColumn(box: HTMLElement, labels: readonly string[]) {
   return Math.min(widest, labelWidths.max, Math.floor(box.clientWidth * labelWidths.share));
 }
 
-export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', valueLabel, showValues = false, columnWidth = 'full', selectedColumn, onColumnSelect, onRowSelect, onDrag }: HeatmapProps) {
+export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', valueLabel, showValues = false, columnWidth = 'full', selectedColumn, onColumnSelect, onRowSelect, windowRows = false, onDrag }: HeatmapProps) {
   const dragging = useRef<{ x: number; moved: boolean }>(undefined);
   const id = useId();
   const scale = useMemo(() => new ScoreScale(spec), [spec]);
@@ -132,6 +135,10 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   const [labelWidth, setLabelWidth] = useState(labelWidths.fallback);
   const [labelHeight, setLabelHeight] = useState(columnLabels.least);
   const more = useMoreToScroll(plot);
+  const grid = useRef<HTMLDivElement>(null);
+  const shown = useRowWindow(grid, rows.length, windowRows, density);
+  // A cell reached by the keyboard in a row not drawn yet takes focus once its row is drawn.
+  const pendingFocus = useRef<Cell>(undefined);
   const narrow = columnWidth === 'narrow' || (columnWidth === 'auto' && !fits);
   const width = narrow ? narrowWidth : cellWidth;
   const format = (value: number) => ScoreScale.number(Number(value.toFixed(decimals)));
@@ -193,8 +200,21 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
     setPinned(false);
     setActive(target);
     setFocus(target);
-    plot.current?.querySelector<HTMLElement>(`[data-cell="${target[0]}-${target[1]}"]`)?.focus();
+    pendingFocus.current = target;
+    focusPending();
   };
+
+  const focusPending = () => {
+    const target = pendingFocus.current;
+    const cell = target && plot.current?.querySelector<HTMLElement>(`[data-cell="${target[0]}-${target[1]}"]`);
+    if (!cell) return;
+    pendingFocus.current = undefined;
+    cell.focus();
+  };
+  useLayoutEffect(focusPending);
+
+  // The window's rows, plus the focused and hovered ones, so the tab stop and the tooltip's cell are always drawn.
+  const drawn = windowRows ? [...new Set([...Array.from({ length: shown.end - shown.start }, (_, index) => shown.start + index), focus[0], ...(active ? [active[0]] : [])])].filter((r) => r < rows.length).sort((a, b) => a - b) : rows.map((_, r) => r);
 
   const activeColumn = active?.[1];
   const activeValue = active ? valueAt(active) : null;
@@ -224,9 +244,11 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
             </div>
           )}
           <div
+            ref={grid}
             role="grid"
             aria-label={title}
             className={onDrag ? 'heatmap-grid heatmap-draggable' : 'heatmap-grid'}
+            {...(windowRows && { 'aria-rowcount': rows.length, 'data-windowed': true, style: { '--heatmap-rows': rows.length, '--heatmap-row-step': `${shown.step}px` } as CSSProperties })}
             {...(onDrag && {
               onPointerDown: (event: PointerEvent<HTMLDivElement>) => {
                 if (event.button === 0) dragging.current = { x: event.clientX, moved: false };
@@ -256,8 +278,8 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
             })}
           >
             {selectedColumn !== undefined && selectedColumn >= 0 && <span className="heatmap-selected-column" aria-hidden="true" style={{ '--heatmap-at': selectedColumn } as CSSProperties} />}
-            {rows.map((row, r) => (
-              <div role="row" key={row.id ?? row.label} className="heatmap-row">
+            {drawn.flatMap((r) => (rows[r] ? [{ row: rows[r], r }] : [])).map(({ row, r }) => (
+              <div role="row" key={row.id ?? row.label} className="heatmap-row" {...(windowRows && { 'aria-rowindex': r + 1, style: { '--heatmap-row-at': r } as CSSProperties })}>
                 <span role="rowheader" className="heatmap-row-label pinned-edge" title={row.label}>
                   {onRowSelect ? (
                     <button type="button" className="heatmap-row-name heatmap-row-pick" onClick={() => onRowSelect(r)}>
@@ -322,7 +344,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
           position={place}
         />
       )}
-      <HeatmapTable summary={summary} scale={scale} columns={columns} rows={rows} rowHeader={rowHeader} decimals={decimals} columnName={columnName} />
+      <HeatmapTable lazy={windowRows} summary={summary} scale={scale} columns={columns} rows={rows} rowHeader={rowHeader} decimals={decimals} columnName={columnName} />
     </figure>
   );
 }

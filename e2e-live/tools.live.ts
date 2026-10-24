@@ -308,7 +308,7 @@ test('Sei HGMD variants reads all 853 real variants, and a heatmap row opens its
   const problems = watch(page);
   await page.goto(`${web}/variant-effects/hgmd/`);
   const heatmap = page.getByRole('grid', { name: 'Sequence class score of 853 HGMD variants' });
-  await expect(heatmap.getByRole('row')).toHaveCount(853, { timeout: 60_000 });
+  await expect(heatmap).toHaveAttribute('aria-rowcount', '853', { timeout: 60_000 });
   // humanbase.io's default order starts here, and its Agammaglobulinaemia variant ranks E7, P and CTCF first (checked October 24, 2026).
   await expect(heatmap.getByRole('row').first().getByRole('button')).toHaveText('Haemophagocytic lymphohistiocytosis type 3 (chr17:73839907)');
   await heatmap.getByRole('button', { name: 'Agammaglobulinaemia (chrX:100641212)' }).click();

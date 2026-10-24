@@ -5,16 +5,21 @@ import { violationsOf } from './violations';
 const web = 'http://localhost:4173';
 
 test('Sei HGMD variants shows every variant on the heatmap, sorts them, and opens one in the genome browser, with the API off', async ({ page }) => {
-  // Axe reads all 75,000 elements of the heatmap view before it checks anything, which takes about half a minute.
-  test.setTimeout(120_000);
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/variant-effects/hgmd/`);
   await expect(page.getByRole('heading', { level: 1, name: 'Sei HGMD variants' })).toBeVisible();
   const heatmap = page.getByRole('grid', { name: 'Sequence class score of 853 HGMD variants' });
-  await expect(heatmap.getByRole('row')).toHaveCount(853);
+  // Only the rows near the screen are drawn; the grid still counts all 853 for screen readers.
+  await expect(heatmap).toHaveAttribute('aria-rowcount', '853');
   await expect(heatmap.getByRole('row').first().getByRole('button')).toHaveText('Haemophagocytic lymphohistiocytosis type 3 (chr17:73839907)');
-  // Axe takes minutes over 34,120 cells and their table; the Heatmap's cells are checked on smaller heatmaps elsewhere.
-  expect(await violationsOf(page, ['.heatmap-grid', '.heatmap-table'])).toEqual([]);
+  expect(await violationsOf(page)).toEqual([]);
+
+  // The arrow keys reach rows that weren't drawn yet.
+  await heatmap.getByRole('gridcell').first().focus();
+  for (let step = 0; step < 100; step += 1) await page.keyboard.press('ArrowDown');
+  await expect(page.locator(':focus')).toHaveAttribute('data-cell', '100-0');
+  await expect(page.locator(':focus').locator('xpath=..')).toHaveAttribute('aria-rowindex', '101');
+  await page.keyboard.press('Escape');
 
   await page.getByRole('combobox', { name: 'Sort variants by' }).click();
   await page.getByRole('option', { name: 'Disease name' }).click();

@@ -16,14 +16,16 @@ export interface HeatmapTableProps {
   rowHeader: string;
   decimals: number;
   columnName: (column: HeatmapColumn) => string;
+  /** Builds the table only once View as table is opened. */
+  lazy?: boolean | undefined;
 }
 
 /** The heatmap's values behind View as table: every cell with its row and column, the first column and header row pinned, each value to the same decimals. */
-export function HeatmapTable({ summary, scale, columns, rows, rowHeader, decimals, columnName }: HeatmapTableProps) {
+export function HeatmapTable({ summary, scale, columns, rows, rowHeader, decimals, columnName, lazy }: HeatmapTableProps) {
   const format = (value: number) => values.decimal(value, decimals);
   const pastEnd = rows.some((row) => row.values.some((value) => value !== null && scale.pastEnd(value) !== undefined));
   return (
-    <ViewAsTable className="heatmap-table">
+    <ViewAsTable className="heatmap-table" lazy={lazy}>
       <Table caption={summary} density="compact" pinFirstColumn>
         <thead>
           <tr>
