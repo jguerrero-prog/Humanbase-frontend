@@ -185,6 +185,32 @@ test('the real Seqweaver result’s genome browser stops at the end of chr1 and 
   await checkScreen(page, problems);
 });
 
+test('the real Seqweaver result’s genome browser finds genes in each assembly’s own GENCODE index', async ({ page }) => {
+  const problems = watch(page);
+  const job = `${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`;
+  const field = page.getByRole('searchbox', { name: 'Location or gene' });
+  const find = async (gene: string) => {
+    await expect(page.locator('.genome-engine .track-header-name').first()).toBeVisible();
+    await field.fill(gene);
+    await field.press('Enter');
+  };
+  await page.goto(job);
+  await find('CHD8');
+  await expect(field).toHaveValue('chr14:21,853,352-21,905,457');
+  // No hg38 job is on record, so the same real job is read as hg38; the gene still comes from the real GENCODE 21 files.
+  await page.route('**/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/', async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({ response, json: { ...(await response.json()), genome_assembly: 'hg38' } });
+  });
+  await page.goto(job);
+  await find('CHD8');
+  await expect(field).toHaveValue('chr14:21,385,193-21,437,298');
+  await expect(page.locator('.genome-location-help')).toContainText('A gene name works too.');
+  await find('NOTAGENE9');
+  await expect(page.getByText('No gene named “NOTAGENE9” on GRCh38/hg38.', { exact: false })).toBeVisible();
+  await checkScreen(page, problems);
+});
+
 test('the real Beluga result shows its variants and molecular effects', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/`);
