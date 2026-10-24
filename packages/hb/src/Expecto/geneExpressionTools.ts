@@ -1,7 +1,16 @@
-import type { TissueDatabase } from '@humanbase/data';
+import { deepseaModels, type TissueDatabase } from '@humanbase/data';
 import type { ScaleSpec } from '@humanbase/ui';
 
 export type GeneExpressionTool = 'expecto' | 'expecto-sc';
+
+/** The Expression effects page's ways in, in the URL as ?tab=. */
+export type ExpressionTab = 'gene' | 'rsid' | 'submit-variants';
+
+export const expressionTabs = [
+  { value: 'gene', label: 'Gene' },
+  { value: 'rsid', label: 'rsID' },
+  { value: 'submit-variants', label: 'Submit variants' },
+] as const satisfies readonly { value: ExpressionTab; label: string }[];
 
 interface Noun {
   /** The segment and context label, such as Tissue systems. */
@@ -13,7 +22,11 @@ interface Noun {
 
 export interface GeneExpressionToolInfo {
   name: string;
-  home: string;
+  /** The Model field's option and hint; ExPecto's come from its job form config. */
+  option: string;
+  modelHint: string;
+  /** The tabs the API can answer for this model; the others say so and offer ExPecto. */
+  tabs: readonly ExpressionTab[];
   database: TissueDatabase;
   groups: Noun;
   members: Noun;
@@ -34,7 +47,9 @@ export const expectoScGeneScale: ScaleSpec = { title: 'Expression effect, z-scor
 export const geneExpressionTools: Record<GeneExpressionTool, GeneExpressionToolInfo> = {
   expecto: {
     name: 'ExPecto',
-    home: '/expecto/',
+    option: deepseaModels.expecto.option,
+    modelHint: deepseaModels.expecto.otherModels,
+    tabs: ['gene', 'rsid', 'submit-variants'],
     database: 'expecto-tissues',
     groups: { label: 'Tissue systems', single: 'Tissue system', singular: 'tissue system', plural: 'tissue systems' },
     members: { label: 'Tissues', single: 'Tissue', singular: 'tissue', plural: 'tissues' },
@@ -46,7 +61,10 @@ export const geneExpressionTools: Record<GeneExpressionTool, GeneExpressionToolI
   },
   'expecto-sc': {
     name: 'ExPecto SC',
-    home: '/expecto-sc/',
+    option: 'ExPecto SC (cell types)',
+    modelHint: 'ExPecto SC covers primary cell types; ExPecto covers tissues.',
+    // The API has no ExPecto SC variant list (/api/variants/ is ExPecto's) and no job that scores a file with it.
+    tabs: ['gene'],
     database: 'clever-tissues',
     groups: { label: 'Organs', single: 'Organ', singular: 'organ', plural: 'organs' },
     members: { label: 'Cell types', single: 'Cell type', singular: 'cell type', plural: 'cell types' },
@@ -57,3 +75,17 @@ export const geneExpressionTools: Record<GeneExpressionTool, GeneExpressionToolI
     examples: ['PTEN'],
   },
 };
+
+const expressionHome = '/expression-effects/';
+
+/** The Expression effects page on one tab and model; ExPecto and Gene are the defaults, left out of the URL. */
+export function expressionEffectsLink({ tab = 'gene', model = 'expecto' }: { tab?: ExpressionTab | undefined; model?: GeneExpressionTool | undefined } = {}): string {
+  const params = new URLSearchParams();
+  if (tab !== 'gene') params.set('tab', tab);
+  if (model !== 'expecto') params.set('model', model);
+  return params.size ? `${expressionHome}?${params}` : expressionHome;
+}
+
+export function expressionGeneLink(entrez: number | string, model: GeneExpressionTool = 'expecto'): string {
+  return `${expressionHome}genes/${entrez}/${model === 'expecto' ? '' : `?model=${model}`}`;
+}

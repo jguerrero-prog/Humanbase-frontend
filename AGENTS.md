@@ -39,6 +39,14 @@ Read this before changing anything. It applies to people and coding agents alike
 - The branch is named after its issue, and the pull request says `Closes #<issue>`.
 - Pull requests target `development`. Nothing is pushed to `development` or `master` directly.
 
+## Authorship
+
+Commits, pull requests, issues and comments are written as the repository owner. Coding agents, Claude and others, never list themselves as authors or contributors, even when their tool adds attribution by default:
+
+- **Commits:** no `Co-Authored-By:` trailers. Commit as the repository owner's GitHub noreply address, currently `jguerrero-prog <234269224+jguerrero-prog@users.noreply.github.com>`, set in the repo's local git config or per commit with `git -c user.name=… -c user.email=…`. Never commit with a personal or work email.
+- **Pull requests:** no agent named as an author or co-author, in the description, the title or the squash-merge message. No "Generated with" lines or AI badges.
+- **Issues and comments:** no agent signatures, "Generated with" lines or AI badges.
+
 ## Notes for coding agents
 
 Astro starts its dev and preview servers in the background when it detects a coding agent. Use `astro dev status` and `astro dev stop`, or `pnpm test:e2e`, which keeps them in the foreground.

@@ -3,7 +3,7 @@ import { Alert, Button, EmptyState, Heatmap, ResultHeader, saveFile, ScoreScale,
 import { useMemo } from 'react';
 import { categoryCrumbs } from '../content/product';
 import { useCopyLink } from '../Jobs/useCopyLink';
-import { geneExpressionTools, type GeneExpressionTool } from './geneExpressionTools';
+import { expressionEffectsLink, geneExpressionTools, type GeneExpressionTool } from './geneExpressionTools';
 import './Expecto.css';
 
 export type GeneExpressionView = 'groups' | 'members';
@@ -90,7 +90,7 @@ export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: G
 
   const header = (
     <ResultHeader
-      crumbs={[categoryCrumbs.variants, { label: tool.name, href: tool.home }, { label: symbol }]}
+      crumbs={[categoryCrumbs.variants, { label: 'Expression effects', href: expressionEffectsLink({ model: toolId }) }, { label: symbol }]}
       title={symbol}
       context={[
         { name: 'Name', value: gene.data?.name ?? '…' },
@@ -120,7 +120,7 @@ export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: G
             title={`${tool.name} has no predictions for ${symbol}`}
             text={api.showsSamples ? `This copy of Humanbase shows sample data, which covers ${tool.examples[0]} only. Turn the API on to see every gene.` : `${tool.name} scores positions near a gene’s start; this gene isn’t in its set. Try another gene.`}
             actions={
-              <a className="button button-secondary" href={linkHref(tool.home)}>
+              <a className="button button-secondary" href={linkHref(expressionEffectsLink({ model: toolId }))}>
                 Search another gene
               </a>
             }

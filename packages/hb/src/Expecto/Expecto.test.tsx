@@ -2,7 +2,9 @@ import { Humanbase, HumanbaseProvider, SampleClient } from '@humanbase/data';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
+import { ExpressionEffects } from './ExpressionEffects';
 import { GeneExpression, type GeneExpressionState } from './GeneExpression';
+import { expressionEffectsLink, expressionGeneLink } from './geneExpressionTools';
 import { GeneFinder } from './GeneFinder';
 import { VariantSearch } from './VariantSearch';
 
@@ -53,10 +55,10 @@ describe('GeneExpression', () => {
 
 describe('VariantSearch', () => {
   it('finds a gene’s variants and links each to the gene', async () => {
-    withSamples(<VariantSearch query="IRGM" onQueryChange={() => undefined} geneHref={(entrez) => `/expecto/genes/${entrez}/`} />);
+    withSamples(<VariantSearch query="IRGM" onQueryChange={() => undefined} geneHref={(entrez) => expressionGeneLink(entrez)} />);
     expect(await screen.findByRole('heading', { name: '17 variants for IRGM' }, wait)).toBeInTheDocument();
     expect(screen.getByText(/the 85,312 with the highest predicted impact/)).toBeInTheDocument();
-    expect(screen.getAllByRole('link', { name: 'IRGM' })[0]).toHaveAttribute('href', '/expecto/genes/345611/');
+    expect(screen.getAllByRole('link', { name: 'IRGM' })[0]).toHaveAttribute('href', '/expression-effects/genes/345611/');
     await userEvent.click(screen.getByRole('button', { name: 'Show 7 more' }));
     expect(screen.getAllByRole('link', { name: 'IRGM' })).toHaveLength(17);
   });
@@ -79,5 +81,33 @@ describe('GeneFinder', () => {
     withSamples(<GeneFinder label="Search a gene" placeholder="Search a gene, such as IRGM" examples={['IRGM']} onPick={onPick} />);
     await userEvent.click(screen.getByRole('button', { name: 'IRGM' }));
     await vi.waitFor(() => expect(onPick).toHaveBeenCalledWith(345611));
+  });
+});
+
+describe('ExpressionEffects', () => {
+  const props = { onModelChange: vi.fn(), query: '', onQueryChange: () => undefined, onOpen: () => undefined };
+
+  it('says ExPecto SC can’t score submitted variants yet and offers ExPecto', async () => {
+    withSamples(<ExpressionEffects {...props} tab="submit-variants" model="expecto-sc" />);
+    expect(screen.getByText('Submitting variants isn’t available for ExPecto SC yet')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /^Run/ })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Switch to ExPecto' }));
+    expect(props.onModelChange).toHaveBeenCalledWith('expecto');
+  });
+
+  it('puts the model first on the ExPecto form, with what it can score, and offers ExPecto SC', async () => {
+    withSamples(<ExpressionEffects {...props} tab="submit-variants" model="expecto" />);
+    expect(screen.getByRole('combobox', { name: 'Model' })).toHaveTextContent('ExPecto (tissues)');
+    expect(screen.getAllByText('Variants within 20 kb of a gene’s start can be scored.')).toHaveLength(1);
+    await userEvent.click(screen.getByRole('combobox', { name: 'Model' }));
+    await userEvent.click(screen.getByRole('option', { name: 'ExPecto SC (cell types)' }));
+    expect(props.onModelChange).toHaveBeenCalledWith('expecto-sc');
+  });
+
+  it('links each tab, model and gene, leaving the defaults out', () => {
+    expect(expressionEffectsLink()).toBe('/expression-effects/');
+    expect(expressionEffectsLink({ tab: 'rsid', model: 'expecto-sc' })).toBe('/expression-effects/?tab=rsid&model=expecto-sc');
+    expect(expressionGeneLink(5728, 'expecto-sc')).toBe('/expression-effects/genes/5728/?model=expecto-sc');
+    expect(expressionGeneLink(345611)).toBe('/expression-effects/genes/345611/');
   });
 });

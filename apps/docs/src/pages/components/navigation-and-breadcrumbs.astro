@@ -667,6 +667,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
 
   .topbar-stage {
     display: grid;
+    overflow: clip;
     min-block-size: 755px;
     padding-block-start: var(--space-14);
     background: var(--surface-subtle);
@@ -769,8 +770,9 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
   }
 
   .panels {
-    display: grid;
-    grid-template-columns: 424px 584px 424px;
+    display: flex;
+    flex-wrap: wrap;
+    container-type: inline-size;
     gap: var(--space-6);
     align-items: start;
     padding: var(--space-8);
@@ -792,6 +794,12 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     min-inline-size: 0;
     inline-size: auto;
     animation: none;
+  }
+
+  @container (width < 584px) {
+    .panels :global(.nav-menu-columns) {
+      grid-auto-flow: row;
+    }
   }
 
   .crumb-variants {
@@ -851,13 +859,17 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
   .tablet {
     display: grid;
     gap: 10px;
+    overflow-x: auto;
+  }
+
+  .tablet :global(.top-bar) {
     inline-size: 1024px;
   }
 
   .phones,
   .footer-row {
-    display: grid;
-    grid-template-columns: 375px 375px minmax(0, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--space-10);
     align-items: start;
   }
@@ -865,6 +877,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
   .phone {
     position: relative;
     overflow: hidden;
+    inline-size: min(375px, 100%);
     block-size: 720px;
     margin: 0;
     border: var(--border-width-1) solid var(--border-subtle);
@@ -893,8 +906,9 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     border-radius: var(--radius-md);
   }
 
-  .footer-row {
-    grid-template-columns: 375px minmax(0, 1fr);
+  .phones .points,
+  .settings-stage {
+    flex: 1 1 194px;
   }
 
   .footer-phone {
@@ -991,15 +1005,17 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     .levels,
     .paths,
     .item-states,
-    .panels,
-    .crumb-variants,
-    .phones,
-    .footer-row {
+    .crumb-variants {
       grid-template-columns: minmax(0, 1fr);
     }
 
-    .tablet {
+    .topbar-legend {
       inline-size: auto;
+      margin-inline-start: var(--space-6);
+    }
+
+    .levels li:not(:last-child)::after {
+      content: none;
     }
   }
 </style>

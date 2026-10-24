@@ -15,7 +15,7 @@ export function DeepseaPage({ model }: { model: VariantModel }) {
         <h1>{info.tool}</h1>
         <p>{info.summary}</p>
       </header>
-      <DeepseaForm model={model} onModelChange={(next) => void navigate(`/${next}/`)} onStarted={(link) => void navigate(link)} />
+      <DeepseaForm model={model} onStarted={(link) => void navigate(link)} />
     </section>
   );
 }

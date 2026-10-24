@@ -62,11 +62,15 @@ export const productSections: NavSection[] = [
   { label: productCategories.about, columns: [[{ links: about }]] },
 ];
 
+/** Job results served outside their tool's path. */
+const jobPaths: Partial<Record<string, readonly string[]>> = { [productCategories.variants]: ['/deepsea/jobs/'] };
+
 /** The top bar section holding the page at this path, so the bar can mark it as current. */
 export function productSectionFor(pathname: string): string | undefined {
   const path = pathname.endsWith('/') ? pathname : `${pathname}/`;
   const holds = (link: NavLink) => link.href.startsWith('/') && path.startsWith(link.href);
-  return productSections.find((section) => section.columns?.flat().some((group) => group.links.some(holds)))?.label;
+  const holdsJob = (section: NavSection) => (jobPaths[section.label] ?? []).some((prefix) => path.startsWith(prefix));
+  return productSections.find((section) => holdsJob(section) || section.columns?.flat().some((group) => group.links.some(holds)))?.label;
 }
 
 const footerLinks = (links: readonly NavLink[]) => links.map(({ label, href }) => ({ label, href }));

@@ -1,4 +1,4 @@
-export { VariantJobForm, type VariantJob, type VariantJobFormProps } from './VariantJobForm/VariantJobForm';
+export { ModelHint, VariantJobForm, type VariantJob, type VariantJobFormProps } from './VariantJobForm/VariantJobForm';
 export { NetwasGenes, type NetwasGenesProps } from './NetwasGenes/NetwasGenes';
 export { AsdBrowser, type AsdBrowserProps, type AsdView } from './AsdBrowser/AsdBrowser';
 export { AsdExplorer, type AsdExplorerProps, type AsdState } from './AsdBrowser/AsdExplorer';
@@ -14,7 +14,8 @@ export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
 export { DeepseaAbout, DeepseaForm, deepseaFormLink, deepseaJobLink, type DeepseaFormProps } from './Deepsea/DeepseaForm';
 export { GeneFinder, type GeneFinderProps } from './Expecto/GeneFinder';
 export { GeneExpression, type GeneExpressionProps, type GeneExpressionState, type GeneExpressionView } from './Expecto/GeneExpression';
-export { expectoGeneScale, expectoScGeneScale, geneExpressionTools, type GeneExpressionTool, type GeneExpressionToolInfo } from './Expecto/geneExpressionTools';
+export { expectoGeneScale, expectoScGeneScale, expressionEffectsLink, expressionGeneLink, expressionTabs, geneExpressionTools, type ExpressionTab, type GeneExpressionTool, type GeneExpressionToolInfo } from './Expecto/geneExpressionTools';
+export { ExpressionEffects, type ExpressionEffectsProps } from './Expecto/ExpressionEffects';
 export { VariantSearch, type VariantSearchProps } from './Expecto/VariantSearch';
 export { DeepseaJobView, type DeepseaJobViewProps } from './Deepsea/DeepseaJobView';
 export { DeepseaResultView, type DeepseaResultViewProps } from './Deepsea/DeepseaResultView';
