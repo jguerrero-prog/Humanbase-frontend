@@ -1,7 +1,8 @@
 import { GenomeLocation, type GenomeTracks } from '@humanbase/data';
-import { genomeCommand, SegmentTable, TrackHeader, type GenomeCommand } from '@humanbase/ui';
-import { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState, type Ref } from 'react';
-import { sameRegion, withChr, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeExportOptions, type GenomeRegion, type GenomeTrackLayout } from './GenomeBrowserEngine';
+import { genomeCommand, SegmentTable, TrackHeader, type ActionMenuItem, type GenomeCommand } from '@humanbase/ui';
+import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState, type Ref } from 'react';
+import { sameRegion, withChr, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeExportOptions, type GenomeRegion, type GenomeTrackArrangement, type GenomeTrackLayout } from './GenomeBrowserEngine';
+import { noArrangement } from './genomeTrackList';
 import { useSegmentTracks } from './tracks/useTrackData';
 import './genome.css';
 
@@ -22,6 +23,10 @@ export interface GenomeEngineViewProps {
   tracks: readonly GenomeDataTrack[];
   /** Tracks left out, by id (see genomeTrackList). */
   hidden?: readonly string[] | undefined;
+  /** The tracks' order and score track settings. */
+  arrangement?: GenomeTrackArrangement | undefined;
+  /** Each track header's menu, by track id; headers have no menu without it. */
+  trackMenu?: ((id: string) => readonly ActionMenuItem[]) | undefined;
   /** The selected position, marked across every track. */
   selected?: { chrom: string; position: number } | undefined;
   onRegionChange?: (region: GenomeRegion) => void;
@@ -31,10 +36,30 @@ export interface GenomeEngineViewProps {
   ref?: Ref<GenomeEngineHandle> | undefined;
 }
 
+/** A move or removal can take the focused menu button out of the page; focus then goes back to that track's button, or to the tracks. */
+function keepingFocus(items: readonly ActionMenuItem[]): ActionMenuItem[] {
+  const restore = () => {
+    const menuButton = document.activeElement;
+    const [frame, label] = [menuButton?.closest('.genome-engine-frame'), menuButton?.getAttribute('aria-label')];
+    requestAnimationFrame(() => {
+      if (!frame || (document.activeElement && document.activeElement !== document.body)) return;
+      const button = [...frame.querySelectorAll<HTMLElement>('[aria-label]')].find((element) => element.getAttribute('aria-label') === label);
+      (button ?? frame.querySelector<HTMLElement>('.genome-engine'))?.focus();
+    });
+  };
+  return items.map((item) => ({
+    ...item,
+    onSelect: () => {
+      restore();
+      item.onSelect?.();
+    },
+  }));
+}
+
 /** Mounts a genome browser engine and keeps it on the page's region and selection. */
 const noneHidden: readonly string[] = [];
 
-export function GenomeEngineView({ engine, files, label, assembly, region, tracks, hidden = noneHidden, selected, onRegionChange, onStatusChange, onCommand, ref }: GenomeEngineViewProps) {
+export function GenomeEngineView({ engine, files, label, assembly, region, tracks, hidden = noneHidden, arrangement = noArrangement, trackMenu, selected, onRegionChange, onStatusChange, onCommand, ref }: GenomeEngineViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GenomeBrowserEngine | null>(null);
   const [ready, setReady] = useState(false);
@@ -46,10 +71,11 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
   });
   // The engine is built once per assembly, file reader and track set; region and selection changes go through it.
   const first = useRef({ region, label });
-  const latestHidden = useRef(hidden);
+  const latest = useRef({ hidden, arrangement, trackMenu });
   useLayoutEffect(() => {
-    latestHidden.current = hidden;
+    latest.current = { hidden, arrangement, trackMenu };
   });
+  const menuOf = useCallback((id: string) => keepingFocus(latest.current.trackMenu?.(id) ?? []), []);
   useImperativeHandle(ref, () => ({
     exportSvg: (options) => instance.current?.exportSvg(options) ?? Promise.reject(new Error('The genome browser hasn’t started yet.')),
   }), []);
@@ -67,7 +93,9 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
         assembly,
         region: first.current.region,
         tracks,
-        hidden: latestHidden.current,
+        hidden: latest.current.hidden,
+        arrangement: latest.current.arrangement,
+        trackMenu: menuOf,
         onRegionChange: (moved) => {
           shown.current = moved;
           events.current.onRegionChange?.(moved);
@@ -92,7 +120,7 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
       setLayout([]);
       element.replaceChildren();
     };
-  }, [engine, files, assembly, tracks]);
+  }, [engine, files, assembly, tracks, menuOf]);
 
   useEffect(() => {
     if (!ready || sameRegion(region, shown.current)) return;
@@ -104,6 +132,11 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
   useEffect(() => {
     if (ready) instance.current?.showTracks(hiddenKey ? hiddenKey.split('\n') : []);
   }, [ready, hiddenKey]);
+
+  const arranged = JSON.stringify(arrangement);
+  useEffect(() => {
+    if (ready) instance.current?.arrangeTracks(JSON.parse(arranged) as GenomeTrackArrangement);
+  }, [ready, arranged]);
 
   const mark = selected ? `${selected.chrom}:${selected.position}` : '';
   useEffect(() => {
@@ -127,7 +160,7 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
           <div className="genome-engine-headers">
             {layout.map((track) => (
               <div key={track.name} className="genome-engine-header" style={{ insetBlockStart: track.top, blockSize: track.height }}>
-                <TrackHeader name={track.name} source={track.meta ?? ''} />
+                <TrackHeader name={track.name} source={track.meta ?? ''} menuItems={trackMenu && keepingFocus(trackMenu(track.id))} />
               </div>
             ))}
           </div>

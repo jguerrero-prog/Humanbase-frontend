@@ -1,5 +1,5 @@
 import { trackFile } from './GenomeBrowserEngine';
-import { genomeTrackList, hiddenByDefault, suggestedTracks } from './genomeTrackList';
+import { genomeTrackList, hiddenByDefault, inOrder, moveTrack, suggestedTracks } from './genomeTrackList';
 
 describe('genomeTrackList', () => {
   it('lists the tracks in drawing order, with Conservation and GM12878 ChromHMM suggested on hg19 only', () => {
@@ -13,5 +13,23 @@ describe('genomeTrackList', () => {
       { id: 'sequence', name: 'Sequence', meta: 'GRCh38/hg38' },
       { id: 'genes', name: 'Genes', meta: 'GENCODE 21' },
     ]);
+  });
+});
+
+describe('track order', () => {
+  const ids = ['sequence', 'DNA', 'RNA', 'genes'];
+
+  it('keeps the stored order, and puts tracks it doesn’t list after the track before them', () => {
+    expect(inOrder(ids, [])).toEqual(ids);
+    expect(inOrder(ids, ['genes', 'sequence', 'RNA', 'DNA'])).toEqual(['genes', 'sequence', 'RNA', 'DNA']);
+    expect(inOrder(ids, ['genes', 'sequence', 'gone'])).toEqual(['genes', 'sequence', 'DNA', 'RNA']);
+    expect(inOrder(ids, ['RNA'])).toEqual(['sequence', 'DNA', 'RNA', 'genes']);
+  });
+
+  it('moves a track past the next shown one and stops at either end', () => {
+    expect(moveTrack(ids, [], 'RNA', -1)).toEqual(['sequence', 'RNA', 'DNA', 'genes']);
+    expect(moveTrack(ids, ['RNA'], 'DNA', 1)).toEqual(['sequence', 'genes', 'RNA', 'DNA']);
+    expect(moveTrack(ids, [], 'sequence', -1)).toEqual(ids);
+    expect(moveTrack(ids, [], 'genes', 1)).toEqual(ids);
   });
 });
