@@ -1,0 +1,7 @@
+{
+  "note": "Hand-built: what rerunning the renal disease panel result with extended (cross-organism) annotations answers with while the API is off. The result itself is the recorded poll sample beside this file.",
+  "status": 202,
+  "body": {
+    "status": "processing"
+  }
+}

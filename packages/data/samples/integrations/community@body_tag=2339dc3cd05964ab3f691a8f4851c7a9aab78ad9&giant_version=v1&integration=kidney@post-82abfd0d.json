@@ -1,0 +1,7 @@
+{
+  "note": "Hand-built: what rerunning the extended-annotations renal result with human-only annotations answers with while the API is off. It sends the result's own gene list, so the body differs from the example's submission; the result is the recorded poll sample for body_tag 2339dc3c\u2026.",
+  "status": 202,
+  "body": {
+    "status": "processing"
+  }
+}

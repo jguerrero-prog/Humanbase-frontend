@@ -53,6 +53,7 @@ export { useIntegrations } from './react/useIntegrations';
 export { useDataTypes, useNetwork } from './react/useNetwork';
 export { GeneFunction, type AnnotationRecord, type FunctionEvidence, type PredictionRecord, type PublicationRecord, type TermRecord } from './functions/GeneFunction';
 export { GeneFunctionService, type FunctionDatabase } from './functions/GeneFunctionService';
+export { ExtendedUniverse, type ExtendedUniverseStatus } from './functions/ExtendedUniverse';
 export { TermEnrichment, type AnnotatedTermRecord, type TermHit } from './functions/TermEnrichment';
 export { TermService, type TermDatabase } from './functions/TermService';
 export { ConnectionEvidence, ConnectionInNetwork, type DatasetEvidence, type EvidenceRecord } from './connections/Connection';

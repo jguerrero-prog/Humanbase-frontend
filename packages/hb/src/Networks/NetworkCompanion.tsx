@@ -16,16 +16,18 @@ export interface NetworkCompanionProps {
   onAddGene: (gene: NetworkGene) => void;
   starred: readonly string[];
   onToggleStar: (identifier: string) => void;
+  /** Ranks terms with cross-organism annotation counts, for extended_universe on GIANT. */
+  extendedUniverse?: boolean;
 }
 
 type Panel = 'genes' | 'processes' | 'tissues';
 
-export function NetworkCompanion({ network, shown, queryNames, networkTitle, fileName, selected, onSelectGene, onAddGene, starred, onToggleStar }: NetworkCompanionProps) {
+export function NetworkCompanion({ network, shown, queryNames, networkTitle, fileName, selected, onSelectGene, onAddGene, starred, onToggleStar, extendedUniverse = false }: NetworkCompanionProps) {
   const [panel, setPanel] = useState<Panel>('genes');
   // Terms load once for every gene in the response, then rank against whichever genes the graph shows.
   const allGenes = useMemo(() => network?.genes.map((gene) => gene.entrez), [network]);
-  const processes = useAnnotatedTerms(allGenes, 'gene-ontology-bp');
-  const tissues = useAnnotatedTerms(allGenes, 'brenda-ontology');
+  const processes = useAnnotatedTerms(allGenes, 'gene-ontology-bp', extendedUniverse);
+  const tissues = useAnnotatedTerms(allGenes, 'brenda-ontology', extendedUniverse);
   const shownIds = useMemo(() => new Set(shown?.map((gene) => gene.entrez)), [shown]);
   const processHits = useMemo(() => (shown ? processes.data?.enriched(shownIds) : undefined), [processes.data, shown, shownIds]);
   const tissueHits = useMemo(() => (shown ? tissues.data?.byGeneCount(shownIds) : undefined), [tissues.data, shown, shownIds]);

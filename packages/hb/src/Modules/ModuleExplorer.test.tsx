@@ -2,23 +2,27 @@ import { Humanbase, HumanbaseProvider, JobHistory, ModuleView, SampleClient } fr
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
-import { ModuleExplorer, type ModuleDraft } from './ModuleExplorer';
+import { ModuleExplorer, type ModuleDraft, type ModuleExplorerProps } from './ModuleExplorer';
 
 const renal = '2339dc3cd05964ab3f691a8f4851c7a9aab78ad9';
+const renalExtended = 'af5b37885800bae6803f59e071fdcfdf84cb405c';
 
-function Explorer({ bodyTag, onEditGenes }: { bodyTag: string; onEditGenes: (draft: ModuleDraft) => void }) {
+type ExplorerProps = Pick<ModuleExplorerProps, 'bodyTag' | 'onEditGenes' | 'onStarted' | 'extendedUniverse'>;
+
+function Explorer(props: ExplorerProps) {
   const [view, setView] = useState(new ModuleView());
-  return <ModuleExplorer bodyTag={bodyTag} view={view} onViewChange={setView} onEditGenes={onEditGenes} onStarted={vi.fn()} />;
+  return <ModuleExplorer {...props} view={view} onViewChange={setView} />;
 }
 
-function renderExplorer(bodyTag = renal) {
+function renderExplorer(bodyTag = renal, extendedUniverse = false) {
   const onEditGenes = vi.fn<(draft: ModuleDraft) => void>();
+  const onStarted = vi.fn<(link: string, replace: boolean) => void>();
   render(
     <HumanbaseProvider api={new Humanbase(SampleClient.bundled())}>
-      <Explorer bodyTag={bodyTag} onEditGenes={onEditGenes} />
+      <Explorer bodyTag={bodyTag} onEditGenes={onEditGenes} onStarted={onStarted} extendedUniverse={extendedUniverse} />
     </HumanbaseProvider>,
   );
-  return { onEditGenes };
+  return { onEditGenes, onStarted };
 }
 
 describe('ModuleExplorer', () => {
@@ -34,6 +38,26 @@ describe('ModuleExplorer', () => {
     expect(within(table).getAllByRole('button').map((button) => button.textContent)).toEqual(['M1', 'M3', 'M4', 'M5', 'M6']);
     expect(within(table).getByText('renal system development')).toBeInTheDocument();
     expect(screen.getByText('Showing 14 enriched modules of 2 genes or more. Edges hidden.')).toBeInTheDocument();
+  });
+
+  it('says nothing about annotations on a human-only result unless extended_universe asks', async () => {
+    const { onStarted } = renderExplorer();
+    await screen.findByRole('table', { name: 'Modules and their top terms' });
+    expect(screen.queryByText('Human-only annotations')).not.toBeInTheDocument();
+    expect(onStarted).not.toHaveBeenCalled();
+  });
+
+  it('reruns a human-only GIANT result with extended annotations when extended_universe asks, as humanbase.io does', async () => {
+    const { onStarted } = renderExplorer(renal, true);
+    await vi.waitFor(() => expect(onStarted).toHaveBeenCalledWith(`/modules/?body_tag=${renalExtended}&extended_universe=true`, true));
+  });
+
+  it('says an extended result used cross-organism annotations and runs it again with human-only ones', async () => {
+    const { onStarted } = renderExplorer(renalExtended);
+    const notice = await screen.findByText('This module was computed with extended (cross-organism) annotations.');
+    expect(screen.getByText('Extended annotations')).toBeInTheDocument();
+    await userEvent.click(within(notice.closest('[role="status"]') as HTMLElement).getByRole('button', { name: 'Run with human-only annotations' }));
+    await vi.waitFor(() => expect(onStarted).toHaveBeenCalledWith(`/modules/?body_tag=${renal}`, false));
   });
 
   it('names a result without a title', async () => {

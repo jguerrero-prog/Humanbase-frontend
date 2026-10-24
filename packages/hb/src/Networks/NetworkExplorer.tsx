@@ -58,6 +58,8 @@ export interface NetworkExplorerProps {
   fromSearch?: boolean;
   /** Draws the gene or connection detail for the current selection; defaults to the gene and connection drawers. */
   detail?: (context: NetworkDetailContext) => ReactNode;
+  /** True when the page dropped an extended_universe flag from its URL, since MAGE pages can't use it. */
+  extendedUniverseIgnored?: boolean;
   renderer?: GraphRendererFactory | undefined;
 }
 
@@ -71,7 +73,7 @@ const tabs: { value: NetworkTab; label: string }[] = [
   { value: 'diseases', label: 'Diseases' },
 ];
 
-export function NetworkExplorer({ query, view, compareView = view, onQueryChange, onViewChange, fromSearch = false, detail = (context) => <NetworkDetail {...context} />, renderer }: NetworkExplorerProps) {
+export function NetworkExplorer({ query, view, compareView = view, onQueryChange, onViewChange, fromSearch = false, detail = (context) => <NetworkDetail {...context} />, extendedUniverseIgnored = false, renderer }: NetworkExplorerProps) {
   // The tissue network names the genes and finds those in no network; the process tab draws its own network.
   const base = useNetwork(query);
   const onProcessTab = view.tab === 'process';
@@ -85,6 +87,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
   const { data: integrations = [] } = useIntegrations();
   const { data: dataTypes = [] } = useDataTypes(activeQuery.version);
   const names = useGenes(query.entrez);
+  const extendedUniverse = query.extendedUniverseStatus === 'active';
   const [missingDismissed, setMissingDismissed] = useState(false);
   const [processMenuOpen, setProcessMenuOpen] = useState(false);
   const [editingGenes, setEditingGenes] = useState(false);
@@ -193,6 +196,12 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
         tab={view.tab}
         onTabChange={(tab) => onViewChange(view.with({ tab: tab as NetworkTab, selection: undefined }))}
       />
+      {extendedUniverse && <Alert tone="info">Showing legacy extended universe (cross-organism) annotation counts.</Alert>}
+      {extendedUniverseIgnored && (
+        <Alert tone="warning" title="Extended universe not applied">
+          The <code>extended_universe</code> flag is a legacy setting available only on GIANT networks; this is a non-GIANT page so the flag was ignored.
+        </Alert>
+      )}
       {missing.length > 0 && !missingDismissed && (
         <Alert tone="info" dismissible onDismiss={() => setMissingDismissed(true)}>
           {`${listJoin(missing)} ${missing.length === 1 ? 'was' : 'were'} left out because ${missing.length === 1 ? 'it isn’t' : 'they aren’t'} in any Humanbase network. This network uses ${listJoin(found)}.`}
@@ -355,6 +364,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
                 onAddGene={addGene}
                 starred={view.starred}
                 onToggleStar={(identifier) => onViewChange(view.toggleStar(identifier))}
+                extendedUniverse={extendedUniverse}
               />
               <p className="result-note">
                 The panel follows the network you used last, here {focusTitle}. Selecting a gene or connection in the other network switches it.
@@ -395,6 +405,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
             onViewChange={onViewChange}
             onSelectGene={(entrez) => select({ kind: 'gene', entrez })}
             onSelectConnection={(source, target) => select({ kind: 'connection', source, target })}
+            extendedUniverse={extendedUniverse}
             renderer={renderer}
           />
         }
@@ -411,6 +422,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
             onAddGene={addGene}
             starred={view.starred}
             onToggleStar={(identifier) => onViewChange(view.toggleStar(identifier))}
+            extendedUniverse={extendedUniverse}
           />
         }
       />
