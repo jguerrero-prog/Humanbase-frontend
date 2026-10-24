@@ -1,7 +1,7 @@
 import { ExpectoService, useVariantSearch, useVariantTotal } from '@humanbase/data';
 import { Alert, Button, Cell, HeaderCell, SearchExamples, SearchField, Table, TableSkeleton, useDebounced, useLinkHref } from '@humanbase/ui';
 import { useState } from 'react';
-import { GenomeBrowserLink, genomeBrowserPreview as genome } from '../content/genomeBrowser';
+import { genomeBrowserLink, genomeBrowserPreview as genome } from '../content/genomeBrowser';
 import { ViewInGenomeBrowser } from '../GenomeBrowser/ViewInGenomeBrowser';
 import './Expecto.css';
 
@@ -86,7 +86,7 @@ export function VariantSearch({ query, onQueryChange, geneHref }: VariantSearchP
                       <Cell type="id">{variant.change}</Cell>
                       {genome && (
                         <Cell>
-                          <ViewInGenomeBrowser href={GenomeBrowserLink.variant(variant.chromosome, variant.position)} context={`at ${variant.chromosome}:${counts.format(variant.position)}`} />
+                          <ViewInGenomeBrowser href={genomeBrowserLink.variant(variant.chromosome, variant.position)} context={`at ${variant.chromosome}:${counts.format(variant.position)}`} />
                         </Cell>
                       )}
                     </tr>

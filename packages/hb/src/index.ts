@@ -11,7 +11,7 @@ export { DocsSearchIndex, snippet, type DocsHit } from './content/docs/DocsSearc
 export { analysisColumns, analysisIcons, analysisOptions, categoryCrumbs, productCategories, productFooter, productSectionFor, productSections, productTools } from './content/product';
 export { sequenceToolModels, type SequenceToolModel } from './content/sequenceTools';
 export { asdBrowserRetired } from './content/asdBrowser';
-export { genomeBrowserPreview, GenomeBrowserLink, type GenomeBrowserView } from './content/genomeBrowser';
+export { genomeBrowserPreview, genomeBrowserLink, type GenomeBrowserView } from './content/genomeBrowser';
 export { GenomeBrowserPreview, type GenomeBrowserPreviewProps } from './GenomeBrowser/GenomeBrowserPreview';
 export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
 export { DeepseaAbout, DeepseaForm, deepseaFormLink, deepseaJobLink, type DeepseaFormProps } from './Deepsea/DeepseaForm';

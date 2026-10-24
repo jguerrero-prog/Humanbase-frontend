@@ -1,17 +1,17 @@
-import { GenomeBrowserLink, genomeBrowserPreview } from './genomeBrowser';
+import { genomeBrowserLink, genomeBrowserPreview } from './genomeBrowser';
 
-const read = (query: string) => GenomeBrowserLink.read(new URLSearchParams(query));
+const read = (query: string) => genomeBrowserLink.read(new URLSearchParams(query));
 
-describe('GenomeBrowserLink', () => {
-  it('links a gene and a variant to /genome/ while the preview is on', () => {
-    expect(genomeBrowserPreview).toBe(true);
-    expect(GenomeBrowserLink.gene('IL1B')).toBe('/genome/?gene=IL1B');
-    expect(GenomeBrowserLink.variant('5', 150226123)).toBe('/genome/?location=chr5:150226123');
+describe('genomeBrowserLink', () => {
+  it('links a gene and a variant to /genome/ while the preview is on, and nowhere once it is off', () => {
+    const on = (href: string) => (genomeBrowserPreview ? href : undefined);
+    expect(genomeBrowserLink.gene('IL1B')).toBe(on('/genome/?gene=IL1B'));
+    expect(genomeBrowserLink.variant('5', 150226123)).toBe(on('/genome/?location=chr5:150226123'));
   });
 
   it('opens humanbase.io’s /genome view on GRCh37/hg19 when the link names nothing', () => {
     expect(read('')).toEqual({ assembly: 'hg19', gene: undefined, location: undefined, variant: undefined });
-    expect(GenomeBrowserLink.start('hg19').format()).toBe('chr1:2,230,000-2,440,000');
+    expect(genomeBrowserLink.start('hg19').format()).toBe('chr1:2,230,000-2,440,000');
   });
 
   it('reads a gene, a range and an assembly', () => {

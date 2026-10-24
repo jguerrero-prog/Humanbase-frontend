@@ -1,8 +1,8 @@
 import { useLinkHref, type ButtonVariant } from '@humanbase/ui';
-import { GenomeBrowserLink } from '../content/genomeBrowser';
+import { genomeBrowserLink } from '../content/genomeBrowser';
 
 export interface ViewInGenomeBrowserProps {
-  /** From GenomeBrowserLink; nothing renders while the preview is off. */
+  /** From genomeBrowserLink; nothing renders while the preview is off. */
   href: string | undefined;
   /** Drawn as a button of this kind; left out, a plain link, as in a table row. */
   variant?: ButtonVariant | undefined;
@@ -15,7 +15,7 @@ export function ViewInGenomeBrowser({ href, variant, context }: ViewInGenomeBrow
   if (!href) return null;
   return (
     <a className={variant && `button button-${variant} button-medium`} href={linkHref(href)}>
-      {GenomeBrowserLink.label}
+      {genomeBrowserLink.label}
       {context && <span className="visually-hidden"> {context}</span>}
     </a>
   );

@@ -43,7 +43,7 @@ export function NetwasGeneTable({ caption, rows, empty = { title: 'No genes to s
   const linkHref = useLinkHref();
   const genome = rows.some((row) => row.genomeHref);
   return (
-    <Table caption={caption} density="compact" columnWidths={['64px', 'auto', '168px', '216px', '152px']}>
+    <Table caption={caption} density="compact" columnWidths={['64px', 'auto', '168px', '216px', genome ? '192px' : '152px']}>
       <thead>
         <tr>
           <HeaderCell align="end">Rank</HeaderCell>

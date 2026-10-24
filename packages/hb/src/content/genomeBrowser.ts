@@ -1,7 +1,7 @@
 import { GenomeLocation, type Assembly } from '@humanbase/data';
+import { genomeBrowserPreview } from './genomeBrowserPreview';
 
-/** The genome browser page (#458) is a preview of a proposal under review (#457). Set to false to take out /genome/ and every "View in genome browser" link. */
-export const genomeBrowserPreview = true;
+export { genomeBrowserPreview };
 
 /** What /genome/ shows: a place, the gene the link named, and the variant to mark when the link came from one. */
 export interface GenomeBrowserView {
@@ -20,29 +20,24 @@ function variantAt(text: string | null, assembly: Assembly): GenomeLocation | un
   return parsed instanceof GenomeLocation ? parsed.fit().location : undefined;
 }
 
+const href = (query: string): string | undefined => (genomeBrowserPreview ? `/genome/?${query}` : undefined);
+
 /** Links into the genome browser page, and the view /genome/ reads back from them. Every link is undefined while the preview is off. */
-export class GenomeBrowserLink {
-  static readonly label = 'View in genome browser';
-  static readonly path = '/genome/';
+export const genomeBrowserLink = {
+  label: 'View in genome browser',
   /** A variant opens with this much of the genome around it, as variant results do. */
-  static readonly variantWidth = 50_000;
+  variantWidth: 50_000,
 
   /** Where humanbase.io's /genome opens. */
-  static start(assembly: Assembly): GenomeLocation {
-    return new GenomeLocation('chr1', 2_230_000, 2_440_000, assembly);
-  }
+  start: (assembly: Assembly): GenomeLocation => new GenomeLocation('chr1', 2_230_000, 2_440_000, assembly),
 
-  static gene(symbol: string): string | undefined {
-    return this.href(`gene=${encodeURIComponent(symbol)}`);
-  }
+  gene: (symbol: string): string | undefined => href(`gene=${encodeURIComponent(symbol)}`),
 
   /** A variant, such as chr1:877047; the page centers on it and marks it. */
-  static variant(chromosome: string, at: number): string | undefined {
-    return this.href(`location=${GenomeLocation.at(chromosome, at).chrom}:${at}`);
-  }
+  variant: (chromosome: string, at: number): string | undefined => href(`location=${GenomeLocation.at(chromosome, at).chrom}:${at}`),
 
   /** Reads ?gene=, ?location= (a range or one position) and ?assembly=, plus ?variant=, which the page keeps once the view moves. */
-  static read(query: URLSearchParams): GenomeBrowserView {
+  read(query: URLSearchParams): GenomeBrowserView {
     const assembly: Assembly = query.get('assembly') === 'hg38' ? 'hg38' : 'hg19';
     const typed = query.get('location') ?? '';
     const one = variantAt(typed, assembly);
@@ -50,12 +45,8 @@ export class GenomeBrowserLink {
     return {
       assembly,
       gene: query.get('gene')?.trim() || undefined,
-      location: range instanceof GenomeLocation ? range.fit().location : one?.withWidth(this.variantWidth),
+      location: range instanceof GenomeLocation ? range.fit().location : one?.withWidth(genomeBrowserLink.variantWidth),
       variant: one ?? variantAt(query.get('variant'), assembly),
     };
-  }
-
-  private static href(query: string): string | undefined {
-    return genomeBrowserPreview ? `${this.path}?${query}` : undefined;
-  }
-}
+  },
+} as const;

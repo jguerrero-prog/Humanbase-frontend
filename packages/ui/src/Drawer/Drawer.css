@@ -69,6 +69,7 @@
 
 .drawer-footer {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-3);
   padding: var(--space-4) var(--space-6);
   border-block-start: var(--border-width-1) solid var(--border-subtle);

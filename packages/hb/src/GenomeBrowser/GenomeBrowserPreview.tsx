@@ -2,7 +2,7 @@ import { assemblyNames, GenomeLocation, useGeneLocation, useHumanbase } from '@h
 import { defaultGenomeEngine, diseaseImpactTracks, seqweaverGnomadTrack, type GenomeBrowserEngineFactory, type GenomeDataTrack } from '@humanbase/genome';
 import { Alert, ResultHeader, ResultLayout, Skeleton } from '@humanbase/ui';
 import { categoryCrumbs } from '../content/product';
-import { GenomeBrowserLink, type GenomeBrowserView } from '../content/genomeBrowser';
+import { genomeBrowserLink, type GenomeBrowserView } from '../content/genomeBrowser';
 import { VariantGenomeBrowser } from '../Deepsea/VariantGenomeBrowser';
 import '../Deepsea/Deepsea.css';
 
@@ -26,7 +26,7 @@ export function GenomeBrowserPreview({ view, onLocationChange, proposalHref, eng
   const { showsSamples } = useHumanbase();
   const found = useGeneLocation(view.location ? undefined : view.gene, view.assembly);
   const assemblyName = assemblyNames[view.assembly];
-  const location = view.location ?? found.data ?? GenomeBrowserLink.start(view.assembly);
+  const location = view.location ?? found.data ?? genomeBrowserLink.start(view.assembly);
   const variant = view.variant?.chrom === location.chrom ? view.variant : undefined;
   const finding = found.isPending && found.fetchStatus !== 'idle';
 

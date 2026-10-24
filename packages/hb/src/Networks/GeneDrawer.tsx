@@ -1,6 +1,6 @@
 import { useGeneFunctions, type GeneFunction, type NetworkGene } from '@humanbase/data';
 import { Button, Drawer, GeneDetail } from '@humanbase/ui';
-import { GenomeBrowserLink } from '../content/genomeBrowser';
+import { genomeBrowserLink } from '../content/genomeBrowser';
 import { ViewInGenomeBrowser } from '../GenomeBrowser/ViewInGenomeBrowser';
 import { annotationRows } from './annotationRows';
 import { geneIdLinks } from './geneIds';
@@ -21,7 +21,7 @@ const strongest = (functions: readonly GeneFunction[] | undefined) => functions 
 export function GeneDrawer({ gene, queryNames, networkTitle, onAdd, onClose }: GeneDrawerProps) {
   const processes = useGeneFunctions(gene.entrez, 'gene-ontology-bp');
   const diseases = useGeneFunctions(gene.entrez, 'disease-ontology');
-  const genome = GenomeBrowserLink.gene(gene.symbol);
+  const genome = genomeBrowserLink.gene(gene.symbol);
 
   return (
     <Drawer
@@ -33,7 +33,7 @@ export function GeneDrawer({ gene, queryNames, networkTitle, onAdd, onClose }: G
         (onAdd || genome) && (
           <>
             {onAdd && <Button onClick={onAdd}>Add to query</Button>}
-            <ViewInGenomeBrowser href={genome} variant="secondary" />
+            <ViewInGenomeBrowser href={genome} variant="ghost" />
           </>
         )
       }
