@@ -57,6 +57,28 @@ describe('TrackEngine', () => {
     vi.restoreAllMocks();
   });
 
+  it('draws each score file on its own, so one that fails leaves the others drawn', async () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains('score-tracks-column') ? 220 : 1220;
+    });
+    const container = document.createElement('div');
+    document.body.append(container);
+    const files = new SampleGenomeTracks(SampleClient.bundled());
+    vi.spyOn(files, 'scores').mockImplementation((url) => (url.endsWith('missing.bw') ? Promise.reject(new Error('blocked')) : Promise.resolve([{ start: 2_300_000, end: 2_300_000, value: 1 }])));
+    const engine = new TrackEngine(files);
+    const tracks = [
+      { name: 'Missing', bigWigUrl: 'https://example.org/missing.bw', range: [0, 1] as const },
+      { name: 'Yours', bigWigUrl: 'file:1/yours.bw', range: [0, 1] as const },
+    ];
+    await act(() => engine.mount(container, { label: 'Genome browser', assembly: 'hg19', region: { chrom: 'chr1', start: 2_230_000, end: 2_440_000 }, tracks }));
+    expect(await screen.findByText('Missing didn’t load. Move or zoom to try again.')).toBeInTheDocument();
+    expect(screen.queryByText('Yours didn’t load. Move or zoom to try again.')).toBeNull();
+    expect(container.querySelectorAll('.genome-tracks-bar')).toHaveLength(1);
+    engine.destroy();
+    container.remove();
+    vi.restoreAllMocks();
+  });
+
   it('draws GM12878 ChromHMM from the file once it is turned on, and exports it', async () => {
     vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
       return this.classList.contains('score-tracks-column') ? 220 : 1220;
