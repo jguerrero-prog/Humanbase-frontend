@@ -319,6 +319,7 @@ ACGTTGCAGGTCCATGACTTGCAATCGGATCCTAGGCTTACGATCGATTGCCAGTACGGTTAACCGTAGCTAGGCATTCG
   .form-column,
   .sequence-form {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-6);
   }
 
@@ -334,7 +335,7 @@ ACGTTGCAGGTCCATGACTTGCAATCGGATCCTAGGCTTACGATCGATTGCCAGTACGGTTAACCGTAGCTAGGCATTCG
   }
 
   .about-specimen {
-    inline-size: 400px;
+    inline-size: min(400px, 100%);
     margin-block-end: var(--space-6);
   }
 
@@ -472,10 +473,15 @@ ACGTTGCAGGTCCATGACTTGCAATCGGATCCTAGGCTTACGATCGATTGCCAGTACGGTTAACCGTAGCTAGGCATTCG
     border-radius: var(--radius-md);
   }
 
-  @media (width < 64rem) {
+  @media (width < 90rem) {
     .screen-columns,
+    .sequence {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (width < 64rem) {
     .check-states,
-    .sequence,
     .form-row,
     .position-row {
       grid-template-columns: minmax(0, 1fr);
