@@ -295,3 +295,17 @@ test('the Sei score plot switches plot style, zooms with the brush, the wheel an
   expect(await violationsOf(page)).toEqual([]);
   expect(apiRequests).toEqual([]);
 });
+
+test('Seqweaver links its gnomAD browser, which opens on the recorded sample range with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/seqweaver/`);
+  await page.getByRole('link', { name: 'Explore gnomAD variant effects' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Seqweaver gnomAD browser' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Molecular effects of chr1:2,334,919 C>T' })).toBeVisible();
+  await expect(page.getByText(/^78 variants in view/)).toBeVisible();
+  expect(await violationsOf(page)).toEqual([]);
+  await page.getByRole('button', { name: 'Next variant' }).click();
+  await expect(page).toHaveURL(/variant=chr1-2335285-G-A/);
+  await expect(page.getByRole('heading', { name: 'Molecular effects of chr1:2,335,285 G>A' })).toBeVisible();
+  expect(apiRequests).toEqual([]);
+});

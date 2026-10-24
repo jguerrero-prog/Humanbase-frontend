@@ -1,8 +1,9 @@
 import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type DeepseaModel, type InputKind, type VariantModel } from '@humanbase/data';
 import { AboutPanel, Alert, type AboutPanelProps, DocsLink, saveFile, type Crumb } from '@humanbase/ui';
 import { useState } from 'react';
-import { categoryCrumbs, seiHgmd } from '../content/product';
+import { categoryCrumbs } from '../content/product';
 import { expressionEffectsLink } from '../Expecto/geneExpressionTools';
+import { seqweaverGnomadHref } from '../PrecomputedVariants/seqweaverGnomad';
 import '../Jobs/JobForm.css';
 import { VariantJobForm, type VariantJob, type VariantJobFormProps } from '../VariantJobForm/VariantJobForm';
 
@@ -39,6 +40,11 @@ export function deepseaFormLink(model: VariantModel): string {
 export function deepseaJobCrumbs(model: DeepseaModel, title: string): Crumb[] {
   return [categoryCrumbs.variants, { label: model.tool, href: deepseaFormLink(model.id) }, { label: title }];
 }
+
+// A model's precomputed variants, browsable without a job; humanbase.io linked Seqweaver's from its own page.
+const precomputedBrowsers: Partial<Record<VariantModel, { text: string; href: string }>> = {
+  seqweaver: { text: 'Explore gnomAD variant effects', href: seqweaverGnomadHref },
+};
 
 export function deepseaJobLink(id: string): string {
   return `/deepsea/jobs/${id}/`;
@@ -87,6 +93,7 @@ export function DeepseaForm({ model, onModelChange, models, inputs, onStarted }:
 /** The About panel for a sequence model: what it does, its documentation and its example files. */
 export function DeepseaAbout({ model, headingLevel = 2 }: { model: VariantModel; headingLevel?: AboutPanelProps['headingLevel'] }) {
   const info = deepseaModels[model];
+  const browser = precomputedBrowsers[model];
   return (
     <AboutPanel
       tool={info.inSentence ?? info.tool}
@@ -95,9 +102,9 @@ export function DeepseaAbout({ model, headingLevel = 2 }: { model: VariantModel;
       links={
         <>
           {info.docsName && <DocsLink href={info.docsHref}>Read the {info.docsName} documentation</DocsLink>}
-          {model === 'sei' && (
-            <DocsLink href={seiHgmd.href} icon="heatmap">
-              Explore {seiHgmd.description}
+          {browser && (
+            <DocsLink href={browser.href} icon="genome-track">
+              {browser.text}
             </DocsLink>
           )}
         </>

@@ -1,5 +1,5 @@
 import { tissueConfidenceScale } from '@humanbase/hb';
-import type { HeatmapCellDetail, HeatmapRow, ScaleSpec } from '@humanbase/ui';
+import { seqweaverGnomadEffects, type HeatmapCellDetail, type HeatmapRow, type ScaleSpec } from '@humanbase/ui';
 
 export type LegendStatus = 'Decided' | 'Proposed' | 'To confirm';
 
@@ -41,6 +41,11 @@ export const scoreLegends: LegendPreset[] = [
     status: 'To confirm',
     spec: { title: 'In silico mutagenesis, log2 fold change of odds', kind: 'diverging', edges: [-2, -1, -0.5, 0.5, 1, 2], words: ['Mutation raises', 'Mutation lowers'] },
     note: 'Words follow the formula, original minus mutated; the sign is on the facts to confirm.',
+  },
+  {
+    status: 'To confirm',
+    spec: seqweaverGnomadEffects.legend,
+    note: 'Seqweaver gnomAD browser: live draws 0 to 5, white at 0 through yellow at 1 and orange at 4 to red at 5. Edges at 1, 2, 3 and 4 to confirm with the Seqweaver team.',
   },
   {
     status: 'Proposed',

@@ -43,6 +43,14 @@ describe('DeepseaService', () => {
     expect(top).toMatchObject({ feature: 'LIN28A', value: 28.003836 });
   });
 
+  it('reads Seqweaver’s precomputed gnomAD variants in a range, without a job', async () => {
+    const view = new GenomeLocation('chr1', 2_334_000, 2_336_000);
+    const records = await service.precomputedPredictions('seqweaver', 'seqweaver', view);
+    expect(records.length).toBeGreaterThan(50);
+    expect(records.every((record) => view.includes(record.chromosome, record.position) && record.feature_predictions.length === 232)).toBe(true);
+    expect(Number(records[0]?.variant_score)).toBeGreaterThan(0);
+  });
+
   it('answers the example submission with a queued job when the API is off', async () => {
     const job = await service.submit({ model: 'beluga', kind: 'vcf', text: deepseaExamples.beluga.hg19.vcf ?? '', fileName: 'example.vcf', genome: 'hg19' });
     expect(job.model.tool).toBe('Beluga');
