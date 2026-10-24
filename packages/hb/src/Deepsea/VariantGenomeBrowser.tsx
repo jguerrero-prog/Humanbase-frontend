@@ -18,10 +18,12 @@ export interface VariantGenomeBrowserProps {
   onPreviousVariant?: (() => void) | undefined;
   onNextVariant?: (() => void) | undefined;
   engine?: GenomeBrowserEngineFactory | undefined;
+  /** Names the browser whose track choices are remembered. */
+  browser?: string | undefined;
 }
 
-/** The genome around the selected variant, with the system toolbar and the job's score tracks. With the API off it draws from the recorded track windows. */
-export function VariantGenomeBrowser({ assembly, chromosome, position, label, location, tracks, onLocationChange, onPreviousVariant, onNextVariant, engine = defaultGenomeEngine }: VariantGenomeBrowserProps) {
+/** The genome around the selected variant, with the system toolbar and the page's score tracks. With the API off it draws from the recorded track windows. */
+export function VariantGenomeBrowser({ assembly, chromosome, position, label, location, tracks, onLocationChange, onPreviousVariant, onNextVariant, engine = defaultGenomeEngine, browser = 'variant-results' }: VariantGenomeBrowserProps) {
   const api = useHumanbase();
   const { genomeTracks } = api;
   const [failure, setFailure] = useState<Error>();
@@ -53,7 +55,7 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
   };
   const onRegionChange = (moved: GenomeRegion) => move(new GenomeLocation(moved.chrom, moved.start, moved.end, assembly).fit().location ?? location);
   const zoomStop = (GenomeLocation.zoomStops as readonly number[]).includes(location.width) ? location.width : undefined;
-  const { attach, ...tools } = useGenomeBrowserTools({ browser: 'variant-results', assembly, tracks, location });
+  const { attach, ...tools } = useGenomeBrowserTools({ browser, assembly, tracks, location });
 
   return (
     <section className="variant-genome-browser" aria-label={`Genome around ${label}`}>

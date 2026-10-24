@@ -273,6 +273,23 @@ test('the real Seqweaver result’s genome browser finds genes in each assembly�
   await checkScreen(page, problems);
 });
 
+test('the Seqweaver gnomAD browser reads the real precomputed variants and track, as humanbase.io’s /seqweaver does', async ({ page }) => {
+  test.setTimeout(120_000);
+  const problems = watch(page);
+  await page.goto(`${web}/seqweaver/gnomad/`);
+  // humanbase.io centers chr1:2,230,000-2,440,000 on this variant, ranks HepG2 / DDX6 first and shows 232 features (checked October 24, 2026).
+  await expect(page.getByRole('heading', { name: 'Molecular effects of chr1:2,334,919 C>T' })).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByText(/^[\d,]+ variants in view/)).toBeVisible();
+  await expect(page.getByText(/Showing the top 20 of 232 proteins/)).toBeVisible();
+  await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Seqweaver gnomAD', 'Genes']);
+  await expect(page.getByRole('rowheader').first()).toHaveText(/^HepG2 \/ DDX6/);
+  await checkScreen(page, problems);
+  await page.getByRole('button', { name: 'Next variant' }).click();
+  await expect(page).toHaveURL(/variant=chr1-/);
+  await expect(page.getByRole('heading', { name: /^Molecular effects of chr1:2,33/ })).toBeVisible();
+  await checkScreen(page, problems);
+});
+
 test('the real Beluga result shows its variants and molecular effects', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/`);

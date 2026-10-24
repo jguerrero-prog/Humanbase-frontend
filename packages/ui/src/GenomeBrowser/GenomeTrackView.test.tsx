@@ -172,6 +172,15 @@ describe('GenomeTrackView', () => {
       expect(container.querySelector('[data-item]')).toBeNull();
     });
 
+    it('tells apart two scores at one position, as a file with one score per allele has', () => {
+      const values = [
+        { start: 200, end: 200, value: 1.2, details: [['Score', '1.2']] as const },
+        { start: 200, end: 200, value: 2.4, details: [['Score', '2.4']] as const },
+      ];
+      const { container } = render(<GenomeTrackView start={1} end={1000} width={1000} scores={[{ name: 'Seqweaver gnomAD', meta: 'Model score, 1.5 to 3', state: 'ready', data: { min: 1.5, max: 3, values } }]} />);
+      expect(new Set([...container.querySelectorAll('.genome-tracks-bar')].map((bar) => bar.getAttribute('data-item'))).size).toBe(2);
+    });
+
     it('opens a score bar’s details on click or from the keyboard, with the value as given, and nothing between bars', async () => {
       const values = [
         { start: 200, end: 200, value: 3.6189358234405518, details: [['Location', 'chr1:200-200'], ['Score', '3.6189358234405518']] as const },

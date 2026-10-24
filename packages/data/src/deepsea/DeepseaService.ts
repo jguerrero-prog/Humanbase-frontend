@@ -67,6 +67,11 @@ export class DeepseaService {
     return this.client.get<FeaturePredictionRecord[]>(`deepsea/jobs/${id}/feature_predictions/`, { score_type: scoreType, chr_and_variant_range: range.variantRange });
   }
 
+  /** Precomputed predictions for every variant in a range, such as Seqweaver's gnomAD variants, read without a job as humanbase.io's variant browsers do. */
+  precomputedPredictions(model: VariantModel, scoreType: string, range: GenomeLocation): Promise<FeaturePredictionRecord[]> {
+    return this.client.get<FeaturePredictionRecord[]>(`deepsea/${deepseaModels[model].apiName}/feature_predictions/`, { score_type: scoreType, chr_and_variant_range: range.variantRange });
+  }
+
   /** One sequence's mutagenesis for one feature, named by its index in the model's feature list. */
   async insilico(id: string, sequenceName: string, featureIndex: number): Promise<InsilicoResult> {
     return new InsilicoResult(await this.client.get<InsilicoRecord>(`deepsea/jobs/${id}/in_silico_mutagenesis/`, { sequence_name: sequenceName, feature_name: featureIndex }));

@@ -21,9 +21,9 @@ export interface VariantScore {
 
 const positions = new Intl.NumberFormat('en-US');
 
-export const variantLocation = (variant: Variant) => `${variant.chromosome}:${positions.format(variant.position)}`;
+export const variantLocation = (variant: Pick<Variant, 'chromosome' | 'position'>) => `${variant.chromosome}:${positions.format(variant.position)}`;
 
-export const variantLabel = (variant: Variant) => `${variantLocation(variant)} ${variant.change}`;
+export const variantLabel = (variant: Pick<Variant, 'chromosome' | 'position' | 'change'>) => `${variantLocation(variant)} ${variant.change}`;
 
 /** A variant's score as the table, plot and focus line show it, to two decimals. */
 export const variantScore = (variant: Pick<Variant, 'scores'>, key: string) => (variant.scores[key] ?? 0).toFixed(2);

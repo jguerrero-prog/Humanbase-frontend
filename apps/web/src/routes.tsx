@@ -54,6 +54,7 @@ export const routes: RouteObject[] = [
           moved('beluga', '/variant-effects/', { model: 'beluga' }),
           moved('ism', '/variant-effects/', { tab: 'region-scan' }),
           page('seqweaver', seqweaver),
+          page('seqweaver/gnomad', async () => (await import('./pages/deepsea/SeqweaverGnomadPage')).SeqweaverGnomadPage),
           page('asd', async () => (asdBrowserRetired ? (await import('./pages/asd/AsdRetiredPage')).AsdRetiredPage : (await import('./pages/asd/AsdPage')).AsdPage)),
           page('deepsea/jobs/:id', async () => (await import('./pages/deepsea/DeepseaJobPage')).DeepseaJobPage),
           page('expression-effects', async () => (await import('./pages/expecto/ExpressionEffectsPage')).ExpressionEffectsPage),

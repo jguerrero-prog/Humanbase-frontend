@@ -52,3 +52,14 @@ export const expressionEffects: EffectScale = {
   ticks: [0, 0.05, 0.1, 0.5],
   digits: 2,
 };
+
+/** Seqweaver's gnomAD browser, in log e-value from 0 to 5 as humanbase.io draws it; larger is stronger. The edges at 1 to 4 are a proposal to confirm with the Seqweaver team. */
+export const seqweaverGnomadEffects: EffectScale = {
+  legend: { title: 'Seqweaver (log e-value)', kind: 'sequential', edges: [1, 2, 3, 4], ends: [0, 5], words: ['Weaker', 'Stronger'] },
+  axis: 'log e-value',
+  prefix: '',
+  bins: { strong: 4, moderate: 3, weak: 2 },
+  cut: 5,
+  ticks: [0, 1, 2, 3, 4, 5],
+  digits: 2,
+};
