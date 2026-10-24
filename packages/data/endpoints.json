@@ -277,20 +277,20 @@
         "ModuleService.poll"
       ],
       "handBuiltSamples": {
-        "why": "Submitting starts a job, so the submit answers are hand-built and say so in their note fields. Two answer the renal result's annotations rerun, which sends the result's own gene list.",
+        "why": "Submitting starts a job, so the submit answer is hand-built and says so in its note field.",
         "files": [
-          "integrations/community@body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&giant_version=v1&integration=kidney@post-8c065d97",
-          "integrations/community@body_tag=af5b37885800bae6803f59e071fdcfdf84cb405c&extended_universe=true&giant_version=v1&integration=kidney@post-82abfd0d",
-          "integrations/community@body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&giant_version=v1&integration=kidney@post-82abfd0d"
+          "integrations/community@body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&giant_version=v1&integration=kidney@post-8c065d97"
         ]
       },
       "recordedByHandSamples": {
-        "why": "Polling is a POST, which pnpm samples:record only sends to read-only endpoints. This poll of the live cache was recorded on October 21, 2026 with every term, so offline term counts match live; only the per-term edge lists are left out, as the note in the file says. The MAGE renal panel (kidney-v3) was recorded the same way on October 23, 2026; submitting it answered 200 with the cached result, so its submit file holds that same body. The renal panel rerun with extended_universe=true (body_tag af5b378…) was polled the same way on October 24, 2026.",
+        "why": "Polling is a POST, which pnpm samples:record only sends to read-only endpoints. This poll of the live cache was recorded on October 21, 2026 with every term, so offline term counts match live; only the per-term edge lists are left out, as the note in the file says. The MAGE renal panel (kidney-v3) was recorded the same way on October 23, 2026; submitting it answered 200 with the cached result, so its submit file holds that same body. The renal panel rerun with extended_universe=true (body_tag af5b378…) was polled the same way on October 24, 2026, and both annotation reruns of the renal result (with and without the flag, sending the result's own gene list) were submitted once each that day; each answered 200 with its cached result.",
         "files": [
           "integrations/community@body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9@post-77074ba4",
           "integrations/community@body_tag=5906cd20e9242a9c20125f8a660e7fd7be4f11ee@post-77074ba4",
           "integrations/community@body_tag=5906cd20e9242a9c20125f8a660e7fd7be4f11ee&giant_version=v3&integration=kidney-v3@post-8c065d97",
-          "integrations/community@body_tag=af5b37885800bae6803f59e071fdcfdf84cb405c@post-77074ba4"
+          "integrations/community@body_tag=af5b37885800bae6803f59e071fdcfdf84cb405c@post-77074ba4",
+          "integrations/community@body_tag=af5b37885800bae6803f59e071fdcfdf84cb405c&extended_universe=true&giant_version=v1&integration=kidney@post-82abfd0d",
+          "integrations/community@body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&giant_version=v1&integration=kidney@post-82abfd0d"
         ]
       }
     },
