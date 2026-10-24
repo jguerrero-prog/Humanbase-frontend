@@ -1,5 +1,5 @@
 import { Humanbase, HumanbaseProvider, JobHistory, SampleClient } from '@humanbase/data';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { elapsed } from '../Jobs/JobPage';
 import { NetwasJobView } from './NetwasJobView';
 
@@ -23,6 +23,9 @@ describe('NetwasJobView', () => {
     expect(await screen.findByText(/^Running for /)).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1, name: 'Untitled NetWAS job' })).toBeInTheDocument();
     expect(screen.getByText('You can leave this page')).toBeInTheDocument();
+    const crumbs = within(screen.getByRole('navigation', { name: 'Breadcrumb' }));
+    expect(crumbs.getAllByRole('listitem').map((item) => item.textContent)).toEqual(['Genes & gene sets', 'NetWAS', 'Untitled NetWAS job']);
+    expect(crumbs.getByRole('link', { name: 'NetWAS' })).toHaveAttribute('href', '/netwas/');
     expect(new JobHistory().list()[0]).toMatchObject({ id: job(1), tool: 'NetWAS', status: 'running', link: `/netwas/${job(1)}/` });
   });
 

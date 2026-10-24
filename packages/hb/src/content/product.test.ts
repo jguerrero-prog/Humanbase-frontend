@@ -15,6 +15,7 @@ describe('product navigation', () => {
     expect(productSectionFor('/expression-effects/genes/5728/')).toBe('Variants & sequences');
     expect(productSectionFor('/seqweaver/')).toBe('Variants & sequences');
     expect(productSectionFor('/deepsea/jobs/abc123')).toBe('Variants & sequences');
+    expect(productSectionFor('/sequence-tools/')).toBe('Variants & sequences');
     expect(productSectionFor('/cite/')).toBe('About');
     expect(productSectionFor('/')).toBeUndefined();
   });

@@ -189,6 +189,9 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
 /** The Variant effects page's models, newest first; the first is the default. */
 export const variantEffectsModels: readonly VariantModel[] = ['sei', 'beluga'];
 
+// Sei and Beluga also read sequences; that input waits on whether it moves to Region scan (#398).
+export const variantListInputs: readonly InputKind[] = ['vcf', 'bed'];
+
 /** Sei, Beluga and Seqweaver: the models that aren't another tool run on Beluga. */
 export const variantModels = (Object.keys(deepseaModels) as VariantModel[]).filter((model) => !deepseaModels[model].basedOn);
 

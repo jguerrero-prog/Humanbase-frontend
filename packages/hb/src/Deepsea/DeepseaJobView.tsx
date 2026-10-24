@@ -2,7 +2,7 @@ import { ApiError, useDeepseaJob, type DeepseaJob } from '@humanbase/data';
 import { Alert, ContextLabel, EmptyState, ResultFiles, Skeleton, type JobStep, useLinkHref } from '@humanbase/ui';
 import { useEffect } from 'react';
 import { elapsed, jobDateTime, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
-import { deepseaFormLink, deepseaJobLink } from './DeepseaForm';
+import { deepseaFormLink, deepseaJobCrumbs, deepseaJobLink } from './DeepseaForm';
 import { DeepseaResultView } from './DeepseaResultView';
 import { InsilicoResultView } from './InsilicoResultView';
 import './Deepsea.css';
@@ -91,6 +91,7 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
       <title>{`${badge} · ${title} · Humanbase`}</title>
       <JobWaiting
         title={title}
+        crumbs={deepseaJobCrumbs(data.model, title)}
         status={data.status}
         badge={badge}
         note={data.status === 'running' ? `${elapsed(data.created, now)} so far.` : data.status === 'queued' ? 'Waiting for a worker to start it.' : undefined}

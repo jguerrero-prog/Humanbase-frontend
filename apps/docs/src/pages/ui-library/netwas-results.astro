@@ -1,8 +1,7 @@
 ---
-import { withBase } from '../../withBase';
 import { Code } from 'astro:components';
 import { NetwasResult } from '@humanbase/data';
-import { NetwasGenes, netwasCitation as citation } from '@humanbase/hb';
+import { categoryCrumbs, NetwasGenes, netwasCitation as citation, productTools } from '@humanbase/hb';
 import { Button, JobDetails, NetwasGuide, ResultHeader, ResultLayout, StatusBadge, TopBar } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -44,7 +43,7 @@ const names = {
   ITGB4: 'integrin subunit beta 4',
 };
 
-const crumbs = [{ label: 'Jobs', href: withBase('/ui-library/job-status-and-queue/') }, { label: title }];
+const crumbs = [categoryCrumbs.genes, productTools.netwas, { label: title }];
 const context = [
   { name: 'Tissue network', value: tissueNetwork },
   { name: 'GWAS file', value: `${gwasFile}, ${gwasFormat}` },

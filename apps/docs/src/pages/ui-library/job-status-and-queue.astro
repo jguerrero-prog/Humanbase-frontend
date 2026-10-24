@@ -1,4 +1,5 @@
 ---
+import { categoryCrumbs, productTools } from '@humanbase/hb';
 import { ActionMenu, Breadcrumbs, Button, Cell, ContextLabel, Dialog, HeaderCell, JobRow, JobSteps, JobsMenu, SearchField, StatusBadge, Table, Tabs, TextInput, Toast } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
@@ -155,7 +156,7 @@ JobHistory.idFromLink(pasted); // the job ID inside a pasted link, or undefined`
 
   <DocSection title="A finished job" lead="The job page once results are ready: one step to the results, every file named in plain words, and the link to share. Queued, running and failed are on Loading and job status.">
     <ProductScreen label="A finished job at 1440px">
-      <Breadcrumbs items={[{ label: 'Jobs', href: '/jobs/' }, { label: 'IL1B region variants' }]} />
+      <Breadcrumbs items={[categoryCrumbs.variants, productTools.seqweaver, { label: 'IL1B region variants' }]} />
       <div class="job-columns">
         <div class="job-main">
           <h3 class="job-title">IL1B region variants</h3>

@@ -84,7 +84,8 @@ const crumbVariants = [
   { title: 'Phones', text: 'Below 768px: only the parent, as a back link', items: networksCrumbs, compact: true },
 ];
 const crumbRules = [
-  'Start at the tool, not Home. The logo already goes home.',
+  'Start at the category or tool, not Home. The logo already goes home.',
+  'Job pages read category, tool, then job title, such as Genes & gene sets › NetWAS › BMI GWAS, adipose tissue.',
   'Every step except the last is a link. The last is the current page, in bold ink, with aria-current="page".',
   'Settings like tissue and data version never appear as steps; they are part of the page’s name, such as “IL1B in blood vessel”.',
   'Use the same names as the menu and page titles. A breadcrumb never invents a label.',

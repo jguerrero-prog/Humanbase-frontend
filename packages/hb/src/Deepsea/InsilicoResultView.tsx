@@ -1,9 +1,8 @@
 import { ApiError, featureLabel, sequenceSpan, useDeepseaFeatures, useHumanbase, useInsilico, type DeepseaJob, type InsilicoResult } from '@humanbase/data';
 import { ActionMenu, Alert, Button, Cell, DocsLink, HeaderCell, ResultHeader, ResultLayout, saveFile, Select, Skeleton, SubstitutionMap, Table, type ScaleSpec } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
-import { categoryCrumbs } from '../content/product';
 import { jobDateTime } from '../Jobs/JobPage';
-import { deepseaFormLink } from './DeepseaForm';
+import { deepseaJobCrumbs } from './DeepseaForm';
 import './Deepsea.css';
 
 export interface InsilicoResultViewProps {
@@ -43,7 +42,7 @@ export function InsilicoResultView({ job, title, tools }: InsilicoResultViewProp
 
   const header = (
     <ResultHeader
-      crumbs={[categoryCrumbs.variants, { label: job.model.tool, href: deepseaFormLink(job.model.id) }, { label: title }]}
+      crumbs={deepseaJobCrumbs(job.model, title)}
       title={title}
       context={[
         { name: 'Model', value: job.model.kind },

@@ -1,5 +1,5 @@
 import { JobHistory, type JobState } from '@humanbase/data';
-import { Breadcrumbs, Button, Dialog, JobSteps, StatusBadge, TextInput, type JobStep } from '@humanbase/ui';
+import { Breadcrumbs, Button, Dialog, JobSteps, StatusBadge, TextInput, type Crumb, type JobStep } from '@humanbase/ui';
 import { useId, useState, type ReactNode } from 'react';
 import { useCopyLink } from './useCopyLink';
 import './JobPage.css';
@@ -94,6 +94,8 @@ export function syncJobHistory(job: JobIdentity & { status: JobState; created: D
 
 export interface JobWaitingProps {
   title: string;
+  /** Category, tool, then the job's title, as on the job's results. */
+  crumbs: readonly Crumb[];
   status: JobState;
   /** The badge text, such as Running for 4 minutes. */
   badge: string;
@@ -109,12 +111,12 @@ export interface JobWaitingProps {
 }
 
 /** A queued, running or failed job: the status and what to do on the left, how it went and its details on the right. */
-export function JobWaiting({ title, status, badge, note, next, actions, children, steps, details, tools }: JobWaitingProps) {
+export function JobWaiting({ title, crumbs, status, badge, note, next, actions, children, steps, details, tools }: JobWaitingProps) {
   const id = useId();
   return (
     <div className="job-page-columns">
       <div className="job-page">
-        <Breadcrumbs items={[{ label: 'Jobs', href: '/jobs/' }, { label: title }]} />
+        <Breadcrumbs items={crumbs} />
         <h1>{title}</h1>
         <p className="job-page-status" role="status">
           <StatusBadge status={status}>{badge}</StatusBadge>
