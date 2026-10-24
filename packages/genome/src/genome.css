@@ -28,6 +28,10 @@
   inline-size: auto;
 }
 
+.genome-outside-note {
+  margin-block-start: var(--space-3);
+}
+
 .genome-engine {
   min-block-size: 240px;
   overflow-x: auto;

@@ -53,7 +53,15 @@ describe('SampleGenomeTracks', () => {
     expect(await tracks.sequence('hg19', { chrom: 'chr1', start: 2_240_000, end: 2_240_009 })).toBeUndefined();
   });
 
-  it('fails outside the recorded windows, so the track says it didn’t load', async () => {
+  it('covers a span only where a recorded window holds all of it', async () => {
+    expect(await tracks.covers('hg19', view)).toBe(true);
+    expect(await tracks.covers('hg19', view, dna)).toBe(true);
+    expect(await tracks.covers('hg38', view)).toBe(false);
+    expect(await tracks.covers('hg19', { chrom: 'chr1', start: 2_600_000, end: 2_700_000 })).toBe(false);
+    expect(await tracks.covers('hg19', { chrom: 'chr1', start: 109_792_590, end: 109_842_590 }, dna)).toBe(false);
+  });
+
+  it('fails outside the recorded windows', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     await expect(tracks.genes('hg19', { chrom: 'chr3', start: 1, end: 100 })).rejects.toThrow();
     vi.restoreAllMocks();

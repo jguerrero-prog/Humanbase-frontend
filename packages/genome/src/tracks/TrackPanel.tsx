@@ -1,11 +1,11 @@
 import type { GeneModel, GenomeTracks, ScorePoint, SequenceSpan } from '@humanbase/data';
 import { GenomeTrackView, type ActionMenuItem, type GeneShape, type TrackOf } from '@humanbase/ui';
 import { useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { isSegmentTrack, withChr, type Assembly, type GenomeDataTrack, type GenomeRegion, type GenomeScoreTrack } from '../GenomeBrowserEngine';
+import { isSegmentTrack, trackFile, withChr, type Assembly, type GenomeDataTrack, type GenomeRegion, type GenomeScoreTrack } from '../GenomeBrowserEngine';
 import { builtInTracks, genesTrack, genomeTrackList, sequenceTrack } from '../genomeTrackList';
 import { geneDetails, scoreDetails, segmentDetails } from './itemDetails';
 import type { DrawnTracks, TrackEngine } from './TrackEngine';
-import { fileState, readEach, readLimit, useSegmentTracks, useTrackData } from './useTrackData';
+import { fileState, readEach, readLimit, useOutside, useSegmentTracks, useTrackData, type Loaded } from './useTrackData';
 
 interface TrackPanelProps {
   engine: TrackEngine;
@@ -54,6 +54,9 @@ export function TrackPanel({ engine, files, assembly, tracks: allTracks, trackMe
   const bins = Math.max(1, Math.round(width));
   const readable = showSequence && width > 0 && width / bases >= readableBase;
   const where = `${chrom}:${span.start}-${span.end}`;
+  // Past the recorded sample windows, tracks draw nothing and the page says why once.
+  const outside = useOutside(files, assembly, span, shownTracks.map(trackFile));
+  const reach = <T,>(loaded: Loaded<T>, file = ''): Loaded<T> => (outside.has(file) ? { state: 'outside' } : loaded);
 
   const sequence = useTrackData<SequenceSpan | undefined>(readable ? () => files.sequence(assembly, span) : undefined, readable ? where : 'none');
   const nearGenes = showGenes && bases <= readLimit;
@@ -64,9 +67,10 @@ export function TrackPanel({ engine, files, assembly, tracks: allTracks, trackMe
     `${where} ${bins} ${urls}`,
   );
 
-  const segments = useSegmentTracks(files, shownTracks, span).map((track) => ({ ...track, data: track.data?.map((segment) => ({ ...segment, details: segmentDetails(chrom, segment) })) }));
+  const segments = useSegmentTracks(files, shownTracks, span, outside).map((track) => ({ ...track, data: track.data?.map((segment) => ({ ...segment, details: segmentDetails(chrom, segment) })) }));
 
-  const geneTrack: TrackOf<readonly GeneShape[]> = { name: named.genes.name, meta: named.genes.meta, ...(bases > readLimit ? { state: 'ready', data: [] } : { state: genes.state, data: genes.data?.map((gene) => shapeOf(chrom, gene)) }) };
+  const genesInReach = reach(genes);
+  const geneTrack: TrackOf<readonly GeneShape[]> = { name: named.genes.name, meta: named.genes.meta, ...(bases > readLimit ? { state: 'ready', data: [] } : { state: genesInReach.state, data: genesInReach.data?.map((gene) => shapeOf(chrom, gene)) }) };
 
   const pan = (pixels: number, done: boolean) => {
     if (!done) {
@@ -84,9 +88,9 @@ export function TrackPanel({ engine, files, assembly, tracks: allTracks, trackMe
     start: span.start,
     end: span.end,
     width,
-    sequence: showSequence ? { name: named.sequence.name, meta: named.sequence.meta, state: readable ? sequence.state : 'ready', data: readable ? sequence.data : undefined, ...menu(sequenceTrack) } : undefined,
+    sequence: showSequence ? { name: named.sequence.name, meta: named.sequence.meta, ...(readable ? reach(sequence) : { state: 'ready' }), ...menu(sequenceTrack) } : undefined,
     scores: tracks.map((track) => {
-      const { state, data: values } = fileState(scores, track.bigWigUrl);
+      const { state, data: values } = reach(fileState(scores, track.bigWigUrl), track.bigWigUrl);
       const { height, range = track.range } = arrangement.settings[track.name] ?? {};
       const data = values && { min: range?.[0] ?? 0, max: range?.[1] ?? 1, values: values.map((point) => ({ ...point, details: scoreDetails(chrom, point) })) };
       return { name: track.name, meta: track.meta ?? '', state, data, height, ...menu(track.name) };
