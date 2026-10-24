@@ -1,5 +1,5 @@
 import { assemblyNames, useHumanbase, UserTrackError, type GenomeLocation, type UserTrack } from '@humanbase/data';
-import { genomeTrackList, hiddenByDefault, inOrder, isSegmentTrack, moveTrack, noArrangement, suggestedTracks, userDataTrack, type Assembly, type GenomeDataTrack, type GenomeEngineHandle, type GenomeScoreTrack, type GenomeTrackArrangement, type GenomeTrackSetting } from '@humanbase/genome';
+import { genomeTrackList, hiddenByDefault, inOrder, isSegmentTrack, moveTrack, noArrangement, suggestedTracks, TrackDownload, userDataTrack, type Assembly, type GenomeDataTrack, type GenomeEngineHandle, type GenomeScoreTrack, type GenomeTrackArrangement, type GenomeTrackSetting } from '@humanbase/genome';
 import { Alert, ExportDialog, saveFile, scoreTrackHeight, StoredChoice, TrackSettingsDialog, TracksDrawer, type ActionMenuItem, type ExportSettings, type GenomeCommand, type TrackSettingsValues } from '@humanbase/ui';
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 
@@ -13,6 +13,11 @@ export interface GenomeBrowserToolsOptions {
 }
 
 type Panel = 'tracks' | 'export' | { settings: string };
+
+interface Failure {
+  title: string;
+  message: string;
+}
 
 const choices = new Map<string, StoredChoice>();
 const choiceFor = (key: string) => {
@@ -61,6 +66,8 @@ function readArrangement(stored: string | undefined): GenomeTrackArrangement {
   return { order: idsOf(value.order) ?? [], settings: Object.fromEntries(settings) };
 }
 
+const megabases = (bases: number) => `${bases / 1_000_000} Mb`;
+
 const exportWidth = (text: string) => {
   const pixels = Number.parseInt(text, 10);
   return Number.isFinite(pixels) ? Math.min(4000, Math.max(200, pixels)) : 800;
@@ -88,12 +95,13 @@ function useAddedTracks(group: string) {
 export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, location }: GenomeBrowserToolsOptions) {
   const [engine, setEngine] = useState<GenomeEngineHandle | null>(null);
   const [panel, setPanel] = useState<Panel>();
-  const [exportError, setExportError] = useState<string>();
+  const [failure, setFailure] = useState<Failure>();
   const [adding, setAdding] = useState(false);
   const [addError, setAddError] = useState<string>();
   const [status, setStatus] = useState<string>();
   const group = `${browser}:${assembly}`;
   const added = useAddedTracks(group);
+  const { genomeTracks } = useHumanbase();
   const tracks = useMemo(() => [...pageTracks, ...suggestedTracks[assembly], ...added.tracks.map(userDataTrack)], [pageTracks, assembly, added.tracks]);
   const defaults = useMemo(() => hiddenByDefault(assembly), [assembly]);
   const shown = useStored(`humanbase:genome-tracks:${browser}:${assembly}`);
@@ -117,6 +125,34 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
 
   // Height and range only mean something for a score track's bars, so only score tracks have settings.
   const scoreTrack = (id: string) => tracks.find((track): track is GenomeScoreTrack => track.name === id && !isSegmentTrack(track));
+  const span = { chrom: location.chrom, start: location.start, end: location.end };
+  const saveView = async (download: TrackDownload, name: string) => {
+    setFailure(undefined);
+    try {
+      saveFile(await download.contents(genomeTracks, span), download.fileName(span), 'text/plain');
+    } catch {
+      setFailure({ title: `${name} data couldn’t download`, message: 'The track file didn’t answer. Try again.' });
+    }
+  };
+  // Only the data tracks come from a file someone can use elsewhere; genes and sequence are the browser's own.
+  const downloads = (id: string): ActionMenuItem[] => {
+    const track = tracks.find((data) => data.name === id);
+    if (!track) return [];
+    const download = new TrackDownload(track, assembly);
+    const { sourceUrl } = download;
+    const fits = download.fits(span);
+    return [
+      {
+        label: 'Download data in view',
+        icon: 'download',
+        dividerBefore: true,
+        description: fits ? `${download.format}, ${location.format()}` : `Zoom in to under ${megabases(TrackDownload.limit)} to download`,
+        disabled: !fits,
+        onSelect: () => void saveView(download, id),
+      },
+      ...(sourceUrl ? [{ label: 'Download full file', icon: 'download' as const, description: download.fileType, onSelect: () => window.open(sourceUrl, '_blank', 'noopener') }] : []),
+    ];
+  };
   const trackMenu = (id: string): ActionMenuItem[] => {
     const visible = order.filter((other) => !hidden.includes(other));
     const settings: ActionMenuItem[] = scoreTrack(id) ? [{ label: 'Track settings…', onSelect: () => setPanel({ settings: id }) }] : [];
@@ -124,7 +160,8 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
       ...settings,
       { label: 'Move up', dividerBefore: settings.length > 0, disabled: visible[0] === id, onSelect: () => arrange({ order: moveTrack(order, hidden, id, -1) }) },
       { label: 'Move down', disabled: visible.at(-1) === id, onSelect: () => arrange({ order: moveTrack(order, hidden, id, 1) }) },
-      { label: 'Remove track', destructive: true, dividerBefore: true, onSelect: () => hide(id) },
+      ...downloads(id),
+      { label: 'Hide track', dividerBefore: true, onSelect: () => hide(id) },
     ];
   };
 
@@ -174,7 +211,7 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
   };
 
   const exportView = async (settings: ExportSettings) => {
-    setExportError(undefined);
+    setFailure(undefined);
     try {
       const file = await engine?.exportSvg({
         width: exportWidth(settings.width),
@@ -185,15 +222,15 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
       if (file) saveFile(file, location.fileName());
       close();
     } catch (error) {
-      setExportError(error instanceof Error ? error.message : String(error));
+      setFailure({ title: 'The view couldn’t export', message: `${error instanceof Error ? error.message : String(error)} Try again once the tracks have loaded.` });
     }
   };
 
   const panels = (
     <>
-      {exportError && (
-        <Alert tone="error" title="The view couldn’t export" dismissible onDismiss={() => setExportError(undefined)}>
-          {exportError} Try again once the tracks have loaded.
+      {failure && (
+        <Alert tone="error" title={failure.title} dismissible onDismiss={() => setFailure(undefined)}>
+          {failure.message}
         </Alert>
       )}
       <TracksDrawer

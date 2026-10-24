@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { apiOff, sampleApi } from './apiOff';
+import { downloadFrom } from './downloads';
 import { violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
@@ -116,6 +117,35 @@ test('the Seqweaver example result draws the job’s own score tracks, on by def
   await page.getByRole('button', { name: 'Next variant' }).click();
   await expect(browser.getByRole('button', { name: '0.59 at 23,508,363' })).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
+test('a data track’s menu downloads the data in view as bedGraph or BED, read from the samples, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(example);
+  const browser = page.locator('.genome-engine');
+  await expect(browser.getByRole('button', { name: '1.00 at 109,817,590' })).toBeVisible();
+  await page.getByRole('button', { name: 'Disease impact score track options' }).click();
+  await expect(page.getByRole('menuitem')).toHaveText(['Track settings…', 'Move up', 'Move down', /^Download data in view/, /^Download full file/, 'Hide track']);
+  await expect(page.getByRole('menuitem', { name: /Download data in view/ })).toContainText('bedGraph, chr1:109,767,590-109,867,590');
+  expect(await violationsOf(page)).toEqual([]);
+  await page.keyboard.press('Escape');
+  const scores = await downloadFrom(page, 'Disease impact score track options', 'Download data in view');
+  expect(scores.name).toBe('Disease-impact-score_hg19_chr1-109767590-109867590.bedgraph');
+  expect(scores.bytes.toString('utf8')).toMatch(/^chr1\t109817589\t109817590\t1\.00\d*\n/m);
+
+  await page.getByRole('button', { name: 'Genes track options' }).click();
+  await expect(page.getByRole('menuitem')).toHaveText(['Move up', 'Move down', 'Hide track']);
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Tracks' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Tracks' });
+  await drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' }).check();
+  await drawer.getByRole('button', { name: 'Done' }).click();
+  const segments = await downloadFrom(page, 'GM12878 ChromHMM track options', 'Download data in view');
+  expect(segments.name).toBe('GM12878-ChromHMM_hg19_chr1-109767590-109867590.bed');
+  const lines = segments.bytes.toString('utf8').trim().split('\n');
+  expect(lines.length).toBeGreaterThan(1);
+  for (const line of lines) expect(line).toMatch(/^chr1\t\d+\t\d+\t\S+\t\d+\t\.\t\d+\t\d+\t(\d+,\d+,\d+|0)$/);
   expect(apiRequests).toEqual([]);
 });
 

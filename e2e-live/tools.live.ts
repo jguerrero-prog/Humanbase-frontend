@@ -173,7 +173,7 @@ test('the real Seqweaver result shows its own score tracks, shows and hides geno
   await expect(headers).toHaveText(['Sequence', 'Disease impact score', 'Mean −log e-value', 'Genes']);
 });
 
-test('the real Seqweaver result’s track menus move, remove and set up tracks, and remember it', async ({ page }) => {
+test('the real Seqweaver result’s track menus move, hide, download and set up tracks, and remember it', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);
   const headers = page.locator('.genome-engine .track-header-name');
@@ -188,11 +188,16 @@ test('the real Seqweaver result’s track menus move, remove and set up tracks, 
   await expect(headers).toHaveText(['Sequence', 'Conservation', 'Genes']);
   // Only a score track has settings; the genes track can only move or go.
   await page.getByRole('button', { name: 'Genes track options' }).click();
-  await expect(page.getByRole('menuitem')).toHaveText(['Move up', 'Move down', 'Remove track']);
+  await expect(page.getByRole('menuitem')).toHaveText(['Move up', 'Move down', 'Hide track']);
   await expect(page.getByRole('menuitem', { name: 'Move down' })).toHaveAttribute('aria-disabled', 'true');
   await page.keyboard.press('Escape');
   const conservation = page.getByRole('button', { name: 'Conservation track options' });
+  // The data in view comes from the real phastCons file, one value per base, as bedGraph.
+  const data = await downloadFrom(page, 'Conservation track options', 'Download data in view');
+  expect(data.name).toBe('Conservation_hg19_chr1-109767590-109867590.bedgraph');
+  expect(data.bytes.toString('utf8').split('\n')[0]).toMatch(/^chr1\t\d+\t\d+\t[\d.e-]+$/);
   await conservation.click();
+  await expect(page.getByRole('menuitem', { name: /Download full file/ })).toContainText('bigWig');
   expect(await violationsOf(page)).toEqual([]);
   await page.getByRole('menuitem', { name: 'Move up' }).click();
   await expect(headers).toHaveText(['Conservation', 'Sequence', 'Genes']);
@@ -216,7 +221,7 @@ test('the real Seqweaver result’s track menus move, remove and set up tracks, 
   await expect(headers).toHaveText(['Conservation', 'Sequence', 'Genes']);
   await expect(rows).toHaveAttribute('style', /30px 120px 60px/);
   await page.getByRole('button', { name: 'Genes track options' }).click();
-  await page.getByRole('menuitem', { name: 'Remove track' }).click();
+  await page.getByRole('menuitem', { name: 'Hide track' }).click();
   await expect(headers).toHaveText(['Conservation', 'Sequence']);
   await expect(page.locator('.genome-engine')).toBeFocused();
   await checkScreen(page, problems);
