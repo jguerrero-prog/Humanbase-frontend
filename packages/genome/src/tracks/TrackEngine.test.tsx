@@ -99,6 +99,30 @@ describe('TrackEngine', () => {
     vi.restoreAllMocks();
   });
 
+  it('draws the tracks in the page’s order, with a score track’s height and range, and gives each header its menu', async () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains('score-tracks-column') ? 220 : 1220;
+    });
+    const container = document.createElement('div');
+    document.body.append(container);
+    const engine = new TrackEngine(new SampleGenomeTracks(SampleClient.bundled()));
+    const dna = { name: 'DNA disease impact score', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw', range: [-0.4, 3] as const };
+    const region = { chrom: 'chr1', start: 2_230_000, end: 2_440_000 };
+    const trackMenu = (id: string) => [{ label: `Remove ${id}` }];
+    await act(() => engine.mount(container, { label: 'Genome browser', assembly: 'hg19', region, tracks: [dna], arrangement: { order: ['genes'], settings: {} }, trackMenu }));
+    const names = () => [...container.querySelectorAll('.track-header-name')].map((name) => name.textContent);
+    expect(names()).toEqual(['Genes', 'Sequence', 'DNA disease impact score']);
+    expect(screen.getByRole('button', { name: 'DNA disease impact score track options' })).toBeInTheDocument();
+    const rows = () => (container.querySelector('.score-tracks-column') as HTMLElement).style.gridTemplateRows;
+    expect(rows()).toContain('30px 60px 60px 60px');
+    act(() => engine.arrangeTracks({ order: [], settings: { 'DNA disease impact score': { height: 120, range: [0, 4] } } }));
+    expect(names()).toEqual(['Sequence', 'DNA disease impact score', 'Genes']);
+    expect(rows()).toContain('30px 60px 120px');
+    engine.destroy();
+    container.remove();
+    vi.restoreAllMocks();
+  });
+
   it('opens a score bar’s details with Location and the value read from the file', async () => {
     vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
       return this.classList.contains('score-tracks-column') ? 220 : 1220;

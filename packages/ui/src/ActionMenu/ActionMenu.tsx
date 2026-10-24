@@ -1,9 +1,10 @@
-import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 import { Button } from '../Button/Button';
 import { Icon, type IconName } from '../Icon/Icon';
 import { ListNavigator } from '../List/ListNavigator';
 import { useDismiss } from '../List/useDismiss';
 import { MenuDivider, MenuItem, MenuPanel } from '../Menu/Menu';
+import { anchorSupported, placeUnder } from '../Tooltip/placement';
 import './ActionMenu.css';
 
 export interface ActionMenuItem {
@@ -36,6 +37,8 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
   const wrapper = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const panel = useRef<HTMLDivElement>(null);
+  const anchor = `--action-menu-${id.replace(/[^\w-]/g, '')}`;
   const [ownOpen, setOwnOpen] = useState(false);
   const [focused, setFocused] = useState(defaultHighlight);
   const open = openProp ?? ownOpen;
@@ -48,6 +51,14 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
   }, []);
   const dismiss = useCallback(() => close(), [close]);
   useDismiss(wrapper, open && openProp === undefined, dismiss);
+
+  // The menu opens in the top layer, so a scrolling or clipped container, such as a genome track's header, never cuts it off.
+  useLayoutEffect(() => {
+    const node = panel.current;
+    if (!ownOpen || !node) return;
+    node.showPopover();
+    if (!anchorSupported && button.current) placeUnder(node, button.current);
+  }, [ownOpen]);
 
   useEffect(() => {
     if (ownOpen && focused >= 0) itemRefs.current[focused]?.focus();
@@ -104,6 +115,7 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
     'aria-controls': open ? `${id}-menu` : undefined,
     onClick: () => (open ? close() : openAt(navigator.first())),
     onKeyDown: handleButtonKeys,
+    style: { anchorName: anchor } as CSSProperties,
   } as const;
 
   return (
@@ -118,7 +130,7 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
         </button>
       )}
       {open && (
-        <MenuPanel className="action-menu-panel">
+        <MenuPanel ref={panel} className="action-menu-panel" popover={openProp === undefined ? 'manual' : undefined} style={{ positionAnchor: anchor } as CSSProperties}>
           <div id={`${id}-menu`} role="menu" aria-label={label} tabIndex={-1} className="menu-list" onKeyDown={handleMenuKeys}>
             {items.map((item, index) => (
               <Fragment key={item.label}>

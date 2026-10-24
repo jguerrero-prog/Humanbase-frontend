@@ -98,37 +98,57 @@ export function TracksDrawer({ tracks, sources = ['suggested', 'file', 'url'], o
   );
 }
 
-export type TrackStyle = 'bars' | 'line' | 'ribbon' | 'points';
-
+/** A score track's settings as typed: its height in pixels and the range of values its bars span. */
 export interface TrackSettings {
   name: string;
-  style: TrackStyle;
+  height: string;
   min: string;
   max: string;
-  height: string;
-  thresholdLeap: string;
-  pinned: boolean;
+}
+
+export interface TrackSettingsValues {
+  height: number;
+  min: number;
+  max: number;
+}
+
+type TrackSettingsField = 'height' | 'min' | 'max';
+
+export const trackHeightLimits = [50, 300] as const;
+
+const numberOf = (text: string) => (text.trim() === '' ? Number.NaN : Number(text.trim().replace('−', '-')));
+
+/** The settings as numbers, or what to fix in each field. */
+export function readTrackSettings({ height, min, max }: TrackSettings): { values?: TrackSettingsValues; errors: Partial<Record<TrackSettingsField, string>> } {
+  const [low, high] = trackHeightLimits;
+  const values = { height: Number.parseFloat(height), min: numberOf(min), max: numberOf(max) };
+  const errors: Partial<Record<TrackSettingsField, string>> = {};
+  if (!(values.height >= low && values.height <= high)) errors.height = `Enter a height from ${low} to ${high} pixels.`;
+  if (!Number.isFinite(values.min)) errors.min = 'Enter a number, such as 0.';
+  if (!Number.isFinite(values.max)) errors.max = 'Enter a number, such as 3.';
+  else if (Number.isFinite(values.min) && values.max <= values.min) errors.max = 'Enter a number above the lowest value.';
+  return Object.keys(errors).length ? { errors } : { values: { ...values, height: Math.round(values.height) }, errors };
 }
 
 export interface TrackSettingsDialogProps extends LayerProps {
   settings: TrackSettings;
-  onApply?: (settings: TrackSettings) => void;
+  onApply?: (values: TrackSettingsValues) => void;
   onReset?: () => void;
 }
 
-const styles = [
-  { value: 'bars', label: 'Bars' },
-  { value: 'line', label: 'Line' },
-  { value: 'ribbon', label: 'Ribbon' },
-  { value: 'points', label: 'Points' },
-];
-
 export function TrackSettingsDialog({ settings, onApply, onReset, open = false, inline = false, onClose = () => {} }: TrackSettingsDialogProps) {
   const [draft, setDraft] = useState(settings);
-  const field = (key: 'name' | 'min' | 'max' | 'height' | 'thresholdLeap') => ({
+  const [checked, setChecked] = useState(false);
+  const { values, errors } = readTrackSettings(draft);
+  const field = (key: TrackSettingsField) => ({
     value: draft[key],
+    error: checked ? errors[key] : undefined,
     onChange: (event: ChangeEvent<HTMLInputElement>) => setDraft({ ...draft, [key]: event.target.value }),
   });
+  const apply = () => {
+    setChecked(true);
+    if (values) onApply?.(values);
+  };
 
   return (
     <Dialog
@@ -143,22 +163,16 @@ export function TrackSettingsDialog({ settings, onApply, onReset, open = false, 
           <Button variant="ghost" onClick={onReset}>
             Reset track
           </Button>
-          <Button onClick={() => onApply?.(draft)}>Apply</Button>
+          <Button onClick={apply}>Apply</Button>
         </>
       }
     >
       <div className="genome-form">
-        <TextInput label="Name" {...field('name')} />
-        <SegmentedControl label="Draw as" size="small" segments={styles} value={draft.style} onChange={(style) => setDraft({ ...draft, style: style as TrackStyle })} />
+        <TextInput label="Height" hint={`In pixels, ${trackHeightLimits[0]} to ${trackHeightLimits[1]}.`} inputMode="numeric" {...field('height')} />
         <div className="genome-form-row">
           <TextInput label="Lowest value shown" inputMode="decimal" {...field('min')} />
           <TextInput label="Highest value shown" inputMode="decimal" {...field('max')} />
         </div>
-        <div className="genome-form-row">
-          <TextInput label="Height" {...field('height')} />
-          <TextInput label="Threshold leap" hint="As today; off by default" {...field('thresholdLeap')} />
-        </div>
-        <Checkbox label="Keep at the top" checked={draft.pinned} onChange={(event) => setDraft({ ...draft, pinned: event.target.checked })} />
       </div>
     </Dialog>
   );

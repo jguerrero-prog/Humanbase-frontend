@@ -1,6 +1,6 @@
 import { assemblyNames } from '@humanbase/data';
 import { chromHmm, humanbaseTracks } from './biodalliance/humanbaseConfig';
-import type { Assembly, GenomeDataTrack } from './GenomeBrowserEngine';
+import type { Assembly, GenomeDataTrack, GenomeTrackArrangement } from './GenomeBrowserEngine';
 
 /** One track a browser can show or hide; data tracks use their name as id. */
 export interface GenomeTrackEntry {
@@ -23,6 +23,28 @@ export const builtInTracks = (assembly: Assembly) => ({
 export function genomeTrackList(assembly: Assembly, tracks: readonly GenomeDataTrack[]): GenomeTrackEntry[] {
   const { sequence, genes } = builtInTracks(assembly);
   return [sequence, ...tracks.map((track) => ({ id: track.name, name: track.name, meta: track.meta ?? '' })), genes];
+}
+
+/** Every track in its usual place, drawn as usual. */
+export const noArrangement: GenomeTrackArrangement = { order: [], settings: {} };
+
+/** Ids in the stored order; ids it doesn't list, such as a new track, keep their place after the track before them. */
+export function inOrder(ids: readonly string[], order: readonly string[]): string[] {
+  const placed = order.filter((id) => ids.includes(id));
+  ids.forEach((id, index) => {
+    if (placed.includes(id)) return;
+    const before = ids.slice(0, index).findLast((other) => placed.includes(other));
+    placed.splice(before === undefined ? 0 : placed.indexOf(before) + 1, 0, id);
+  });
+  return placed;
+}
+
+/** A track's place among the shown tracks moved by one, skipping hidden ones; the order is unchanged at either end. */
+export function moveTrack(order: readonly string[], hidden: readonly string[], id: string, by: -1 | 1): string[] {
+  const shown = order.filter((other) => !hidden.includes(other));
+  const neighbor = shown[shown.indexOf(id) + by];
+  if (!shown.includes(id) || neighbor === undefined) return [...order];
+  return order.map((other) => (other === id ? neighbor : other === neighbor ? id : other));
 }
 
 const conservationRange = [0, 1] as const;

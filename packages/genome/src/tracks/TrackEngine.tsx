@@ -2,7 +2,8 @@ import type { GenomeTracks } from '@humanbase/data';
 import { GenomeTrackFigure, standaloneSvg, type GenomeTrackViewProps } from '@humanbase/ui';
 import { flushSync } from 'react-dom';
 import { createRoot, type Root } from 'react-dom/client';
-import type { GenomeBrowserEngine, GenomeExportOptions, GenomeMountOptions, GenomeRegion } from '../GenomeBrowserEngine';
+import type { GenomeBrowserEngine, GenomeExportOptions, GenomeMountOptions, GenomeRegion, GenomeTrackArrangement } from '../GenomeBrowserEngine';
+import { noArrangement } from '../genomeTrackList';
 import { TrackPanel } from './TrackPanel';
 
 type Listener = () => void;
@@ -12,6 +13,7 @@ export interface TrackEngineView {
   region: GenomeRegion;
   highlight: { chrom: string; position: number } | undefined;
   hidden: readonly string[];
+  arrangement: GenomeTrackArrangement;
 }
 
 export type DrawnTracks = Omit<GenomeTrackViewProps, 'onPan' | 'shift'>;
@@ -28,7 +30,7 @@ export class TrackEngine implements GenomeBrowserEngine {
   private drawn: DrawnTracks | undefined;
 
   constructor(private readonly files: GenomeTracks) {
-    this.view = { region: { chrom: 'chr1', start: 1, end: 1 }, highlight: undefined, hidden: [] };
+    this.view = { region: { chrom: 'chr1', start: 1, end: 1 }, highlight: undefined, hidden: [], arrangement: noArrangement };
   }
 
   mount(container: HTMLElement, options: GenomeMountOptions): Promise<void> {
@@ -37,7 +39,7 @@ export class TrackEngine implements GenomeBrowserEngine {
     host.className = 'track-engine-host';
     container.append(host);
     this.host = host;
-    this.view = { ...this.view, region: options.region, hidden: options.hidden ?? [] };
+    this.view = { ...this.view, region: options.region, hidden: options.hidden ?? [], arrangement: options.arrangement ?? noArrangement };
     this.root = createRoot(host);
     this.root.render(
       <TrackPanel
@@ -45,6 +47,7 @@ export class TrackEngine implements GenomeBrowserEngine {
         files={this.files}
         assembly={options.assembly}
         tracks={options.tracks}
+        trackMenu={options.trackMenu}
         onRegionChange={(region) => {
           this.update({ region });
           options.onRegionChange?.(region);
@@ -64,6 +67,10 @@ export class TrackEngine implements GenomeBrowserEngine {
 
   showTracks(hidden: readonly string[]): void {
     this.update({ hidden });
+  }
+
+  arrangeTracks(arrangement: GenomeTrackArrangement): void {
+    this.update({ arrangement });
   }
 
   /** Keeps what the panel last drew, so an export draws the same tracks and data. */

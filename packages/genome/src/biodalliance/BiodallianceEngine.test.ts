@@ -2,12 +2,27 @@ import { suggestedTracks } from '../genomeTrackList';
 import { BiodallianceEngine, markImagesDecorative, resolveTokens } from './BiodallianceEngine';
 import { chromHmm } from './humanbaseConfig';
 
+class FakeTier {
+  pinned = false;
+  config: Record<string, unknown> = {};
+  constructor(readonly dasSource: { name: string }) {}
+  mergeConfig(config: Record<string, unknown>) {
+    this.config = { ...this.config, ...config };
+  }
+}
+
 class FakeBrowser {
   static last: FakeBrowser;
   views: ((chr: string, min: number, max: number) => void)[] = [];
   calls: string[] = [];
+  orders: string[] = [];
+  tiers: FakeTier[];
   constructor(readonly options: Record<string, unknown>) {
     FakeBrowser.last = this;
+    this.tiers = (options.sources as { name: string; disabled?: boolean }[]).filter((source) => !source.disabled).map((source) => new FakeTier(source));
+  }
+  reorderTiers() {
+    this.orders.push(this.tiers.map((tier) => tier.dasSource.name).join(', '));
   }
   addInitListener(listener: () => void) {
     queueMicrotask(listener);
@@ -119,6 +134,20 @@ describe('BiodallianceEngine', () => {
     engine.showTracks([]);
     await engine.exportSvg({ width: 900, highlights: false, guideline: true, title: 'chr1:2,230,000-2,440,000' });
     expect(FakeBrowser.last.calls).toEqual(['remove GENCODE 19', 'add DNA Disease Impact Score', 'add GENCODE 19', 'svg {"highlights":false,"ruler":"center","width":900,"banner":false,"region":true}']);
+  });
+
+  it('draws the tracks in the page’s order and gives score tracks their height and range', async () => {
+    const engine = new BiodallianceEngine();
+    await engine.mount(document.createElement('div'), { label: 'Genome browser', assembly: 'hg19', region, tracks: [dna] });
+    const { tiers, orders } = FakeBrowser.last;
+    expect(orders).toEqual(['Genome, DNA Disease Impact Score, GENCODE 19']);
+    expect(tiers.every((tier) => tier.pinned)).toBe(true);
+    engine.arrangeTracks({ order: ['genes', 'sequence'], settings: { 'DNA Disease Impact Score': { height: 120, range: [-1, 4] } } });
+    expect(orders.at(-1)).toBe('GENCODE 19, Genome, DNA Disease Impact Score');
+    expect(tiers.find((tier) => tier.dasSource.name === 'DNA Disease Impact Score')?.config).toEqual({ height: 120, forceMin: -1, forceMax: 4 });
+    engine.arrangeTracks({ order: [], settings: {} });
+    expect(orders.at(-1)).toBe('Genome, DNA Disease Impact Score, GENCODE 19');
+    expect(tiers.find((tier) => tier.dasSource.name === 'DNA Disease Impact Score')?.config).toEqual({ height: undefined, forceMin: undefined, forceMax: undefined });
   });
 
   it('draws GM12878 ChromHMM with the live site’s style, off until turned on', async () => {

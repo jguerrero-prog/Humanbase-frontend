@@ -1,8 +1,8 @@
 import type { GeneModel, GenomeTracks, ScorePoint, SequenceSpan } from '@humanbase/data';
-import { GenomeTrackView, type GeneShape, type TrackOf } from '@humanbase/ui';
+import { GenomeTrackView, type ActionMenuItem, type GeneShape, type TrackOf } from '@humanbase/ui';
 import { useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { isSegmentTrack, withChr, type Assembly, type GenomeDataTrack, type GenomeRegion, type GenomeScoreTrack } from '../GenomeBrowserEngine';
-import { builtInTracks, genesTrack, sequenceTrack } from '../genomeTrackList';
+import { builtInTracks, genesTrack, genomeTrackList, sequenceTrack } from '../genomeTrackList';
 import { geneDetails, scoreDetails, segmentDetails } from './itemDetails';
 import type { DrawnTracks, TrackEngine } from './TrackEngine';
 import { readLimit, useSegmentTracks, useTrackData } from './useTrackData';
@@ -12,6 +12,7 @@ interface TrackPanelProps {
   files: GenomeTracks;
   assembly: Assembly;
   tracks: readonly GenomeDataTrack[];
+  trackMenu?: ((id: string) => readonly ActionMenuItem[]) | undefined;
   onRegionChange: (region: GenomeRegion) => void;
 }
 
@@ -36,8 +37,11 @@ function useAreaWidth() {
   return { element, width };
 }
 
-export function TrackPanel({ engine, files, assembly, tracks: allTracks, onRegionChange }: TrackPanelProps) {
-  const { region, highlight, hidden } = useSyncExternalStore(engine.subscribe, engine.snapshot);
+export function TrackPanel({ engine, files, assembly, tracks: allTracks, trackMenu, onRegionChange }: TrackPanelProps) {
+  const { region, highlight, hidden, arrangement } = useSyncExternalStore(engine.subscribe, engine.snapshot);
+  // Data tracks use their name as id; the view orders tracks by name.
+  const nameOf = new Map(genomeTrackList(assembly, allTracks).map((track) => [track.id, track.name]));
+  const menu = (id: string) => ({ menu: trackMenu?.(id) });
   const shownTracks = allTracks.filter((track) => !hidden.includes(track.name));
   const tracks = shownTracks.filter((track): track is GenomeScoreTrack => !isSegmentTrack(track));
   const [showSequence, showGenes] = [!hidden.includes(sequenceTrack), !hidden.includes(genesTrack)];
@@ -80,14 +84,17 @@ export function TrackPanel({ engine, files, assembly, tracks: allTracks, onRegio
     start: span.start,
     end: span.end,
     width,
-    sequence: showSequence ? { name: named.sequence.name, meta: named.sequence.meta, state: readable ? sequence.state : 'ready', data: readable ? sequence.data : undefined } : undefined,
+    sequence: showSequence ? { name: named.sequence.name, meta: named.sequence.meta, state: readable ? sequence.state : 'ready', data: readable ? sequence.data : undefined, ...menu(sequenceTrack) } : undefined,
     scores: tracks.map((track) => {
       // A track just turned on has no data until its first read lands.
       const values = scores.data?.[track.bigWigUrl];
-      return { name: track.name, meta: track.meta ?? '', state: values || scores.state === 'failed' ? scores.state : 'loading', data: values && { min: track.range?.[0] ?? 0, max: track.range?.[1] ?? 1, values: values.map((point) => ({ ...point, details: scoreDetails(chrom, point) })) } };
+      const { height, range = track.range } = arrangement.settings[track.name] ?? {};
+      const data = values && { min: range?.[0] ?? 0, max: range?.[1] ?? 1, values: values.map((point) => ({ ...point, details: scoreDetails(chrom, point) })) };
+      return { name: track.name, meta: track.meta ?? '', state: values || scores.state === 'failed' ? scores.state : 'loading', data, height, ...menu(track.name) };
     }),
-    segments,
-    genes: showGenes ? geneTrack : undefined,
+    segments: segments.map((track) => ({ ...track, ...menu(track.name) })),
+    genes: showGenes ? { ...geneTrack, ...menu(genesTrack) } : undefined,
+    order: arrangement.order.flatMap((id) => nameOf.get(id) ?? []),
     selected: highlight && withChr(highlight.chrom) === chrom ? { position: highlight.position, label: `${chrom}:${count.format(highlight.position)}` } : undefined,
   };
   useLayoutEffect(() => {

@@ -17,6 +17,7 @@ interface GenomeBrowserEngine {
   showRegion(region: GenomeRegion): void;
   highlight(position: { chrom: string; position: number } | undefined): void;
   showTracks(hidden: readonly string[]): void;
+  arrangeTracks(arrangement: GenomeTrackArrangement): void;
   exportSvg(options: GenomeExportOptions): Promise<Blob>;
   destroy(): void;
 }
@@ -28,11 +29,13 @@ interface GenomeBrowserEngine {
 - `showRegion` follows the page's own toolbar: search, zoom, Previous and Next variant.
 - `highlight` marks the selected variant; `undefined` clears it.
 - `showTracks` shows every track but the hidden ones, by id: `sequence`, `genes`, or a data track's name. `mount` takes the first `hidden` list too. `genomeTrackList` lists a browser's tracks in drawing order for the Tracks drawer, and `suggestedTracks` adds the live site's Conservation (`phastCons46way.bw`) and GM12878 ChromHMM (`gm12878.ChromHMM.bb`) tracks on hg19; they start hidden (`hiddenByDefault`). `TrackEngine` draws ChromHMM as 8px boxes in each segment's own color with a 1px ink outline and shows the Data tooltip on hover; Biodalliance uses the live site's ChromHMM style (`chromHmm` in `humanbaseConfig.ts`).
+- `arrangeTracks` draws the tracks in `order` (track ids; ids it leaves out keep their usual place, see `inOrder`) and gives score tracks their Track settings by id: a `height` in pixels and a `range` for the bars. Anything left out is drawn as usual. `mount` takes the first `arrangement`. `TrackEngine` passes both to `GenomeTrackView`; Biodalliance reorders its tiers (pinning them all, as it draws pinned tiers first) and sets each tier's `height`, `forceMin` and `forceMax`.
+- `trackMenu`, in the mount options, gives each track header its menu by track id; `TrackEngine` reads it on every draw for the headers it draws itself.
 - `exportSvg` returns the current view as an SVG file with the Export dialog's options: the tracks' width, the selected variant's highlights, the vertical guideline, and a title line such as the location. `TrackEngine` draws `GenomeTrackFigure` from `@humanbase/ui` with the data on screen; Biodalliance uses its own `makeSVG`.
 - Regions are 1-based and inclusive, with the `chr` prefix.
-- `onTrackLayout`, when set, receives each track's name, `meta`, top and height whenever the engine lays its tracks out, so the page can draw headers beside them.
+- `onTrackLayout`, when set, receives each track's id, name, `meta`, top and height whenever the engine lays its tracks out, so the page can draw headers beside them.
 
-`GenomeEngineView` is the React wrapper pages use; it takes `hidden`, and its `ref` gets `exportSvg`; pages pass it `files`, `useHumanbase().genomeTracks`. It mounts an engine once per assembly, file reader and track set, then passes region and selection changes to it. It draws the design system's `TrackHeader` for each track the engine reports, in the 220 px header column (120 px under 48rem). With `onCommand`, the tracks take keyboard focus and keys map through `genomeCommand` from `@humanbase/ui`, so arrows, + and −, and Ctrl+arrows act through the page's own toolbar. Under the tracks, it lists each shown segment track's segments in view with `SegmentTable` (View as table), whichever engine draws them.
+`GenomeEngineView` is the React wrapper pages use; it takes `hidden`, `arrangement` and `trackMenu`, and its `ref` gets `exportSvg`; pages pass it `files`, `useHumanbase().genomeTracks`. It mounts an engine once per assembly, file reader and track set, then passes region and selection changes to it. It draws the design system's `TrackHeader`, with its menu, for each track the engine reports, in the 220 px header column (120 px under 48rem). With `onCommand`, the tracks take keyboard focus and keys map through `genomeCommand` from `@humanbase/ui`, so arrows, + and −, and Ctrl+arrows act through the page's own toolbar. Under the tracks, it lists each shown segment track's segments in view with `SegmentTable` (View as table), whichever engine draws them.
 
 ## Theming Biodalliance
 

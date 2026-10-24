@@ -26,14 +26,14 @@ const tracks = [
   { name: 'Mean −log e-value', source: 'This job', scale: 'scale 0 to 3' },
   { name: 'Genes', source: 'GENCODE 19' },
 ];
-const trackMenu: ActionMenuItem[] = [
-  { label: 'About this track', description: 'Source and what the values mean' },
-  { label: 'Download track data', icon: 'download' },
-  { label: 'Track settings…' },
-  { label: 'Move up', dividerBefore: true },
+// Only score tracks have Track settings: height and value range are what their bars can change.
+const trackMenuOf = (scores: boolean): ActionMenuItem[] => [
+  ...(scores ? [{ label: 'Track settings…' }] : []),
+  { label: 'Move up', dividerBefore: scores },
   { label: 'Move down' },
   { label: 'Remove track', destructive: true, dividerBefore: true },
 ];
+const trackMenu = trackMenuOf(true);
 const moreMenu: ActionMenuItem[] = [{ label: 'Browser settings…' }, { label: 'Clear highlights' }];
 const suggested = [
   { id: 'impact', label: 'Disease impact score', source: 'This job', shown: true },
@@ -43,7 +43,7 @@ const suggested = [
   { id: 'conservation', label: 'Conservation', source: 'Suggested track, as today', shown: false },
   { id: 'chromhmm', label: 'GM12878 ChromHMM', source: 'Genome segmentation', shown: false },
 ];
-const trackSettings = { name: 'Disease impact score', style: 'bars' as const, min: '0', max: '3', height: '50 px', thresholdLeap: 'Off', pinned: true };
+const trackSettings = { name: 'Disease impact score', height: '60', min: '0', max: '3' };
 const browserSettings = { reverseTrackpad: false, reverseButtons: false, highlightLocation: false, guideline: 'left' };
 
 const today = [
@@ -91,7 +91,7 @@ const integration = [
   ['Track colors from the system', 'Score tracks use viz.seq step 6 (#1F5FAE); the selected variant is ink. Gene exons stay grey 600.'],
   ['Location in words', 'Show chr1:109,767,590-109,867,590 with commas and the assembly beside it; accept today’s 1:109,767,590..109,867,590 format too.'],
   ['Linked heatmap', 'Column positions and the center variant come from the browser’s view, as today; the connectors read the same positions.'],
-  ['Remember choices', 'Tracks and settings are kept in this browser, like other preferences (no accounts).'],
+  ['Remember choices', 'Tracks, their order and settings are kept in this browser, like other preferences (no accounts). Reset to default tracks puts all three back.'],
 ];
 
 const words = [
@@ -107,6 +107,9 @@ const behavior = [
   ['Follows the selection', 'On a result, selecting a variant centers the browser on it at the current zoom. Moving the browser by hand doesn’t change the selection.'],
   ['Zoom stops', '200 bp, 2 kb, 50 kb and 500 kb, as today; the view can sit between stops, and the field shows the exact width.'],
   ['Tracks', 'The job’s score tracks and genes are on by default. Suggested tracks, your file and By URL add more; Remove track is in each track menu.'],
+  ['Track menu', 'Each track header has one. Move up and Move down swap the track with the next shown track, and are off at the top and bottom. Remove track hides it; Tracks turns it back on. Focus stays on the track’s menu button, or goes to the tracks once the track is gone.'],
+  ['Track settings', 'Score tracks only: Height, 50 to 300 px (60 by default), and the lowest and highest values the bars span (the track’s own range by default). Apply checks the fields and says what to fix; Reset track goes back to the defaults. Other tracks have nothing their data lets you change, so their menu has no Track settings.'],
+  ['Not yet', 'Today’s Line, Ribbon and Scatter styles, colors, threshold leap, Pin to top, renaming, About this track and Download track data wait for a drawing spec and a download format.'],
   ['Export', `SVG for publication with today’s options; the file is named after the location, such as ${view.fileName()}.`],
   ['Panels', 'Tracks is a drawer over the page; settings and export are dialogs. None of them resizes the tracks.'],
   ['URL', 'Location and tracks are in the URL, so a view can be shared.'],
@@ -209,7 +212,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
       <div class="browser-tracks">
         <div class="track-column">
           <div class="track-column-ruler">Position</div>
-          {tracks.map((track) => <TrackHeader name={track.name} source={track.source} scale={track.scale} menuItems={trackMenu} />)}
+          {tracks.map((track) => <TrackHeader name={track.name} source={track.source} scale={track.scale} menuItems={trackMenuOf(Boolean(track.scale))} />)}
         </div>
         <div class="track-area" data-illustration>
           <GenomeTracksSketch
@@ -230,7 +233,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
     </DocTable>
   </DocSection>
 
-  <DocSection title="Tracks, track settings and export" lead="Today these panels open beside the tracks and squeeze them. Here Tracks opens as a drawer over the page, track settings start from a menu on each track header, and export and options are dialogs. Every option from today is kept.">
+  <DocSection title="Tracks, track settings and export" lead="Today these panels open beside the tracks and squeeze them. Here Tracks opens as a drawer over the page, track settings start from a menu on each track header, and export and options are dialogs. Track settings offer only what a track’s data can change (Behavior lists what waits).">
     <div class="panels" inert>
       <figure>
         <figcaption>Tracks drawer</figcaption>
@@ -283,6 +286,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
       <ul>
         <li>Pages talk to one interface, <code>GenomeBrowserEngine</code> in <code>@humanbase/genome</code>: mount, show a region, mark the selected variant, and report when a drag or zoom settles.</li>
         <li>The default engine, <code>TrackEngine</code>, draws <code>GenomeTrackView</code> from <code>@humanbase/ui</code>: the ruler, the sequence (letters once a base is 7px wide), the score tracks as <code>viz-seq-6</code> bars, GENCODE genes with names and strand arrows, and the selected variant as a 50% ink line with its value and a mono pill. Drag the tracks to move along the genome.</li>
+        <li>Track menus and Track settings go through the same interface: <code>arrangeTracks</code> takes the tracks' order and each score track's height and range, by track id, and <code>GenomeEngineView</code> takes <code>arrangement</code> and <code>trackMenu</code>. <code>TrackEngine</code> draws the menus in its own headers; Biodalliance reorders its tiers and sets their height, <code>forceMin</code> and <code>forceMax</code>.</li>
         <li>Items open their details when the page gives them <code>details</code>: <code>geneDetails</code> and <code>segmentDetails</code> in <code>@humanbase/genome</code> list humanbase.io’s fields, and <code>GenomeTrackView</code> draws the popover with <code>DataTooltip</code> and <code>placeUnderBox</code>. An item without details doesn’t open one.</li>
         <li>Segment tracks, such as GM12878 ChromHMM, read a bigBed file through <code>GenomeTracks.segments</code> and draw each segment as an 8px box in the file’s own color; <code>SegmentTable</code> lists them under View as table, under either engine.</li>
         <li>It reads the same files as the live site through <code>GenomeTracks</code> in <code>@humanbase/data</code>: the hg19 genome, GENCODE 19 genes and the DNA and RNA impact tracks from Humanbase's files on S3, in byte ranges. With the API off it reads recorded windows of those files from the sample data and makes no request.</li>

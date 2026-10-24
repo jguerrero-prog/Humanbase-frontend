@@ -86,6 +86,8 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
         region={region}
         tracks={tools.tracks}
         hidden={tools.hidden}
+        arrangement={tools.arrangement}
+        trackMenu={tools.trackMenu}
         selected={{ chrom, position }}
         onRegionChange={onRegionChange}
         onStatusChange={(status, error) => setFailure(status === 'failed' ? error : undefined)}
