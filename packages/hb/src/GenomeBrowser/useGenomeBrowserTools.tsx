@@ -1,7 +1,7 @@
 import { assemblyNames, useHumanbase, UserTrackError, type GenomeLocation, type UserTrack } from '@humanbase/data';
 import { genomeTrackList, hiddenByDefault, inOrder, isSegmentTrack, moveTrack, noArrangement, suggestedTracks, TrackDownload, trackFile, useOutside, userDataTrack, type Assembly, type GenomeDataTrack, type GenomeEngineHandle, type GenomeScoreTrack, type GenomeTrackArrangement, type GenomeTrackSetting } from '@humanbase/genome';
-import { Alert, ExportDialog, saveFile, scoreTrackHeight, StoredChoice, TrackSettingsDialog, TracksDrawer, type ActionMenuItem, type ExportSettings, type GenomeCommand, type TrackSettingsValues } from '@humanbase/ui';
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { Alert, ExportDialog, saveFile, scoreTrackHeight, StoredChoice, ToastQueue, ToastRegion, TrackSettingsDialog, TracksDrawer, type ActionMenuItem, type ExportSettings, type GenomeCommand, type TrackSettingsValues } from '@humanbase/ui';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 
 export interface GenomeBrowserToolsOptions {
   /** Names the browser whose track choices are remembered, such as asd or variant-results. */
@@ -99,6 +99,9 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
   const [adding, setAdding] = useState(false);
   const [addError, setAddError] = useState<string>();
   const [status, setStatus] = useState<string>();
+  const [toasts] = useState(() => new ToastQueue());
+  const pending = useRef(new Set<string>());
+  const toastOf = useRef(new Map<string, string>());
   const group = `${browser}:${assembly}`;
   const added = useAddedTracks(group);
   const { genomeTracks } = useHumanbase();
@@ -128,12 +131,22 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
   const span = { chrom: location.chrom, start: location.start, end: location.end };
   // With the API off, a file the samples don't hold here has no data in view to save.
   const outside = useOutside(genomeTracks, assembly, span, tracks.map(trackFile));
+  // A second click on a stretch still preparing waits for that download; a new try replaces the stretch's last toast.
   const saveView = async (download: TrackDownload, name: string) => {
-    setFailure(undefined);
+    const file = download.fileName(span);
+    if (pending.current.has(file)) return;
+    pending.current.add(file);
+    const earlier = toastOf.current.get(file);
+    if (earlier) toasts.dismiss(earlier);
+    const toast = toasts.show({ tone: 'loading', message: `Preparing ${name} data…` });
+    toastOf.current.set(file, toast);
     try {
-      saveFile(await download.contents(genomeTracks, span), download.fileName(span), 'text/plain');
+      saveFile(await download.contents(genomeTracks, span), file, 'text/plain');
+      toasts.update(toast, { tone: 'success', message: `${name} data downloaded` });
     } catch {
-      setFailure({ title: `${name} data couldn’t download`, message: 'The track file didn’t answer. Try again.' });
+      toasts.update(toast, { tone: 'error', message: `${name} data couldn’t download`, action: { label: 'Try again', onSelect: () => void saveView(download, name) } });
+    } finally {
+      pending.current.delete(file);
     }
   };
   // Only the data tracks come from a file someone can use elsewhere; genes and sequence are the browser's own.
@@ -265,6 +278,7 @@ export function useGenomeBrowserTools({ browser, assembly, tracks: pageTracks, l
         />
       )}
       <ExportDialog open={panel === 'export'} onClose={close} onExport={(settings) => void exportView(settings)} />
+      <ToastRegion queue={toasts} label="Download notifications" />
     </>
   );
 
