@@ -101,6 +101,7 @@ const words = [
   ['Out of range', new GenomeLocation('chr1', 249_240_000, 249_290_000).clamp(249_250_621).message ?? ''],
   ['Track loading', 'Loading GENCODE 19…'],
   ['Track failed', 'GM12878 ChromHMM didn’t load. Try again, or remove it from Tracks.'],
+  ['Outside the sample data', 'With the API off, one info Alert under the tracks replaces every track’s message: “Sample data covers only the area around each example variant. Turn the API on to browse the whole genome.” Tracks you added still draw from their own file.'],
   ['Nothing in view', 'No variants in this range. Previous variant and Next variant jump to the nearest ones.'],
   ['Track added', 'H3K27ac is added and shown.'],
   ['Added, not kept', 'H3K27ac is added for this visit only. This browser wouldn’t store it, so add it again next time.'],

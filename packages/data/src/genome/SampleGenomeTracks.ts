@@ -38,9 +38,18 @@ export class SampleGenomeTracks implements GenomeTracks {
     return { start: span.start, bases: recorded.bases.slice(span.start - recorded.start, span.end - recorded.start + 1) };
   }
 
-  private async window(span: GenomeSpan, fits: (window: RecordedWindow) => boolean): Promise<RecordedWindow> {
+  /** Whether a recorded window holds the whole span: of the file, or of the assembly's genes and sequence without one. */
+  async covers(assembly: Assembly, span: GenomeSpan, file?: string): Promise<boolean> {
+    return Boolean(await this.find(span, file ? (window) => file in window.scores || file in (window.segments ?? {}) : (window) => window.assembly === assembly));
+  }
+
+  private async find(span: GenomeSpan, fits: (window: RecordedWindow) => boolean): Promise<RecordedWindow | undefined> {
     const { windows } = await this.client.get<{ windows: RecordedWindow[] }>('genome/tracks');
-    const found = windows.find((window) => fits(window) && window.chrom === span.chrom && window.start <= span.start && window.end >= span.end);
+    return windows.find((window) => fits(window) && window.chrom === span.chrom && window.start <= span.start && window.end >= span.end);
+  }
+
+  private async window(span: GenomeSpan, fits: (window: RecordedWindow) => boolean): Promise<RecordedWindow> {
+    const found = await this.find(span, fits);
     if (!found) throw new ApiError(404, `sample:genome/tracks ${span.chrom}:${span.start}-${span.end}`);
     return found;
   }
