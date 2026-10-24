@@ -5,6 +5,16 @@ import { DeepseaJob, type DeepseaJobRecord } from './DeepseaJob';
 import { deepseaModels, type Genome } from './DeepseaModel';
 import type { FeaturePredictionRecord, FeaturesRecord, ScoreType, VariantScoresRecord } from './DeepseaResult';
 import { InsilicoResult, type InsilicoRecord } from './InsilicoResult';
+import { withSequenceClassGroups } from './seiSequenceClasses';
+
+/** A model's precomputed variants: on the model's own predictions, such as Seqweaver's gnomAD variants, or in a dataset of their own, such as sei_hgmd. */
+export interface PrecomputedSource {
+  model: VariantModel;
+  /** The API's name for a dataset with its own features, such as sei_hgmd; the model's own by default. */
+  dataset?: string | undefined;
+  /** Sent as score_type when the dataset takes one, such as seqweaver. */
+  scoreType?: string | undefined;
+}
 
 export interface DeepseaRequest {
   model: VariantModel;
@@ -68,8 +78,14 @@ export class DeepseaService {
   }
 
   /** Precomputed predictions for every variant in a range, such as Seqweaver's gnomAD variants, read without a job as humanbase.io's variant browsers do. */
-  precomputedPredictions(model: VariantModel, scoreType: string, range: GenomeLocation): Promise<FeaturePredictionRecord[]> {
-    return this.client.get<FeaturePredictionRecord[]>(`deepsea/${deepseaModels[model].apiName}/feature_predictions/`, { score_type: scoreType, chr_and_variant_range: range.variantRange });
+  precomputedPredictions({ model, dataset, scoreType }: PrecomputedSource, range: GenomeLocation): Promise<FeaturePredictionRecord[]> {
+    return this.client.get<FeaturePredictionRecord[]>(`deepsea/${dataset ?? deepseaModels[model].apiName}/feature_predictions/`, { ...(scoreType && { score_type: scoreType }), chr_and_variant_range: range.variantRange });
+  }
+
+  /** The features a set of precomputed variants is scored on; a dataset's own sequence classes are named with their groups, as Sei job results name them. */
+  async precomputedFeatures({ model, dataset, scoreType }: PrecomputedSource): Promise<FeaturesRecord> {
+    if (!dataset) return this.features(model, scoreType);
+    return withSequenceClassGroups(await this.client.get<FeaturesRecord>(`deepsea/${dataset}/features/`));
   }
 
   /** One sequence's mutagenesis for one feature, named by its index in the model's feature list. */

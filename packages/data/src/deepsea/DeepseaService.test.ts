@@ -45,7 +45,7 @@ describe('DeepseaService', () => {
 
   it('reads Seqweaver’s precomputed gnomAD variants in a range, without a job', async () => {
     const view = new GenomeLocation('chr1', 2_334_000, 2_336_000);
-    const records = await service.precomputedPredictions('seqweaver', 'seqweaver', view);
+    const records = await service.precomputedPredictions({ model: 'seqweaver', scoreType: 'seqweaver' }, view);
     expect(records.length).toBeGreaterThan(50);
     expect(records.every((record) => view.includes(record.chromosome, record.position) && record.feature_predictions.length === 232)).toBe(true);
     expect(Number(records[0]?.variant_score)).toBeGreaterThan(0);

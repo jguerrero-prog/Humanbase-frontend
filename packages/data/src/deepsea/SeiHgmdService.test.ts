@@ -1,9 +1,11 @@
 import { featureEffects } from './DeepseaResult';
+import { DeepseaService } from './DeepseaService';
 import { SampleClient } from '../sample/SampleClient';
 import { SeiHgmdService, type HgmdOrder } from './SeiHgmdService';
 
 describe('SeiHgmdService', () => {
-  const service = new SeiHgmdService(SampleClient.bundled());
+  const client = SampleClient.bundled();
+  const service = new SeiHgmdService(client);
 
   it('reads all 853 HGMD variants, each with 40 sequence class scores', async () => {
     const variants = await service.variants();
@@ -20,7 +22,7 @@ describe('SeiHgmdService', () => {
   });
 
   it('names the sequence classes with their groups, as Sei job results do', async () => {
-    const features = await service.features();
+    const features = await new DeepseaService(client).precomputedFeatures(SeiHgmdService.source);
     expect(features.model_features).toHaveLength(40);
     const effects = (await service.variants()).slice(0, 1).flatMap((variant) => featureEffects(variant, features));
     expect(effects[0]).toMatchObject({ feature: 'E5 B-cell-like', label: 'Enhancer / E5 B-cell-like' });

@@ -1,4 +1,4 @@
-import { productCategories, seiHgmd, sequenceToolModels } from '@humanbase/hb';
+import { productCategories, seiHgmdLink, sequenceToolModels } from '@humanbase/hb';
 import { Cell, HeaderCell, Table, useLinkHref } from '@humanbase/ui';
 import './ToolPage.css';
 
@@ -45,7 +45,7 @@ export function SequenceToolsPage() {
         </tbody>
       </Table>
       <p className="tool-page-note">
-        Want to see a model on known disease variants first? Explore <a href={linkHref(seiHgmd.href)}>{seiHgmd.description}</a>.
+        Want to see a model on known disease variants first? Explore <a href={linkHref(seiHgmdLink.href)}>{seiHgmdLink.description}</a>.
       </p>
     </section>
   );

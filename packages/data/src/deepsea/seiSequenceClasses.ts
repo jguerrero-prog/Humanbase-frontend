@@ -45,6 +45,13 @@ const classes: readonly (readonly [name: string, group: string])[] = [
   ['HET6 Centromere', 'Heterochromatin'],
 ];
 
+const groups = new Map(classes.map(([name, group]) => [name, group]));
+
+/** Gives each Sei sequence class in a feature list its group, as the bundled list does; other features keep their cell type. */
+export function withSequenceClassGroups(record: FeaturesRecord): FeaturesRecord {
+  return { ...record, model_features: (record.model_features ?? []).map((feature) => ({ ...feature, cell_type: { name: groups.get(feature.chromatin_feature_type.name) ?? feature.cell_type.name } })) };
+}
+
 /** Names Sei's sequence class predictions; the API's Sei feature list holds its 21,907 chromatin profiles instead. */
 export const seiSequenceClasses: FeaturesRecord = {
   model_features: classes.map(([name, group], idx) => ({ cell_type: { name: group }, chromatin_feature_type: { name }, treatment: { name: 'None' }, idx })),

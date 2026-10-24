@@ -290,6 +290,21 @@ test('the Seqweaver gnomAD browser reads the real precomputed variants and track
   await checkScreen(page, problems);
 });
 
+test('Sei HGMD variants reads all 853 real variants, and a heatmap row opens its real predictions in the genome browser', async ({ page }) => {
+  test.setTimeout(120_000);
+  const problems = watch(page);
+  await page.goto(`${web}/variant-effects/hgmd/`);
+  const heatmap = page.getByRole('grid', { name: 'Sequence class score of 853 HGMD variants' });
+  await expect(heatmap.getByRole('row')).toHaveCount(853, { timeout: 60_000 });
+  // humanbase.io's default order starts here, and its Agammaglobulinaemia variant ranks E7, P and CTCF first (checked October 24, 2026).
+  await expect(heatmap.getByRole('row').first().getByRole('button')).toHaveText('Haemophagocytic lymphohistiocytosis type 3 (chr17:73839907)');
+  await heatmap.getByRole('button', { name: 'Agammaglobulinaemia (chrX:100641212)' }).click();
+  await expect(page.getByRole('heading', { name: 'Molecular effects of chrX:100,641,212 T>C' })).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByText(/^2 variants in view/)).toBeVisible();
+  await expect(page.getByRole('rowheader').first()).toHaveText(/E7 Monocyte \/ Macrophage/);
+  await checkScreen(page, problems);
+});
+
 test('the real Beluga result shows its variants and molecular effects', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/`);

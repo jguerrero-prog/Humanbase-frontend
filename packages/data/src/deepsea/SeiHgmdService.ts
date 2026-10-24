@@ -1,6 +1,6 @@
 import type { DataClient } from '../DataClient';
-import type { FeaturePredictionRecord, FeaturesRecord } from './DeepseaResult';
-import { seiSequenceClasses } from './seiSequenceClasses';
+import type { PrecomputedSource } from './DeepseaService';
+import type { FeaturePredictionRecord } from './DeepseaResult';
 
 // Not in the schema: one HGMD variant as GET /api/deepsea/sei_hgmd/feature_predictions/ returns it.
 export interface HgmdVariantRecord extends FeaturePredictionRecord {
@@ -17,8 +17,6 @@ export interface HgmdVariantRecord extends FeaturePredictionRecord {
 /** humanbase.io's Sort variants by: the dataset's order, disease name, or genome position as the API lists them. */
 export type HgmdOrder = 'default' | 'disease' | 'position';
 
-const groups = new Map((seiSequenceClasses.model_features ?? []).map((feature) => [feature.chromatin_feature_type.name, feature.cell_type.name]));
-
 /** Sei's sequence class scores for 853 noncoding pathogenic variants from the Human Gene Mutation Database, as humanbase.io's /sei-hgmd shows them. */
 export class SeiHgmdService {
   static readonly orders: readonly { value: HgmdOrder; label: string }[] = [
@@ -26,6 +24,9 @@ export class SeiHgmdService {
     { value: 'disease', label: 'Disease name' },
     { value: 'position', label: 'Genome position' },
   ];
+
+  /** Where its predictions and sequence classes are read, as humanbase.io's genome view reads them. */
+  static readonly source: PrecomputedSource = { model: 'sei', dataset: 'sei_hgmd' };
 
   constructor(private readonly client: DataClient) {}
 
@@ -42,13 +43,7 @@ export class SeiHgmdService {
     return list;
   }
 
-  /** The 40 sequence classes in the order the predictions use, each with its group, as Sei job results name them. */
-  async features(): Promise<FeaturesRecord> {
-    const record = await this.client.get<FeaturesRecord>('deepsea/sei_hgmd/features/');
-    return { model_features: (record.model_features ?? []).map((feature) => ({ ...feature, cell_type: { name: groups.get(feature.chromatin_feature_type.name) ?? feature.cell_type.name } })) };
-  }
-
-  /** Every variant with its 40 scores; the genome view picks the ones in its range from these. */
+  /** Every variant with its 40 scores, for the heatmap; the genome view reads the ones in its range. */
   variants(): Promise<HgmdVariantRecord[]> {
     return this.client.get<HgmdVariantRecord[]>('deepsea/sei_hgmd/feature_predictions/');
   }
