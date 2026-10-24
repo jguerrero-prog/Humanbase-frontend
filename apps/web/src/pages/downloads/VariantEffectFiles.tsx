@@ -3,7 +3,7 @@ import { downloadCitations, variantEffectDownloads, variantEffectsIntro, type Re
 import { Cell, DocsLink, HeaderCell, Table } from '@humanbase/ui';
 import { useId } from 'react';
 
-function ResourceSection({ title, description, docs, files }: ResourceGroup) {
+function ResourceSection({ title, description, docs, link, files }: ResourceGroup) {
   const headingId = useId();
   return (
     <section className="downloads-section" aria-labelledby={headingId}>
@@ -12,6 +12,13 @@ function ResourceSection({ title, description, docs, files }: ResourceGroup) {
       {docs && (
         <p className="downloads-docs">
           <DocsLink href={docsPage(docs)}>Read the {title} documentation</DocsLink>
+        </p>
+      )}
+      {link && (
+        <p className="downloads-docs">
+          <DocsLink href={link.href} icon="dataset">
+            {link.label}
+          </DocsLink>
         </p>
       )}
       <Table caption={`${title} files`} columnWidths={['24%', '38%', '16%', '10%', '12%']} minWidth="800px">

@@ -63,6 +63,8 @@ export interface ResourceGroup {
   description: string;
   /** A page of the Humanbase docs. */
   docs?: string;
+  /** Another site to point to, such as SFARI Base for the retired ASD Browser. */
+  link?: { label: string; href: string };
   files: readonly ResourceFile[];
 }
 
@@ -318,11 +320,12 @@ export const variantEffectDownloads: readonly ResourceGroup[] = [
   {
     title: 'ASD Browser',
     description: 'Access the code for making variant effect predictions from the DNA and RNA models used in the ASD Browser analysis.',
+    link: { label: 'Go to SFARI Base', href: 'https://base.sfari.org' },
     files: [
       {
         name: 'DNA and RNA models',
         file: 'code_asd_dnarna_v3.tar.gz',
-        description: 'Code for making variant effect predictions from the DNA and RNA models used in the ASD Browser analysis described in “Whole-genome deep learning analysis reveals causal role of noncoding mutations in autism”.',
+        description: 'Code for making variant effect predictions from the DNA and RNA models used in the ASD Browser analysis described in “Whole-genome deep learning analysis reveals causal role of noncoding mutations in autism”. The ASD Browser is retired, and its data is also on SFARI Base. For autism genetics data, visit SFARI Base.',
         format: 'TAR GZ archive',
         size: '2.19 GB',
         href: 'https://humanbase.s3.amazonaws.com/asd/code_asd_dnarna_v3.tar.gz',

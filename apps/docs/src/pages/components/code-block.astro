@@ -163,7 +163,7 @@ const usage = `import { CodeBlock, CodeTabs, InlineCode } from '@humanbase/ui';
       <p>Send the genes to <InlineCode>/api/modules/</InlineCode> as <InlineCode>{'{"entrez": [3553, 7124]}'}</InlineCode> and read <InlineCode>queue_position</InlineCode> to show progress.</p>
       <p>Upload <InlineCode>bmi_gwas_2012.txt</InlineCode> with columns <InlineCode>gene</InlineCode> and <InlineCode>p</InlineCode>.</p>
     </div>
-    <p class="caption">Atkinson Hyperlegible Mono 14 on grey 100, 4px corners, 4px side padding. It sits on the text baseline and never wraps mid-token.</p>
+    <p class="caption">Atkinson Hyperlegible Mono 14 on grey 100, 4px corners, 4px side padding. It sits on the text baseline and never wraps mid-token. For a long line that must fit a phone, such as a file’s column layout on Downloads, pass <InlineCode>wrap</InlineCode>: it then wraps at spaces, or anywhere if a token is still too long, and keeps its background on each line.</p>
   </DocSection>
 
   <DocSection title="Behavior and accessibility" lead="Copying should be quick and certain.">

@@ -26,7 +26,7 @@ export function DownloadsPage() {
   return (
     <>
       <title>Downloads · Humanbase</title>
-      <ArticleHero title={downloadsPage.title} lead={downloadsPage.lead} band="reads" />
+      <ArticleHero title={downloadsPage.title} lead={downloadsPage.lead} band={null} />
       <div className="downloads">
         <Tabs label="Downloads" tabs={tabs} value={tab} onChange={chooseTab}>
           {tab === 'tissue-networks' ? (

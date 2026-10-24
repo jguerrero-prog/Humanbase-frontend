@@ -12,6 +12,7 @@ test('MAGE tissue networks open by default with no WCAG 2.2 AA violations', asyn
   await page.goto(downloads);
   await expect(page).toHaveTitle('Downloads · Humanbase');
   await expect(page.getByRole('heading', { level: 1, name: 'Downloads' })).toBeVisible();
+  await expect(page.locator('.article-band')).toHaveCount(0);
   await expect(page.getByRole('radio', { name: 'MAGE' })).toBeChecked();
   await expect(page.getByRole('link', { name: 'acinar_cell_of_salivary_gland.dat.gz' })).toHaveAttribute('href', 'https://s3-us-west-2.amazonaws.com/humanbase/networks/v3/acinar_cell_of_salivary_gland.dat.gz');
   await expect(page.getByText('1 to 25 of 290 tissues and cell types')).toBeVisible();
@@ -42,6 +43,8 @@ test('the Variant effects tab is in the URL and the back button returns', async 
   await expect(page).toHaveURL(/\/downloads\/\?tab=variant-effects$/);
   await expect(page.getByRole('link', { name: 'Download deepsea.beluga.pth' })).toHaveAttribute('href', 'https://humanbase.s3.us-west-2.amazonaws.com/clever/deepsea.beluga.pth');
   await expect(page.getByRole('link', { name: /Read the ExPecto documentation/ })).toHaveAttribute('href', '/docs/expecto/');
+  await expect(page.getByRole('link', { name: /Go to SFARI Base/ })).toHaveAttribute('href', 'https://base.sfari.org');
+  await expect(page.getByText('The ASD Browser is retired, and its data is also on SFARI Base.')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
   await page.goBack();
   await expect(page.getByRole('tab', { name: 'Tissue networks' })).toHaveAttribute('aria-selected', 'true');

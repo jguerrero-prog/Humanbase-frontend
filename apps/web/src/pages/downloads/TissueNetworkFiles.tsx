@@ -10,7 +10,7 @@ function FileFormats({ networks }: { networks: TissueNetworks }) {
           <dt>{name}</dt>
           <dd>
             <p>{description}</p>
-            {columns && <InlineCode>{columns}</InlineCode>}
+            {columns && <InlineCode wrap>{columns}</InlineCode>}
           </dd>
         </div>
       ))}

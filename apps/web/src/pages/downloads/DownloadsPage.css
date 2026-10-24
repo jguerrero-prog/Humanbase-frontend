@@ -15,11 +15,6 @@
   gap: var(--space-4);
 }
 
-.downloads-formats code {
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
 .downloads-section > .segmented {
   justify-self: start;
 }

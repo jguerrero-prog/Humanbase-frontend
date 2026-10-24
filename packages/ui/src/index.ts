@@ -35,7 +35,7 @@ export { OnThisPage, type OnThisPageProps } from './Docs/OnThisPage';
 export { TexMath, type TexMathProps } from './Docs/TexMath';
 export { useCurrentSection } from './Docs/useCurrentSection';
 export { Drawer, DrawerSection, type DrawerPlacement, type DrawerProps, type DrawerSize } from './Drawer/Drawer';
-export { CodeBlock, CopyButton, InlineCode, type CodeBlockProps, type CodeLine, type CodeToken, type CopyButtonProps, type SyntaxRole } from './CodeBlock/CodeBlock';
+export { CodeBlock, CopyButton, InlineCode, type CodeBlockProps, type InlineCodeProps, type CodeLine, type CodeToken, type CopyButtonProps, type SyntaxRole } from './CodeBlock/CodeBlock';
 export { CodeTabs, type CodeExample, type CodeTabsProps } from './CodeBlock/CodeTabs';
 export { FileDrop, fileSize, type ChosenFile, type FileDropProps, type FileProblemLine } from './FileDrop/FileDrop';
 export { Field, FieldError, type FieldProps, type FieldSize } from './Field/Field';
