@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { asdBrowserRetired } from '@humanbase/hb';
+import { asdBrowserRetired, genomeBrowserPreview } from '@humanbase/hb';
 import { createBrowserRouter, Navigate, useSearchParams, type RouteObject } from 'react-router';
 import { AppLayout } from './layout/AppLayout';
 import { HomePage } from './pages/HomePage';
@@ -55,6 +55,7 @@ export const routes: RouteObject[] = [
           moved('ism', '/variant-effects/', { tab: 'region-scan' }),
           page('seqweaver', seqweaver),
           page('asd', async () => (asdBrowserRetired ? (await import('./pages/asd/AsdRetiredPage')).AsdRetiredPage : (await import('./pages/asd/AsdPage')).AsdPage)),
+          ...(genomeBrowserPreview ? [page('genome', async () => (await import('./pages/GenomePage')).GenomePage)] : []),
           page('deepsea/jobs/:id', async () => (await import('./pages/deepsea/DeepseaJobPage')).DeepseaJobPage),
           page('expression-effects', async () => (await import('./pages/expecto/ExpressionEffectsPage')).ExpressionEffectsPage),
           page('expression-effects/genes/:entrez', async () => (await import('./pages/expecto/GeneExpressionPage')).GeneExpressionPage),

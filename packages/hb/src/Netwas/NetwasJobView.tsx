@@ -2,6 +2,7 @@ import { ApiError, NetworkQuery, useGeneListMatches, useIntegrations, useNetwasJ
 import { Alert, Button, ContextLabel, EmptyState, JobDetails, NetwasGuide, ResultHeader, ResultLayout, saveFile, Skeleton, StatusBadge, type JobStep, useLinkHref } from '@humanbase/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { netwasCitation as citation } from '../content/cite';
+import { GenomeBrowserLink } from '../content/genomeBrowser';
 import { categoryCrumbs, productTools } from '../content/product';
 import { elapsed, jobDateTime as dateTime, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
 import { NetwasGenes } from '../NetwasGenes/NetwasGenes';
@@ -50,7 +51,7 @@ function ResultGenes({ text, job }: { text: string; job: NetwasJob }) {
     if (gene) return new NetworkQuery([gene.entrez], tissue, job.version).href;
     return matches.isSuccess ? null : undefined;
   };
-  return <NetwasGenes file={text} names={names} networkHref={hrefOf} onShownChange={onShownChange} />;
+  return <NetwasGenes file={text} names={names} networkHref={hrefOf} genomeHref={(symbol) => GenomeBrowserLink.gene(symbol)} onShownChange={onShownChange} />;
 }
 
 export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {

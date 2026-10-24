@@ -30,11 +30,13 @@ export interface GenomeBrowserToolbarProps {
   moreItems?: readonly ActionMenuItem[];
   /** False leaves out Tracks and Export, for a browser whose tracks are fixed. */
   trackActions?: boolean | undefined;
+  /** False leaves out Previous variant and Next variant, for a browser with no variants to step through. */
+  variantSteps?: boolean | undefined;
   className?: string;
 }
 
 export function GenomeBrowserToolbar({
-  location, assembly, widthHelp, locationError, zoomStop, onLocation, onZoomStop, onZoom, onPreviousVariant, onNextVariant, onTracks, onExport, moreItems = [], trackActions = true, className,
+  location, assembly, widthHelp, locationError, zoomStop, onLocation, onZoomStop, onZoom, onPreviousVariant, onNextVariant, onTracks, onExport, moreItems = [], trackActions = true, variantSteps = true, className,
 }: GenomeBrowserToolbarProps) {
   const helpId = useId();
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -44,11 +46,13 @@ export function GenomeBrowserToolbar({
 
   return (
     <div role="toolbar" aria-label="Genome browser" className={['genome-toolbar', className].filter(Boolean).join(' ')}>
-      <div className="genome-step">
-        <Button variant="ghost" size="small" aria-keyshortcuts={keys.previousVariant} onClick={onPreviousVariant}>
-          Previous variant
-        </Button>
-      </div>
+      {variantSteps && (
+        <div className="genome-step">
+          <Button variant="ghost" size="small" aria-keyshortcuts={keys.previousVariant} onClick={onPreviousVariant}>
+            Previous variant
+          </Button>
+        </div>
+      )}
       <form role="search" className="genome-location" onSubmit={submit}>
         <SearchField key={location} label="Location or gene" size="medium" name="location" defaultValue={location} aria-describedby={helpId} aria-invalid={locationError ? true : undefined} />
         <p id={helpId} className={locationError ? 'genome-location-help genome-location-error' : 'genome-location-help'}>
@@ -87,9 +91,11 @@ export function GenomeBrowserToolbar({
             {moreItems.length > 0 && <ActionMenu label="More browser options" items={moreItems} />}
           </div>
         )}
-        <Button variant="ghost" size="small" className="genome-next" aria-keyshortcuts={keys.nextVariant} onClick={onNextVariant}>
-          Next variant
-        </Button>
+        {variantSteps && (
+          <Button variant="ghost" size="small" className="genome-next" aria-keyshortcuts={keys.nextVariant} onClick={onNextVariant}>
+            Next variant
+          </Button>
+        )}
       </div>
     </div>
   );

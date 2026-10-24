@@ -7,6 +7,7 @@ export { genesTrack, genomeTrackList, hiddenByDefault, inOrder, moveTrack, noArr
 export { BiodallianceEngine, biodallianceBaseUrl, loadBiodalliance, type BiodallianceOptions } from './biodalliance/BiodallianceEngine';
 export { humanbaseAssemblies, humanbaseBrowserOptions, humanbaseTracks, type BiodallianceAssembly } from './biodalliance/humanbaseConfig';
 export { scoreTrack, type ScoreTrackOptions } from './scoreTrack';
+export { diseaseImpactTracks, seqweaverGnomadTrack } from './precomputedTracks';
 export { defaultGenomeEngine } from './defaultGenomeEngine';
 export { TrackEngine } from './tracks/TrackEngine';
 export { geneDetails, scoreDetails, segmentDetails } from './tracks/itemDetails';
