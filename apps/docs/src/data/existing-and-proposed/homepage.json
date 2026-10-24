@@ -258,7 +258,7 @@
     {
       "area": "Analysis menu",
       "existing": "Flat list of 10 tools, each with a one-line description.",
-      "proposed": "Same tools grouped under Network analysis, Variant effects, Sequences and Browsers, with a 'Compare them' link.",
+      "proposed": "Six analyses in two columns, Genes & gene sets and Variants & sequences, with a 'Compare them' link.",
       "status": "Same function",
       "evidence": "Both menus opened on the live sites; HomeSearch.tsx footer links to /sequence-tools/"
     },
@@ -349,7 +349,7 @@
     {
       "area": "Top navigation",
       "existing": "Analyses, Resources, Documentation, About, Mailing list.",
-      "proposed": "Network analysis, Sequence analysis, Data, Docs, About, Jobs.",
+      "proposed": "Genes & gene sets, Variants & sequences, Resources (with Docs), About (with Mailing list), Jobs.",
       "status": "Changed",
       "evidence": "Live headers"
     },
@@ -363,7 +363,7 @@
     {
       "area": "Mailing list and contact",
       "existing": "'Mailing list' in the top bar and a floating 'Contact us' button.",
-      "proposed": "'Release notes by email, Subscribe' and 'Contact us' in the footer.",
+      "proposed": "'Release notes by email, Subscribe' in the footer, linked as 'Mailing list' from the About menu.",
       "status": "Changed",
       "evidence": "Live pages"
     },

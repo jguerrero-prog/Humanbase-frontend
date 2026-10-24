@@ -10,13 +10,14 @@ export interface ArticleHeroProps {
   source?: ReactNode;
   doi?: string;
   player?: ReactNode;
-  band?: IllustrationName;
+  /** The illustration along the hero's bottom edge; null leaves it out, for pages outside the illustrated set. */
+  band?: IllustrationName | null;
   /** 2 when the hero is shown inside another page, such as a design system example. */
   titleLevel?: 1 | 2;
   titleId?: string;
 }
 
-/** The cream opening of an article or content page: title, lead, optional source and player, then an illustrated band. */
+/** The cream opening of an article or content page: title, lead, optional source and player, then an illustrated band unless band is null. */
 export function ArticleHero({ title, lead, source, doi, player, band = 'capillary', titleLevel = 1, titleId }: ArticleHeroProps) {
   const Title = titleLevel === 1 ? 'h1' : 'h2';
   return (
@@ -36,7 +37,7 @@ export function ArticleHero({ title, lead, source, doi, player, band = 'capillar
           {player}
         </div>
       </div>
-      <Illustration name={band} className="article-band" loading="eager" />
+      {band && <Illustration name={band} className="article-band" loading="eager" />}
     </header>
   );
 }

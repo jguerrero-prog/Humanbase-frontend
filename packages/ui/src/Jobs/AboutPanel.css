@@ -1,5 +1,6 @@
 .about-panel {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   justify-items: start;
   align-self: start;
@@ -17,6 +18,11 @@
 .about-panel > p {
   font: var(--type-body-sm);
   color: var(--text-secondary);
+}
+
+.about-panel > .button {
+  white-space: normal;
+  text-align: start;
 }
 
 .about-panel-examples-title {
@@ -37,6 +43,7 @@
 
 .about-panel-examples li {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2);
   align-items: center;
   justify-content: space-between;

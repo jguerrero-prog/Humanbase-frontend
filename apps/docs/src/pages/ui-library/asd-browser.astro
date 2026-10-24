@@ -32,7 +32,7 @@ const heatmap: AsdBrowserProps['heatmap'] = {
 
 const notice = 'Simons Simplex Collection (and Simons VIP) data may only be used for projects that advance autism and related developmental disorder research. Questions about the data go to collections@sfari.org.';
 const shared: Omit<AsdBrowserProps, 'defaultView' | 'noticeKey'> = {
-  crumbs: [{ label: 'Sequence analysis', href: '#' }, { label: 'ASD Browser' }],
+  crumbs: [{ label: 'Variants & sequences', href: '#' }, { label: 'ASD Browser' }],
   subtitle: 'Predicted effects of de novo noncoding variants in autism, from Simons Simplex Collection whole-genome sequencing.',
   context: [
     { name: 'Study', value: 'Simons Simplex Collection' },
@@ -124,13 +124,13 @@ AsdVariant.isStrong(1.62); // true: shown bold
   </DocSection>
 
   <DocSection title="The browser view" lead="Where the ASD Browser opens. The header names the study and data; one search moves the browser and the heatmap. Browser and heatmap are the components from the Genome browser and Heatmaps pages.">
-    <ProductScreen label="The ASD Browser, browser view, at 1440px" current="Sequence analysis">
+    <ProductScreen label="The ASD Browser, browser view, at 1440px" current="Variants & sequences">
       <AsdBrowser {...shared} defaultView="browser" noticeKey="" />
     </ProductScreen>
   </DocSection>
 
   <DocSection title="The table view" lead="Every variant as a row: the same page and header with Table selected, not a separate page. Rows from the live table; the four junction columns are behind Columns, since they are blank for most variants.">
-    <ProductScreen label="The ASD Browser, table view, at 1440px" current="Sequence analysis">
+    <ProductScreen label="The ASD Browser, table view, at 1440px" current="Variants & sequences">
       <AsdBrowser {...shared} defaultView="table" noticeKey="" />
     </ProductScreen>
   </DocSection>

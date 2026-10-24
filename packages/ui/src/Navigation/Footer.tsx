@@ -1,3 +1,4 @@
+import { useEffect, useRef, type RefObject } from 'react';
 import { Accordion, AccordionItem } from '../Accordion/Accordion';
 import { Button } from '../Button/Button';
 import { Logo } from '../Logo/Logo';
@@ -20,6 +21,22 @@ export interface FooterProps {
   onDisplaySettings?: () => void;
 }
 
+const mailingListId = 'mailing-list';
+/** Links to the footer's sign-up; following one moves focus into its email field. */
+export const mailingListHref = `#${mailingListId}`;
+
+function useFocusFromLinks(field: RefObject<HTMLInputElement | null>) {
+  useEffect(() => {
+    if (window.location.hash === mailingListHref) field.current?.focus();
+    const focusField = (event: MouseEvent) => {
+      const link = event.target instanceof Element ? event.target.closest('a') : null;
+      if (link?.hash === mailingListHref && link.pathname === window.location.pathname) field.current?.focus();
+    };
+    document.addEventListener('click', focusField);
+    return () => document.removeEventListener('click', focusField);
+  }, [field]);
+}
+
 function LinkList({ links }: { links: readonly NavLink[] }) {
   const linkHref = useLinkHref();
   return (
@@ -34,6 +51,8 @@ function LinkList({ links }: { links: readonly NavLink[] }) {
 }
 
 export function Footer({ description, groups, legal, dataVersion, mailingListAction = '/subscribe', onDisplaySettings }: FooterProps) {
+  const email = useRef<HTMLInputElement>(null);
+  useFocusFromLinks(email);
   return (
     <footer className="footer">
       <div className="footer-inner">
@@ -42,7 +61,7 @@ export function Footer({ description, groups, legal, dataVersion, mailingListAct
             <Logo />
             <p>{description}</p>
             <form className="footer-mailing-list" action={mailingListAction} method="post">
-              <TextInput label="Release notes by email" type="email" name="email" autoComplete="email" placeholder="Email address" size="small" />
+              <TextInput ref={email} id={mailingListId} label="Release notes by email" type="email" name="email" autoComplete="email" placeholder="Email address" size="small" />
               <Button type="submit" variant="secondary" size="small">
                 Subscribe
               </Button>

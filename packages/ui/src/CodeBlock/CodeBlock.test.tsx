@@ -73,6 +73,12 @@ describe('CodeBlock', () => {
   it('marks inline code', () => {
     render(<p>Send the genes to <InlineCode>/api/modules/</InlineCode></p>);
     expect(screen.getByText('/api/modules/')).toHaveClass('inline-code');
+    expect(screen.getByText('/api/modules/')).not.toHaveClass('inline-code-wrap');
+  });
+
+  it('lets inline code wrap when asked', () => {
+    render(<p><InlineCode wrap>[entrez gene id 1][entrez gene id 2][edge weight]</InlineCode></p>);
+    expect(screen.getByText('[entrez gene id 1][entrez gene id 2][edge weight]')).toHaveClass('inline-code', 'inline-code-wrap');
   });
 });
 
