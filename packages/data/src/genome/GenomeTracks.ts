@@ -1,6 +1,12 @@
 // Also imported by scripts/record-samples.mjs, so it imports only packages and uses only syntax Node can strip.
 import type { Assembly } from './GenomeLocation';
 
+/** Each assembly's files on the Humanbase tracks bucket, as the live genome browser reads them. */
+export const trackFiles: Record<Assembly, { genes: string; geneIndex: string; sequence: string }> = {
+  hg19: { genes: 'gencode.bb', geneIndex: 'geneIndex', sequence: 'hg19.2bit' },
+  hg38: { genes: 'GRCh38/gencode.v21.annotation.bb', geneIndex: 'GRCh38/gencode.v21.annotation', sequence: 'GRCh38/hg38.2bit' },
+};
+
 /** A stretch of one chromosome, 1-based and inclusive, with the chr prefix. */
 export interface GenomeSpan {
   chrom: string;
@@ -34,7 +40,7 @@ export interface Segment {
   start: number;
   end: number;
   name: string;
-  /** The file's itemRgb, such as #FF6969. */
+  /** The file's itemRgb, such as #FF6969; empty when the file gives none. */
   color: string;
   /** The file's score for the segment, 0 to 1000. */
   score: number;
@@ -129,5 +135,7 @@ const hex = (channel: string) => Math.max(0, Math.min(255, Number(channel) || 0)
 export function segmentOf(feature: { start: number; end: number; rest?: string }): Segment {
   const [name = '', score = '0', , , , rgb = ''] = (feature.rest ?? '').split('\t');
   const [red = '0', green = '0', blue = '0'] = rgb.split(',');
-  return { start: feature.start + 1, end: feature.end, name, color: `#${hex(red)}${hex(green)}${hex(blue)}`, score: Number(score) };
+  // UCSC writes itemRgb 0, or leaves it out, for no color.
+  const color = rgb.includes(',') ? `#${hex(red)}${hex(green)}${hex(blue)}` : '';
+  return { start: feature.start + 1, end: feature.end, name, color, score: Number(score) };
 }

@@ -1,4 +1,5 @@
 import { useCallback, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
+import type { ActionMenuItem } from '../ActionMenu/ActionMenu';
 import { usePinned } from '../List/useDismiss';
 import { DataTooltip, type DataTooltipProps } from '../Tooltip/DataTooltip';
 import { placeNearPoint, placeUnderBox } from '../Tooltip/placement';
@@ -33,6 +34,8 @@ export interface TrackOf<T> {
   data?: T | undefined;
   /** What the track says when it has nothing to draw. */
   empty?: string | undefined;
+  /** The options in the track header's menu; the header has no menu without them. */
+  menu?: readonly ActionMenuItem[] | undefined;
 }
 
 /** One score bar: a value over a stretch, or at one position when start and end are equal. */
@@ -50,7 +53,12 @@ export interface ScoreTrackData {
   values: readonly ScoreShape[];
 }
 
-/** One segment of a segment track, such as a chromatin state, 1-based and inclusive, in the file's own color. */
+/** A score track, which can be drawn taller or shorter than the usual 60px. */
+export interface ScoreTrackOf extends TrackOf<ScoreTrackData> {
+  height?: number | undefined;
+}
+
+/** One segment of a segment track, such as a chromatin state, 1-based and inclusive, in the file's own color or viz-seq-6 without one. */
 export interface SegmentShape {
   start: number;
   end: number;
@@ -67,11 +75,13 @@ export interface GenomeTrackViewProps {
   /** The drawing's width in pixels, without the header column. */
   width: number;
   sequence?: TrackOf<{ start: number; bases: string }> | undefined;
-  scores?: readonly TrackOf<ScoreTrackData>[] | undefined;
+  scores?: readonly ScoreTrackOf[] | undefined;
   segments?: readonly TrackOf<readonly SegmentShape[]>[] | undefined;
   genes?: TrackOf<readonly GeneShape[]> | undefined;
   /** The selected position, drawn as an ink guide through every track with its label on a pill. */
   selected?: { position: number; label: string } | undefined;
+  /** Track names in drawing order; tracks left out keep their usual place: sequence, scores, segments, then genes. */
+  order?: readonly string[] | undefined;
   /** Called while the tracks are dragged, in pixels; done is true when the drag ends. */
   onPan?: ((pixels: number, done: boolean) => void) | undefined;
   /** How far the drawing is dragged, in pixels, while a drag is under way. */
@@ -80,7 +90,8 @@ export interface GenomeTrackViewProps {
 
 const rulerHeight = 30;
 const sequenceHeight = 60;
-const scoreHeight = 60;
+/** A score track's usual height in pixels. */
+export const scoreTrackHeight = 60;
 const segmentHeight = 60;
 // The live site's ChromHMM boxes are 8px high.
 const segmentBox = 8;
@@ -134,21 +145,25 @@ interface DrawingOptions {
 }
 
 /** Where each row sits: the ruler, each track, then the selected variant's pill. */
-function layoutOf({ start, end, width, sequence, scores = [], segments = [], genes, selected: chosenPosition }: GenomeTrackViewProps, marks: boolean) {
+function layoutOf({ start, end, width, sequence, scores = [], segments = [], genes, order = [], selected: chosenPosition }: GenomeTrackViewProps, marks: boolean) {
   const selected = chosenPosition && chosenPosition.position >= start && chosenPosition.position <= end ? chosenPosition : undefined;
   const span = Math.max(1, end - start + 1);
   const x = (position: number) => ((position - start) / span) * width;
   const placed = genes?.data ? placeGenes(genes.data, x, width) : [];
   const geneHeight = Math.max(geneMinHeight, (Math.max(0, ...placed.map((item) => item.row)) + 1) * geneRowHeight + 12);
   const pill = selected && marks ? pillHeight : 0;
-  const rows = [
-    { key: 'ruler', height: rulerHeight },
+  const tracks = [
     ...(sequence ? [{ key: 'sequence', height: sequenceHeight, track: sequence }] : []),
-    ...scores.map((track) => ({ key: `score-${track.name}`, height: scoreHeight, track })),
+    ...scores.map((track) => ({ key: `score-${track.name}`, height: track.height ?? scoreTrackHeight, track })),
     ...segments.map((track) => ({ key: `segments-${track.name}`, height: segmentHeight, track })),
     ...(genes ? [{ key: 'genes', height: geneHeight, track: genes }] : []),
-    { key: 'pill', height: pill },
   ];
+  const rank = (row: (typeof tracks)[number], index: number) => {
+    const at = order.indexOf(row.track.name);
+    return at === -1 ? order.length + index : at;
+  };
+  const ordered = tracks.map((row, index) => ({ row, rank: rank(row, index) })).sort((a, b) => a.rank - b.rank).map(({ row }) => row);
+  const rows = [{ key: 'ruler', height: rulerHeight }, ...ordered, { key: 'pill', height: pill }];
   const tops = rows.map((_, index) => rows.slice(0, index).reduce((sum, row) => sum + row.height, 0));
   const topOf = (key: string) => tops[rows.findIndex((row) => row.key === key)] ?? 0;
   const height = rows.reduce((sum, row) => sum + row.height, 0);
@@ -173,8 +188,8 @@ function geneBox({ gene, row, labelAt, label }: PlacedGene, geneTop: number, x: 
 }
 
 /** Each bar from 0 to its value: at least 2px wide and 1px tall, centered on its bases. */
-function scoreBarsOf({ min, max, values }: ScoreTrackData, top: number, x: (position: number) => number, perBase: number) {
-  const yOf = (value: number) => top + ((max - Math.max(min, Math.min(max, value))) / (max - min)) * (scoreHeight - 8) + 4;
+function scoreBarsOf({ min, max, values }: ScoreTrackData, top: number, height: number, x: (position: number) => number, perBase: number) {
+  const yOf = (value: number) => top + ((max - Math.max(min, Math.min(max, value))) / (max - min)) * (height - 8) + 4;
   const zero = yOf(0);
   const bars = values.map((point) => {
     const [y1, y2] = [zero, yOf(point.value)].sort((a, b) => a - b) as [number, number];
@@ -185,9 +200,9 @@ function scoreBarsOf({ min, max, values }: ScoreTrackData, top: number, x: (posi
 }
 
 // A short bar's button is at least 24px tall and stays inside its track, clear of the next track's items.
-function scoreTarget(bar: Box, top: number): Box {
+function scoreTarget(bar: Box, top: number, trackHeight: number): Box {
   const height = Math.max(minTarget, bar.height);
-  const middle = Math.min(top + scoreHeight - 4 - height / 2, Math.max(top + 4 + height / 2, bar.top + bar.height / 2));
+  const middle = Math.min(top + trackHeight - 4 - height / 2, Math.max(top + 4 + height / 2, bar.top + bar.height / 2));
   return { ...bar, top: middle - height / 2, height };
 }
 
@@ -206,13 +221,14 @@ interface TrackItem {
 /** The items with details, by track, in the order the tracks are drawn. */
 function itemGroupsOf({ width, scores = [], segments = [], genes }: GenomeTrackViewProps, { x, span, placed, topOf }: Layout): { track: string; items: TrackItem[] }[] {
   const scoreGroups = scores.map((track) => {
-    const top = topOf(`score-${track.name}`);
+    const [top, height] = [topOf(`score-${track.name}`), track.height ?? scoreTrackHeight];
     return {
       track: track.name,
+      top,
       items:
         track.state === 'ready' && track.data
-          ? scoreBarsOf(track.data, top, x, width / span).bars.flatMap(({ point, box }) =>
-              point.details ? [{ key: spanKey(track.name, point), label: `${point.value.toFixed(2)} at ${spanWords(point)}`, details: point.details, box: scoreTarget(box, top) }] : [],
+          ? scoreBarsOf(track.data, top, height, x, width / span).bars.flatMap(({ point, box }) =>
+              point.details ? [{ key: spanKey(track.name, point), label: `${point.value.toFixed(2)} at ${spanWords(point)}`, details: point.details, box: scoreTarget(box, top, height) }] : [],
             )
           : [],
     };
@@ -222,6 +238,7 @@ function itemGroupsOf({ width, scores = [], segments = [], genes }: GenomeTrackV
     const items = (track.state === 'ready' && track.data) || [];
     return {
       track: track.name,
+      top,
       items: items.flatMap((segment) => {
         if (!segment.details) return [];
         const [left, right] = [Math.max(0, x(segment.start)), Math.min(width, x(segment.end + 1))];
@@ -231,7 +248,11 @@ function itemGroupsOf({ width, scores = [], segments = [], genes }: GenomeTrackV
   });
   const geneTop = topOf('genes');
   const geneItems = genes?.state === 'ready' ? placed.flatMap((item) => (item.gene.details ? [{ key: geneKey(genes.name, item.gene), label: item.gene.name, details: item.gene.details, box: geneBox(item, geneTop, x, width) }] : [])) : [];
-  return [...scoreGroups, ...segmentGroups, ...(genes ? [{ track: genes.name, items: geneItems }] : [])].filter((group) => group.items.length > 0);
+  // Tab order follows the drawing order, which the page can change.
+  return [...scoreGroups, ...segmentGroups, ...(genes ? [{ track: genes.name, top: geneTop, items: geneItems }] : [])]
+    .filter((group) => group.items.length > 0)
+    .sort((a, b) => a.top - b.top)
+    .map(({ track, items }) => ({ track, items }));
 }
 
 /** The tracks inside an svg, shared by the browser on the page and its exported figure. */
@@ -300,9 +321,9 @@ function TrackDrawing({ props, layout, marks = true, guide = true, onSegment, in
                 }))}
 
         {scores.map((track) => {
-          const top = topOf(`score-${track.name}`);
-          if (track.state !== 'ready' || !track.data) return <g key={track.name}>{stateNote(track, top, scoreHeight)}</g>;
-          const { yOf, zero, bars } = scoreBarsOf(track.data, top, x, perBase);
+          const [top, height] = [topOf(`score-${track.name}`), track.height ?? scoreTrackHeight];
+          if (track.state !== 'ready' || !track.data) return <g key={track.name}>{stateNote(track, top, height)}</g>;
+          const { yOf, zero, bars } = scoreBarsOf(track.data, top, height, x, perBase);
           const chosen = marked && track.data.values.find((point) => point.start <= marked.position && point.end >= marked.position);
           return (
             <g key={track.name}>
@@ -341,7 +362,7 @@ function TrackDrawing({ props, layout, marks = true, guide = true, onSegment, in
                   y={top + (segmentHeight - segmentBox) / 2}
                   width={Math.max(1, x(segment.end + 1) - x(segment.start))}
                   height={segmentBox}
-                  fill={segment.color}
+                  fill={segment.color || undefined}
                   data-item={interactive && segment.details ? spanKey(track.name, segment) : undefined}
                   onPointerEnter={onSegment && ((event) => onSegment({ segment, track: track.name, box: event.currentTarget, pointer: event.clientX }))}
                   onPointerLeave={onSegment && (() => onSegment(undefined))}
@@ -441,7 +462,7 @@ export function GenomeTrackView(props: GenomeTrackViewProps) {
     <div ref={frame} className="score-tracks genome-tracks">
       <div className="score-tracks-column" style={{ gridTemplateRows: layout.rows.map((row) => `${row.height}px`).join(' ') }}>
         <div className="score-tracks-ruler-label">Position</div>
-        {layout.rows.flatMap((row) => ('track' in row && row.track ? [<TrackHeader key={row.key} name={row.track.name} source={row.track.meta} />] : []))}
+        {layout.rows.flatMap((row) => ('track' in row && row.track ? [<TrackHeader key={row.key} name={row.track.name} source={row.track.meta} menuItems={row.track.menu} />] : []))}
       </div>
       <div className="genome-tracks-plot">
         <svg className={onPan ? 'genome-tracks-area is-draggable' : 'genome-tracks-area'} width={width} height={layout.height} aria-hidden="true" focusable="false" onClick={onClick} {...pointer}>

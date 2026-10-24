@@ -1,4 +1,5 @@
 import type { GenomeTracks } from '@humanbase/data';
+import type { ActionMenuItem } from '@humanbase/ui';
 
 export type Assembly = 'hg19' | 'hg38';
 
@@ -36,8 +37,24 @@ export const isSegmentTrack = (track: GenomeDataTrack): track is GenomeSegmentTr
 
 export const trackFile = (track: GenomeDataTrack) => (isSegmentTrack(track) ? track.bigBedUrl : track.bigWigUrl);
 
+/** One score track's settings from its Track settings dialog; anything left out is drawn as usual. */
+export interface GenomeTrackSetting {
+  /** The track's height in pixels. */
+  height?: number | undefined;
+  /** The values the track's bars span, from bottom to top, in place of the track's own range. */
+  range?: readonly [number, number] | undefined;
+}
+
+/** The order tracks are drawn in, and each score track's settings, by track id (see genomeTrackList). */
+export interface GenomeTrackArrangement {
+  order: readonly string[];
+  settings: Readonly<Record<string, GenomeTrackSetting>>;
+}
+
 /** Where one track sits inside the engine, so the page can draw its header beside it. */
 export interface GenomeTrackLayout {
+  /** The track's id, as in genomeTrackList. */
+  id: string;
   name: string;
   meta?: string | undefined;
   top: number;
@@ -62,6 +79,10 @@ export interface GenomeMountOptions extends GenomeBrowserEvents {
   tracks: readonly GenomeDataTrack[];
   /** Tracks left out from the start, by id (see genomeTrackList). */
   hidden?: readonly string[] | undefined;
+  /** The first order and settings; arrangeTracks changes them later. */
+  arrangement?: GenomeTrackArrangement | undefined;
+  /** Each track's header menu, by track id, for engines that draw their own headers. Read on every draw, so it can change. */
+  trackMenu?: ((id: string) => readonly ActionMenuItem[]) | undefined;
 }
 
 /** The Export dialog's choices. */
@@ -88,6 +109,8 @@ export interface GenomeBrowserEngine {
   highlight(position: { chrom: string; position: number } | undefined): void;
   /** Shows every track but these, by id. */
   showTracks(hidden: readonly string[]): void;
+  /** Draws the tracks in this order, with these settings. */
+  arrangeTracks(arrangement: GenomeTrackArrangement): void;
   /** The current view as an SVG file. */
   exportSvg(options: GenomeExportOptions): Promise<Blob>;
   destroy(): void;

@@ -8,7 +8,8 @@ export { doiLink, humanbaseCitation, humanbaseCitationText, methodCitations, net
 export { DocsLibrary, docsLibrary, docsRoute, parsePage, type DocsGroup, type DocsPage } from './content/docs/DocsLibrary';
 export { DocsSearch, type DocsSearchProps } from './content/docs/DocsSearch';
 export { DocsSearchIndex, snippet, type DocsHit } from './content/docs/DocsSearchIndex';
-export { analysisColumns, analysisIcons, analysisOptions, categoryCrumbs, productCategories, productFooter, productSectionFor, productSections } from './content/product';
+export { analysisColumns, analysisIcons, analysisOptions, categoryCrumbs, productCategories, productFooter, productSectionFor, productSections, productTools } from './content/product';
+export { sequenceToolModels, type SequenceToolModel } from './content/sequenceTools';
 export { asdBrowserRetired } from './content/asdBrowser';
 export { jobsMenuSummary, useJobsMenuSummary } from './Jobs/jobsMenuSummary';
 export { DeepseaAbout, DeepseaForm, deepseaFormLink, deepseaJobLink, type DeepseaFormProps } from './Deepsea/DeepseaForm';

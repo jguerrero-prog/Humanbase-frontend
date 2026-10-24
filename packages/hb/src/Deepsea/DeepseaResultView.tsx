@@ -1,4 +1,4 @@
-import { featureEffects, GenomeLocation, useDeepseaVariants, useHumanbase, useViewPredictions, variantIdOf, variantScoreTypes, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
+import { featureEffects, GenomeLocation, scoreTypeLabel, useDeepseaVariants, useHumanbase, useViewPredictions, variantIdOf, variantScoreTypes, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
 import {
   ActionMenu,
   Alert,
@@ -26,10 +26,10 @@ import {
   type PlotBy,
 } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
-import { categoryCrumbs } from '../content/product';
 import { jobDateTime } from '../Jobs/JobPage';
-import { deepseaFormLink } from './DeepseaForm';
+import { deepseaJobCrumbs } from './DeepseaForm';
 import { EffectsCard } from './EffectsCard';
+import { jobScoreTracks } from './jobScoreTracks';
 import { VariantGenomeBrowser } from './VariantGenomeBrowser';
 import './Deepsea.css';
 
@@ -65,7 +65,7 @@ function effectScaleOf(model: DeepseaJob['model']): EffectScale {
   return model.expecto ? expressionEffects : zEffects;
 }
 
-const scoreOptions = (types: readonly ScoreType[]) => types.map((type) => ({ value: type.short_name, label: type.name.replace('-log', '−log') }));
+const scoreOptions = (types: readonly ScoreType[]) => types.map((type) => ({ value: type.short_name, label: scoreTypeLabel(type) }));
 const matches = (variant: VariantRow, text: string) => `${variantLabel(variant)} ${variantName(variant)}`.toLowerCase().includes(text.trim().toLowerCase());
 
 /** A finished Sei, Beluga or Seqweaver job: variant scores as a plot and table, then the selected variant's molecular effects. */
@@ -73,7 +73,8 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
   const model = job.model;
   const { showsSamples } = useHumanbase();
   const { scoreTypes, variants, error, refetch } = useDeepseaVariants(job);
-  const variantTypes = variantScoreTypes(model, scoreTypes ?? []);
+  const variantTypes = useMemo(() => variantScoreTypes(model, scoreTypes ?? []), [model, scoreTypes]);
+  const scoreTracks = useMemo(() => jobScoreTracks(job, variantTypes), [job, variantTypes]);
   const featureTypes = (scoreTypes ?? []).filter((type) => type.level === 'FEATURE');
   const [scoreKey, setScoreKey] = useState<string>();
   const [plotBy, setPlotBy] = useState<PlotBy>('genome');
@@ -114,7 +115,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
   const files = job.resultFiles;
   const header = (
     <ResultHeader
-      crumbs={[categoryCrumbs.variants, { label: model.tool, href: deepseaFormLink(model.id) }, { label: title }]}
+      crumbs={deepseaJobCrumbs(model, title)}
       title={title}
       context={[
         { name: 'Model', value: model.kind },
@@ -188,7 +189,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
             {byClass && <KeyLegend title="Sequence class" items={sequenceClassLegend} />}
             <VariantScorePlot
               variants={variants}
-              score={{ key: score.short_name, label: score.name.replace('-log', '−log') }}
+              score={{ key: score.short_name, label: scoreTypeLabel(score) }}
               by={plotBy}
               selected={selected?.id}
               onSelect={select}
@@ -233,6 +234,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
               position={selected.position}
               label={variantLabel(selected)}
               location={location}
+              tracks={scoreTracks}
               onLocationChange={browse}
               {...(index > 0 && { onPreviousVariant: () => step(-1) })}
               {...(index < ordered.length - 1 && { onNextVariant: () => step(1) })}

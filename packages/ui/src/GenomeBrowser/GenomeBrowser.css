@@ -118,10 +118,25 @@
   gap: var(--space-0-5);
 }
 
+.tracks-status {
+  font: var(--type-body-sm);
+  color: var(--text-default);
+}
+
 .tracks-source {
   padding-inline-start: 36px;
   font: 400 12px/1.4 Lato, sans-serif;
   color: var(--text-secondary);
+}
+
+.tracks-list li.is-removable {
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-3);
+}
+
+.tracks-list li.is-removable > .button {
+  grid-area: 1 / 2 / span 2;
+  align-self: center;
 }
 
 .tracks-url {
@@ -278,6 +293,10 @@
 .genome-tracks-segment {
   stroke: var(--text-default);
   stroke-width: 1;
+}
+
+.genome-tracks-segment:not([fill]) {
+  fill: var(--viz-seq-6);
 }
 
 .genome-tracks-value {

@@ -9,19 +9,21 @@ export { IconButton, type IconButtonProps } from './IconButton/IconButton';
 export { StarToggle, type StarToggleProps } from './StarToggle/StarToggle';
 export { GenomeBrowserToolbar, TrackHeader, zoomStopSegments, type GenomeBrowserToolbarProps, type TrackHeaderProps } from './GenomeBrowser/GenomeBrowserToolbar';
 export { ScoreTracks, type ScoreTrack, type ScoreTracksProps } from './GenomeBrowser/ScoreTracks';
-export { GenomeTrackFigure, GenomeTrackView, type GeneShape, type GenomeTrackFigureProps, type GenomeTrackViewProps, type ItemDetails, type ScoreShape, type ScoreTrackData, type SegmentShape, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
+export { GenomeTrackFigure, GenomeTrackView, scoreTrackHeight, type GeneShape, type GenomeTrackFigureProps, type GenomeTrackViewProps, type ItemDetails, type ScoreShape, type ScoreTrackData, type ScoreTrackOf, type SegmentShape, type TrackOf, type TrackState } from './GenomeBrowser/GenomeTrackView';
 export { SegmentTable, type SegmentTableProps } from './GenomeBrowser/SegmentTable';
 export {
   BrowserSettingsDialog,
   ExportDialog,
+  readTrackSettings,
+  trackHeightLimits,
   TrackSettingsDialog,
   TracksDrawer,
   type BrowserSettings,
   type ExportSettings,
   type SuggestedTrack,
   type TrackSettings,
+  type TrackSettingsValues,
   type TrackSource,
-  type TrackStyle,
 } from './GenomeBrowser/GenomeBrowserPanels';
 export { genomeBrowserKeyHelp, genomeBrowserShortcuts, genomeCommand, type GenomeCommand } from './GenomeBrowser/genomeBrowserKeys';
 export { ContextLabel, type ContextLabelProps } from './ContextLabel/ContextLabel';

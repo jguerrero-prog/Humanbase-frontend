@@ -57,6 +57,28 @@ describe('TrackEngine', () => {
     vi.restoreAllMocks();
   });
 
+  it('draws each score file on its own, so one that fails leaves the others drawn', async () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains('score-tracks-column') ? 220 : 1220;
+    });
+    const container = document.createElement('div');
+    document.body.append(container);
+    const files = new SampleGenomeTracks(SampleClient.bundled());
+    vi.spyOn(files, 'scores').mockImplementation((url) => (url.endsWith('missing.bw') ? Promise.reject(new Error('blocked')) : Promise.resolve([{ start: 2_300_000, end: 2_300_000, value: 1 }])));
+    const engine = new TrackEngine(files);
+    const tracks = [
+      { name: 'Missing', bigWigUrl: 'https://example.org/missing.bw', range: [0, 1] as const },
+      { name: 'Yours', bigWigUrl: 'file:1/yours.bw', range: [0, 1] as const },
+    ];
+    await act(() => engine.mount(container, { label: 'Genome browser', assembly: 'hg19', region: { chrom: 'chr1', start: 2_230_000, end: 2_440_000 }, tracks }));
+    expect(await screen.findByText('Missing didn’t load. Move or zoom to try again.')).toBeInTheDocument();
+    expect(screen.queryByText('Yours didn’t load. Move or zoom to try again.')).toBeNull();
+    expect(container.querySelectorAll('.genome-tracks-bar')).toHaveLength(1);
+    engine.destroy();
+    container.remove();
+    vi.restoreAllMocks();
+  });
+
   it('draws GM12878 ChromHMM from the file once it is turned on, and exports it', async () => {
     vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
       return this.classList.contains('score-tracks-column') ? 220 : 1220;
@@ -94,6 +116,30 @@ describe('TrackEngine', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Pol2, 2,303,401 to 2,313,000' }));
     const segment = screen.getByRole('dialog', { name: 'GM12878 ChromHMM' });
     expect([...within(segment).getAllByRole('definition')].map((value) => value.textContent)).toEqual(['chr1:2,303,401-2,313,000', '1000']);
+    engine.destroy();
+    container.remove();
+    vi.restoreAllMocks();
+  });
+
+  it('draws the tracks in the page’s order, with a score track’s height and range, and gives each header its menu', async () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains('score-tracks-column') ? 220 : 1220;
+    });
+    const container = document.createElement('div');
+    document.body.append(container);
+    const engine = new TrackEngine(new SampleGenomeTracks(SampleClient.bundled()));
+    const dna = { name: 'DNA disease impact score', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw', range: [-0.4, 3] as const };
+    const region = { chrom: 'chr1', start: 2_230_000, end: 2_440_000 };
+    const trackMenu = (id: string) => [{ label: `Remove ${id}` }];
+    await act(() => engine.mount(container, { label: 'Genome browser', assembly: 'hg19', region, tracks: [dna], arrangement: { order: ['genes'], settings: {} }, trackMenu }));
+    const names = () => [...container.querySelectorAll('.track-header-name')].map((name) => name.textContent);
+    expect(names()).toEqual(['Genes', 'Sequence', 'DNA disease impact score']);
+    expect(screen.getByRole('button', { name: 'DNA disease impact score track options' })).toBeInTheDocument();
+    const rows = () => (container.querySelector('.score-tracks-column') as HTMLElement).style.gridTemplateRows;
+    expect(rows()).toContain('30px 60px 60px 60px');
+    act(() => engine.arrangeTracks({ order: [], settings: { 'DNA disease impact score': { height: 120, range: [0, 4] } } }));
+    expect(names()).toEqual(['Sequence', 'DNA disease impact score', 'Genes']);
+    expect(rows()).toContain('30px 60px 120px');
     engine.destroy();
     container.remove();
     vi.restoreAllMocks();

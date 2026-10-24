@@ -1,4 +1,5 @@
 ---
+import { categoryCrumbs, productTools } from '@humanbase/hb';
 import {
   AllFeaturesPlot,
   Button,
@@ -29,7 +30,7 @@ import ProductScreen from '../../components/docs/ProductScreen.astro';
 import { exampleVariants, featureTotal, illustrativeRanks, selectedVariant, strengthCounts, topExperiments } from '../../data/variant-effects';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
-const crumbs = [{ label: 'Jobs', href: '/jobs/' }, { label: 'Seqweaver', href: '/seqweaver/' }, { label: 'Example variants' }];
+const crumbs = [categoryCrumbs.variants, productTools.seqweaver, { label: 'Example variants' }];
 const context = [
   { name: 'Model', value: 'Seqweaver (RNA)' },
   { name: 'Genome', value: 'GRCh37/hg19' },

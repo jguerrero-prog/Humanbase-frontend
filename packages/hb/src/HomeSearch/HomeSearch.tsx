@@ -14,7 +14,7 @@ import {
   useLinkHref,
 } from '@humanbase/ui';
 import { useMemo, useState, type ClipboardEvent, type KeyboardEvent, type ReactNode } from 'react';
-import { analysisColumns, analysisOptions } from '../content/product';
+import { analysisColumns, analysisOptions, categoryCrumbs } from '../content/product';
 import { matchOf, suggestionOf } from './geneMatches';
 import { genesWord, OutsideVersionAlert } from './OutsideVersionAlert';
 import './HomeSearch.css';
@@ -123,7 +123,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
           size="large"
           footer={
             <p>
-              Not sure which tool? <a href={linkHref('/sequence-tools/')}>Compare them</a>
+              Not sure which tool? <a href={linkHref(categoryCrumbs.variants.href)}>Compare them</a>
             </p>
           }
           onChange={(value) => (value === 'networks' ? setAnalysis(value) : onChooseAnalysis(value))}

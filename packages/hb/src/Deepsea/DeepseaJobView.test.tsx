@@ -84,6 +84,9 @@ describe('DeepseaJobView', () => {
     renderJob(job(112));
     expect(await screen.findByRole('heading', { level: 1, name: 'Untitled Beluga job' }, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByRole('rowheader', { name: /Your query/ })).toBeInTheDocument();
+    const crumbs = within(screen.getByRole('navigation', { name: 'Breadcrumb' }));
+    expect(crumbs.getAllByRole('listitem').map((item) => item.textContent)).toEqual(['Variants & sequences', 'Beluga', 'Untitled Beluga job']);
+    expect(crumbs.getByRole('link', { name: 'Beluga' })).toHaveAttribute('href', '/variant-effects/?model=beluga');
   });
 
   it('says why a job failed', async () => {
