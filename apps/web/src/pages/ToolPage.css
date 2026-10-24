@@ -18,3 +18,8 @@
   font: var(--type-body);
   color: var(--text-secondary);
 }
+
+.tool-page-note {
+  font: var(--type-body);
+  color: var(--text-secondary);
+}

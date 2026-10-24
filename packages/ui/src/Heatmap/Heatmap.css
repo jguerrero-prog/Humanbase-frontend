@@ -185,7 +185,7 @@
 .heatmap-column-labels {
   display: grid;
   grid-template-columns: var(--heatmap-label) repeat(var(--heatmap-columns), calc(var(--heatmap-cell) + 1px));
-  block-size: 96px;
+  block-size: var(--heatmap-column-labels, 96px);
   font: var(--type-code-sm);
   color: var(--text-secondary);
 }
@@ -242,6 +242,22 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.heatmap-row-pick {
+  inline-size: 100%;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  color: var(--text-link);
+  text-align: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.heatmap-row-pick:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 .heatmap-column-labels::before {
@@ -381,3 +397,15 @@
   min-block-size: 22px;
 }
 
+
+.heatmap-grid[data-windowed] {
+  display: block;
+  inline-size: calc(var(--heatmap-label) + var(--heatmap-columns) * (var(--heatmap-cell) + 1px));
+  block-size: calc(var(--heatmap-rows) * var(--heatmap-row-step));
+}
+
+.heatmap-grid[data-windowed] > .heatmap-row {
+  position: absolute;
+  inset-block-start: calc(var(--heatmap-row-at) * var(--heatmap-row-step));
+  inset-inline-start: 0;
+}

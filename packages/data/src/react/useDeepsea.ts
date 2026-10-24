@@ -1,9 +1,10 @@
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import type { DeepseaJob } from '../deepsea/DeepseaJob';
-import { variantRows, variantScoreTypes, type FeaturePredictionRecord, type VariantRow, type VariantScoresRecord } from '../deepsea/DeepseaResult';
+import { variantRows, variantScoreTypes, type FeaturePredictionRecord, type FeaturesRecord, type VariantRow, type VariantScoresRecord } from '../deepsea/DeepseaResult';
 import { deepseaModels } from '../deepsea/DeepseaModel';
-import { DeepseaService } from '../deepsea/DeepseaService';
+import { DeepseaService, type PrecomputedSource } from '../deepsea/DeepseaService';
+import { SeiHgmdService } from '../deepsea/SeiHgmdService';
 import type { GenomeLocation } from '../genome/GenomeLocation';
 import type { VariantModel } from '../jobs/VariantFileCheck';
 import { useHumanbase } from './HumanbaseProvider';
@@ -40,21 +41,28 @@ export function useDeepseaVariants(job: DeepseaJob | undefined) {
 export function useViewPredictions(job: DeepseaJob | undefined, scoreType: string | undefined, view: GenomeLocation | undefined) {
   const api = useHumanbase();
   const id = job?.id ?? '';
-  return useInViewPredictions(job?.model.id, scoreType, view, ['deepsea-predictions', id], (range) => api.deepsea.featurePredictions(id, scoreType ?? '', range), Boolean(id));
+  const model = job?.model.id;
+  const named = model && deepseaModels[model].classFeatures?.scoreType === scoreType ? scoreType : undefined;
+  const features = useQuery({ queryKey: ['deepsea-features', model, named], queryFn: () => api.deepsea.features(model ?? 'sei', named), enabled: Boolean(model), staleTime: Infinity });
+  return useInViewPredictions(features, view, ['deepsea-predictions', id, scoreType ?? ''], (range) => api.deepsea.featurePredictions(id, scoreType ?? '', range), Boolean(id && scoreType));
 }
 
 /** The same for a model's precomputed variants, such as Seqweaver's gnomAD variants, which no job holds. */
-export function usePrecomputedPredictions(model: VariantModel, scoreType: string, view: GenomeLocation | undefined) {
+export function usePrecomputedPredictions(source: PrecomputedSource, view: GenomeLocation | undefined) {
   const api = useHumanbase();
-  return useInViewPredictions(model, scoreType, view, ['precomputed-predictions', model], (range) => api.deepsea.precomputedPredictions(model, scoreType, range), true);
+  const features = usePrecomputedFeatures(source);
+  return useInViewPredictions(features, view, ['precomputed-predictions', source.dataset ?? source.model, source.scoreType ?? ''], (range) => api.deepsea.precomputedPredictions(source, range), true);
 }
 
-function useInViewPredictions(model: VariantModel | undefined, scoreType: string | undefined, view: GenomeLocation | undefined, key: readonly string[], read: (range: GenomeLocation) => Promise<FeaturePredictionRecord[]>, enabled: boolean) {
+/** The features a set of precomputed variants is scored on; they never change, so they load once. */
+export function usePrecomputedFeatures(source: PrecomputedSource) {
   const api = useHumanbase();
-  const named = model && deepseaModels[model].classFeatures?.scoreType === scoreType ? scoreType : undefined;
-  const features = useQuery({ queryKey: ['deepsea-features', model, named], queryFn: () => api.deepsea.features(model ?? 'sei', named), enabled: Boolean(model), staleTime: Infinity });
-  const range = useReadRange(view, `${key.join(' ')} ${scoreType ?? ''}`);
-  const predictions = useQuery(rangeQuery([...key, scoreType, range?.variantRange], () => read(range as GenomeLocation), Boolean(enabled && scoreType && range)));
+  return useQuery({ queryKey: ['precomputed-features', source.dataset ?? source.model, source.scoreType], queryFn: () => api.deepsea.precomputedFeatures(source), staleTime: Infinity });
+}
+
+function useInViewPredictions(features: UseQueryResult<FeaturesRecord>, view: GenomeLocation | undefined, key: readonly string[], read: (range: GenomeLocation) => Promise<FeaturePredictionRecord[]>, enabled: boolean) {
+  const range = useReadRange(view, key.join(' '));
+  const predictions = useQuery(rangeQuery([...key, range?.variantRange], () => read(range as GenomeLocation), Boolean(enabled && range)));
   const inView = useMemo(() => view && predictions.data?.filter((record) => view.includes(record.chromosome, record.position)).sort((a, b) => a.position - b.position), [view, predictions.data]);
   const failed = [features, predictions].filter((query) => query.isError);
   return { features: features.data, predictions: inView, error: failed[0]?.error, refetch: () => failed.forEach((query) => void query.refetch()) };
@@ -76,4 +84,13 @@ export function useInsilico(job: DeepseaJob | undefined, sequenceName: string | 
     enabled: Boolean(id && sequenceName && featureIndex !== undefined),
     staleTime: Infinity,
   });
+}
+
+/** The Sei HGMD dataset for its heatmap: its 40 sequence classes and all 853 variants, which never change, so they load once. */
+export function useSeiHgmd() {
+  const api = useHumanbase();
+  const features = usePrecomputedFeatures(SeiHgmdService.source);
+  const variants = useQuery({ queryKey: ['sei-hgmd-variants'], queryFn: () => api.seiHgmd.variants(), staleTime: Infinity });
+  const failed = [features, variants].filter((query) => query.isError);
+  return { features: features.data, variants: variants.data, error: failed[0]?.error, refetch: () => failed.forEach((query) => void query.refetch()) };
 }

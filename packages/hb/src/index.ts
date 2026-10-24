@@ -22,6 +22,7 @@ export { ExpressionEffects, type ExpressionEffectsProps } from './Expecto/Expres
 export { VariantSearch, type VariantSearchProps } from './Expecto/VariantSearch';
 export { DeepseaJobView, type DeepseaJobViewProps } from './Deepsea/DeepseaJobView';
 export { DeepseaResultView, type DeepseaResultViewProps } from './Deepsea/DeepseaResultView';
+export { SeiHgmdBrowser, type SeiHgmdBrowserProps, type SeiHgmdState, type SeiHgmdView } from './PrecomputedVariants/SeiHgmdBrowser';
 export { InsilicoResultView, type InsilicoResultViewProps } from './Deepsea/InsilicoResultView';
 export { HomeSearch, type HomeSearchProps } from './HomeSearch/HomeSearch';
 export { EmptyNetworkQuery, NetworkExplorer, type NetworkDetailContext, type NetworkExplorerProps } from './Networks/NetworkExplorer';
@@ -55,3 +56,4 @@ export {
 } from './content/downloads/downloads';
 export { PrecomputedVariantBrowser, type PrecomputedVariantBrowserProps, type PrecomputedVariantSet, type PrecomputedVariantState } from './PrecomputedVariants/PrecomputedVariantBrowser';
 export { seqweaverGnomad, seqweaverGnomadHref } from './PrecomputedVariants/seqweaverGnomad';
+export { seiHgmd, seiHgmdLink } from './PrecomputedVariants/seiHgmd';

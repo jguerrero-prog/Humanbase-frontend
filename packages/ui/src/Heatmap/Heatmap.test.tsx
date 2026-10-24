@@ -128,4 +128,37 @@ describe('Heatmap in a scrolling plot', () => {
     // The cells now start at 440px, past the 160px of pinned row labels.
     expect(labels.filter((label) => label.textContent).map((label) => label.hasAttribute('data-cut'))).toEqual([true, true, false]);
   });
+
+  it('makes each row label a button where the page passes onRowSelect, and keeps rows that share a label apart', () => {
+    const onRowSelect = vi.fn();
+    const twins = [
+      { id: 'one', label: 'Haemophilia A (chrX:154251084)', values: [0.5, 1] },
+      { id: 'two', label: 'Haemophilia A (chrX:154251084)', values: [-0.5, 2] },
+    ];
+    render(<Heatmap {...props} rows={twins} onRowSelect={onRowSelect} />);
+    const buttons = screen.getAllByRole('button', { name: 'Haemophilia A (chrX:154251084)' });
+    expect(buttons).toHaveLength(2);
+    fireEvent.click(buttons[1] as HTMLElement);
+    expect(onRowSelect).toHaveBeenCalledWith(1);
+    expect(screen.getAllByRole('gridcell')).toHaveLength(4);
+  });
+
+  it('draws only the rows near the screen with windowRows, counts every row for screen readers, and builds its table when opened', () => {
+    vi.spyOn(window, 'innerHeight', 'get').mockReturnValue(100);
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(26);
+    const many = Array.from({ length: 300 }, (_, index) => ({ label: `variant ${index}`, values: [index / 100, 0] }));
+    const { container } = render(<Heatmap {...props} rows={many} windowRows />);
+    const grid = screen.getByRole('grid');
+    expect(grid).toHaveAttribute('aria-rowcount', '300');
+    const drawn = screen.getAllByRole('row').filter((row) => row.closest('[role="grid"]'));
+    expect(drawn.length).toBeLessThan(40);
+    expect(drawn[1]).toHaveAttribute('aria-rowindex', '2');
+    expect(container.querySelector('.heatmap-table table')).toBeNull();
+    const details = container.querySelector('details');
+    if (!details) throw new Error('no View as table');
+    details.open = true;
+    fireEvent(details, new Event('toggle'));
+    expect(container.querySelector('.heatmap-table table')).not.toBeNull();
+    vi.restoreAllMocks();
+  });
 });

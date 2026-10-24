@@ -1,7 +1,7 @@
 import { ApiError, featureEffects, GenomeLocation, useHumanbase, usePrecomputedPredictions, variantIdOf, type FeatureEffect, type FeaturePredictionRecord, type FeaturesRecord, type VariantModel } from '@humanbase/data';
 import { defaultGenomeEngine, type Assembly, type GenomeBrowserEngineFactory, type GenomeDataTrack } from '@humanbase/genome';
-import { Alert, defaultEffectsView, ResultHeader, ResultLayout, Skeleton, variantLabel, type ContextLabelProps, type Crumb, type EffectScale, type EffectsView } from '@humanbase/ui';
-import { useMemo, useState } from 'react';
+import { Alert, defaultEffectsView, ResultHeader, ResultLayout, Skeleton, Tabs, variantLabel, type TabItem, type ContextLabelProps, type Crumb, type EffectScale, type EffectsView } from '@humanbase/ui';
+import { useMemo, useState, type ReactNode } from 'react';
 import { EffectsCard } from '../Deepsea/EffectsCard';
 import type { VariantInView } from '../Deepsea/InViewHeatmap';
 import { VariantGenomeBrowser } from '../Deepsea/VariantGenomeBrowser';
@@ -12,9 +12,15 @@ export interface PrecomputedVariantSet {
   /** Names the browser whose track choices are remembered, such as seqweaver-gnomad. */
   id: string;
   model: VariantModel;
-  /** The score_type the predictions are read with, such as seqweaver. */
-  scoreType: string;
+  /** The API's name for a dataset with its own features, such as sei_hgmd; the model's own predictions by default. */
+  dataset?: string | undefined;
+  /** The score_type the predictions are read with, such as seqweaver, where the dataset takes one. */
+  scoreType?: string | undefined;
   scale: EffectScale;
+  /** What each feature is, as in the effects card's Raises binding, 14 proteins. */
+  featureNoun: string;
+  featurePlural: string;
+  verb: string;
   title: string;
   subtitle: string;
   crumbs: readonly Crumb[];
@@ -36,10 +42,20 @@ export interface PrecomputedVariantState {
   variant?: string | undefined;
 }
 
+/** Other views of the same set beside the genome browser, such as the Sei HGMD heatmap of every variant. */
+export interface PrecomputedVariantViews {
+  tabs: readonly TabItem[];
+  value: string;
+  onChange: (value: string) => void;
+  /** The open view and what it shows; undefined shows the genome browser. */
+  content?: { label: string; view: ReactNode } | undefined;
+}
+
 export interface PrecomputedVariantBrowserProps {
   set: PrecomputedVariantSet;
   state: PrecomputedVariantState;
   onStateChange: (next: PrecomputedVariantState) => void;
+  views?: PrecomputedVariantViews | undefined;
   engine?: GenomeBrowserEngineFactory | undefined;
 }
 
@@ -78,17 +94,18 @@ function locationOf(text: string | undefined, assembly: Assembly, fallback: Geno
 }
 
 /** Browses a model's precomputed variants: the genome browser with the set's score track, and the effects of the variant nearest its center on every feature. */
-export function PrecomputedVariantBrowser({ set, state, onStateChange, engine = defaultGenomeEngine }: PrecomputedVariantBrowserProps) {
+export function PrecomputedVariantBrowser({ set, state, onStateChange, views, engine = defaultGenomeEngine }: PrecomputedVariantBrowserProps) {
   const { showsSamples } = useHumanbase();
   const location = useMemo(() => locationOf(state.location, set.assembly, showsSamples ? set.sampleStart : set.start), [state.location, set, showsSamples]);
   const [view, setView] = useState<EffectsView>(defaultEffectsView);
   // As in the ASD Browser, a variant picked with Previous, Next or a heatmap column starts its effects afresh; moving the browser keeps them.
   const [picked, setPicked] = useState(state.variant);
-  const { features, predictions, error, refetch } = usePrecomputedPredictions(set.model, set.scoreType, location);
+  const { features, predictions, error, refetch } = usePrecomputedPredictions(set, location);
   const variants = useMemo(() => (predictions ?? []).map((record) => new PrecomputedVariant(record, features, set.assembly)), [predictions, features, set.assembly]);
   const selectedRecord = predictions && (predictions.find((record) => variantIdOf(record) === state.variant) ?? location.nearest(predictions));
   const index = selectedRecord && predictions ? predictions.indexOf(selectedRecord) : -1;
   const selected = variants[index];
+  const scoreKey = set.scoreType ?? set.id;
   const sampleHelp = `With the API off, the sample data covers ${set.sampleStart.format()}. Zoom in there, or turn the API on.`;
 
   const move = (to: GenomeLocation) => onStateChange({ location: to.format(), variant: undefined });
@@ -141,37 +158,47 @@ export function PrecomputedVariantBrowser({ set, state, onStateChange, engine = 
           onRetry={refetch}
           scale={set.scale}
           threshold={set.scale.bins.weak}
-          featureNoun="protein"
-          featurePlural="proteins"
-          verb="binding"
-          choice={{ label: 'Score', options: [{ value: set.scoreType, label: set.scale.legend.title }], value: set.scoreType, onChange: () => undefined, name: set.scale.legend.title }}
+          featureNoun={set.featureNoun}
+          featurePlural={set.featurePlural}
+          verb={set.verb}
+          choice={{ label: 'Score', options: [{ value: scoreKey, label: set.scale.legend.title }], value: scoreKey, onChange: () => undefined, name: set.scale.legend.title }}
           scoreDocs={set.scoreDocs}
         />
       </>
     );
   }
 
+  const genome = (
+    <div className="deepsea-result">
+      <VariantGenomeBrowser
+        browser={set.id}
+        assembly={set.assembly}
+        chromosome={selectedRecord?.chromosome ?? location.chrom}
+        position={selectedRecord?.position ?? location.center}
+        label={selected?.name ?? location.format()}
+        location={location}
+        tracks={set.tracks}
+        onLocationChange={move}
+        engine={engine}
+        {...(index > 0 && { onPreviousVariant: () => pick(index - 1) })}
+        {...(predictions && index >= 0 && index < predictions.length - 1 && { onNextVariant: () => pick(index + 1) })}
+      />
+      {effects}
+    </div>
+  );
+
   return (
     <ResultLayout
       header={<ResultHeader crumbs={set.crumbs} title={set.title} subtitle={set.subtitle} context={set.context} />}
-      mainLabel="Genome browser and molecular effects"
+      mainLabel={views?.content?.label ?? 'Genome browser and molecular effects'}
       main={
-        <div className="deepsea-result">
-          <VariantGenomeBrowser
-            browser={set.id}
-            assembly={set.assembly}
-            chromosome={selectedRecord?.chromosome ?? location.chrom}
-            position={selectedRecord?.position ?? location.center}
-            label={selected?.name ?? location.format()}
-            location={location}
-            tracks={set.tracks}
-            onLocationChange={move}
-            engine={engine}
-            {...(index > 0 && { onPreviousVariant: () => pick(index - 1) })}
-            {...(predictions && index >= 0 && index < predictions.length - 1 && { onNextVariant: () => pick(index + 1) })}
-          />
-          {effects}
-        </div>
+        views ? (
+          <Tabs label="Views" tabs={views.tabs} value={views.value} onChange={views.onChange}>
+            {views.content?.view ?? genome}
+          </Tabs>
+        ) : (
+          genome
+        )
       }
     />
   );

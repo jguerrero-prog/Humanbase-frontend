@@ -3,6 +3,7 @@ import { AboutPanel, Alert, type AboutPanelProps, DocsLink, saveFile, type Crumb
 import { useState } from 'react';
 import { categoryCrumbs } from '../content/product';
 import { expressionEffectsLink } from '../Expecto/geneExpressionTools';
+import { seiHgmdLink } from '../PrecomputedVariants/seiHgmd';
 import { seqweaverGnomadHref } from '../PrecomputedVariants/seqweaverGnomad';
 import '../Jobs/JobForm.css';
 import { VariantJobForm, type VariantJob, type VariantJobFormProps } from '../VariantJobForm/VariantJobForm';
@@ -44,6 +45,7 @@ export function deepseaJobCrumbs(model: DeepseaModel, title: string): Crumb[] {
 // A model's precomputed variants, browsable without a job; humanbase.io linked Seqweaver's from its own page.
 const precomputedBrowsers: Partial<Record<VariantModel, { text: string; href: string }>> = {
   seqweaver: { text: 'Explore gnomAD variant effects', href: seqweaverGnomadHref },
+  sei: { text: `Explore ${seiHgmdLink.description}`, href: seiHgmdLink.href },
 };
 
 export function deepseaJobLink(id: string): string {
