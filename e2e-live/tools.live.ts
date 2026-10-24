@@ -136,7 +136,7 @@ test('the real Seqweaver result shows and hides genome tracks from the real file
   await expect(segments.first()).toHaveAttribute('fill', '#CF0BC6');
   await segments.nth(11).hover();
   await expect(page.getByRole('tooltip')).toHaveText(/^QuiesGM12878 ChromHMMStart109,806,801Length9,600 bp$/);
-  await page.getByText('View as table').click();
+  await page.getByRole('region', { name: /^Genome around / }).getByText('View as table').click();
   const table = page.getByRole('table', { name: 'GM12878 ChromHMM segments in chr1:109,792,590-109,842,590, GRCh37/hg19' });
   await expect(table.getByRole('row')).toHaveCount(40);
   await expect(table.getByRole('row').filter({ hasText: '109,816,601' })).toHaveText(/^ReprW\s*109,816,601\s*109,818,400\s*1,800 bp$/);
