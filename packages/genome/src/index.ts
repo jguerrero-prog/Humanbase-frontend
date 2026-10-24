@@ -10,3 +10,5 @@ export { scoreTrack, type ScoreTrackOptions } from './scoreTrack';
 export { defaultGenomeEngine } from './defaultGenomeEngine';
 export { TrackEngine } from './tracks/TrackEngine';
 export { geneDetails, scoreDetails, segmentDetails } from './tracks/itemDetails';
+export { bedGraphLines, bedLines, TrackDownload } from './trackDownload';
+export { useOutside } from './tracks/useTrackData';

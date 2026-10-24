@@ -35,7 +35,7 @@ describe('GenomeBrowserToolbar', () => {
   });
 
   it('labels the track menu with the track name', () => {
-    render(<TrackHeader name="Genes" source="GENCODE 19" menuItems={[{ label: 'Remove track' }]} />);
+    render(<TrackHeader name="Genes" source="GENCODE 19" menuItems={[{ label: 'Hide track' }]} />);
     expect(screen.getByRole('button', { name: 'Genes track options' })).toBeInTheDocument();
     expect(screen.getByText('GENCODE 19')).toBeInTheDocument();
   });

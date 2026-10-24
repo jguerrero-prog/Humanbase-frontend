@@ -15,6 +15,12 @@ describe('VariantJobForm', () => {
     expect(onRun).toHaveBeenCalledWith(expect.objectContaining({ model: 'seqweaver', kind: 'vcf', text: example, uploaded: false, genome: 'hg19' }));
   });
 
+  it('can start with the example loaded', () => {
+    render(<VariantJobForm model="seqweaver" examples={{ hg19: { vcf: example }, hg38: {} }} defaultSource="example" />);
+    expect(screen.getByRole('radio', { name: 'Use the example' })).toBeChecked();
+    expect(screen.getByRole('button', { name: 'Run Seqweaver on 2 variants' })).not.toHaveAttribute('aria-disabled');
+  });
+
   it('keeps the run button off while lines break a rule', () => {
     render(<VariantJobForm model="seqweaver" examples={{ hg19: { vcf: 'chr1\t100\trs1\tN\tG\t+' }, hg38: {} }} />);
     fireEvent.click(screen.getByRole('radio', { name: 'Use the example' }));

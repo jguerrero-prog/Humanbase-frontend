@@ -111,7 +111,7 @@ const specs = [
   ['table.row.selected', 'Checked checkbox only. The selection bar above the table shows the count.'],
   ['table.score.bar', '80 × 6px, radius 2px, grey 100 #EFEFEF track, grey 600 #4A4A4A fill'],
   ['table.checkbox.column', '56px'],
-  ['table.pinned.edge', 'shadow/pinned-edge: 8px, ink at 12% to 0%'],
+  ['table.pinned.edge', 'shadow/pinned-edge: 8px, ink at 12% to 0%. Hidden until the table scrolls sideways; fades in over the first 8px of scroll'],
   ['checkbox.box', '20px in a 24px box, radius.xs 4px, 1.5px grey 500 #6B6B6B; checked emerald 600 with a white 2.5px check'],
 ];
 
@@ -450,7 +450,7 @@ const { directionOf, toggle } = useTableSort({ column: 'score', direction: 'desc
         </Table>
       </div>
       <ul class="points">
-        <li>Pin the first column; a soft 8px shadow shows where the rest scrolls under it.</li>
+        <li>Pin the first column. Once the rest scrolls under it, a soft 8px shadow marks the edge; scrolled back to the start, the shadow goes away.</li>
         <li>Keep the header sticky at the top while the page scrolls.</li>
         <li>Don’t hide columns on small screens without saying so; offer a Columns menu instead.</li>
       </ul>
@@ -529,6 +529,7 @@ const { directionOf, toggle } = useTableSort({ column: 'score', direction: 'desc
       <li><code>HeaderCell</code> becomes a sort button when it has a <code>sort</code> prop, and sets <code>aria-sort</code> only on the sorted column. <code>useTableSort</code> keeps the column and direction.</li>
       <li><code>useRowSelection</code> tracks selected rows for <code>SelectCell</code>, <code>SelectAllCell</code> and <code>SelectionBar</code>. Pass a sentence to <code>status</code>, such as “Sorted by score, highest first”, and it is announced politely.</li>
       <li><code>Cell</code> takes <code>wrap</code> for text that wraps instead of being cut off with an ellipsis. Use it for descriptions and “Used in” columns, not for names, IDs or numbers.</li>
+      <li><code>pinFirstColumn</code> keeps the first column in place as the table scrolls sideways. Its edge shadow comes from the shared <code>pinned-edge</code> styles in <code>root.css</code>, a scroll-driven animation that shows it only while content is scrolled under the column. Browsers without scroll-driven animations show no shadow. It is a fade, not movement, so it stays with reduced motion.</li>
       <li><code>ValueFormat</code> formats scores, counts, p-values and dates the same way everywhere, and writes “Not available” for missing values.</li>
     </ul>
     <Code code={usage} lang="tsx" theme="css-variables" />

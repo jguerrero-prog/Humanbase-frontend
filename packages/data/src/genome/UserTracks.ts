@@ -135,6 +135,11 @@ export class UserTracks implements GenomeTracks {
     return track ? this.reader.segments(bigBedUrl, this.inFile(track, span)) : this.base.segments(bigBedUrl, span);
   }
 
+  /** A track the person added is read from its own file or address, so it's always within reach. */
+  covers(assembly: Assembly, span: GenomeSpan, file?: string): Promise<boolean> {
+    return file && this.added.has(file) ? Promise.resolve(true) : this.base.covers(assembly, span, file);
+  }
+
   private async check(source: File | string, assembly: Assembly, taken: readonly string[]): Promise<UserTrack> {
     const file = typeof source === 'string' ? undefined : source;
     const address = typeof source === 'string' ? URL.parse(source.trim()) ?? undefined : undefined;

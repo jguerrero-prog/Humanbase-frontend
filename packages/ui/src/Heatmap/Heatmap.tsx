@@ -244,7 +244,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
             {selectedColumn !== undefined && selectedColumn >= 0 && <span className="heatmap-selected-column" aria-hidden="true" style={{ '--heatmap-at': selectedColumn } as CSSProperties} />}
             {rows.map((row, r) => (
               <div role="row" key={row.label} className="heatmap-row">
-                <span role="rowheader" className="heatmap-row-label" title={row.label}>
+                <span role="rowheader" className="heatmap-row-label pinned-edge" title={row.label}>
                   <span className="heatmap-row-name">{row.label}</span>
                 </span>
                 {row.values.map((value, c) => {

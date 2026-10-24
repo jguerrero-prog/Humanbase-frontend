@@ -65,6 +65,7 @@ describe('TrackEngine', () => {
     document.body.append(container);
     const files = new SampleGenomeTracks(SampleClient.bundled());
     vi.spyOn(files, 'scores').mockImplementation((url) => (url.endsWith('missing.bw') ? Promise.reject(new Error('blocked')) : Promise.resolve([{ start: 2_300_000, end: 2_300_000, value: 1 }])));
+    vi.spyOn(files, 'covers').mockResolvedValue(true);
     const engine = new TrackEngine(files);
     const tracks = [
       { name: 'Missing', bigWigUrl: 'https://example.org/missing.bw', range: [0, 1] as const },
@@ -74,6 +75,33 @@ describe('TrackEngine', () => {
     expect(await screen.findByText('Missing didn’t load. Move or zoom to try again.')).toBeInTheDocument();
     expect(screen.queryByText('Yours didn’t load. Move or zoom to try again.')).toBeNull();
     expect(container.querySelectorAll('.genome-tracks-bar')).toHaveLength(1);
+    engine.destroy();
+    container.remove();
+    vi.restoreAllMocks();
+  });
+
+  it('draws nothing past the recorded sample windows, except the tracks the person added', async () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+      return this.classList.contains('score-tracks-column') ? 220 : 1220;
+    });
+    const container = document.createElement('div');
+    document.body.append(container);
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const files = new SampleGenomeTracks(SampleClient.bundled());
+    const recorded = files.scores.bind(files);
+    const covers = files.covers.bind(files);
+    vi.spyOn(files, 'scores').mockImplementation((url, span) => (url.startsWith('file:') ? Promise.resolve([{ start: 3_000_000, end: 3_000_000, value: 1 }]) : recorded(url, span)));
+    vi.spyOn(files, 'covers').mockImplementation((assembly, span, file) => (file?.startsWith('file:') ? Promise.resolve(true) : covers(assembly, span, file)));
+    const engine = new TrackEngine(files);
+    const tracks = [
+      { name: 'Conservation', bigWigUrl: 'https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw', range: [0, 1] as const },
+      { name: 'Yours', bigWigUrl: 'file:1/yours.bw', range: [0, 1] as const },
+    ];
+    await act(() => engine.mount(container, { label: 'Genome browser', assembly: 'hg19', region: { chrom: 'chr3', start: 2_990_000, end: 3_010_000 }, tracks }));
+    await waitFor(() => expect(container.querySelectorAll('.genome-tracks-bar')).toHaveLength(1));
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect([...container.querySelectorAll('.genome-tracks-note')].map((note) => note.textContent)).toEqual(['Zoom in to under 142 bp to read the bases.']);
+    expect(screen.queryByText(/didn’t load/)).toBeNull();
     engine.destroy();
     container.remove();
     vi.restoreAllMocks();

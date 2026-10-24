@@ -1,5 +1,5 @@
 import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type DeepseaModel, type InputKind, type VariantModel } from '@humanbase/data';
-import { AboutPanel, Alert, DocsLink, saveFile, type Crumb } from '@humanbase/ui';
+import { AboutPanel, Alert, type AboutPanelProps, DocsLink, saveFile, type Crumb } from '@humanbase/ui';
 import { useState } from 'react';
 import { categoryCrumbs } from '../content/product';
 import { expressionEffectsLink } from '../Expecto/geneExpressionTools';
@@ -85,11 +85,12 @@ export function DeepseaForm({ model, onModelChange, models, inputs, onStarted }:
 }
 
 /** The About panel for a sequence model: what it does, its documentation and its example files. */
-export function DeepseaAbout({ model }: { model: VariantModel }) {
+export function DeepseaAbout({ model, headingLevel = 2 }: { model: VariantModel; headingLevel?: AboutPanelProps['headingLevel'] }) {
   const info = deepseaModels[model];
   return (
     <AboutPanel
       tool={info.inSentence ?? info.tool}
+      headingLevel={headingLevel}
       docsHref={info.docsName ? undefined : info.docsHref}
       links={info.docsName && <DocsLink href={info.docsHref}>Read the {info.docsName} documentation</DocsLink>}
       examples={Object.entries(deepseaExamples[model].hg19).map(([kind, text]) => ({

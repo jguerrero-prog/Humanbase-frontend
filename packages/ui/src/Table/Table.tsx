@@ -29,7 +29,7 @@ export interface TableProps {
 export function Table({ caption, showCaption = false, density = 'comfortable', columnWidths, minWidth, pinFirstColumn = false, busy = false, status, className, children }: TableProps) {
   const captionId = useId();
   return (
-    <div className={classes('table', `table-${density}`, pinFirstColumn && 'table-pinned', className)}>
+    <div className={classes('table', `table-${density}`, pinFirstColumn && 'table-pinned pinned-edge-column', className)}>
       {/* A scrolling region must take focus so keyboard users can scroll it. */}
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
       <div className="table-scroll" role="region" aria-labelledby={captionId} tabIndex={0}>

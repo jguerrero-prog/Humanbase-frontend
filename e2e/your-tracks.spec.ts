@@ -1,7 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 import { bbiTestFile } from '../packages/data/src/genome/bbiTestFile.ts';
 import chromosomeSizes from '../packages/data/src/genome/chromosomeSizes.json' with { type: 'json' };
-import { sampleApi } from './apiOff';
+import { apiOff, sampleApi } from './apiOff';
+import { downloadFrom } from './downloads';
 import { violationsOf } from './violations';
 
 const example = 'http://localhost:4173/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/';
@@ -46,7 +47,14 @@ test('a track from the person’s own file shows, stays after a reload, exports 
   await expect(headers).toContainText(['H3K27ac']);
   await page.getByRole('button', { name: 'H3K27ac track options' }).click();
   await expect(page.getByRole('menuitem', { name: 'Track settings…' })).toBeVisible();
+  // A file from this computer has no address to open, so only the data in view downloads.
+  await expect(page.getByRole('menuitem', { name: /Download full file/ })).toHaveCount(0);
   await page.keyboard.press('Escape');
+  const data = await downloadFrom(page, 'H3K27ac track options', 'Download data in view');
+  expect(data.name).toBe('H3K27ac_hg19_chr1-109767590-109867590.bedgraph');
+  const lines = data.bytes.toString('utf8').trim().split('\n');
+  expect(lines.slice(0, 2)).toEqual(['chr1\t109767589\t109768000\t8', 'chr1\t109768000\t109769000\t9']);
+  expect(lines.at(-1)).toBe('chr1\t109867000\t109867590\t8');
   const bars = page.locator('.genome-engine .genome-tracks-bar');
   await expect(bars).not.toHaveCount(0);
 
@@ -128,4 +136,33 @@ test('a bigBed without itemRgb draws its segments in the browser’s track color
     });
     expect(fill).toBe(token);
   }
+});
+
+test('with the API off, past the recorded windows one note replaces every track’s message, and the person’s own track still draws', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(example);
+  const browser = page.locator('.genome-engine');
+  const note = page.getByRole('status').filter({ hasText: 'Sample data covers only the area around each example variant' });
+  await expect(browser.getByRole('button', { name: '1.00 at 109,817,590' })).toBeVisible();
+  await expect(note).toHaveCount(0);
+  const drawer = await openTracks(page);
+  await drawer.getByRole('radio', { name: 'Your file' }).check();
+  await drawer.getByLabel('bigWig or bigBed file').setInputFiles(yourTrack);
+  await expect(drawer.getByRole('status')).toHaveText('H3K27ac is added and shown.');
+  await drawer.getByRole('button', { name: 'Done' }).click();
+
+  // The example's window ends at 109,892,590; the person's file goes on to 109,900,000.
+  await page.getByLabel('Location or gene').fill('chr1:109,885,000-109,899,000');
+  await page.keyboard.press('Enter');
+  await expect(note).toBeVisible();
+  await expect(note).toContainText('Turn the API on to browse the whole genome.');
+  await expect(browser.locator('.genome-tracks-bar')).not.toHaveCount(0);
+  await expect(browser.getByText(/didn’t load|Loading/)).toHaveCount(0);
+  expect(await violationsOf(page)).toEqual([]);
+
+  await page.getByLabel('Location or gene').fill('chr1:109,807,590-109,827,590');
+  await page.keyboard.press('Enter');
+  await expect(browser.getByRole('button', { name: '1.00 at 109,817,590' })).toBeVisible();
+  await expect(note).toHaveCount(0);
+  expect(apiRequests).toEqual([]);
 });
