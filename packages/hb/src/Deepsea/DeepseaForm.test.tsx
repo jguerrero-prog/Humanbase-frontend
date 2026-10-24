@@ -33,6 +33,11 @@ describe('DeepseaForm', () => {
     expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual(['Seqweaver (RNA)']);
   });
 
+  it('links Seqweaver’s gnomAD browser from About Seqweaver, as decided for humanbase.io’s /seqweaver', () => {
+    renderForm('seqweaver');
+    expect(screen.getByRole('link', { name: 'Explore gnomAD variant effects' })).toHaveAttribute('href', '/seqweaver/gnomad/');
+  });
+
   it('tells the page when another model is chosen', async () => {
     const { onModelChange } = renderForm('beluga', { models: ['sei', 'beluga'] });
     await userEvent.click(screen.getByRole('combobox', { name: 'Model' }));
