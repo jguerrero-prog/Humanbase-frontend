@@ -8,6 +8,8 @@ export interface NetwasGenesProps {
   names?: Readonly<Record<string, string>>;
   /** Link to the gene in Networks; `{gene}` is replaced by the symbol. null says the gene isn't in Humanbase; undefined leaves the cell empty while a lookup runs. */
   networkHref: string | ((symbol: string) => string | null | undefined);
+  /** Link to a top-ranked gene in the genome browser, or undefined for none. */
+  genomeHref?: ((symbol: string) => string | undefined) | undefined;
   defaultFilter?: NetwasFilter;
   note?: string;
   /** Called with the symbols on screen, so their names and links can be looked up a page at a time. */
@@ -33,10 +35,12 @@ const emptyTitles: Record<NetwasFilter, string> = {
 };
 
 const firstRows = 25;
+// The proposal (#457) links only the top-ranked genes to the genome browser.
+const genomeRanks = 10;
 const step = 25;
 const count = new Intl.NumberFormat('en-US');
 
-export function NetwasGenes({ file, names = {}, networkHref, defaultFilter = 'all', note, onShownChange }: NetwasGenesProps) {
+export function NetwasGenes({ file, names = {}, networkHref, genomeHref, defaultFilter = 'all', note, onShownChange }: NetwasGenesProps) {
   const result = useMemo(() => NetwasResult.parse(file), [file]);
   const [filter, setFilter] = useState<NetwasFilter>(defaultFilter);
   const [query, setQuery] = useState('');
@@ -46,7 +50,7 @@ export function NetwasGenes({ file, names = {}, networkHref, defaultFilter = 'al
   const matching = result.filter(filter).filter((gene) => !needle || gene.symbol.toLowerCase().includes(needle) || names[gene.symbol]?.toLowerCase().includes(needle));
   const shown = matching.slice(0, visible);
   const hrefOf = (symbol: string) => (typeof networkHref === 'string' ? networkHref.replace('{gene}', encodeURIComponent(symbol)) : networkHref(symbol));
-  const rows = shown.map((gene) => ({ ...gene, name: names[gene.symbol], gwas: NetwasResult.labelText(gene.label), href: hrefOf(gene.symbol) }));
+  const rows = shown.map((gene) => ({ ...gene, name: names[gene.symbol], gwas: NetwasResult.labelText(gene.label), href: hrefOf(gene.symbol), genomeHref: gene.rank <= genomeRanks ? genomeHref?.(gene.symbol) : undefined }));
   const more = Math.min(step, matching.length - visible);
   const empty = needle ? { title: `No genes match “${query.trim()}”`, text: 'Check the symbol, or clear the search.' } : { title: emptyTitles[filter] };
   const shownKey = shown.map((gene) => gene.symbol).join(' ');

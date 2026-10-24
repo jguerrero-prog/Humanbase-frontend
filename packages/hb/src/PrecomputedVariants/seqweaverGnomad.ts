@@ -1,5 +1,5 @@
 import { deepseaModels, GenomeLocation } from '@humanbase/data';
-import { scoreTrack } from '@humanbase/genome';
+import { seqweaverGnomadTrack } from '@humanbase/genome';
 import { seqweaverGnomadEffects } from '@humanbase/ui';
 import { categoryCrumbs, productTools } from '../content/product';
 import type { PrecomputedVariantSet } from './PrecomputedVariantBrowser';
@@ -22,7 +22,7 @@ export const seqweaverGnomad: PrecomputedVariantSet = {
     { name: 'Paper', value: 'Park et al., 2021' },
   ],
   assembly: 'hg19',
-  tracks: [scoreTrack({ name: 'Seqweaver gnomAD', source: 'Model score', bigWigUrl: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/seqweaver_gnomad.diff.meanlog.bw', range: [1.5, 3] })],
+  tracks: [seqweaverGnomadTrack([1.5, 3])],
   start: new GenomeLocation('chr1', 2_230_000, 2_440_000),
   sampleStart: new GenomeLocation('chr1', 2_334_000, 2_336_000),
   scoreDocs: { label: 'Score type documentation', href: `${deepseaModels.seqweaver.docsHref}#molecular-level-biochemical-effects-prediction` },

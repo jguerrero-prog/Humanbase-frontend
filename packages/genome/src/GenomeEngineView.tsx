@@ -62,7 +62,9 @@ const noneHidden: readonly string[] = [];
 export function GenomeEngineView({ engine, files, label, assembly, region, tracks, hidden = noneHidden, arrangement = noArrangement, trackMenu, selected, onRegionChange, onStatusChange, onCommand, ref }: GenomeEngineViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GenomeBrowserEngine | null>(null);
-  const [ready, setReady] = useState(false);
+  // The engine in view once it has mounted; a new one, such as after the tracks change, runs the effects below again.
+  const [mounted, setMounted] = useState<GenomeBrowserEngine | null>(null);
+  const ready = mounted !== null;
   const [layout, setLayout] = useState<readonly GenomeTrackLayout[]>([]);
   const shown = useRef(region);
   const events = useRef({ onRegionChange, onStatusChange });
@@ -85,7 +87,7 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
     if (!element) return;
     const browser = engine(files);
     let live = true;
-    setReady(false);
+    setMounted(null);
     events.current.onStatusChange?.('loading');
     browser
       .mount(element, {
@@ -107,7 +109,7 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
       .then(() => {
         if (!live) return;
         instance.current = browser;
-        setReady(true);
+        setMounted(browser);
         events.current.onStatusChange?.('ready');
       })
       .catch((error: unknown) => {
@@ -123,27 +125,27 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
   }, [engine, files, assembly, tracks, menuOf]);
 
   useEffect(() => {
-    if (!ready || sameRegion(region, shown.current)) return;
+    if (!mounted || sameRegion(region, shown.current)) return;
     shown.current = region;
     instance.current?.showRegion(region);
-  }, [ready, region]);
+  }, [mounted, region]);
 
   const hiddenKey = hidden.join('\n');
   useEffect(() => {
-    if (ready) instance.current?.showTracks(hiddenKey ? hiddenKey.split('\n') : []);
-  }, [ready, hiddenKey]);
+    if (mounted) instance.current?.showTracks(hiddenKey ? hiddenKey.split('\n') : []);
+  }, [mounted, hiddenKey]);
 
   const arranged = JSON.stringify(arrangement);
   useEffect(() => {
-    if (ready) instance.current?.arrangeTracks(JSON.parse(arranged) as GenomeTrackArrangement);
-  }, [ready, arranged]);
+    if (mounted) instance.current?.arrangeTracks(JSON.parse(arranged) as GenomeTrackArrangement);
+  }, [mounted, arranged]);
 
   const mark = selected ? `${selected.chrom}:${selected.position}` : '';
   useEffect(() => {
-    if (!ready) return;
+    if (!mounted) return;
     const [chrom = '', position = ''] = mark.split(':');
     instance.current?.highlight(mark ? { chrom, position: Number(position) } : undefined);
-  }, [ready, mark]);
+  }, [mounted, mark]);
 
   // Segment tracks are listed as tables under any engine, so their states never rest on color alone.
   const span = { chrom: withChr(region.chrom), start: Math.round(region.start), end: Math.round(region.end) };

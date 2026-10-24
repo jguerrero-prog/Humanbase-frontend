@@ -1,6 +1,8 @@
 import { NetworkQuery, type DataVersion, type GeneHit, type Module, type ModuleResult } from '@humanbase/data';
 import { Button, Drawer, saveFile, SegmentedControl, useLinkHref } from '@humanbase/ui';
 import { useState } from 'react';
+import { genomeBrowserLink } from '../content/genomeBrowser';
+import { ViewInGenomeBrowser } from '../GenomeBrowser/ViewInGenomeBrowser';
 import { GeneNeighborsTable } from './GeneNeighborsTable';
 import { ModuleGeneList, type ModuleGene } from './ModuleGeneList';
 import { ModuleTermsTable } from './ModuleTermsTable';
@@ -33,7 +35,7 @@ export function ModuleDrawer({ result, module, gene, database, genes, integratio
   const databaseName = result.databaseName(database);
   const topTerm = terms[0]?.title;
 
-  const footer = (label: string, entrez: readonly number[], download: () => void, opened = label) => (
+  const footer = (label: string, entrez: readonly number[], download: () => void, opened = label, genome?: string) => (
     <>
       <a className="button button-primary" href={linkHref(new NetworkQuery(entrez, integration, version).href)}>
         Open {opened} in Networks
@@ -41,6 +43,7 @@ export function ModuleDrawer({ result, module, gene, database, genes, integratio
       <Button variant="ghost" onClick={download}>
         Download {label}
       </Button>
+      <ViewInGenomeBrowser href={genome} variant="ghost" />
     </>
   );
   const saveRows = (rows: readonly string[], name: string) => saveFile(rows.join('\n'), `${name}.tsv`, 'text/tab-separated-values');
@@ -65,7 +68,7 @@ export function ModuleDrawer({ result, module, gene, database, genes, integratio
         subtitle={[name, `in ${module.label}${topTerm ? ` ${topTerm}` : ''}`].filter(Boolean).join(', ')}
         back={{ label: `Back to ${module.label}`, onSelect: onBack }}
         onClose={onClose}
-        footer={footer(symbol, [gene], download)}
+        footer={footer(symbol, [gene], download, symbol, genomeBrowserLink.gene(symbol))}
       >
         <SegmentedControl
           label={`${symbol} details`}
