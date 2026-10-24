@@ -44,7 +44,7 @@ export function HeatmapTable({ summary, scale, columns, rows, rowHeader, decimal
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.label}>
+            <tr key={row.id ?? row.label}>
               <Cell rowHeader title={row.label}>
                 <span className="heatmap-table-label">{row.label}</span>
               </Cell>

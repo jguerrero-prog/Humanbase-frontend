@@ -128,4 +128,18 @@ describe('Heatmap in a scrolling plot', () => {
     // The cells now start at 440px, past the 160px of pinned row labels.
     expect(labels.filter((label) => label.textContent).map((label) => label.hasAttribute('data-cut'))).toEqual([true, true, false]);
   });
+
+  it('makes each row label a button where the page passes onRowSelect, and keeps rows that share a label apart', () => {
+    const onRowSelect = vi.fn();
+    const twins = [
+      { id: 'one', label: 'Haemophilia A (chrX:154251084)', values: [0.5, 1] },
+      { id: 'two', label: 'Haemophilia A (chrX:154251084)', values: [-0.5, 2] },
+    ];
+    render(<Heatmap {...props} rows={twins} onRowSelect={onRowSelect} />);
+    const buttons = screen.getAllByRole('button', { name: 'Haemophilia A (chrX:154251084)' });
+    expect(buttons).toHaveLength(2);
+    fireEvent.click(buttons[1] as HTMLElement);
+    expect(onRowSelect).toHaveBeenCalledWith(1);
+    expect(screen.getAllByRole('gridcell')).toHaveLength(4);
+  });
 });

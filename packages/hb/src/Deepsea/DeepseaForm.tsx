@@ -1,7 +1,7 @@
 import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type DeepseaModel, type InputKind, type VariantModel } from '@humanbase/data';
 import { AboutPanel, Alert, type AboutPanelProps, DocsLink, saveFile, type Crumb } from '@humanbase/ui';
 import { useState } from 'react';
-import { categoryCrumbs } from '../content/product';
+import { categoryCrumbs, seiHgmd } from '../content/product';
 import { expressionEffectsLink } from '../Expecto/geneExpressionTools';
 import '../Jobs/JobForm.css';
 import { VariantJobForm, type VariantJob, type VariantJobFormProps } from '../VariantJobForm/VariantJobForm';
@@ -92,7 +92,16 @@ export function DeepseaAbout({ model, headingLevel = 2 }: { model: VariantModel;
       tool={info.inSentence ?? info.tool}
       headingLevel={headingLevel}
       docsHref={info.docsName ? undefined : info.docsHref}
-      links={info.docsName && <DocsLink href={info.docsHref}>Read the {info.docsName} documentation</DocsLink>}
+      links={
+        <>
+          {info.docsName && <DocsLink href={info.docsHref}>Read the {info.docsName} documentation</DocsLink>}
+          {model === 'sei' && (
+            <DocsLink href={seiHgmd.href} icon="heatmap">
+              Explore {seiHgmd.description}
+            </DocsLink>
+          )}
+        </>
+      }
       examples={Object.entries(deepseaExamples[model].hg19).map(([kind, text]) => ({
         name: `example.${kind}`,
         detail: exampleDetail(kind as InputKind, model),

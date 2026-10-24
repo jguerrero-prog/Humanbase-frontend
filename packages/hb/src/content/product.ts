@@ -35,6 +35,9 @@ export const productTools = {
   expressionEffects: { label: 'Expression effects', href: '/expression-effects/', description: 'ExPecto and ExPecto SC: tissue and cell-type effects', image: expecto },
 } as const satisfies Record<string, NavLink>;
 
+/** Sei's precomputed scores for HGMD disease variants, linked from the Sei form and the tools comparison rather than the menus. */
+export const seiHgmd = { label: 'Sei HGMD variants', href: '/variant-effects/hgmd/', description: 'Sei scores for 853 noncoding HGMD disease variants' } as const satisfies NavLink;
+
 const asdBrowser = { label: 'ASD Browser', href: '/asd/', description: 'Predicted effects of ASD proband mutations' };
 const variantTools: NavLink[] = [productTools.variantEffects, productTools.seqweaver, productTools.expressionEffects, ...(asdBrowserRetired ? [] : [asdBrowser])];
 

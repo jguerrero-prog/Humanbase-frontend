@@ -501,21 +501,23 @@
             "description"
           ],
           "digits": 0
-        }
+        },
+        "/api/deepsea/sei_hgmd/features/"
       ],
       "usedBy": [
         "DeepseaService.features",
         "DeepseaService.features (ExPecto)",
-        "AsdService.features"
+        "AsdService.features",
+        "SeiHgmdService.features"
       ],
-      "$note": "Sei answers with 4 MB, too large to bundle; its 40 sequence classes are hand-built below. Seqweaver and Beluga are recorded without descriptions. ExPecto reads the same Beluga list with expecto=true and only needs its 218 expecto_features, so that sample drops model_features."
+      "$note": "Sei answers with 4 MB, too large to bundle; its 40 sequence classes are hand-built below. Seqweaver and Beluga are recorded without descriptions. ExPecto reads the same Beluga list with expecto=true and only needs its 218 expecto_features, so that sample drops model_features. sei_hgmd is the Sei HGMD browser’s 40 sequence classes."
     },
     {
       "method": "GET",
       "path": "/api/deepsea/{name}/feature_predictions/",
       "documented": true,
       "example": "/api/deepsea/DNA_Binding/feature_predictions/?chr_and_variant_range=1:2230000:2440000",
-      "$note": "Precomputed predictions for every ASD variant in a range: DNA_Binding has 2,002 features, RNA_Binding fewer. Samples round to two decimals: DNA for the default range, CHD8 and SCN2A; RNA for the default range.",
+      "$note": "Precomputed predictions for every ASD variant in a range: DNA_Binding has 2,002 features, RNA_Binding fewer. Samples round to two decimals: DNA for the default range, CHD8 and SCN2A; RNA for the default range. sei_hgmd without a range returns all 853 HGMD variants with their 40 sequence class scores, rounded to three decimals as humanbase.io’s tooltip shows them; its genome view picks the variants in range from these.",
       "samples": [
         {
           "path": "/api/deepsea/DNA_Binding/feature_predictions/?chr_and_variant_range=1:2230000:2440000",
@@ -532,10 +534,15 @@
         {
           "path": "/api/deepsea/RNA_Binding/feature_predictions/?chr_and_variant_range=1:2230000:2440000",
           "digits": 2
+        },
+        {
+          "path": "/api/deepsea/sei_hgmd/feature_predictions/",
+          "digits": 3
         }
       ],
       "usedBy": [
-        "AsdService.predictions"
+        "AsdService.predictions",
+        "SeiHgmdService.variants"
       ]
     },
     {
@@ -611,7 +618,7 @@
     ]
   },
   "genomeTracks": {
-    "$note": "Not the API: the genome browser reads gene models, scores, segments and sequence from the static track files on S3. pnpm samples:record saves each window padded by its own width on both sides, the listed score files over it (a file with bins, such as per-base conservation, summarised to about that many values), the listed segment files (bigBed, such as GM12878 ChromHMM) over it, and 2 kb of sequence around its center, into genome/tracks.json. The windows from chr1:109792590 on cover the variants whose effects the Seqweaver, Sei, Beluga and ExPecto sample jobs record, with each job's own score files.",
+    "$note": "Not the API: the genome browser reads gene models, scores, segments and sequence from the static track files on S3. pnpm samples:record saves each window padded by its own width on both sides, the listed score files over it (a file with bins, such as per-base conservation, summarised to about that many values), the listed segment files (bigBed, such as GM12878 ChromHMM) over it, and 2 kb of sequence around its center, into genome/tracks.json. The windows from chr1:109792590 on cover the variants whose effects the Seqweaver, Sei, Beluga and ExPecto sample jobs record, with each job's own score files. The last three cover the Sei HGMD browser's first variant in each sort order, with its sequence class score file.",
     "tracks": "https://humanbase.s3.amazonaws.com/tracks/",
     "windows": [
       { "assembly": "hg19", "region": "chr1:2230000-2440000", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw", "https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_rna.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
@@ -630,7 +637,10 @@
       { "assembly": "hg19", "region": "chr19:59020227-59120227", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/76aea8fe-8ec7-4698-a193-a186c7665edb_variant_dis.bw", "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/76aea8fe-8ec7-4698-a193-a186c7665edb_variant_mean-evalue.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
       { "assembly": "hg19", "region": "chr3:12548855-12648855", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/2e18fedf-3de7-4d08-a894-9a937a2b860b_variant_seqclass.bw", "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073_variant_dis.bw", "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/8b26a498-278c-4c73-a6a4-5f2550c30073_variant_mean-evalue.bw", "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1_variant_expecto.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
       { "assembly": "hg19", "region": "chr7:49763589-49863589", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/2e18fedf-3de7-4d08-a894-9a937a2b860b_variant_seqclass.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
-      { "assembly": "hg19", "region": "chr5:134821851-134921851", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1_variant_expecto.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] }
+      { "assembly": "hg19", "region": "chr5:134821851-134921851", "scores": ["https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1_variant_expecto.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
+      { "assembly": "hg19", "region": "chr17:73789907-73889907", "scores": ["https://humanbase.s3-us-west-2.amazonaws.com/tracks/sei.hgmd.nodup.abs_max.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
+      { "assembly": "hg19", "region": "chr1:7971919-8071919", "scores": ["https://humanbase.s3-us-west-2.amazonaws.com/tracks/sei.hgmd.nodup.abs_max.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] },
+      { "assembly": "hg19", "region": "chr17:70067348-70167348", "scores": ["https://humanbase.s3-us-west-2.amazonaws.com/tracks/sei.hgmd.nodup.abs_max.bw", { "url": "https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw", "bins": 1000 }], "segments": ["https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb"] }
     ]
   }
 }

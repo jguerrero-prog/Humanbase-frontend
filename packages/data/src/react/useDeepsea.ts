@@ -67,3 +67,12 @@ export function useInsilico(job: DeepseaJob | undefined, sequenceName: string | 
     staleTime: Infinity,
   });
 }
+
+/** The Sei HGMD dataset: its 40 sequence classes and all 853 variants, which never change, so they load once. */
+export function useSeiHgmd() {
+  const api = useHumanbase();
+  const features = useQuery({ queryKey: ['sei-hgmd-features'], queryFn: () => api.seiHgmd.features(), staleTime: Infinity });
+  const variants = useQuery({ queryKey: ['sei-hgmd-variants'], queryFn: () => api.seiHgmd.variants(), staleTime: Infinity });
+  const failed = [features, variants].filter((query) => query.isError);
+  return { features: features.data, variants: variants.data, error: failed[0]?.error, refetch: () => failed.forEach((query) => void query.refetch()) };
+}

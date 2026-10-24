@@ -26,6 +26,8 @@ export interface HeatmapCellDetail {
 
 export interface HeatmapRow {
   label: string;
+  /** Tells rows apart when two share a label, such as two variants at one position. */
+  id?: string;
   values: readonly (number | null)[];
   details?: readonly (HeatmapCellDetail | undefined)[];
 }
@@ -61,6 +63,8 @@ export interface HeatmapProps {
   selectedColumn?: number | undefined;
   /** Makes each column's line to the ruler a button, such as one that centers the genome browser on that variant. */
   onColumnSelect?: ((column: number) => void) | undefined;
+  /** Makes each row label a button, such as one that shows that variant in the genome browser. */
+  onRowSelect?: ((row: number) => void) | undefined;
   /** Dragging across the cells reports each move's horizontal change in pixels; a drag never pins a tooltip. */
   onDrag?: ((dx: number) => void) | undefined;
 }
@@ -75,6 +79,13 @@ const hoverGrace = 300;
 const dragStart = 4;
 const switchDelay = 150;
 const labelWidths = { fallback: 160, max: 360, share: 0.4 };
+const columnLabels = { least: 96, slope: Math.sin((50 * Math.PI) / 180), clearance: 8 };
+
+/** Rotated column labels need the height of the longest one at 50°, so none is cut off at the top. */
+function columnLabelHeight(box: HTMLElement) {
+  const widest = Math.max(0, ...[...box.querySelectorAll<HTMLElement>('.heatmap-column-labels span')].map((label) => label.offsetWidth));
+  return Math.max(columnLabels.least, Math.ceil(widest * columnLabels.slope) + columnLabels.clearance);
+}
 
 /** The row label column fits the longest label, up to 360px and 40% of the plot; longer labels end in an ellipsis. */
 function labelColumn(box: HTMLElement, labels: readonly string[]) {
@@ -87,7 +98,7 @@ function labelColumn(box: HTMLElement, labels: readonly string[]) {
   return Math.min(widest, labelWidths.max, Math.floor(box.clientWidth * labelWidths.share));
 }
 
-export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', valueLabel, showValues = false, columnWidth = 'full', selectedColumn, onColumnSelect, onDrag }: HeatmapProps) {
+export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader, columnHeader, axis, decimals = 2, initialActive, density = 'full', valueLabel, showValues = false, columnWidth = 'full', selectedColumn, onColumnSelect, onRowSelect, onDrag }: HeatmapProps) {
   const dragging = useRef<{ x: number; moved: boolean }>(undefined);
   const id = useId();
   const scale = useMemo(() => new ScoreScale(spec), [spec]);
@@ -119,6 +130,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   const [place, setPlace] = useState<{ x: number; y: number }>();
   const [fits, setFits] = useState(true);
   const [labelWidth, setLabelWidth] = useState(labelWidths.fallback);
+  const [labelHeight, setLabelHeight] = useState(columnLabels.least);
   const more = useMoreToScroll(plot);
   const narrow = columnWidth === 'narrow' || (columnWidth === 'auto' && !fits);
   const width = narrow ? narrowWidth : cellWidth;
@@ -126,6 +138,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   const columnLabel = (column: HeatmapColumn) => (column.position === undefined ? column.label : counts.format(column.position));
   const columnName = (column: HeatmapColumn) => column.name ?? columnLabel(column);
   const labels = rows.map((row) => row.label).join('\n');
+  const headers = columns.map((column) => column.label).join('\n');
   const valueAt = ([row, column]: Cell) => rows[row]?.values[column] ?? null;
 
   useLayoutEffect(() => {
@@ -135,6 +148,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
       const label = labelColumn(box, labels.split('\n'));
       const room = box.clientWidth - label;
       setLabelWidth(label);
+      setLabelHeight(columnLabelHeight(box));
       if (columnWidth === 'auto') setFits(room <= 0 || columns.length * (cellWidth + 1) <= room);
     };
     fit();
@@ -143,7 +157,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
     const observer = new ResizeObserver(fit);
     observer.observe(box);
     return () => observer.disconnect();
-  }, [columnWidth, columns.length, labels]);
+  }, [columnWidth, columns.length, labels, headers]);
 
   useLayoutEffect(() => {
     const box = figure.current;
@@ -200,7 +214,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
         <LegendStepped spec={spec} highlighted={highlighted ?? (activeValue === null ? null : scale.step(activeValue))} onHighlight={setHighlighted} />
       </div>
       <div className="heatmap-frame" data-more={more || undefined}>
-        <div className="heatmap-plot" ref={plot} style={{ '--heatmap-columns': columns.length, '--heatmap-cell': `${width}px`, '--heatmap-label': `${labelWidth}px` } as CSSProperties}>
+        <div className="heatmap-plot" ref={plot} style={{ '--heatmap-columns': columns.length, '--heatmap-cell': `${width}px`, '--heatmap-label': `${labelWidth}px`, '--heatmap-column-labels': `${labelHeight}px` } as CSSProperties}>
           {narrow && <PositionLabels plot={plot} columns={columns} labelOf={columnLabel} />}
           {!axis && !narrow && (
             <div className="heatmap-column-labels" aria-hidden="true">
@@ -243,9 +257,15 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
           >
             {selectedColumn !== undefined && selectedColumn >= 0 && <span className="heatmap-selected-column" aria-hidden="true" style={{ '--heatmap-at': selectedColumn } as CSSProperties} />}
             {rows.map((row, r) => (
-              <div role="row" key={row.label} className="heatmap-row">
+              <div role="row" key={row.id ?? row.label} className="heatmap-row">
                 <span role="rowheader" className="heatmap-row-label pinned-edge" title={row.label}>
-                  <span className="heatmap-row-name">{row.label}</span>
+                  {onRowSelect ? (
+                    <button type="button" className="heatmap-row-name heatmap-row-pick" onClick={() => onRowSelect(r)}>
+                      {row.label}
+                    </button>
+                  ) : (
+                    <span className="heatmap-row-name">{row.label}</span>
+                  )}
                 </span>
                 {row.values.map((value, c) => {
                   const column = columns[c];
