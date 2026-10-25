@@ -75,6 +75,7 @@
 
 .doc-section {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
 }
 
@@ -165,6 +166,7 @@
 }
 
 .doc-table {
+  position: relative;
   overflow-x: auto;
 }
 
@@ -172,6 +174,10 @@
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+}
+
+.doc-table col {
+  inline-size: var(--column-width, auto);
 }
 
 .doc-table th[scope="col"] {
@@ -600,5 +606,31 @@
   .key-list div {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-1);
+  }
+}
+
+/* On phones, a specimen wider than the column scrolls inside its own block instead of widening the page. */
+@media (width < 40rem) {
+  .page-content {
+    overflow-wrap: break-word;
+  }
+
+  :where(.page-content > *, .doc-section > :not(header)) > * {
+    min-inline-size: 0;
+  }
+
+  .page-content > :not(.doc-section),
+  .doc-section > :not(header) {
+    position: relative;
+    max-inline-size: 100%;
+    overflow-x: auto;
+  }
+
+  .doc-table table {
+    table-layout: auto;
+  }
+
+  .doc-table col {
+    inline-size: auto;
   }
 }

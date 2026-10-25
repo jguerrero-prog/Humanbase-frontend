@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { readdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { apiOff } from './apiOff';
 
 const pages = [
@@ -23,3 +25,17 @@ for (const url of pages) {
     }
   });
 }
+
+test('every design system page fits a 390px phone without scrolling sideways', async ({ page }) => {
+  const dist = fileURLToPath(new URL('../apps/docs/dist/', import.meta.url));
+  const paths = readdirSync(dist, { recursive: true, encoding: 'utf8' })
+    .filter((file) => file.endsWith('index.html'))
+    .map((file) => `/${file.replace(/index\.html$/, '')}`);
+  expect(paths.length).toBeGreaterThan(50);
+  await apiOff(page);
+  await page.setViewportSize({ width: 390, height: 900 });
+  for (const path of paths) {
+    await page.goto(`http://localhost:4322${path}`);
+    expect.soft(await page.evaluate(() => document.documentElement.scrollWidth), path).toBeLessThanOrEqual(390);
+  }
+});
