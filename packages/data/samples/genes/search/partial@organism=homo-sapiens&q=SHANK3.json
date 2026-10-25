@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 85358,
+      "standard_name": "SHANK3",
+      "aliases": "SPANK-2|PSAP2|PROSAP2|SCZD15|DEL22q13.3",
+      "xrefs": "ENSG00000251322|606230|HGNC:14294|85358",
+      "description": "SH3 and multiple ankyrin repeat domains 3",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}

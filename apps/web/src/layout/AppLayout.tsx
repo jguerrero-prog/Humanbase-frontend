@@ -1,4 +1,4 @@
-import { JobWatcher, productFooter, productSectionFor, productSections, useJobsMenuSummary } from '@humanbase/hb';
+import { JobWatcher, TopBarSearch, productFooter, productSectionFor, productSections, useJobsMenuSummary } from '@humanbase/hb';
 import { Banner, Footer, SkipLink, TopBar } from '@humanbase/ui';
 import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router';
@@ -27,7 +27,7 @@ export function AppLayout() {
           We’ve made some changes to Humanbase and we’d like to show you around.
         </Banner>
       )}
-      <TopBar sections={productSections} jobs={jobs} search={!onHomepage} {...(current ? { current } : {})} />
+      <TopBar sections={productSections} jobs={jobs} search={!onHomepage} searchField={<TopBarSearch />} {...(current ? { current } : {})} />
       <main id="main" tabIndex={-1}>
         <Outlet />
       </main>

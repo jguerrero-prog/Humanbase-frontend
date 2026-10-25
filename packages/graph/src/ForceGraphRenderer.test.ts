@@ -1,6 +1,12 @@
+import { forceSimulation } from 'd3-force';
 import { edgeBand } from './edgeBands';
 import { ForceGraphRenderer } from './ForceGraphRenderer';
 import type { GraphData } from './GraphRenderer';
+
+vi.mock('d3-force', async (original) => {
+  const actual = await original<typeof import('d3-force')>();
+  return { ...actual, forceSimulation: vi.fn(actual.forceSimulation) };
+});
 
 const data: GraphData = {
   nodes: [
@@ -90,6 +96,22 @@ describe('ForceGraphRenderer', () => {
     expect(state('AQP9')).not.toContain('is-faded');
   });
 
+  it('lays out again only when genes or connections change, not when names or the title do', () => {
+    const { container, renderer } = mounted();
+    const positions = () => [...container.querySelectorAll('.force-graph-node')].map((n) => n.getAttribute('transform'));
+    const placed = positions();
+    vi.mocked(forceSimulation).mockClear();
+    renderer.render({ ...data, nodes: data.nodes.map((node) => ({ ...node, label: `${node.label} renamed` })) });
+    renderer.setLabel('Network of IL1B, TNF and friends');
+    expect(forceSimulation).not.toHaveBeenCalled();
+    expect(positions()).toEqual(placed);
+    expect(container.querySelector('[aria-label="IL1R1 renamed, related gene"]')).not.toBeNull();
+    expect(container.querySelector('svg')?.getAttribute('aria-label')).toBe('Network of IL1B, TNF and friends');
+
+    renderer.render({ ...data, links: data.links.slice(1) });
+    expect(forceSimulation).toHaveBeenCalledTimes(1);
+  });
+
   it('removes everything it drew', () => {
     const { container, renderer } = mounted();
     renderer.destroy();
@@ -126,6 +148,17 @@ describe('ForceGraphRenderer with groups', () => {
     const fgf8 = container.querySelector('[aria-label="FGF8, M1"]') as SVGGElement;
     expect(fgf8.style.getPropertyValue('--node-color')).toBe('var(--viz-cat-1)');
     expect(fgf8.querySelector('text')).toBeNull();
+  });
+
+  it('keeps every cluster in place when gene names arrive', () => {
+    const { container, renderer } = mountedGroups();
+    const positions = () => [...container.querySelectorAll('.force-graph-node, .force-graph-group')].map((n) => n.getAttribute('transform'));
+    const placed = positions();
+    vi.mocked(forceSimulation).mockClear();
+    renderer.render({ ...grouped, nodes: grouped.nodes.map((node) => ({ ...node, label: node.label.toLowerCase() })) });
+    expect(forceSimulation).not.toHaveBeenCalled();
+    expect(positions()).toEqual(placed);
+    expect(container.querySelector('[aria-label="fgf8, M1"]')).not.toBeNull();
   });
 
   it('selects a group from its label and fades the other groups', () => {

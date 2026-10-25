@@ -28,6 +28,8 @@
       "samples": [
         "/api/genes/search/partial/?organism=homo-sapiens&q=IL1",
         "/api/genes/search/partial/?organism=homo-sapiens&q=IL1B",
+        "/api/genes/search/partial/?organism=homo-sapiens&q=SHANK3",
+        "/api/genes/search/partial/?organism=homo-sapiens&q=autism",
         "/api/genes/search/partial/?organism=homo-sapiens&q=NOTAGENE123"
       ],
       "usedBy": [
@@ -522,7 +524,7 @@
       "path": "/api/deepsea/{name}/feature_predictions/",
       "documented": true,
       "example": "/api/deepsea/DNA_Binding/feature_predictions/?chr_and_variant_range=1:2230000:2440000",
-      "$note": "Precomputed predictions for every variant in a range: the ASD variants on DNA_Binding (2,002 features) and RNA_Binding, and Seqweaver's gnomAD variants with score_type=seqweaver (232 features, each record with its variant_score). Samples round to two decimals: DNA for the default range, CHD8 and SCN2A; RNA for the default range; Seqweaver gnomAD for 2 kb at the default range's center, since the whole 210 kb range is 13.7 MB. sei_hgmd takes no score_type: without a range it returns all 853 HGMD variants for the heatmap, rounded to three decimals as humanbase.io’s tooltip shows them; its range samples are the first variant of each heatmap order, 50 kb either side.",
+      "$note": "Precomputed predictions for every variant in a range: the ASD variants on DNA_Binding (2,002 features) and RNA_Binding, and Seqweaver's gnomAD variants with score_type=seqweaver (232 features, each record with its variant_score). Samples round to two decimals: DNA for the default range, CHD8 and SCN2A; RNA for the default range; Seqweaver gnomAD for 2 kb at the default range's center, since the whole 210 kb range is 13.7 MB. sei_hgmd takes no score_type: without a range it returns all 853 HGMD variants for the heatmap, rounded to three decimals as humanbase.io’s tooltip shows them; its range samples are the first variant of each heatmap order, and the third in the dataset’s order, where Next variant first leaves chr17, 50 kb either side.",
       "samples": [
         {
           "path": "/api/deepsea/DNA_Binding/feature_predictions/?chr_and_variant_range=1:2230000:2440000",
@@ -558,6 +560,10 @@
         },
         {
           "path": "/api/deepsea/sei_hgmd/feature_predictions/?chr_and_variant_range=17:70067348:70167348",
+          "digits": 3
+        },
+        {
+          "path": "/api/deepsea/sei_hgmd/feature_predictions/?chr_and_variant_range=X:37589264:37689264",
           "digits": 3
         }
       ],

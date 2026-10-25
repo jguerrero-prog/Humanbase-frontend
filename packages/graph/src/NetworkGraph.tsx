@@ -33,16 +33,16 @@ const noHighlights: readonly GraphHighlight[] = [];
 export function NetworkGraph({ data, label, selection = null, highlights = noHighlights, hover = null, onSelectNode, onSelectLink, onSelectGroup, onHoverNode, renderer, className, ref }: NetworkGraphProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GraphRenderer | null>(null);
-  const events = useRef({ onSelectNode, onSelectLink, onSelectGroup, onHoverNode });
+  const events = useRef({ label, onSelectNode, onSelectLink, onSelectGroup, onHoverNode });
   useLayoutEffect(() => {
-    events.current = { onSelectNode, onSelectLink, onSelectGroup, onHoverNode };
+    events.current = { label, onSelectNode, onSelectLink, onSelectGroup, onHoverNode };
   });
 
   useEffect(() => {
     if (!container.current) return;
     const graph = (renderer ?? defaultRenderer)();
     graph.mount(container.current, {
-      label,
+      label: events.current.label,
       onSelectNode: (id) => events.current.onSelectNode?.(id),
       onSelectLink: (source, target) => events.current.onSelectLink?.(source, target),
       onSelectGroup: (id) => events.current.onSelectGroup?.(id),
@@ -53,12 +53,13 @@ export function NetworkGraph({ data, label, selection = null, highlights = noHig
       graph.destroy();
       instance.current = null;
     };
-  }, [renderer, label]);
+  }, [renderer]);
 
-  useEffect(() => instance.current?.render(data), [data, renderer, label]);
-  useEffect(() => instance.current?.select(selection), [selection, data, renderer, label]);
-  useEffect(() => instance.current?.highlight(highlights), [highlights, data, renderer, label]);
-  useEffect(() => instance.current?.hover(hover), [hover, data, renderer, label]);
+  useEffect(() => instance.current?.setLabel(label), [label, renderer]);
+  useEffect(() => instance.current?.render(data), [data, renderer]);
+  useEffect(() => instance.current?.select(selection), [selection, data, renderer]);
+  useEffect(() => instance.current?.highlight(highlights), [highlights, data, renderer]);
+  useEffect(() => instance.current?.hover(hover), [hover, data, renderer]);
 
   useImperativeHandle(ref, () => ({
     zoomBy: (factor) => instance.current?.zoomBy(factor),

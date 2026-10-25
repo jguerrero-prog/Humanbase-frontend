@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SearchField } from './SearchField';
 
@@ -69,5 +69,84 @@ describe('SearchField suggestions', () => {
     render(<SearchField label="Search genes" suggestions={[]} />);
     await userEvent.type(screen.getByRole('combobox'), 'IL1Z');
     expect(screen.getAllByText('No genes match “IL1Z”')).toHaveLength(2);
+  });
+});
+
+describe('SearchField suggestions with destinations', () => {
+  const genes = [
+    { id: '85358', label: 'SHANK3', description: 'SH3 and multiple ankyrin repeat domains 3', destinations: [{ label: 'Networks', href: '/networks/?entrez=85358' }, { label: 'Expression effects', href: '/expression-effects/genes/85358/' }] },
+    { id: '22941', label: 'SHANK2', description: 'SH3 and multiple ankyrin repeat domains 2', destinations: [{ label: 'Expression effects', href: '/expression-effects/genes/22941/' }] },
+  ];
+  const opened: string[] = [];
+  const record = (event: MouseEvent) => {
+    const link = event.target instanceof Element ? event.target.closest('a') : null;
+    if (!link) return;
+    event.preventDefault();
+    opened.push(link.getAttribute('href') ?? '');
+  };
+  beforeEach(() => {
+    opened.length = 0;
+    document.addEventListener('click', record);
+  });
+  afterEach(() => document.removeEventListener('click', record));
+
+  const renderGrid = () => {
+    render(<SearchField label="Search genes" suggestions={genes} heading="Genes" total={21} />);
+    return screen.getByRole('combobox', { name: 'Search genes' });
+  };
+  const active = (box: HTMLElement) => document.getElementById(box.getAttribute('aria-activedescendant') ?? '');
+
+  it('is a grid combobox: a row per gene, a cell per destination, and a count when more matched', async () => {
+    const box = renderGrid();
+    expect(box).toHaveAttribute('aria-haspopup', 'grid');
+    await userEvent.type(box, 'SHANK');
+    const grid = screen.getByRole('grid', { name: 'Genes' });
+    expect(box).toHaveAttribute('aria-controls', grid.id);
+    expect(within(grid).getAllByRole('row')).toHaveLength(2);
+    expect(within(grid).getAllByRole('gridcell')).toHaveLength(3);
+    expect(within(grid).getByRole('link', { name: 'SHANK3 in Networks' })).toHaveAttribute('href', '/networks/?entrez=85358');
+    expect(screen.getByText('2 of 21')).toBeInTheDocument();
+  });
+
+  it('moves between genes with Up and Down and between destinations with Left and Right, then opens with Enter', async () => {
+    const box = renderGrid();
+    await userEvent.type(box, 'SHANK{ArrowDown}');
+    expect(active(box)).toHaveTextContent('Networks');
+    expect(active(box)).toHaveAttribute('aria-selected', 'true');
+    await userEvent.keyboard('{ArrowRight}');
+    expect(active(box)).toHaveTextContent('Expression effects');
+    await userEvent.keyboard('{ArrowRight}');
+    expect(active(box)).toHaveTextContent('Expression effects');
+    await userEvent.keyboard('{ArrowDown}');
+    expect(active(box)).toHaveAccessibleName('SHANK2 in Expression effects');
+    await userEvent.keyboard('{ArrowUp}{ArrowLeft}{Enter}');
+    expect(opened).toEqual(['/networks/?entrez=85358']);
+    expect(box).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('never opens a destination it guessed: Enter with nothing highlighted highlights the first one', async () => {
+    const box = renderGrid();
+    await userEvent.type(box, 'SHANK{Enter}');
+    expect(opened).toEqual([]);
+    expect(active(box)).toHaveAccessibleName('SHANK3 in Networks');
+    await userEvent.keyboard('{Enter}');
+    expect(opened).toEqual(['/networks/?entrez=85358']);
+  });
+
+  it('opens a destination with one click, and closes with Escape', async () => {
+    const box = renderGrid();
+    await userEvent.type(box, 'SHANK');
+    await userEvent.click(screen.getByRole('link', { name: 'SHANK2 in Expression effects' }));
+    expect(opened).toEqual(['/expression-effects/genes/22941/']);
+    await userEvent.type(box, '2');
+    expect(box).toHaveAttribute('aria-expanded', 'true');
+    await userEvent.keyboard('{Escape}');
+    expect(box).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('hints at the grid keys', async () => {
+    await userEvent.type(renderGrid(), 'SHANK');
+    expect(screen.getByText('destination')).toBeInTheDocument();
+    expect(screen.getByText('result')).toBeInTheDocument();
   });
 });

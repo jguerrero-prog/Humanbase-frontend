@@ -28,6 +28,18 @@ const diseaseSuggestions: SearchSuggestion[] = [
   { id: '139411', label: 'PTCHD1', description: 'patched domain containing 1', badges: ['SFARI Autism (Level 2)', 'autism spectrum disorder'], details: 'Entrez 139411. Also known as AUTSX4' },
 ];
 
+const destinations = ['Networks', 'Expression effects', 'Genome browser'].map((label) => ({ label, href: '#suggestions-in-the-top-bar' }));
+const topBarSuggestions: SearchSuggestion[] = diseaseSuggestions.map((gene) => ({ ...gene, destinations }));
+
+const topBarNotes = [
+  'Typing doesn’t say which tool someone wants, so a gene never opens by guessing. Each row lists where it can open, and one click picks the gene and the page.',
+  'Networks shows only when a network version has the gene, and opens in MAGE unless only GIANT has it. Expression effects is always offered. Genome browser shows while its preview is on.',
+  'The Genes heading counts what is shown against what matched, such as 5 of 21, when the API finds more than the five listed. Typing more narrows the list.',
+  'It is a grid combobox: Up and Down move between genes, Left and Right between destinations, Enter opens the highlighted one, Escape closes. Each destination is a grid cell, so screen readers hear “SHANK2 in Expression effects”.',
+  'Enter with nothing highlighted highlights the first destination of the first gene instead of opening it, so a second Enter opens what is shown. Pressing Enter out of habit never lands on a page nobody chose.',
+  'On touch screens the key hints are hidden. On a phone the search button opens the field across the bar and the list uses the screen’s width.',
+];
+
 const suggestionNotes = [
   'The list is a listbox: arrow keys move the active row, Enter picks it, Escape closes the list and keeps what was typed.',
   'Symbols are bold and names regular; there is no colored highlight, so suggestions read like the rest of the table text.',
@@ -113,12 +125,14 @@ const behavior = [
   ['Duplicates', 'A gene typed twice, or as both a symbol and an alias, is listed once, with both terms in You typed.'],
   ['Editing', 'Rematches that row only. Removing a row also removes the term from the box.'],
   ['Download gene list', 'A TSV with what was typed, symbol, Entrez ID and status for every row, including terms left out.'],
-  ['Where it’s used', 'The top bar search, the Networks and Modules forms, and Edit genes on a result. Typing several genes in the top bar opens the Networks form with the list filled in.'],
+  ['Where it’s used', 'The top bar search, the Networks and Modules forms, and Edit genes on a result. The top bar suggests one gene at a time; lists go in a tool’s form.'],
 ];
 
 const specs = [
   ['suggestion list', 'Same width as the box, white, 1px border.subtle, 8px radius, elevation 2; rows 12px by 16px padding; symbol Lato Bold 16, name Lato 16, meta Lato 13'],
   ['active suggestion', 'surface.sunken background, no border or bar; it moves with arrow keys and pointer'],
+  ['Open in row', 'Caption “Open in” in text.secondary, then small ghost buttons as links, 4px apart; the active destination takes the ghost button’s hover background'],
+  ['top bar suggestions', '560px wide, right-aligned to the field; on screens under 1280px, the bar’s width less 8px each side, up to 560px. Five genes at most, with the count beside the heading'],
   ['matching table', 'Table component, comfortable rows; columns 200 / fill / 140 / 200 / 140 at 1440'],
   ['status', 'Icon plus a word: success 700 Matched, warning 700 Check the match, error 700 Not found, the same hues as Alerts'],
   ['summary', 'Cabin Medium 22 title; counts in Lato Regular 14 with 16px icons, 20px apart'],
@@ -133,7 +147,7 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
 <DocsLayout title="Gene search and matching" description="One search box for every gene reference, suggestions that explain themselves, and a matching table that shows and fixes each term before anything runs.">
   <Intro
     lead="Every Humanbase analysis starts with genes. People type a symbol, an alias, an ID, a disease, or paste a list of hundreds; Humanbase matches each term to a gene before anything runs, and shows the match so nobody analyzes the wrong gene by accident."
-    status="Updated October 16, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+    status="Updated October 24, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
       rules={[
@@ -171,6 +185,16 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
       </div>
     </div>
     <ul class="points">{suggestionNotes.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="Suggestions in the top bar" lead="The top bar suggests genes the same way, under a Genes heading, and adds an Open in row to each: the pages that gene can open in.">
+    <div class="examples">
+      <div class="example">
+        <h3>A disease, with destinations</h3>
+        <SearchField label="Search genes, example in the top bar" value="autism" suggestions={topBarSuggestions} open inlineSuggestions defaultHighlight={1} heading="Genes" total={21} />
+      </div>
+    </div>
+    <ul class="points">{topBarNotes.map((note) => <li>{note}</li>)}</ul>
   </DocSection>
 
   <DocSection title="The matching table" lead="When the genes are checked, every term gets a row. Problems sort to the top, each with its fix in the row, and the button says how many genes will run.">

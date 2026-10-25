@@ -12,6 +12,7 @@ const renalExtended = 'af5b37885800bae6803f59e071fdcfdf84cb405c';
 class BlankRenderer implements GraphRenderer {
   mount() {}
   render() {}
+  setLabel() {}
   select() {}
   hover() {}
   highlight() {}

@@ -1,0 +1,275 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 139411,
+      "standard_name": "PTCHD1",
+      "aliases": "AUTSX4",
+      "xrefs": "ENSG00000165186|300828|139411|HGNC:26392",
+      "description": "patched domain containing 1",
+      "terms": [
+        "SFARI Autism (Level 2)",
+        "autism spectrum disorder"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 22941,
+      "standard_name": "SHANK2",
+      "aliases": "CTTNBP1|SPANK-3|ProSAP1|AUTS17|CORTBP1|SHANK",
+      "xrefs": "HGNC:14295|ENSG00000162105|22941|603290",
+      "description": "SH3 and multiple ankyrin repeat domains 2",
+      "terms": [
+        "SFARI Autism (Level 2)",
+        "autism spectrum disorder"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 55217,
+      "standard_name": "TMLHE",
+      "aliases": "XAP130|BBOX2|TMLD|AUTSX6|TMLHED|TMLH",
+      "xrefs": "55217|HGNC:18308|ENSG00000185973|300777",
+      "description": "trimethyllysine hydroxylase, epsilon",
+      "terms": [
+        "SFARI Autism (Level 3)",
+        "autism spectrum disorder"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 54413,
+      "standard_name": "NLGN3",
+      "aliases": "HNL3",
+      "xrefs": "ENSG00000196338|54413|HGNC:14289|300336",
+      "description": "neuroligin 3",
+      "terms": [
+        "SFARI Autism (Level 2)",
+        "autism spectrum disorder"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 26047,
+      "standard_name": "CNTNAP2",
+      "aliases": "CDFE|NRXN4|AUTS15|CASPR2|PTHSL1",
+      "xrefs": "604569|26047|ENSG00000174469|HGNC:13830",
+      "description": "contactin associated protein 2",
+      "terms": [
+        "SFARI Autism (Level 2)",
+        "autism spectrum disorder"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 57502,
+      "standard_name": "NLGN4X",
+      "aliases": "ASPGX2|HLNX|AUTSX2|HNL4X|NLGN4",
+      "xrefs": "ENSG00000146938|300427|HGNC:14287|57502",
+      "description": "neuroligin 4 X-linked",
+      "terms": [
+        "autism spectrum disorder",
+        "SFARI Autism (Level 3)"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 1977,
+      "standard_name": "EIF4E",
+      "aliases": "EIF4E1|eIF-4E|CBP|EIF4F|EIF4EL1|AUTS19",
+      "xrefs": "133440|ENSG00000151247|HGNC:3287|1977",
+      "description": "eukaryotic translation initiation factor 4E",
+      "terms": [
+        "autism spectrum disorder",
+        "SFARI Autism (Level 4)"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 6134,
+      "standard_name": "RPL10",
+      "aliases": "L10|DXS648|AUTSX5|DXS648E|MRXS35|QM|NOV",
+      "xrefs": "ENSG00000147403|6134|HGNC:10298|312173",
+      "description": "ribosomal protein L10",
+      "terms": [
+        "autism spectrum disorder",
+        "SFARI Autism (Level 4)"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 57680,
+      "standard_name": "CHD8",
+      "aliases": "AUTS18|HELSNF1",
+      "xrefs": "57680|HGNC:20153|ENSG00000100888|610528",
+      "description": "chromodomain helicase DNA binding protein 8",
+      "terms": [
+        "autism spectrum disorder",
+        "SFARI Autism (Level 1)"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 4204,
+      "standard_name": "MECP2",
+      "aliases": "RTS|RTT|RS|AUTSX3|PPMX|MRX79|MRXSL|MRXS13|MRX16",
+      "xrefs": "ENSG00000169057|HGNC:6990|4204|300005",
+      "description": "methyl-CpG binding protein 2",
+      "terms": [
+        "autism spectrum disorder",
+        "SFARI Autism (Level 2)"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 100188832,
+      "standard_name": "AUTS1",
+      "aliases": "",
+      "xrefs": "209850|100188832",
+      "description": "Autism, susceptibility to, 1",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    },
+    {
+      "entrez": 387577,
+      "standard_name": "AUTS3",
+      "aliases": "",
+      "xrefs": "387577|608049",
+      "description": "Autism, susceptibility to, 3",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    },
+    {
+      "entrez": 94313,
+      "standard_name": "AUTS5",
+      "aliases": "",
+      "xrefs": "606053|94313",
+      "description": "Autism, susceptibility to, 5",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    },
+    {
+      "entrez": 554314,
+      "standard_name": "AUTS6",
+      "aliases": "",
+      "xrefs": "554314|609378",
+      "description": "Autism, susceptibility to, 6",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    },
+    {
+      "entrez": 100188816,
+      "standard_name": "AUTS7",
+      "aliases": "",
+      "xrefs": "100188816|610676",
+      "description": "Autism, susceptibility to, 7",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    },
+    {
+      "entrez": 282553,
+      "standard_name": "AUTS8",
+      "aliases": "AUTS2",
+      "xrefs": "282553|607373",
+      "description": "Autism, susceptibility to, 8",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    },
+    {
+      "entrez": 100188820,
+      "standard_name": "AUTS11",
+      "aliases": "",
+      "xrefs": "100188820|610836",
+      "description": "Autism, susceptibility to, 11",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    },
+    {
+      "entrez": 100188314,
+      "standard_name": "AUTS12",
+      "aliases": "",
+      "xrefs": "100188314|610838",
+      "description": "autism, susceptibility to, 12",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    },
+    {
+      "entrez": 100188317,
+      "standard_name": "AUTS13",
+      "aliases": "",
+      "xrefs": "100188317|610908",
+      "description": "autism, susceptibility to, 13",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    },
+    {
+      "entrez": 100187724,
+      "standard_name": "DEL16P11.2",
+      "aliases": "AUTS14A|C16DELp11.2|DUP16p11.2|C16DUPp11.2|AUTS14",
+      "xrefs": "100187724|611913",
+      "description": "autism, susceptibility to, 14",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    },
+    {
+      "entrez": 100529118,
+      "standard_name": "DELXP22.11",
+      "aliases": "AUTSX4|CXDELp22.11",
+      "xrefs": "100529118|300830",
+      "description": "Autism, X-linked, susceptibility to, 4",
+      "terms": [],
+      "organism": "homo-sapiens",
+      "versions_available": []
+    }
+  ]
+}

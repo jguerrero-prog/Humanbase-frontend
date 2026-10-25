@@ -76,14 +76,26 @@ test('the Modules Download menu saves the real result as TSV, PDF and ZIP', asyn
   await checkScreen(page, problems);
 });
 
-test('the NetWAS form loads the real example file', async ({ page }) => {
-  const problems = watch(page);
-  await page.goto(`${web}/netwas/`);
-  await page.getByRole('radio', { name: 'Use the example' }).click();
-  await expect(page.getByText('17,692 genes with p-values, VEGAS format, ready to run')).toBeVisible();
-  await expect(page.getByRole('combobox', { name: 'Tissue network' })).toHaveText(/Adipose tissue/);
-  await checkScreen(page, problems);
-});
+for (const [version, example, genes, tissue, run] of [
+  ['MAGE', 'Alzheimer’s', '1,008', 'Global', 'MAGE-WAS'],
+  ['GIANT', 'BMI', '17,692', 'Adipose tissue', 'NetWAS'],
+] as const) {
+  test(`the NetWAS form loads the real ${version} ${example} example file`, async ({ page }) => {
+    const problems = watch(page);
+    await page.goto(`${web}/netwas/`);
+    const dataVersion = page.getByRole('combobox', { name: 'Data version' });
+    if (version === 'GIANT') {
+      await dataVersion.click();
+      await page.getByRole('option', { name: 'GIANT' }).click();
+    }
+    await expect(dataVersion).toHaveText(version);
+    await page.getByRole('radio', { name: 'Use the example' }).click();
+    await expect(page.getByText(`${genes} genes with p-values, VEGAS format, ready to run`)).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Tissue network' })).toHaveText(tissue);
+    await expect(page.getByRole('button', { name: `Run ${run} on ${genes} genes` })).toBeVisible();
+    await checkScreen(page, problems);
+  });
+}
 
 for (const [path, tool, run] of [
   ['/variant-effects/', 'Sei', /^Run Sei on \d+ variants$/],

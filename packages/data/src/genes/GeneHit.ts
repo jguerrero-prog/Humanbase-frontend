@@ -6,6 +6,8 @@ export interface GeneHitRecord {
   aliases: string;
   description: string;
   versions_available: readonly string[];
+  /** The diseases and terms the search text matched on this gene, such as autism spectrum disorder. */
+  terms?: readonly string[];
 }
 
 // A gene as gene search returns it: lighter than the full record, but it says which networks include it.
@@ -26,6 +28,10 @@ export class GeneHit {
 
   get aliases(): string[] {
     return this.record.aliases.split('|').filter(Boolean);
+  }
+
+  get terms(): readonly string[] {
+    return this.record.terms ?? [];
   }
 
   get isInAnyNetwork(): boolean {

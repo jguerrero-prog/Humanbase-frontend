@@ -55,7 +55,7 @@ export { MenuDivider, MenuGroupLabel, MenuItem, MenuPanel, type MenuItemProps } 
 export { RadioGroup, type RadioGroupProps, type RadioOption } from './RadioGroup/RadioGroup';
 export { SegmentedControl, type Segment, type SegmentedControlProps } from './SegmentedControl/SegmentedControl';
 export { SearchExamples, type SearchExample, type SearchExamplesProps } from './SearchExamples/SearchExamples';
-export { SearchField, SuggestionsEmpty, SuggestionsLoading, type SearchFieldProps, type SearchFieldSize, type SearchSuggestion } from './SearchField/SearchField';
+export { SearchField, SuggestionsEmpty, SuggestionsLoading, type SearchFieldProps, type SearchDestination, type SearchFieldSize, type SearchSuggestion } from './SearchField/SearchField';
 export { Select, type SelectOption, type SelectProps, type SelectSize } from './Select/Select';
 export { AboutPanel, type AboutPanelProps, type ExampleFile } from './Jobs/AboutPanel';
 export { DocsLink, type DocsLinkProps } from './Jobs/DocsLink';
@@ -103,7 +103,7 @@ export { PageWindow, type PageSlot } from './Pagination/PageWindow';
 export { Breadcrumbs, SkipLink, type BreadcrumbsProps, type Crumb } from './Navigation/Breadcrumbs';
 export { Footer, mailingListHref, type FooterGroup, type FooterProps } from './Navigation/Footer';
 export { NavMenu, NavPanelContent, type NavMenuProps } from './Navigation/NavMenu';
-export { TopBar, type TopBarProps } from './Navigation/TopBar';
+export { TopBar, topBarSearchLabel, type TopBarProps } from './Navigation/TopBar';
 export type { NavGroup, NavItemState, NavLink, NavSection } from './Navigation/types';
 export { DataTooltip, type DataTooltipProps } from './Tooltip/DataTooltip';
 export { anchorSupported, placeNearPoint, placeUnder, placeUnderBox, type Placement } from './Tooltip/placement';

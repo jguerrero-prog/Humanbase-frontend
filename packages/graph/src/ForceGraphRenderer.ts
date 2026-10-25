@@ -47,6 +47,8 @@ export class ForceGraphRenderer implements GraphRenderer {
   private hoverLinkLayer: SVGGElement | undefined;
   private hovered: SVGGElement | undefined;
   private highlights: readonly GraphHighlight[] = [];
+  private layoutKey: string | undefined;
+  private positions = new Map<string, { x: number; y: number }>();
 
   mount(container: HTMLElement, options: MountOptions): void {
     this.options = options;
@@ -64,8 +66,10 @@ export class ForceGraphRenderer implements GraphRenderer {
   render(data: GraphData): void {
     const { svg, canvas } = this;
     if (!svg || !canvas) return;
-    const placed = data.groups ? this.clusterLayout(data, data.groups) : this.layout(data);
-    if (!data.groups) this.stretchToFit(placed.nodes, svg);
+    const key = ForceGraphRenderer.layoutKeyOf(data);
+    const fresh = key !== this.layoutKey;
+    const placed = fresh ? this.placeAnew(data, svg) : this.placeAsBefore(data);
+    this.layoutKey = key;
     canvas.replaceChildren();
     this.nodes.clear();
     this.links = [];
@@ -97,7 +101,39 @@ export class ForceGraphRenderer implements GraphRenderer {
     const [minX, maxX, minY, maxY] = xs.length ? [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)] : [0, 0, 0, 0];
     this.highlight(this.highlights);
     svg.setAttribute('viewBox', `${minX - padding} ${minY - padding} ${maxX - minX + padding * 2 + 60} ${maxY - minY + padding * 2}`);
-    this.fit();
+    if (fresh) this.fit();
+  }
+
+  setLabel(label: string): void {
+    this.svg?.setAttribute('aria-label', label);
+  }
+
+  /** What the layout depends on; gene names and group labels are left out, so renaming moves nothing. */
+  private static layoutKeyOf(data: GraphData): string {
+    const nodes = data.nodes.map((node) => (data.groups ? `${node.id}:${node.group ?? ''}` : `${node.id}:${node.query}`));
+    const links = data.groups ? [] : data.links.map((link) => `${link.source}-${link.target}:${link.weight}`);
+    return JSON.stringify([data.groups?.map((group) => group.id) ?? null, nodes, links]);
+  }
+
+  private placeAnew(data: GraphData, svg: SVGSVGElement): { nodes: PlacedNode[]; links: PlacedLink[] } {
+    const placed = data.groups ? this.clusterLayout(data, data.groups) : this.layout(data);
+    if (!data.groups) this.stretchToFit(placed.nodes, svg);
+    this.positions = new Map(placed.nodes.map((node) => [node.id, { x: node.x, y: node.y }]));
+    return placed;
+  }
+
+  private placeAsBefore(data: GraphData): { nodes: PlacedNode[]; links: PlacedLink[] } {
+    const nodes = data.nodes.map((node) => ({ ...node, ...(this.positions.get(node.id) ?? { x: 0, y: 0 }) }));
+    return { nodes, links: ForceGraphRenderer.linksBetween(nodes, data.links) };
+  }
+
+  private static linksBetween(nodes: PlacedNode[], links: readonly GraphLink[]): PlacedLink[] {
+    const byId = new Map(nodes.map((node) => [node.id, node]));
+    return links.flatMap((link) => {
+      const source = byId.get(link.source);
+      const target = byId.get(link.target);
+      return source && target ? [{ source, target, weight: link.weight }] : [];
+    });
   }
 
   private drawLine(from: { x: number; y: number }, to: { x: number; y: number }, weight: number): SVGLineElement {
@@ -146,12 +182,7 @@ export class ForceGraphRenderer implements GraphRenderer {
 
   private layout(data: GraphData): { nodes: PlacedNode[]; links: PlacedLink[] } {
     const nodes: PlacedNode[] = data.nodes.map((node, index) => ({ ...node, x: Math.cos(index) * 100, y: Math.sin(index) * 100 }));
-    const byId = new Map(nodes.map((node) => [node.id, node]));
-    const links = data.links.flatMap((link) => {
-      const source = byId.get(link.source);
-      const target = byId.get(link.target);
-      return source && target ? [{ source, target, weight: link.weight }] : [];
-    });
+    const links = ForceGraphRenderer.linksBetween(nodes, data.links);
     forceSimulation(nodes)
       .force('link', forceLink<PlacedNode, PlacedLink>(links).distance((link) => 90 + (1 - link.weight) * 160).strength((link) => link.weight * 0.6))
       .force('charge', forceManyBody().strength(-420))
@@ -168,12 +199,7 @@ export class ForceGraphRenderer implements GraphRenderer {
     const centers = new Map(groups.map((group, index) => [group.id, { x: (index % columns) * clusterGap, y: Math.floor(index / columns) * clusterGap }]));
     const centerOf = (node: GraphNode) => centers.get(node.group ?? '') ?? { x: 0, y: 0 };
     const nodes: PlacedNode[] = data.nodes.map((node, index) => ({ ...node, x: centerOf(node).x + Math.cos(index) * 20, y: centerOf(node).y + Math.sin(index) * 20 }));
-    const byId = new Map(nodes.map((node) => [node.id, node]));
-    const links = data.links.flatMap((link) => {
-      const source = byId.get(link.source);
-      const target = byId.get(link.target);
-      return source && target ? [{ source, target, weight: link.weight }] : [];
-    });
+    const links = ForceGraphRenderer.linksBetween(nodes, data.links);
     forceSimulation(nodes)
       .force('x', forceX<PlacedNode>((node) => centerOf(node).x).strength(0.35))
       .force('y', forceY<PlacedNode>((node) => centerOf(node).y).strength(0.35))
@@ -308,6 +334,8 @@ export class ForceGraphRenderer implements GraphRenderer {
     this.links = [];
     this.groupLabels.clear();
     this.placed.clear();
+    this.layoutKey = undefined;
+    this.positions.clear();
     this.hullLayer = undefined;
     this.selectedLinkLayer = undefined;
     this.hoverLinkLayer = undefined;
