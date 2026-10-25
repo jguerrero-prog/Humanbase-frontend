@@ -67,13 +67,20 @@ test('starting the Seqweaver example opens its job page, with the API off', asyn
   expect(apiRequests).toEqual([]);
 });
 
-test('the Seqweaver FASTA example opens its real job, whose results are files, with the API off', async ({ page }) => {
+test('the Seqweaver FASTA example, which has no recorded submit, says jobs need the API, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/seqweaver/`);
   await page.getByRole('radio', { name: 'Sequences (FASTA)' }).click();
   await page.getByRole('radio', { name: 'Use the example' }).click();
   await page.getByRole('button', { name: 'Run Seqweaver on 4 sequences' }).click();
-  await expect(page).toHaveURL(`${web}/deepsea/jobs/dbebecbe-f58a-4ce4-b4ba-04af819a9ad7/`);
+  await expect(page.getByText('Jobs can’t start while the API is off')).toBeVisible();
+  await expect(page).toHaveURL(`${web}/seqweaver/`);
+  expect(apiRequests).toEqual([]);
+});
+
+test('the recorded Seqweaver FASTA job’s results are files, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/deepsea/jobs/dbebecbe-f58a-4ce4-b4ba-04af819a9ad7/`);
   await expect(page.getByRole('link', { name: 'Download everything (tar.gz)' })).toBeVisible();
   const files = page.getByRole('table', { name: 'Result files' });
   await expect(files.getByRole('row')).toHaveText([/File/, /^Probability.*Every feature for every sequence.*TSV, gzipped.*Download/, /^Your query.*FASTA.*Download/]);
