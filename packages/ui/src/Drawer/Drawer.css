@@ -82,8 +82,7 @@
 
 .drawer-section-label {
   font: var(--type-label-sm);
-  color: var(--text-muted);
-  text-transform: uppercase;
+  color: var(--text-default);
 }
 
 .drawer-sheet {

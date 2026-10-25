@@ -11,14 +11,13 @@ import {
   Select,
   Spinner,
   TextInput,
-  ToastQueue,
-  ToastRegion,
   useDebounced,
   useLinkHref,
 } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { analysisColumns, analysisOptions, categoryCrumbs } from '../content/product';
 import { matchOf } from '../HomeSearch/geneMatches';
+import { notifications } from '../Notifications/Notifications';
 import type { ModuleDraft } from '../Modules/ModuleExplorer';
 import '../HomeSearch/HomeSearch.css';
 import './ModuleSearch.css';
@@ -54,7 +53,6 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
   const [exampleTitle, setExampleTitle] = useState(preset?.title);
   const [submitting, setSubmitting] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [toasts] = useState(() => new ToastQueue());
 
   const settled = useDebounced(typed);
   const terms = useMemo(() => parseGeneList(settled), [settled]);
@@ -90,7 +88,7 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
     const gone = new Set(list.matches.filter((match) => ids.includes(match.id)).flatMap((match) => match.typed.map((term) => term.toLowerCase())));
     setRemoved([...removed, ...ids]);
     setText(parseGeneList(text).filter((term) => !gone.has(term.toLowerCase())).join('\n'));
-    toasts.show({ tone: 'success', message: `${genesWord(ids.length)} removed from the list` });
+    notifications.show({ tone: 'success', message: `${genesWord(ids.length)} removed from the list` });
   };
 
   const chooseVersion = (next: string) => {
@@ -204,7 +202,6 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
           />
         </section>
       )}
-      <ToastRegion queue={toasts} />
     </div>
   );
 }

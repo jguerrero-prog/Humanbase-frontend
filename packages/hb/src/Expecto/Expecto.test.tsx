@@ -57,10 +57,11 @@ describe('VariantSearch', () => {
   it('finds a gene’s variants and links each to the gene', async () => {
     withSamples(<VariantSearch query="IRGM" onQueryChange={() => undefined} geneHref={(entrez) => expressionGeneLink(entrez)} />);
     expect(await screen.findByRole('heading', { name: '17 variants for IRGM' }, wait)).toBeInTheDocument();
-    expect(screen.getByText(/the 85,312 with the highest predicted impact/)).toBeInTheDocument();
-    expect(screen.getAllByRole('link', { name: 'IRGM' })[0]).toHaveAttribute('href', '/expression-effects/genes/345611/');
+    // The total loads apart from the variants, so it can arrive later. Text queries skip role queries' slow style lookups.
+    expect(await screen.findByText(/the 85,312 with the highest predicted impact/, {}, wait)).toBeInTheDocument();
+    expect(screen.getAllByText('IRGM', { selector: 'a' })[0]).toHaveAttribute('href', '/expression-effects/genes/345611/');
     await userEvent.click(screen.getByRole('button', { name: 'Show 7 more' }));
-    expect(screen.getAllByRole('link', { name: 'IRGM' })).toHaveLength(17);
+    expect(screen.getAllByText('IRGM', { selector: 'a' })).toHaveLength(17);
   });
 
   it('searches by position', async () => {

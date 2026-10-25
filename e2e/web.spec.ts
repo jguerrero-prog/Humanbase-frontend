@@ -29,13 +29,35 @@ test('a running job that finishes is announced on any page and listed on the Job
     localStorage.setItem('humanbase:jobs', JSON.stringify([{ id: '76aea8fe-8ec7-4698-a193-a186c7665edb', tool: 'Seqweaver', status: 'running', startedAt: '2026-10-20T21:02:00.000Z', link: '/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/', title: 'IL1B region variants', detail: 'Seqweaver, example.vcf' }]));
   });
   await page.goto(`${web}/jobs/`);
-  const toast = page.getByRole('region', { name: 'Job notifications' }).getByRole('listitem');
+  const toast = page.getByRole('region', { name: 'Notifications' }).getByRole('listitem');
   await expect(toast).toHaveText(/Seqweaver finished: IL1B region variants/);
   await expect(page.getByRole('link', { name: 'View results: IL1B region variants' })).toBeVisible();
   // The toast fades in; axe reads colors mid-fade otherwise.
   await settleAnimations(page);
   const { violations } = await new AxeBuilder({ page }).withTags(axeTags).analyze();
   expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
+test('toasts from different screens stack in the one app region instead of overlapping, with the API off', async ({ page, context }) => {
+  const apiRequests = await apiOff(page);
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('seeded')) return;
+    sessionStorage.setItem('seeded', 'yes');
+    localStorage.setItem('humanbase:jobs', JSON.stringify([{ id: '76aea8fe-8ec7-4698-a193-a186c7665edb', tool: 'Seqweaver', status: 'running', startedAt: '2026-10-20T21:02:00.000Z', link: '/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/', title: 'IL1B region variants', detail: 'Seqweaver, example.vcf' }]));
+  });
+  await page.goto(`${web}/jobs/`);
+  const region = page.getByRole('region', { name: 'Notifications' });
+  await expect(region.getByRole('listitem')).toHaveText([/Seqweaver finished: IL1B region variants/]);
+  await page.getByRole('button', { name: 'More actions for IL1B region variants' }).click();
+  await page.getByRole('menuitem', { name: 'Copy link' }).click();
+  const toasts = region.getByRole('listitem');
+  await expect(toasts).toHaveText([/Seqweaver finished: IL1B region variants/, /Link copied/]);
+  await expect(page.locator('.toast-region')).toHaveCount(1);
+  await settleAnimations(page);
+  const [first, second] = await Promise.all([toasts.nth(0).boundingBox(), toasts.nth(1).boundingBox()]);
+  expect(first && second && first.y + first.height <= second.y).toBe(true);
   expect(apiRequests).toEqual([]);
 });
 

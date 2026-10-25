@@ -1,12 +1,12 @@
-import { Humanbase, HumanbaseProvider, SampleClient, type NetworkQuery } from '@humanbase/data';
+import { ApiError, Humanbase, HumanbaseProvider, SampleClient, type NetworkQuery } from '@humanbase/data';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HomeSearch } from './HomeSearch';
 
-function renderSearch() {
+function renderSearch(api = new Humanbase(SampleClient.bundled())) {
   const onShowNetwork = vi.fn<(query: NetworkQuery) => void>();
   render(
-    <HumanbaseProvider api={new Humanbase(SampleClient.bundled())}>
+    <HumanbaseProvider api={api}>
       <HomeSearch onShowNetwork={onShowNetwork} onChooseAnalysis={vi.fn()} onExampleSet={vi.fn()} />
     </HumanbaseProvider>,
   );
@@ -39,5 +39,17 @@ describe('HomeSearch', () => {
     renderSearch();
     await userEvent.type(screen.getByRole('combobox', { name: 'Search genes' }), 'IL1B');
     expect(await screen.findByRole('option', { name: /CASP1/ }, { timeout: 2000 })).toHaveTextContent('Matched on its alias IL1BC');
+  });
+
+  it('says the suggestions failed, not that no gene matches, and Try again searches again', async () => {
+    const api = new Humanbase(SampleClient.bundled());
+    const failing = vi.spyOn(api.search, 'suggest').mockRejectedValue(new ApiError(502, 'genes/search/partial/'));
+    renderSearch(api);
+    await userEvent.type(screen.getByRole('combobox', { name: 'Search genes' }), 'IL1B');
+    expect(await screen.findByText('Suggestions couldn’t load', {}, { timeout: 5000 })).toBeInTheDocument();
+    expect(screen.queryByText(/No genes match/)).not.toBeInTheDocument();
+    failing.mockRestore();
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByRole('option', { name: /CASP1/ }, { timeout: 2000 })).toBeInTheDocument();
   });
 });

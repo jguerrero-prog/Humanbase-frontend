@@ -259,7 +259,7 @@ JobHistory.idFromLink(pasted); // the job ID inside a pasted link, or undefined`
     <ul>
       <li><code>JobHistory</code> in <code>@humanbase/data</code> keeps the list in this browser under one key. It never calls the API; checking status stays with the job service.</li>
       <li><code>JobRow</code> fills a <code>Table</code>; its <code>menu</code> holds an <code>ActionMenu</code> with Copy link and Remove from this list. <code>JobsMenu</code> is the top bar’s list, up to five jobs with a link to the Jobs page.</li>
-      <li><code>JobsList</code> in <code>@humanbase/hb</code> is the whole Jobs page. <code>JobWatcher</code>, mounted once in the app shell, checks running jobs from any page through the same queries as their job pages, keeps the list current and shows the finish toast, except on that job’s own page.</li>
+      <li><code>JobsList</code> in <code>@humanbase/hb</code> is the whole Jobs page. <code>JobWatcher</code>, mounted once in the app shell, checks running jobs from any page through the same queries as their job pages, keeps the list current and posts the finish toast to the app’s <code>notifications</code>, except on that job’s own page.</li>
     </ul>
     <Code code={usage} lang="ts" theme="css-variables" />
   </NoteCard>

@@ -3,6 +3,7 @@ export type { DataClient, Query, QueryValue } from './DataClient';
 export { SampleClient, type RecordedResponse, type SampleLoaders } from './sample/SampleClient';
 export { sampleKey, type SampleMethod } from './sample/sampleKey';
 export { ApiError } from './ApiError';
+export { readableSearch } from './readableSearch';
 export { loadAppConfig, type AppConfig } from './AppConfig';
 export { Humanbase } from './Humanbase';
 export { Gene, type DataVersion, type GeneRecord } from './genes/Gene';
