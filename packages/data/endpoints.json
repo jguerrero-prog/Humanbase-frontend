@@ -390,14 +390,17 @@
       "method": "GET",
       "path": "/api/deepsea/jobs/{job_id}/",
       "documented": true,
-      "$note": "The Seqweaver example job 76aea8fe-8ec7-4698-a193-a186c7665edb, written on the Figma job screens and checked in the Seqweaver API note on October 18, 2026. The in silico mutagenesis example job 0576e894-a2c5-48bb-9bdf-227962495d5f, written on the Figma job screens, read on October 20, 2026.",
+      "$note": "The Seqweaver example job 76aea8fe-8ec7-4698-a193-a186c7665edb, written on the Figma job screens and checked in the Seqweaver API note on October 18, 2026. The in silico mutagenesis example job 0576e894-a2c5-48bb-9bdf-227962495d5f, written on the Figma job screens, read on October 20, 2026. The FASTA example jobs (Sei 5154ea8d, Beluga 27d030ee, Seqweaver dbebecbe), each submitted on October 25, 2026 with its tool's own example.fasta (#348).",
       "samples": [
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/",
         "/api/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/",
         "/api/deepsea/jobs/00000000-0000-4000-8000-000000000000/",
         "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/",
         "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/",
-        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/"
+        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/",
+        "/api/deepsea/jobs/5154ea8d-3203-4c81-acc8-757faeb44e0c/",
+        "/api/deepsea/jobs/27d030ee-02d9-43ca-adec-e5d76265591a/",
+        "/api/deepsea/jobs/dbebecbe-f58a-4ce4-b4ba-04af819a9ad7/"
       ],
       "usedBy": [
         "DeepseaService.get"
@@ -422,7 +425,10 @@
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/score_types/",
         "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/score_types/",
         "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/score_types/",
-        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/score_types/"
+        "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/score_types/",
+        "/api/deepsea/jobs/5154ea8d-3203-4c81-acc8-757faeb44e0c/score_types/",
+        "/api/deepsea/jobs/27d030ee-02d9-43ca-adec-e5d76265591a/score_types/",
+        "/api/deepsea/jobs/dbebecbe-f58a-4ce4-b4ba-04af819a9ad7/score_types/"
       ],
       "usedBy": [
         "DeepseaService.scoreTypes"
@@ -451,7 +457,7 @@
       "method": "GET",
       "path": "/api/deepsea/jobs/{job_id}/sequence_scores/",
       "documented": true,
-      "$note": "humanbase.io reads a SEQUENCE-level score type here instead of variant_scores. No recorded job has one yet, so this is untested on real data and has no sample.",
+      "$note": "humanbase.io reads a SEQUENCE-level score type here instead of variant_scores. No real job has listed one: the FASTA example jobs of October 25, 2026 (#348) list only the FEATURE-level predictions, humanbase.io shows those jobs as files without reading scores, and this endpoint answered 400 Invalid request for input type for one of them. Still untested on real data, so it has no sample.",
       "usedBy": [
         "DeepseaService.scores"
       ]

@@ -20,6 +20,25 @@ describe('DeepseaService', () => {
     expect(job.genome).toBe('GRCh37/hg19');
     expect(job.resultFiles.map((file) => file.key)).toEqual(['variant_dis', 'variant_mean-evalue', 'feature_zscore', 'feature_evalue', 'feature_diffs', 'uploaded_query', 'gz_file']);
     expect(DeepseaService.pollDelay(job)).toBe(false);
+    expect(job.plotsScores).toBe(true);
+  });
+
+  it('reads each FASTA example job as files only, as humanbase.io shows them: no variant- or sequence-level score to plot', async () => {
+    for (const [id, tool] of [
+      ['5154ea8d-3203-4c81-acc8-757faeb44e0c', 'Sei'],
+      ['27d030ee-02d9-43ca-adec-e5d76265591a', 'Beluga'],
+      ['dbebecbe-f58a-4ce4-b4ba-04af819a9ad7', 'Seqweaver'],
+    ] as const) {
+      const job = await service.get(id);
+      expect(job.model.tool).toBe(tool);
+      expect(job.kind).toBe('fasta');
+      expect(job.plotsScores).toBe(false);
+      expect(jobScoreTypes(job.model, await service.scoreTypes(id))).toEqual([]);
+      const files = job.resultFiles;
+      expect(files.every((file) => file.url.startsWith('https://'))).toBe(true);
+      expect(files.find((file) => file.key === 'feature_predictions')).toMatchObject({ holds: 'Every feature for every sequence', format: 'TSV, gzipped' });
+      expect(files.map((file) => file.key)).toContain('gz_file');
+    }
   });
 
   it('merges the variant scores into one row per variant', async () => {

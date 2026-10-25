@@ -1,7 +1,8 @@
 import { ApiError, useDeepseaJob, type DeepseaJob } from '@humanbase/data';
-import { Alert, ContextLabel, EmptyState, ResultFiles, Skeleton, type JobStep, useLinkHref } from '@humanbase/ui';
+import { Alert, ContextLabel, EmptyState, Skeleton, type JobStep, useLinkHref } from '@humanbase/ui';
 import { useEffect } from 'react';
 import { elapsed, jobDateTime, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
+import { DeepseaFilesView, DeepseaResultFiles } from './DeepseaFilesView';
 import { deepseaFormLink, deepseaJobCrumbs, deepseaJobLink } from './DeepseaForm';
 import { DeepseaResultView } from './DeepseaResultView';
 import { InsilicoResultView } from './InsilicoResultView';
@@ -74,6 +75,8 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
         <title>{`Finished · ${title} · Humanbase`}</title>
         {data.model.insilico ? (
           <InsilicoResultView job={data} title={title} tools={tools} />
+        ) : !data.plotsScores ? (
+          <DeepseaFilesView job={data} title={title} tools={tools} />
         ) : (
           <DeepseaResultView job={data} title={title} tools={tools} variant={variant} onVariantChange={onVariantChange} />
         )}
@@ -117,12 +120,7 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
         }
         tools={tools}
       >
-        {data.status !== 'failed' && data.resultFiles.length > 0 && (
-          <section className="deepsea-files" aria-label="Result files">
-            <h2>Result files</h2>
-            <ResultFiles files={data.resultFiles.map((file) => ({ name: file.key === 'uploaded_query' ? 'Your query' : file.name, holds: file.holds, format: file.format }))} />
-          </section>
-        )}
+        {data.status !== 'failed' && <DeepseaResultFiles job={data} linked={false} />}
       </JobWaiting>
       {overlays}
     </>
