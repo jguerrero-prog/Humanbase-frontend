@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { Drawer } from '../Drawer/Drawer';
 import { Alert } from './Alert';
 import { Banner } from './Banner';
 import { Toast, ToastRegion } from './Toast';
@@ -88,4 +89,55 @@ describe('ToastRegion', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Couldn’t download results');
     expect(within(list).getAllByRole('listitem')).toHaveLength(3);
   });
+
+  it('moves inside an open modal sheet, so its toasts stay usable, and back out when the sheet closes', () => {
+    const queue = new ToastQueue();
+    const { rerender } = render(
+      <>
+        <Drawer title="Job actions" sheet open>
+          <p>Settings</p>
+        </Drawer>
+        <ToastRegion queue={queue} />
+      </>,
+    );
+    act(() => void queue.show({ tone: 'info', message: 'Link copied' }));
+    const sheet = screen.getByRole('dialog', { name: 'Job actions' });
+    expect(within(sheet).getByRole('region', { name: 'Notifications' })).toHaveTextContent('Link copied');
+    rerender(
+      <>
+        <Drawer title="Job actions" sheet>
+          <p>Settings</p>
+        </Drawer>
+        <ToastRegion queue={queue} />
+      </>,
+    );
+    expect(sheet).not.toContainElement(screen.getByRole('region', { name: 'Notifications' }));
+  });
+
+  it('keeps a toast’s time left and skips its entrance when the region moves into a sheet', () => {
+    vi.useFakeTimers();
+    const queue = new ToastQueue();
+    const page = (open: boolean) => (
+      <>
+        <Drawer title="Job actions" sheet open={open}>
+          <p>Settings</p>
+        </Drawer>
+        <ToastRegion queue={queue} />
+      </>
+    );
+    const { rerender } = render(page(false));
+    act(() => void queue.show({ tone: 'info', message: 'Link copied' }));
+    const frame = () => screen.getByRole('listitem').querySelector('.toast-frame') as HTMLElement;
+    expect(frame()).not.toHaveAttribute('data-still');
+    act(() => vi.advanceTimersByTime(4000));
+    rerender(page(true));
+    expect(screen.getByRole('dialog', { name: 'Job actions' })).toContainElement(frame());
+    expect(frame()).toHaveAttribute('data-still');
+    act(() => vi.advanceTimersByTime(1999));
+    expect(frame()).not.toHaveAttribute('data-leaving');
+    act(() => vi.advanceTimersByTime(1));
+    expect(frame()).toHaveAttribute('data-leaving');
+    vi.useRealTimers();
+  });
 });
+

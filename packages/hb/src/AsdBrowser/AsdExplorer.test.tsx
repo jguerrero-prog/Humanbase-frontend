@@ -1,6 +1,6 @@
 import { Humanbase, HumanbaseProvider, SampleClient } from '@humanbase/data';
 import type { GenomeBrowserEngine } from '@humanbase/genome';
-import { render, screen, within } from '@testing-library/react';
+import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { AsdExplorer, type AsdState } from './AsdExplorer';
@@ -33,6 +33,14 @@ function renderPage(start: AsdState = { view: 'browser', set: 'dna' }) {
 }
 
 describe('AsdExplorer', () => {
+  // The first render loads the samples and compiles the page, which would otherwise slow whichever test runs first.
+  beforeAll(async () => {
+    renderPage();
+    await screen.findByText('Molecular effects of chr1:2,337,101 A>C', {}, { timeout: 5000 });
+    await userEvent.click(screen.getByText('Tracks', { selector: 'button' }));
+    cleanup();
+  });
+
   beforeEach(() => {
     localStorage.clear();
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
@@ -85,22 +93,22 @@ describe('AsdExplorer', () => {
 
   it('shows and hides tracks from the Tracks drawer, remembers the choice, and opens Export', async () => {
     renderPage();
-    await screen.findByRole('heading', { name: 'Molecular effects of chr1:2,337,101 A>C' }, { timeout: 5000 });
-    await userEvent.click(screen.getByRole('button', { name: 'Tracks' }));
+    await screen.findByText('Molecular effects of chr1:2,337,101 A>C', {}, { timeout: 5000 });
+    await userEvent.click(screen.getByText('Tracks', { selector: 'button' }));
     const drawer = within(screen.getByRole('dialog', { name: 'Tracks' }));
     expect(drawer.getAllByRole('checkbox').map((box) => (box as HTMLInputElement).labels?.[0]?.textContent)).toEqual(['Sequence', 'DNA disease impact score', 'RNA disease impact score', 'Conservation', 'GM12878 ChromHMM', 'Genes']);
-    expect(drawer.getByRole('checkbox', { name: 'GM12878 ChromHMM' })).not.toBeChecked();
-    expect(drawer.getByRole('radio', { name: 'By URL' })).toBeInTheDocument();
-    expect(drawer.getByRole('checkbox', { name: 'Conservation' })).not.toBeChecked();
-    await userEvent.click(drawer.getByRole('checkbox', { name: 'Conservation' }));
-    expect(screen.getByRole('application', { name: /5 tracks$/, hidden: true })).toBeInTheDocument();
-    await userEvent.click(drawer.getByRole('checkbox', { name: 'Genes' }));
-    expect(drawer.getByRole('checkbox', { name: 'Conservation' })).toBeChecked();
+    expect(drawer.getByLabelText('GM12878 ChromHMM')).not.toBeChecked();
+    expect(drawer.getByLabelText('By URL')).toHaveAttribute('type', 'radio');
+    expect(drawer.getByLabelText('Conservation')).not.toBeChecked();
+    await userEvent.click(drawer.getByLabelText('Conservation'));
+    expect(screen.getByLabelText(/5 tracks$/)).toHaveAttribute('role', 'application');
+    await userEvent.click(drawer.getByLabelText('Genes'));
+    expect(drawer.getByLabelText('Conservation')).toBeChecked();
     expect(JSON.parse(localStorage.getItem('humanbase:genome-tracks:asd:hg19') ?? '')).toEqual(['GM12878 ChromHMM', 'genes']);
-    await userEvent.click(drawer.getByRole('button', { name: 'Reset to default tracks' }));
-    expect(drawer.getByRole('checkbox', { name: 'Conservation' })).not.toBeChecked();
-    expect(drawer.getByRole('checkbox', { name: 'Genes' })).toBeChecked();
-    await userEvent.click(drawer.getByRole('button', { name: 'Done' }));
+    await userEvent.click(drawer.getByText('Reset to default tracks', { selector: 'button' }));
+    expect(drawer.getByLabelText('Conservation')).not.toBeChecked();
+    expect(drawer.getByLabelText('Genes')).toBeChecked();
+    await userEvent.click(drawer.getByText('Done', { selector: 'button' }));
     await userEvent.click(screen.getByRole('button', { name: 'Export' }));
     expect(screen.getByRole('dialog', { name: 'Export the view' })).toBeInTheDocument();
   });

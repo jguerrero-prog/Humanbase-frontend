@@ -1,4 +1,5 @@
 import { useEffect, useEffectEvent, useRef, type KeyboardEvent, type SyntheticEvent } from 'react';
+import { modalStack } from './ModalStack';
 
 export interface LayerOptions {
   open: boolean;
@@ -14,8 +15,10 @@ export function useLayer({ open, inline, modal, onClose, initialFocus, closeOnBa
   const ref = useRef<HTMLDialogElement>(null);
 
   const show = useEffectEvent((layer: HTMLDialogElement) => {
-    if (modal) layer.showModal();
-    else layer.show();
+    if (modal) {
+      layer.showModal();
+      modalStack.open(layer);
+    } else layer.show();
     initialFocus(layer)?.focus();
   });
   // A click lands on the dialog element itself only outside its frame, which is the backdrop.
@@ -33,6 +36,7 @@ export function useLayer({ open, inline, modal, onClose, initialFocus, closeOnBa
     return () => {
       layer.removeEventListener('click', onClick);
       layer.close();
+      modalStack.close(layer);
       opener?.focus();
     };
   }, [open, inline]);
