@@ -1,10 +1,10 @@
-import { DeepseaService, SampleClient, variantScoreTypes } from '@humanbase/data';
+import { DeepseaJob, DeepseaService, SampleClient, type DeepseaJobRecord, type ScoreType } from '@humanbase/data';
 import { jobScoreTracks } from './jobScoreTracks';
 
 const service = new DeepseaService(SampleClient.bundled());
 const tracksOf = async (id: string) => {
   const job = await service.get(id);
-  return jobScoreTracks(job, variantScoreTypes(job.model, await service.scoreTypes(id)));
+  return jobScoreTracks(job, await service.scoreTypes(id));
 };
 const file = (id: string, score: string) => `https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/${id}/${id}_variant_${score}.bw`;
 
@@ -24,5 +24,15 @@ describe('jobScoreTracks', () => {
     const [expecto, ...others] = await tracksOf('e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1');
     expect(others).toEqual([]);
     expect(expecto).toMatchObject({ name: 'Max ExPecto expression effect', meta: 'This job, −0.5 to 0.5', range: [-0.5, 0.5] });
+  });
+
+  it('reads a sequence-level score from its sequence_ file, as humanbase.io does, and skips scores with no file', () => {
+    const url = 'https://example.org/job_sequence_dis.bw';
+    const record: DeepseaJobRecord = { job_id: 'job', created: '2026-10-16T20:16:12', ds_model: 'SeqWeaver', status: 'completed', input_type: 'vcf', genome_assembly: 'hg19', files: { sequence_dis: { url, name: 'Disease impact score' } } };
+    const types: ScoreType[] = [
+      { name: 'Disease impact score', level: 'SEQUENCE', short_name: 'dis' },
+      { name: 'Mean -log e-value', level: 'VARIANT', short_name: 'mean-evalue' },
+    ];
+    expect(jobScoreTracks(new DeepseaJob(record), types).map(({ name, bigWigUrl }) => ({ name, bigWigUrl }))).toEqual([{ name: 'Disease impact score', bigWigUrl: url }]);
   });
 });

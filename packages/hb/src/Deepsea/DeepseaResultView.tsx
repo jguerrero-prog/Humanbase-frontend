@@ -74,7 +74,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
   const { showsSamples } = useHumanbase();
   const { scoreTypes, variants, error, refetch } = useDeepseaVariants(job);
   const variantTypes = useMemo(() => variantScoreTypes(model, scoreTypes ?? []), [model, scoreTypes]);
-  const scoreTracks = useMemo(() => jobScoreTracks(job, variantTypes), [job, variantTypes]);
+  const scoreTracks = useMemo(() => jobScoreTracks(job, scoreTypes ?? []), [job, scoreTypes]);
   const featureTypes = (scoreTypes ?? []).filter((type) => type.level === 'FEATURE');
   const [scoreKey, setScoreKey] = useState<string>();
   const [plotBy, setPlotBy] = useState<PlotBy>('genome');
