@@ -29,10 +29,12 @@ const logFactorial = (n: number) => {
 };
 const logChoose = (n: number, k: number) => logFactorial(n) - logFactorial(k) - logFactorial(n - k);
 
-// Ranks the terms behind a network's genes, computed in the browser from GET /api/terms/annotated/.
+// Ranks the terms behind a network's genes, computed in the browser from GET /api/terms/annotated/ as humanbase.io does.
 export class TermEnrichment {
-  /** Term sizes tested for enrichment, which reproduces the live site's ranking. */
-  static readonly testedSizes = [20, 300] as const;
+  /** Raw p-values a term needs to be a candidate, and adjusted ones it needs to be listed. */
+  static readonly cutoff = 0.05;
+  /** Adjusted p-values never go below this. */
+  static readonly floor = 1e-12;
 
   constructor(private readonly terms: readonly AnnotatedTermRecord[]) {}
 
@@ -50,24 +52,31 @@ export class TermEnrichment {
     });
   }
 
+  /** Shown genes annotated to any term, counted per database. */
+  private drawsByDatabase(hits: readonly (TermHit & { record: AnnotatedTermRecord })[]): Map<string, number> {
+    const genes = new Map<string, Set<number>>();
+    for (const { record, genes: hitGenes } of hits) {
+      const set = genes.get(record.database.slug) ?? new Set<number>();
+      hitGenes.forEach((entrez) => set.add(entrez));
+      genes.set(record.database.slug, set);
+    }
+    return new Map([...genes].map(([slug, set]) => [slug, set.size]));
+  }
+
   /** Terms over-represented among the shown genes, most significant first (hypergeometric test, Benjamini-Hochberg adjusted). */
   enriched(shown: ReadonlySet<number>): TermHit[] {
-    const annotated = new Set(this.terms.flatMap((term) => term.annotations).filter((entrez) => shown.has(entrez)));
-    const [smallest, largest] = TermEnrichment.testedSizes;
-    const tested = this.hits(shown)
-      .filter(({ record }) => record.total_term_annotations >= smallest && record.total_term_annotations <= largest)
-      .map((hit) => ({ ...hit, raw: TermEnrichment.hypergeometricTail(hit.record.total_gene_annotations, hit.record.total_term_annotations, annotated.size, hit.genes.length) }))
+    const hits = this.hits(shown);
+    const draws = this.drawsByDatabase(hits);
+    const candidates = hits
+      .filter((hit) => hit.genes.length >= 2)
+      .map((hit) => ({ ...hit, raw: TermEnrichment.hypergeometricTail(hit.record.total_gene_annotations, hit.record.total_term_annotations, draws.get(hit.record.database.slug) ?? 0, hit.genes.length) }))
+      .filter((hit) => hit.raw < TermEnrichment.cutoff)
       .sort((a, b) => a.raw - b.raw);
-    let lowest = 1;
-    for (let rank = tested.length; rank >= 1; rank--) {
-      const hit = tested[rank - 1];
-      if (!hit) continue;
-      lowest = Math.min(lowest, (hit.raw * tested.length) / rank);
-      hit.raw = lowest;
-    }
-    return tested
-      .sort((a, b) => a.raw - b.raw || b.genes.length - a.genes.length || a.title.localeCompare(b.title))
-      .map(({ title, identifier, database, genes, raw }) => ({ title, identifier, database, genes, pValue: raw }));
+    const adjusted = candidates.map((hit, index) => Math.max(TermEnrichment.floor, (hit.raw * hits.length) / (index + 1)));
+    for (let index = adjusted.length - 2; index >= 0; index--) adjusted[index] = Math.min(adjusted[index] ?? 1, adjusted[index + 1] ?? 1);
+    return candidates
+      .map(({ title, identifier, database, genes }, index) => ({ title, identifier, database, genes, pValue: adjusted[index] ?? 1 }))
+      .filter((hit) => hit.pValue <= TermEnrichment.cutoff);
   }
 
   /** Terms by how many shown genes they include, most first. */

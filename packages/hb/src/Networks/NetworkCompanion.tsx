@@ -1,4 +1,4 @@
-import { useAnnotatedTerms, type Network, type NetworkGene } from '@humanbase/data';
+import { TermService, useAnnotatedTerms, type Network, type NetworkGene } from '@humanbase/data';
 import { Tabs } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 import { RelatedGenesPanel } from './RelatedGenesPanel';
@@ -26,8 +26,8 @@ export function NetworkCompanion({ network, shown, queryNames, networkTitle, fil
   const [panel, setPanel] = useState<Panel>('genes');
   // Terms load once for every gene in the response, then rank against whichever genes the graph shows.
   const allGenes = useMemo(() => network?.genes.map((gene) => gene.entrez), [network]);
-  const processes = useAnnotatedTerms(allGenes, 'gene-ontology-bp', extendedUniverse);
-  const tissues = useAnnotatedTerms(allGenes, 'brenda-ontology', extendedUniverse);
+  const processes = useAnnotatedTerms(allGenes, TermService.processDatabases, extendedUniverse);
+  const tissues = useAnnotatedTerms(allGenes, TermService.tissueDatabases, extendedUniverse);
   const shownIds = useMemo(() => new Set(shown?.map((gene) => gene.entrez)), [shown]);
   const processHits = useMemo(() => (shown ? processes.data?.enriched(shownIds) : undefined), [processes.data, shown, shownIds]);
   const tissueHits = useMemo(() => (shown ? tissues.data?.byGeneCount(shownIds) : undefined), [tissues.data, shown, shownIds]);
@@ -59,7 +59,7 @@ export function NetworkCompanion({ network, shown, queryNames, networkTitle, fil
           hits={panel === 'processes' ? processHits : tissueHits}
           failed={(panel === 'processes' ? processes : tissues).isError}
           onRetry={() => void (panel === 'processes' ? processes : tissues).refetch()}
-          caption={panel === 'processes' ? `Biological processes over-represented among the genes in the ${networkTitle} network graph` : `Tissues and cell types of the genes in the ${networkTitle} network graph`}
+          caption={panel === 'processes' ? `Biological processes and diseases over-represented among the genes in the ${networkTitle} network graph` : `Tissues and cell types of the genes in the ${networkTitle} network graph`}
           fileName={fileName}
           starred={starred}
           onToggleStar={onToggleStar}

@@ -5,12 +5,12 @@ import type { TermDatabase } from '../functions/TermService';
 import { useHumanbase } from './HumanbaseProvider';
 
 /** Every term the network's genes are annotated to; the panels rank them against the genes shown. */
-export function useAnnotatedTerms(entrez: readonly number[] | undefined, database: TermDatabase, extendedUniverse = false) {
+export function useAnnotatedTerms(entrez: readonly number[] | undefined, databases: readonly TermDatabase[], extendedUniverse = false) {
   const api = useHumanbase();
   const ids = [...(entrez ?? [])].sort((a, b) => a - b);
   return useQuery({
-    queryKey: ['terms-annotated', database, ids, extendedUniverse],
-    queryFn: () => api.terms.annotated(ids, database, extendedUniverse),
+    queryKey: ['terms-annotated', databases, ids, extendedUniverse],
+    queryFn: () => api.terms.annotated(ids, databases, extendedUniverse),
     enabled: ids.length > 0,
     staleTime: Infinity,
   });

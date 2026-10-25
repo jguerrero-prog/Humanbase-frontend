@@ -150,7 +150,7 @@ test('the Processes panel and both drawers have no WCAG 2.2 AA violations with t
   };
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1`);
   await page.getByRole('tab', { name: /^Processes/ }).click();
-  await expect(page.getByRole('table', { name: /Biological processes over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
+  await expect(page.getByRole('table', { name: /Biological processes and diseases over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
   await scan();
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&gene=3383`);
   await expect(page.getByRole('dialog', { name: 'ICAM1' }).getByRole('region', { name: 'Annotations' }).getByRole('rowheader').first()).toBeVisible();

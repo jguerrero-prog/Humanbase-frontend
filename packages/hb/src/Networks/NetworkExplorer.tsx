@@ -76,12 +76,13 @@ const tabs: { value: NetworkTab; label: string }[] = [
 export function NetworkExplorer({ query, view, compareView = view, onQueryChange, onViewChange, fromSearch = false, detail = (context) => <NetworkDetail {...context} />, extendedUniverseIgnored = false, renderer }: NetworkExplorerProps) {
   // The tissue network names the genes and finds those in no network; the process tab draws its own network.
   const base = useNetwork(query);
-  const onProcessTab = view.tab === 'process';
+  const tab: NetworkTab = query.hasAnalysisTabs ? view.tab : 'network';
+  const onProcessTab = tab === 'process';
   const processQuery = query.processNetwork;
   const activeQuery = onProcessTab && processQuery ? processQuery : query;
   const active = useNetwork(activeQuery);
   const network = active.data;
-  const comparing = view.tab === 'network' && query.compared !== undefined;
+  const comparing = tab === 'network' && query.compared !== undefined;
   const focusQuery = comparing && view.focus === 'compare' && query.compared ? query.compared : activeQuery;
   const focused = useNetwork(focusQuery);
   const { data: integrations = [] } = useIntegrations();
@@ -115,7 +116,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
   const queryGenes = shownIds.map((entrez) => ({ entrez, symbol: symbolOf(entrez) }));
 
   // Each query gene's annotations load with the page, as on the live site, so switching tabs makes no new request.
-  const functionIds = base.data ? shownIds : [];
+  const functionIds = base.data && query.hasAnalysisTabs ? shownIds : [];
   const expression = useGenesFunctions(functionIds, 'brenda-ontology');
   const processes = useGenesFunctions(functionIds, 'gene-ontology-bp');
   const diseases = useGenesFunctions(functionIds, 'disease-ontology');
@@ -125,7 +126,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
   const graphSelection: GraphSelection =
     view.selection?.kind === 'gene' ? { kind: 'node', id: String(view.selection.entrez) } : view.selection ? { kind: 'link', source: String(view.selection.source), target: String(view.selection.target) } : null;
   const addGene = (gene: NetworkGene) => onQueryChange(query.with({ entrez: [...query.entrez, gene.entrez] }));
-  const showsNetwork = view.tab === 'network' || (onProcessTab && processQuery !== undefined);
+  const showsNetwork = tab === 'network' || (onProcessTab && processQuery !== undefined);
 
   const dataTypesFilter = dataTypes.length > 0 && <DataTypesFilter types={dataTypes} value={query.dataTypes} onChange={(slugs) => onQueryChange(query.with({ dataTypes: slugs }))} />;
   const settings: Partial<Record<NetworkTab, ReactNode>> = {
@@ -184,16 +185,14 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
               ]
             : []
         }
-        settings={comparing ? undefined : settings[view.tab]}
+        settings={comparing ? undefined : settings[tab]}
         actions={
           <>
             {editGenes}
-            {view.tab === 'expression' && downloadPredictions}
+            {tab === 'expression' && downloadPredictions}
           </>
         }
-        tabs={tabs}
-        tabsLabel={`Views of ${listJoin(found)}`}
-        tab={view.tab}
+        {...(query.hasAnalysisTabs ? { tabs, tabsLabel: `Views of ${listJoin(found)}`, tab } : {})}
         onTabChange={(tab) => onViewChange(view.with({ tab: tab as NetworkTab, selection: undefined }))}
       />
       {extendedUniverse && <Alert tone="info">Showing legacy extended universe (cross-organism) annotation counts.</Alert>}
@@ -222,13 +221,10 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
           onQueryChange(query.with({ compare }));
         }}
       />
-      {onProcessTab && query.version === 'v3' && (
-        <Alert tone="info">Process networks are built from GIANT data, so this tab uses GIANT even though the page is set to MAGE.</Alert>
-      )}
     </>
   );
 
-  if (view.tab === 'expression') {
+  if (tab === 'expression') {
     return (
       <ResultLayout
         header={header}
@@ -238,16 +234,16 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
     );
   }
 
-  if (view.tab === 'processes' || view.tab === 'diseases') {
-    const results = view.tab === 'processes' ? processes : diseases;
+  if (tab === 'processes' || tab === 'diseases') {
+    const results = tab === 'processes' ? processes : diseases;
     return (
       <ResultLayout
         header={header}
-        mainLabel={view.tab === 'processes' ? 'Biological processes' : 'Diseases'}
+        mainLabel={tab === 'processes' ? 'Biological processes' : 'Diseases'}
         main={
           <GeneAssociations
-            key={view.tab}
-            kind={view.tab}
+            key={tab}
+            kind={tab}
             genes={queryGenes}
             perGene={results.data}
             failed={results.isError}
