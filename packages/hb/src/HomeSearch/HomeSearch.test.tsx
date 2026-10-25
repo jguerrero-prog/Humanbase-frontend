@@ -3,11 +3,11 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HomeSearch } from './HomeSearch';
 
-function renderSearch(query?: string) {
+function renderSearch() {
   const onShowNetwork = vi.fn<(query: NetworkQuery) => void>();
   render(
     <HumanbaseProvider api={new Humanbase(SampleClient.bundled())}>
-      <HomeSearch onShowNetwork={onShowNetwork} onChooseAnalysis={vi.fn()} onExampleSet={vi.fn()} query={query} />
+      <HomeSearch onShowNetwork={onShowNetwork} onChooseAnalysis={vi.fn()} onExampleSet={vi.fn()} />
     </HumanbaseProvider>,
   );
   return { onShowNetwork };
@@ -33,13 +33,6 @@ describe('HomeSearch', () => {
     expect(screen.queryByText('2 genes will be analyzed in MAGE')).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Show network for 2 genes' }));
     expect(onShowNetwork.mock.calls[0]?.[0].href).toBe('/networks/?entrez=3553&entrez=7124&version=v3');
-  });
-
-  it('matches a search handed over from the top bar as if typed and entered', async () => {
-    renderSearch('IL1B TNF');
-    expect(await screen.findByRole('button', { name: 'Show network for 2 genes' })).toBeEnabled();
-    expect(screen.getByRole('combobox', { name: 'Analysis' })).toHaveTextContent('Networks');
-    expect(screen.getByRole('combobox', { name: 'Search genes' })).toHaveValue('');
   });
 
   it('suggests genes while typing and says which alias matched', async () => {

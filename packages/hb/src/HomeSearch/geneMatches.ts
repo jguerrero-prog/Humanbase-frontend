@@ -28,5 +28,5 @@ export function suggestionOf(gene: GeneHit, text: string): SearchSuggestion {
   const alias = aliasStartingWith(gene, text);
   const others = gene.aliases.filter((name) => name !== alias).slice(0, shownAliases);
   const details = [`Entrez ${gene.entrez}.`, alias && `Matched on its alias ${alias}.`, others.length > 0 && `Also known as ${others.join(', ')}`].filter(Boolean).join(' ');
-  return { id: String(gene.entrez), label: gene.symbol, description: gene.name, details };
+  return { id: String(gene.entrez), label: gene.symbol, description: gene.name, badges: gene.terms, details };
 }

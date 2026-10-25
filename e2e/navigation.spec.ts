@@ -74,25 +74,44 @@ test('Mailing list moves focus to the footer’s email field, on desktop and pho
   await expect(page.getByRole('button', { name: 'Menu' })).toHaveAttribute('aria-expanded', 'false');
 });
 
-test('the top bar search opens the homepage search with the genes matched, and old /search links do too', async ({ page }) => {
+test('the top bar search lists genes with where each opens, and opens only the destination chosen, with no WCAG 2.2 AA violations', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${web}/cite/`);
-  await page.getByRole('search').getByRole('searchbox', { name: 'Search' }).fill('IL1B TNF');
-  await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(`${web}/?q=IL1B+TNF`);
-  await expect(page.getByRole('button', { name: 'Show network for 2 genes' })).toBeEnabled();
-  await expect(page.getByRole('heading', { name: 'Page not found' })).toHaveCount(0);
-
-  await page.goto(`${web}/search?q=IL1B+TNF`);
-  await expect(page).toHaveURL(`${web}/?q=IL1B+TNF`);
-  await expect(page.getByRole('button', { name: 'Show network for 2 genes' })).toBeEnabled();
+  const box = page.getByRole('combobox', { name: 'Search genes' });
+  await expect(box).toHaveAttribute('placeholder', 'Search genes');
+  await box.fill('autism');
+  const genes = page.getByRole('grid', { name: 'Genes' });
+  await expect(genes.getByRole('row')).toHaveCount(5);
+  await expect(page.getByText('5 of 21')).toBeVisible();
+  await box.press('Enter');
+  await expect(page).toHaveURL(`${web}/cite/`);
+  await box.press('ArrowDown');
+  await box.press('ArrowRight');
+  const active = page.locator(`[id="${await box.getAttribute('aria-activedescendant')}"]`);
+  await expect(active).toHaveAccessibleName('SHANK2 in Expression effects');
+  expect(await violationsOf(page)).toEqual([]);
+  await box.press('Enter');
+  await expect(page).toHaveURL(`${web}/expression-effects/genes/22941/`);
 });
 
-test('the top bar search works from the phone search button', async ({ page }) => {
+test('old /search links land on the homepage, not the not-found page', async ({ page }) => {
+  await page.goto(`${web}/search?q=IL1B`);
+  await expect(page).toHaveURL(`${web}/`);
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toHaveCount(0);
+});
+
+test('the top bar search fits a phone and opens a destination with a tap, with no WCAG 2.2 AA violations', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${web}/cite/`);
   await page.getByRole('button', { name: 'Search', exact: true }).click();
-  await page.getByRole('searchbox', { name: 'Search' }).fill('IL1B TNF');
-  await page.keyboard.press('Enter');
-  await expect(page.getByRole('button', { name: 'Show network for 2 genes' })).toBeEnabled();
+  const box = page.getByRole('combobox', { name: 'Search genes' });
+  await expect(box).toBeFocused();
+  await box.fill('SHANK3');
+  const genes = page.getByRole('grid', { name: 'Genes' });
+  await expect(genes.getByRole('row')).toHaveCount(1);
+  const panel = await genes.boundingBox();
+  expect(panel && panel.x >= 0 && panel.x + panel.width <= 390).toBe(true);
+  expect(await violationsOf(page)).toEqual([]);
+  await genes.getByRole('link', { name: 'SHANK3 in Networks' }).click();
+  await expect(page).toHaveURL(`${web}/networks/?entrez=85358&version=v3`);
 });

@@ -1,4 +1,4 @@
-import { dataVersionNames, GeneSearchService, IntegrationService, NetworkQuery, useGeneListMatches, useGeneSuggestions, useHumanbase, useIntegrations, type DataVersion, type GeneHit, type TermMatches } from '@humanbase/data';
+import { dataVersionNames, GeneSearchService, IntegrationService, NetworkQuery, useGeneSuggestions, useHumanbase, useIntegrations, type DataVersion, type GeneHit, type TermMatches } from '@humanbase/data';
 import {
   Alert,
   Button,
@@ -25,14 +25,12 @@ export interface HomeSearchProps {
   onExampleSet: () => void;
   /** Shown under the example searches, above the selected genes. */
   afterExamples?: ReactNode;
-  /** Text searched from the top bar, matched as if typed here and Enter pressed. */
-  query?: string | undefined;
 }
 
 const exampleGenes = ['IL1B', 'BRCA1', 'PTEN'];
 const versionOptions = (Object.keys(dataVersionNames) as DataVersion[]).map((version) => ({ value: version, label: dataVersionNames[version] }));
 
-export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afterExamples, query }: HomeSearchProps) {
+export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afterExamples }: HomeSearchProps) {
   const linkHref = useLinkHref();
   const api = useHumanbase();
   const [analysis, setAnalysis] = useState<string>();
@@ -79,18 +77,6 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
     add([{ typed: text.trim(), genes: [gene] }]);
     setText('');
   };
-
-  const [queryTerms] = useState(() => GeneSearchService.terms(query ?? ''));
-  const handedOver = useGeneListMatches(queryTerms);
-  const [handedOverDone, setHandedOverDone] = useState(false);
-  if (!handedOverDone && (handedOver.data || handedOver.isError)) {
-    setHandedOverDone(true);
-    if (handedOver.data) add(handedOver.data);
-    else {
-      setFailed(true);
-      setText(query ?? '');
-    }
-  }
 
   const runTyped = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== 'Enter' || event.defaultPrevented || !text.trim()) return;
@@ -146,7 +132,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
           label="Search genes"
           placeholder={list.matches.length > 0 ? 'Add more genes, for example TNF' : 'Search a gene, for example IL1B'}
           value={text}
-          loading={matching || handedOver.isFetching}
+          loading={matching}
           onChange={(event) => setText(event.target.value)}
           onClear={() => setText('')}
           onKeyDown={runTyped}

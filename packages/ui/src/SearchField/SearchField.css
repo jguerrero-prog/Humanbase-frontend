@@ -146,11 +146,23 @@
 
 .search-suggestions-keys {
   display: flex;
-  gap: var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
   padding: var(--space-2) var(--space-3) 6px;
   font: var(--type-caption);
   color: var(--text-muted);
   border-block-start: var(--border-width-1) solid var(--border-subtle);
+}
+
+.search-suggestions-keys span {
+  white-space: nowrap;
+}
+
+/* Touch screens have no arrow keys to hint at. */
+@media (pointer: coarse) {
+  .search-suggestions-keys {
+    display: none;
+  }
 }
 
 .search-suggestions-keys kbd {
@@ -229,4 +241,37 @@
 .search-suggestions-note {
   padding: var(--space-2) var(--space-3) 6px;
   border-block-start: var(--border-width-1) solid var(--border-subtle);
+}
+
+.search-suggestions-heading:has(.search-suggestions-count) {
+  display: flex;
+  justify-content: space-between;
+}
+
+.search-suggestions-count {
+  font: var(--type-caption);
+  color: var(--text-muted);
+}
+
+.search-suggestion-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.search-suggestion-destinations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.search-suggestion-open-in {
+  margin-inline-end: var(--space-1);
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.search-suggestion-destinations .button {
+  padding: var(--space-1) var(--space-3);
 }

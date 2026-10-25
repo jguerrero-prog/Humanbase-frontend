@@ -52,7 +52,7 @@ export const routes: RouteObject[] = [
           page('sequence-tools', async () => (await import('./pages/SequenceToolsPage')).SequenceToolsPage),
           page('variant-effects', async () => (await import('./pages/deepsea/VariantEffectsPage')).VariantEffectsPage),
           page('variant-effects/hgmd', async () => (await import('./pages/deepsea/SeiHgmdPage')).SeiHgmdPage),
-          moved('search', '/', {}),
+          { path: 'search', element: <Navigate to="/" replace /> },
           moved('sei-hgmd', '/variant-effects/hgmd/', {}),
           moved('sei', '/variant-effects/', { model: 'sei' }),
           moved('beluga', '/variant-effects/', { model: 'beluga' }),

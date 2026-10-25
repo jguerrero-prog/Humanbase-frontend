@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Accordion, AccordionItem } from '../Accordion/Accordion';
 import { Icon } from '../Icon/Icon';
 import { activeJobCount, JobsMenu, type JobsMenuSummary } from '../Jobs/JobsMenu';
 import { useDismiss } from '../List/useDismiss';
 import { Logo } from '../Logo/Logo';
+import { SearchField } from '../SearchField/SearchField';
 import { NavLinkContent, sectionHasImages } from './NavLinkContent';
 import { NavMenu } from './NavMenu';
 import type { NavSection } from './types';
@@ -15,9 +16,8 @@ export interface TopBarProps {
   current?: string;
   jobs?: JobsMenuSummary;
   homeHref?: string;
-  /** Where the search goes without script; the homepage, which runs the same search. */
-  searchAction?: string;
-  onSearch?: (query: string) => void;
+  /** The search, such as gene search with its destinations; a plain field when left out. */
+  searchField?: ReactNode;
   /** Leave the search out where the page has its own, such as the homepage hero. */
   search?: boolean;
   openSection?: string;
@@ -26,7 +26,8 @@ export interface TopBarProps {
   className?: string;
 }
 
-const searchPlaceholder = 'Search genes, terms or diseases';
+/** The top bar search's label and placeholder. */
+export const topBarSearchLabel = 'Search genes';
 
 function useScrolled(forced: boolean | undefined) {
   const [scrolled, setScrolled] = useState(false);
@@ -40,23 +41,21 @@ function useScrolled(forced: boolean | undefined) {
   return forced ?? scrolled;
 }
 
-export function TopBar({ sections, current, jobs, homeHref = '/', searchAction = '/', onSearch, search = true, openSection, menuOpen, scrolled, className }: TopBarProps) {
+export function TopBar({ sections, current, jobs, homeHref = '/', searchField, search = true, openSection, menuOpen, scrolled, className }: TopBarProps) {
   const linkHref = useLinkHref();
   const nav = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(openSection);
   const [phoneMenu, setPhoneMenu] = useState(menuOpen ?? false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const searchArea = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (searchOpen) searchArea.current?.querySelector('input')?.focus();
+  }, [searchOpen]);
   const isScrolled = useScrolled(scrolled);
   const closeMenus = useCallback(() => setOpen(undefined), []);
   useDismiss(nav, open !== undefined && openSection === undefined, closeMenus);
 
   const running = jobs ? activeJobCount(jobs.jobs) : 0;
-  const submitSearch = (event: FormEvent<HTMLFormElement>) => {
-    if (!onSearch) return;
-    event.preventDefault();
-    const query = String(new FormData(event.currentTarget).get('q') ?? '').trim();
-    if (query) onSearch(query);
-  };
 
   return (
     <header className={['top-bar', className].filter(Boolean).join(' ')} data-scrolled={isScrolled || undefined}>
@@ -77,10 +76,9 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
         </nav>
         {search && (
           <>
-            <form className="top-bar-search" role="search" action={linkHref(searchAction)} onSubmit={submitSearch}>
-              <Icon name="search" size={16} />
-              <input type="search" name="q" aria-label="Search" placeholder={searchPlaceholder} />
-            </form>
+            <div ref={searchArea} className="top-bar-search" role="search">
+              {searchField ?? <SearchField size="medium" label={topBarSearchLabel} placeholder={topBarSearchLabel} />}
+            </div>
             <button type="button" className="top-bar-icon-button top-bar-search-button" aria-label="Search" aria-expanded={searchOpen} onClick={() => setSearchOpen(!searchOpen)}>
               <Icon name={searchOpen ? 'x' : 'search'} size={20} />
             </button>

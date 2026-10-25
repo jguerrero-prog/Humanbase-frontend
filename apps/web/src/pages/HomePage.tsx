@@ -41,8 +41,6 @@ export function HomePage() {
             <ModuleSearch key={search.get('example') ?? draft?.title ?? ''} example={search.get('example') ?? undefined} draft={draft} onChooseAnalysis={chooseAnalysis} onStarted={(link) => void navigate(link)} afterExamples={cite} />
           ) : (
             <HomeSearch
-              key={search.get('q') ?? ''}
-              query={search.get('q') ?? undefined}
               onShowNetwork={(query) => void navigate(query.href, { state: { fromSearch: true } })}
               onChooseAnalysis={chooseAnalysis}
               onExampleSet={() => void navigate('/?analysis=modules&example=autism')}

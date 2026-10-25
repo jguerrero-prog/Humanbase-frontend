@@ -29,16 +29,6 @@ describe('TopBar', () => {
     expect(within(main).getByRole('link', { name: 'Docs' })).toHaveAttribute('href', '/docs/');
   });
 
-  it('hands the trimmed search to onSearch, and ignores an empty one', async () => {
-    const onSearch = vi.fn<(query: string) => void>();
-    render(<TopBar sections={sections} jobs={jobs} onSearch={onSearch} />);
-    const box = within(screen.getByRole('search')).getByRole('searchbox', { name: 'Search' });
-    await userEvent.type(box, '{Enter}');
-    await userEvent.type(box, '  IL1B TNF {Enter}');
-    expect(onSearch.mock.calls).toEqual([['IL1B TNF']]);
-    expect(screen.getByRole('search')).toHaveAttribute('action', '/');
-  });
-
   it('leaves the search out when the page has its own', () => {
     render(<TopBar sections={sections} jobs={jobs} search={false} />);
     expect(screen.queryByRole('search')).not.toBeInTheDocument();

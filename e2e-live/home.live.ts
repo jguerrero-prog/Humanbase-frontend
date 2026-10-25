@@ -10,6 +10,16 @@ test('the homepage suggests genes as you type', async ({ page }) => {
   await checkScreen(page, problems);
 });
 
+test('the top bar suggests genes with the pages each opens in', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/cite/`);
+  await page.getByRole('combobox', { name: 'Search genes' }).pressSequentially('SHANK3');
+  const row = page.getByRole('grid', { name: 'Genes' }).getByRole('row', { name: /^SHANK3/ });
+  await expect(row.getByRole('link', { name: 'SHANK3 in Networks' })).toHaveAttribute('href', '/networks/?entrez=85358&version=v3');
+  await expect(row.getByRole('link', { name: 'SHANK3 in Expression effects' })).toHaveAttribute('href', '/expression-effects/genes/85358/');
+  await checkScreen(page, problems);
+});
+
 test('an example gene goes straight into the list', async ({ page }) => {
   const problems = watch(page);
   await page.goto(web);
