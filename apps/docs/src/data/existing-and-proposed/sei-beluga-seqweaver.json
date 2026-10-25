@@ -422,9 +422,9 @@
     {
       "area": "Effect color scale",
       "existing": "Continuous blue to red, -6 to 6, for Sei",
-      "proposed": "Binned blue to brown at 0.5, 1 and 2 for Sei; z-score bins 2, 3, 5 for Beluga and Seqweaver",
+      "proposed": "Binned blue to brown at 0.5, 1 and 2 for Sei; z-score bins 2, 3, 5 for Beluga and Seqweaver. Their e-value and Probability diffs are stepped over humanbase.io's range for each score (0 to 0.05, smaller stronger; −0.3 to 0.3), with no Strongest effects, as live only ranks them",
       "status": "Changed",
-      "evidence": "Capture pair 4 legends; DeepseaModel.ts bins; DeepseaResultView.tsx:45-48"
+      "evidence": "Capture pair 4 legends; DeepseaModel.ts bins; effectScaleOf in DeepseaResultView.tsx; live job page code checked Oct 25, 2026 (#533)"
     },
     {
       "area": "Feature score types",
