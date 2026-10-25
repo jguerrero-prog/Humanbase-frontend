@@ -1,5 +1,6 @@
 import type { InputKind } from '../jobs/VariantFileCheck';
 import type { JobState } from '../jobs/JobHistory';
+import type { ScoreType } from './DeepseaResult';
 import { deepseaModels, genomeLabels, modelOf, type DeepseaModel, type Genome } from './DeepseaModel';
 
 export interface DeepseaFile {
@@ -115,9 +116,9 @@ export class DeepseaJob {
     return [...nested, ...flat];
   }
 
-  /** The bigWig file of one variant-level score, such as dis, which genome browsers draw as a track. */
-  scoreTrackFile(scoreType: string): DeepseaFile | undefined {
-    const file = this.record.files?.[`variant_${scoreType}`];
+  /** The bigWig file of one variant- or sequence-level score, such as variant_dis, which genome browsers draw as a track. */
+  scoreTrackFile(type: Pick<ScoreType, 'level' | 'short_name'>): DeepseaFile | undefined {
+    const file = this.record.files?.[`${type.level.toLowerCase()}_${type.short_name}`];
     return file && isFile(file) ? file : undefined;
   }
 

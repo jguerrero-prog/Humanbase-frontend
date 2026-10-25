@@ -84,7 +84,7 @@ const usage = `import { RangeSlider, Slider } from '@humanbase/ui';
     <KeyRules
       rules={[
         { title: 'Drag or type', text: 'Every slider has a number field. Dragging and typing set the same value; each updates the other.' },
-        { title: 'Show the effect', text: 'Say what changed next to the result: “Showing 15 of 50 genes”, “108 edges at 0.84 or more”.' },
+        { title: 'Show the effect', text: 'Say what changed next to the result: “Showing 15 of 50 genes”, “108 connections above 0.84”.' },
         { title: 'Works without a mouse', text: 'A labeled slider role, arrow keys in sensible steps, and a visible focus ring on the thumb.' },
       ]}
     />
@@ -144,7 +144,7 @@ const usage = `import { RangeSlider, Slider } from '@humanbase/ui';
         <Slider {...confidence} />
         <Slider label="Genes shown" min={5} max={50} step={5} defaultValue={15} />
         <div class="result" role="status">
-          <strong>Showing 15 of 50 genes, 108 edges at 0.84 or more</strong>
+          <strong>Showing 15 of 50 genes: 1 query gene and 14 related genes, 108 connections above 0.84.</strong>
           <span>Updated when you release the thumb.</span>
         </div>
       </section>

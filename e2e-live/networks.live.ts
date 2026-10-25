@@ -9,7 +9,7 @@ for (const [version, name] of [['v1', 'GIANT'], ['v3', 'MAGE']] as const) {
     const problems = watch(page);
     await page.goto(`${il1bTnf}&version=${version}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(/IL1B/);
-    await expect(page.getByText(/Showing \d+ of \d+ genes, [1-9]\d* connections at \d\.\d\d or more/)).toBeVisible();
+    await expect(page.getByText(/Showing \d+ of \d+ genes: 2 query genes and \d+ related genes?, [1-9]\d* connections? above \d\.\d\d/)).toBeVisible();
     const genes = page.getByRole('table', { name: /Genes functionally related/ });
     await expect(genes.getByRole('row')).not.toHaveCount(1);
     expect(await page.locator('.force-graph-node').count()).toBeGreaterThan(5);
@@ -34,7 +34,7 @@ test('the filters change the network: genes shown, minimum confidence, uniquenes
   await expect(page.getByText(/Showing 25 of \d+ genes/)).toBeVisible();
   await page.getByRole('textbox', { name: /Minimum confidence, exact value/ }).fill('0.7');
   await page.getByRole('textbox', { name: /Minimum confidence, exact value/ }).press('Enter');
-  await expect(page.getByText(/connections at 0\.70 or more/)).toBeVisible();
+  await expect(page.getByText(/connections above 0\.70/)).toBeVisible();
   // The checkbox follows the URL, so it is clicked and then checked once the URL has caught up.
   await page.getByRole('checkbox', { name: /Prioritize by uniqueness/ }).click();
   await expect(page.getByRole('checkbox', { name: /Prioritize by uniqueness/ })).toBeChecked();
@@ -43,7 +43,7 @@ test('the filters change the network: genes shown, minimum confidence, uniquenes
   await expect(page.getByRole('checkbox', { name: 'Co-expression' })).not.toBeChecked();
   await page.keyboard.press('Escape');
   await expect(page).toHaveURL(/datatype/);
-  await expect(page.getByText(/Showing \d+ of \d+ genes, \d+ connections/)).toBeVisible();
+  await expect(page.getByText(/Showing \d+ of \d+ genes: .+, \d+ connections?/)).toBeVisible();
   await checkScreen(page, problems);
 });
 
@@ -51,12 +51,34 @@ test('the Processes and Tissues panels list real terms, and a star rings the rig
   const problems = watch(page);
   await page.goto(`${il1bTnf}&version=v1`);
   await page.getByRole('tab', { name: /^Processes/ }).click();
-  await expect(page.getByRole('table', { name: /Biological processes over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
+  await expect(page.getByRole('table', { name: /Biological processes and diseases over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
   await page.getByRole('tab', { name: /Tissues/ }).click();
   await page.getByRole('button', { name: 'Highlight peripheral blood genes in the network' }).click();
   const ringed = page.locator('.force-graph-node').filter({ has: page.locator('.force-graph-star') });
   await expect(ringed).toHaveCount(3);
   expect((await ringed.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('aria-label')?.split(',')[0]))).sort()).toEqual(['CCL20', 'RELB', 'TNFRSF1B']);
+  await checkScreen(page, problems);
+});
+
+test('the Processes panel matches humanbase.io’s enrichment for IL1B on GIANT', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/networks/?entrez=3553&version=v1`);
+  await page.getByRole('tab', { name: /^Processes/ }).click();
+  const rows = page.getByRole('table', { name: /Biological processes and diseases over-represented/ }).locator('tbody tr');
+  // Gene Ontology terms for every gene in the network arrive in one large response.
+  await expect(rows.first()).toContainText('cytokine-mediated signaling pathway', { timeout: 90_000 });
+  await expect(rows.first()).toContainText('4.8 × 10⁻⁵');
+  await expect(rows.nth(1)).toContainText('cellular response to cytokine stimulus');
+  await expect(rows.nth(1)).toContainText('4.2 × 10⁻⁴');
+  await checkScreen(page, problems);
+});
+
+test('a MAGE page shows the tissue network alone, with no analysis tabs', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${il1bTnf}&version=v3&tab=process`);
+  await expect(page.getByRole('table', { name: /Genes functionally related/ }).getByRole('row')).not.toHaveCount(1);
+  await expect(page.getByRole('tab', { name: 'Process network' })).toHaveCount(0);
+  await expect(page.getByRole('tab', { name: 'Tissue expression' })).toHaveCount(0);
   await checkScreen(page, problems);
 });
 
@@ -67,7 +89,7 @@ test('extended_universe ranks GIANT terms with cross-organism counts, and a MAGE
   await expect(page.getByText('Showing legacy extended universe (cross-organism) annotation counts.')).toBeVisible();
   await extended;
   await page.getByRole('tab', { name: /^Processes/ }).click();
-  await expect(page.getByRole('table', { name: /Biological processes over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
+  await expect(page.getByRole('table', { name: /Biological processes and diseases over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
   await checkScreen(page, problems);
   await page.goto(`${il1bTnf}&version=v3&extended_universe=true`);
   await expect(page.getByText('Extended universe not applied')).toBeVisible();
@@ -109,9 +131,9 @@ test('View as table and Expand show the real connections', async ({ page }) => {
 test('the Download menu saves the real network: the visible part and every pair the API sent', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${il1bTnf}&version=v1`);
-  const summary = page.getByText(/Showing \d+ of (\d+) genes, (\d+) connections/);
+  const summary = page.getByText(/Showing \d+ of (\d+) genes: .+, (\d+) connections?/);
   await expect(summary).toBeVisible();
-  const [, total, shown] = (await summary.textContent())?.match(/of (\d+) genes, (\d+) connections/) ?? [];
+  const [, total, shown] = (await summary.textContent())?.match(/of (\d+) genes: .+, (\d+) connections?/) ?? [];
   const lines = async (item: string) => {
     const file = await downloadFrom(page, 'Download network', item);
     expect(file.name).toBe('global.txt');
@@ -162,14 +184,14 @@ test('Edit genes adds ICAM1 and reloads the network', async ({ page }) => {
   await checkScreen(page, problems);
   await page.getByRole('button', { name: 'Show network for 3 genes' }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/ICAM1/);
-  await expect(page.getByText(/Showing \d+ of \d+ genes, [1-9]\d* connections/)).toBeVisible();
+  await expect(page.getByText(/Showing \d+ of \d+ genes: .+, [1-9]\d* connections?/)).toBeVisible();
   await checkScreen(page, problems);
 });
 
 test('Compare draws a second network beside the first', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${il1bTnf}&version=v1&compare=mononuclear-phagocyte`);
-  await expect(page.getByRole('region', { name: 'mononuclear phagocyte network', exact: true }).getByText(/[1-9]\d* connections at/)).toBeVisible();
-  await expect(page.getByRole('region', { name: 'global network', exact: true }).getByText(/[1-9]\d* connections at/)).toBeVisible();
+  await expect(page.getByRole('region', { name: 'mononuclear phagocyte network', exact: true }).getByText(/[1-9]\d* connections above/)).toBeVisible();
+  await expect(page.getByRole('region', { name: 'global network', exact: true }).getByText(/[1-9]\d* connections above/)).toBeVisible();
   await checkScreen(page, problems);
 });

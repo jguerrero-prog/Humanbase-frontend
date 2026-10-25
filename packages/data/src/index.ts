@@ -12,7 +12,7 @@ export { HumanbaseProvider, useHumanbase } from './react/HumanbaseProvider';
 export { useGene, useGenes } from './react/useGene';
 export { useGeneLocation } from './react/useGeneLocation';
 export { GenomeLocation, assemblyNames, type Assembly } from './genome/GenomeLocation';
-export { inputKindNames, VariantFileCheck, type FileCheckResult, type FileProblem, type InputKind, type VariantModel } from './jobs/VariantFileCheck';
+export { inputKindNames, VariantFileCheck, type FileCheckResult, type FileProblem, type LengthWarning, type OffLengthSequence, type InputKind, type VariantModel } from './jobs/VariantFileCheck';
 export { JobHistory, type JobEntry, type JobState } from './jobs/JobHistory';
 export { NetwasResult, type NetwasFilter, type NetwasGene, type TrainingLabel } from './jobs/NetwasResult';
 export { NetwasJob, type NetwasJobRecord } from './jobs/NetwasJob';
@@ -25,7 +25,7 @@ export { featureEffects, featureLabel, scoreTypeLabel, variantIdOf, variantRows,
 export { DeepseaService, type DeepseaRequest, type PrecomputedSource } from './deepsea/DeepseaService';
 export { SeiHgmdService, type HgmdOrder, type HgmdVariantRecord } from './deepsea/SeiHgmdService';
 export { deepseaExamples } from './deepsea/deepseaExamples';
-export { InsilicoResult, sequenceSpan, type InsilicoRecord, type Substitution } from './deepsea/InsilicoResult';
+export { InsilicoResult, sequenceSpan, type InsilicoRecord, type PercentileStops, type Substitution } from './deepsea/InsilicoResult';
 export { useDeepseaFeatures, useDeepseaJob, useDeepseaVariants, useInsilico, usePrecomputedFeatures, usePrecomputedPredictions, useSeiHgmd, useViewPredictions } from './react/useDeepsea';
 export { ExpectoService, type ScoredVariant, type VariantQuery } from './expecto/ExpectoService';
 export { TissueVariants, strongestOf, tissueTitle, type EffectRow, type GenePosition, type PositionAxis, type TissueDatabase, type TissueEffects, type TissueVariantsRecord } from './expecto/TissueVariants';

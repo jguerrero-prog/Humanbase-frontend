@@ -6,12 +6,25 @@ export interface FileProblem {
   rule: string;
 }
 
+export interface OffLengthSequence {
+  name: string;
+  length: number;
+}
+
+/** FASTA sequences of another length still run: the API trims or pads them to the model's length. */
+export interface LengthWarning {
+  title: string;
+  body: string;
+  sequences: OffLengthSequence[];
+}
+
 export interface FileCheckResult {
   count: number;
   problems: FileProblem[];
   summary: string;
   limit?: string;
   otherKind?: string;
+  lengthWarning?: LengthWarning;
 }
 
 const modelNames: Record<VariantModel, string> = { sei: 'Sei', beluga: 'Beluga', seqweaver: 'Seqweaver', expecto: 'ExPecto', insilico: 'Beluga' };
@@ -34,8 +47,9 @@ export class VariantFileCheck {
   check(text: string): FileCheckResult {
     const lines = text.split(/\r?\n/);
     const otherKind = VariantFileCheck.guess(lines);
-    const { count, problems, chromosomes } = this.kind === 'fasta' ? this.checkFasta(lines) : this.checkTable(lines);
-    const result: FileCheckResult = { count, problems, summary: this.summary(count, chromosomes) };
+    const { count, problems, chromosomes, offLength } = this.kind === 'fasta' ? this.checkFasta(lines) : { ...this.checkTable(lines), offLength: [] };
+    const result: FileCheckResult = { count, problems, summary: this.summary(count, chromosomes, offLength.length > 0) };
+    if (offLength.length) result.lengthWarning = this.lengthWarning(offLength);
     if (count > VariantFileCheck.maxVariants) {
       result.limit = `This file has ${number.format(count)} ${nouns[this.kind][1]}; Humanbase runs up to ${number.format(VariantFileCheck.maxVariants)} per job. Split it into two files.`;
     }
@@ -100,14 +114,14 @@ export class VariantFileCheck {
   private checkFasta(lines: readonly string[]) {
     const length = VariantFileCheck.sequenceLength[this.model];
     const problems: FileProblem[] = [];
+    const offLength: OffLengthSequence[] = [];
     let count = 0;
     let header = 0;
+    let name = '';
     let sequence = '';
     let orphan = false;
     const close = () => {
-      if (header && sequence.length !== length) {
-        problems.push({ line: header, rule: `The sequence is ${number.format(sequence.length)} bp; ${modelNames[this.model]} reads ${number.format(length)} bp.` });
-      }
+      if (header && sequence.length !== length) offLength.push({ name, length: sequence.length });
     };
     lines.forEach((line, index) => {
       const text = line.trim();
@@ -116,6 +130,7 @@ export class VariantFileCheck {
         close();
         count += 1;
         header = index + 1;
+        name = text.slice(1).trim();
         sequence = '';
         return;
       }
@@ -130,13 +145,26 @@ export class VariantFileCheck {
       sequence += upper;
     });
     close();
-    return { count, problems, chromosomes: new Set<string>() };
+    return { count, problems, chromosomes: new Set<string>(), offLength };
   }
 
-  private summary(count: number, chromosomes: ReadonlySet<string>): string {
+  // humanbase.io's wording: the API trims longer sequences to the center and pads shorter ones with N.
+  private lengthWarning(sequences: OffLengthSequence[]): LengthWarning {
+    const length = VariantFileCheck.sequenceLength[this.model];
+    const bp = `${number.format(length)} bp`;
+    const counted = sequences.length === 1 ? '1 sequence isn’t' : `${number.format(sequences.length)} sequences aren’t`;
+    const body = [
+      sequences.some((sequence) => sequence.length > length) && `Longer sequences are trimmed to the central ${bp}, since that is all ${modelNames[this.model]} needs.`,
+      sequences.some((sequence) => sequence.length < length) && 'Shorter sequences are padded with N on both sides, which can affect the predictions.',
+      this.model === 'insilico' && 'Region scan positions follow the adjusted sequence.',
+    ];
+    return { title: `${counted} exactly ${bp}`, body: body.filter(Boolean).join(' '), sequences };
+  }
+
+  private summary(count: number, chromosomes: ReadonlySet<string>, offLength: boolean): string {
     const [one, many] = nouns[this.kind];
     const counted = `${number.format(count)} ${count === 1 ? one : many}`;
-    if (this.kind === 'fasta') return `${counted}, ${number.format(VariantFileCheck.sequenceLength[this.model])} bp each`;
+    if (this.kind === 'fasta') return offLength ? counted : `${counted}, ${number.format(VariantFileCheck.sequenceLength[this.model])} bp each`;
     const names = VariantFileCheck.chromosomeList(chromosomes);
     return names ? `${counted} on ${names}` : counted;
   }

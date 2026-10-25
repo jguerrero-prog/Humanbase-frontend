@@ -1,0 +1,22 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "title": "SFARI Autism (Level 5)",
+      "database": {
+        "name": "SFARI Gene",
+        "slug": "sfari-gene",
+        "term_version": "",
+        "annotation_version": "SFARI-Gene_human-gene-scores_release_04-17-2018"
+      },
+      "slim_terms": [],
+      "identifier": "SG:5",
+      "total_term_annotations": 157,
+      "annotations": [
+        960,
+        3569
+      ],
+      "total_gene_annotations": 839
+    }
+  ]
+}

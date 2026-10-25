@@ -1,0 +1,848 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "title": "viral infectious disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:934",
+      "total_term_annotations": 13,
+      "annotations": [
+        6347
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "carbohydrate metabolism disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0050013",
+      "total_term_annotations": 41,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "acquired metabolic disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0060158",
+      "total_term_annotations": 72,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "primary bacterial infectious disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0050338",
+      "total_term_annotations": 4,
+      "annotations": [
+        7097
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "lupus erythematosus",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:8857",
+      "total_term_annotations": 13,
+      "annotations": [
+        6775
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "bacterial infectious disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:104",
+      "total_term_annotations": 4,
+      "annotations": [
+        7097
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "inflammatory bowel disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0050589",
+      "total_term_annotations": 9,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "intestinal disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:5295",
+      "total_term_annotations": 17,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "gastrointestinal system cancer",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:3119",
+      "total_term_annotations": 52,
+      "annotations": [
+        7097,
+        3553,
+        3557
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "connective tissue disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:65",
+      "total_term_annotations": 145,
+      "annotations": [
+        6775,
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "cancer",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:162",
+      "total_term_annotations": 180,
+      "annotations": [
+        7097,
+        3553,
+        3557,
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "large intestine cancer",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:5672",
+      "total_term_annotations": 30,
+      "annotations": [
+        7097
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "cell type benign neoplasm",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0060084",
+      "total_term_annotations": 13,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "colorectal cancer",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:9256",
+      "total_term_annotations": 30,
+      "annotations": [
+        7097
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "glucose metabolism disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:4194",
+      "total_term_annotations": 41,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "hypersensitivity reaction type II disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:417",
+      "total_term_annotations": 20,
+      "annotations": [
+        6775
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "severe combined immunodeficiency",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:627",
+      "total_term_annotations": 16,
+      "annotations": [
+        3575
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "combined T cell and B cell immunodeficiency",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:628",
+      "total_term_annotations": 19,
+      "annotations": [
+        3575
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "hypersensitivity reaction disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0060056",
+      "total_term_annotations": 28,
+      "annotations": [
+        6775
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "immune system disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:2914",
+      "total_term_annotations": 99,
+      "annotations": [
+        4688,
+        6775,
+        3575
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "benign neoplasm",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0060072",
+      "total_term_annotations": 22,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "musculoskeletal system cancer",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0060100",
+      "total_term_annotations": 12,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "connective tissue cancer",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:201",
+      "total_term_annotations": 7,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "gastrointestinal system disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:77",
+      "total_term_annotations": 54,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "bone inflammation disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:3342",
+      "total_term_annotations": 16,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "musculoskeletal system disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:17",
+      "total_term_annotations": 236,
+      "annotations": [
+        6775,
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "primary immunodeficiency disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:612",
+      "total_term_annotations": 58,
+      "annotations": [
+        4688,
+        3575
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "arteriovenous malformations of the brain",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0060688",
+      "total_term_annotations": 2,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "arteriovenous malformation",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:11294",
+      "total_term_annotations": 2,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "bone disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0080001",
+      "total_term_annotations": 124,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "severe combined immunodeficiency, autosomal recessive, T cell-negative, B cell-positive, Nk cell-positive",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0090014",
+      "total_term_annotations": 2,
+      "annotations": [
+        3575
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "hypogonadotropic hypogonadism",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0090070",
+      "total_term_annotations": 22,
+      "annotations": [
+        1848
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "hypogonadism",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:1924",
+      "total_term_annotations": 32,
+      "annotations": [
+        1848
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "hypogonadotropic hypogonadism 19 with or without anosmia",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0090090",
+      "total_term_annotations": 1,
+      "annotations": [
+        1848
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "endocrine system disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:28",
+      "total_term_annotations": 73,
+      "annotations": [
+        1848
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "inflammatory bowel disease 1",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:0110892",
+      "total_term_annotations": 2,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "intestinal cancer",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:10155",
+      "total_term_annotations": 30,
+      "annotations": [
+        7097
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "type 2 diabetes mellitus",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:9352",
+      "total_term_annotations": 30,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "leprosy",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:1024",
+      "total_term_annotations": 4,
+      "annotations": [
+        7097
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "stomach cancer",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:10534",
+      "total_term_annotations": 12,
+      "annotations": [
+        3553,
+        3557
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "hemangioma",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:255",
+      "total_term_annotations": 5,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "arthritis",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:848",
+      "total_term_annotations": 14,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "diabetes mellitus",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:9351",
+      "total_term_annotations": 40,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "gonadal disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:2277",
+      "total_term_annotations": 35,
+      "annotations": [
+        1848
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "phagocyte bactericidal dysfunction",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:3262",
+      "total_term_annotations": 4,
+      "annotations": [
+        4688
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "chronic granulomatous disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:3265",
+      "total_term_annotations": 4,
+      "annotations": [
+        4688
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "human immunodeficiency virus infectious disease",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:526",
+      "total_term_annotations": 13,
+      "annotations": [
+        6347
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "acquired immunodeficiency syndrome",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:635",
+      "total_term_annotations": 13,
+      "annotations": [
+        6347
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "juvenile rheumatoid arthritis",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:676",
+      "total_term_annotations": 2,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "rheumatoid arthritis",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:7148",
+      "total_term_annotations": 9,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "Kaposi's sarcoma",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:8632",
+      "total_term_annotations": 1,
+      "annotations": [
+        3569
+      ],
+      "total_gene_annotations": 2459
+    },
+    {
+      "title": "systemic lupus erythematosus",
+      "database": {
+        "name": "Disease Ontology",
+        "slug": "disease-ontology",
+        "term_version": "releases/2017-06-13",
+        "annotation_version": ""
+      },
+      "slim_terms": [],
+      "identifier": "DOID:9074",
+      "total_term_annotations": 13,
+      "annotations": [
+        6775
+      ],
+      "total_gene_annotations": 2459
+    }
+  ]
+}

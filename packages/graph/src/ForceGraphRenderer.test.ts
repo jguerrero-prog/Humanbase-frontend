@@ -1,5 +1,5 @@
 import { forceSimulation } from 'd3-force';
-import { edgeBand } from './edgeBands';
+import { edgeBand, edgeBands, edgeBandsFrom } from './edgeBands';
 import { ForceGraphRenderer } from './ForceGraphRenderer';
 import type { GraphData } from './GraphRenderer';
 
@@ -38,6 +38,11 @@ describe('edgeBand', () => {
     expect(edgeBand(0.8)?.label).toBe('0.75 to 0.9');
     expect(edgeBand(0.5)?.label).toBe('0.5 to 0.75');
     expect(edgeBand(0.3)).toBeUndefined();
+  });
+
+  it('starts the weakest band at a minimum confidence below 0.5', () => {
+    expect(edgeBandsFrom(0.4807).map((band) => band.label)).toEqual(['0.9 and up', '0.75 to 0.9', '0.48 to 0.75']);
+    expect(edgeBandsFrom(0.6)).toBe(edgeBands);
   });
 });
 
@@ -159,6 +164,23 @@ describe('ForceGraphRenderer with groups', () => {
     expect(forceSimulation).not.toHaveBeenCalled();
     expect(positions()).toEqual(placed);
     expect(container.querySelector('[aria-label="fgf8, M1"]')).not.toBeNull();
+  });
+
+  it('sizes genes by their size between the node and query gene radii, and keeps them in place when names arrive', () => {
+    const container = document.createElement('div');
+    const renderer = new ForceGraphRenderer();
+    renderer.mount(container, { label: 'Modules' });
+    const sized = { ...grouped, nodes: grouped.nodes.map((node, index) => ({ ...node, size: (index + 1) ** 2 })) };
+    renderer.render(sized);
+    const radii = () => [...container.querySelectorAll('.force-graph-dot')].map((dot) => Number(dot.getAttribute('r')));
+    expect(radii()).toEqual([6, 8, 10]);
+    const positions = () => [...container.querySelectorAll('.force-graph-node')].map((n) => n.getAttribute('transform'));
+    const placed = positions();
+    vi.mocked(forceSimulation).mockClear();
+    renderer.render({ ...sized, nodes: sized.nodes.map((node) => ({ ...node, label: node.label.toLowerCase() })) });
+    expect(forceSimulation).not.toHaveBeenCalled();
+    expect(positions()).toEqual(placed);
+    expect(radii()).toEqual([6, 8, 10]);
   });
 
   it('selects a group from its label and fades the other groups', () => {

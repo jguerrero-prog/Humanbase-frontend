@@ -22,7 +22,21 @@ describe('NetworkExplorer', () => {
     expect(within(table).getAllByRole('row')).toHaveLength(14);
     expect(await screen.findByText('AUTS12 was left out because it isn’t in any Humanbase network. This network uses IL1B and TNF.')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('IL1B interleukin 1 beta TNF tumor necrosis factor');
-    expect(screen.getByText(/Showing 15 of 52 genes, \d+ connections at 0\.48 or more/)).toBeInTheDocument();
+    expect(screen.getByText(/Showing 15 of 52 genes: 2 query genes and 13 related genes, \d+ connections above 0\.48\.$/)).toBeInTheDocument();
+    expect(within(table).getByRole('columnheader', { name: 'Score' })).toHaveAttribute('aria-sort', 'descending');
+  });
+
+  it('with uniqueness, splits the count and claims no Score sort', async () => {
+    renderExplorer(new NetworkQuery([3553, 7124], undefined, 'v1'), { view: new NetworkView(15, undefined, true) });
+    const table = await screen.findByRole('table', { name: /Genes functionally related to IL1B and TNF/ });
+    expect(await screen.findByText('Showing 16 of 52 genes: 2 query genes and 14 related genes, 40 connections above 0.48.')).toBeInTheDocument();
+    expect(within(table).getByRole('columnheader', { name: 'Score' })).not.toHaveAttribute('aria-sort');
+    expect(screen.getByText(/Rows are ranked by uniqueness to the query genes\./)).toBeInTheDocument();
+  });
+
+  it('says when related genes are hidden for having no connection above the cutoff', async () => {
+    renderExplorer(new NetworkQuery([3553], undefined, 'v1'), { view: new NetworkView(15, undefined, true) });
+    expect(await screen.findByText(/^Showing 6 of \d+ genes: 1 query gene and 5 related genes, 5 connections above 0\.84\. Genes with no connection above the cutoff are hidden\.$/)).toBeInTheDocument();
   });
 
   it('ranks terms with extended annotation counts on GIANT when extended_universe asks, and says so', async () => {
@@ -30,7 +44,7 @@ describe('NetworkExplorer', () => {
     expect(await screen.findByText('Showing legacy extended universe (cross-organism) annotation counts.')).toBeInTheDocument();
     await screen.findByRole('table', { name: /Genes functionally related/ });
     await userEvent.click(screen.getByRole('tab', { name: /Processes/ }));
-    expect(await screen.findByRole('table', { name: /Biological processes over-represented/ })).toBeInTheDocument();
+    expect(await screen.findByRole('table', { name: /Biological processes and diseases over-represented/ })).toBeInTheDocument();
   });
 
   it('warns when a MAGE page ignored extended_universe', async () => {
@@ -38,6 +52,14 @@ describe('NetworkExplorer', () => {
     const warning = await screen.findByText('Extended universe not applied');
     expect(warning.closest('[role="status"]')).toHaveTextContent('flag is a legacy setting available only on GIANT networks; this is a non-GIANT page so the flag was ignored.');
     expect(screen.queryByText(/Showing legacy extended universe/)).not.toBeInTheDocument();
+  });
+
+  it('shows a MAGE page as the tissue network alone, as humanbase.io does', async () => {
+    renderExplorer(new NetworkQuery([3553, 7124]), { view: new NetworkView().with({ tab: 'process' }) });
+    expect(await screen.findByRole('table', { name: /Genes functionally related/ })).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'Process network' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'Tissue network' })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Choose a biological process/)).not.toBeInTheDocument();
   });
 
   it('selects a gene from the table and adds a gene to the query', async () => {
@@ -110,8 +132,7 @@ describe('NetworkExplorer', () => {
     renderExplorer(new NetworkQuery([3553, 7124], undefined, 'v1'));
     await screen.findByRole('table', { name: /Genes functionally related/ });
     await userEvent.click(await screen.findByRole('tab', { name: /^Processes \d+$/ }));
-    const processes = await screen.findByRole('table', { name: /Biological processes over-represented/ });
-    // Hundreds of terms are listed, and finding every row by role takes longer than the rest of the test.
+    const processes = await screen.findByRole('table', { name: /Biological processes and diseases over-represented/ });
     const first = () => processes.querySelector('tbody tr');
     await vi.waitFor(() => expect(first()).toHaveTextContent(/Gene Ontology \(BP\), \d+ genes/));
     expect(first()).toHaveTextContent(/× 10⁻/);
@@ -217,7 +238,7 @@ describe('NetworkExplorer', () => {
     const { onQueryChange, onViewChange } = renderExplorer(query);
     const compared = await screen.findByRole('region', { name: 'mononuclear phagocyte network' });
     expect(screen.getByRole('region', { name: 'global network' })).toBeInTheDocument();
-    expect(await within(compared).findByText(/connections at 0\.51 or more/)).toBeInTheDocument();
+    expect(await within(compared).findByText(/connections above 0\.51/)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Compare' })).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('radio', { name: 'Mononuclear phagocyte' }));
     expect(onViewChange.mock.lastCall?.[0].focus).toBe('compare');
