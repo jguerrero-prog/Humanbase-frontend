@@ -191,6 +191,16 @@ export class ModuleResult {
     return (this.neighborsByGene.get(entrez) ?? []).map((neighbor) => ({ ...neighbor, module: this.moduleOf(neighbor.entrez) })).sort((a, b) => b.weight - a.weight);
   }
 
+  /** 1 plus each gene's connections to the other given genes, in or across modules, which humanbase.io sizes module graph genes by. */
+  connectionCounts(genes: readonly number[]): Map<number, number> {
+    const counts = new Map(genes.map((gene) => [gene, 1]));
+    for (const [source, target] of this.edges) {
+      if (!counts.has(source) || !counts.has(target)) continue;
+      for (const gene of [source, target]) counts.set(gene, (counts.get(gene) ?? 1) + 1);
+    }
+    return counts;
+  }
+
   isEnriched(moduleId: number, database: string): boolean {
     return (this.record.enrichment[database] ?? []).some((row) => ModuleResult.moduleId(row.cluster) === moduleId);
   }

@@ -357,10 +357,16 @@ test('the real NetWAS result lists ranked genes with names and links into Networ
   await checkScreen(page, problems);
 });
 
-test('the real in silico mutagenesis result draws its substitution map', async ({ page }) => {
+test('the real in silico mutagenesis result draws its substitution map, colored by the feature’s percentiles', async ({ page }) => {
   const problems = watch(page);
+  const response = page.waitForResponse((reply) => reply.url().includes('/in_silico_mutagenesis/'));
   await page.goto(`${web}/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/`);
   await expect(page.getByRole('grid', { name: /^Substitutions at positions/ })).toBeVisible();
+  const { percentile } = (await (await response).json()) as { percentile: number[] };
+  const edge = (value = 0) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 3 }).format(value).replace('-', '−');
+  const edges = page.getByRole('group', { name: 'Log2 fold change' }).locator('.legend-edge');
+  await expect(edges.first()).toHaveText(edge(percentile[1]));
+  await expect(edges.last()).toHaveText(edge(percentile[99]));
   await checkScreen(page, problems);
   await page.getByRole('combobox', { name: /^Sequence/ }).click();
   await page.getByRole('option', { name: /known_GATA1_binding_increase/ }).click();

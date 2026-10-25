@@ -1,5 +1,5 @@
 import { ApiError, featureLabel, sequenceSpan, useDeepseaFeatures, useHumanbase, useInsilico, type DeepseaJob, type InsilicoResult } from '@humanbase/data';
-import { ActionMenu, Alert, Button, Cell, DocsLink, HeaderCell, ResultHeader, ResultLayout, saveFile, Select, Skeleton, SubstitutionMap, Table, type ScaleSpec } from '@humanbase/ui';
+import { ActionMenu, Alert, Button, Cell, DocsLink, HeaderCell, ResultHeader, ResultLayout, saveFile, ScoreScale, Select, Skeleton, SubstitutionMap, Table, type ScaleSpec } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { jobDateTime } from '../Jobs/JobPage';
 import { deepseaJobCrumbs } from './DeepseaForm';
@@ -17,7 +17,16 @@ const binSize = 10;
 const strongestShown = 10;
 // The result the Figma screens open on: HepG2 / CEBPB, the example's first variant.
 const startFeature = 297;
-const scale: ScaleSpec = { title: 'Log2 fold change', kind: 'diverging', edges: [-0.5, -0.25, -0.1, 0.1, 0.25, 0.5], words: ['Mutation lowers', 'Mutation raises'] };
+const scaleTitle = 'Log2 fold change';
+const scaleWords = ['Mutation lowers', 'Mutation raises'] as const;
+// For a result without percentiles; the API has always sent them so far.
+const fixedScale: ScaleSpec = { title: scaleTitle, kind: 'diverging', edges: [-0.5, -0.25, -0.1, 0.1, 0.25, 0.5], words: scaleWords };
+
+/** Colored by the feature's 1st, 50th and 99th percentiles, as humanbase.io does. */
+function scaleFor(result: InsilicoResult): ScaleSpec {
+  const stops = result.percentiles;
+  return stops ? ScoreScale.fromStops(scaleTitle, [stops.low, stops.middle, stops.high], scaleWords) : fixedScale;
+}
 const number = new Intl.NumberFormat('en-US');
 const fold = (value: number) => (value < 0 ? `−${Math.abs(value).toFixed(2)}` : value.toFixed(2));
 
@@ -143,6 +152,7 @@ function InsilicoMap({ result, feature, span, start, onStart }: InsilicoMapProps
   const from = Math.min(last, Math.max(0, start ?? strongest - Math.floor(windowSize / 2)));
   const overview = useMemo(() => result.strongestPer(binSize).map((item) => Math.abs(item.value)), [result]);
   const top = useMemo(() => result.strongestPositions(strongestShown), [result]);
+  const scale = useMemo(() => scaleFor(result), [result]);
   const [shown, setShown] = useState<number>();
   const genome = (position: number) => (span ? `${span.chromosome}:${number.format(span.start + position)}` : undefined);
   const show = (position: number) => {
@@ -163,7 +173,7 @@ function InsilicoMap({ result, feature, span, start, onStart }: InsilicoMapProps
         onSelect={setSelected}
         scale={scale}
         {...(span && { genome: { chromosome: span.chromosome, start: span.start } })}
-        note={`Log2 fold change for ${feature}. Negative: the mutation lowers the predicted signal.`}
+        note={`Log2 fold change for ${feature}. ${result.percentiles ? 'Colors follow this feature’s 1st, 50th and 99th percentiles. ' : ''}Negative: the mutation lowers the predicted signal.`}
       />
       <Table caption={`Strongest changes to ${feature}`} showCaption density="compact">
         <thead>

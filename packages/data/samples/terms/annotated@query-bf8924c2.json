@@ -1,0 +1,53 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "title": "SFARI Autism (Level 6)",
+      "database": {
+        "name": "SFARI Gene",
+        "slug": "sfari-gene",
+        "term_version": "",
+        "annotation_version": "SFARI-Gene_human-gene-scores_release_04-17-2018"
+      },
+      "slim_terms": [],
+      "identifier": "SG:6",
+      "total_term_annotations": 21,
+      "annotations": [
+        596
+      ],
+      "total_gene_annotations": 839
+    },
+    {
+      "title": "SFARI Autism (Level 3)",
+      "database": {
+        "name": "SFARI Gene",
+        "slug": "sfari-gene",
+        "term_version": "",
+        "annotation_version": "SFARI-Gene_human-gene-scores_release_04-17-2018"
+      },
+      "slim_terms": [],
+      "identifier": "SG:3",
+      "total_term_annotations": 176,
+      "annotations": [
+        4089
+      ],
+      "total_gene_annotations": 839
+    },
+    {
+      "title": "SFARI Autism (Level 5)",
+      "database": {
+        "name": "SFARI Gene",
+        "slug": "sfari-gene",
+        "term_version": "",
+        "annotation_version": "SFARI-Gene_human-gene-scores_release_04-17-2018"
+      },
+      "slim_terms": [],
+      "identifier": "SG:5",
+      "total_term_annotations": 157,
+      "annotations": [
+        6772
+      ],
+      "total_gene_annotations": 839
+    }
+  ]
+}

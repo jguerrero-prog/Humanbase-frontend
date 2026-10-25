@@ -61,6 +61,16 @@ describe('ModuleSearch', () => {
     expect(screen.getByRole('button', { name: 'Find modules in 297 genes' })).toBeInTheDocument();
   }, 20_000);
 
+  it('leaves out genes that are not in the chosen data version and counts only the genes it will send', async () => {
+    renderSearch();
+    await userEvent.type(screen.getByRole('textbox', { name: 'Gene list' }), 'AUTS12 IL1B TNF');
+    expect(await screen.findByText('2 genes will be analyzed in MAGE', {}, { timeout: 3000 })).toBeInTheDocument();
+    expect(screen.getByText(/AUTS12 is a recognized gene, but it is not part of any Humanbase network/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Find modules in 2 genes' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Remove AUTS12 from the list' }));
+    expect((screen.getByRole('textbox', { name: 'Gene list' }) as HTMLTextAreaElement).value).toBe('IL1B\nTNF');
+  });
+
   it('needs at least 20 genes', async () => {
     renderSearch();
     await userEvent.type(screen.getByRole('textbox', { name: 'Gene list' }), 'IL1B TNF');

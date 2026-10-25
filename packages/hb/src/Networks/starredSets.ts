@@ -1,4 +1,4 @@
-import { useAnnotatedTerms, type Network, type NetworkGene } from '@humanbase/data';
+import { TermService, useAnnotatedTerms, type Network, type NetworkGene } from '@humanbase/data';
 import type { GraphHighlight } from '@humanbase/graph';
 import { useMemo } from 'react';
 
@@ -11,8 +11,8 @@ export const starColor = (index: number) => `--viz-cat-${(index % categoricalCol
 export function useStarredHighlights(network: Network | undefined, shown: readonly NetworkGene[] | undefined, starred: readonly string[], extendedUniverse = false): GraphHighlight[] {
   // The same gene list as the Process and Tissue panels, so the terms load once.
   const genes = useMemo(() => (starred.length ? network?.genes.map((gene) => gene.entrez) : undefined), [network, starred.length]);
-  const processes = useAnnotatedTerms(genes, 'gene-ontology-bp', extendedUniverse);
-  const tissues = useAnnotatedTerms(genes, 'brenda-ontology', extendedUniverse);
+  const processes = useAnnotatedTerms(genes, TermService.processDatabases, extendedUniverse);
+  const tissues = useAnnotatedTerms(genes, TermService.tissueDatabases, extendedUniverse);
   return useMemo(() => {
     const shownIds = new Set(shown?.map((gene) => gene.entrez));
     const hits = new Map([...(processes.data?.byGeneCount(shownIds) ?? []), ...(tissues.data?.byGeneCount(shownIds) ?? [])].map((hit) => [hit.identifier, hit]));

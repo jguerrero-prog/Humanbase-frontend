@@ -81,6 +81,16 @@ describe('ModuleResult', () => {
     expect(modules.symbol(80000)).toBe('GREB1L');
   });
 
+  it('counts each shown gene as 1 plus its connections to other shown genes, as humanbase.io sizes them', async () => {
+    const modules = await result();
+    const genes = modules.shown('gene-ontology-bp').flatMap((module) => module.genes);
+    const shown = new Set(genes);
+    const counts = modules.connectionCounts(genes);
+    expect([...counts.keys()]).toEqual(genes);
+    for (const gene of genes) expect(counts.get(gene)).toBe(1 + modules.neighbors(gene).filter((neighbor) => shown.has(neighbor.entrez)).length);
+    expect(Math.max(...counts.values())).toBeGreaterThan(1);
+  });
+
   it('opens a MAGE result on Gene Ontology BP (NCBI), as the live site does', async () => {
     const mage = (await samples().modules.poll('5906cd20e9242a9c20125f8a660e7fd7be4f11ee')) as ModuleResult;
     expect(mage.databases[0]).toBe('gene-ontology-bp-ncbi');

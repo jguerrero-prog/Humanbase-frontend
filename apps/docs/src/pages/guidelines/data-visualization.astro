@@ -82,7 +82,7 @@ const specs = [
   ['viz.div.-3 to +3', diverging.map((s) => s.label).join(' ')],
   ['viz.cat.1 to .6, other', `${categorical.slice(0, -1).map((c) => c.hex).join(' ')}; other ${categorical.at(-1)?.hex}`],
   ['viz.edge (diagrams, new graphs)', '≥ 0.9: seq.7, 2.5px; 0.75 to 0.9: seq.6, 1.75px; 0.5 to 0.75: seq.5, 1px; a minimum confidence below 0.5 starts the weakest band there, such as 0.48 to 0.75'],
-  ['viz.node (diagrams, new graphs)', '12px, white with 1.5px grey 600 outline; query gene 20px ink; fixed size'],
+  ['viz.node (diagrams, new graphs)', '12px, white with 1.5px grey 600 outline; query gene 20px ink; fixed size, except module genes: 12px to 20px by 1 plus their connections, as on humanbase.io'],
   ['viz.selection (diagrams, new graphs)', '2px ink ring, 5px out from the node; others at 35% opacity'],
   ['viz.highlight (starred sets)', 'A 3.5px ring per starred set in viz.cat.1 to .6, in starring order, stacked outward; a 1px ink edge outside the last ring; a hull of the same color at 12% behind the set'],
   ['viz.label (diagrams, new graphs)', 'Lato Bold 12 ink with a 3px white halo; query gene 14'],
@@ -230,7 +230,7 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
           <li>Starring a process or tissue rings its genes in that set’s categorical color, with a light hull behind them. A gene in several starred sets gets one ring per set, stacked outward in the order they were starred. A 1px ink edge outside the rings keeps light colors visible on white.</li>
           <li>Labels are Lato Bold 12 ink with a 3px white halo, so they stay readable over edges. The query gene is 14px.</li>
           <li>Show labels for the query gene and the top 15 neighbors; others show on hover, focus or zoom.</li>
-          <li>Node size stays fixed. Size encodes nothing, which keeps dense graphs calm and comparable.</li>
+          <li>Node size stays fixed in network graphs, which keeps dense graphs calm and comparable. Module graphs size each gene by 1 plus its connections in the result, as humanbase.io does, from 12px to 20px, with the most connected gene in the middle of its module.</li>
         </ul>
       </div>
     </div>

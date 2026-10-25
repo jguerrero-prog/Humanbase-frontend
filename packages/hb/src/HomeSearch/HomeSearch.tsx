@@ -9,13 +9,12 @@ import {
   SearchField,
   Select,
   useDebounced,
-  type GeneMatch,
   type SearchSuggestion,
   useLinkHref,
 } from '@humanbase/ui';
 import { useMemo, useState, type ClipboardEvent, type KeyboardEvent, type ReactNode } from 'react';
 import { analysisColumns, analysisOptions, categoryCrumbs } from '../content/product';
-import { matchOf, suggestionOf } from './geneMatches';
+import { matchOf, splitByVersion, suggestionOf } from './geneMatches';
 import { genesWord, OutsideVersionAlert } from './OutsideVersionAlert';
 import './HomeSearch.css';
 
@@ -94,14 +93,8 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
 
   const runExample = (symbol: string) => () => void match(async () => [{ typed: symbol, genes: await api.search.exact(symbol) }]);
 
-  const geneOf = (match: GeneMatch) => {
-    const candidate = list.gene(match);
-    return candidate ? genes.get(candidate.entrez) : undefined;
-  };
   const resolved = list.matches.filter((match) => match.status === 'matched' || match.status === 'alias' || (match.status === 'choose' && match.chosen));
-  const outside = resolved.filter((match) => geneOf(match)?.isInVersion(version) === false);
-  const runnable = resolved.filter((match) => !outside.includes(match)).flatMap((match) => list.gene(match)?.entrez ?? []).map(Number);
-
+  const { entrez: runnable, outside, outsideGenes } = splitByVersion(list, resolved, genes, version);
 
   const remove = (ids: readonly string[]) => setList(list.remove(ids));
   const chooseVersion = (next: string) => {
@@ -176,7 +169,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
             </Button>
           </div>
           <GeneMatchSummary list={list} level={2} />
-          <OutsideVersionAlert outside={outside.flatMap((match) => geneOf(match) ?? [])} version={version} runnable={runnable.length} onRemove={() => remove(outside.map((match) => match.id))} />
+          <OutsideVersionAlert outside={outsideGenes} version={version} runnable={runnable.length} onRemove={() => remove(outside.map((match) => match.id))} />
           <GeneMatchTable list={list} caption="How your genes matched" onRemove={remove} onChoose={(id, entrez) => setList(list.choose(id, entrez))} />
         </section>
       )}

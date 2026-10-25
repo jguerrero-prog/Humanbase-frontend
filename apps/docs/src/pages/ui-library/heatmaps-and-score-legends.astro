@@ -16,7 +16,7 @@ const today = [
   ['ASD Browser: DNA and RNA features', 'Blue, white, red; −3 to 3; z-scores.'],
   ['ExPecto: expression effect', 'Blue, white, red; −1 to 1; predicted log fold change. The bulk download uses 0.3 as its threshold.'],
   ['ExPecto SC: expression effect', 'Blue, white, red; −100 to 100; z-scores. The docs say about 3 to 5 or more is reliable, so most cells look pale.'],
-  ['In silico mutagenesis', 'Not captured. Log2 fold change of odds, original minus mutated: a positive value means the mutation lowers the feature, if the formula is read literally.'],
+  ['In silico mutagenesis', 'Blue, white, yellow, titled Log-fold change; from the chosen feature’s 1st percentile through its 50th to its 99th, read from the result, so the range changes with each feature. Negative values, where the mutation lowers the feature, are blue.'],
   ['Tissue expression', 'White to red; confidence 0 to 1.'],
 ];
 
@@ -47,7 +47,7 @@ const rules = [
 
 const words = [
   ['Diverging ends', 'Lowers and Raises for features; Decreases and Increases expression for ExPecto.'],
-  ['ISM ends', 'Mutation raises and Mutation lowers, following the formula, until the sign is confirmed.'],
+  ['ISM ends', 'Mutation lowers and Mutation raises: negative values are blue, as on humanbase.io.'],
   ['e-value ends', 'Weaker and Stronger evidence; above 0.05 reads “not significant at 0.05”.'],
   ['Past the end', '−1.42, past the end of the legend (−1).'],
   ['Not available', 'Not available for this tissue system.'],
@@ -148,7 +148,7 @@ const substitutionSpecs = [
   ['substitution.cell', '10px wide, 22px tall, 1px white gap; 91 positions in a 1,290px card'],
   ['substitution.reference', 'surface.page fill, 1px border.default outline'],
   ['substitution.selected', '2px ink outline, 3px radius, around the whole column'],
-  ['substitution.scale', 'viz.div.-3 to +3 at log2 fold change edges ±0.1, 0.25, 0.5; "Mutation lowers" and "Mutation raises"'],
+  ['substitution.scale', 'viz.div.-3 to +3; edges at the feature’s 1st and 99th percentiles and a third and two thirds of the way out from its 50th; "Mutation lowers" and "Mutation raises"'],
   ['overview.bar', 'grey 300, 5px per 10 bp; window: 2px border.selected with 4px handles'],
   ['detail.panel', '236px, surface.page, border.subtle, radius 12'],
   ['Data', 'position 999 is real (example job 0576e894: −4.63, −4.24, −4.00); other cells are illustrative'],
@@ -158,12 +158,12 @@ const substitutionSpecs = [
 <DocsLayout title="Heatmaps and score legends" description="Stepped legends for every Humanbase score, and the rules every heatmap follows: labels, gaps, missing values, hover and a table view.">
   <Intro
     lead="Seven Humanbase scores are shown as colored cells: variant effects, expression effects, significance and confidence. This page sets one way to read all of them: stepped legends whose edges come from what each score means, the exact number always one hover away, and the same rules for labels, gaps and missing values."
-    status="Updated October 17, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+    status="Updated October 25, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
       rules={[
         { title: 'Steps, not a smooth ramp', text: 'Every legend has a few labeled steps, so a cell can be read against the legend without guessing a shade.' },
-        { title: 'Edges come from the score', text: 'Where steps break follows what the score means, such as z of 2, 3 and 5, or ExPecto’s live range of ±0.1 log fold change. Values never change.' },
+        { title: 'Edges come from the score', text: 'Where steps break follows what the score means, such as z of 2, 3 and 5, ExPecto’s live range of ±0.1 log fold change, or each in silico mutagenesis feature’s own percentiles. Values never change.' },
         { title: 'The number is always there', text: 'Tooltips, single-column values and View as table give the exact value; a value past the last step says so.' },
       ]}
     />
@@ -253,7 +253,7 @@ const substitutionSpecs = [
         onSelect={() => undefined}
         scale={mutagenesisScale}
         genome={{ chromosome: 'chr1', start: 109816591 }}
-        note="Log2 fold change for HepG2 / CEBPB. Negative: the mutation lowers the predicted signal."
+        note="Log2 fold change for HepG2 / CEBPB. Colors follow this feature’s 1st, 50th and 99th percentiles. Negative: the mutation lowers the predicted signal."
       />
     </div>
     <DocTable caption="Parts of the substitution map" columns={['Part', 'What it does']} widths={['380px']}>

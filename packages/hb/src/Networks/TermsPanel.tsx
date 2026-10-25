@@ -1,6 +1,7 @@
 import type { TermHit } from '@humanbase/data';
 import { Button, Cell, HeaderCell, IconButton, saveFile, SearchField, StarToggle, Table, TableMessage, TableSkeleton, ValueFormat } from '@humanbase/ui';
 import { starColor } from './starredSets';
+import { termsTsv } from './termsTsv';
 import { useState } from 'react';
 
 export type TermsPanelKind = 'processes' | 'tissues';
@@ -24,7 +25,7 @@ const copy = {
     noun: 'processes',
     term: 'Process',
     value: 'p-value',
-    note: 'Biological processes over-represented among the genes in the graph, most significant first. The table scrolls inside its panel.',
+    note: 'Biological processes and diseases over-represented among the genes in the graph, most significant first, with Benjamini-Hochberg adjusted p-values. The table scrolls inside its panel.',
   },
   tissues: {
     noun: 'tissues',
@@ -44,9 +45,7 @@ export function TermsPanel({ kind, hits, failed, onRetry, caption, fileName, sta
 
   const download = () => {
     if (!hits) return;
-    const header = kind === 'processes' ? 'term\tidentifier\tgenes\tp_value' : 'term\tidentifier\tgenes';
-    const lines = hits.map((hit) => [hit.title, hit.identifier, hit.genes.length, ...(kind === 'processes' ? [hit.pValue?.toExponential(2) ?? ''] : [])].join('\t'));
-    saveFile([header, ...lines].join('\n'), `${fileName}_${kind}.tsv`, 'text/tab-separated-values');
+    saveFile(termsTsv(kind, hits), `${fileName}_${kind}.tsv`, 'text/tab-separated-values');
   };
 
   return (
@@ -88,7 +87,7 @@ export function TermsPanel({ kind, hits, failed, onRetry, caption, fileName, sta
                     <span>{kind === 'processes' ? `${hit.database}, ${genesLabel(hit.genes.length)}` : hit.database}</span>
                   </span>
                 </Cell>
-                <Cell type="number">{kind === 'processes' && hit.pValue !== undefined ? format.pValue(hit.pValue).text : hit.genes.length}</Cell>
+                <Cell type="number">{kind === 'processes' && hit.pValue !== undefined ? format.scientific(hit.pValue) : hit.genes.length}</Cell>
               </tr>
               );
             })
