@@ -56,7 +56,7 @@ const topBarParts = [
   ['Current section', 'Bold white with a 3px Simons Yellow bar (4.3:1 on emerald). aria-current="true".'],
   ['Open menu', 'White at 14% behind the item; the chevron flips. Opens on click, not hover.'],
   ['Tool icons', `Each tool in the ${toolSections.map((section) => section.label).join(' and ')} menus (${toolNames.join(', ')}) shows its analysis icon at 20px, the same icon as in the homepage’s Analysis menu.`],
-  ['Search', 'Genes, GO terms and diseases. The same search as the homepage, so there is one way in.'],
+  ['Search', 'Search genes. Each suggested gene lists the pages it opens in, and nothing opens until one is chosen (Gene search and matching, Suggestions in the top bar).'],
   ['Jobs', 'Shows how many jobs are running. Humanbase has no accounts, so the list holds jobs submitted from this browser; jobs submitted with an email address also get their link by email.'],
 ];
 
@@ -160,7 +160,7 @@ const writing = [
 
 const questions = [
   ['Should changing tissue add a Back entry?', 'This page assumes not, so Back leaves the result. Planned: see “Research to run” at the bottom of this page.'],
-  ['What does search cover?', 'Genes, GO terms and diseases are assumed. If it also finds tools and docs, it can replace the homepage selector entirely.'],
+  ['What does search cover?', 'Genes, decided October 24, 2026. Terms and diseases wait for an API that searches them; until then a disease finds the genes tagged with it.'],
   ['Are SEEK and the non-human collections staying?', 'They are in the API but not linked. If they stay, they need a place in this menu.'],
 ];
 

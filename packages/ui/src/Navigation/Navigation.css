@@ -221,38 +221,44 @@ a.nav-item,
 }
 
 .top-bar-search {
-  display: flex;
   flex: none;
-  gap: var(--space-2);
-  align-items: center;
   inline-size: 280px;
-  block-size: 36px;
   margin-inline-end: var(--space-2);
+}
+
+.top-bar-search .search-field {
+  gap: var(--space-2);
+  block-size: 36px;
   padding: 0 var(--space-3);
-  color: var(--text-muted);
-  background: var(--surface-page);
+  border: 0;
   border-radius: var(--radius-sm);
 }
 
-.top-bar-search input {
-  flex: 1;
-  min-inline-size: 0;
+.top-bar-search .search-field > svg {
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+.top-bar-search .search-field-input {
   font: var(--type-body-sm);
-  color: var(--text-default);
-  background: transparent;
-  border: 0;
 }
 
-.top-bar-search input:focus-visible {
-  box-shadow: none;
-}
-
-.top-bar-search:focus-within {
+.top-bar-search .search-field:focus-within {
+  outline: none;
   box-shadow: 0 0 0 2px var(--action-primary), 0 0 0 4px var(--text-on-brand);
 }
 
-.top-bar-search input::placeholder {
-  color: var(--text-muted);
+.top-bar-search .search-field-input:focus-visible {
+  box-shadow: none;
+}
+
+.top-bar-search .search-suggestions {
+  inset-inline: auto 0;
+  inline-size: 560px;
+  min-inline-size: 0;
+  max-inline-size: none;
+  max-block-size: calc(100dvh - 80px);
+  overflow-y: auto;
 }
 
 .top-bar-jobs-count {
@@ -282,11 +288,27 @@ a.nav-item,
     display: inline-flex;
   }
 
+  /* The open field takes the place of the logo and sections, so the buttons beside it stay clear. */
+  [data-search] .top-bar-home,
+  [data-search] .top-bar-sections {
+    display: none;
+  }
+
   [data-search] .top-bar-search {
-    position: absolute;
-    inset-inline: var(--space-6) var(--space-16);
-    display: flex;
+    display: block;
+    flex: 1;
     inline-size: auto;
+  }
+
+  /* The suggestions hang from the bar rather than the field, so a phone gives them its full width. */
+  .top-bar-search .search-field-group {
+    position: static;
+  }
+
+  .top-bar-search .search-suggestions {
+    inset-block-start: calc(100% - var(--space-1));
+    inset-inline: auto var(--space-2);
+    inline-size: min(560px, calc(100% - 2 * var(--space-2)));
   }
 }
 

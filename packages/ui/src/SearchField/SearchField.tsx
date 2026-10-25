@@ -5,9 +5,16 @@ import { ListNavigator } from '../List/ListNavigator';
 import { useDismiss } from '../List/useDismiss';
 import { MenuPanel } from '../Menu/Menu';
 import { Spinner } from '../Spinner/Spinner';
+import { useLinkHref } from '../hooks/useLinkHref';
 import './SearchField.css';
 
 export type SearchFieldSize = 'large' | 'medium';
+
+/** A page a suggestion can open in, such as Networks. */
+export interface SearchDestination {
+  label: string;
+  href: string;
+}
 
 export interface SearchSuggestion {
   id: string;
@@ -16,6 +23,8 @@ export interface SearchSuggestion {
   meta?: string;
   badges?: readonly string[];
   details?: string;
+  /** Where the suggestion can open. Given, the suggestions become a grid with an Open in row of links, and nothing opens until one is chosen. */
+  destinations?: readonly SearchDestination[];
 }
 
 export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id' | 'type' | 'value' | 'defaultValue'> {
@@ -32,6 +41,8 @@ export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElem
   open?: boolean;
   defaultHighlight?: number;
   heading?: string;
+  /** How many matched in all, shown beside the heading as “5 of 21” when more matched than are suggested. */
+  total?: number;
   note?: string;
   inlineSuggestions?: boolean;
   /** What the suggestions are, for “No genes match”. */
@@ -42,8 +53,9 @@ export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElem
 
 export function SearchField({
   label, size = 'large', loading = false, value, defaultValue = '', disabled, className, onChange, onClear, onKeyDown,
-  suggestions, suggestionsLoading = false, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, defaultHighlight = -1, heading, note, inlineSuggestions = false, matchNoun = 'genes', enterHint = 'open gene', ...rest
+  suggestions, suggestionsLoading = false, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, defaultHighlight = -1, heading, total, note, inlineSuggestions = false, matchNoun = 'genes', enterHint = 'open gene', ...rest
 }: SearchFieldProps) {
+  const linkHref = useLinkHref();
   const id = useId();
   const listboxId = `${id}-suggestions`;
   const wrapper = useRef<HTMLDivElement>(null);
@@ -51,11 +63,21 @@ export function SearchField({
   const [ownText, setOwnText] = useState(defaultValue);
   const [ownOpen, setOwnOpen] = useState(false);
   const [highlight, setHighlight] = useState(defaultHighlight);
+  const [column, setColumn] = useState(0);
   const text = value ?? ownText;
   const iconSize = size === 'large' ? 24 : 20;
   const offersSuggestions = suggestions !== undefined;
   const open = offersSuggestions && text.length > 0 && (openProp ?? ownOpen);
   const navigator = useMemo(() => new ListNavigator(suggestions ?? []), [suggestions]);
+  const count = suggestions?.length ?? 0;
+  const grid = suggestions?.some((suggestion) => suggestion.destinations?.length) ?? false;
+  const destinationsOf = (row: number) => suggestions?.[row]?.destinations ?? [];
+  const optionId = (index: number) => `${id}-suggestion-${index}`;
+  const cellId = (row: number, at: number) => `${optionId(row)}-${at}`;
+  const highlightRow = (row: number) => {
+    setHighlight(row);
+    setColumn((current) => Math.max(0, Math.min(current, destinationsOf(row).length - 1)));
+  };
 
   const close = () => {
     setOwnOpen(false);
@@ -83,6 +105,8 @@ export function SearchField({
     onSuggestionSelect?.(suggestion);
   };
 
+  const openDestination = (row: number, at: number) => document.getElementById(cellId(row, at))?.querySelector('a')?.click();
+
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
       event.preventDefault();
@@ -91,7 +115,19 @@ export function SearchField({
     } else if (offersSuggestions && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
       event.preventDefault();
       setOwnOpen(true);
-      setHighlight(event.key === 'ArrowDown' ? navigator.next(highlight) : navigator.previous(highlight));
+      highlightRow(event.key === 'ArrowDown' ? navigator.next(highlight) : navigator.previous(highlight));
+    } else if (grid && open && highlight >= 0 && (event.key === 'ArrowRight' || event.key === 'ArrowLeft')) {
+      event.preventDefault();
+      setColumn(Math.max(0, Math.min(column + (event.key === 'ArrowRight' ? 1 : -1), destinationsOf(highlight).length - 1)));
+    } else if (grid && event.key === 'Enter') {
+      // Enter never guesses a destination: with nothing highlighted it highlights the first, so the next Enter opens it.
+      event.preventDefault();
+      if (highlight >= 0 && open) openDestination(highlight, column);
+      else if (count > 0) {
+        setOwnOpen(true);
+        setHighlight(0);
+        setColumn(0);
+      }
     } else if (event.key === 'Enter' && open && highlight >= 0) {
       event.preventDefault();
       choose(suggestions?.[highlight]);
@@ -99,8 +135,7 @@ export function SearchField({
     onKeyDown?.(event);
   };
 
-  const optionId = (index: number) => `${id}-suggestion-${index}`;
-  const count = suggestions?.length ?? 0;
+  const activeId = grid && destinationsOf(highlight).length > 0 ? cellId(highlight, column) : optionId(highlight);
   const announcement = !open || suggestionsLoading ? '' : count === 0 ? `No ${matchNoun} match “${text}”` : `${count} ${count === 1 ? 'suggestion' : 'suggestions'}`;
 
   return (
@@ -124,9 +159,10 @@ export function SearchField({
           {...(offersSuggestions && {
             role: 'combobox',
             'aria-autocomplete': 'list' as const,
+            'aria-haspopup': grid ? ('grid' as const) : ('listbox' as const),
             'aria-expanded': open,
             'aria-controls': open ? listboxId : undefined,
-            'aria-activedescendant': open && highlight >= 0 ? optionId(highlight) : undefined,
+            'aria-activedescendant': open && highlight >= 0 ? activeId : undefined,
           })}
         />
         {loading ? (
@@ -153,7 +189,48 @@ export function SearchField({
             <SuggestionsEmpty query={text} text={noMatchesText} noun={matchNoun} />
           ) : (
             <>
-              {heading && <p className="search-suggestions-heading">{heading}</p>}
+              {heading && (
+                <p className="search-suggestions-heading">
+                  {heading}
+                  {total !== undefined && total > count && <span className="search-suggestions-count">{`${count} of ${total}`}</span>}
+                </p>
+              )}
+              {grid ? (
+                <div id={listboxId} role="grid" aria-label={heading ?? label} className="menu-list">
+                  {suggestions?.map((suggestion, row) => (
+                    <div
+                      key={suggestion.id}
+                      id={optionId(row)}
+                      role="row"
+                      className={['search-suggestion', 'search-suggestion-stacked', row === highlight && 'search-suggestion-highlighted'].filter(Boolean).join(' ')}
+                      onPointerDown={(event) => event.preventDefault()}
+                      onPointerEnter={() => highlightRow(row)}
+                    >
+                      <div role="rowheader" className="search-suggestion-header">
+                        <SuggestionBody suggestion={suggestion} query={text} />
+                      </div>
+                      <div className="search-suggestion-destinations">
+                        <span className="search-suggestion-open-in" aria-hidden="true">Open in</span>
+                        {suggestion.destinations?.map((destination, at) => (
+                          <div key={destination.label} id={cellId(row, at)} role="gridcell" aria-selected={row === highlight && at === column}>
+                            <a
+                              className="button button-ghost button-small"
+                              data-state={row === highlight && at === column ? 'hover' : undefined}
+                              href={linkHref(destination.href)}
+                              tabIndex={-1}
+                              aria-label={`${suggestion.label} in ${destination.label}`}
+                              onPointerEnter={() => setColumn(at)}
+                              onClick={close}
+                            >
+                              {destination.label}
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
               <div id={listboxId} role="listbox" aria-label={heading ?? label} className="menu-list">
                 {suggestions?.map((suggestion, index) => (
                   // Options are chosen with the keyboard through the combobox input (aria-activedescendant).
@@ -172,29 +249,19 @@ export function SearchField({
                     {suggestion.details === undefined ? (
                       <SuggestionLine suggestion={suggestion} query={text} />
                     ) : (
-                      <>
-                        <span className="search-suggestion-title">
-                          <SuggestionLine suggestion={suggestion} query={text} />
-                        </span>
-                        {suggestion.badges && (
-                          <span className="search-suggestion-badges">
-                            {suggestion.badges.map((badge) => (
-                              <Badge key={badge} size="small">{badge}</Badge>
-                            ))}
-                          </span>
-                        )}
-                        <span className="search-suggestion-details">{suggestion.details}</span>
-                      </>
+                      <SuggestionBody suggestion={suggestion} query={text} />
                     )}
                   </div>
                 ))}
               </div>
+              )}
               {note ? (
                 <p className="search-suggestions-note">{note}</p>
               ) : (
                 <p className="search-suggestions-keys" aria-hidden="true">
-                  <span><kbd>↑ ↓</kbd> move</span>
-                  <span><kbd>Enter</kbd> {enterHint}</span>
+                  <span><kbd>↑ ↓</kbd> {grid ? 'result' : 'move'}</span>
+                  {grid && <span><kbd>← →</kbd> destination</span>}
+                  <span><kbd>Enter</kbd> {grid ? 'open' : enterHint}</span>
                   <span><kbd>Esc</kbd> close</span>
                 </p>
               )}
@@ -221,6 +288,24 @@ export function SuggestionsEmpty({ query, text, noun = 'genes' }: { query: strin
       <p className="search-suggestions-empty-title">No {noun} match “{query}”</p>
       <p>{text}</p>
     </div>
+  );
+}
+
+function SuggestionBody({ suggestion, query }: { suggestion: SearchSuggestion; query: string }) {
+  return (
+    <>
+      <span className="search-suggestion-title">
+        <SuggestionLine suggestion={suggestion} query={query} />
+      </span>
+      {suggestion.badges && suggestion.badges.length > 0 && (
+        <span className="search-suggestion-badges">
+          {suggestion.badges.map((badge) => (
+            <Badge key={badge} size="small">{badge}</Badge>
+          ))}
+        </span>
+      )}
+      {suggestion.details && <span className="search-suggestion-details">{suggestion.details}</span>}
+    </>
   );
 }
 
