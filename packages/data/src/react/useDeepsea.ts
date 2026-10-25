@@ -98,10 +98,12 @@ export function useDeepseaFeatures(model: VariantModel | undefined) {
   return useQuery({ ...featuresQuery(api, model ?? 'sei'), enabled: Boolean(model) });
 }
 
-/** How many features a model has; a list too large to load for a count is counted only when already loaded for another view. */
+/** How many features a model has, from its known count when its list is too large to load for one. */
 export function useDeepseaFeatureCount(model: VariantModel) {
   const api = useHumanbase();
-  return useQuery({ ...featuresQuery(api, model), enabled: !deepseaModels[model].largeFeatureList }).data?.model_features?.length;
+  const known = deepseaModels[model].featureCount;
+  const listed = useQuery({ ...featuresQuery(api, model), enabled: known === undefined }).data?.model_features?.length;
+  return known ?? listed;
 }
 
 /** How many sequences or regions a finished job ran, read once from its input file. */

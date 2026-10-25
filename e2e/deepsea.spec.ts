@@ -97,7 +97,7 @@ test('the recorded Sei BED job’s results are files, as humanbase.io shows them
   const id = '90e896a5-a950-4180-a4fb-c5bcc8cefd1d';
   await page.goto(`${web}/deepsea/jobs/${id}/`);
   await expect(page.getByRole('heading', { level: 1, name: 'Untitled Sei job' })).toBeVisible();
-  await expect(page.getByText('Sei predicted chromatin profiles for each of your 10 regions. The results are files to download, one probability per profile and region.')).toBeVisible();
+  await expect(page.getByText('Sei predicted 21,907 chromatin profiles for each of your 10 regions. The results are files to download, one probability per profile and region.')).toBeVisible();
   const files = page.getByRole('table', { name: 'Result files' });
   await expect(files.getByRole('row')).toHaveText([/File/, /^Probability.*Every feature for every region.*TSV, gzipped, with tabix index.*Download/, /^Your query.*BED.*Download/]);
   await expect(page.getByRole('combobox', { name: 'Score' })).toHaveCount(0);
