@@ -40,8 +40,10 @@ test('every DOI links to doi.org, the method papers as live has them', async ({ 
 test('Copy citation copies the plain-text citation and announces it', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.goto(cite);
+  // Chromium refuses clipboard writes from a page without focus, which parallel workers can cause.
+  await page.bringToFront();
   await page.getByRole('button', { name: 'Copy citation' }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Citation copied' })).toBeAttached();
+  await expect(page.getByRole('status').filter({ hasText: /copied|copy/ })).toHaveText('Citation copied');
   await expect(page.getByRole('button', { name: 'Copied' })).toBeVisible();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(citation);
   await expect(page.getByRole('button', { name: 'Copy citation' })).toBeVisible();
