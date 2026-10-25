@@ -5,6 +5,8 @@ export interface GraphNode {
   query: boolean;
   /** The group, such as a module, the gene belongs to. */
   group?: string;
+  /** What the circle's area grows with, such as 1 plus a module gene's connections; drawn between the node and query gene sizes. */
+  size?: number;
 }
 
 /** A cluster of genes drawn together, such as a module. */
