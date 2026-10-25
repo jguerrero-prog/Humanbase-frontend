@@ -1,6 +1,7 @@
 import type { TermHit } from '@humanbase/data';
 import { Button, Cell, HeaderCell, IconButton, saveFile, SearchField, StarToggle, Table, TableMessage, TableSkeleton, ValueFormat } from '@humanbase/ui';
 import { starColor } from './starredSets';
+import { termsTsv } from './termsTsv';
 import { useState } from 'react';
 
 export type TermsPanelKind = 'processes' | 'tissues';
@@ -44,9 +45,7 @@ export function TermsPanel({ kind, hits, failed, onRetry, caption, fileName, sta
 
   const download = () => {
     if (!hits) return;
-    const header = kind === 'processes' ? 'term\tidentifier\tgenes\tp_value' : 'term\tidentifier\tgenes';
-    const lines = hits.map((hit) => [hit.title, hit.identifier, hit.genes.length, ...(kind === 'processes' ? [hit.pValue?.toExponential(2) ?? ''] : [])].join('\t'));
-    saveFile([header, ...lines].join('\n'), `${fileName}_${kind}.tsv`, 'text/tab-separated-values');
+    saveFile(termsTsv(kind, hits), `${fileName}_${kind}.tsv`, 'text/tab-separated-values');
   };
 
   return (
