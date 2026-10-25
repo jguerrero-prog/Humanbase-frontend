@@ -28,9 +28,9 @@ export interface NetworkRecord {
 export class NetworkGene {
   constructor(
     private readonly record: NetworkGeneRecord,
-    /** Average weight of this gene's connections to the query genes. */
+    /** Average weight of this gene's connections to the query genes; NaN for a query gene with no other query gene. */
     readonly score: number,
-    /** How much more this gene connects to the query genes than to the rest of the network. */
+    /** Its score over the average weight of all its connections, query genes included, as humanbase.io computes it. */
     readonly uniqueness: number,
   ) {}
 
@@ -66,7 +66,7 @@ export interface NetworkEdge {
 }
 
 export interface NetworkViewOptions {
-  /** Genes to draw, counting the query genes, as the live site's "Maximum number of genes" does. */
+  /** How many top-ranked genes to draw, as the live site's "Maximum number of genes" does. Query genes are always drawn. */
   shown: number;
   minConfidence: number;
   prioritizeUniqueness: boolean;
@@ -75,9 +75,13 @@ export interface NetworkViewOptions {
 export interface NetworkSubset {
   genes: NetworkGene[];
   edges: NetworkEdge[];
+  /** Related genes ranked within the number shown but left out for having no connection above the cutoff. */
+  hidden: number;
 }
 
-const mean = (values: readonly number[]) => (values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0);
+const mean = (values: readonly number[]) => values.reduce((sum, value) => sum + value, 0) / values.length;
+// A lone query gene has no query genes to score against; humanbase.io ranks it first.
+const rankKey = (value: number) => (Number.isNaN(value) ? Infinity : value);
 
 export class Network {
   static readonly fallbackConfidence = 0.5;
@@ -88,14 +92,16 @@ export class Network {
   constructor(private readonly record: NetworkRecord) {
     const isQuery = record.genes.map((gene) => gene.query);
     const toQuery = record.genes.map((): number[] => []);
-    const toOthers = record.genes.map((): number[] => []);
+    const toAll = record.genes.map((): number[] => []);
     for (const { source, target, weight } of record.edges) {
-      (isQuery[target] ? toQuery : toOthers)[source]?.push(weight);
-      (isQuery[source] ? toQuery : toOthers)[target]?.push(weight);
+      if (isQuery[target]) toQuery[source]?.push(weight);
+      if (isQuery[source]) toQuery[target]?.push(weight);
+      toAll[source]?.push(weight);
+      toAll[target]?.push(weight);
     }
     this.genes = record.genes.map((gene, index) => {
       const score = mean(toQuery[index] ?? []);
-      return new NetworkGene(gene, score, score - mean(toOthers[index] ?? []));
+      return new NetworkGene(gene, score, score / mean(toAll[index] ?? []));
     });
     this.edges = record.edges.flatMap(({ source, target, weight }) => {
       const a = this.genes[source];
@@ -113,19 +119,25 @@ export class Network {
     return this.genes.filter((gene) => gene.isQuery);
   }
 
-  /** Every non-query gene, best first. */
-  related(prioritizeUniqueness = false): NetworkGene[] {
-    const key = prioritizeUniqueness ? (gene: NetworkGene) => gene.uniqueness : (gene: NetworkGene) => gene.score;
-    return this.genes.filter((gene) => !gene.isQuery).sort((a, b) => key(b) - key(a) || a.symbol.localeCompare(b.symbol));
+  /** Every gene, best first, query genes included, in the order humanbase.io ranks them. */
+  ranked(prioritizeUniqueness = false): NetworkGene[] {
+    const byScore = [...this.genes].sort((a, b) => rankKey(b.score) - rankKey(a.score));
+    return prioritizeUniqueness ? byScore.sort((a, b) => rankKey(b.uniqueness) - rankKey(a.uniqueness)) : byScore;
   }
 
-  /** The genes and connections drawn for a set of view options. */
+  /** Every non-query gene, best first. */
+  related(prioritizeUniqueness = false): NetworkGene[] {
+    return this.ranked(prioritizeUniqueness).filter((gene) => !gene.isQuery);
+  }
+
+  /** As humanbase.io draws it: query genes and the top `shown` ranked genes, connections above the cutoff, no unconnected non-query gene. */
   subset({ shown, minConfidence, prioritizeUniqueness }: NetworkViewOptions): NetworkSubset {
-    const query = this.queryGenes;
-    const genes = [...query, ...this.related(prioritizeUniqueness).slice(0, Math.max(0, shown - query.length))];
-    const kept = new Set(genes);
-    const edges = this.edges.filter((edge) => edge.weight >= minConfidence && kept.has(edge.source) && kept.has(edge.target));
-    return { genes, edges };
+    const top = this.ranked(prioritizeUniqueness).slice(0, Math.max(0, shown));
+    const candidates = new Set([...this.queryGenes, ...top.filter((gene) => !gene.isQuery)]);
+    const edges = this.edges.filter((edge) => edge.weight > minConfidence && candidates.has(edge.source) && candidates.has(edge.target));
+    const connected = new Set(edges.flatMap((edge) => [edge.source, edge.target]));
+    const genes = [...candidates].filter((gene) => gene.isQuery || connected.has(gene));
+    return { genes, edges, hidden: candidates.size - genes.length };
   }
 
   /** Requested genes the network left out, because they are in no network of this version. */

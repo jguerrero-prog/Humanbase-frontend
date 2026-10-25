@@ -1,5 +1,5 @@
 import { forceSimulation } from 'd3-force';
-import { edgeBand } from './edgeBands';
+import { edgeBand, edgeBands, edgeBandsFrom } from './edgeBands';
 import { ForceGraphRenderer } from './ForceGraphRenderer';
 import type { GraphData } from './GraphRenderer';
 
@@ -38,6 +38,11 @@ describe('edgeBand', () => {
     expect(edgeBand(0.8)?.label).toBe('0.75 to 0.9');
     expect(edgeBand(0.5)?.label).toBe('0.5 to 0.75');
     expect(edgeBand(0.3)).toBeUndefined();
+  });
+
+  it('starts the weakest band at a minimum confidence below 0.5', () => {
+    expect(edgeBandsFrom(0.4807).map((band) => band.label)).toEqual(['0.9 and up', '0.75 to 0.9', '0.48 to 0.75']);
+    expect(edgeBandsFrom(0.6)).toBe(edgeBands);
   });
 });
 

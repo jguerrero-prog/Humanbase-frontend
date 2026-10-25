@@ -90,7 +90,7 @@ test('a toast posted from an open sheet on a phone shows above the sheet, clear 
 test('the Networks result has no WCAG 2.2 AA violations once loaded, with the data types open', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&entrez=100188314&version=v1`);
-  await expect(page.getByText(/Showing 15 of 52 genes, \d+ connections at 0\.48 or more/)).toBeVisible();
+  await expect(page.getByText(/Showing 15 of 52 genes: 2 query genes and 13 related genes, \d+ connections above 0\.48\./)).toBeVisible();
   await expect(page.getByText('AUTS12 was left out because it isn’t in any Humanbase network. This network uses IL1B and TNF.')).toBeVisible();
   await page.getByRole('button', { name: 'Data types' }).click();
   await expect(page.getByRole('checkbox', { name: 'Co-expression' })).toBeVisible();
@@ -234,8 +234,8 @@ test('Compare adds a second network side by side, keeps it in the URL and has no
   await dialog.getByRole('button', { name: 'Add network' }).click();
   await expect(page).toHaveURL(/compare=mononuclear-phagocyte/);
   const compared = page.getByRole('region', { name: 'mononuclear phagocyte network', exact: true });
-  await expect(compared.getByText(/connections at 0\.51 or more/)).toBeVisible();
-  await expect(page.getByRole('region', { name: 'global network', exact: true }).getByText(/connections at 0\.48 or more/)).toBeVisible();
+  await expect(compared.getByText(/connections above 0\.51/)).toBeVisible();
+  await expect(page.getByRole('region', { name: 'global network', exact: true }).getByText(/connections above 0\.48/)).toBeVisible();
   scan = await new AxeBuilder({ page }).withTags(axeTags).analyze();
   expect(scan.violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
   await compared.getByRole('slider', { name: 'Genes shown', exact: true }).press('ArrowRight');

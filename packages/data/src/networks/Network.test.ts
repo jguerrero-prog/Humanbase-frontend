@@ -31,14 +31,34 @@ describe('Network', () => {
     ]);
   });
 
-  it('can rank by uniqueness to the query genes instead', () => {
-    expect(network.related(true).map((g) => g.symbol)).toEqual(['C', 'D', 'E']);
+  it('can rank by uniqueness: the score over the average weight of all the gene’s connections, query genes included', () => {
+    expect(network.related(true).map((g) => [g.symbol, Number(g.uniqueness.toFixed(3))])).toEqual([
+      ['C', 1],
+      ['D', 0.944],
+      ['E', 0.48],
+    ]);
   });
 
-  it('shows the chosen number of genes, query genes first, with connections above the cutoff', () => {
+  it('ranks query genes with the others, so one inside the chosen number takes a place', () => {
+    expect(network.ranked().map((g) => g.symbol)).toEqual(['D', 'C', 'A', 'B', 'E']);
     const { genes, edges } = network.subset({ shown: 3, minConfidence: 0.65, prioritizeUniqueness: false });
-    expect(genes.map((g) => g.symbol)).toEqual(['A', 'B', 'D']);
-    expect(edges.map((e) => `${e.source.symbol}-${e.target.symbol}`)).toEqual(['A-D']);
+    expect(genes.map((g) => g.symbol)).toEqual(['A', 'B', 'D', 'C']);
+    expect(edges.map((e) => `${e.source.symbol}-${e.target.symbol}`)).toEqual(['A-C', 'B-C', 'A-D']);
+  });
+
+  it('keeps connections strictly above the cutoff and hides related genes left without one', () => {
+    const { genes, edges } = network.subset({ shown: 5, minConfidence: 0.85, prioritizeUniqueness: false });
+    expect(edges.map((e) => `${e.source.symbol}-${e.target.symbol}`)).toEqual(['A-C', 'D-E']);
+    expect(genes.map((g) => g.symbol)).toEqual(['A', 'B', 'D', 'C', 'E']);
+    const hiding = network.subset({ shown: 4, minConfidence: 0.85, prioritizeUniqueness: false });
+    expect(hiding.genes.map((g) => g.symbol)).toEqual(['A', 'B', 'C']);
+    expect(hiding.hidden).toBe(1);
+  });
+
+  it('ranks a lone query gene first, as humanbase.io does', () => {
+    const lone = new Network({ ...record, genes: record.genes.map((g) => ({ ...g, query: g.entrez === 1 })) });
+    expect(lone.ranked(true)[0]?.symbol).toBe('A');
+    expect(lone.subset({ shown: 2, minConfidence: 0.5, prioritizeUniqueness: false }).genes.map((g) => g.symbol)).toEqual(['A', 'C']);
   });
 
   it('names requested genes the network left out', () => {

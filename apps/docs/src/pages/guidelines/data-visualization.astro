@@ -81,7 +81,7 @@ const specs = [
   ['viz.seq.1 to .7', sequential.map((s) => s.label).join(' ')],
   ['viz.div.-3 to +3', diverging.map((s) => s.label).join(' ')],
   ['viz.cat.1 to .6, other', `${categorical.slice(0, -1).map((c) => c.hex).join(' ')}; other ${categorical.at(-1)?.hex}`],
-  ['viz.edge (diagrams, new graphs)', '≥ 0.9: seq.7, 2.5px; 0.75 to 0.9: seq.6, 1.75px; 0.5 to 0.75: seq.5, 1px; below 0.5 hidden by default'],
+  ['viz.edge (diagrams, new graphs)', '≥ 0.9: seq.7, 2.5px; 0.75 to 0.9: seq.6, 1.75px; 0.5 to 0.75: seq.5, 1px; a minimum confidence below 0.5 starts the weakest band there, such as 0.48 to 0.75'],
   ['viz.node (diagrams, new graphs)', '12px, white with 1.5px grey 600 outline; query gene 20px ink; fixed size, except module genes: 12px to 20px by 1 plus their connections, as on humanbase.io'],
   ['viz.selection (diagrams, new graphs)', '2px ink ring, 5px out from the node; others at 35% opacity'],
   ['viz.highlight (starred sets)', 'A 3.5px ring per starred set in viz.cat.1 to .6, in starring order, stacked outward; a 1px ink edge outside the last ring; a hull of the same color at 12% behind the set'],
@@ -202,7 +202,7 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
         </figcaption>
         <NetworkDiagram mode="strength" />
         <KeyLegend title="Connection" mark="line" items={edgeItems} />
-        <p class="caption">Query gene in ink, other genes white with a grey 600 outline. Edges below 0.5 are hidden by the default filter.</p>
+        <p class="caption">Query gene in ink, other genes white with a grey 600 outline. Only edges above the minimum confidence are drawn. When it is below 0.5, the weakest band and its legend start there, such as 0.48 to 0.75.</p>
       </figure>
       <figure class="diagram">
         <figcaption>

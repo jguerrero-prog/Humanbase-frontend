@@ -31,7 +31,7 @@ The screens call the renderer in this order: `mount` once, `render` whenever the
 
 `ForceGraphRenderer` is a plain, open-source force-directed layout built on d3-force, d3-selection and d3-zoom. It follows the encoding rules on the design system's Data visualization page:
 
-- Connections get darker and wider with confidence, in the bands from `edgeBands` (0.5 to 0.75, 0.75 to 0.9, 0.9 and up). Connections under 0.5 use the weakest band.
+- Connections get darker and wider with confidence, in the bands from `edgeBands` (0.5 to 0.75, 0.75 to 0.9, 0.9 and up). Connections under 0.5 use the weakest band, and `edgeBandsFrom(minConfidence)` gives the legend that starts it at the minimum confidence, such as 0.48 to 0.75.
 - Query genes are larger and drawn in ink; related genes are white with a grey outline. Labels are Lato Bold 12, 14 for query genes, with a white halo.
 - A selected gene gets an ink ring; genes and connections it doesn't touch fade to 35%.
 - The layout is computed before anything is drawn, so the graph never drifts. It is computed again only when the genes, their groups or the connections change; new gene names redraw the graph in place, keeping positions and zoom. It fades in, which reduced motion keeps.
