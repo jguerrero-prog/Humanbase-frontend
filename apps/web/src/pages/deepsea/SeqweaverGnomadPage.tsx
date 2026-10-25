@@ -1,10 +1,10 @@
 import { PrecomputedVariantBrowser, seqweaverGnomad, type PrecomputedVariantState } from '@humanbase/hb';
-import { useSearchParams } from 'react-router';
+import { useReadableSearchParams } from '../../useReadableSearchParams';
 import '../ToolPage.css';
 
 // The URL keeps the browser's range and the selected variant, so a view can be shared.
 export function SeqweaverGnomadPage() {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useReadableSearchParams();
   const state: PrecomputedVariantState = { location: params.get('location') ?? undefined, variant: params.get('variant') ?? undefined };
   const change = (next: PrecomputedVariantState) =>
     setParams((current) => {

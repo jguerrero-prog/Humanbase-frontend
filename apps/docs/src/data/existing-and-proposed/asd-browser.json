@@ -192,7 +192,7 @@
       "existing": "Address stays /asdbrowser/ while you move or select.",
       "proposed": "Location, selected variant, view and feature set are kept in the address, so a view can be shared.",
       "status": "Added",
-      "evidence": "Proposed URL after Next variant: ?variant=chr1%3A2346202; AsdPage.tsx"
+      "evidence": "Proposed URL after Next variant: ?variant=chr1:2346202; AsdPage.tsx"
     },
     {
       "area": "Effects views",
