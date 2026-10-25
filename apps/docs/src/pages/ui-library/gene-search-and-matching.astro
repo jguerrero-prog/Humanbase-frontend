@@ -43,7 +43,7 @@ const topBarNotes = [
 const suggestionNotes = [
   'The list is a listbox: arrow keys move the active row, Enter picks it, Escape closes the list and keeps what was typed.',
   'Symbols are bold and names regular; there is no colored highlight, so suggestions read like the rest of the table text.',
-  'A disease search lists genes, not the disease itself. The badges come from the annotation source and keep its wording.',
+  'A disease search lists genes, not the disease itself. The badges come from the annotation source and keep its wording. Every term the search returns is shown, as on humanbase.io; a long one wraps inside the row rather than being cut off.',
   'With nothing typed, the box shows example searches under it instead of an empty list (Empty states).',
 ];
 
@@ -117,7 +117,7 @@ const removalNotes = [
 
 const words = [
   ['Matched an alias', 'p53 is an alias of TP53. TP53 will be used.'],
-  ['Check the match', 'AUTS2 matches 2 genes. The standard symbol is picked; change it if you meant the other.'],
+  ['Check the match', 'AUTS2 matches 2 genes. In the row: Using AUTS2. Pick another gene to change it.'],
   ['Not found', 'FOOBAR1 wasn’t found and will be left out. Edit it to include it.'],
   ['Not found again, or several', 'Humanbase didn’t recognize 3 terms. It knows human gene symbols, aliases, Entrez IDs and gene names; check the spelling or try the Entrez ID.'],
   ['Nothing matched', 'None of these terms matched a human gene, so there’s nothing to run yet. Try a symbol such as IL1B, or an example gene set.'],
@@ -128,7 +128,7 @@ const words = [
 const behavior = [
   ['When matching runs', 'A single term is suggested as it’s typed. A list is checked when Enter is pressed, the box loses focus, or an example set is picked; the panel shows the loading pattern while it checks.'],
   ['Order', 'Terms to check and not found come first, then the rest in the order they were typed.'],
-  ['Alias and ambiguous terms', 'The standard symbol is picked by default, as today. The row stays marked so it can be changed, but it doesn’t block running.'],
+  ['Alias and ambiguous terms', 'A term that matches several genes uses the first one by default, as humanbase.io does, and counts on the run button. The row stays marked Check the match and says which gene it uses, so people can pick another; nothing has to be chosen before running.'],
   ['Aliases', 'Shown only on rows matched through an alias and rows to check, with the alias that matched in bold. Plain matches show symbol and description only, so long lists stay short.'],
   ['Not found', 'Left out of the run; the button counts only genes that will run, such as Show network for 4 genes.'],
   ['Duplicates', 'A gene typed twice, or as both a symbol and an alias, is listed once, with both terms in You typed.'],
@@ -142,7 +142,7 @@ const specs = [
   ['active suggestion', 'surface.sunken background, no border or bar; it moves with arrow keys and pointer'],
   ['Open in row', 'Caption “Open in” in text.secondary, then small ghost buttons as links, 4px apart; the active destination takes the ghost button’s hover background'],
   ['top bar suggestions', '560px wide, right-aligned to the field; on screens under 1280px, the bar’s width less 8px each side, up to 560px. Five genes at most, with the count beside the heading'],
-  ['matching table', 'Table component, comfortable rows; columns 200 / fill / 140 / 200 / 140 at 1440'],
+  ['matching table', 'Table component, comfortable rows; columns 200 / fill / 140 / 200 / 140 at 1440. Gene keeps at least 280 and wraps, so in Edit genes and on phones the table scrolls sideways with You typed pinned'],
   ['status', 'Icon plus a word: success 700 Matched, warning 700 Check the match, error 700 Not found, the same hues as Alerts'],
   ['summary', 'Cabin Medium 22 title; counts in Lato Regular 14 with 16px icons, 20px apart'],
   ['run button', 'Primary, full width of the settings column; label carries the gene count'],
@@ -156,7 +156,7 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
 <DocsLayout title="Gene search and matching" description="One search box for every gene reference, suggestions that explain themselves, and a matching table that shows and fixes each term before anything runs.">
   <Intro
     lead="Every Humanbase analysis starts with genes. People type a symbol, an alias, an ID, a disease, or paste a list of hundreds; Humanbase matches each term to a gene before anything runs, and shows the match so nobody analyzes the wrong gene by accident."
-    status="Updated October 24, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+    status="Updated October 25, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
       rules={[

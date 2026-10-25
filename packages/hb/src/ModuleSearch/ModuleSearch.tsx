@@ -67,8 +67,7 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
     return next;
   }, [matches.data, removed, chosen]);
   const hits = useMemo(() => hitsOf(matches.data ?? []), [matches.data]);
-  // Terms to check run as their chosen gene, the first one until another is picked.
-  const { entrez, outside, outsideGenes } = splitByVersion(list, list.matches.filter((match) => match.status !== 'not-found'), hits, version);
+  const { entrez, outside, outsideGenes } = splitByVersion(list, hits, version);
   const inRange = entrez.length >= ModuleService.minimumGenes && entrez.length <= ModuleService.maximumGenes;
 
   const type = (next: string) => {

@@ -2,6 +2,7 @@ import { ApiError, Humanbase, HumanbaseProvider, SampleClient, type NetworkQuery
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HomeSearch } from './HomeSearch';
+import { hes1List } from './recordedLists.testdata';
 
 function renderSearch(api = new Humanbase(SampleClient.bundled())) {
   const onShowNetwork = vi.fn<(query: NetworkQuery) => void>();
@@ -33,6 +34,20 @@ describe('HomeSearch', () => {
     expect(screen.queryByText('2 genes will be analyzed in MAGE')).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Show network for 2 genes' }));
     expect(onShowNetwork.mock.calls[0]?.[0].href).toBe('/networks/?entrez=3553&entrez=7124&version=v3');
+  });
+
+  it('includes the first gene of a term that matched several, as humanbase.io does, and lets people pick another', async () => {
+    const { onShowNetwork } = renderSearch();
+    await userEvent.click(screen.getByRole('combobox', { name: 'Search genes' }));
+    await userEvent.paste(hes1List.join('\n'));
+    await userEvent.keyboard('{Enter}');
+    const choice = await screen.findByRole('group', { name: 'Gene for HES1' });
+    expect(within(choice).getByRole('radio', { name: /^HES1,/ })).toBeChecked();
+    expect(within(choice).getByText('Using HES1. Pick another gene to change it.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Show network for 25 genes' })).toBeEnabled();
+    await userEvent.click(within(choice).getByRole('radio', { name: /^GATD3,/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Show network for 25 genes' }));
+    expect(onShowNetwork.mock.calls[0]?.[0].href).toContain('entrez=8209');
   });
 
   it('suggests genes while typing and says which alias matched', async () => {

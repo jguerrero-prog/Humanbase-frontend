@@ -43,8 +43,9 @@ export interface VersionSplit {
   outsideGenes: GeneHit[];
 }
 
-/** Keeps the matches whose chosen gene is in the data version, as humanbase.io's gene list form does before a query runs. */
-export function splitByVersion(list: GeneMatchList, matches: readonly GeneMatch[], hits: ReadonlyMap<string, GeneHit>, version: DataVersion): VersionSplit {
+/** Runs every term that found a gene, a term to check as its chosen one (the first until another is picked), and keeps those in the data version, as humanbase.io's gene list form does. */
+export function splitByVersion(list: GeneMatchList, hits: ReadonlyMap<string, GeneHit>, version: DataVersion): VersionSplit {
+  const matches = list.matches.filter((match) => match.status !== 'not-found');
   const hitOf = (match: GeneMatch) => hits.get(list.gene(match)?.entrez ?? '');
   const outside = matches.filter((match) => hitOf(match)?.isInVersion(version) === false);
   const entrez = [...new Set(matches.filter((match) => !outside.includes(match)).flatMap((match) => list.gene(match)?.entrez ?? []))].map(Number);
