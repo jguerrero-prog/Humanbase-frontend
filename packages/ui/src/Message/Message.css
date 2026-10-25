@@ -151,16 +151,36 @@
   animation: toast-enter var(--motion-duration-moderate) var(--motion-easing-enter);
 }
 
+.toast-frame[data-still] {
+  animation: none;
+}
+
 .toast-frame[data-leaving] {
   animation: toast-leave var(--motion-duration-base) var(--motion-easing-exit) forwards;
 }
 
 .toast-region {
+  --toast-enter-from: var(--motion-distance-sm);
+
   position: fixed;
   z-index: var(--z-toast);
+  inset: auto;
   inset-block-end: var(--space-6);
   inset-inline-start: var(--space-6);
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  color: inherit;
+  background: none;
+  border: 0;
   pointer-events: none;
+}
+
+/* A bottom sheet holds its actions where toasts usually sit, so toasts arrive from the top instead. */
+.drawer-sheet .toast-region {
+  --toast-enter-from: calc(-1 * var(--motion-distance-sm));
+
+  inset-block: calc(env(safe-area-inset-top, 0px) + var(--space-4)) auto;
 }
 
 .toast-list {
@@ -185,6 +205,7 @@
 @media (width < 48rem) {
   .toast-region {
     inset-inline: var(--space-4);
+    inline-size: auto;
   }
 
   .toast {
@@ -195,7 +216,7 @@
 @keyframes toast-enter {
   from {
     opacity: 0;
-    translate: 0 var(--motion-distance-sm);
+    translate: 0 var(--toast-enter-from);
   }
 }
 

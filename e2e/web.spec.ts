@@ -61,6 +61,32 @@ test('toasts from different screens stack in the one app region instead of overl
   expect(apiRequests).toEqual([]);
 });
 
+test('a toast posted from an open sheet on a phone shows above the sheet, clear of its actions, without taking focus, with the API off', async ({ page, context }) => {
+  const apiRequests = await apiOff(page);
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${web}/netwas/c66b3d05-2f49-4522-b910-1605609e4083/`);
+  await page.getByRole('button', { name: 'Job actions' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Job actions' });
+  const copy = sheet.getByRole('button', { name: 'Copy link' });
+  await copy.click();
+  const toast = sheet.getByRole('region', { name: 'Notifications' }).getByRole('listitem');
+  await expect(toast).toHaveText('Link copied');
+  await expect(copy).toBeFocused();
+  await settleAnimations(page);
+  const onTop = (element: Element) => {
+    const box = element.getBoundingClientRect();
+    return element.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2));
+  };
+  expect(await toast.evaluate(onTop)).toBe(true);
+  // At the top of the screen, so the sheet's own actions stay uncovered.
+  for (const name of ['Rename', 'Copy link', 'Download result file']) expect(await sheet.getByRole('button', { name }).evaluate(onTop)).toBe(true);
+  await toast.getByRole('button', { name: 'Dismiss' }).click();
+  await expect(toast).toHaveCount(0);
+  await expect(sheet).toBeVisible();
+  expect(apiRequests).toEqual([]);
+});
+
 test('the Networks result has no WCAG 2.2 AA violations once loaded, with the data types open', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&entrez=100188314&version=v1`);

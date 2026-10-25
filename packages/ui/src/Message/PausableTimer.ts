@@ -1,19 +1,19 @@
+/** Counts down a toast's time. Each start can name who to tell, so the time left carries over when the toast is shown somewhere new. */
 export class PausableTimer {
   #handle: ReturnType<typeof setTimeout> | undefined;
   #remaining: number;
   #startedAt = 0;
+  #onDone: () => void = () => {};
 
-  constructor(
-    private readonly onDone: () => void,
-    duration: number,
-  ) {
+  constructor(duration: number) {
     this.#remaining = duration;
   }
 
-  start(): void {
+  start(onDone?: () => void): void {
+    if (onDone) this.#onDone = onDone;
     if (this.#handle !== undefined) return;
     this.#startedAt = Date.now();
-    this.#handle = setTimeout(this.onDone, this.#remaining);
+    this.#handle = setTimeout(() => this.#onDone(), this.#remaining);
   }
 
   pause(): void {
