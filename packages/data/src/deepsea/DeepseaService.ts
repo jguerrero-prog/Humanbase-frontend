@@ -68,8 +68,9 @@ export class DeepseaService {
     return this.client.get<ScoreType[]>(`deepsea/jobs/${id}/score_types/`);
   }
 
-  variantScores(id: string, scoreType: string): Promise<VariantScoresRecord> {
-    return this.client.get<VariantScoresRecord>(`deepsea/jobs/${id}/variant_scores/`, { score_type: scoreType });
+  /** One score for every variant of the job; as on humanbase.io, a sequence-level score reads sequence_scores. */
+  scores(id: string, type: Pick<ScoreType, 'level' | 'short_name'>): Promise<VariantScoresRecord> {
+    return this.client.get<VariantScoresRecord>(`deepsea/jobs/${id}/${type.level === 'SEQUENCE' ? 'sequence' : 'variant'}_scores/`, { score_type: type.short_name });
   }
 
   /** Each variant's score on every feature, for every variant of the job in a range, as the live job page reads them. */

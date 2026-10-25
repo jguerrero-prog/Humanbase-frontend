@@ -1,4 +1,4 @@
-import { featureEffects, GenomeLocation, scoreTypeLabel, useDeepseaVariants, useHumanbase, useViewPredictions, variantIdOf, variantScoreTypes, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
+import { ApiError, featureEffects, GenomeLocation, scoreTypeLabel, useDeepseaVariants, useHumanbase, useViewPredictions, variantIdOf, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
 import {
   ActionMenu,
   Alert,
@@ -66,24 +66,36 @@ function effectScaleOf(model: DeepseaJob['model']): EffectScale {
 }
 
 const scoreOptions = (types: readonly ScoreType[]) => types.map((type) => ({ value: type.short_name, label: scoreTypeLabel(type) }));
+// Sentence-case names lowercase mid-sentence; sequence class names, such as P Promoter or CTCF CTCF-Cohesin, keep their capitals.
+const midSentence = (type: ScoreType) => (/^[A-Z][a-z]/.test(type.name) ? type.name.charAt(0).toLowerCase() + type.name.slice(1) : type.name);
+// The design system's rule: a select over 15 options gets a filter box.
+const searchableOver = 15;
+
+/** A job's plotted scores; with a summary, as on Sei, the summary comes first and its per-class scores follow in their own group. */
+function plotScoreOptions(model: DeepseaJob['model'], types: readonly ScoreType[], summary: readonly ScoreType[]) {
+  const options = scoreOptions(types);
+  if (!model.summaryScores) return options;
+  const classes = model.featurePlural.charAt(0).toUpperCase() + model.featurePlural.slice(1);
+  return options.map((option, index) => ({ ...option, group: summary.includes(types[index] as ScoreType) ? 'Summary' : classes }));
+}
 const matches = (variant: VariantRow, text: string) => `${variantLabel(variant)} ${variantName(variant)}`.toLowerCase().includes(text.trim().toLowerCase());
 
 /** A finished Sei, Beluga or Seqweaver job: variant scores as a plot and table, then the selected variant's molecular effects. */
 export function DeepseaResultView({ job, title, tools, variant: chosen, onVariantChange }: DeepseaResultViewProps) {
   const model = job.model;
   const { showsSamples } = useHumanbase();
-  const { scoreTypes, variants, error, refetch } = useDeepseaVariants(job);
-  const variantTypes = useMemo(() => variantScoreTypes(model, scoreTypes ?? []), [model, scoreTypes]);
+  const [scoreKey, setScoreKey] = useState<string>();
+  const { scoreTypes, plotTypes, summary, chosen: plotted, chosenScores, variants, error, refetch } = useDeepseaVariants(job, scoreKey);
   const scoreTracks = useMemo(() => jobScoreTracks(job, scoreTypes ?? []), [job, scoreTypes]);
   const featureTypes = (scoreTypes ?? []).filter((type) => type.level === 'FEATURE');
-  const [scoreKey, setScoreKey] = useState<string>();
   const [plotBy, setPlotBy] = useState<PlotBy>('genome');
   const [colorStyle, setColorStyle] = useState<ColorStyle>('chr');
   const [effectsView, setEffectsView] = useState<EffectsView>(defaultEffectsView);
   const [filter, setFilter] = useState('');
   const [showAll, setShowAll] = useState(false);
   const [picked, setPicked] = useState(chosen);
-  const score = variantTypes.find((type) => type.short_name === scoreKey) ?? variantTypes[0];
+  // Until the chosen score arrives, the table and selected variant keep the first summary score.
+  const score = chosenScores?.pending || chosenScores?.error ? summary[0] : plotted;
   const ordered = useMemo(() => [...(variants ?? [])].sort(byGenomePosition), [variants]);
   const selected = ordered.find((row) => row.id === (picked ?? chosen)) ?? ordered[0];
   // A variant picked from the plot, table, heatmap or Previous and Next starts its effects afresh; one reached by moving the browser keeps them, so a drag carries on.
@@ -161,7 +173,9 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
     );
   }
 
-  const tableScores = variantTypes.map((type) => ({ key: type.short_name, label: tableLabels[type.short_name] ?? type.name }));
+  // A per-class score, with its long name, takes the table alone; the top class is already under each variant.
+  const tableTypes = summary.includes(score) ? summary : [score];
+  const tableScores = tableTypes.map((type) => ({ key: type.short_name, label: tableLabels[type.short_name] ?? type.name }));
   const filtered = ordered.filter((row) => matches(row, filter));
   // Sei variants name the sequence class they change most, so only Sei offers Color style.
   const hasClasses = ordered.some((row) => row.topClass);
@@ -177,29 +191,35 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
     <div className="deepsea-result">
       <ResultLayout
         header={header}
-        mainLabel={`Variants plotted by ${score.name.toLowerCase()}`}
+        mainLabel={`Variants plotted by ${midSentence(plotted ?? score)}`}
         main={
           <div className="deepsea-plot">
             <div className="deepsea-plot-controls">
-              <Select label="Score" size="small" options={scoreOptions(variantTypes)} value={score.short_name} onChange={setScoreKey} />
+              <Select label="Score" size="small" options={plotScoreOptions(model, plotTypes, summary)} value={(plotted ?? score).short_name} onChange={setScoreKey} searchable={plotTypes.length > searchableOver} filterLabel="Filter scores" />
               <DocsLink href={`${model.docsHref}#output`}>{scoreDocsLabel}</DocsLink>
               <Select label="Plot style" size="small" options={plotStyles} value={plotBy} onChange={(value) => setPlotBy(value as PlotBy)} />
               {hasClasses && <Select label="Color style" size="small" options={colorStyles} value={colorStyle} onChange={(value) => setColorStyle(value as ColorStyle)} />}
             </div>
             {byClass && <KeyLegend title="Sequence class" items={sequenceClassLegend} />}
-            <VariantScorePlot
-              variants={variants}
-              score={{ key: score.short_name, label: scoreTypeLabel(score) }}
-              by={plotBy}
-              selected={selected?.id}
-              onSelect={select}
-              colorBy={byClass ? 'sequence-class' : 'chromosome'}
-              summary={
-                byClass
-                  ? `${number.format(ordered.length)} variants, colored by the sequence class each changes most; the class is also in the table.`
-                  : `${number.format(ordered.length)} variants, colored by chromosome; position also carries the chromosome.`
-              }
-            />
+            {chosenScores?.error ? (
+              <ScoreAlert error={chosenScores.error} showsSamples={showsSamples} onRetry={chosenScores.refetch} />
+            ) : chosenScores?.pending ? (
+              <Skeleton width="100%" height="320px" />
+            ) : (
+              <VariantScorePlot
+                variants={variants}
+                score={{ key: score.short_name, label: scoreTypeLabel(score) }}
+                by={plotBy}
+                selected={selected?.id}
+                onSelect={select}
+                colorBy={byClass ? 'sequence-class' : 'chromosome'}
+                summary={
+                  byClass
+                    ? `${number.format(ordered.length)} variants, colored by the sequence class each changes most; the class is also in the table.`
+                    : `${number.format(ordered.length)} variants, colored by chromosome; position also carries the chromosome.`
+                }
+              />
+            )}
           </div>
         }
         companionLabel="Variants"
@@ -221,7 +241,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
         <>
           <VariantFocus
             label={variantLabel(selected)}
-            detail={`${variantName(selected)}, ${score.name.toLowerCase()} ${variantScore(selected, score.short_name)}`}
+            detail={`${variantName(selected)}, ${midSentence(score)} ${variantScore(selected, score.short_name)}`}
             hasPrevious={index > 0}
             hasNext={index < ordered.length - 1}
             onPrevious={() => step(-1)}
@@ -261,6 +281,22 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
         </>
       )}
     </div>
+  );
+}
+
+/** The chosen score didn't load: with the API off, the sample data holds only a few of Sei's per-class scores. */
+function ScoreAlert({ error, showsSamples, onRetry }: { error: Error; showsSamples: boolean; onRetry: () => void }) {
+  if (showsSamples && error instanceof ApiError && error.isNotFound) {
+    return (
+      <Alert tone="info" title="The sample data doesn’t include this score">
+        With the API off, Sei results show Max sequence class score and the CTCF CTCF-Cohesin, E12 Erythroblast-like and P Promoter scores. Choose one of those, or turn the API on.
+      </Alert>
+    );
+  }
+  return (
+    <Alert tone="error" title="This score couldn’t load" action={{ label: 'Try again', onSelect: onRetry }}>
+      Humanbase didn’t answer. The job’s results are kept, so trying again is safe.
+    </Alert>
   );
 }
 

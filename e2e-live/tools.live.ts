@@ -139,6 +139,25 @@ for (const [tool, id, heading] of [
   });
 }
 
+test('the real Sei result plots any of its 41 scores, reading each only when chosen', async ({ page }) => {
+  const problems = watch(page);
+  const scores: string[] = [];
+  page.on('request', (request) => {
+    const type = /variant_scores\/\?score_type=([^&]+)/.exec(request.url())?.[1];
+    if (type) scores.push(type);
+  });
+  await page.goto(`${web}/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/`);
+  const picker = page.getByRole('combobox', { name: 'Score', exact: true }).first();
+  await expect(picker).toHaveText('Max sequence class score');
+  await picker.click();
+  await expect(page.getByRole('group', { name: 'Sequence classes' }).getByRole('option')).toHaveCount(40);
+  await page.getByRole('option', { name: 'TN1 Transcription' }).click();
+  await expect(page.getByRole('region', { name: 'Variants plotted by TN1 Transcription' })).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: /TN1 Transcription/ })).toBeVisible();
+  expect(scores).toEqual(['seqclass', 'tn1-transcription']);
+  await checkScreen(page, problems);
+});
+
 test('the real Seqweaver result shows its own score tracks, shows and hides genome tracks from the real files and exports the view', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/`);

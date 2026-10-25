@@ -57,6 +57,28 @@ describe('DeepseaJobView', () => {
     expect(screen.getByText(/colored by the sequence class each changes most/)).toBeInTheDocument();
   });
 
+  it('offers every Sei score humanbase.io plots, the summary then 40 sequence classes, loading each when chosen', async () => {
+    renderJob('2e18fedf-3de7-4d08-a894-9a937a2b860b');
+    const [picker] = await screen.findAllByRole('combobox', { name: 'Score' }, { timeout: 5000 });
+    if (!picker) throw new Error('No score picker');
+    expect(picker).toHaveTextContent('Max sequence class score');
+    await userEvent.click(picker);
+    const summary = screen.getByRole('group', { name: 'Summary' });
+    expect(within(summary).getAllByRole('option').map((option) => option.textContent)).toEqual(['Max sequence class score']);
+    const classes = within(screen.getByRole('group', { name: 'Sequence classes' })).getAllByRole('option');
+    expect(classes).toHaveLength(40);
+    expect(classes[0]).toHaveTextContent('CTCF CTCF-Cohesin');
+    await userEvent.type(screen.getByRole('combobox', { name: 'Filter scores' }), 'promoter');
+    await userEvent.click(screen.getByRole('option', { name: 'P Promoter' }));
+    expect(await screen.findByRole('columnheader', { name: /P Promoter/ }, { timeout: 5000 })).toBeInTheDocument();
+    expect(screen.queryByRole('columnheader', { name: /Max class score/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Variants plotted by P Promoter' })).toBeInTheDocument();
+    expect(screen.getAllByRole('row')[1]).toHaveTextContent(/VWC2.*2\.01/);
+    await userEvent.click(picker);
+    await userEvent.click(screen.getByRole('option', { name: 'TN1 Transcription' }));
+    expect(await screen.findByText('The sample data doesn’t include this score', {}, { timeout: 5000 })).toBeInTheDocument();
+  }, 20_000);
+
   it('links each model’s score type documentation, as humanbase.io does', async () => {
     renderJob('76aea8fe-8ec7-4698-a193-a186c7665edb');
     await screen.findByText('Molecular effects of chr1:109,817,590 G>T', {}, { timeout: 5000 });
