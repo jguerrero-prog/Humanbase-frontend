@@ -13,10 +13,10 @@ async function openStrongest() {
 
 const job = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 
-function renderJob(id: string, variant?: string) {
+function renderJob(id: string, variant?: string, onRegionChange?: (region: string | undefined) => void) {
   render(
     <HumanbaseProvider api={new Humanbase(SampleClient.bundled())}>
-      <DeepseaJobView id={id} variant={variant} />
+      <DeepseaJobView id={id} variant={variant} onRegionChange={onRegionChange} />
     </HumanbaseProvider>,
   );
 }
@@ -71,6 +71,38 @@ describe('DeepseaJobView', () => {
     expect(screen.getByText('Regions, BED')).toBeInTheDocument();
     expect(await screen.findByText('Sei predicted 21,907 chromatin profiles for each of your 10 regions. The results are files to download, one probability per profile and region.')).toBeInTheDocument();
     expect(screen.queryByRole('combobox', { name: 'Score' })).not.toBeInTheDocument();
+  });
+
+  it('shows the Sei BED job’s regions in the genome browser on request, stepping in genome order, from one read of its file', async () => {
+    const read = vi.spyOn(SampleClient.prototype, 'text');
+    const onRegionChange = vi.fn();
+    renderJob('90e896a5-a950-4180-a4fb-c5bcc8cefd1d', undefined, onRegionChange);
+    const view = await screen.findByRole('button', { name: 'View your regions in the genome browser' }, { timeout: 5000 });
+    expect(await screen.findByText('See where your 10 regions sit on the genome, with the reference tracks. The predictions stay in the files above.')).toBeInTheDocument();
+    await userEvent.click(view);
+    expect(await screen.findByText('Region 1 of 10: chr1:109,817,091')).toBeInTheDocument();
+    expect(onRegionChange).toHaveBeenLastCalledWith('chr1:109,817,091');
+    expect(screen.getByRole('button', { name: 'Previous region' })).toBeDisabled();
+    await userEvent.click(screen.getByRole('button', { name: 'Next region' }));
+    expect(screen.getByText('Region 2 of 10: chr10:23,507,864')).toBeInTheDocument();
+    for (let step = 0; step < 8; step += 1) await userEvent.click(screen.getByRole('button', { name: 'Next region' }));
+    expect(screen.getByText('Region 10 of 10: chr19:59,070,228')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Next region' })).toBeDisabled();
+    expect(read.mock.calls.filter(([url]) => url.endsWith('_textarea.bed'))).toHaveLength(1);
+    await userEvent.click(screen.getByRole('button', { name: 'Hide the genome browser' }));
+    expect(onRegionChange).toHaveBeenLastCalledWith(undefined);
+    expect(screen.getByRole('button', { name: 'View your regions in the genome browser' })).toHaveFocus();
+  });
+
+  it('disables Previous variant at the first variant and Next variant at the last', async () => {
+    renderJob('76aea8fe-8ec7-4698-a193-a186c7665edb');
+    const previous = await screen.findByRole('button', { name: 'Previous variant' }, { timeout: 5000 });
+    expect(previous).toBeDisabled();
+    const next = screen.getByRole('button', { name: 'Next variant' });
+    expect(next).toBeEnabled();
+    for (let step = 0; step < 9; step += 1) await userEvent.click(screen.getByRole('button', { name: 'Next variant' }));
+    expect(screen.getByRole('button', { name: 'Next variant' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Previous variant' })).toBeEnabled();
   });
 
   it('reads Sei effects as sequence classes', async () => {

@@ -23,8 +23,9 @@ export interface GenomeBrowserToolbarProps {
   onLocation?: (text: string) => void;
   onZoomStop?: (bases: number) => void;
   onZoom?: (direction: 'in' | 'out') => void;
-  onPreviousVariant?: () => void;
-  onNextVariant?: () => void;
+  /** Left out at the first variant, which disables Previous; likewise Next at the last. */
+  onPreviousVariant?: (() => void) | undefined;
+  onNextVariant?: (() => void) | undefined;
   onTracks?: () => void;
   onExport?: () => void;
   moreItems?: readonly ActionMenuItem[];
@@ -32,11 +33,13 @@ export interface GenomeBrowserToolbarProps {
   trackActions?: boolean | undefined;
   /** False leaves out Previous variant and Next variant, for a browser with no variants to step through. */
   variantSteps?: boolean | undefined;
+  /** What the steps move between, such as region for Previous region and Next region. */
+  stepNoun?: string | undefined;
   className?: string;
 }
 
 export function GenomeBrowserToolbar({
-  location, assembly, widthHelp, locationError, zoomStop, onLocation, onZoomStop, onZoom, onPreviousVariant, onNextVariant, onTracks, onExport, moreItems = [], trackActions = true, variantSteps = true, className,
+  location, assembly, widthHelp, locationError, zoomStop, onLocation, onZoomStop, onZoom, onPreviousVariant, onNextVariant, onTracks, onExport, moreItems = [], trackActions = true, variantSteps = true, stepNoun = 'variant', className,
 }: GenomeBrowserToolbarProps) {
   const helpId = useId();
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -48,8 +51,8 @@ export function GenomeBrowserToolbar({
     <div role="toolbar" aria-label="Genome browser" className={['genome-toolbar', className].filter(Boolean).join(' ')}>
       {variantSteps && (
         <div className="genome-step">
-          <Button variant="ghost" size="small" aria-keyshortcuts={keys.previousVariant} onClick={onPreviousVariant}>
-            Previous variant
+          <Button variant="ghost" size="small" aria-keyshortcuts={keys.previousVariant} disabled={!onPreviousVariant} onClick={onPreviousVariant}>
+            Previous {stepNoun}
           </Button>
         </div>
       )}
@@ -92,8 +95,8 @@ export function GenomeBrowserToolbar({
           </div>
         )}
         {variantSteps && (
-          <Button variant="ghost" size="small" className="genome-next" aria-keyshortcuts={keys.nextVariant} onClick={onNextVariant}>
-            Next variant
+          <Button variant="ghost" size="small" className="genome-next" aria-keyshortcuts={keys.nextVariant} disabled={!onNextVariant} onClick={onNextVariant}>
+            Next {stepNoun}
           </Button>
         )}
       </div>

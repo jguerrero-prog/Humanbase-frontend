@@ -106,16 +106,24 @@ export function useDeepseaFeatureCount(model: VariantModel) {
   return known ?? listed;
 }
 
-/** How many sequences or regions a finished job ran, read once from its input file. */
+// The count and the regions come from one read of the job's input file.
+const inputQuery = (api: Humanbase, job: DeepseaJob | undefined) => ({
+  queryKey: ['deepsea-input', job?.id],
+  queryFn: () => api.deepsea.input(job as DeepseaJob),
+  enabled: job?.status === 'finished',
+  staleTime: Infinity,
+});
+
+/** How many sequences or regions a finished job ran, read from its input file. */
 export function useDeepseaInputCount(job: DeepseaJob | undefined) {
   const api = useHumanbase();
-  return useQuery({ queryKey: ['deepsea-input-count', job?.id], queryFn: () => api.deepsea.inputCount(job as DeepseaJob), enabled: job?.status === 'finished', staleTime: Infinity });
+  return useQuery({ ...inputQuery(api, job), select: (input) => input.count });
 }
 
-/** A BED job's regions, read from its input file only once asked for, such as when the genome browser opens. */
-export function useDeepseaRegions(job: DeepseaJob | undefined, enabled = true) {
+/** A finished BED job's regions, from the same read of its input file. */
+export function useDeepseaRegions(job: DeepseaJob | undefined) {
   const api = useHumanbase();
-  return useQuery({ queryKey: ['deepsea-regions', job?.id], queryFn: () => api.deepsea.regions(job as DeepseaJob), enabled: enabled && job?.status === 'finished' && job.kind === 'bed', staleTime: Infinity });
+  return useQuery({ ...inputQuery(api, job), select: (input) => input.regions });
 }
 
 /** One sequence's in silico mutagenesis for one feature; each choice is one request, kept once loaded. */

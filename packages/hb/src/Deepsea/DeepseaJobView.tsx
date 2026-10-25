@@ -14,7 +14,7 @@ export interface DeepseaJobViewProps {
   onVariantChange?: ((id: string) => void) | undefined;
   /** A BED job's region open in its genome browser. */
   region?: string | undefined;
-  onRegionChange?: ((region: string) => void) | undefined;
+  onRegionChange?: ((region: string | undefined) => void) | undefined;
 }
 
 function stepsOf(job: DeepseaJob, now: number): JobStep[] {

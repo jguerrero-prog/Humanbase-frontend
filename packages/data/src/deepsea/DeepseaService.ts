@@ -17,6 +17,12 @@ export interface PrecomputedSource {
   scoreType?: string | undefined;
 }
 
+export interface DeepseaInput {
+  /** Undefined when the file has none to count. */
+  count: number | undefined;
+  regions: BedRegion[];
+}
+
 export interface DeepseaRequest {
   model: VariantModel;
   kind: InputKind;
@@ -65,17 +71,12 @@ export class DeepseaService {
     return new DeepseaJob(await this.client.get<DeepseaJobRecord>(`deepsea/jobs/${id}/`));
   }
 
-  /** How many sequences or regions the job ran, counted from its input as submitted; undefined when the file has none to count. */
-  async inputCount(job: DeepseaJob): Promise<number | undefined> {
-    if (!job.uploadedQuery) return undefined;
-    const { count } = new VariantFileCheck(job.kind, job.model.id).check(await this.client.text(job.uploadedQuery.url));
-    return count || undefined;
-  }
-
-  /** A BED job's regions, read from its input as submitted; none for other jobs. */
-  async regions(job: DeepseaJob): Promise<BedRegion[]> {
-    if (job.kind !== 'bed' || !job.uploadedQuery) return [];
-    return BedRegion.parse(await this.client.text(job.uploadedQuery.url));
+  /** The job's input as submitted, read once: how many sequences or regions it ran, and a BED job's regions. */
+  async input(job: DeepseaJob): Promise<DeepseaInput> {
+    if (!job.uploadedQuery) return { count: undefined, regions: [] };
+    const text = await this.client.text(job.uploadedQuery.url);
+    const { count } = new VariantFileCheck(job.kind, job.model.id).check(text);
+    return { count: count || undefined, regions: job.kind === 'bed' ? BedRegion.parse(text) : [] };
   }
 
   scoreTypes(id: string): Promise<ScoreType[]> {

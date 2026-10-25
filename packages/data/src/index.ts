@@ -23,7 +23,7 @@ export { deepseaModels, genomeLabels, docsPage, modelOf, variantEffectsModels, v
 export { DeepseaJob, type DeepseaFile, type DeepseaJobRecord, type ResultFile } from './deepsea/DeepseaJob';
 export { featureEffects, featureLabel, scoreTypeLabel, variantIdOf, jobScoreTypes, summaryScoreTypes, variantRows, type FeatureEffect, type FeaturePredictionRecord, type FeaturesRecord, type ModelFeature, type ScoreType, type VariantRow, type VariantScoresRecord, type VariantSequence } from './deepsea/DeepseaResult';
 export { BedRegion } from './deepsea/BedRegion';
-export { DeepseaService, type DeepseaRequest, type PrecomputedSource } from './deepsea/DeepseaService';
+export { DeepseaService, type DeepseaInput, type DeepseaRequest, type PrecomputedSource } from './deepsea/DeepseaService';
 export { SeiHgmdService, type HgmdOrder, type HgmdVariantRecord } from './deepsea/SeiHgmdService';
 export { deepseaExamples } from './deepsea/deepseaExamples';
 export { InsilicoResult, sequenceSpan, type InsilicoRecord, type PercentileStops, type Substitution } from './deepsea/InsilicoResult';
