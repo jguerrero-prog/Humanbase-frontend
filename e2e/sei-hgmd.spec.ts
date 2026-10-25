@@ -38,6 +38,25 @@ test('Sei HGMD variants shows every variant on the heatmap, sorts them, and open
   expect(apiRequests).toEqual([]);
 });
 
+test('Sei HGMD variants’ Previous and Next step through the whole list in the heatmap’s order, jumping the view across chromosomes, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/variant-effects/hgmd/`);
+  await page.getByRole('button', { name: 'Haemophagocytic lymphohistiocytosis type 3 (chr17:73839907)' }).click();
+  await expect(page.getByText(/step through all 853 HGMD variants in the dataset’s order\.$/)).toBeVisible();
+  const location = page.getByRole('searchbox', { name: 'Location or gene' });
+
+  // The second variant is in view, so the view stays; the third is on chrX, so the view moves there at the same width.
+  await page.getByRole('button', { name: 'Next variant' }).click();
+  await expect(page.getByRole('heading', { name: /^Molecular effects of chr17:73,839,908/ })).toBeVisible();
+  await expect(location).toHaveValue('chr17:73,789,907-73,889,907');
+  await page.getByRole('button', { name: 'Next variant' }).click();
+  await expect(page.getByRole('heading', { name: /^Molecular effects of chrX:37,639,264/ })).toBeVisible();
+  await expect(location).toHaveValue('chrX:37,589,264-37,689,264');
+  await expect(page).toHaveURL(/variant=chrX-37639264-T-C/);
+  expect(await violationsOf(page)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
 test('humanbase.io’s /sei-hgmd link opens Sei HGMD variants, and Variant effects and the tools comparison link to it', async ({ page }) => {
   await apiOff(page);
   await page.goto(`${web}/sei-hgmd`);

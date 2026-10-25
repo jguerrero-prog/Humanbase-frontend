@@ -5,6 +5,7 @@ import { useMemo, useState, type ReactNode } from 'react';
 import { EffectsCard } from '../Deepsea/EffectsCard';
 import type { VariantInView } from '../Deepsea/InViewHeatmap';
 import { VariantGenomeBrowser } from '../Deepsea/VariantGenomeBrowser';
+import { VariantSteps } from './VariantSteps';
 import '../Deepsea/Deepsea.css';
 
 /** A model's precomputed variants, such as Seqweaver's gnomAD variants, and how humanbase.io shows them. */
@@ -32,6 +33,17 @@ export interface PrecomputedVariantSet {
   /** Where it opens with the API off: a stretch the recorded samples cover. */
   sampleStart: GenomeLocation;
   scoreDocs: { label: string; href: string };
+  /**
+   * What Previous variant and Next variant step through: the variants in view, or the page's whole list in its order,
+   * moving the view to a variant outside it. In view by default, and until the list loads.
+   */
+  steps?: 'view' | 'list' | undefined;
+}
+
+/** The whole list a set steps through, in the order the page shows it, and how the page names it, such as all 853 HGMD variants by disease name. */
+export interface PrecomputedVariantList {
+  variants: readonly FeaturePredictionRecord[];
+  label: string;
 }
 
 /** What the page keeps in its URL. */
@@ -56,6 +68,7 @@ export interface PrecomputedVariantBrowserProps {
   state: PrecomputedVariantState;
   onStateChange: (next: PrecomputedVariantState) => void;
   views?: PrecomputedVariantViews | undefined;
+  list?: PrecomputedVariantList | undefined;
   engine?: GenomeBrowserEngineFactory | undefined;
 }
 
@@ -94,7 +107,7 @@ function locationOf(text: string | undefined, assembly: Assembly, fallback: Geno
 }
 
 /** Browses a model's precomputed variants: the genome browser with the set's score track, and the effects of the variant nearest its center on every feature. */
-export function PrecomputedVariantBrowser({ set, state, onStateChange, views, engine = defaultGenomeEngine }: PrecomputedVariantBrowserProps) {
+export function PrecomputedVariantBrowser({ set, state, onStateChange, views, list, engine = defaultGenomeEngine }: PrecomputedVariantBrowserProps) {
   const { showsSamples } = useHumanbase();
   const location = useMemo(() => locationOf(state.location, set.assembly, showsSamples ? set.sampleStart : set.start), [state.location, set, showsSamples]);
   const [view, setView] = useState<EffectsView>(defaultEffectsView);
@@ -105,22 +118,24 @@ export function PrecomputedVariantBrowser({ set, state, onStateChange, views, en
   const selectedRecord = predictions && (predictions.find((record) => variantIdOf(record) === state.variant) ?? location.nearest(predictions));
   const index = selectedRecord && predictions ? predictions.indexOf(selectedRecord) : -1;
   const selected = variants[index];
+  const stepsList = set.steps === 'list' ? list : undefined;
+  const steps = useMemo(() => new VariantSteps(stepsList?.variants ?? predictions ?? []), [stepsList, predictions]);
+  const current = selectedRecord ? variantIdOf(selectedRecord) : state.variant;
+  const previous = steps.previous(current);
+  const next = steps.next(current);
   const scoreKey = set.scoreType ?? set.id;
   const sampleHelp = `With the API off, the sample data covers ${set.sampleStart.format()}. Zoom in there, or turn the API on.`;
 
   const move = (to: GenomeLocation) => onStateChange({ location: to.format(), variant: undefined });
-  const pick = (at: number) => {
-    const next = predictions?.[at];
-    if (!next) return;
-    setPicked(variantIdOf(next));
-    onStateChange({ location: location.format(), variant: variantIdOf(next) });
+  const around = (record: FeaturePredictionRecord) => GenomeLocation.at(record.chromosome, record.position, set.assembly).withWidth(location.width);
+  const pick = (record: FeaturePredictionRecord, at = location.includes(record.chromosome, record.position) ? location : around(record)) => {
+    setPicked(variantIdOf(record));
+    onStateChange({ variant: variantIdOf(record), location: at.format() });
   };
   // As on humanbase.io, clicking a heatmap column selects that variant and centers the browser on it at the same width.
   const center = (key: string) => {
     const record = predictions?.find((one) => variantIdOf(one) === key);
-    if (!record) return;
-    setPicked(key);
-    onStateChange({ variant: key, location: GenomeLocation.at(record.chromosome, record.position, set.assembly).withWidth(location.width).format() });
+    if (record) pick(record, around(record));
   };
 
   let effects;
@@ -145,7 +160,7 @@ export function PrecomputedVariantBrowser({ set, state, onStateChange, views, en
     effects = (
       <>
         <p className="deepsea-note">
-          {count.format(predictions.length)} variants in view; the selected one, {selected.name}, is drawn in ink. Previous variant and Next variant step through them.
+          {count.format(predictions.length)} variants in view; the selected one, {selected.name}, is drawn in ink. Previous variant and Next variant step through {stepsList ? stepsList.label : 'them'}.
         </p>
         <EffectsCard
           key={picked ?? ''}
@@ -180,8 +195,8 @@ export function PrecomputedVariantBrowser({ set, state, onStateChange, views, en
         tracks={set.tracks}
         onLocationChange={move}
         engine={engine}
-        {...(index > 0 && { onPreviousVariant: () => pick(index - 1) })}
-        {...(predictions && index >= 0 && index < predictions.length - 1 && { onNextVariant: () => pick(index + 1) })}
+        {...(previous && { onPreviousVariant: () => pick(previous) })}
+        {...(next && { onNextVariant: () => pick(next) })}
       />
       {effects}
     </div>

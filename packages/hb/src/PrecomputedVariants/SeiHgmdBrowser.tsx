@@ -32,6 +32,9 @@ const openWidth = 100_000;
 
 /** Sei's HGMD variants: every variant on a heatmap, sortable as on humanbase.io, beside the shared genome browser of precomputed variants. */
 export function SeiHgmdBrowser({ state, onStateChange, engine }: SeiHgmdBrowserProps) {
+  const hgmd = useSeiHgmd();
+  const sorted = useMemo(() => hgmd.variants && SeiHgmdService.sorted(hgmd.variants, state.order), [hgmd.variants, state.order]);
+  const list = useMemo(() => sorted && { variants: sorted, label: `all ${count.format(sorted.length)} HGMD variants ${orderNames[state.order]}` }, [sorted, state.order]);
   const open = (record: HgmdVariantRecord) => onStateChange({ view: 'genome', variant: variantIdOf(record), location: GenomeLocation.at(record.chromosome, record.position).withWidth(openWidth).format() });
   return (
     <PrecomputedVariantBrowser
@@ -39,17 +42,21 @@ export function SeiHgmdBrowser({ state, onStateChange, engine }: SeiHgmdBrowserP
       state={state}
       onStateChange={onStateChange}
       engine={engine}
+      list={list}
       views={{
         tabs: views,
         value: state.view,
         onChange: (view) => onStateChange({ view: view as SeiHgmdView }),
-        content: state.view === 'heatmap' ? { label: 'Sequence class scores of every variant', view: <HgmdHeatmap order={state.order} onOrderChange={(order) => onStateChange({ order })} onOpen={open} /> } : undefined,
+        content: state.view === 'heatmap' ? { label: 'Sequence class scores of every variant', view: <HgmdHeatmap hgmd={hgmd} sorted={sorted} order={state.order} onOrderChange={(order) => onStateChange({ order })} onOpen={open} /> } : undefined,
       }}
     />
   );
 }
 
 interface HgmdHeatmapProps {
+  hgmd: ReturnType<typeof useSeiHgmd>;
+  /** Every variant in the chosen order. */
+  sorted: readonly HgmdVariantRecord[] | undefined;
   order: HgmdOrder;
   onOrderChange: (order: HgmdOrder) => void;
   onOpen: (record: HgmdVariantRecord) => void;
@@ -57,8 +64,7 @@ interface HgmdHeatmapProps {
 
 const orderNames: Record<HgmdOrder, string> = { default: 'in the dataset’s order', disease: 'by disease name', position: 'by genome position' };
 
-function HgmdHeatmap({ order, onOrderChange, onOpen }: HgmdHeatmapProps) {
-  const { features, variants, error, refetch } = useSeiHgmd();
+function HgmdHeatmap({ hgmd: { features, variants, error, refetch }, sorted, order, onOrderChange, onOpen }: HgmdHeatmapProps) {
   if (error) {
     return (
       <Alert tone="error" title="The HGMD variants couldn’t load" action={{ label: 'Try again', onSelect: refetch }}>
@@ -66,13 +72,13 @@ function HgmdHeatmap({ order, onOrderChange, onOpen }: HgmdHeatmapProps) {
       </Alert>
     );
   }
-  if (!variants || !features) return <Skeleton width="100%" height="480px" />;
+  if (!variants || !sorted || !features) return <Skeleton width="100%" height="480px" />;
   return (
     <div className="deepsea-plot">
       <div className="deepsea-plot-controls">
         <Select label="Sort variants by" size="small" options={SeiHgmdService.orders} value={order} onChange={(value) => onOrderChange(value as HgmdOrder)} />
       </div>
-      <VariantsHeatmap variants={variants} features={features} order={order} onOpen={onOpen} />
+      <VariantsHeatmap variants={variants} sorted={sorted} features={features} order={order} onOpen={onOpen} />
     </div>
   );
 }
@@ -80,6 +86,7 @@ function HgmdHeatmap({ order, onOrderChange, onOpen }: HgmdHeatmapProps) {
 interface VariantsHeatmapProps {
   /** Every variant, in the API's order. */
   variants: readonly HgmdVariantRecord[];
+  sorted: readonly HgmdVariantRecord[];
   features: FeaturesRecord;
   order: HgmdOrder;
   onOpen: (record: HgmdVariantRecord) => void;
@@ -87,7 +94,7 @@ interface VariantsHeatmapProps {
 
 // One row per variant named as humanbase.io names it; the tooltip adds its gene and position, as humanbase.io's does.
 // Rows are built once and only reordered by a sort, and only the rows on screen are drawn.
-function VariantsHeatmap({ variants, features, order, onOpen }: VariantsHeatmapProps) {
+function VariantsHeatmap({ variants, sorted, features, order, onOpen }: VariantsHeatmapProps) {
   const columns = useMemo(() => (features.model_features ?? []).map((feature) => ({ label: feature.chromatin_feature_type.name })), [features]);
   const rowOf = useMemo(() => {
     const values = new ScoreScale(scale.legend);
@@ -99,7 +106,6 @@ function VariantsHeatmap({ variants, features, order, onOpen }: VariantsHeatmapP
       details: variant.feature_predictions.map((value) => ({ rows: [['Gene', variant.gene] as const, ['Position', `${variant.chromosome}:${variant.position}`] as const, [scoreName, values.describe(value, format)] as const] })),
     }]));
   }, [variants]);
-  const sorted = useMemo(() => SeiHgmdService.sorted(variants, order), [variants, order]);
   const rows = useMemo(() => sorted.flatMap((variant) => rowOf.get(variant) ?? []), [sorted, rowOf]);
 
   return (

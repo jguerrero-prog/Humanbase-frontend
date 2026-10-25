@@ -27,7 +27,8 @@ describe('PrecomputedVariantBrowser', () => {
   it('opens on the gnomAD variant nearest the middle, as humanbase.io’s /seqweaver does, and steps to the next', async () => {
     renderPage();
     expect(await screen.findByRole('heading', { name: 'Molecular effects of chr1:2,334,919 C>T' }, { timeout: 5000 })).toBeInTheDocument();
-    expect(screen.getByText(/^78 variants in view/)).toBeInTheDocument();
+    // gnomAD is a positional scan, so Previous and Next stay among the variants in view.
+    expect(screen.getByText(/^78 variants in view.*step through them\.$/)).toBeInTheDocument();
     expect(screen.getByText(/Seqweaver \(log e-value\)\. Showing the top 20 of 232 proteins/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Score type documentation/ })).toHaveAttribute('href', '/docs/seqweaver/#molecular-level-biochemical-effects-prediction');
     await userEvent.click(screen.getByRole('button', { name: 'Next variant' }));
