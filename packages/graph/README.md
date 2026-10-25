@@ -8,6 +8,7 @@ Draws Humanbase networks. The front end talks only to the `GraphRenderer` interf
 interface GraphRenderer {
   mount(container: HTMLElement, options: { label: string; onSelectNode?; onSelectLink?; onSelectGroup?; onHoverNode? }): void;
   render(data: GraphData): void;      // nodes { id, label, query, group? }, links { source, target, weight } and optional groups { id, label, color }
+  setLabel(label: string): void;      // renames the graph for screen readers, such as after the result is renamed
   select(selection: GraphSelection): void; // a gene (optionally with its own links), a connection, a group, or null
   hover(focus: GraphFocus | null): void;   // a gene { id, links } to ring with a dashed ring, its links drawn; null clears
   highlight(sets: readonly GraphHighlight[]): void; // starred sets { id, label, color, nodes }, in starring order; [] clears
@@ -24,7 +25,7 @@ interface GraphRenderer {
 <NetworkGraph data={data} label="Network of IL1B and 15 related genes" highlights={starred} renderer={() => new MyRenderer()} />
 ```
 
-The screens call the renderer in this order: `mount` once, `render` whenever the genes or connections change, then `select` and `highlight` with the current state. A renderer must keep the selection and highlights when `render` runs again. It reports clicks through the `onSelectNode`, `onSelectLink` and `onSelectGroup` callbacks it got in `mount`; the screens open the drawers. It reports a gene hovered or focused, and when it no longer is, through `onHoverNode(id, anchor)`, where `anchor` is the gene's box on screen so the screen can place its tooltip; the screen answers with `hover`. `color` values are design token names such as `--viz-cat-1`, so draw them with `var(...)`.
+The screens call the renderer in this order: `mount` once, `render` whenever the genes, their names or the connections change, then `select` and `highlight` with the current state. A new title goes to `setLabel`, never through a new `mount`. A renderer must keep the selection and highlights when `render` runs again. It reports clicks through the `onSelectNode`, `onSelectLink` and `onSelectGroup` callbacks it got in `mount`; the screens open the drawers. It reports a gene hovered or focused, and when it no longer is, through `onHoverNode(id, anchor)`, where `anchor` is the gene's box on screen so the screen can place its tooltip; the screen answers with `hover`. `color` values are design token names such as `--viz-cat-1`, so draw them with `var(...)`.
 
 ## The default renderer
 
@@ -33,7 +34,7 @@ The screens call the renderer in this order: `mount` once, `render` whenever the
 - Connections get darker and wider with confidence, in the bands from `edgeBands` (0.5 to 0.75, 0.75 to 0.9, 0.9 and up). Connections under 0.5 use the weakest band.
 - Query genes are larger and drawn in ink; related genes are white with a grey outline. Labels are Lato Bold 12, 14 for query genes, with a white halo.
 - A selected gene gets an ink ring; genes and connections it doesn't touch fade to 35%.
-- The layout is computed before anything is drawn, so the graph never drifts. It fades in, which reduced motion keeps.
+- The layout is computed before anything is drawn, so the graph never drifts. It is computed again only when the genes, their groups or the connections change; new gene names redraw the graph in place, keeping positions and zoom. It fades in, which reduced motion keeps.
 - Every gene is a focusable button named by its symbol and role, and Enter or Space selects it. The table view is the full accessible equivalent.
 - Starred sets (from the star toggles in the Process and Tissue panels) ring each of their genes in the set's color, stacked outward in starring order, with a thin ink edge outside the last ring so light colors still show on white. A light shaded area of the same color is drawn behind each set's genes.
 - A gene selected with `links`, as in a module result, draws those links even when the graph's own links are hidden. The gene, its neighbors and their group labels stay at full strength and everything else fades; the gene's group label is marked selected.

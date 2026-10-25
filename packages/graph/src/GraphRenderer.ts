@@ -67,7 +67,10 @@ export interface MountOptions extends GraphEvents {
  */
 export interface GraphRenderer {
   mount(container: HTMLElement, options: MountOptions): void;
+  /** Lays the graph out again only when its genes, groups or connections change; new names alone keep every position. */
   render(data: GraphData): void;
+  /** Renames the graph for screen readers without redrawing it. */
+  setLabel(label: string): void;
   select(selection: GraphSelection): void;
   /** Rings a gene with a dashed ring and draws its links; null clears it. */
   hover(focus: GraphFocus | null): void;
