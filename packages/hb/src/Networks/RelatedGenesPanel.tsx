@@ -10,11 +10,13 @@ export interface RelatedGenesPanelProps {
   selected: number | undefined;
   onSelectGene: (entrez: number) => void;
   onAddGene: (gene: NetworkGene) => void;
+  /** Rows come in uniqueness order, so the Score column claims no sort. */
+  rankedByUniqueness?: boolean;
 }
 
 const columns = 3;
 
-export function RelatedGenesPanel({ genes, caption, fileName, selected, onSelectGene, onAddGene }: RelatedGenesPanelProps) {
+export function RelatedGenesPanel({ genes, caption, fileName, selected, onSelectGene, onAddGene, rankedByUniqueness = false }: RelatedGenesPanelProps) {
   const [filter, setFilter] = useState('');
   const term = filter.trim().toLowerCase();
   const rows = genes?.filter((gene) => !term || gene.symbol.toLowerCase().includes(term) || gene.name.toLowerCase().includes(term));
@@ -35,7 +37,7 @@ export function RelatedGenesPanel({ genes, caption, fileName, selected, onSelect
         <thead>
           <tr>
             <HeaderCell>Gene</HeaderCell>
-            <HeaderCell align="end" sort="descending">
+            <HeaderCell align="end" {...(rankedByUniqueness ? {} : { sort: 'descending' as const })}>
               Score
             </HeaderCell>
             <HeaderCell>
@@ -66,7 +68,9 @@ export function RelatedGenesPanel({ genes, caption, fileName, selected, onSelect
           )}
         </tbody>
       </Table>
-      <p className="result-note">The score is the average weight of a gene’s connections to the query genes. The table lists the same genes shown in the graph and scrolls inside its panel.</p>
+      <p className="result-note">
+        The score is the average weight of a gene’s connections to the query genes.{rankedByUniqueness && ' Rows are ranked by uniqueness to the query genes.'} The table lists the same genes shown in the graph and scrolls inside its panel.
+      </p>
     </>
   );
 }

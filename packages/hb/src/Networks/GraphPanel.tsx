@@ -7,6 +7,15 @@ import { networkFileName, networkText } from './networkExport';
 import { useStarredHighlights } from './starredSets';
 
 const zoomStep = 1.3;
+const count = (n: number, noun: string) => `${n} ${noun}${n === 1 ? '' : 's'}`;
+
+function resultLine({ genes, edges, hidden }: NetworkSubset, total: number, minConfidence: number): string {
+  const query = genes.filter((gene) => gene.isQuery).length;
+  const showing = genes.length === total ? `all ${genes.length}` : `${genes.length} of ${total}`;
+  const split = `${count(query, 'query gene')} and ${count(genes.length - query, 'related gene')}`;
+  const line = `Showing ${showing} genes: ${split}, ${count(edges.length, 'connection')} above ${minConfidence.toFixed(2)}.`;
+  return hidden ? `${line} Genes with no connection above the cutoff are hidden.` : line;
+}
 const pngWidth = 1080;
 
 export interface GraphPanelProps {
@@ -56,7 +65,6 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
         { label: 'Clear all starred sets', dividerBefore: true, onSelect: () => onViewChange(view.with({ starred: [] })) },
       ]
     : [{ label: 'Star a process or tissue to highlight its genes', disabled: true }];
-  const shown = subset?.genes.length ?? 0;
   const total = network?.genes.length ?? 0;
 
   const asTable = view.display === 'table';
@@ -119,7 +127,7 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
         <KeyLegend title="Connection" mark="line" items={legendItems} />
         {subset && (
           <p className="result-line" role="status">
-            Showing {shown === total ? `all ${shown}` : `${shown} of ${total}`} genes, {subset.edges.length} connections above {minConfidence.toFixed(2)}
+            {resultLine(subset, total, minConfidence)}
           </p>
         )}
       </div>

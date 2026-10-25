@@ -9,7 +9,7 @@ for (const [version, name] of [['v1', 'GIANT'], ['v3', 'MAGE']] as const) {
     const problems = watch(page);
     await page.goto(`${il1bTnf}&version=${version}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(/IL1B/);
-    await expect(page.getByText(/Showing \d+ of \d+ genes, [1-9]\d* connections above \d\.\d\d/)).toBeVisible();
+    await expect(page.getByText(/Showing \d+ of \d+ genes: 2 query genes and \d+ related genes?, [1-9]\d* connections? above \d\.\d\d/)).toBeVisible();
     const genes = page.getByRole('table', { name: /Genes functionally related/ });
     await expect(genes.getByRole('row')).not.toHaveCount(1);
     expect(await page.locator('.force-graph-node').count()).toBeGreaterThan(5);
@@ -43,7 +43,7 @@ test('the filters change the network: genes shown, minimum confidence, uniquenes
   await expect(page.getByRole('checkbox', { name: 'Co-expression' })).not.toBeChecked();
   await page.keyboard.press('Escape');
   await expect(page).toHaveURL(/datatype/);
-  await expect(page.getByText(/Showing \d+ of \d+ genes, \d+ connections/)).toBeVisible();
+  await expect(page.getByText(/Showing \d+ of \d+ genes: .+, \d+ connections?/)).toBeVisible();
   await checkScreen(page, problems);
 });
 
@@ -109,9 +109,9 @@ test('View as table and Expand show the real connections', async ({ page }) => {
 test('the Download menu saves the real network: the visible part and every pair the API sent', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${il1bTnf}&version=v1`);
-  const summary = page.getByText(/Showing \d+ of (\d+) genes, (\d+) connections/);
+  const summary = page.getByText(/Showing \d+ of (\d+) genes: .+, (\d+) connections?/);
   await expect(summary).toBeVisible();
-  const [, total, shown] = (await summary.textContent())?.match(/of (\d+) genes, (\d+) connections/) ?? [];
+  const [, total, shown] = (await summary.textContent())?.match(/of (\d+) genes: .+, (\d+) connections?/) ?? [];
   const lines = async (item: string) => {
     const file = await downloadFrom(page, 'Download network', item);
     expect(file.name).toBe('global.txt');
@@ -162,7 +162,7 @@ test('Edit genes adds ICAM1 and reloads the network', async ({ page }) => {
   await checkScreen(page, problems);
   await page.getByRole('button', { name: 'Show network for 3 genes' }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/ICAM1/);
-  await expect(page.getByText(/Showing \d+ of \d+ genes, [1-9]\d* connections/)).toBeVisible();
+  await expect(page.getByText(/Showing \d+ of \d+ genes: .+, [1-9]\d* connections?/)).toBeVisible();
   await checkScreen(page, problems);
 });
 

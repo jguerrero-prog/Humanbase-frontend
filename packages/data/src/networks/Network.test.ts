@@ -50,7 +50,9 @@ describe('Network', () => {
     const { genes, edges } = network.subset({ shown: 5, minConfidence: 0.85, prioritizeUniqueness: false });
     expect(edges.map((e) => `${e.source.symbol}-${e.target.symbol}`)).toEqual(['A-C', 'D-E']);
     expect(genes.map((g) => g.symbol)).toEqual(['A', 'B', 'D', 'C', 'E']);
-    expect(network.subset({ shown: 4, minConfidence: 0.85, prioritizeUniqueness: false }).genes.map((g) => g.symbol)).toEqual(['A', 'B', 'C']);
+    const hiding = network.subset({ shown: 4, minConfidence: 0.85, prioritizeUniqueness: false });
+    expect(hiding.genes.map((g) => g.symbol)).toEqual(['A', 'B', 'C']);
+    expect(hiding.hidden).toBe(1);
   });
 
   it('ranks a lone query gene first, as humanbase.io does', () => {

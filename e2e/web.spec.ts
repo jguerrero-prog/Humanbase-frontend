@@ -90,7 +90,7 @@ test('a toast posted from an open sheet on a phone shows above the sheet, clear 
 test('the Networks result has no WCAG 2.2 AA violations once loaded, with the data types open', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&entrez=100188314&version=v1`);
-  await expect(page.getByText(/Showing 15 of 52 genes, \d+ connections above 0\.48/)).toBeVisible();
+  await expect(page.getByText(/Showing 15 of 52 genes: 2 query genes and 13 related genes, \d+ connections above 0\.48\./)).toBeVisible();
   await expect(page.getByText('AUTS12 was left out because it isn’t in any Humanbase network. This network uses IL1B and TNF.')).toBeVisible();
   await page.getByRole('button', { name: 'Data types' }).click();
   await expect(page.getByRole('checkbox', { name: 'Co-expression' })).toBeVisible();

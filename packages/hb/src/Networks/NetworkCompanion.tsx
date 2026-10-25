@@ -18,11 +18,13 @@ export interface NetworkCompanionProps {
   onToggleStar: (identifier: string) => void;
   /** Ranks terms with cross-organism annotation counts, for extended_universe on GIANT. */
   extendedUniverse?: boolean;
+  /** The genes follow "Prioritize by uniqueness" instead of their score. */
+  rankedByUniqueness?: boolean;
 }
 
 type Panel = 'genes' | 'processes' | 'tissues';
 
-export function NetworkCompanion({ network, shown, queryNames, networkTitle, fileName, selected, onSelectGene, onAddGene, starred, onToggleStar, extendedUniverse = false }: NetworkCompanionProps) {
+export function NetworkCompanion({ network, shown, queryNames, networkTitle, fileName, selected, onSelectGene, onAddGene, starred, onToggleStar, extendedUniverse = false, rankedByUniqueness = false }: NetworkCompanionProps) {
   const [panel, setPanel] = useState<Panel>('genes');
   // Terms load once for every gene in the response, then rank against whichever genes the graph shows.
   const allGenes = useMemo(() => network?.genes.map((gene) => gene.entrez), [network]);
@@ -52,6 +54,7 @@ export function NetworkCompanion({ network, shown, queryNames, networkTitle, fil
           selected={selected}
           onSelectGene={onSelectGene}
           onAddGene={onAddGene}
+          rankedByUniqueness={rankedByUniqueness}
         />
       ) : (
         <TermsPanel

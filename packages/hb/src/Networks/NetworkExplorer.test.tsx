@@ -22,7 +22,21 @@ describe('NetworkExplorer', () => {
     expect(within(table).getAllByRole('row')).toHaveLength(14);
     expect(await screen.findByText('AUTS12 was left out because it isn’t in any Humanbase network. This network uses IL1B and TNF.')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('IL1B interleukin 1 beta TNF tumor necrosis factor');
-    expect(screen.getByText(/Showing 15 of 52 genes, \d+ connections above 0\.48/)).toBeInTheDocument();
+    expect(screen.getByText(/Showing 15 of 52 genes: 2 query genes and 13 related genes, \d+ connections above 0\.48\.$/)).toBeInTheDocument();
+    expect(within(table).getByRole('columnheader', { name: 'Score' })).toHaveAttribute('aria-sort', 'descending');
+  });
+
+  it('with uniqueness, splits the count and claims no Score sort', async () => {
+    renderExplorer(new NetworkQuery([3553, 7124], undefined, 'v1'), { view: new NetworkView(15, undefined, true) });
+    const table = await screen.findByRole('table', { name: /Genes functionally related to IL1B and TNF/ });
+    expect(await screen.findByText('Showing 16 of 52 genes: 2 query genes and 14 related genes, 40 connections above 0.48.')).toBeInTheDocument();
+    expect(within(table).getByRole('columnheader', { name: 'Score' })).not.toHaveAttribute('aria-sort');
+    expect(screen.getByText(/Rows are ranked by uniqueness to the query genes\./)).toBeInTheDocument();
+  });
+
+  it('says when related genes are hidden for having no connection above the cutoff', async () => {
+    renderExplorer(new NetworkQuery([3553], undefined, 'v1'), { view: new NetworkView(15, undefined, true) });
+    expect(await screen.findByText(/^Showing 6 of \d+ genes: 1 query gene and 5 related genes, 5 connections above 0\.84\. Genes with no connection above the cutoff are hidden\.$/)).toBeInTheDocument();
   });
 
   it('ranks terms with extended annotation counts on GIANT when extended_universe asks, and says so', async () => {

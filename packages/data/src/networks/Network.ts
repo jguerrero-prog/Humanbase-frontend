@@ -75,6 +75,8 @@ export interface NetworkViewOptions {
 export interface NetworkSubset {
   genes: NetworkGene[];
   edges: NetworkEdge[];
+  /** Related genes ranked within the number shown but left out for having no connection above the cutoff. */
+  hidden: number;
 }
 
 const mean = (values: readonly number[]) => values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -134,7 +136,8 @@ export class Network {
     const candidates = new Set([...this.queryGenes, ...top.filter((gene) => !gene.isQuery)]);
     const edges = this.edges.filter((edge) => edge.weight > minConfidence && candidates.has(edge.source) && candidates.has(edge.target));
     const connected = new Set(edges.flatMap((edge) => [edge.source, edge.target]));
-    return { genes: [...candidates].filter((gene) => gene.isQuery || connected.has(gene)), edges };
+    const genes = [...candidates].filter((gene) => gene.isQuery || connected.has(gene));
+    return { genes, edges, hidden: candidates.size - genes.length };
   }
 
   /** Requested genes the network left out, because they are in no network of this version. */

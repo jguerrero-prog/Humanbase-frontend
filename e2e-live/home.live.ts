@@ -50,6 +50,6 @@ test('Show network opens the Networks result for the matched genes', async ({ pa
   await search.press('Enter');
   await page.getByRole('button', { name: 'Show network for 2 genes' }).click();
   await expect(page).toHaveURL(/\/networks\/\?.*entrez=3553.*entrez=7124/);
-  await expect(page.getByText(/Showing \d+ of \d+ genes, \d+ connections at/)).toBeVisible();
+  await expect(page.getByText(/Showing \d+ of \d+ genes: .+, \d+ connections? above/)).toBeVisible();
   await checkScreen(page, problems);
 });

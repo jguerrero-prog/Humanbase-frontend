@@ -365,6 +365,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
                 starred={view.starred}
                 onToggleStar={(identifier) => onViewChange(view.toggleStar(identifier))}
                 extendedUniverse={extendedUniverse}
+                rankedByUniqueness={focusView.prioritizeUniqueness}
               />
               <p className="result-note">
                 The panel follows the network you used last, here {focusTitle}. Selecting a gene or connection in the other network switches it.
@@ -423,6 +424,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
             starred={view.starred}
             onToggleStar={(identifier) => onViewChange(view.toggleStar(identifier))}
             extendedUniverse={extendedUniverse}
+            rankedByUniqueness={view.prioritizeUniqueness}
           />
         }
       />

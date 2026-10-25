@@ -223,8 +223,8 @@ const behavior = [
   ['Comparing', 'Compare adds a column for the same genes with its own tissue and data types. A new column starts with all five data types (Comparing networks).'],
   ['Layout', 'Layout options place the query genes in the center or around the edge. Pause layout stops the graph moving and starts on when the system asks for reduced motion (Motion).'],
   ['Starred sets', 'Starring a process or tissue in the panel highlights its genes in the graph and adds it to Starred sets. The button stays disabled until something is starred.'],
-  ['Filters', 'As humanbase.io filters the network: genes are ranked with the query genes among them, Genes shown keeps the query genes and the other genes ranked within it, connections are kept only above the minimum confidence, and a related gene left without a connection is hidden.'],
-  ['Uniqueness', 'Prioritize by uniqueness to the query genes ranks genes as humanbase.io does: the average weight of a gene’s connections to the query genes over the average weight of all its connections, query genes included. Off, genes rank by the first average alone. The graph, table and result line update together when it changes.'],
+  ['Filters', 'As humanbase.io filters the network: genes are ranked with the query genes among them, Genes shown keeps the query genes and the other genes ranked within it, connections are kept only above the minimum confidence, and a related gene left without a connection is hidden. So the count can differ from the slider; the result line splits it into query and related genes and, when genes are hidden, adds “Genes with no connection above the cutoff are hidden.”'],
+  ['Uniqueness', 'Prioritize by uniqueness to the query genes ranks genes as humanbase.io does: the average weight of a gene’s connections to the query genes over the average weight of all its connections, query genes included. Off, genes rank by the first average alone. On, the Genes table drops the Score sort arrow and its note says rows are ranked by uniqueness to the query genes. The graph, table and result line update together when it changes.'],
   ['Sticky parts', 'The top bar always; the tabs once the header scrolls away. Settings stay in the header.'],
   ['Loading', 'The header, tabs and table headers appear at once; the view and table show still skeletons (Loading and job status).'],
   ['Nothing to show', 'The empty state sits inside the view or table it belongs to (Empty states).'],
@@ -303,7 +303,7 @@ const il1r1Terms = [
             <div class="graph-area"><NetworkSketch /><p class="graph-label">Existing renderer, shown as a diagram</p></div>
             <div class="graph-meta">
               <KeyLegend title="Connection" mark="line" items={edgeItems} />
-              <p class="result-line">Showing 15 of 50 genes, 108 connections above 0.84</p>
+              <p class="result-line">Showing 15 of 50 genes: 1 query gene and 14 related genes, 108 connections above 0.84.</p>
             </div>
             <div class="graph-filters">
               <Slider label="Minimum confidence" min={0} max={1} step={0.01} defaultValue={0.84} />
@@ -413,7 +413,7 @@ const il1r1Terms = [
           <GraphToolbar label={`Graph controls, ${tissue}`} groups={toolbar} tableHref="#comparing-networks" />
           <div class="graph-area"><NetworkSketch /></div>
           <KeyLegend title="Connection" mark="line" items={edgeItems} />
-          <p class="result-line">Showing 15 of 50 genes, 108 connections above 0.84</p>
+          <p class="result-line">Showing 15 of 50 genes: 1 query gene and 14 related genes, 108 connections above 0.84.</p>
           <Slider label="Minimum confidence" min={0} max={1} step={0.01} defaultValue={0.84} />
         </section>
       ))}
