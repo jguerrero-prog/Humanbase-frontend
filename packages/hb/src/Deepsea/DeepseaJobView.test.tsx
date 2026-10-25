@@ -58,7 +58,7 @@ describe('DeepseaJobView', () => {
 
   it('shows the Sei FASTA job’s sequence count without a profile count when the feature list can’t be read', async () => {
     renderJob('5154ea8d-3203-4c81-acc8-757faeb44e0c');
-    expect(await screen.findByText('Sei predicted chromatin profiles for each of your 4 sequences. The results are files to download, one probability per profile and sequence.', {}, { timeout: 5000 })).toBeInTheDocument();
+    expect(await screen.findByText('Sei predicted 21,907 chromatin profiles for each of your 4 sequences. The results are files to download, one probability per profile and sequence.', {}, { timeout: 5000 })).toBeInTheDocument();
   });
 
   it('shows the Sei BED job as humanbase.io does: its files, with no score plot', async () => {
@@ -69,7 +69,7 @@ describe('DeepseaJobView', () => {
     expect(within(files).getByRole('link', { name: 'Download Probability' })).toHaveAttribute('href', `https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/${id}/${id}_feature_predictions.tsv.gz`);
     expect(within(files).getByText('Every feature for every region')).toBeInTheDocument();
     expect(screen.getByText('Regions, BED')).toBeInTheDocument();
-    expect(await screen.findByText('Sei predicted chromatin profiles for each of your 10 regions. The results are files to download, one probability per profile and region.')).toBeInTheDocument();
+    expect(await screen.findByText('Sei predicted 21,907 chromatin profiles for each of your 10 regions. The results are files to download, one probability per profile and region.')).toBeInTheDocument();
     expect(screen.queryByRole('combobox', { name: 'Score' })).not.toBeInTheDocument();
   });
 
