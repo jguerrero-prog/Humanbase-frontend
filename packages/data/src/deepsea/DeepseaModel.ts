@@ -24,6 +24,8 @@ export interface DeepseaModel {
   genomes: readonly Genome[];
   /** The inputs the tool takes; the first is where its form opens. */
   inputs: readonly InputKind[];
+  /** As humanbase.io's vizInputTypes: the inputs whose results are plotted; other jobs are shown as their files. */
+  plotted: readonly InputKind[];
   option: string;
   /** Under the option in the Model menu, such as Earlier model: 2,002 chromatin features. */
   optionDetail?: string;
@@ -40,6 +42,10 @@ export interface DeepseaModel {
   /** What each feature is: an RNA-binding protein, a chromatin feature or a sequence class. */
   featureNoun: string;
   featurePlural: string;
+  /** What a job shown as files predicted, as in Beluga predicted 2,002 chromatin profiles. */
+  profiles?: string;
+  /** The API's feature list is too large to load just to count it: Sei's is 4 MB, with no lighter way to read its length. */
+  largeFeatureList?: boolean;
   /** What a raised feature does, as in Raises binding; empty reads as just Raises. */
   verb: string;
   /** The effects card's name when the model's paper uses another than Molecular effects: Expression effects for ExPecto. */
@@ -75,6 +81,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     tool: 'Sei',
     genomes: ['hg19', 'hg38'],
     inputs: ['vcf', 'bed', 'fasta'],
+    plotted: ['vcf'],
     option: 'Sei (DNA, 2021)',
     optionDetail: 'Current model: 40 sequence classes from 21,907 chromatin profiles',
     kind: 'Sei (DNA)',
@@ -84,6 +91,8 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     scored: 'Variants anywhere in the genome can be scored.',
     featureNoun: 'sequence class',
     featurePlural: 'sequence classes',
+    profiles: 'chromatin profiles',
+    largeFeatureList: true,
     verb: '',
     strand: false,
     summaryScores: ['seqclass'],
@@ -98,6 +107,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     tool: 'Beluga',
     genomes: ['hg19', 'hg38'],
     inputs: ['vcf', 'bed', 'fasta'],
+    plotted: ['vcf', 'bed'],
     option: 'Beluga (DNA, 2019)',
     optionDetail: 'Earlier model: 2,002 chromatin features',
     kind: 'Beluga (DNA)',
@@ -107,6 +117,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     scored: 'Variants anywhere in the genome can be scored.',
     featureNoun: 'chromatin feature',
     featurePlural: 'chromatin features',
+    profiles: 'chromatin profiles',
     verb: '',
     strand: false,
     threshold: 3,
@@ -119,6 +130,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     tool: 'Seqweaver',
     genomes: ['hg19', 'hg38'],
     inputs: ['vcf', 'bed', 'fasta'],
+    plotted: ['vcf', 'bed'],
     option: 'Seqweaver (RNA)',
     kind: 'Seqweaver (RNA)',
     summary: 'Predict how variants change RNA-binding protein targets and post-transcriptional regulation.',
@@ -128,6 +140,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     scored: 'Variants near genes and splice junctions can be scored.',
     featureNoun: 'protein',
     featurePlural: 'proteins',
+    profiles: 'RNA-binding protein profiles',
     verb: 'binding',
     strand: true,
     threshold: 2,
@@ -140,6 +153,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     tool: 'ExPecto',
     genomes: ['hg19'],
     inputs: ['vcf'],
+    plotted: ['vcf'],
     option: 'ExPecto (tissues)',
     kind: 'ExPecto (Beluga model)',
     summary: 'Predict how variants change gene expression across tissues.',
@@ -165,6 +179,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     genomes: ['hg19', 'hg38'],
     inSentence: 'region scan',
     inputs: ['fasta'],
+    plotted: ['fasta'],
     option: 'Beluga (DNA, 2019)',
     kind: 'Beluga (DNA)',
     summary: 'Mutate every base of a sequence and see which changes move each of Beluga’s 2,002 chromatin features.',

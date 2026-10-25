@@ -1,4 +1,4 @@
-import { deepseaModels, genomeLabels, VariantFileCheck, type FileCheckResult, type Genome, type InputKind, type LengthWarning, type VariantModel } from '@humanbase/data';
+import { deepseaModels, genomeLabels, inputNouns, VariantFileCheck, type FileCheckResult, type Genome, type InputKind, type LengthWarning, type VariantModel } from '@humanbase/data';
 import { Accordion, AccordionItem, Alert, Button, Field, FileDrop, SegmentedControl, saveFile, Select, TextInput, useLinkHref, type ChosenFile, type SelectOption } from '@humanbase/ui';
 import { useId, useMemo, useState, type ReactNode } from 'react';
 import '../Jobs/JobForm.css';
@@ -42,7 +42,6 @@ const optionOf = (value: VariantModel): SelectOption => {
   return optionDetail ? { value, label: option, description: optionDetail } : { value, label: option };
 };
 const extensions: Record<InputKind, string> = { vcf: '.vcf,.txt', bed: '.bed,.txt', fasta: '.fasta,.fa,.txt' };
-const nouns: Record<InputKind, string> = { vcf: 'variants', bed: 'regions', fasta: 'sequences' };
 
 const bp = (model: VariantModel) => VariantFileCheck.sequenceLength[model].toLocaleString('en-US');
 // The model that reads the sequences: Beluga for in silico mutagenesis and ExPecto.
@@ -112,7 +111,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, models, inp
   const result = useMemo(() => (text.trim() ? new VariantFileCheck(kind, model).check(text) : undefined), [text, kind, model]);
   const blocking = result?.limit ?? result?.otherKind;
   const ready = Boolean(result && result.count > 0 && !result.problems.length && !blocking);
-  const runLabel = ready && result ? `Run ${named} on ${result.count.toLocaleString('en-US')} ${nouns[kind]}` : `Run ${named}`;
+  const runLabel = ready && result ? `Run ${named} on ${result.count.toLocaleString('en-US')} ${inputNouns[kind][1]}` : `Run ${named}`;
 
   const sources = [
     { value: 'upload', label: 'Upload a file' },
@@ -137,7 +136,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, models, inp
   const run = () => {
     if (!ready) return;
     if (onRun) void onRun({ model, kind, text, fileName: file?.name ?? `pasted.${kind}`, uploaded: source === 'upload', genome, count: result?.count ?? 0, title, email });
-    else setNote(`${named} would start on ${result?.count.toLocaleString('en-US')} ${nouns[kind]}. This example doesn’t send a job.`);
+    else setNote(`${named} would start on ${result?.count.toLocaleString('en-US')} ${inputNouns[kind][1]}. This example doesn’t send a job.`);
   };
 
   return (
@@ -179,7 +178,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, models, inp
       />
       {result?.lengthWarning && <SequenceLengthAlert warning={result.lengthWarning} />}
       {source === 'paste' ? (
-        <Field label={`Paste ${nouns[kind]}`} hint={result ? (result.problems.length ? `${result.problems.length} lines need fixing` : result.summary) : undefined}>
+        <Field label={`Paste ${inputNouns[kind][1]}`} hint={result ? (result.problems.length ? `${result.problems.length} lines need fixing` : result.summary) : undefined}>
           {(control) => <textarea {...control} className="field-control job-form-paste" value={text} spellCheck={false} onChange={(event) => setText(event.target.value)} />}
         </Field>
       ) : (

@@ -41,6 +41,39 @@ describe('DeepseaService', () => {
     }
   });
 
+  it('reads the Sei BED example job as files only, as humanbase.io plots Sei only from VCF', async () => {
+    const id = '90e896a5-a950-4180-a4fb-c5bcc8cefd1d';
+    const job = await service.get(id);
+    expect(job).toMatchObject({ kind: 'bed', status: 'finished', plotsScores: false, inputLabel: 'Regions, BED' });
+    expect(job.model.tool).toBe('Sei');
+    expect(jobScoreTypes(job.model, await service.scoreTypes(id))).toEqual([]);
+    expect(job.resultFiles.map((file) => file.key)).toEqual(['feature_predictions', 'uploaded_query', 'gz_file']);
+    expect(job.resultFiles[0]).toMatchObject({ holds: 'Every feature for every region', format: 'TSV, gzipped, with tabix index' });
+    expect(await service.inputCount(job)).toBe(10);
+  });
+
+  it('plots only the inputs humanbase.io plots for each model', () => {
+    const plotted = Object.fromEntries(Object.values(deepseaModels).map((model) => [model.id, model.plotted]));
+    expect(plotted).toEqual({ sei: ['vcf'], beluga: ['vcf', 'bed'], seqweaver: ['vcf', 'bed'], expecto: ['vcf'], insilico: ['fasta'] });
+  });
+
+  it('counts each FASTA example job’s sequences from its uploaded query', async () => {
+    for (const id of ['5154ea8d-3203-4c81-acc8-757faeb44e0c', '27d030ee-02d9-43ca-adec-e5d76265591a', 'dbebecbe-f58a-4ce4-b4ba-04af819a9ad7']) {
+      expect(await service.inputCount(await service.get(id))).toBe(4);
+    }
+  });
+
+  it('says what a files-only job predicted, counting profiles and inputs, and drops a count it couldn’t read', async () => {
+    const seqweaver = await service.get('dbebecbe-f58a-4ce4-b4ba-04af819a9ad7');
+    const profiles = (await service.features('seqweaver')).model_features?.length;
+    expect(seqweaver.filesSummary(profiles, 4)).toBe('Seqweaver predicted 232 RNA-binding protein profiles for each of your 4 sequences. The results are files to download, one probability per profile and sequence.');
+    const beluga = await service.get('27d030ee-02d9-43ca-adec-e5d76265591a');
+    expect(beluga.filesSummary((await service.features('beluga')).model_features?.length, 1)).toBe('Beluga predicted 2,002 chromatin profiles for your sequence. The results are files to download, one probability per profile and sequence.');
+    const sei = await service.get('90e896a5-a950-4180-a4fb-c5bcc8cefd1d');
+    expect(sei.filesSummary(21907, 10)).toBe('Sei predicted 21,907 chromatin profiles for each of your 10 regions. The results are files to download, one probability per profile and region.');
+    expect(sei.filesSummary(undefined, undefined)).toBe('Sei predicted chromatin profiles for each of your regions. The results are files to download, one probability per profile and region.');
+  });
+
   it('merges the variant scores into one row per variant', async () => {
     const sets = await Promise.all(['dis', 'mean-evalue'].map((type) => service.scores(exampleJob, { level: 'VARIANT', short_name: type })));
     const rows = variantRows(sets);
