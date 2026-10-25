@@ -65,7 +65,7 @@ export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: G
   const api = useHumanbase();
   const gene = useGene(entrez);
   const effects = useTissueVariants(entrez, tool.database satisfies TissueDatabase);
-  const { copyButton, toastRegion } = useCopyLink();
+  const { copyButton } = useCopyLink();
   const table = effects.data;
   const symbol = gene.data?.symbol ?? '…';
   const change = (next: Partial<GeneExpressionState>) => onStateChange({ ...state, ...next });
@@ -196,7 +196,6 @@ export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: G
           />
         )}
       </section>
-      {toastRegion}
     </div>
   );
 }

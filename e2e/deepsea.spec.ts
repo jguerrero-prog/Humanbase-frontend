@@ -133,7 +133,7 @@ test('a data track’s menu downloads the data in view as bedGraph or BED, read 
   const scores = await downloadFrom(page, 'Disease impact score track options', 'Download data in view');
   expect(scores.name).toBe('Disease-impact-score_hg19_chr1-109767590-109867590.bedgraph');
   expect(scores.bytes.toString('utf8')).toMatch(/^chr1\t109817589\t109817590\t1\.00\d*\n/m);
-  await expect(page.getByRole('region', { name: 'Download notifications' }).getByRole('listitem')).toHaveText('Disease impact score data downloaded');
+  await expect(page.getByRole('region', { name: 'Notifications' }).getByRole('listitem')).toHaveText('Disease impact score data downloaded');
 
   await page.getByRole('button', { name: 'Genes track options' }).click();
   await expect(page.getByRole('menuitem')).toHaveText(['Move up', 'Move down', 'Hide track']);
