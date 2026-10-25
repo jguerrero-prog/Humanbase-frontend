@@ -26,7 +26,7 @@ export { DeepseaService, type DeepseaRequest, type PrecomputedSource } from './d
 export { SeiHgmdService, type HgmdOrder, type HgmdVariantRecord } from './deepsea/SeiHgmdService';
 export { deepseaExamples } from './deepsea/deepseaExamples';
 export { InsilicoResult, sequenceSpan, type InsilicoRecord, type PercentileStops, type Substitution } from './deepsea/InsilicoResult';
-export { useDeepseaFeatures, useDeepseaInputCount, useDeepseaJob, useDeepseaVariants, useInsilico, usePrecomputedFeatures, usePrecomputedPredictions, useSeiHgmd, useViewPredictions } from './react/useDeepsea';
+export { useDeepseaFeatureCount, useDeepseaFeatures, useDeepseaInputCount, useDeepseaJob, useDeepseaVariants, useInsilico, usePrecomputedFeatures, usePrecomputedPredictions, useSeiHgmd, useViewPredictions } from './react/useDeepsea';
 export { ExpectoService, type ScoredVariant, type VariantQuery } from './expecto/ExpectoService';
 export { TissueVariants, strongestOf, tissueTitle, type EffectRow, type GenePosition, type PositionAxis, type TissueDatabase, type TissueEffects, type TissueVariantsRecord } from './expecto/TissueVariants';
 export { expectoTissues, type ExpectoTissue } from './expecto/expectoTissues';

@@ -1,4 +1,4 @@
-import { useDeepseaFeatures, useDeepseaInputCount, type DeepseaJob } from '@humanbase/data';
+import { useDeepseaFeatureCount, useDeepseaInputCount, type DeepseaJob } from '@humanbase/data';
 import { ContextLabel, Icon, ResultFiles, type JobStep } from '@humanbase/ui';
 import type { ReactNode } from 'react';
 import { jobDateTime, JobWaiting } from '../Jobs/JobPage';
@@ -25,7 +25,7 @@ export function DeepseaResultFiles({ job, linked }: { job: DeepseaJob; linked: b
 
 /** A finished Sei, Beluga or Seqweaver job whose input humanbase.io doesn't plot: its results are files to download. */
 export function DeepseaFilesView({ job, title, tools }: DeepseaFilesViewProps) {
-  const profiles = useDeepseaFeatures(job.model.id).data?.model_features?.length;
+  const profiles = useDeepseaFeatureCount(job.model.id);
   const inputs = useDeepseaInputCount(job).data;
   const archive = job.resultFiles.find((file) => file.key === 'gz_file');
   const steps: JobStep[] = [

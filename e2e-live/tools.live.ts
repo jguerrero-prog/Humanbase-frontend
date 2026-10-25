@@ -377,16 +377,16 @@ test('the real NetWAS result lists ranked genes with names and links into Networ
 });
 
 for (const [tool, id, input, summary] of [
-  ['Sei', '5154ea8d-3203-4c81-acc8-757faeb44e0c', 'FASTA', 'Sei predicted 21,907 chromatin profiles for each of your 4 sequences.'],
+  ['Sei', '5154ea8d-3203-4c81-acc8-757faeb44e0c', 'FASTA', 'Sei predicted chromatin profiles for each of your 4 sequences.'],
   ['Beluga', '27d030ee-02d9-43ca-adec-e5d76265591a', 'FASTA', 'Beluga predicted 2,002 chromatin profiles for each of your 4 sequences.'],
   ['Seqweaver', 'dbebecbe-f58a-4ce4-b4ba-04af819a9ad7', 'FASTA', 'Seqweaver predicted 232 RNA-binding protein profiles for each of your 4 sequences.'],
-  ['Sei', '90e896a5-a950-4180-a4fb-c5bcc8cefd1d', 'BED', 'Sei predicted 21,907 chromatin profiles for each of your 10 regions.'],
+  ['Sei', '90e896a5-a950-4180-a4fb-c5bcc8cefd1d', 'BED', 'Sei predicted chromatin profiles for each of your 10 regions.'],
 ] as const) {
-  test(`the real ${tool} ${input} job shows its files, as humanbase.io does, without reading scores`, async ({ page }) => {
+  test(`the real ${tool} ${input} job shows its files, as humanbase.io does, without reading scores or Sei’s feature list`, async ({ page }) => {
     const problems = watch(page);
     const scoreReads: string[] = [];
     page.on('request', (request) => {
-      if (/_scores\/|score_types\//.test(request.url())) scoreReads.push(request.url());
+      if (/_scores\/|score_types\/|Sei\/features\//.test(request.url())) scoreReads.push(request.url());
     });
     await page.goto(`${web}/deepsea/jobs/${id}/`);
     await expect(page.getByRole('heading', { level: 1, name: `Untitled ${tool} job` })).toBeVisible();

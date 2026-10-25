@@ -7,6 +7,7 @@ import { DeepseaService, type PrecomputedSource } from '../deepsea/DeepseaServic
 import { SeiHgmdService } from '../deepsea/SeiHgmdService';
 import type { GenomeLocation } from '../genome/GenomeLocation';
 import type { VariantModel } from '../jobs/VariantFileCheck';
+import type { Humanbase } from '../Humanbase';
 import { useHumanbase } from './HumanbaseProvider';
 import { rangeQuery, useReadRange } from './useReadRange';
 
@@ -58,7 +59,7 @@ export function useViewPredictions(job: DeepseaJob | undefined, scoreType: strin
   const id = job?.id ?? '';
   const model = job?.model.id;
   const named = model && deepseaModels[model].classFeatures?.scoreType === scoreType ? scoreType : undefined;
-  const features = useQuery({ queryKey: ['deepsea-features', model, named], queryFn: () => api.deepsea.features(model ?? 'sei', named), enabled: Boolean(model), staleTime: Infinity });
+  const features = useQuery({ ...featuresQuery(api, model ?? 'sei', named), enabled: Boolean(model) });
   return useInViewPredictions(features, view, ['deepsea-predictions', id, scoreType ?? ''], (range) => api.deepsea.featurePredictions(id, scoreType ?? '', range), Boolean(id && scoreType));
 }
 
@@ -83,10 +84,24 @@ function useInViewPredictions(features: UseQueryResult<FeaturesRecord>, view: Ge
   return { features: features.data, predictions: inView, error: failed[0]?.error, refetch: () => failed.forEach((query) => void query.refetch()) };
 }
 
-/** A model's features, such as Beluga's 2,002 chromatin features; they never change, so they load once. */
+// A model's features never change, so each list loads once per session and is kept.
+const featuresQuery = (api: Humanbase, model: VariantModel, named?: string) => ({
+  queryKey: ['deepsea-features', model, named ?? null],
+  queryFn: () => api.deepsea.features(model, named),
+  staleTime: Infinity,
+  gcTime: Infinity,
+});
+
+/** A model's features, such as Beluga's 2,002 chromatin features. */
 export function useDeepseaFeatures(model: VariantModel | undefined) {
   const api = useHumanbase();
-  return useQuery({ queryKey: ['deepsea-features', model], queryFn: () => api.deepsea.features(model as VariantModel), enabled: Boolean(model), staleTime: Infinity });
+  return useQuery({ ...featuresQuery(api, model ?? 'sei'), enabled: Boolean(model) });
+}
+
+/** How many features a model has; a list too large to load for a count is counted only when already loaded for another view. */
+export function useDeepseaFeatureCount(model: VariantModel) {
+  const api = useHumanbase();
+  return useQuery({ ...featuresQuery(api, model), enabled: !deepseaModels[model].largeFeatureList }).data?.model_features?.length;
 }
 
 /** How many sequences or regions a finished job ran, read once from its input file. */
