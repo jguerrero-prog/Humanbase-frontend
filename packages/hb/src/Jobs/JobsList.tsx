@@ -1,6 +1,7 @@
 import { JobHistory, type JobEntry, type JobState } from '@humanbase/data';
-import { ActionMenu, Button, Dialog, EmptyState, HeaderCell, JobRow, SearchField, Table, Tabs, TextInput, ToastQueue, ToastRegion, useLinkHref } from '@humanbase/ui';
+import { ActionMenu, Button, Dialog, EmptyState, HeaderCell, JobRow, SearchField, Table, Tabs, TextInput, useLinkHref } from '@humanbase/ui';
 import { useEffect, useMemo, useState, useSyncExternalStore, type FormEvent } from 'react';
+import { notifications } from '../Notifications/Notifications';
 import './JobsList.css';
 
 type Filter = 'all' | 'active' | 'finished' | 'failed';
@@ -45,7 +46,6 @@ export function JobsList({ onOpenJob }: JobsListProps) {
   const [link, setLink] = useState('');
   const [linkError, setLinkError] = useState<string>();
   const [clearing, setClearing] = useState(false);
-  const [toasts] = useState(() => new ToastQueue());
   // Running times count up while the page is open.
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -75,7 +75,7 @@ export function JobsList({ onOpenJob }: JobsListProps) {
 
   const copyLink = async (job: JobEntry) => {
     await navigator.clipboard?.writeText(new URL(linkHref(job.link), window.location.origin).href);
-    toasts.show({ tone: 'info', message: 'Link copied' });
+    notifications.show({ tone: 'info', message: 'Link copied' });
   };
 
   return (
@@ -191,7 +191,6 @@ export function JobsList({ onOpenJob }: JobsListProps) {
       >
         <p>This only changes this browser’s list. Their links keep working.</p>
       </Dialog>
-      <ToastRegion queue={toasts} />
     </section>
   );
 }

@@ -1,6 +1,7 @@
 import { Humanbase, HumanbaseProvider, JobHistory, SampleClient } from '@humanbase/data';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Notifications } from '../Notifications/Notifications';
 import { ModuleSearch } from './ModuleSearch';
 
 function renderSearch(example?: string) {
@@ -8,6 +9,7 @@ function renderSearch(example?: string) {
   render(
     <HumanbaseProvider api={new Humanbase(SampleClient.bundled())}>
       <ModuleSearch example={example} onChooseAnalysis={vi.fn()} onStarted={onStarted} />
+      <Notifications />
     </HumanbaseProvider>,
   );
   return { onStarted };

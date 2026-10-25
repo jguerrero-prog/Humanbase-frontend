@@ -2,6 +2,7 @@ import { Humanbase, HumanbaseProvider, JobHistory, SampleClient, type JobEntry }
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { jobLinkFrom, JobsList } from './JobsList';
+import { Notifications } from '../Notifications/Notifications';
 import { JobWatcher } from './JobWatcher';
 
 const seqweaver = '76aea8fe-8ec7-4698-a193-a186c7665edb';
@@ -44,8 +45,15 @@ describe('JobWatcher', () => {
     const history = new JobHistory();
     history.add(entry(seqweaver, 'Seqweaver', 'running', 'IL1B region variants'));
     history.add(entry(beluga, 'Beluga', 'running'));
-    render(withApi(<JobWatcher />));
-    const region = screen.getByRole('region', { name: 'Job notifications' });
+    render(
+      withApi(
+        <>
+          <JobWatcher />
+          <Notifications />
+        </>,
+      ),
+    );
+    const region = screen.getByRole('region', { name: 'Notifications' });
     await waitFor(() => expect(within(region).getAllByRole('listitem')).toHaveLength(2));
     const toasts = within(region).getAllByRole('listitem').map((toast) => toast.textContent);
     expect(toasts.some((text) => text?.includes('Seqweaver finished: IL1B region variants'))).toBe(true);

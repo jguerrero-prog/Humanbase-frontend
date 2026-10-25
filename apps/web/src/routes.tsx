@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import { readableSearch } from '@humanbase/data';
 import { asdBrowserRetired, genomeBrowserPreview } from '@humanbase/hb';
 import { createBrowserRouter, Navigate, useSearchParams, type RouteObject } from 'react-router';
 import { AppLayout } from './layout/AppLayout';
@@ -17,8 +18,7 @@ function page(path: string, load: () => Promise<ComponentType>): RouteObject {
 /** Keeps an old link working: opens the new page with its meaning, plus any query the link carried. */
 function Moved({ to, with: kept }: { to: string; with: Record<string, string> }) {
   const [search] = useSearchParams();
-  const query = new URLSearchParams({ ...Object.fromEntries(search), ...kept });
-  const text = query.toString();
+  const text = readableSearch({ ...Object.fromEntries(search), ...kept });
   return <Navigate replace to={text ? `${to}?${text}` : to} />;
 }
 

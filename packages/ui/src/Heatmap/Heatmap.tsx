@@ -78,6 +78,7 @@ const counts = new Intl.NumberFormat('en-US');
 const cellWidth = 34;
 const narrowWidth = 8;
 const labelEvery = 20;
+const tickLabelGap = 56;
 const hoverGrace = 300;
 const dragStart = 4;
 const switchDelay = 150;
@@ -391,6 +392,8 @@ function PositionAxis({ axis, columns, active: hovered, selected, onSelect, colu
   const first = axis.ticks[0] ?? 0;
   const last = axis.ticks.at(-1) ?? 1;
   const x = (offset: number) => ((offset - first) / (last - first)) * width;
+  // On a short ruler only every so many ticks gets a label, so the labels never overlap.
+  const tickEvery = Math.max(1, Math.ceil(tickLabelGap / (x(axis.ticks[1] ?? last) - x(first) || width)));
   const activePosition = active === undefined ? undefined : columns[active]?.position;
   return (
     <div className="heatmap-axis">
@@ -421,12 +424,14 @@ function PositionAxis({ axis, columns, active: hovered, selected, onSelect, colu
         })}
         <line className="ruler" x1="0" y1="34" x2={width} y2="34" />
         {columns.map((column) => column.position !== undefined && <line key={`v-${column.label}`} className="variant-tick" x1={x(column.position - axis.offset)} y1="28" x2={x(column.position - axis.offset)} y2="34" />)}
-        {axis.ticks.map((tick) => (
+        {axis.ticks.map((tick, index) => (
           <g key={tick}>
             <line className="ruler" x1={x(tick)} y1="34" x2={x(tick)} y2="38" />
-            <text x={x(tick)} y="52">
-              {tick}
-            </text>
+            {index % tickEvery === 0 && (
+              <text x={x(tick)} y="52">
+                {tick}
+              </text>
+            )}
           </g>
         ))}
       </svg>

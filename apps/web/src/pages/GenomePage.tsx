@@ -1,6 +1,6 @@
 import { genomeBrowserLink, GenomeBrowserPreview } from '@humanbase/hb';
 import type { GenomeLocation } from '@humanbase/data';
-import { useSearchParams } from 'react-router';
+import { useReadableSearchParams } from '../useReadableSearchParams';
 import { site } from '../../../docs/src/data/site';
 import './ToolPage.css';
 
@@ -8,7 +8,7 @@ const proposalHref = `${site.repoUrl}/issues/457`;
 
 // The URL keeps the view, the gene or variant the link named, and the assembly, so a view can be shared.
 export function GenomePage() {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useReadableSearchParams();
   const view = genomeBrowserLink.read(params);
   const move = (to: GenomeLocation) =>
     setParams((current) => {
