@@ -23,13 +23,15 @@ export interface MolecularEffectsProps {
   allLabel?: string | undefined;
   /** What the effects are, as each model's paper names them: Expression effects for ExPecto. */
   heading?: string | undefined;
+  /** False for a score without strength bins, which has no Strongest effects tab. */
+  strongest?: boolean | undefined;
   children: ReactNode;
 }
 
-export function MolecularEffects({ variant, view, onViewChange, allLabel = 'All features', heading = 'Molecular effects', children }: MolecularEffectsProps) {
+export function MolecularEffects({ variant, view, onViewChange, allLabel = 'All features', heading = 'Molecular effects', strongest = true, children }: MolecularEffectsProps) {
   const id = useId();
   const tabs = [
-    { value: 'strongest', label: 'Strongest effects' },
+    ...(strongest ? [{ value: 'strongest', label: 'Strongest effects' }] : []),
     { value: 'heatmap', label: 'Heatmap' },
     { value: 'all', label: allLabel },
   ];

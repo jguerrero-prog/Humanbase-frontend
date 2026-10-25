@@ -40,6 +40,7 @@ export class EffectGroups {
   ) {}
 
   strength(value: number): keyof StrengthCounts | null {
+    if (!this.scale.bins) return null;
     const { strong, moderate, weak } = this.scale.bins;
     if (value <= -weak) return 'lowered';
     if (value >= strong) return 'strong';

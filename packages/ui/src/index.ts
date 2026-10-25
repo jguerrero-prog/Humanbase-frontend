@@ -140,7 +140,7 @@ export { ResultLayout, type ResultLayoutProps } from './Results/ResultLayout';
 export { ResultFiles, type ResultFile as ResultFileRow, type ResultFilesProps } from './Results/ResultFiles';
 export { AllFeaturesPlot, type AllFeaturesPlotProps } from './VariantEffects/AllFeaturesPlot';
 export { EffectGroups, type EffectExperiment, type EffectGroup, type StrengthCounts } from './VariantEffects/EffectGroups';
-export { asdEffects, expressionEffects, seqweaverGnomadEffects, sequenceClassEffects, zEffects, type EffectScale } from './VariantEffects/EffectScale';
+export { asdEffects, expressionEffects, rangeEffects, seqweaverGnomadEffects, sequenceClassEffects, zEffects, type BinnedEffectScale, type EffectBins, type EffectScale } from './VariantEffects/EffectScale';
 export { EffectsHeatmap, type EffectsHeatmapProps } from './VariantEffects/EffectsHeatmap';
 export { EffectsControls, MolecularEffects, defaultEffectsView, effectZScale, type EffectsControlsProps, type EffectsView, type MolecularEffectsProps } from './VariantEffects/MolecularEffects';
 export { chromosomeColor } from './VariantEffects/ChromosomeColor';
