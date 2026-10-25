@@ -17,13 +17,28 @@ describe('VariantFileCheck', () => {
     ]);
   });
 
-  it('checks FASTA length against the model', () => {
+  it('checks FASTA bases, and warns without blocking when a length isn’t the model’s', () => {
     const result = new VariantFileCheck('fasta', 'seqweaver').check(`>a\n${'acgt'.repeat(250)}\n>b\nACGTN`);
     expect(result.count).toBe(2);
-    expect(result.problems).toEqual([
-      { line: 4, rule: 'N isn’t a base. Use A, C, G or T.' },
-      { line: 3, rule: 'The sequence is 5 bp; Seqweaver reads 1,000 bp.' },
-    ]);
+    expect(result.problems).toEqual([{ line: 4, rule: 'N isn’t a base. Use A, C, G or T.' }]);
+    expect(result.summary).toBe('2 sequences');
+    expect(result.lengthWarning).toEqual({
+      title: '1 sequence isn’t exactly 1,000 bp',
+      body: 'Shorter sequences are padded with N on both sides, which can affect the predictions.',
+      sequences: [{ name: 'b', length: 5 }],
+    });
+    expect(new VariantFileCheck('fasta', 'seqweaver').check(`>a\n${'acgt'.repeat(250)}`)).toEqual({ count: 1, problems: [], summary: '1 sequence, 1,000 bp each' });
+  });
+
+  it('says longer sequences are trimmed to the center, and region scan follows the adjusted sequence', () => {
+    const result = new VariantFileCheck('fasta', 'insilico').check(`>long one\n${'A'.repeat(2100)}\n>short\nACGT`);
+    expect(result.problems).toEqual([]);
+    expect(result.lengthWarning?.title).toBe('2 sequences aren’t exactly 2,000 bp');
+    expect(result.lengthWarning?.body).toBe(
+      'Longer sequences are trimmed to the central 2,000 bp, since that is all Beluga needs. Shorter sequences are padded with N on both sides, which can affect the predictions. Region scan positions follow the adjusted sequence.',
+    );
+    expect(result.lengthWarning?.sequences).toEqual([{ name: 'long one', length: 2100 }, { name: 'short', length: 4 }]);
+    expect(new VariantFileCheck('fasta', 'sei').check(`>x\n${'C'.repeat(5000)}`).lengthWarning?.body).toBe('Longer sequences are trimmed to the central 4,096 bp, since that is all Sei needs.');
   });
 
   it('flags BED values and suggests the right input type', () => {

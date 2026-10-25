@@ -161,6 +161,23 @@ describe('ForceGraphRenderer with groups', () => {
     expect(container.querySelector('[aria-label="fgf8, M1"]')).not.toBeNull();
   });
 
+  it('sizes genes by their size between the node and query gene radii, and keeps them in place when names arrive', () => {
+    const container = document.createElement('div');
+    const renderer = new ForceGraphRenderer();
+    renderer.mount(container, { label: 'Modules' });
+    const sized = { ...grouped, nodes: grouped.nodes.map((node, index) => ({ ...node, size: (index + 1) ** 2 })) };
+    renderer.render(sized);
+    const radii = () => [...container.querySelectorAll('.force-graph-dot')].map((dot) => Number(dot.getAttribute('r')));
+    expect(radii()).toEqual([6, 8, 10]);
+    const positions = () => [...container.querySelectorAll('.force-graph-node')].map((n) => n.getAttribute('transform'));
+    const placed = positions();
+    vi.mocked(forceSimulation).mockClear();
+    renderer.render({ ...sized, nodes: sized.nodes.map((node) => ({ ...node, label: node.label.toLowerCase() })) });
+    expect(forceSimulation).not.toHaveBeenCalled();
+    expect(positions()).toEqual(placed);
+    expect(radii()).toEqual([6, 8, 10]);
+  });
+
   it('selects a group from its label and fades the other groups', () => {
     const { container, renderer, onSelectGroup } = mountedGroups();
     (container.querySelector('[aria-label="M3, 1 gene"]') as SVGGElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));

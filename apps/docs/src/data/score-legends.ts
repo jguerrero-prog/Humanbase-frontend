@@ -1,5 +1,5 @@
 import { tissueConfidenceScale } from '@humanbase/hb';
-import { seqweaverGnomadEffects, type HeatmapCellDetail, type HeatmapRow, type ScaleSpec } from '@humanbase/ui';
+import { ScoreScale, seqweaverGnomadEffects, type HeatmapCellDetail, type HeatmapRow, type ScaleSpec } from '@humanbase/ui';
 
 export type LegendStatus = 'Decided' | 'Proposed' | 'To confirm';
 
@@ -12,6 +12,9 @@ export interface LegendPreset {
 const zEdges = [-5, -3, -2, 2, 3, 5];
 
 export const expressionGeneLegend: ScaleSpec = { title: 'Log fold change', kind: 'diverging', edges: [-1, -0.3, -0.1, 0.1, 0.3, 1], words: ['Decreases', 'Increases'] };
+
+// The example job's HepG2 / CEBPB percentiles (1st, 50th, 99th), as its in_silico_mutagenesis response gives them.
+export const mutagenesisScale: ScaleSpec = ScoreScale.fromStops('Log2 fold change', [-0.783, 0.004, 0.832], ['Mutation lowers', 'Mutation raises']);
 
 export const tissueConfidenceLegend: ScaleSpec = tissueConfidenceScale;
 
@@ -38,9 +41,9 @@ export const scoreLegends: LegendPreset[] = [
     note: 'Can only fall between −1 and 1; typical sizes weren’t captured.',
   },
   {
-    status: 'To confirm',
-    spec: { title: 'In silico mutagenesis, log2 fold change of odds', kind: 'diverging', edges: [-2, -1, -0.5, 0.5, 1, 2], words: ['Mutation raises', 'Mutation lowers'] },
-    note: 'Words follow the formula, original minus mutated; the sign is on the facts to confirm.',
+    status: 'Decided',
+    spec: { ...mutagenesisScale, title: 'In silico mutagenesis, log2 fold change' },
+    note: 'Edges come from the chosen feature’s 1st, 50th and 99th percentiles in the result, as on humanbase.io: the end steps start at the 1st and 99th, white sits around the 50th, and the inner edges are a third and two thirds of the way out from it. Blue means the mutation lowers the feature. Shown for HepG2 / CEBPB in the example job.',
   },
   {
     status: 'To confirm',
@@ -93,7 +96,6 @@ const specimenRow = (label: string, row: number): HeatmapRow => ({
 export const positionSpecimenRows: HeatmapRow[] = ['Blood', 'Immune', 'Digestive', 'Nervous', 'Liver'].map(specimenRow);
 
 // A substitution map specimen: position 999 is real (example job 0576e894, HepG2 / CEBPB); other values are illustrative.
-export const mutagenesisScale: ScaleSpec = { title: 'Log2 fold change', kind: 'diverging', edges: [-0.5, -0.25, -0.1, 0.1, 0.25, 0.5], words: ['Mutation lowers', 'Mutation raises'] };
 const specimenBases = 'GTCAATACTCGTTGCCCGCTATACCGGGGCTAACTATGTCTTGGCTTTTGCGCAGACGTCAGGTAGACTCACTGAACTCGGCAGCTATTGA';
 export const substitutionColumns = Array.from(specimenBases, (reference, index) => {
   const position = 954 + index;
