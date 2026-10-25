@@ -52,6 +52,11 @@ export class NetworkQuery {
     return dataVersionNames[this.version];
   }
 
+  /** The analysis tabs exist for GIANT only; humanbase.io shows a MAGE page as the tissue network alone. */
+  get hasAnalysisTabs(): boolean {
+    return this.version === 'v1';
+  }
+
   /** The integration slug to request: the chosen tissue, or the global network of this version. */
   get slug(): string {
     return this.tissue ?? (this.version === 'v3' ? 'global-v3' : 'global');

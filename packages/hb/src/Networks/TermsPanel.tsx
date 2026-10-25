@@ -24,7 +24,7 @@ const copy = {
     noun: 'processes',
     term: 'Process',
     value: 'p-value',
-    note: 'Biological processes over-represented among the genes in the graph, most significant first. The table scrolls inside its panel.',
+    note: 'Biological processes and diseases over-represented among the genes in the graph, most significant first, with Benjamini-Hochberg adjusted p-values. The table scrolls inside its panel.',
   },
   tissues: {
     noun: 'tissues',
@@ -88,7 +88,7 @@ export function TermsPanel({ kind, hits, failed, onRetry, caption, fileName, sta
                     <span>{kind === 'processes' ? `${hit.database}, ${genesLabel(hit.genes.length)}` : hit.database}</span>
                   </span>
                 </Cell>
-                <Cell type="number">{kind === 'processes' && hit.pValue !== undefined ? format.pValue(hit.pValue).text : hit.genes.length}</Cell>
+                <Cell type="number">{kind === 'processes' && hit.pValue !== undefined ? format.scientific(hit.pValue) : hit.genes.length}</Cell>
               </tr>
               );
             })
