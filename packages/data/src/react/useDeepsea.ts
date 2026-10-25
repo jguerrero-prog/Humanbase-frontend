@@ -89,6 +89,12 @@ export function useDeepseaFeatures(model: VariantModel | undefined) {
   return useQuery({ queryKey: ['deepsea-features', model], queryFn: () => api.deepsea.features(model as VariantModel), enabled: Boolean(model), staleTime: Infinity });
 }
 
+/** How many sequences or regions a finished job ran, read once from its input file. */
+export function useDeepseaInputCount(job: DeepseaJob | undefined) {
+  const api = useHumanbase();
+  return useQuery({ queryKey: ['deepsea-input-count', job?.id], queryFn: () => api.deepsea.inputCount(job as DeepseaJob), enabled: job?.status === 'finished', staleTime: Infinity });
+}
+
 /** One sequence's in silico mutagenesis for one feature; each choice is one request, kept once loaded. */
 export function useInsilico(job: DeepseaJob | undefined, sequenceName: string | undefined, featureIndex: number | undefined) {
   const api = useHumanbase();

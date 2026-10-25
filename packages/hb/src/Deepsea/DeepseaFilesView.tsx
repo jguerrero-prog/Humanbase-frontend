@@ -1,4 +1,4 @@
-import type { DeepseaJob } from '@humanbase/data';
+import { useDeepseaFeatures, useDeepseaInputCount, type DeepseaJob } from '@humanbase/data';
 import { ContextLabel, Icon, ResultFiles, type JobStep } from '@humanbase/ui';
 import type { ReactNode } from 'react';
 import { jobDateTime, JobWaiting } from '../Jobs/JobPage';
@@ -23,8 +23,10 @@ export function DeepseaResultFiles({ job, linked }: { job: DeepseaJob; linked: b
   );
 }
 
-/** A finished Sei, Beluga or Seqweaver job on sequences: as on humanbase.io, its results are files to download, not a plot. */
+/** A finished Sei, Beluga or Seqweaver job whose input humanbase.io doesn't plot: its results are files to download. */
 export function DeepseaFilesView({ job, title, tools }: DeepseaFilesViewProps) {
+  const profiles = useDeepseaFeatures(job.model.id).data?.model_features?.length;
+  const inputs = useDeepseaInputCount(job).data;
   const archive = job.resultFiles.find((file) => file.key === 'gz_file');
   const steps: JobStep[] = [
     { label: 'Submitted', detail: jobDateTime.format(job.created), state: 'done' },
@@ -38,7 +40,7 @@ export function DeepseaFilesView({ job, title, tools }: DeepseaFilesViewProps) {
       crumbs={deepseaJobCrumbs(job.model, title)}
       status="finished"
       badge="Finished"
-      next={{ title: 'Download the results', text: `${job.model.tool} scored every sequence on every feature. Sequence results are files: the archive holds everything, or download each file below.` }}
+      next={{ title: 'Download the results', text: job.filesSummary(profiles, inputs) }}
       actions={
         archive && (
           <a className="button button-primary button-medium" href={archive.url}>
@@ -51,7 +53,7 @@ export function DeepseaFilesView({ job, title, tools }: DeepseaFilesViewProps) {
       details={
         <>
           <ContextLabel name="Tool" value={job.model.tool} />
-          <ContextLabel name="Input" value="Sequences, FASTA" />
+          <ContextLabel name="Input" value={job.inputLabel} />
         </>
       }
       tools={tools}

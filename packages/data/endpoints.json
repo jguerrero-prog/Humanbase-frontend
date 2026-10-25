@@ -390,7 +390,7 @@
       "method": "GET",
       "path": "/api/deepsea/jobs/{job_id}/",
       "documented": true,
-      "$note": "The Seqweaver example job 76aea8fe-8ec7-4698-a193-a186c7665edb, written on the Figma job screens and checked in the Seqweaver API note on October 18, 2026. The in silico mutagenesis example job 0576e894-a2c5-48bb-9bdf-227962495d5f, written on the Figma job screens, read on October 20, 2026. The FASTA example jobs (Sei 5154ea8d, Beluga 27d030ee, Seqweaver dbebecbe), each submitted on October 25, 2026 with its tool's own example.fasta (#348).",
+      "$note": "The Seqweaver example job 76aea8fe-8ec7-4698-a193-a186c7665edb, written on the Figma job screens and checked in the Seqweaver API note on October 18, 2026. The in silico mutagenesis example job 0576e894-a2c5-48bb-9bdf-227962495d5f, written on the Figma job screens, read on October 20, 2026. The FASTA example jobs (Sei 5154ea8d, Beluga 27d030ee, Seqweaver dbebecbe), each submitted on October 25, 2026 with its tool's own example.fasta (#348). The Sei BED example job 90e896a5, submitted on October 25, 2026 with the form's example.bed (10 regions, hg19): like the FASTA jobs it lists only the FEATURE-level predictions (#525).",
       "samples": [
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/",
         "/api/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/",
@@ -400,7 +400,8 @@
         "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/",
         "/api/deepsea/jobs/5154ea8d-3203-4c81-acc8-757faeb44e0c/",
         "/api/deepsea/jobs/27d030ee-02d9-43ca-adec-e5d76265591a/",
-        "/api/deepsea/jobs/dbebecbe-f58a-4ce4-b4ba-04af819a9ad7/"
+        "/api/deepsea/jobs/dbebecbe-f58a-4ce4-b4ba-04af819a9ad7/",
+        "/api/deepsea/jobs/90e896a5-a950-4180-a4fb-c5bcc8cefd1d/"
       ],
       "usedBy": [
         "DeepseaService.get"
@@ -419,6 +420,22 @@
     },
     {
       "method": "GET",
+      "path": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/{job_id}/{file}",
+      "documented": true,
+      "text": true,
+      "$note": "Not the API: the uploaded_query file a finished job links to, read as text. A job shown as files counts its sequences or regions here, as submitted. Samples are the FASTA example jobs (#348) and the Sei BED example job (#525).",
+      "samples": [
+        "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/5154ea8d-3203-4c81-acc8-757faeb44e0c/5154ea8d-3203-4c81-acc8-757faeb44e0c_textarea.fasta",
+        "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/27d030ee-02d9-43ca-adec-e5d76265591a/27d030ee-02d9-43ca-adec-e5d76265591a_textarea.fasta",
+        "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/dbebecbe-f58a-4ce4-b4ba-04af819a9ad7/dbebecbe-f58a-4ce4-b4ba-04af819a9ad7_textarea.fasta",
+        "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/90e896a5-a950-4180-a4fb-c5bcc8cefd1d/90e896a5-a950-4180-a4fb-c5bcc8cefd1d_textarea.bed"
+      ],
+      "usedBy": [
+        "DeepseaService.inputCount"
+      ]
+    },
+    {
+      "method": "GET",
       "path": "/api/deepsea/jobs/{job_id}/score_types/",
       "documented": true,
       "samples": [
@@ -428,7 +445,8 @@
         "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/score_types/",
         "/api/deepsea/jobs/5154ea8d-3203-4c81-acc8-757faeb44e0c/score_types/",
         "/api/deepsea/jobs/27d030ee-02d9-43ca-adec-e5d76265591a/score_types/",
-        "/api/deepsea/jobs/dbebecbe-f58a-4ce4-b4ba-04af819a9ad7/score_types/"
+        "/api/deepsea/jobs/dbebecbe-f58a-4ce4-b4ba-04af819a9ad7/score_types/",
+        "/api/deepsea/jobs/90e896a5-a950-4180-a4fb-c5bcc8cefd1d/score_types/"
       ],
       "usedBy": [
         "DeepseaService.scoreTypes"

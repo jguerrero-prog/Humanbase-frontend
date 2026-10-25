@@ -82,8 +82,24 @@ test('the recorded Seqweaver FASTA job’s results are files, with the API off',
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/deepsea/jobs/dbebecbe-f58a-4ce4-b4ba-04af819a9ad7/`);
   await expect(page.getByRole('link', { name: 'Download everything (tar.gz)' })).toBeVisible();
+  await expect(page.getByText('Seqweaver predicted 232 RNA-binding protein profiles for each of your 4 sequences. The results are files to download, one probability per profile and sequence.')).toBeVisible();
   const files = page.getByRole('table', { name: 'Result files' });
   await expect(files.getByRole('row')).toHaveText([/File/, /^Probability.*Every feature for every sequence.*TSV, gzipped.*Download/, /^Your query.*FASTA.*Download/]);
+  await expect(page.getByRole('combobox', { name: 'Score' })).toHaveCount(0);
+  expect(await violationsOf(page)).toEqual([]);
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
+  expect(apiRequests).toEqual([]);
+});
+
+test('the recorded Sei BED job’s results are files, as humanbase.io shows them, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  const id = '90e896a5-a950-4180-a4fb-c5bcc8cefd1d';
+  await page.goto(`${web}/deepsea/jobs/${id}/`);
+  await expect(page.getByRole('heading', { level: 1, name: 'Untitled Sei job' })).toBeVisible();
+  await expect(page.getByText('Sei predicted chromatin profiles for each of your 10 regions. The results are files to download, one probability per profile and region.')).toBeVisible();
+  const files = page.getByRole('table', { name: 'Result files' });
+  await expect(files.getByRole('row')).toHaveText([/File/, /^Probability.*Every feature for every region.*TSV, gzipped, with tabix index.*Download/, /^Your query.*BED.*Download/]);
   await expect(page.getByRole('combobox', { name: 'Score' })).toHaveCount(0);
   expect(await violationsOf(page)).toEqual([]);
   await page.setViewportSize({ width: 375, height: 812 });
@@ -96,6 +112,7 @@ test('each FASTA example job shows its files with the API off', async ({ page })
   for (const [tool, id] of [['Sei', '5154ea8d-3203-4c81-acc8-757faeb44e0c'], ['Beluga', '27d030ee-02d9-43ca-adec-e5d76265591a']]) {
     await page.goto(`${web}/deepsea/jobs/${id}/`);
     await expect(page.getByRole('heading', { level: 1, name: `Untitled ${tool} job` })).toBeVisible();
+    await expect(page.getByText(new RegExp(`^${tool} predicted .*for each of your 4 sequences\\.`))).toBeVisible();
     await expect(page.getByRole('table', { name: 'Result files' }).getByRole('link', { name: 'Download Probability' })).toHaveAttribute('href', `https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/${id}/${id}_feature_predictions.tsv.gz`);
   }
   expect(apiRequests).toEqual([]);

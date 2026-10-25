@@ -1,0 +1,35 @@
+{
+  "status": 200,
+  "body": {
+    "created": "2026-10-25T03:55:38",
+    "ds_model": "Sei",
+    "email": "",
+    "files": {
+      "feature_predictions": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/90e896a5-a950-4180-a4fb-c5bcc8cefd1d/90e896a5-a950-4180-a4fb-c5bcc8cefd1d_feature_predictions.tsv.gz",
+        "name": "Probability"
+      },
+      "feature_predictions_index": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/90e896a5-a950-4180-a4fb-c5bcc8cefd1d/90e896a5-a950-4180-a4fb-c5bcc8cefd1d_feature_predictions.tsv.gz.tbi",
+        "name": "Probability tabix index"
+      },
+      "uploaded_query": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/90e896a5-a950-4180-a4fb-c5bcc8cefd1d/90e896a5-a950-4180-a4fb-c5bcc8cefd1d_textarea.bed",
+        "name": "Uploaded query"
+      },
+      "gz_file": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/90e896a5-a950-4180-a4fb-c5bcc8cefd1d/90e896a5-a950-4180-a4fb-c5bcc8cefd1d.tar.gz",
+        "name": "Archive of results"
+      }
+    },
+    "expecto": false,
+    "input_type": "bed",
+    "insilico": false,
+    "job_id": "90e896a5-a950-4180-a4fb-c5bcc8cefd1d",
+    "output_format": "tsv",
+    "sequence_names": [],
+    "status": "completed",
+    "title": "",
+    "genome_assembly": "hg19"
+  }
+}

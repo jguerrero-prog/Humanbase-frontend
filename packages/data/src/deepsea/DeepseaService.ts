@@ -1,6 +1,6 @@
 import type { DataClient } from '../DataClient';
 import type { GenomeLocation } from '../genome/GenomeLocation';
-import type { InputKind, VariantModel } from '../jobs/VariantFileCheck';
+import { VariantFileCheck, type InputKind, type VariantModel } from '../jobs/VariantFileCheck';
 import { DeepseaJob, type DeepseaJobRecord } from './DeepseaJob';
 import { deepseaModels, type Genome } from './DeepseaModel';
 import type { FeaturePredictionRecord, FeaturesRecord, ScoreType, VariantScoresRecord } from './DeepseaResult';
@@ -62,6 +62,13 @@ export class DeepseaService {
 
   async get(id: string): Promise<DeepseaJob> {
     return new DeepseaJob(await this.client.get<DeepseaJobRecord>(`deepsea/jobs/${id}/`));
+  }
+
+  /** How many sequences or regions the job ran, counted from its input as submitted; undefined when the file has none to count. */
+  async inputCount(job: DeepseaJob): Promise<number | undefined> {
+    if (!job.uploadedQuery) return undefined;
+    const { count } = new VariantFileCheck(job.kind, job.model.id).check(await this.client.text(job.uploadedQuery.url));
+    return count || undefined;
   }
 
   scoreTypes(id: string): Promise<ScoreType[]> {

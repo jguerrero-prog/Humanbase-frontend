@@ -37,7 +37,7 @@ export function ResultFiles({ files, caption = 'Result files' }: ResultFilesProp
               <span className="result-file-name">{file.name}</span>
               <span className="result-file-about">{file.holds}</span>
             </Cell>
-            <Cell>{file.format}</Cell>
+            <Cell wrap>{file.format}</Cell>
             <Cell>
               {file.href ? (
                 <a className="button button-ghost button-small" href={file.href}>
