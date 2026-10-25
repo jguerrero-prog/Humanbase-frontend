@@ -158,8 +158,15 @@
 .toast-region {
   position: fixed;
   z-index: var(--z-toast);
+  inset: auto;
   inset-block-end: var(--space-6);
   inset-inline-start: var(--space-6);
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  color: inherit;
+  background: none;
+  border: 0;
   pointer-events: none;
 }
 
@@ -185,6 +192,7 @@
 @media (width < 48rem) {
   .toast-region {
     inset-inline: var(--space-4);
+    inline-size: auto;
   }
 
   .toast {

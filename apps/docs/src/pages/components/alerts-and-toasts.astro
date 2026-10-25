@@ -50,7 +50,7 @@ const placement = [
   'Bottom left, 24px from the edges, above the sidebar. This keeps them clear of the graph controls and zoom buttons on the right.',
   'Newest at the bottom. At most 3 at once; older ones leave when a fourth arrives.',
   'On phones they span the width with 16px margins, above the bottom of the screen.',
-  'Toasts never cover a dialog’s buttons; while a dialog is open, they wait.',
+  'While a dialog or sheet is open, toasts show above it in the same place, so a message posted from inside it, like Link copied, is seen right away.',
 ];
 
 const toastTiming = [
@@ -70,7 +70,7 @@ const lifecycle: { step: string; text: string; props: ToastProps }[] = [
 
 const accessibility = [
   ['Live regions', 'Toasts and success alerts use role="status", read when people pause. Errors use role="alert", read at once. An alert inside a control that has its own polite live region, such as the search suggestions, sets live={false} so it is read once.'],
-  ['Focus stays put', 'Toasts never take focus. A field error or blocking alert receives focus only after a submit that failed.'],
+  ['Focus stays put', 'Toasts never take focus, even above an open dialog or sheet, where their buttons join the dialog’s Tab order. A field error or blocking alert receives focus only after a submit that failed.'],
   ['Reachable actions', 'Every toast action is also available elsewhere, such as View job in job history, so nobody has to race a timer.'],
   ['Timing', 'Toasts pause while hovered or focused, and actions keep them open, meeting WCAG 2.2.1 Timing Adjustable.'],
   ['Dismiss button', 'An icon button labeled “Dismiss”, 32px, reachable by keyboard. Escape dismisses the newest toast when focus is inside it.'],
@@ -272,7 +272,7 @@ notifications.show({ tone: 'info', message: 'Link copied' });
   <NoteCard title="Using the components in code">
     <ul>
       <li><code>Alert</code>, <code>Toast</code> and <code>Banner</code> share one message frame, so the icon, colors and Dismiss button are the same everywhere.</li>
-      <li>The app has one <code>ToastRegion</code> and one <code>ToastQueue</code>, so toasts from any screen stack in one place. In the product, screens post to <code>notifications</code> from <code>@humanbase/hb</code>; the app shell mounts <code>Notifications</code> once. Don’t add a region to a screen. The queue keeps the newest three and announces each new message in a live region; errors are announced at once. Write each message so it makes sense alone, since toasts from different tools share the region.</li>
+      <li>The app has one <code>ToastRegion</code> and one <code>ToastQueue</code>, so toasts from any screen stack in one place. In the product, screens post to <code>notifications</code> from <code>@humanbase/hb</code>; the app shell mounts <code>Notifications</code> once. Don’t add a region to a screen. While a modal dialog or sheet is open, the region moves inside it and opens in the top layer with <code>popover="manual"</code>, since a modal makes the rest of the page inert. It follows the modal <code>Dialog</code> and <code>Drawer</code> sheets, so open modals only through them. The queue keeps the newest three and announces each new message in a live region; errors are announced at once. Write each message so it makes sense alone, since toasts from different tools share the region.</li>
       <li><code>update</code> turns a loading toast into its result in place. Toasts without an action time out after 6 seconds plus 1 for every 20 words, and pause while hovered or focused.</li>
       <li>Actions take an <code>href</code> for links or <code>onSelect</code> for buttons. Alerts are not dismissible unless you pass <code>dismissible</code>; error banners never are.</li>
     </ul>

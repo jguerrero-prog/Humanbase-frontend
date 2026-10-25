@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
+import { modalStack } from '../Layer/ModalStack';
 import { MessageActionControl, MessageFrame } from './Message';
 import { PausableTimer } from './PausableTimer';
 import { toastDuration, type ToastContent, type ToastQueue } from './ToastQueue';
@@ -48,8 +50,16 @@ export function Toast({ tone, message, action, dismissible = tone !== 'loading',
 
 export function ToastRegion({ queue, label = 'Notifications' }: { queue: ToastQueue; label?: string }) {
   const { toasts, announcement } = useSyncExternalStore(queue.subscribe, queue.getState, queue.getState);
-  return (
-    <section className="toast-region" aria-label={label}>
+  const modal = useSyncExternalStore(modalStack.subscribe, modalStack.top, () => null);
+  const region = useRef<HTMLElement>(null);
+
+  // A modal dialog makes the rest of the page inert, so the region moves inside it and opens in the top layer above it.
+  useLayoutEffect(() => {
+    region.current?.showPopover();
+  }, [modal]);
+
+  const content = (
+    <section ref={region} className="toast-region" aria-label={label} popover="manual">
       <ol className="toast-list">
         {toasts.map((toast) => (
           <li key={toast.id}>
@@ -65,4 +75,5 @@ export function ToastRegion({ queue, label = 'Notifications' }: { queue: ToastQu
       </p>
     </section>
   );
+  return modal ? createPortal(content, modal) : content;
 }

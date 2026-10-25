@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { Drawer } from '../Drawer/Drawer';
 import { Alert } from './Alert';
 import { Banner } from './Banner';
 import { Toast, ToastRegion } from './Toast';
@@ -87,5 +88,29 @@ describe('ToastRegion', () => {
     act(() => queue.update(loading, { tone: 'error', message: 'Couldn’t download results' }));
     expect(screen.getByRole('alert')).toHaveTextContent('Couldn’t download results');
     expect(within(list).getAllByRole('listitem')).toHaveLength(3);
+  });
+
+  it('moves inside an open modal sheet, so its toasts stay usable, and back out when the sheet closes', () => {
+    const queue = new ToastQueue();
+    const { rerender } = render(
+      <>
+        <Drawer title="Job actions" sheet open>
+          <p>Settings</p>
+        </Drawer>
+        <ToastRegion queue={queue} />
+      </>,
+    );
+    act(() => void queue.show({ tone: 'info', message: 'Link copied' }));
+    const sheet = screen.getByRole('dialog', { name: 'Job actions' });
+    expect(within(sheet).getByRole('region', { name: 'Notifications' })).toHaveTextContent('Link copied');
+    rerender(
+      <>
+        <Drawer title="Job actions" sheet>
+          <p>Settings</p>
+        </Drawer>
+        <ToastRegion queue={queue} />
+      </>,
+    );
+    expect(sheet).not.toContainElement(screen.getByRole('region', { name: 'Notifications' }));
   });
 });
