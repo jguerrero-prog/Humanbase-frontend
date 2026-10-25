@@ -70,6 +70,20 @@ describe('SearchField suggestions', () => {
     await userEvent.type(screen.getByRole('combobox'), 'IL1Z');
     expect(screen.getAllByText('No genes match “IL1Z”')).toHaveLength(2);
   });
+
+  it('reports a failed search instead of saying nothing matches, and Try again returns to the box', async () => {
+    const onRetry = vi.fn();
+    render(<SearchField label="Search genes" suggestions={[]} suggestionsFailed onRetry={onRetry} />);
+    const box = screen.getByRole('combobox');
+    await userEvent.type(box, 'IL1B');
+    expect(screen.queryByText(/No genes match/)).not.toBeInTheDocument();
+    expect(screen.getByText('Suggestions couldn’t load', { selector: '.alert-title' })).toBeInTheDocument();
+    expect(screen.getByText(/^Error: Suggestions couldn’t load\. Humanbase didn’t answer, so “IL1B” hasn’t been checked yet\./)).toHaveAttribute('aria-live', 'polite');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(onRetry).toHaveBeenCalledOnce();
+    expect(box).toHaveFocus();
+  });
 });
 
 describe('SearchField suggestions with destinations', () => {

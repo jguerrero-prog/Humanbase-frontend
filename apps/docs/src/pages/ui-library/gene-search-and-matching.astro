@@ -47,6 +47,14 @@ const suggestionNotes = [
   'With nothing typed, the box shows example searches under it instead of an empty list (Empty states).',
 ];
 
+const failureNotes = [
+  'A request that fails never reads as “No genes match”, which would tell people their gene doesn’t exist. The panel shows an error alert instead, naming what wasn’t checked.',
+  'Try again sends the same search and puts focus back in the box, so people can keep typing. What they typed stays.',
+  'The message is read once through the field’s polite live region, starting with “Error”, so it doesn’t interrupt typing. The alert inside the panel sets live={false}.',
+  'With the API off, a term with no recorded sample has nothing to fail, so it reads as no match.',
+  'The top bar and the homepage search use it. Set suggestionsFailed and onRetry on SearchField, as with suggestionsLoading.',
+];
+
 const il1b: GeneCandidate = { entrez: '3553', symbol: 'IL1B', name: 'interleukin 1 beta', aliases: ['IL1F2', 'IL1beta', 'IL-1', 'IL1-BETA'] };
 const tp53: GeneCandidate = { entrez: '7157', symbol: 'TP53', name: 'tumor protein p53', aliases: ['TRP53', 'LFS1', 'BCC7', 'P53', 'BMFS5'] };
 const tnf: GeneCandidate = { entrez: '7124', symbol: 'TNF', name: 'tumor necrosis factor', aliases: ['TNF-alpha', 'DIF', 'TNFSF2', 'TNLG1F', 'TNFA'] };
@@ -114,6 +122,7 @@ const words = [
   ['Not found again, or several', 'Humanbase didn’t recognize 3 terms. It knows human gene symbols, aliases, Entrez IDs and gene names; check the spelling or try the Entrez ID.'],
   ['Nothing matched', 'None of these terms matched a human gene, so there’s nothing to run yet. Try a symbol such as IL1B, or an example gene set.'],
   ['Checking', 'Checking 301 genes…'],
+  ['Suggestions couldn’t load', 'Suggestions couldn’t load. Humanbase didn’t answer, so “SHANK3” hasn’t been checked yet. What you typed is still here. With Try again.'],
 ];
 
 const behavior = [
@@ -195,6 +204,14 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
       </div>
     </div>
     <ul class="points">{topBarNotes.map((note) => <li>{note}</li>)}</ul>
+  </DocSection>
+
+  <DocSection title="When suggestions can’t load" lead="If Humanbase doesn’t answer, the panel says the search failed and offers Try again, rather than claiming nothing matched.">
+    <div class="example failure-example">
+      <h3>The request failed</h3>
+      <SearchField label="Search genes, example of a failed search" value="SHANK3" suggestions={[]} suggestionsFailed onRetry={() => {}} open inlineSuggestions heading="Genes" />
+    </div>
+    <ul class="points">{failureNotes.map((note) => <li>{note}</li>)}</ul>
   </DocSection>
 
   <DocSection title="The matching table" lead="When the genes are checked, every term gets a row. Problems sort to the top, each with its fix in the row, and the button says how many genes will run.">
@@ -291,6 +308,10 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
 
   .points {
     margin-block-start: var(--space-6);
+  }
+
+  .failure-example {
+    max-inline-size: 615px;
   }
 
   .screen {

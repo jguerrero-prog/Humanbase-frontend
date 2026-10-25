@@ -69,7 +69,7 @@ const lifecycle: { step: string; text: string; props: ToastProps }[] = [
 ];
 
 const accessibility = [
-  ['Live regions', 'Toasts and success alerts use role="status", read when people pause. Errors use role="alert", read at once.'],
+  ['Live regions', 'Toasts and success alerts use role="status", read when people pause. Errors use role="alert", read at once. An alert inside a control that has its own polite live region, such as the search suggestions, sets live={false} so it is read once.'],
   ['Focus stays put', 'Toasts never take focus. A field error or blocking alert receives focus only after a submit that failed.'],
   ['Reachable actions', 'Every toast action is also available elsewhere, such as View job in job history, so nobody has to race a timer.'],
   ['Timing', 'Toasts pause while hovered or focused, and actions keep them open, meeting WCAG 2.2.1 Timing Adjustable.'],
@@ -133,7 +133,7 @@ notifications.show({ tone: 'info', message: 'Link copied' });
 <DocsLayout title="Alerts and toasts" description="Inline alerts, toasts and banners: which to use, timing, placement, accessibility and writing.">
   <Intro
     lead="Messages tell people what happened and what to do next. Humanbase has four kinds, from a quiet toast that confirms a job was submitted to a banner that pauses job submission for everyone. Choosing the right one depends on how urgent the message is and how long it needs to stay."
-    status="Updated October 16, 2026 · Components: Alert, Toast, Banner · Timing from the Motion page"
+    status="Updated October 24, 2026 · Components: Alert, Toast, Banner · Timing from the Motion page"
   >
     <KeyRules
       rules={[
