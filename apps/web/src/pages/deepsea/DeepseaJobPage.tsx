@@ -1,10 +1,11 @@
 import { DeepseaJobView } from '@humanbase/hb';
-import { useParams, useSearchParams } from 'react-router';
+import { useParams } from 'react-router';
+import { useReadableSearchParams } from '../../useReadableSearchParams';
 import '../ToolPage.css';
 
 export function DeepseaJobPage() {
   const { id = '' } = useParams();
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useReadableSearchParams();
   return (
     <section className="page-section tool-page">
       <DeepseaJobView

@@ -1,4 +1,4 @@
-import { GenomeLocation, type Assembly } from '@humanbase/data';
+import { GenomeLocation, readableSearch, type Assembly } from '@humanbase/data';
 import { genomeBrowserPreview } from './genomeBrowserPreview';
 
 export { genomeBrowserPreview };
@@ -31,10 +31,10 @@ export const genomeBrowserLink = {
   /** Where humanbase.io's /genome opens. */
   start: (assembly: Assembly): GenomeLocation => new GenomeLocation('chr1', 2_230_000, 2_440_000, assembly),
 
-  gene: (symbol: string): string | undefined => href(`gene=${encodeURIComponent(symbol)}`),
+  gene: (symbol: string): string | undefined => href(readableSearch({ gene: symbol })),
 
   /** A variant, such as chr1:877047; the page centers on it and marks it. */
-  variant: (chromosome: string, at: number): string | undefined => href(`location=${GenomeLocation.at(chromosome, at).chrom}:${at}`),
+  variant: (chromosome: string, at: number): string | undefined => href(readableSearch({ location: `${GenomeLocation.at(chromosome, at).chrom}:${at}` })),
 
   /** Reads ?gene=, ?location= (a range or one position) and ?assembly=, plus ?variant=, which the page keeps once the view moves. */
   read(query: URLSearchParams): GenomeBrowserView {
