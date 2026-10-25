@@ -29,6 +29,12 @@ describe('in silico mutagenesis', () => {
     expect(result.strongest(1)[0]).toMatchObject({ position: 999, alt: 'A' });
   });
 
+  it('reads the feature’s 1st, 50th and 99th percentiles, which humanbase.io colors by', async () => {
+    const result = await service.insilico(exampleJob, cebp, hepg2Cebpb);
+    expect(result.percentiles).toEqual({ low: -0.783, middle: 0.004, high: 0.832 });
+    expect(new InsilicoResult({ positions: ['0,T,A,-1'] }).percentiles).toBeUndefined();
+  });
+
   it('lays a window out one column per position, with its reference and each substitution', () => {
     const result = new InsilicoResult({ positions: ['0,T,A,-1', '0,T,G,0.5', '0,T,C,0.2', '1,A,G,2', '1,A,C,0', '1,A,T,-0.1'] });
     expect(result.strongestPer(1).map((item) => item.value)).toEqual([-1, 2]);

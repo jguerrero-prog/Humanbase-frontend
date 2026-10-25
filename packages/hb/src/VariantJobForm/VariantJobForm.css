@@ -4,3 +4,9 @@
   font: var(--type-code-sm);
   resize: vertical;
 }
+
+.job-form-sequences {
+  margin: var(--space-1) 0;
+  padding-inline-start: var(--space-5);
+  overflow-wrap: anywhere;
+}

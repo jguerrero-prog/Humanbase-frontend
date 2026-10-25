@@ -29,6 +29,12 @@ export class ScoreScale {
     this.descending = first > last;
   }
 
+  /** A diverging scale from three stops, as a smooth low, middle, high ramp would color it: the outer edges sit at low and high, the inner ones a third and two thirds of the way out from the middle. */
+  static fromStops(title: string, [low, middle, high]: readonly [number, number, number], words: readonly [string, string]): ScaleSpec {
+    const toward = (end: number, share: number) => middle + (end - middle) * share;
+    return { title, kind: 'diverging', edges: [low, toward(low, 2 / 3), toward(low, 1 / 3), toward(high, 1 / 3), toward(high, 2 / 3), high], words };
+  }
+
   static number(value: number): string {
     return plain.format(value).replace('-', '−');
   }

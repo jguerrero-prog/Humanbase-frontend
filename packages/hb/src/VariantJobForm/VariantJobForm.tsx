@@ -1,5 +1,5 @@
-import { deepseaModels, genomeLabels, VariantFileCheck, type FileCheckResult, type Genome, type InputKind, type VariantModel } from '@humanbase/data';
-import { Accordion, AccordionItem, Button, Field, FileDrop, SegmentedControl, saveFile, Select, TextInput, useLinkHref, type ChosenFile, type SelectOption } from '@humanbase/ui';
+import { deepseaModels, genomeLabels, VariantFileCheck, type FileCheckResult, type Genome, type InputKind, type LengthWarning, type VariantModel } from '@humanbase/data';
+import { Accordion, AccordionItem, Alert, Button, Field, FileDrop, SegmentedControl, saveFile, Select, TextInput, useLinkHref, type ChosenFile, type SelectOption } from '@humanbase/ui';
 import { useId, useMemo, useState, type ReactNode } from 'react';
 import '../Jobs/JobForm.css';
 import './VariantJobForm.css';
@@ -49,7 +49,7 @@ const bp = (model: VariantModel) => VariantFileCheck.sequenceLength[model].toLoc
 const engineOf = (model: VariantModel) => deepseaModels[deepseaModels[model].basedOn ?? model].tool;
 
 function rulesFor(kind: InputKind, model: VariantModel): string {
-  if (kind === 'fasta') return `Each sequence starts with >. Only A, C, G, T; lower case becomes upper case. ${engineOf(model)} reads ${bp(model)} bp.`;
+  if (kind === 'fasta') return `Each sequence starts with >. Only A, C, G, T; lower case becomes upper case. ${engineOf(model)} reads ${bp(model)} bp: longer sequences are trimmed to the central ${bp(model)} bp, and shorter ones are padded with N on both sides.`;
   if (kind === 'bed') return 'Tab-separated: chromosome, start, end. Each interval is scored at its center.';
   if (deepseaModels[model].strand) return 'Tab-separated: chromosome, position, ID, REF, ALT, then strand (+ or -). A header line is optional.';
   return 'Tab-separated, at least 5 columns: chromosome, position, ID, reference and alternative allele.';
@@ -67,6 +67,25 @@ export function ModelHint({ model }: { model: VariantModel }) {
 function genomeHint(model: VariantModel): string {
   const { genomes } = deepseaModels[model];
   return genomes.length > 1 ? `${genomes.map((value) => genomeLabels[value]).join(' or ')}. Coordinates in the file must match.` : 'Coordinates in the file must match.';
+}
+
+const shownSequences = 5;
+
+function SequenceLengthAlert({ warning }: { warning: LengthWarning }) {
+  const more = warning.sequences.length - shownSequences;
+  return (
+    <Alert tone="warning" title={warning.title}>
+      <p>{warning.body}</p>
+      <ul className="job-form-sequences">
+        {warning.sequences.slice(0, shownSequences).map(({ name, length }, index) => (
+          <li key={index}>
+            {name || 'Unnamed'}: {length.toLocaleString('en-US')} bp
+          </li>
+        ))}
+      </ul>
+      {more > 0 && <p>And {more.toLocaleString('en-US')} more.</p>}
+    </Alert>
+  );
 }
 
 function downloadProblems(result: FileCheckResult) {
@@ -158,6 +177,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, models, inp
         onChange={(value) => start(kind, value as Source)}
         segments={sources}
       />
+      {result?.lengthWarning && <SequenceLengthAlert warning={result.lengthWarning} />}
       {source === 'paste' ? (
         <Field label={`Paste ${nouns[kind]}`} hint={result ? (result.problems.length ? `${result.problems.length} lines need fixing` : result.summary) : undefined}>
           {(control) => <textarea {...control} className="field-control job-form-paste" value={text} spellCheck={false} onChange={(event) => setText(event.target.value)} />}
@@ -168,7 +188,7 @@ export function VariantJobForm({ model: initialModel, onModelChange, models, inp
           hideLabel
           accept={extensions[kind]}
           prompt={`Drop a ${kind.toUpperCase()} file here, or`}
-          hint={kind === 'fasta' ? `Sequences of ${bp(model)} bp each, for ${engineOf(model)}.` : 'Up to 20,000 variants; 10,000 or fewer finish fastest.'}
+          hint={kind === 'fasta' ? `${engineOf(model)} reads ${bp(model)} bp. Longer sequences are trimmed to the center ${bp(model)}.` : 'Up to 20,000 variants; 10,000 or fewer finish fastest.'}
           file={file}
           result={result ? `${result.summary}, ready to run` : undefined}
           problems={result?.problems}

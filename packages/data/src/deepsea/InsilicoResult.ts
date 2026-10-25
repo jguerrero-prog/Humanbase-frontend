@@ -2,8 +2,15 @@
 export interface InsilicoRecord {
   /** One "position,ref,alt,value" line per substitution, three per base. */
   positions: string[];
-  /** Value cutoffs the live site colors by, from lowest to highest. */
+  /** The feature's 0th to 100th percentiles; humanbase.io colors by the 1st, 50th and 99th. */
   percentile?: number[];
+}
+
+/** Where the color scale is fully blue, white and fully yellow on humanbase.io. */
+export interface PercentileStops {
+  low: number;
+  middle: number;
+  high: number;
 }
 
 export interface Substitution {
@@ -17,6 +24,8 @@ export interface Substitution {
 /** One sequence's in silico mutagenesis for one chromatin feature. */
 export class InsilicoResult {
   readonly substitutions: readonly Substitution[];
+  /** The feature's 1st, 50th and 99th percentiles, when the API sends them. */
+  readonly percentiles: PercentileStops | undefined;
   private readonly byPosition = new Map<number, Substitution[]>();
 
   constructor(record: InsilicoRecord) {
@@ -24,6 +33,8 @@ export class InsilicoResult {
       const [position = '', ref = '', alt = '', value = ''] = line.split(',');
       return { position: Number(position), ref, alt, value: Number(value) };
     });
+    const [low, middle, high] = [1, 50, 99].map((rank) => record.percentile?.[rank]);
+    this.percentiles = low !== undefined && middle !== undefined && high !== undefined ? { low, middle, high } : undefined;
     for (const item of this.substitutions) this.byPosition.set(item.position, [...(this.byPosition.get(item.position) ?? []), item]);
   }
 

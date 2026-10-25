@@ -76,4 +76,16 @@ describe('DeepseaForm', () => {
     await waitFor(() => expect(onStarted).toHaveBeenCalledWith('/deepsea/jobs/00000000-0000-4000-8000-000000000151/'));
     expect(new JobHistory().list()[0]).toMatchObject({ tool: 'Region scan', detail: 'Region scan, 4 sequences' });
   });
+
+  it('warns about sequences of another length and still lets the region scan run', async () => {
+    renderForm('insilico');
+    await userEvent.click(screen.getByRole('radio', { name: 'Paste' }));
+    await userEvent.click(screen.getByRole('textbox', { name: 'Paste sequences' }));
+    await userEvent.paste(`>long\n${'A'.repeat(2010)}\n>short\nACGT`);
+    const warning = screen.getByText('2 sequences aren’t exactly 2,000 bp').closest('[role="status"]');
+    expect(warning).toHaveTextContent('Longer sequences are trimmed to the central 2,000 bp');
+    expect(warning).toHaveTextContent('long: 2,010 bp');
+    expect(warning).toHaveTextContent('short: 4 bp');
+    expect(screen.getByRole('button', { name: 'Run region scan on 2 sequences' })).not.toHaveAttribute('aria-disabled');
+  });
 });
