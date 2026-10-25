@@ -80,7 +80,7 @@ export function GeneMatchTable({
           </Button>
         </SelectionBar>
       )}
-      <Table caption={caption} columnWidths={[...(selectable ? ['56px'] : []), '200px', 'auto', '140px', '200px', '140px']}>
+      <Table caption={caption} columnWidths={[...(selectable ? ['56px'] : []), '200px', 'auto', '140px', '200px', '140px']} minWidth={selectable ? '1016px' : '960px'} pinFirstColumn={!selectable}>
         <thead>
           <tr>
             {selectable && <SelectAllCell label="Select all genes shown" state={selection.state} onToggle={selection.toggleAll} />}
@@ -136,13 +136,14 @@ function MatchRow({ list, match, select, onChoose, onEdit, onRemove }: MatchRowP
       <Cell rowHeader className="gene-match-term">
         {match.edited ? `${term}, edited` : term}
       </Cell>
-      <Cell className="gene-match-gene">
+      <Cell className="gene-match-gene" wrap>
         {match.status === 'not-found' && 'No gene matches this term'}
         {match.status === 'choose' && (
           <RadioGroup
             legend={`Gene for ${term}`}
             hideLegend
-            defaultValue={match.chosen ?? match.candidates[0]?.entrez ?? ''}
+            {...(gene && { hint: `Using ${gene.symbol}. Pick another gene to change it.` })}
+            defaultValue={gene?.entrez ?? ''}
             onChange={(entrez) => onChoose?.(match.id, entrez)}
             options={match.candidates.map((candidate) => ({ value: candidate.entrez, label: `${candidate.symbol}, ${candidate.name}`, description: candidateDetails(candidate) }))}
           />

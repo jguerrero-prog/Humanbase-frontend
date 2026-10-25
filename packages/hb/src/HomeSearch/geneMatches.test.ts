@@ -30,19 +30,19 @@ describe('splitByVersion', () => {
     { typed: 'IL-1', genes: [gene('IL1B', '', 3553, ['v1', 'v3']), gene('IL1A', '', 3552, ['v1'])] },
     { typed: 'AUTS12', genes: [gene('AUTS12', '', 100188314, [])] },
     { typed: 'TNF', genes: [gene('TNF', '', 7124, ['v1'])] },
+    { typed: 'NOTAGENE123', genes: [] },
   ];
   const list = new GeneMatchList(terms.map(matchOf));
-  const resolved = list.matches.filter((match) => match.status !== 'not-found');
 
   it('keeps genes in the version once, taking the first candidate of a term to check until another is chosen', () => {
-    const split = splitByVersion(list, resolved, hitsOf(terms), 'v3');
+    const split = splitByVersion(list, hitsOf(terms), 'v3');
     expect(split.entrez).toEqual([3553]);
     expect(split.outsideGenes.map((hit) => hit.symbol)).toEqual(['AUTS12', 'TNF']);
   });
 
   it('uses the chosen candidate of a term to check', () => {
     const chosen = list.choose('term-il-1', '3552');
-    const split = splitByVersion(chosen, chosen.matches, hitsOf(terms), 'v1');
+    const split = splitByVersion(chosen, hitsOf(terms), 'v1');
     expect(split.entrez).toEqual([3553, 3552, 7124]);
     expect(split.outsideGenes.map((hit) => hit.symbol)).toEqual(['AUTS12']);
   });
