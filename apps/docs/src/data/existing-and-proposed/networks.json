@@ -255,7 +255,7 @@
     {
       "area": "Connection legend",
       "existing": "Continuous green to red scale from 0 to 1.",
-      "proposed": "Three bands: 0.5 to 0.75, 0.75 to 0.9, 0.9 and up, plus 'Showing 15 of 52 genes, 89 connections at 0.48 or more'.",
+      "proposed": "Three bands: 0.5 to 0.75, 0.75 to 0.9, 0.9 and up, with the weakest starting at the minimum confidence when it is lower (0.48 to 0.75), plus 'Showing 15 of 52 genes, 89 connections above 0.48'.",
       "status": "Changed",
       "evidence": "Screenshots networks-1 and networks-2"
     },

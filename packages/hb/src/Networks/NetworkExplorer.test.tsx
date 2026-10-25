@@ -22,7 +22,7 @@ describe('NetworkExplorer', () => {
     expect(within(table).getAllByRole('row')).toHaveLength(14);
     expect(await screen.findByText('AUTS12 was left out because it isn’t in any Humanbase network. This network uses IL1B and TNF.')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('IL1B interleukin 1 beta TNF tumor necrosis factor');
-    expect(screen.getByText(/Showing 15 of 52 genes, \d+ connections at 0\.48 or more/)).toBeInTheDocument();
+    expect(screen.getByText(/Showing 15 of 52 genes, \d+ connections above 0\.48/)).toBeInTheDocument();
   });
 
   it('ranks terms with extended annotation counts on GIANT when extended_universe asks, and says so', async () => {
@@ -217,7 +217,7 @@ describe('NetworkExplorer', () => {
     const { onQueryChange, onViewChange } = renderExplorer(query);
     const compared = await screen.findByRole('region', { name: 'mononuclear phagocyte network' });
     expect(screen.getByRole('region', { name: 'global network' })).toBeInTheDocument();
-    expect(await within(compared).findByText(/connections at 0\.51 or more/)).toBeInTheDocument();
+    expect(await within(compared).findByText(/connections above 0\.51/)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Compare' })).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('radio', { name: 'Mononuclear phagocyte' }));
     expect(onViewChange.mock.lastCall?.[0].focus).toBe('compare');

@@ -9,7 +9,7 @@ for (const [version, name] of [['v1', 'GIANT'], ['v3', 'MAGE']] as const) {
     const problems = watch(page);
     await page.goto(`${il1bTnf}&version=${version}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(/IL1B/);
-    await expect(page.getByText(/Showing \d+ of \d+ genes, [1-9]\d* connections at \d\.\d\d or more/)).toBeVisible();
+    await expect(page.getByText(/Showing \d+ of \d+ genes, [1-9]\d* connections above \d\.\d\d/)).toBeVisible();
     const genes = page.getByRole('table', { name: /Genes functionally related/ });
     await expect(genes.getByRole('row')).not.toHaveCount(1);
     expect(await page.locator('.force-graph-node').count()).toBeGreaterThan(5);
@@ -34,7 +34,7 @@ test('the filters change the network: genes shown, minimum confidence, uniquenes
   await expect(page.getByText(/Showing 25 of \d+ genes/)).toBeVisible();
   await page.getByRole('textbox', { name: /Minimum confidence, exact value/ }).fill('0.7');
   await page.getByRole('textbox', { name: /Minimum confidence, exact value/ }).press('Enter');
-  await expect(page.getByText(/connections at 0\.70 or more/)).toBeVisible();
+  await expect(page.getByText(/connections above 0\.70/)).toBeVisible();
   // The checkbox follows the URL, so it is clicked and then checked once the URL has caught up.
   await page.getByRole('checkbox', { name: /Prioritize by uniqueness/ }).click();
   await expect(page.getByRole('checkbox', { name: /Prioritize by uniqueness/ })).toBeChecked();
@@ -169,7 +169,7 @@ test('Edit genes adds ICAM1 and reloads the network', async ({ page }) => {
 test('Compare draws a second network beside the first', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${il1bTnf}&version=v1&compare=mononuclear-phagocyte`);
-  await expect(page.getByRole('region', { name: 'mononuclear phagocyte network', exact: true }).getByText(/[1-9]\d* connections at/)).toBeVisible();
-  await expect(page.getByRole('region', { name: 'global network', exact: true }).getByText(/[1-9]\d* connections at/)).toBeVisible();
+  await expect(page.getByRole('region', { name: 'mononuclear phagocyte network', exact: true }).getByText(/[1-9]\d* connections above/)).toBeVisible();
+  await expect(page.getByRole('region', { name: 'global network', exact: true }).getByText(/[1-9]\d* connections above/)).toBeVisible();
   await checkScreen(page, problems);
 });

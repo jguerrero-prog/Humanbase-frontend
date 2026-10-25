@@ -1,12 +1,11 @@
 import type { Network, NetworkEdge, NetworkSubset, NetworkView } from '@humanbase/data';
-import { edgeBands, NetworkGraph, type GraphData, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
+import { edgeBandsFrom, NetworkGraph, type GraphData, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
 import { ActionMenu, Checkbox, GraphToolbar, KeyLegend, Slider, Spinner, useExportMenu, useImageFormats, type ActionMenuItem, type GraphAction } from '@humanbase/ui';
 import { useMemo, useRef, type ReactNode } from 'react';
 import { ConnectionsTable } from './ConnectionsTable';
 import { networkFileName, networkText } from './networkExport';
 import { useStarredHighlights } from './starredSets';
 
-const legendItems = [...edgeBands].reverse().map(({ label, color, width }) => ({ label, color, width }));
 const zoomStep = 1.3;
 const pngWidth = 1080;
 
@@ -44,6 +43,7 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
       },
     [subset],
   );
+  const legendItems = useMemo(() => [...edgeBandsFrom(minConfidence)].reverse().map(({ label, color, width }) => ({ label, color, width })), [minConfidence]);
   const highlights = useStarredHighlights(network, subset?.genes, view.starred, extendedUniverse);
   const starredItems: ActionMenuItem[] = highlights.length
     ? [
@@ -119,7 +119,7 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
         <KeyLegend title="Connection" mark="line" items={legendItems} />
         {subset && (
           <p className="result-line" role="status">
-            Showing {shown === total ? `all ${shown}` : `${shown} of ${total}`} genes, {subset.edges.length} connections at {minConfidence.toFixed(2)} or more
+            Showing {shown === total ? `all ${shown}` : `${shown} of ${total}`} genes, {subset.edges.length} connections above {minConfidence.toFixed(2)}
           </p>
         )}
       </div>
