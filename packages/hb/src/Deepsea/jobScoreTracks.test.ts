@@ -1,4 +1,4 @@
-import { DeepseaJob, DeepseaService, SampleClient, type DeepseaJobRecord, type ScoreType } from '@humanbase/data';
+import { DeepseaService, SampleClient } from '@humanbase/data';
 import { jobScoreTracks } from './jobScoreTracks';
 
 const service = new DeepseaService(SampleClient.bundled());
@@ -26,13 +26,13 @@ describe('jobScoreTracks', () => {
     expect(expecto).toMatchObject({ name: 'Max ExPecto expression effect', meta: 'This job, −0.5 to 0.5', range: [-0.5, 0.5] });
   });
 
-  it('reads a sequence-level score from its sequence_ file, as humanbase.io does, and skips scores with no file', () => {
-    const url = 'https://example.org/job_sequence_dis.bw';
-    const record: DeepseaJobRecord = { job_id: 'job', created: '2026-10-16T20:16:12', ds_model: 'SeqWeaver', status: 'completed', input_type: 'vcf', genome_assembly: 'hg19', files: { sequence_dis: { url, name: 'Disease impact score' } } };
-    const types: ScoreType[] = [
-      { name: 'Disease impact score', level: 'SEQUENCE', short_name: 'dis' },
-      { name: 'Mean -log e-value', level: 'VARIANT', short_name: 'mean-evalue' },
-    ];
-    expect(jobScoreTracks(new DeepseaJob(record), types).map(({ name, bigWigUrl }) => ({ name, bigWigUrl }))).toEqual([{ name: 'Disease impact score', bigWigUrl: url }]);
+  it('reads each score’s file by its level and short name, as humanbase.io does: Sei’s seqclass is a variant bigWig and a feature table', async () => {
+    const id = '2e18fedf-3de7-4d08-a894-9a937a2b860b';
+    const [job, types] = await Promise.all([service.get(id), service.scoreTypes(id)]);
+    const seqclass = types.filter((type) => type.short_name === 'seqclass');
+    expect(seqclass.map((type) => [type.level, job.scoreTrackFile(type)?.url.split('/').at(-1)])).toEqual([
+      ['FEATURE', `${id}_feature_seqclass.tsv.gz`],
+      ['VARIANT', `${id}_variant_seqclass.bw`],
+    ]);
   });
 });
