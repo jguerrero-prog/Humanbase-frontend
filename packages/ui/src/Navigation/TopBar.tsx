@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { Accordion, AccordionItem } from '../Accordion/Accordion';
 import { Icon } from '../Icon/Icon';
 import { activeJobCount, JobsMenu, type JobsMenuSummary } from '../Jobs/JobsMenu';
@@ -15,7 +15,9 @@ export interface TopBarProps {
   current?: string;
   jobs?: JobsMenuSummary;
   homeHref?: string;
+  /** Where the search goes without script; the homepage, which runs the same search. */
   searchAction?: string;
+  onSearch?: (query: string) => void;
   /** Leave the search out where the page has its own, such as the homepage hero. */
   search?: boolean;
   openSection?: string;
@@ -38,7 +40,7 @@ function useScrolled(forced: boolean | undefined) {
   return forced ?? scrolled;
 }
 
-export function TopBar({ sections, current, jobs, homeHref = '/', searchAction = '/search', search = true, openSection, menuOpen, scrolled, className }: TopBarProps) {
+export function TopBar({ sections, current, jobs, homeHref = '/', searchAction = '/', onSearch, search = true, openSection, menuOpen, scrolled, className }: TopBarProps) {
   const linkHref = useLinkHref();
   const nav = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(openSection);
@@ -49,6 +51,12 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
   useDismiss(nav, open !== undefined && openSection === undefined, closeMenus);
 
   const running = jobs ? activeJobCount(jobs.jobs) : 0;
+  const submitSearch = (event: FormEvent<HTMLFormElement>) => {
+    if (!onSearch) return;
+    event.preventDefault();
+    const query = String(new FormData(event.currentTarget).get('q') ?? '').trim();
+    if (query) onSearch(query);
+  };
 
   return (
     <header className={['top-bar', className].filter(Boolean).join(' ')} data-scrolled={isScrolled || undefined}>
@@ -69,7 +77,7 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchAction =
         </nav>
         {search && (
           <>
-            <form className="top-bar-search" role="search" action={searchAction}>
+            <form className="top-bar-search" role="search" action={linkHref(searchAction)} onSubmit={submitSearch}>
               <Icon name="search" size={16} />
               <input type="search" name="q" aria-label="Search" placeholder={searchPlaceholder} />
             </form>

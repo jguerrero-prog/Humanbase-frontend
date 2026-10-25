@@ -73,3 +73,26 @@ test('Mailing list moves focus to the footer’s email field, on desktop and pho
   await expect(email).toBeInViewport();
   await expect(page.getByRole('button', { name: 'Menu' })).toHaveAttribute('aria-expanded', 'false');
 });
+
+test('the top bar search opens the homepage search with the genes matched, and old /search links do too', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`${web}/cite/`);
+  await page.getByRole('search').getByRole('searchbox', { name: 'Search' }).fill('IL1B TNF');
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(`${web}/?q=IL1B+TNF`);
+  await expect(page.getByRole('button', { name: 'Show network for 2 genes' })).toBeEnabled();
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toHaveCount(0);
+
+  await page.goto(`${web}/search?q=IL1B+TNF`);
+  await expect(page).toHaveURL(`${web}/?q=IL1B+TNF`);
+  await expect(page.getByRole('button', { name: 'Show network for 2 genes' })).toBeEnabled();
+});
+
+test('the top bar search works from the phone search button', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${web}/cite/`);
+  await page.getByRole('button', { name: 'Search', exact: true }).click();
+  await page.getByRole('searchbox', { name: 'Search' }).fill('IL1B TNF');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('button', { name: 'Show network for 2 genes' })).toBeEnabled();
+});

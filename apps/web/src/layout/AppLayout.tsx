@@ -1,7 +1,7 @@
 import { JobWatcher, productFooter, productSectionFor, productSections, useJobsMenuSummary } from '@humanbase/hb';
 import { Banner, Footer, SkipLink, TopBar } from '@humanbase/ui';
 import { useState } from 'react';
-import { Outlet, useLocation } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 import { BrowserSetting } from './BrowserSetting';
 import { DisplaySettings } from './DisplaySettings';
 import './AppLayout.css';
@@ -13,6 +13,7 @@ export function AppLayout() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const jobs = useJobsMenuSummary();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const onHomepage = pathname === '/';
   const current = productSectionFor(pathname);
   const dismissBanner = () => {
@@ -27,7 +28,7 @@ export function AppLayout() {
           We’ve made some changes to Humanbase and we’d like to show you around.
         </Banner>
       )}
-      <TopBar sections={productSections} jobs={jobs} search={!onHomepage} {...(current ? { current } : {})} />
+      <TopBar sections={productSections} jobs={jobs} search={!onHomepage} onSearch={(q) => void navigate(`/?${new URLSearchParams({ q })}`)} {...(current ? { current } : {})} />
       <main id="main" tabIndex={-1}>
         <Outlet />
       </main>
