@@ -55,14 +55,17 @@ export function ModuleResultView({ result, title, view, tissues, starting, notic
     if (module) onViewChange(view.with({ module: module.id, gene: entrez }));
   };
 
+  const connections = useMemo(() => result.connectionCounts(shown.flatMap((module) => module.genes)), [result, shown]);
   const data = useMemo<GraphData>(() => {
     const inShown = new Set(shown.flatMap((module) => module.genes));
     return {
       groups: shown.map((module) => ({ id: String(module.id), label: module.label, color: colors.get(module.id) ?? '--viz-cat-other' })),
-      nodes: shown.flatMap((module) => module.genes.map((entrez) => ({ id: String(entrez), label: names.data?.get(entrez)?.symbol ?? String(entrez), query: false, group: String(module.id) }))),
+      nodes: shown.flatMap((module) =>
+        module.genes.map((entrez) => ({ id: String(entrez), label: names.data?.get(entrez)?.symbol ?? String(entrez), query: false, group: String(module.id), size: connections.get(entrez) ?? 1 })),
+      ),
       links: view.showEdges ? result.edges.filter(([source, target]) => inShown.has(source) && inShown.has(target)).map(([source, target, weight]) => ({ source: String(source), target: String(target), weight })) : [],
     };
-  }, [shown, colors, names.data, view.showEdges, result.edges]);
+  }, [shown, colors, names.data, view.showEdges, result.edges, connections]);
 
   const selection = useMemo<GraphSelection>(() => {
     if (openGene) return { kind: 'node', id: String(openGene), links: linksOf(result, openGene) };
