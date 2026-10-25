@@ -1,5 +1,6 @@
 .tabs {
   position: relative;
+  min-inline-size: 0;
 }
 
 /* The padding keeps the focus ring visible inside the scrolling row. */

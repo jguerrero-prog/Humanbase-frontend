@@ -110,7 +110,7 @@ export function JobsList({ onOpenJob }: JobsListProps) {
               No jobs match. Clear the filter to see every job in this browser.
             </p>
           ) : (
-            <Table caption="Jobs in this browser" columnWidths={['auto', '280px', '200px', '240px']}>
+            <Table caption="Jobs in this browser" columnWidths={['auto', '280px', '200px', '240px']} minWidth="880px" pinFirstColumn>
               <thead>
                 <tr>
                   <HeaderCell>Job</HeaderCell>
