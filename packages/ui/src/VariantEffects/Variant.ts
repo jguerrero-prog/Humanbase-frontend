@@ -35,4 +35,4 @@ const chromosomeRank = (name: string) => {
 };
 
 /** Variants in genome order: chromosome 1 to 22, then X and Y, then position. */
-export const byGenomePosition = (a: Variant, b: Variant) => chromosomeRank(a.chromosome) - chromosomeRank(b.chromosome) || a.position - b.position;
+export const byGenomePosition = (a: Pick<Variant, 'chromosome' | 'position'>, b: Pick<Variant, 'chromosome' | 'position'>) => chromosomeRank(a.chromosome) - chromosomeRank(b.chromosome) || a.position - b.position;

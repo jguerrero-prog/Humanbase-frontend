@@ -46,7 +46,7 @@ export interface DeepseaResultViewProps {
 const tableLabels: Record<string, string> = { dis: 'Disease impact', 'mean-evalue': 'Mean −log e', seqclass: 'Max class score' };
 const shownRows = 9;
 // As on humanbase.io, the browser opens on the selected variant with 50 kb either side.
-const startWidth = 100_000;
+export const startWidth = 100_000;
 const scoreDocsLabel = 'Score type documentation';
 type ColorStyle = 'chr' | 'seqclass';
 // humanbase.io's Plot style names, Manhattan first and by default.

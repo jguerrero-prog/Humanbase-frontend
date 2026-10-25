@@ -23,12 +23,14 @@ export interface VariantGenomeBrowserProps {
   browser?: string | undefined;
   /** False leaves out Previous variant and Next variant, for a page with no variants to step through. */
   variantSteps?: boolean | undefined;
+  /** What Previous and Next step between; variant by default. */
+  stepNoun?: string | undefined;
   /** What still works when the browser can't load, said after the error. */
   failureNote?: string | undefined;
 }
 
 /** The genome around the selected variant, with the system toolbar and the page's score tracks. With the API off it draws from the recorded track windows. */
-export function VariantGenomeBrowser({ assembly, chromosome, position, label, location, tracks, onLocationChange, onPreviousVariant, onNextVariant, engine = defaultGenomeEngine, browser = 'variant-results', variantSteps = true, failureNote = 'The molecular effects below still work.' }: VariantGenomeBrowserProps) {
+export function VariantGenomeBrowser({ assembly, chromosome, position, label, location, tracks, onLocationChange, onPreviousVariant, onNextVariant, engine = defaultGenomeEngine, browser = 'variant-results', variantSteps = true, stepNoun, failureNote = 'The molecular effects below still work.' }: VariantGenomeBrowserProps) {
   const api = useHumanbase();
   const { genomeTracks } = api;
   const [failure, setFailure] = useState<Error>();
@@ -70,13 +72,14 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
         assembly={location.assemblyName}
         widthHelp={`${GenomeLocation.widthInWords(location.width)} shown. A gene name works too.`}
         variantSteps={variantSteps}
+        stepNoun={stepNoun}
         locationError={locationError}
         zoomStop={zoomStop}
         onLocation={(text) => void onLocation(text)}
         onZoom={(direction) => move(location.zoom(direction))}
         onZoomStop={(bases) => move(location.withWidth(bases))}
-        {...(onPreviousVariant && { onPreviousVariant })}
-        {...(onNextVariant && { onNextVariant })}
+        onPreviousVariant={onPreviousVariant}
+        onNextVariant={onNextVariant}
         {...tools.toolbar}
       />
       {tools.panels}

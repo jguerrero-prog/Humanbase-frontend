@@ -431,7 +431,7 @@
         "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/90e896a5-a950-4180-a4fb-c5bcc8cefd1d/90e896a5-a950-4180-a4fb-c5bcc8cefd1d_textarea.bed"
       ],
       "usedBy": [
-        "DeepseaService.inputCount"
+        "DeepseaService.input"
       ]
     },
     {

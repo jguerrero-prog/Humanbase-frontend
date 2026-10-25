@@ -5,29 +5,23 @@ import { Humanbase } from '../Humanbase';
 import type { VariantModel } from '../jobs/VariantFileCheck';
 import { SampleClient } from '../sample/SampleClient';
 import { HumanbaseProvider } from './HumanbaseProvider';
-import { useDeepseaFeatureCount, useDeepseaFeatures } from './useDeepsea';
+import { useDeepseaFeatureCount } from './useDeepsea';
 
 function Count({ model }: { model: VariantModel }) {
   const count = useDeepseaFeatureCount(model);
   return <p>{count === undefined ? 'No count' : `${count} features`}</p>;
 }
 
-function Remounting({ model, preload = false }: { model: VariantModel; preload?: boolean }) {
+function Remounting({ model }: { model: VariantModel }) {
   const [shown, setShown] = useState(true);
   return (
     <>
-      {preload && <Preload model={model} />}
       {shown && <Count model={model} />}
       <button type="button" onClick={() => setShown((value) => !value)}>
         Toggle
       </button>
     </>
   );
-}
-
-function Preload({ model }: { model: VariantModel }) {
-  useDeepseaFeatures(model);
-  return null;
 }
 
 function renderWith(client: DataClient, ui: ReactNode) {
@@ -47,16 +41,9 @@ describe('useDeepseaFeatureCount', () => {
     expect(calls('deepsea/Beluga/features/')).toBe(1);
   });
 
-  it('never loads Sei’s 4 MB list just to count it', async () => {
+  it('gives Sei’s 21,907 profiles without loading its 4 MB list', async () => {
     const calls = renderWith(SampleClient.bundled(), <Count model="sei" />);
-    await screen.findByText('No count');
+    await screen.findByText('21907 features');
     expect(calls('deepsea/Sei/features/')).toBe(0);
-  });
-
-  it('counts Sei’s list when another view has already loaded it', async () => {
-    const client: DataClient = { get: async <T,>() => ({ model_features: [{ idx: 0 }, { idx: 1 }, { idx: 2 }] }) as T, post: async () => Promise.reject(new Error('No posts')), text: async () => '' };
-    const calls = renderWith(client, <Remounting model="sei" preload />);
-    await screen.findByText('3 features');
-    expect(calls('deepsea/Sei/features/')).toBe(1);
   });
 });

@@ -142,6 +142,7 @@ const yourTracks = [
 
 const behavior = [
   ['Follows the selection', 'On a result, selecting a variant centers the browser on it at the current zoom. Moving the browser by hand doesn’t change the selection.'],
+  ['Steps', 'Previous variant and Next variant move to the page’s previous or next variant, as Ctrl and the arrow keys do. Previous is unavailable at the first and Next at the last: styled as disabled and marked aria-disabled, with click, Enter and Space doing nothing, so focus stays on the button, as on any system Button. stepNoun names what they step between: a BED job’s files page says Previous region and Next region, and steps through the job’s own regions in genome order.'],
   ['Zoom stops', '200 bp, 2 kb, 50 kb and 500 kb, as today; the view can sit between stops, and the field shows the exact width.'],
   ['Tracks', 'The job’s score tracks and genes are on by default. Suggested tracks are listed off; Your file and By URL add a bigWig or bigBed track of your own. Hide track in a track menu hides a track; Remove beside a track you added, in All tracks, deletes it from this browser.'],
   ['Track menu', 'Each track header has one. Move up and Move down swap the track with the next shown track, and are off at the top and bottom. Data tracks can download their data. Hide track hides it; Tracks turns it back on. It isn’t red, as nothing is lost. Focus stays on the track’s menu button, or goes to the tracks once the track is gone.'],
@@ -154,7 +155,7 @@ const behavior = [
 ];
 
 const specs = [
-  ['toolbar', '12px by 16px padding, 12px gaps; labeled buttons for Previous variant, Tracks, Export, Next variant (a browser with no variants to step through, such as the genome browser page, leaves out Previous variant and Next variant); 36px icon buttons with tooltip and shortcut; every control centered on the location field’s 44px line; when the row is too narrow, Tracks, Export and Next variant wrap together; on a phone the padding is 12px by 0, and when the zoom buttons and stops can’t share a line, the stops take their own line below the buttons, in full'],
+  ['toolbar', '12px by 16px padding, 12px gaps; labeled buttons for Previous variant, Tracks, Export, Next variant (stepNoun renames the steps, such as Previous region; a browser with no variants to step through, such as the genome browser page, leaves out Previous variant and Next variant); 36px icon buttons with tooltip and shortcut; every control centered on the location field’s 44px line; when the row is too narrow, Tracks, Export and Next variant wrap together; on a phone the padding is 12px by 0, and when the zoom buttons and stops can’t share a line, the stops take their own line below the buttons, in full'],
   ['location', 'Search field medium, 400px; assembly Lato Bold 12 grey and width Lato 12 grey under it'],
   ['track header', '220px column, grey 50; name Lato Bold 13; source and scale Lato 12 grey; 28px menu button'],
   ['ruler and positions', 'Atkinson Hyperlegible Mono 11 grey 600 with commas; ticks every tenth of the view'],
@@ -220,6 +221,9 @@ const view = GenomeLocation.parse('1:109,767,590..109,867,590');
 <GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="100 kb shown. A gene name works too."
   zoomStop={view.width} onZoom={(direction) => engine.zoomTo(view.zoom(direction))} />
 
+// A BED job steps between regions; leaving out a step's handler marks it aria-disabled, as at the first or last region.
+<GenomeBrowserToolbar {...props} stepNoun="region" onPreviousVariant={undefined} onNextVariant={() => show(index + 1)} />
+
 // One place maps keys to commands; the Biodalliance adapter carries them out.
 element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
 ---
@@ -227,7 +231,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
 <DocsLayout title="Genome browser" description="The genome browser: the design system draws its tracks, toolbar, track headers, panels and words; Biodalliance stays available as an alternative engine.">
   <Intro
     lead="Variant results and the ASD Browser show variants in their genomic context. The design system draws the tracks itself from the same Humanbase track files the live site reads, and replaces what people see and touch around them: the toolbar, track headers, panels and words. Biodalliance, the open-source browser the live site uses, stays available as an alternative engine."
-    status="Updated October 23, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+    status="Updated October 25, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
       rules={[
@@ -246,7 +250,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
 
   <DocSection title="The browser" lead="On a variant result, centered on the selected variant with 50 kb either side (100 kb), as on humanbase.io. The toolbar, track headers and tracks are system components; the tracks follow the specs below. Gene positions in this drawing are approximate.">
     <section class="browser" aria-label={view.regionLabel(trackCount)}>
-      <GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="100 kb shown. A gene name works too." moreItems={moreMenu} />
+      <GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="100 kb shown. A gene name works too." moreItems={moreMenu} onPreviousVariant={() => undefined} onNextVariant={() => undefined} />
       <div class="browser-tracks">
         <div class="track-column">
           <div class="track-column-ruler">Position</div>

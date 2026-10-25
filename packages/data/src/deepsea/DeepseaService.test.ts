@@ -49,7 +49,9 @@ describe('DeepseaService', () => {
     expect(jobScoreTypes(job.model, await service.scoreTypes(id))).toEqual([]);
     expect(job.resultFiles.map((file) => file.key)).toEqual(['feature_predictions', 'uploaded_query', 'gz_file']);
     expect(job.resultFiles[0]).toMatchObject({ holds: 'Every feature for every region', format: 'TSV, gzipped, with tabix index' });
-    expect(await service.inputCount(job)).toBe(10);
+    const input = await service.input(job);
+    expect(input.count).toBe(10);
+    expect(input.regions.map((region) => region.label).slice(0, 2)).toEqual(['chr1:109,817,091', 'chr10:23,507,864']);
   });
 
   it('plots only the inputs humanbase.io plots for each model', () => {
@@ -59,7 +61,7 @@ describe('DeepseaService', () => {
 
   it('counts each FASTA example job’s sequences from its uploaded query', async () => {
     for (const id of ['5154ea8d-3203-4c81-acc8-757faeb44e0c', '27d030ee-02d9-43ca-adec-e5d76265591a', 'dbebecbe-f58a-4ce4-b4ba-04af819a9ad7']) {
-      expect(await service.inputCount(await service.get(id))).toBe(4);
+      expect(await service.input(await service.get(id))).toEqual({ count: 4, regions: [] });
     }
   });
 

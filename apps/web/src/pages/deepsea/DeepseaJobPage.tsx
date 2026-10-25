@@ -13,6 +13,8 @@ export function DeepseaJobPage() {
         id={id}
         variant={params.get('variant') ?? undefined}
         onVariantChange={(variant) => setParams((current) => { current.set('variant', variant); return current; }, { replace: true })}
+        region={params.get('region') ?? undefined}
+        onRegionChange={(region) => setParams((current) => { if (region) current.set('region', region); else current.delete('region'); return current; }, { replace: true })}
       />
     </section>
   );

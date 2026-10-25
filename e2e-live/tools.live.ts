@@ -377,10 +377,10 @@ test('the real NetWAS result lists ranked genes with names and links into Networ
 });
 
 for (const [tool, id, input, summary] of [
-  ['Sei', '5154ea8d-3203-4c81-acc8-757faeb44e0c', 'FASTA', 'Sei predicted chromatin profiles for each of your 4 sequences.'],
+  ['Sei', '5154ea8d-3203-4c81-acc8-757faeb44e0c', 'FASTA', 'Sei predicted 21,907 chromatin profiles for each of your 4 sequences.'],
   ['Beluga', '27d030ee-02d9-43ca-adec-e5d76265591a', 'FASTA', 'Beluga predicted 2,002 chromatin profiles for each of your 4 sequences.'],
   ['Seqweaver', 'dbebecbe-f58a-4ce4-b4ba-04af819a9ad7', 'FASTA', 'Seqweaver predicted 232 RNA-binding protein profiles for each of your 4 sequences.'],
-  ['Sei', '90e896a5-a950-4180-a4fb-c5bcc8cefd1d', 'BED', 'Sei predicted chromatin profiles for each of your 10 regions.'],
+  ['Sei', '90e896a5-a950-4180-a4fb-c5bcc8cefd1d', 'BED', 'Sei predicted 21,907 chromatin profiles for each of your 10 regions.'],
 ] as const) {
   test(`the real ${tool} ${input} job shows its files, as humanbase.io does, without reading scores or Sei’s feature list`, async ({ page }) => {
     const problems = watch(page);
@@ -397,6 +397,28 @@ for (const [tool, id, input, summary] of [
     expect(scoreReads).toEqual([]);
   });
 }
+
+test('the real Sei BED job opens its 10 regions in the genome browser with the reference tracks, stepping across chromosomes', async ({ page }) => {
+  const problems = watch(page);
+  const reads: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().endsWith('_textarea.bed')) reads.push(request.url());
+  });
+  await page.goto(`${web}/deepsea/jobs/90e896a5-a950-4180-a4fb-c5bcc8cefd1d/`);
+  await page.getByRole('button', { name: 'View your regions in the genome browser' }).click();
+  await expect(page.getByText('Region 1 of 10: chr1:109,817,091')).toBeVisible();
+  await expect(page).toHaveURL(/\?region=chr1:109,817,091$/);
+  await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Genes']);
+  await expect(page.locator('.genome-engine')).toHaveAttribute('aria-label', /^Genome browser, chr1:109,767,091-109,867,091, GRCh37\/hg19/);
+  await expect(page.getByRole('button', { name: 'Previous region' })).toHaveAttribute('aria-disabled', 'true');
+  await checkScreen(page, problems);
+  await page.getByRole('button', { name: 'Next region' }).click();
+  await expect(page.getByText('Region 2 of 10: chr10:23,507,864')).toBeVisible();
+  await expect(page).toHaveURL(/\?region=chr10:23,507,864$/);
+  await expect(page.getByText('The genome browser couldn’t load')).toHaveCount(0);
+  expect(reads).toHaveLength(1);
+  await checkScreen(page, problems);
+});
 
 test('the real in silico mutagenesis result draws its substitution map, colored by the feature’s percentiles', async ({ page }) => {
   const problems = watch(page);

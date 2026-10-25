@@ -44,8 +44,8 @@ export interface DeepseaModel {
   featurePlural: string;
   /** What a job shown as files predicted, as in Beluga predicted 2,002 chromatin profiles. */
   profiles?: string;
-  /** The API's feature list is too large to load just to count it: Sei's is 4 MB, with no lighter way to read its length. */
-  largeFeatureList?: boolean;
+  /** The feature count when the API's list is too large to load for it: Sei's is 4 MB, and a real job's result file has 21,907 profiles. */
+  featureCount?: number;
   /** What a raised feature does, as in Raises binding; empty reads as just Raises. */
   verb: string;
   /** The effects card's name when the model's paper uses another than Molecular effects: Expression effects for ExPecto. */
@@ -92,7 +92,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     featureNoun: 'sequence class',
     featurePlural: 'sequence classes',
     profiles: 'chromatin profiles',
-    largeFeatureList: true,
+    featureCount: 21907,
     verb: '',
     strand: false,
     summaryScores: ['seqclass'],
