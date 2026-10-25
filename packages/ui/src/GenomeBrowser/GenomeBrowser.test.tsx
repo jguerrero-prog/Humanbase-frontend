@@ -37,11 +37,13 @@ describe('GenomeBrowserToolbar', () => {
   it('names its steps after what they step between and disables a step it has no handler for', () => {
     const props = { location: 'chr1:109,792,590-109,842,590', assembly: 'GRCh37/hg19', widthHelp: '50 kb shown.' };
     const { rerender } = render(<GenomeBrowserToolbar {...props} onNextVariant={vi.fn()} />);
-    expect(screen.getByRole('button', { name: 'Previous variant' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Next variant' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Previous variant' })).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByRole('button', { name: 'Next variant' })).not.toHaveAttribute('aria-disabled');
     rerender(<GenomeBrowserToolbar {...props} stepNoun="region" onPreviousVariant={vi.fn()} />);
-    expect(screen.getByRole('button', { name: 'Previous region' })).toBeEnabled();
-    expect(screen.getByRole('button', { name: 'Next region' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Previous region' })).not.toHaveAttribute('aria-disabled');
+    const next = screen.getByRole('button', { name: 'Next region' });
+    expect(next).toHaveAttribute('aria-disabled', 'true');
+    expect(next).toBeEnabled();
   });
 
   it('labels the track menu with the track name', () => {

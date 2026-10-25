@@ -82,27 +82,40 @@ describe('DeepseaJobView', () => {
     await userEvent.click(view);
     expect(await screen.findByText('Region 1 of 10: chr1:109,817,091')).toBeInTheDocument();
     expect(onRegionChange).toHaveBeenLastCalledWith('chr1:109,817,091');
-    expect(screen.getByRole('button', { name: 'Previous region' })).toBeDisabled();
-    await userEvent.click(screen.getByRole('button', { name: 'Next region' }));
+    expect(screen.getByRole('button', { name: 'Previous region' })).toHaveAttribute('aria-disabled', 'true');
+    const next = screen.getByRole('button', { name: 'Next region' });
+    next.focus();
+    await userEvent.keyboard('{Enter}');
     expect(screen.getByText('Region 2 of 10: chr10:23,507,864')).toBeInTheDocument();
-    for (let step = 0; step < 8; step += 1) await userEvent.click(screen.getByRole('button', { name: 'Next region' }));
+    for (let step = 0; step < 8; step += 1) await userEvent.keyboard('{Enter}');
     expect(screen.getByText('Region 10 of 10: chr19:59,070,228')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Next region' })).toBeDisabled();
+    expect(next).toHaveFocus();
+    expect(next).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.keyboard('{Enter}');
+    expect(screen.getByText('Region 10 of 10: chr19:59,070,228')).toBeInTheDocument();
+    const previous = screen.getByRole('button', { name: 'Previous region' });
+    previous.focus();
+    for (let step = 0; step < 9; step += 1) await userEvent.keyboard(' ');
+    expect(screen.getByText('Region 1 of 10: chr1:109,817,091')).toBeInTheDocument();
+    expect(previous).toHaveFocus();
+    expect(previous).toHaveAttribute('aria-disabled', 'true');
     expect(read.mock.calls.filter(([url]) => url.endsWith('_textarea.bed'))).toHaveLength(1);
     await userEvent.click(screen.getByRole('button', { name: 'Hide the genome browser' }));
     expect(onRegionChange).toHaveBeenLastCalledWith(undefined);
     expect(screen.getByRole('button', { name: 'View your regions in the genome browser' })).toHaveFocus();
   });
 
-  it('disables Previous variant at the first variant and Next variant at the last', async () => {
+  it('marks Previous variant unavailable at the first variant and Next variant at the last, keeping focus on it', async () => {
     renderJob('76aea8fe-8ec7-4698-a193-a186c7665edb');
     const previous = await screen.findByRole('button', { name: 'Previous variant' }, { timeout: 5000 });
-    expect(previous).toBeDisabled();
+    expect(previous).toHaveAttribute('aria-disabled', 'true');
     const next = screen.getByRole('button', { name: 'Next variant' });
-    expect(next).toBeEnabled();
-    for (let step = 0; step < 9; step += 1) await userEvent.click(screen.getByRole('button', { name: 'Next variant' }));
-    expect(screen.getByRole('button', { name: 'Next variant' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Previous variant' })).toBeEnabled();
+    expect(next).not.toHaveAttribute('aria-disabled');
+    next.focus();
+    for (let step = 0; step < 9; step += 1) await userEvent.keyboard('{Enter}');
+    expect(next).toHaveFocus();
+    expect(next).toHaveAttribute('aria-disabled', 'true');
+    expect(previous).not.toHaveAttribute('aria-disabled');
   });
 
   it('reads Sei effects as sequence classes', async () => {

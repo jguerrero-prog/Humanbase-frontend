@@ -410,7 +410,7 @@ test('the real Sei BED job opens its 10 regions in the genome browser with the r
   await expect(page).toHaveURL(/\?region=chr1:109,817,091$/);
   await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Genes']);
   await expect(page.locator('.genome-engine')).toHaveAttribute('aria-label', /^Genome browser, chr1:109,767,091-109,867,091, GRCh37\/hg19/);
-  await expect(page.getByRole('button', { name: 'Previous region' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Previous region' })).toHaveAttribute('aria-disabled', 'true');
   await checkScreen(page, problems);
   await page.getByRole('button', { name: 'Next region' }).click();
   await expect(page.getByText('Region 2 of 10: chr10:23,507,864')).toBeVisible();

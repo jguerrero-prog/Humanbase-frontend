@@ -23,7 +23,7 @@ export interface GenomeBrowserToolbarProps {
   onLocation?: (text: string) => void;
   onZoomStop?: (bases: number) => void;
   onZoom?: (direction: 'in' | 'out') => void;
-  /** Left out at the first variant, which disables Previous; likewise Next at the last. */
+  /** Left out at the first variant, which marks Previous aria-disabled so focus stays on it; likewise Next at the last. */
   onPreviousVariant?: (() => void) | undefined;
   onNextVariant?: (() => void) | undefined;
   onTracks?: () => void;
@@ -51,7 +51,7 @@ export function GenomeBrowserToolbar({
     <div role="toolbar" aria-label="Genome browser" className={['genome-toolbar', className].filter(Boolean).join(' ')}>
       {variantSteps && (
         <div className="genome-step">
-          <Button variant="ghost" size="small" aria-keyshortcuts={keys.previousVariant} disabled={!onPreviousVariant} onClick={onPreviousVariant}>
+          <Button variant="ghost" size="small" aria-keyshortcuts={keys.previousVariant} aria-disabled={!onPreviousVariant || undefined} onClick={onPreviousVariant}>
             Previous {stepNoun}
           </Button>
         </div>
@@ -95,7 +95,7 @@ export function GenomeBrowserToolbar({
           </div>
         )}
         {variantSteps && (
-          <Button variant="ghost" size="small" className="genome-next" aria-keyshortcuts={keys.nextVariant} disabled={!onNextVariant} onClick={onNextVariant}>
+          <Button variant="ghost" size="small" className="genome-next" aria-keyshortcuts={keys.nextVariant} aria-disabled={!onNextVariant || undefined} onClick={onNextVariant}>
             Next {stepNoun}
           </Button>
         )}

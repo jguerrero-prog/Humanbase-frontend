@@ -113,10 +113,19 @@ test('the Sei BED job’s regions open in the genome browser, keep the region in
   await page.getByRole('button', { name: 'View your regions in the genome browser' }).click();
   await expect(page.getByText('Region 1 of 10: chr1:109,817,091')).toBeVisible();
   await expect(page).toHaveURL(/\?region=chr1:109,817,091$/);
-  await expect(page.getByRole('button', { name: 'Previous region' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Previous region' })).toHaveAttribute('aria-disabled', 'true');
   await page.getByRole('button', { name: 'Next region' }).click();
   await expect(page.getByText('Region 2 of 10: chr10:23,507,864')).toBeVisible();
   await expect(page).toHaveURL(/\?region=chr10:23,507,864$/);
+  const previous = page.getByRole('button', { name: 'Previous region' });
+  await previous.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Region 1 of 10: chr1:109,817,091')).toBeVisible();
+  await expect(previous).toBeFocused();
+  await expect(previous).toHaveAttribute('aria-disabled', 'true');
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Region 1 of 10: chr1:109,817,091')).toBeVisible();
+  await page.getByRole('button', { name: 'Next region' }).click();
   expect(await violationsOf(page)).toEqual([]);
   for (const width of [1440, 375]) {
     await page.setViewportSize({ width, height: 812 });

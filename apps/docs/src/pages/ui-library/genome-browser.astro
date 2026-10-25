@@ -142,7 +142,7 @@ const yourTracks = [
 
 const behavior = [
   ['Follows the selection', 'On a result, selecting a variant centers the browser on it at the current zoom. Moving the browser by hand doesn’t change the selection.'],
-  ['Steps', 'Previous variant and Next variant move to the page’s previous or next variant, as Ctrl and the arrow keys do. Previous is disabled at the first and Next at the last, as real disabled buttons. stepNoun names what they step between: a BED job’s files page says Previous region and Next region, and steps through the job’s own regions in genome order.'],
+  ['Steps', 'Previous variant and Next variant move to the page’s previous or next variant, as Ctrl and the arrow keys do. Previous is unavailable at the first and Next at the last: styled as disabled and marked aria-disabled, with click, Enter and Space doing nothing, so focus stays on the button, as on any system Button. stepNoun names what they step between: a BED job’s files page says Previous region and Next region, and steps through the job’s own regions in genome order.'],
   ['Zoom stops', '200 bp, 2 kb, 50 kb and 500 kb, as today; the view can sit between stops, and the field shows the exact width.'],
   ['Tracks', 'The job’s score tracks and genes are on by default. Suggested tracks are listed off; Your file and By URL add a bigWig or bigBed track of your own. Hide track in a track menu hides a track; Remove beside a track you added, in All tracks, deletes it from this browser.'],
   ['Track menu', 'Each track header has one. Move up and Move down swap the track with the next shown track, and are off at the top and bottom. Data tracks can download their data. Hide track hides it; Tracks turns it back on. It isn’t red, as nothing is lost. Focus stays on the track’s menu button, or goes to the tracks once the track is gone.'],
@@ -221,7 +221,7 @@ const view = GenomeLocation.parse('1:109,767,590..109,867,590');
 <GenomeBrowserToolbar location={view.format()} assembly={view.assemblyName} widthHelp="100 kb shown. A gene name works too."
   zoomStop={view.width} onZoom={(direction) => engine.zoomTo(view.zoom(direction))} />
 
-// A BED job steps between regions; leaving out a step's handler disables it, as at the first or last region.
+// A BED job steps between regions; leaving out a step's handler marks it aria-disabled, as at the first or last region.
 <GenomeBrowserToolbar {...props} stepNoun="region" onPreviousVariant={undefined} onNextVariant={() => show(index + 1)} />
 
 // One place maps keys to commands; the Biodalliance adapter carries them out.
