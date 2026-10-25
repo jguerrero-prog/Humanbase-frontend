@@ -1,4 +1,5 @@
 import type { MessageAction, MessageTone } from './Message';
+import { PausableTimer } from './PausableTimer';
 
 export type ToastTone = MessageTone | 'loading';
 
@@ -10,6 +11,8 @@ export interface ToastContent {
 
 export interface ToastEntry extends ToastContent {
   id: string;
+  /** Kept with the toast, not the screen, so the time left survives the region moving into or out of a dialog. */
+  timer?: PausableTimer | undefined;
 }
 
 export interface ToastQueueState {
@@ -22,6 +25,11 @@ export function toastDuration({ tone, message, action }: ToastContent): number |
   if (action || tone === 'error' || tone === 'loading') return undefined;
   const words = message.trim().split(/\s+/).length;
   return 6000 + Math.floor(words / 20) * 1000;
+}
+
+function entryFor(id: string, content: ToastContent): ToastEntry {
+  const duration = toastDuration(content);
+  return { ...content, id, timer: duration === undefined ? undefined : new PausableTimer(duration) };
 }
 
 export class ToastQueue {
@@ -40,12 +48,12 @@ export class ToastQueue {
 
   show(content: ToastContent): string {
     const id = `toast-${++this.#count}`;
-    this.#set([...this.#state.toasts, { ...content, id }].slice(-this.limit), content);
+    this.#set([...this.#state.toasts, entryFor(id, content)].slice(-this.limit), content);
     return id;
   }
 
   update(id: string, content: ToastContent): void {
-    this.#set(this.#state.toasts.map((toast) => (toast.id === id ? { ...content, id } : toast)), content);
+    this.#set(this.#state.toasts.map((toast) => (toast.id === id ? entryFor(id, content) : toast)), content);
   }
 
   dismiss(id: string): void {

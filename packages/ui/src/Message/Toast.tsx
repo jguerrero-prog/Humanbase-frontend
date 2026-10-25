@@ -9,12 +9,16 @@ import { toastDuration, type ToastContent, type ToastQueue } from './ToastQueue'
 const leaveDuration = 150;
 
 export interface ToastProps extends ToastContent {
+  /** The queue's timer, which keeps the time left when the toast is shown again elsewhere. Without one, the toast times itself. */
+  timer?: PausableTimer | undefined;
+  /** False when an existing toast is shown again in a new place, so it doesn't arrive twice. */
+  enter?: boolean;
   dismissible?: boolean;
   onDismiss?: () => void;
   className?: string;
 }
 
-export function Toast({ tone, message, action, dismissible = tone !== 'loading', onDismiss, className }: ToastProps) {
+export function Toast({ tone, message, action, timer, enter = true, dismissible = tone !== 'loading', onDismiss, className }: ToastProps) {
   const [leaving, setLeaving] = useState(false);
   const frame = useRef<HTMLDivElement>(null);
   const duration = toastDuration({ tone, message, action });
@@ -22,15 +26,15 @@ export function Toast({ tone, message, action, dismissible = tone !== 'loading',
   const leave = canDismiss ? () => setLeaving(true) : undefined;
 
   useEffect(() => {
-    if (duration === undefined || !canDismiss || !frame.current) return;
-    const timer = new PausableTimer(() => setLeaving(true), duration);
-    const release = timer.holdWhileInside(frame.current);
-    timer.start();
+    const clock = timer ?? (duration === undefined ? undefined : new PausableTimer(duration));
+    if (!clock || !canDismiss || !frame.current) return;
+    const release = clock.holdWhileInside(frame.current);
+    clock.start(() => setLeaving(true));
     return () => {
       release();
-      timer.stop();
+      clock.pause();
     };
-  }, [duration, canDismiss]);
+  }, [timer, duration, canDismiss]);
 
   useEffect(() => {
     if (!leaving) return;
@@ -39,7 +43,7 @@ export function Toast({ tone, message, action, dismissible = tone !== 'loading',
   }, [leaving, onDismiss]);
 
   return (
-    <div ref={frame} className="toast-frame" data-leaving={leaving || undefined}>
+    <div ref={frame} className="toast-frame" data-still={!enter || undefined} data-leaving={leaving || undefined}>
       <MessageFrame kind="toast" tone={tone} dismissible={dismissible} onDismiss={leave} className={className}>
         <p className="message-text">{message}</p>
         {action && <MessageActionControl action={action} onEscape={leave} />}
@@ -52,6 +56,12 @@ export function ToastRegion({ queue, label = 'Notifications' }: { queue: ToastQu
   const { toasts, announcement } = useSyncExternalStore(queue.subscribe, queue.getState, queue.getState);
   const modal = useSyncExternalStore(modalStack.subscribe, modalStack.top, () => null);
   const region = useRef<HTMLElement>(null);
+  const [placedIn, setPlacedIn] = useState(modal);
+  const [carried, setCarried] = useState<ReadonlySet<string>>(new Set());
+  if (placedIn !== modal) {
+    setPlacedIn(modal);
+    setCarried(new Set(toasts.map((toast) => toast.id)));
+  }
 
   // A modal dialog makes the rest of the page inert, so the region moves inside it and opens in the top layer above it.
   useLayoutEffect(() => {
@@ -63,7 +73,7 @@ export function ToastRegion({ queue, label = 'Notifications' }: { queue: ToastQu
       <ol className="toast-list">
         {toasts.map((toast) => (
           <li key={toast.id}>
-            <Toast tone={toast.tone} message={toast.message} action={toast.action} onDismiss={() => queue.dismiss(toast.id)} />
+            <Toast tone={toast.tone} message={toast.message} action={toast.action} timer={toast.timer} enter={!carried.has(toast.id)} onDismiss={() => queue.dismiss(toast.id)} />
           </li>
         ))}
       </ol>

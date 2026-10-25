@@ -113,4 +113,31 @@ describe('ToastRegion', () => {
     );
     expect(sheet).not.toContainElement(screen.getByRole('region', { name: 'Notifications' }));
   });
+
+  it('keeps a toast’s time left and skips its entrance when the region moves into a sheet', () => {
+    vi.useFakeTimers();
+    const queue = new ToastQueue();
+    const page = (open: boolean) => (
+      <>
+        <Drawer title="Job actions" sheet open={open}>
+          <p>Settings</p>
+        </Drawer>
+        <ToastRegion queue={queue} />
+      </>
+    );
+    const { rerender } = render(page(false));
+    act(() => void queue.show({ tone: 'info', message: 'Link copied' }));
+    const frame = () => screen.getByRole('listitem').querySelector('.toast-frame') as HTMLElement;
+    expect(frame()).not.toHaveAttribute('data-still');
+    act(() => vi.advanceTimersByTime(4000));
+    rerender(page(true));
+    expect(screen.getByRole('dialog', { name: 'Job actions' })).toContainElement(frame());
+    expect(frame()).toHaveAttribute('data-still');
+    act(() => vi.advanceTimersByTime(1999));
+    expect(frame()).not.toHaveAttribute('data-leaving');
+    act(() => vi.advanceTimersByTime(1));
+    expect(frame()).toHaveAttribute('data-leaving');
+    vi.useRealTimers();
+  });
 });
+

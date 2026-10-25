@@ -61,7 +61,7 @@ test('toasts from different screens stack in the one app region instead of overl
   expect(apiRequests).toEqual([]);
 });
 
-test('a toast posted from an open sheet on a phone shows above the sheet without taking focus, with the API off', async ({ page, context }) => {
+test('a toast posted from an open sheet on a phone shows above the sheet, clear of its actions, without taking focus, with the API off', async ({ page, context }) => {
   const apiRequests = await apiOff(page);
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.setViewportSize({ width: 390, height: 844 });
@@ -74,11 +74,13 @@ test('a toast posted from an open sheet on a phone shows above the sheet without
   await expect(toast).toHaveText('Link copied');
   await expect(copy).toBeFocused();
   await settleAnimations(page);
-  const hit = await toast.evaluate((item) => {
-    const box = item.getBoundingClientRect();
-    return item.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2));
-  });
-  expect(hit).toBe(true);
+  const onTop = (element: Element) => {
+    const box = element.getBoundingClientRect();
+    return element.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2));
+  };
+  expect(await toast.evaluate(onTop)).toBe(true);
+  // At the top of the screen, so the sheet's own actions stay uncovered.
+  for (const name of ['Rename', 'Copy link', 'Download result file']) expect(await sheet.getByRole('button', { name }).evaluate(onTop)).toBe(true);
   await toast.getByRole('button', { name: 'Dismiss' }).click();
   await expect(toast).toHaveCount(0);
   await expect(sheet).toBeVisible();

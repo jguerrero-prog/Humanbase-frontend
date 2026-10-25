@@ -50,7 +50,8 @@ const placement = [
   'Bottom left, 24px from the edges, above the sidebar. This keeps them clear of the graph controls and zoom buttons on the right.',
   'Newest at the bottom. At most 3 at once; older ones leave when a fourth arrives.',
   'On phones they span the width with 16px margins, above the bottom of the screen.',
-  'While a dialog or sheet is open, toasts show above it in the same place, so a message posted from inside it, like Link copied, is seen right away.',
+  'While a dialog is open, toasts show above it in the usual place, clear of its buttons. While a bottom sheet is open on a phone, they move to the top of the screen, 16px below the safe area, so they never cover the sheet’s actions.',
+  'Moving above a dialog or sheet keeps each toast’s time left and doesn’t replay its entrance.',
 ];
 
 const toastTiming = [
