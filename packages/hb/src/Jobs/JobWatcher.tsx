@@ -1,6 +1,7 @@
 import { JobHistory, useDeepseaJob, useModuleResult, useNetwasJob, type JobEntry, type JobState } from '@humanbase/data';
-import { ToastQueue, ToastRegion, useLinkHref } from '@humanbase/ui';
-import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useLinkHref } from '@humanbase/ui';
+import { useCallback, useEffect, useMemo, useSyncExternalStore } from 'react';
+import { notifications } from '../Notifications/Notifications';
 
 type Done = (job: JobEntry, status: Extract<JobState, 'finished' | 'failed'>) => void;
 
@@ -42,7 +43,6 @@ export function JobWatcher() {
   const linkHref = useLinkHref();
   const stored = useSyncExternalStore(JobHistory.subscribe, () => JobHistory.snapshot(), () => '');
   const active = useMemo(() => new JobHistory({ getItem: () => stored, setItem: () => undefined }).list().filter((job) => job.status === 'queued' || job.status === 'running'), [stored]);
-  const [toasts] = useState(() => new ToastQueue());
 
   const onDone = useCallback<Done>(
     (job, status) => {
@@ -53,22 +53,17 @@ export function JobWatcher() {
     // On the job page itself the page turns into its finished state instead.
     if (window.location.pathname + window.location.search === linkHref(job.link)) return;
     const title = JobHistory.titleOf(entry);
-    toasts.show(
+    notifications.show(
       status === 'finished'
         ? { tone: 'success', message: `${entry.tool} finished: ${title}`, action: { label: 'View results', href: job.link } }
         : { tone: 'error', message: `${entry.tool} stopped: ${title}`, action: { label: 'See why', href: job.link } },
     );
     },
-    [linkHref, toasts],
+    [linkHref],
   );
 
-  return (
-    <>
-      {active.map((job) => {
-        const Watch = watcherFor(job);
-        return Watch ? <Watch key={job.id} job={job} onDone={onDone} /> : null;
-      })}
-      <ToastRegion queue={toasts} label="Job notifications" />
-    </>
-  );
+  return active.map((job) => {
+    const Watch = watcherFor(job);
+    return Watch ? <Watch key={job.id} job={job} onDone={onDone} /> : null;
+  });
 }

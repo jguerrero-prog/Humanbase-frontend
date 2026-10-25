@@ -37,11 +37,11 @@ export function useJobTitle(job: JobIdentity | undefined) {
   return { title, rename };
 }
 
-/** Copy link and Rename, with the dialog and toast they need. */
+/** Copy link and Rename, with the dialog Rename needs. */
 export function useJobActions(title: string, rename: (title: string) => void) {
   const [renaming, setRenaming] = useState(false);
   const [draft, setDraft] = useState('');
-  const { copyButton, toastRegion } = useCopyLink();
+  const { copyButton } = useCopyLink();
   const renameButton = (
     <Button
       variant="ghost"
@@ -55,31 +55,28 @@ export function useJobActions(title: string, rename: (title: string) => void) {
     </Button>
   );
   const overlays = (
-    <>
-      <Dialog
-        title="Rename this job"
-        open={renaming}
-        onClose={() => setRenaming(false)}
-        actions={
-          <>
-            <Button variant="ghost" onClick={() => setRenaming(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                rename(draft.trim());
-                setRenaming(false);
-              }}
-            >
-              Rename
-            </Button>
-          </>
-        }
-      >
-        <TextInput label="Title" value={draft} hint="Kept in this browser and shown in your job list." onChange={(event) => setDraft(event.target.value)} />
-      </Dialog>
-      {toastRegion}
-    </>
+    <Dialog
+      title="Rename this job"
+      open={renaming}
+      onClose={() => setRenaming(false)}
+      actions={
+        <>
+          <Button variant="ghost" onClick={() => setRenaming(false)}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              rename(draft.trim());
+              setRenaming(false);
+            }}
+          >
+            Rename
+          </Button>
+        </>
+      }
+    >
+      <TextInput label="Title" value={draft} hint="Kept in this browser and shown in your job list." onChange={(event) => setDraft(event.target.value)} />
+    </Dialog>
   );
   return { copyButton, renameButton, overlays };
 }
