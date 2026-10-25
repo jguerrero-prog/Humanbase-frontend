@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "created": "2026-10-25T03:07:14",
+    "ds_model": "Beluga",
+    "email": "",
+    "files": {
+      "feature_predictions": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/27d030ee-02d9-43ca-adec-e5d76265591a/27d030ee-02d9-43ca-adec-e5d76265591a_feature_predictions.tsv.gz",
+        "name": "Probability"
+      },
+      "uploaded_query": {
+        "url": "https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/27d030ee-02d9-43ca-adec-e5d76265591a/27d030ee-02d9-43ca-adec-e5d76265591a_textarea.fasta",
+        "name": "Uploaded query"
+      },
+      "gz_file": {
+        "url": "http://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/27d030ee-02d9-43ca-adec-e5d76265591a/27d030ee-02d9-43ca-adec-e5d76265591a.tar.gz",
+        "name": "Archive of results"
+      }
+    },
+    "expecto": false,
+    "input_type": "fasta",
+    "insilico": false,
+    "job_id": "27d030ee-02d9-43ca-adec-e5d76265591a",
+    "output_format": "tsv",
+    "sequence_names": [],
+    "status": "completed",
+    "title": "",
+    "genome_assembly": "hg19"
+  }
+}

@@ -36,6 +36,20 @@ describe('DeepseaJobView', () => {
     expect(screen.getByText('10 variants, colored by chromosome; position also carries the chromosome.')).toBeInTheDocument();
   });
 
+  it('shows a finished FASTA job as humanbase.io does: its files to download, with no score plot', async () => {
+    const id = 'dbebecbe-f58a-4ce4-b4ba-04af819a9ad7';
+    renderJob(id);
+    expect(await screen.findByRole('heading', { level: 1, name: 'Untitled Seqweaver job' }, { timeout: 5000 })).toBeInTheDocument();
+    expect(screen.getAllByRole('status').map((status) => status.textContent)).toContain('Finished');
+    expect(screen.getByRole('link', { name: 'Download everything (tar.gz)' })).toHaveAttribute('href', `https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/${id}/${id}.tar.gz`);
+    const files = screen.getByRole('table', { name: 'Result files' });
+    expect(within(files).getByRole('link', { name: 'Download Probability' })).toHaveAttribute('href', `https://s3-us-west-2.amazonaws.com/humanbase/deepsea/jobs/${id}/${id}_feature_predictions.tsv.gz`);
+    expect(within(files).getByText('Every feature for every sequence')).toBeInTheDocument();
+    expect(within(files).getByRole('link', { name: 'Download Your query' })).toBeInTheDocument();
+    expect(screen.getByText('Sequences, FASTA')).toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: 'Score' })).not.toBeInTheDocument();
+  });
+
   it('reads Sei effects as sequence classes', async () => {
     renderJob('2e18fedf-3de7-4d08-a894-9a937a2b860b', 'chr7-49813589-G-C');
     expect(await screen.findByText('Molecular effects of chr7:49,813,589 G>C', {}, { timeout: 5000 })).toBeInTheDocument();
