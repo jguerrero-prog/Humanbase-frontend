@@ -29,4 +29,6 @@ export const seqweaverGnomad: PrecomputedVariantSet = {
   start: new GenomeLocation('chr1', 2_230_000, 2_440_000),
   sampleStart: new GenomeLocation('chr1', 2_334_000, 2_336_000),
   scoreDocs: { label: 'Score type documentation', href: `${deepseaModels.seqweaver.docsHref}#molecular-level-biochemical-effects-prediction` },
+  // A positional scan of a dense region, so Previous and Next go to the neighboring variant in view.
+  steps: 'view',
 };
