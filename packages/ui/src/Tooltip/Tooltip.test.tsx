@@ -12,7 +12,9 @@ const iconButton = (label: string) => (
 );
 
 describe('Tooltip', () => {
-  beforeEach(() => vi.useFakeTimers());
+  // Tooltips share one controller, which skips the delay just after one closes; a minute between tests lets that lapse.
+  let clock = Date.now();
+  beforeEach(() => vi.useFakeTimers({ now: (clock += 60_000) }));
   afterEach(() => vi.useRealTimers());
 
   it('waits 400ms on hover, shows the same words as the label, and hides 100ms after leaving', () => {
