@@ -8,6 +8,7 @@ const heatmapRows = 20;
 const allResources = 'all';
 const resourceOrder = ['GTEx', 'Roadmap', 'ENCODE'];
 const number = new Intl.NumberFormat('en-US');
+const signed = (value: number) => String(value).replace('-', '−');
 
 export interface EffectsCardProps {
   /** The selected variant, such as chr1:109,817,590 G>T. */
@@ -47,7 +48,10 @@ const rank = (resource: string) => {
 /** A variant's effect on every feature: Strongest effects, Heatmap and All features. */
 export function EffectsCard({ label, heading, effects, failed, onRetry, scale, threshold: start, featureNoun, featurePlural, verb, inCellTypes = true, choice, scoreDocs, inView, reverseOrder = false, view: keptView, onViewChange }: EffectsCardProps) {
   const [ownView, setOwnView] = useState<EffectsView>(defaultEffectsView);
-  const view = keptView ?? ownView;
+  // A score without strength bins has no Strongest effects, so it shows the Heatmap; the kept view returns with a binned score.
+  const strongest = Boolean(scale.bins);
+  const chosen = keptView ?? ownView;
+  const view = chosen === 'strongest' && !strongest ? 'heatmap' : chosen;
   const setView = onViewChange ?? setOwnView;
   const [threshold, setThreshold] = useState<number | null>(start);
   const [search, setSearch] = useState('');
@@ -64,6 +68,13 @@ export function EffectsCard({ label, heading, effects, failed, onRetry, scale, t
   const groups = useMemo(() => new EffectGroups(found, scale), [found, scale]);
   const all = useMemo(() => new EffectGroups(inResource, scale), [inResource, scale]);
   const allLabel = inCellTypes ? 'All features' : `All ${featurePlural}`;
+  const [quietLow, quietHigh] = scale.insignificant ?? [0, 0];
+  const plotted = scale.insignificant ? inResource.filter((effect) => effect.value < quietLow || effect.value > quietHigh) : inResource;
+  const named = [...plotted].sort((a, b) => (scale.reversed ? a.value - b.value : b.value - a.value)).slice(0, 5);
+  const among = `${resource === allResources ? '' : `${resource} `}${featurePlural}`;
+  const plotSummary = scale.insignificant
+    ? `${choice.name} of the ${number.format(plotted.length)} of ${number.format(inResource.length)} ${among} outside ${signed(quietLow)} to ${signed(quietHigh)}, where values aren’t significant, for ${label}, lowest to highest.`
+    : `${choice.name} of all ${number.format(inResource.length)} ${among} for ${label}, lowest to highest.`;
 
   const content = failed ? (
     <Alert tone="error" title="These effects couldn’t load" action={{ label: 'Try again', onSelect: onRetry }}>
@@ -98,23 +109,18 @@ export function EffectsCard({ label, heading, effects, failed, onRetry, scale, t
       onShowMore={() => setRows((shown) => shown + heatmapRows)}
     />
   ) : (
-    <AllFeaturesPlot
-      values={inResource.map((effect) => effect.value)}
-      labels={[...inResource].sort((a, b) => b.value - a.value).slice(0, 5).map((effect) => ({ label: effect.label, value: effect.value }))}
-      scale={scale}
-      summary={`${choice.name} of all ${number.format(inResource.length)} ${resource === allResources ? '' : `${resource} `}${featurePlural} for ${label}, lowest to highest.`}
-    />
+    <AllFeaturesPlot values={plotted.map((effect) => effect.value)} labels={named.map((effect) => ({ label: effect.label, value: effect.value }))} scale={scale} summary={plotSummary} />
   );
 
   return (
-    <MolecularEffects variant={label} view={view} onViewChange={setView} allLabel={allLabel} heading={heading}>
+    <MolecularEffects variant={label} view={view} onViewChange={setView} allLabel={allLabel} heading={heading} strongest={strongest}>
       <EffectsControls
         scoreLabel={choice.label}
         scores={choice.options}
         score={choice.value}
         onScore={choice.onChange}
         scoreDocs={scoreDocs}
-        {...(view === 'strongest' ? { threshold, onThreshold: setThreshold, thresholdSteps: [scale.bins.weak, scale.bins.moderate, scale.bins.strong] } : {})}
+        {...(view === 'strongest' && scale.bins ? { threshold, onThreshold: setThreshold, thresholdSteps: [scale.bins.weak, scale.bins.moderate, scale.bins.strong] } : {})}
         search={search}
         onSearch={setSearch}
         {...(resources.length > 1 ? { resources: [{ value: allResources, label: 'All resources' }, ...resources.map((name) => ({ value: name, label: name }))], resource, onResource: setResource } : {})}

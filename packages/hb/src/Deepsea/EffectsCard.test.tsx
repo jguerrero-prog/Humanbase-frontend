@@ -1,5 +1,5 @@
 import { GenomeLocation, type FeatureEffect } from '@humanbase/data';
-import { expressionEffects, zEffects } from '@humanbase/ui';
+import { expressionEffects, rangeEffects, zEffects } from '@humanbase/ui';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EffectsCard, type EffectsCardProps } from './EffectsCard';
@@ -121,5 +121,20 @@ describe('EffectsCard', () => {
     const center = variants[1]?.effects ?? [];
     renderCard({ effects: center, inView: { location: new GenomeLocation('chr1', 109_792_590, 109_842_590), variants, selected: 1 }, reverseOrder: true, view: 'heatmap' });
     expect(rowLabels()).toEqual(['K562 / LIN28A', 'K562 / QKI', 'K562 / AGO']);
+  });
+
+  it('offers no Strongest effects for a score humanbase.io only ranks, such as Probability diffs, and shows the Heatmap', () => {
+    const diffs = [protein('LIN28A', 0.06), protein('AGO', -0.001), protein('QKI', 0.02)];
+    renderCard({ effects: diffs, inView: one(diffs), scale: rangeEffects('Probability diffs', [-0.3, 0, 0.3], { insignificant: [-0.01, 0.01] }), view: 'strongest' });
+    expect(screen.queryByRole('tab', { name: 'Strongest effects' })).not.toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Heatmap' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.queryByRole('group', { name: 'Show effects of' })).not.toBeInTheDocument();
+  });
+
+  it('leaves values that aren’t significant out of All features, as humanbase.io does', async () => {
+    const diffs = [protein('LIN28A', 0.06), protein('AGO', -0.001), protein('QKI', 0.02)];
+    renderCard({ effects: diffs, inView: one(diffs), scale: rangeEffects('Probability diffs', [-0.3, 0, 0.3], { insignificant: [-0.01, 0.01] }), choice: { label: 'Score', options: [{ value: 'diffs', label: 'Probability diffs' }], value: 'diffs', onChange: () => undefined, name: 'Probability diffs' }, view: 'all', featurePlural: 'features' });
+    expect(screen.getByText('Probability diffs of the 2 of 3 features outside −0.01 to 0.01, where values aren’t significant, for chr5:134,871,851 G>A, lowest to highest.')).toBeInTheDocument();
+    expect(within(screen.getByRole('list', { name: 'Strongest' })).getAllByRole('listitem').map((item) => item.textContent)).toEqual(['K562 / LIN28A, 0.06', 'K562 / QKI, 0.02']);
   });
 });

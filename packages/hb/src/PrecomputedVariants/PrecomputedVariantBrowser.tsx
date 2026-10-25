@@ -1,6 +1,6 @@
 import { ApiError, featureEffects, GenomeLocation, useHumanbase, usePrecomputedPredictions, variantIdOf, type FeatureEffect, type FeaturePredictionRecord, type FeaturesRecord, type VariantModel } from '@humanbase/data';
 import { defaultGenomeEngine, type Assembly, type GenomeBrowserEngineFactory, type GenomeDataTrack } from '@humanbase/genome';
-import { Alert, defaultEffectsView, ResultHeader, ResultLayout, Skeleton, Tabs, variantLabel, type TabItem, type ContextLabelProps, type Crumb, type EffectScale, type EffectsView } from '@humanbase/ui';
+import { Alert, defaultEffectsView, ResultHeader, ResultLayout, Skeleton, Tabs, variantLabel, type TabItem, type ContextLabelProps, type Crumb, type BinnedEffectScale, type EffectsView } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { EffectsCard } from '../Deepsea/EffectsCard';
 import type { VariantInView } from '../Deepsea/InViewHeatmap';
@@ -17,7 +17,7 @@ export interface PrecomputedVariantSet {
   dataset?: string | undefined;
   /** The score_type the predictions are read with, such as seqweaver, where the dataset takes one. */
   scoreType?: string | undefined;
-  scale: EffectScale;
+  scale: BinnedEffectScale;
   /** What each feature is, as in the effects card's Raises binding, 14 proteins. */
   featureNoun: string;
   featurePlural: string;

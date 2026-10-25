@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import { ScoreScale } from '../Heatmap/ScoreScale';
+import { ValueFormat } from '../Table/ValueFormat';
 import { BreakableText } from '../Text/BreakableText';
 import { zEffects, type EffectScale } from './EffectScale';
 import './VariantEffects.css';
@@ -22,18 +23,39 @@ const bottom = 56;
 const top = 16;
 const plotWidth = width - left - 16;
 const plotHeight = height - top - bottom;
+const roundSteps = [1, 2, 2.5, 5, 10];
+const valueFormat = new ValueFormat();
+
+/** An axis over the values in about four round steps, for a score without strength bins. */
+function fittedAxis(low: number, high: number): { min: number; max: number; ticks: number[] } {
+  const raw = (high - low || Math.abs(high) || 1) / 4;
+  const power = 10 ** Math.floor(Math.log10(raw));
+  const step = (roundSteps.find((size) => size * power >= raw) ?? 10) * power;
+  const min = Math.floor(low / step) * step;
+  const max = Math.ceil(high / step) * step;
+  const ticks = Array.from({ length: Math.round((max - min) / step) + 1 }, (_, index) => Number((min + index * step).toPrecision(6)));
+  return { min, max, ticks };
+}
+
+/** The z-score style axis: from 0 or the lowest whole value up to a multiple of the strong bin, ticked every 5. */
+function binnedAxis(low: number, high: number, strong: number): { min: number; max: number; ticks: number[] } {
+  const max = Math.max(strong, Math.ceil(high / strong) * strong);
+  const min = Math.min(0, Math.floor(low));
+  return { min, max, ticks: Array.from({ length: Math.floor(max / 5) + 1 }, (_, index) => index * 5) };
+}
 
 export function AllFeaturesPlot({ values, labels = [], marked = 20, summary, scale: effectScale = zEffects }: AllFeaturesPlotProps) {
   const scale = new ScoreScale(effectScale.legend);
   const id = useId();
   const sorted = [...values].sort((a, b) => a - b);
-  const max = Math.max(effectScale.bins.strong, Math.ceil(Math.max(...sorted) / effectScale.bins.strong) * effectScale.bins.strong);
-  const min = Math.min(0, Math.floor(Math.min(...sorted)));
+  const [low = 0, high = 0] = [sorted[0], sorted.at(-1)];
+  const { min, max, ticks: yTicks } = effectScale.bins ? binnedAxis(low, high, effectScale.bins.strong) : fittedAxis(Math.min(0, low), Math.max(0, high));
   const x = (rank: number) => left + ((rank - 1) / Math.max(sorted.length - 1, 1)) * plotWidth;
-  const y = (value: number) => top + plotHeight - ((value - min) / (max - min)) * plotHeight;
-  const yTicks = Array.from({ length: Math.floor(max / 5) + 1 }, (_, index) => index * 5);
+  const y = (value: number) => top + plotHeight - ((value - min) / (max - min || 1)) * plotHeight;
   const xTicks = [1, ...[50, 100, 150, 200].filter((tick) => tick < sorted.length), sorted.length];
-  const firstMarked = sorted.length - marked + 1;
+  const count = Math.min(marked, sorted.length);
+  // The heatmap shows the smallest values first for a reversed score, such as e-value.
+  const [firstMarked, lastMarked] = effectScale.reversed ? [1, count] : [sorted.length - count + 1, sorted.length];
 
   return (
     <figure className="all-features" aria-labelledby={`${id}-summary`}>
@@ -43,7 +65,7 @@ export function AllFeaturesPlot({ values, labels = [], marked = 20, summary, sca
             <g key={tick}>
               <line className="variant-plot-grid" x1={left} x2={left + plotWidth} y1={y(tick)} y2={y(tick)} />
               <text className="variant-plot-tick" x={left - 8} y={y(tick) + 4} textAnchor="end">
-                {tick}
+                {ScoreScale.number(tick)}
               </text>
             </g>
           ))}
@@ -58,10 +80,16 @@ export function AllFeaturesPlot({ values, labels = [], marked = 20, summary, sca
           <text className="variant-plot-title" transform={`translate(14 ${top + plotHeight / 2}) rotate(-90)`} textAnchor="middle">
             {effectScale.legend.title}
           </text>
-          <rect className="all-features-marked" x={x(firstMarked) - 6} y={top} width={x(sorted.length) - x(firstMarked) + 12} height={plotHeight} />
-          <text className="variant-plot-tick" x={x(firstMarked) - 10} y={top + 12} textAnchor="end">
-            Top {marked}, shown in the heatmap
-          </text>
+          {count < sorted.length && <rect className="all-features-marked" x={x(firstMarked) - 6} y={top} width={x(lastMarked) - x(firstMarked) + 12} height={plotHeight} />}
+          {count >= sorted.length ? null : effectScale.reversed ? (
+            <text className="variant-plot-tick" x={x(lastMarked) + 10} y={top + 12} textAnchor="start">
+              Smallest {count}, shown in the heatmap
+            </text>
+          ) : (
+            <text className="variant-plot-tick" x={x(firstMarked) - 10} y={top + 12} textAnchor="end">
+              Top {count}, shown in the heatmap
+            </text>
+          )}
           {sorted.map((value, index) => (
             <circle key={index} className="all-features-point" cx={x(index + 1)} cy={y(value)} r="3" style={{ fill: `var(${scale.color(scale.step(value) ?? 4)})` }} />
           ))}
@@ -70,7 +98,7 @@ export function AllFeaturesPlot({ values, labels = [], marked = 20, summary, sca
           <ol className="all-features-labels" aria-label="Strongest">
             {labels.map(({ label, value }) => (
               <li key={label}>
-                <BreakableText>{label}</BreakableText>, {ScoreScale.number(value)}
+                <BreakableText>{label}</BreakableText>, {effectScale.reversed ? valueFormat.pValue(value).text : ScoreScale.number(value)}
               </li>
             ))}
           </ol>

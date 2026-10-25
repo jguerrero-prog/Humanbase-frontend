@@ -1,4 +1,5 @@
 import { EffectGroups } from './EffectGroups';
+import { rangeEffects } from './EffectScale';
 
 const effects = new EffectGroups([
   { feature: 'LIN28A', cell: 'H9', context: 'H9', label: 'H9 / LIN28A', value: 28 },
@@ -39,5 +40,27 @@ describe('EffectGroups', () => {
     expect(effects.atLeast(3).groups('raises').map((group) => group.feature)).toEqual(['LIN28A', 'LARP4', 'QKI']);
     expect(effects.atLeast(3).groups('lowers')).toEqual([]);
     expect(effects.atLeast(null).experiments).toHaveLength(7);
+  });
+
+  it('counts nothing for a score without strength bins', () => {
+    const ranked = new EffectGroups(effects.experiments, rangeEffects('e-value', [0, 0.05], { reversed: true }));
+    expect(ranked.counts()).toEqual({ strong: 0, moderate: 0, weak: 0, lowered: 0 });
+  });
+});
+
+describe('rangeEffects', () => {
+  it('steps a three-stop range like a diverging legend, outer edges at its ends', () => {
+    const diffs = rangeEffects('Probability diffs', [-0.3, 0, 0.3], { insignificant: [-0.01, 0.01] });
+    expect(diffs.legend).toMatchObject({ kind: 'diverging', words: ['Lowers', 'Raises'] });
+    expect(diffs.legend.edges.map((edge) => Number(edge.toFixed(3)))).toEqual([-0.3, -0.2, -0.1, 0.1, 0.2, 0.3]);
+    expect(diffs.bins).toBeUndefined();
+    expect(diffs).toMatchObject({ insignificant: [-0.01, 0.01], digits: 3 });
+  });
+
+  it('draws a reversed score such as e-value darkest at its smallest values', () => {
+    const evalue = rangeEffects('e-value', [0, 0.05], { reversed: true });
+    expect(evalue.legend).toMatchObject({ kind: 'sequential', ends: [0.05, 0], words: ['Weaker', 'Stronger'] });
+    expect(evalue.legend.edges.map((edge) => Number(edge.toFixed(3)))).toEqual([0.04, 0.03, 0.02, 0.01]);
+    expect(evalue).toMatchObject({ reversed: true, digits: 4 });
   });
 });
