@@ -6,8 +6,8 @@ describe('PausableTimer', () => {
 
   it('keeps the time left across a pause', () => {
     const done = vi.fn();
-    const timer = new PausableTimer(done, 6000);
-    timer.start();
+    const timer = new PausableTimer(6000);
+    timer.start(done);
     vi.advanceTimersByTime(5000);
     timer.pause();
     vi.advanceTimersByTime(30000);
