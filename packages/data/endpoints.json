@@ -436,12 +436,24 @@
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/variant_scores/?score_type=dis",
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/variant_scores/?score_type=mean-evalue",
         "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/variant_scores/?score_type=seqclass",
+        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/variant_scores/?score_type=ctcf-ctcf-cohesin",
+        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/variant_scores/?score_type=e12-erythroblast-like",
+        "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/variant_scores/?score_type=p-promoter",
         "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/variant_scores/?score_type=dis",
         "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/variant_scores/?score_type=mean-evalue",
         "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/variant_scores/?score_type=expecto"
       ],
       "usedBy": [
-        "DeepseaService.variantScores"
+        "DeepseaService.scores"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/deepsea/jobs/{job_id}/sequence_scores/",
+      "documented": true,
+      "$note": "humanbase.io reads a SEQUENCE-level score type here instead of variant_scores. No recorded job has one yet, so this is untested on real data and has no sample.",
+      "usedBy": [
+        "DeepseaService.scores"
       ]
     },
     {

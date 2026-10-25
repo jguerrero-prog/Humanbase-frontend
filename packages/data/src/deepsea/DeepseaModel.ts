@@ -46,8 +46,8 @@ export interface DeepseaModel {
   effectsHeading?: string;
   /** VCF files for this model add a strand column. */
   strand: boolean;
-  /** The variant-level scores a result loads, when not all of them; Sei also sends one per sequence class. */
-  variantScores?: readonly string[];
+  /** The scores a result loads up front and keeps in its table, when not all of them: Sei's summary, whose 40 per-class scores load when chosen. */
+  summaryScores?: readonly string[];
   /** Names a feature-level score's predictions when the API's feature list doesn't, as for Sei's sequence classes. */
   classFeatures?: { scoreType: string; features: FeaturesRecord };
   /** Strongest effects opens at this threshold. */
@@ -86,7 +86,7 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
     featurePlural: 'sequence classes',
     verb: '',
     strand: false,
-    variantScores: ['seqclass'],
+    summaryScores: ['seqclass'],
     classFeatures: { scoreType: 'seqclass', features: seiSequenceClasses },
     threshold: 0.5,
     bins: { strong: 2, moderate: 1, weak: 0.5 },
@@ -147,8 +147,6 @@ export const deepseaModels: Record<VariantModel, DeepseaModel> = {
       'ExPecto leverages deep learning-based sequence models trained on chromatin profiling data, and integrated with spatial transformation and regularized linear models. This framework does not use any variant information, enabling prediction of the expression effect for any variant, even those that are rare or have never been previously observed.',
     otherModels: 'ExPecto is the tissue model; ExPecto SC covers primary cell types.',
     scored: 'Variants within 20 kb of a gene’s start can be scored.',
-    // ExPecto jobs also list Beluga's dis and mean-evalue scores, but the API answers 500 for them.
-    variantScores: ['expecto'],
     featureNoun: 'tissue',
     featurePlural: 'tissues',
     verb: 'expression',
