@@ -113,6 +113,15 @@ describe('DeepseaJobView', () => {
     expect(screen.getByRole('link', { name: /Log-fold change score documentation/ })).toHaveAttribute('href', '/docs/in-silico-mutagenesis/#output');
   });
 
+  it('colors the in silico mutagenesis map by the feature’s 1st, 50th and 99th percentiles, as humanbase.io does', async () => {
+    renderJob('0576e894-a2c5-48bb-9bdf-227962495d5f');
+    const legend = await screen.findByRole('group', { name: 'Log2 fold change' }, { timeout: 5000 });
+    // The recorded result's percentiles: −0.783, 0.004 and 0.832.
+    expect(legend.querySelector('.legend-edges')).toHaveTextContent('−0.783−0.521−0.2580.280.5560.832');
+    expect(legend).toHaveTextContent('Mutation lowersMutation raises');
+    expect(screen.getByText(/Colors follow this feature’s 1st, 50th and 99th percentiles/)).toBeInTheDocument();
+  });
+
   it('lists the strongest positions under the map and shows one on request', async () => {
     renderJob('0576e894-a2c5-48bb-9bdf-227962495d5f');
     const table = await screen.findByRole('table', { name: 'Strongest changes to HepG2 / CEBPB' }, { timeout: 5000 });

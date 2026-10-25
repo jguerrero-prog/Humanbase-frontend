@@ -33,7 +33,7 @@ const checks = [
   ['VCF', 'Tab-separated, at least 5 columns: chromosome, position, ID, REF, ALT. Meta lines starting with ## are skipped. A header, if present, starts with #CHROM POS ID REF ALT. Position is within the chromosome’s length on the chosen assembly. The ID can be empty. REF and ALT are upper-case A, C, G, T, up to 100 characters.'],
   ['VCF for Seqweaver', 'A sixth column, strand: + or -.'],
   ['BED', 'Tab-separated, at least 3 columns: chromosome, start, end. Start and end are non-negative and within the chromosome, and end is greater than start. Each interval is scored at its center; for an even length, the left center (chr1 100 106 is scored at 103).'],
-  ['FASTA', 'Each sequence starts with >. Only A, C, G, T; lower case becomes upper case. Length set by the model: Sei 4,096 bp, Beluga 2,000 bp, Seqweaver 1,000 bp.'],
+  ['FASTA', 'Each sequence starts with >. Only A, C, G, T; lower case becomes upper case. Length set by the model: Sei 4,096 bp, Beluga 2,000 bp, Seqweaver 1,000 bp. Another length is a warning, not an error, as on humanbase.io: longer sequences are trimmed to the central length, and shorter ones are padded with N on both sides, which can affect the predictions.'],
   ['Size', 'Up to 20,000 variants, 10,000 or fewer recommended. ExPecto’s docs say 10,000; the limit is on the facts to confirm.'],
 ];
 
@@ -59,6 +59,7 @@ const words = [
   ['Many lines, same rule', '212 lines are past the end of their chromosome on GRCh37/hg19. If this file uses GRCh38/hg38, change the genome assembly.'],
   ['Too many variants', 'This file has 26,400 variants; Humanbase runs up to 20,000 per job. Split it into two files.'],
   ['Wrong input type', 'This looks like a BED file. Switch to Regions (BED) to use it.'],
+  ['Sequences of another length', 'A warning above the file, and Run stays on: 2 sequences aren’t exactly 2,000 bp. Longer sequences are trimmed to the central 2,000 bp, since that is all Beluga needs. Shorter sequences are padded with N on both sides, which can affect the predictions. It lists up to five sequences with their lengths; region scan adds that positions follow the adjusted sequence.'],
   ['Button, nothing to run', 'Add a file to run Seqweaver.'],
   ['Started', 'Seqweaver started on 1,284 variants. Follow it on the job page; it’s saved in this browser.'],
 ];
@@ -110,7 +111,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
 <DocsLayout title="Job submission" description="One form for every variant tool: model, input type, a file checked in the browser, and a run button that says what will run.">
   <Intro
     lead="Variant effects (Sei, Beluga and its region scan), Seqweaver and ExPecto share one form: choose a model, give it variants or sequences, and start a job. Humanbase checks the file before it is sent, so a job never fails an hour later because of line 14."
-    status="Updated October 23, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
+    status="Updated October 25, 2026 · UI library · Screens drawn at 1440px on the 12-column grid, shown at 96%"
   >
     <KeyRules
       rules={[

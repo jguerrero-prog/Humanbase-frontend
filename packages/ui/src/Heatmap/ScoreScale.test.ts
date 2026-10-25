@@ -6,6 +6,13 @@ describe('ScoreScale', () => {
   const eValue = new ScoreScale({ title: 'e-value', kind: 'one-sided', edges: [0.05, 0.01, 0.001], words: ['Weaker', 'Stronger evidence'] });
   const confidence = new ScoreScale({ title: 'Confidence', kind: 'sequential', edges: [0.5, 0.7, 0.8, 0.9], ends: [0, 1], words: ['Lower', 'Higher'] });
 
+  it('builds a diverging scale from three stops, edges at the outer stops and thirds of the way out', () => {
+    const spec = ScoreScale.fromStops('Log2 fold change', [-0.9, 0, 0.6], ['Mutation lowers', 'Mutation raises']);
+    expect(spec.edges.map((edge) => Number(edge.toFixed(6)))).toEqual([-0.9, -0.6, -0.3, 0.2, 0.4, 0.6]);
+    const scale = new ScoreScale(spec);
+    expect([-0.95, -0.7, 0, 0.5, 0.6].map((value) => scale.step(value))).toEqual([1, 2, 4, 6, 7]);
+  });
+
   it('bins values into steps, with the middle step neutral', () => {
     expect(zScore.step(0)).toBe(4);
     expect(zScore.step(2.5)).toBe(5);
