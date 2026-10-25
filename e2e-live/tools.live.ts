@@ -19,6 +19,19 @@ test('the Modules renal panel result shows real modules, a module drawer and the
   await checkScreen(page, problems);
 });
 
+test('extended_universe reruns the GIANT renal panel with extended annotations, which can run again with human-only ones', async ({ page }) => {
+  const problems = watch(page);
+  await page.goto(`${web}/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&extended_universe=true`);
+  await expect(page).toHaveURL(/body_tag=af5b37885800bae6803f59e071fdcfdf84cb405c&extended_universe=true/);
+  const notice = page.getByRole('status').filter({ hasText: 'Extended annotations' });
+  await expect(notice).toContainText('This module was computed with extended (cross-organism) annotations.');
+  await checkScreen(page, problems);
+  await notice.getByRole('button', { name: 'Run with human-only annotations' }).click();
+  await expect(page).toHaveURL(/body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9$/);
+  await expect(page.getByText(/Showing \d+ enriched modules/)).toBeVisible();
+  await expect(page.getByText('Human-only annotations')).toHaveCount(0);
+});
+
 test('a Modules gene shows its live terms and neighbors, and chains to a neighbor', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/modules/?body_tag=2339dc3cd05964ab3f691a8f4851c7a9aab78ad9&module=1&gene=6928`);
@@ -270,6 +283,38 @@ test('the real Seqweaver result’s genome browser finds genes in each assembly�
   await expect(page.locator('.genome-location-help')).toContainText('A gene name works too.');
   await find('NOTAGENE9');
   await expect(page.getByText('No gene named “NOTAGENE9” on GRCh38/hg38.', { exact: false })).toBeVisible();
+  await checkScreen(page, problems);
+});
+
+test('the Seqweaver gnomAD browser reads the real precomputed variants and track, as humanbase.io’s /seqweaver does', async ({ page }) => {
+  test.setTimeout(120_000);
+  const problems = watch(page);
+  await page.goto(`${web}/seqweaver/gnomad/`);
+  // humanbase.io centers chr1:2,230,000-2,440,000 on this variant, ranks HepG2 / DDX6 first and shows 232 features (checked October 24, 2026).
+  await expect(page.getByRole('heading', { name: 'Molecular effects of chr1:2,334,919 C>T' })).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByText(/^[\d,]+ variants in view/)).toBeVisible();
+  await expect(page.getByText(/Showing the top 20 of 232 proteins/)).toBeVisible();
+  await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Seqweaver gnomAD', 'Genes']);
+  await expect(page.getByRole('rowheader').first()).toHaveText(/^HepG2 \/ DDX6/);
+  await checkScreen(page, problems);
+  await page.getByRole('button', { name: 'Next variant' }).click();
+  await expect(page).toHaveURL(/variant=chr1-/);
+  await expect(page.getByRole('heading', { name: /^Molecular effects of chr1:2,33/ })).toBeVisible();
+  await checkScreen(page, problems);
+});
+
+test('Sei HGMD variants reads all 853 real variants, and a heatmap row opens its real predictions in the genome browser', async ({ page }) => {
+  test.setTimeout(120_000);
+  const problems = watch(page);
+  await page.goto(`${web}/variant-effects/hgmd/`);
+  const heatmap = page.getByRole('grid', { name: 'Sequence class score of 853 HGMD variants' });
+  await expect(heatmap).toHaveAttribute('aria-rowcount', '853', { timeout: 60_000 });
+  // humanbase.io's default order starts here, and its Agammaglobulinaemia variant ranks E7, P and CTCF first (checked October 24, 2026).
+  await expect(heatmap.getByRole('row').first().getByRole('button')).toHaveText('Haemophagocytic lymphohistiocytosis type 3 (chr17:73839907)');
+  await heatmap.getByRole('button', { name: 'Agammaglobulinaemia (chrX:100641212)' }).click();
+  await expect(page.getByRole('heading', { name: 'Molecular effects of chrX:100,641,212 T>C' })).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByText(/^2 variants in view/)).toBeVisible();
+  await expect(page.getByRole('rowheader').first()).toHaveText(/E7 Monocyte \/ Macrophage/);
   await checkScreen(page, problems);
 });
 

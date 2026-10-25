@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { asdBrowserRetired } from '@humanbase/hb';
+import { asdBrowserRetired, genomeBrowserPreview } from '@humanbase/hb';
 import { createBrowserRouter, Navigate, useSearchParams, type RouteObject } from 'react-router';
 import { AppLayout } from './layout/AppLayout';
 import { HomePage } from './pages/HomePage';
@@ -18,7 +18,8 @@ function page(path: string, load: () => Promise<ComponentType>): RouteObject {
 function Moved({ to, with: kept }: { to: string; with: Record<string, string> }) {
   const [search] = useSearchParams();
   const query = new URLSearchParams({ ...Object.fromEntries(search), ...kept });
-  return <Navigate replace to={`${to}?${query.toString()}`} />;
+  const text = query.toString();
+  return <Navigate replace to={text ? `${to}?${text}` : to} />;
 }
 
 const moved = (path: string, to: string, kept: Record<string, string>): RouteObject => ({ path, element: <Moved to={to} with={kept} /> });
@@ -50,11 +51,15 @@ export const routes: RouteObject[] = [
           page('netwas/:id', async () => (await import('./pages/netwas/NetwasJobPage')).NetwasJobPage),
           page('sequence-tools', async () => (await import('./pages/SequenceToolsPage')).SequenceToolsPage),
           page('variant-effects', async () => (await import('./pages/deepsea/VariantEffectsPage')).VariantEffectsPage),
+          page('variant-effects/hgmd', async () => (await import('./pages/deepsea/SeiHgmdPage')).SeiHgmdPage),
+          moved('sei-hgmd', '/variant-effects/hgmd/', {}),
           moved('sei', '/variant-effects/', { model: 'sei' }),
           moved('beluga', '/variant-effects/', { model: 'beluga' }),
           moved('ism', '/variant-effects/', { tab: 'region-scan' }),
           page('seqweaver', seqweaver),
+          page('seqweaver/gnomad', async () => (await import('./pages/deepsea/SeqweaverGnomadPage')).SeqweaverGnomadPage),
           page('asd', async () => (asdBrowserRetired ? (await import('./pages/asd/AsdRetiredPage')).AsdRetiredPage : (await import('./pages/asd/AsdPage')).AsdPage)),
+          ...(genomeBrowserPreview ? [page('genome', async () => (await import('./pages/GenomePage')).GenomePage)] : []),
           page('deepsea/jobs/:id', async () => (await import('./pages/deepsea/DeepseaJobPage')).DeepseaJobPage),
           page('expression-effects', async () => (await import('./pages/expecto/ExpressionEffectsPage')).ExpressionEffectsPage),
           page('expression-effects/genes/:entrez', async () => (await import('./pages/expecto/GeneExpressionPage')).GeneExpressionPage),

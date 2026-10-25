@@ -1,6 +1,8 @@
 import { ExpectoService, useVariantSearch, useVariantTotal } from '@humanbase/data';
 import { Alert, Button, Cell, HeaderCell, SearchExamples, SearchField, Table, TableSkeleton, useDebounced, useLinkHref } from '@humanbase/ui';
 import { useState } from 'react';
+import { genomeBrowserLink, genomeBrowserPreview as genome } from '../content/genomeBrowser';
+import { ViewInGenomeBrowser } from '../GenomeBrowser/ViewInGenomeBrowser';
 import './Expecto.css';
 
 export interface VariantSearchProps {
@@ -65,6 +67,11 @@ export function VariantSearch({ query, onQueryChange, geneHref }: VariantSearchP
                   <HeaderCell>rsID</HeaderCell>
                   <HeaderCell>Gene</HeaderCell>
                   <HeaderCell>Change</HeaderCell>
+                  {genome && (
+                    <HeaderCell>
+                      <span className="visually-hidden">Genome browser</span>
+                    </HeaderCell>
+                  )}
                 </tr>
               </thead>
               {found.data ? (
@@ -77,12 +84,17 @@ export function VariantSearch({ query, onQueryChange, geneHref }: VariantSearchP
                       <Cell type="id">{variant.rsid}</Cell>
                       <Cell type="gene">{variant.gene ? <a href={linkHref(geneHref(variant.gene.entrez))}>{variant.gene.symbol}</a> : 'None'}</Cell>
                       <Cell type="id">{variant.change}</Cell>
+                      {genome && (
+                        <Cell>
+                          <ViewInGenomeBrowser href={genomeBrowserLink.variant(variant.chromosome, variant.position)} context={`at ${variant.chromosome}:${counts.format(variant.position)}`} />
+                        </Cell>
+                      )}
                     </tr>
                   ))}
                 </tbody>
               ) : (
                 <tbody>
-                  <TableSkeleton columns={4} />
+                  <TableSkeleton columns={genome ? 5 : 4} />
                 </tbody>
               )}
             </Table>

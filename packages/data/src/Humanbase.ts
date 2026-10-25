@@ -13,6 +13,7 @@ import { SampleGenomeTracks } from './genome/SampleGenomeTracks';
 import { S3GenomeTracks } from './genome/S3GenomeTracks';
 import { UserTracks } from './genome/UserTracks';
 import { DeepseaService } from './deepsea/DeepseaService';
+import { SeiHgmdService } from './deepsea/SeiHgmdService';
 import { ExpectoService } from './expecto/ExpectoService';
 import { NetwasService } from './jobs/NetwasService';
 import { IntegrationService } from './networks/IntegrationService';
@@ -32,6 +33,7 @@ export class Humanbase {
   readonly modules: ModuleService;
   readonly netwas: NetwasService;
   readonly deepsea: DeepseaService;
+  readonly seiHgmd: SeiHgmdService;
   readonly expecto: ExpectoService;
   readonly asd: AsdService;
   /** Finds a gene's span by name, for genome browser searches. */
@@ -54,6 +56,7 @@ export class Humanbase {
     this.modules = new ModuleService(client);
     this.netwas = new NetwasService(client);
     this.deepsea = new DeepseaService(client);
+    this.seiHgmd = new SeiHgmdService(client);
     this.expecto = new ExpectoService(client);
     // Gene lookups and genome tracks read static files on S3, which also stay off while the API is off.
     this.geneLocator = showsSamples ? new SampleGeneLocator(client) : new S3GeneLocator();

@@ -22,6 +22,18 @@ describe('ModuleService', () => {
     expect(await ModuleService.bodyTag({ entrez: [3553, 7124], integration: 'kidney', version: 'v1', title: 'Two genes' })).not.toBe(tag);
   });
 
+  it('makes the extended annotations body_tag humanbase.io makes, and sends the flag only when on', async () => {
+    const request = await renalRequest();
+    const result = (await samples().modules.poll(await ModuleService.bodyTag(request))) as ModuleResult;
+    expect(result.extendedUniverse).toBe(false);
+    expect(await ModuleService.bodyTag({ ...request, entrez: result.entrez, extendedUniverse: true })).toBe('af5b37885800bae6803f59e071fdcfdf84cb405c');
+    const client = { get: vi.fn(), post: vi.fn().mockResolvedValue({ status: 'processing' }), text: vi.fn() };
+    await new ModuleService(client).submit({ ...request, extendedUniverse: true });
+    await new ModuleService(client).submit(request);
+    expect(client.post.mock.calls[0]?.[2]).toMatchObject({ extended_universe: true });
+    expect(client.post.mock.calls[1]?.[2]).not.toHaveProperty('extended_universe');
+  });
+
   it('submits a job, then polls its result', async () => {
     const api = samples();
     const request = await renalRequest();

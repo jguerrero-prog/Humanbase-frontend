@@ -33,6 +33,8 @@ export interface VariantScoresRecord {
 
 export interface FeaturePredictionRecord extends VariantSequence {
   feature_predictions: number[];
+  /** Precomputed sets, such as Seqweaver's gnomAD variants, send each variant's own score as text. */
+  variant_score?: string;
 }
 
 interface Named {

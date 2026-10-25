@@ -4,6 +4,8 @@ import { apiOff } from './apiOff';
 const pages = [
   'http://localhost:4173/ism/',
   'http://localhost:4173/sequence-tools/',
+  'http://localhost:4173/seqweaver/gnomad/',
+  'http://localhost:4173/genome/?gene=IL1B',
   'http://localhost:4322/ui-library/job-submission/',
   'http://localhost:4322/components/navigation-and-breadcrumbs/',
   'http://localhost:4322/tokens/radius-and-elevation/',

@@ -133,6 +133,7 @@ test('a data track’s menu downloads the data in view as bedGraph or BED, read 
   const scores = await downloadFrom(page, 'Disease impact score track options', 'Download data in view');
   expect(scores.name).toBe('Disease-impact-score_hg19_chr1-109767590-109867590.bedgraph');
   expect(scores.bytes.toString('utf8')).toMatch(/^chr1\t109817589\t109817590\t1\.00\d*\n/m);
+  await expect(page.getByRole('region', { name: 'Download notifications' }).getByRole('listitem')).toHaveText('Disease impact score data downloaded');
 
   await page.getByRole('button', { name: 'Genes track options' }).click();
   await expect(page.getByRole('menuitem')).toHaveText(['Move up', 'Move down', 'Hide track']);
@@ -293,5 +294,19 @@ test('the Sei score plot switches plot style, zooms with the brush, the wheel an
   await page.keyboard.press('-');
   await expect.poll(windowWidth).toBeGreaterThan(zoomed);
   expect(await violationsOf(page)).toEqual([]);
+  expect(apiRequests).toEqual([]);
+});
+
+test('Seqweaver links its gnomAD browser, which opens on the recorded sample range with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/seqweaver/`);
+  await page.getByRole('link', { name: 'Explore gnomAD variant effects' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Seqweaver gnomAD browser' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Molecular effects of chr1:2,334,919 C>T' })).toBeVisible();
+  await expect(page.getByText(/^78 variants in view/)).toBeVisible();
+  expect(await violationsOf(page)).toEqual([]);
+  await page.getByRole('button', { name: 'Next variant' }).click();
+  await expect(page).toHaveURL(/variant=chr1-2335285-G-A/);
+  await expect(page.getByRole('heading', { name: 'Molecular effects of chr1:2,335,285 G>A' })).toBeVisible();
   expect(apiRequests).toEqual([]);
 });

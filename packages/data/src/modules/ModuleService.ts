@@ -1,5 +1,6 @@
 import type { DataClient } from '../DataClient';
 import type { DataVersion } from '../genes/Gene';
+import { ExtendedUniverse } from '../functions/ExtendedUniverse';
 import { ModuleResult, type CommunityRecord } from './ModuleResult';
 
 export interface ModuleRequest {
@@ -37,7 +38,7 @@ export class ModuleService {
   async submit(request: ModuleRequest): Promise<{ bodyTag: string; result: ModuleResult | null }> {
     const bodyTag = await ModuleService.bodyTag(request);
     const title = request.title?.trim();
-    const query = { integration: request.integration, giant_version: request.version, body_tag: bodyTag, ...(title && { title }) };
+    const query = { integration: request.integration, giant_version: request.version, body_tag: bodyTag, ...(title && { title }), ...ExtendedUniverse.query(request.extendedUniverse ?? false) };
     const body = await this.client.post<CommunityRecord | Processing>(path, { entrez: request.entrez }, query);
     return { bodyTag, result: isProcessing(body) ? null : new ModuleResult(body) };
   }

@@ -41,4 +41,14 @@ describe('NetworkQuery', () => {
     expect(query.with({ tissue: 'liver' }).compare?.tissue).toBe('kidney');
     expect(query.with({ version: 'v3' }).compare).toBeUndefined();
   });
+
+  it('keeps extended_universe in the URL and applies it to GIANT only', () => {
+    const query = NetworkQuery.fromSearch(new URLSearchParams('entrez=3553&version=v1&compare=kidney&extended_universe=true'));
+    expect(query.extendedUniverseStatus).toBe('active');
+    expect(query.href).toBe('/networks/?entrez=3553&version=v1&compare=kidney&extended_universe=true');
+    expect(query.with({ tissue: 'liver' }).extendedUniverse).toBe(true);
+    expect(query.compared?.extendedUniverseStatus).toBe('active');
+    expect(query.with({ version: 'v3' }).extendedUniverseStatus).toBe('ignored');
+    expect(NetworkQuery.fromSearch(new URLSearchParams('entrez=3553&version=v1')).extendedUniverseStatus).toBe('inactive');
+  });
 });
