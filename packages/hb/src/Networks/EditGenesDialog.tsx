@@ -32,9 +32,8 @@ function EditGenesForm({ open, symbols, version, onClose, onApply }: EditGenesDi
     const base = new GeneMatchList((matches.data ?? []).map(matchOf));
     return [...chosen].reduce((next, [id, entrez]) => (next.matches.some((match) => match.id === id) ? next.choose(id, entrez) : next), base);
   }, [matches.data, chosen]);
-  const resolved = list.matches.filter((match) => match.status === 'matched' || match.status === 'alias' || (match.status === 'choose' && match.chosen));
   const hits = useMemo(() => hitsOf(matches.data ?? []), [matches.data]);
-  const { entrez, outside, outsideGenes } = splitByVersion(list, resolved, hits, version);
+  const { entrez, outside, outsideGenes } = splitByVersion(list, hits, version);
   const showTable = !pending && !matches.isError && list.matches.some((match) => match.status !== 'matched');
   const status: { text: string; tone?: 'success' | 'error' } =
     terms.length === 0
@@ -45,7 +44,7 @@ function EditGenesForm({ open, symbols, version, onClose, onApply }: EditGenesDi
           ? { text: 'Genes couldn’t be matched right now. Try again in a moment; your list is kept.', tone: 'error' }
           : showTable
             ? { text: list.summary.join('. ') }
-            : { text: `${list.matches.length} matched: ${resolved.map((match) => list.gene(match)?.symbol).join(', ')}`, tone: 'success' };
+            : { text: `${list.matches.length} matched: ${list.matches.map((match) => list.gene(match)?.symbol).join(', ')}`, tone: 'success' };
 
   const removeTerms = (ids: readonly string[]) => {
     const gone = new Set(list.matches.filter((match) => ids.includes(match.id)).flatMap((match) => match.typed.map((term) => term.toLowerCase())));
