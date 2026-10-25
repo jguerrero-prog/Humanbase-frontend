@@ -12,6 +12,9 @@ export interface DeepseaJobViewProps {
   id: string;
   variant?: string | undefined;
   onVariantChange?: ((id: string) => void) | undefined;
+  /** A BED job's region open in its genome browser. */
+  region?: string | undefined;
+  onRegionChange?: ((region: string | undefined) => void) | undefined;
 }
 
 function stepsOf(job: DeepseaJob, now: number): JobStep[] {
@@ -22,7 +25,7 @@ function stepsOf(job: DeepseaJob, now: number): JobStep[] {
 }
 
 /** A Sei, Beluga or Seqweaver job: its progress while it runs, then its results. */
-export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewProps) {
+export function DeepseaJobView({ id, variant, onVariantChange, region, onRegionChange }: DeepseaJobViewProps) {
   const linkHref = useLinkHref();
   const job = useDeepseaJob(id);
   const data = job.data;
@@ -76,7 +79,7 @@ export function DeepseaJobView({ id, variant, onVariantChange }: DeepseaJobViewP
         {data.model.insilico ? (
           <InsilicoResultView job={data} title={title} tools={tools} />
         ) : !data.plotsScores ? (
-          <DeepseaFilesView job={data} title={title} tools={tools} />
+          <DeepseaFilesView job={data} title={title} tools={tools} region={region} onRegionChange={onRegionChange} />
         ) : (
           <DeepseaResultView job={data} title={title} tools={tools} variant={variant} onVariantChange={onVariantChange} />
         )}

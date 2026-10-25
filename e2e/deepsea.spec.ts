@@ -107,6 +107,36 @@ test('the recorded Sei BED job’s results are files, as humanbase.io shows them
   expect(apiRequests).toEqual([]);
 });
 
+test('the Sei BED job’s regions open in the genome browser, keep the region in the address and hide again, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/deepsea/jobs/90e896a5-a950-4180-a4fb-c5bcc8cefd1d/`);
+  await page.getByRole('button', { name: 'View your regions in the genome browser' }).click();
+  await expect(page.getByText('Region 1 of 10: chr1:109,817,091')).toBeVisible();
+  await expect(page).toHaveURL(/\?region=chr1:109,817,091$/);
+  await expect(page.getByRole('button', { name: 'Previous region' })).toHaveAttribute('aria-disabled', 'true');
+  await page.getByRole('button', { name: 'Next region' }).click();
+  await expect(page.getByText('Region 2 of 10: chr10:23,507,864')).toBeVisible();
+  await expect(page).toHaveURL(/\?region=chr10:23,507,864$/);
+  const previous = page.getByRole('button', { name: 'Previous region' });
+  await previous.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Region 1 of 10: chr1:109,817,091')).toBeVisible();
+  await expect(previous).toBeFocused();
+  await expect(previous).toHaveAttribute('aria-disabled', 'true');
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Region 1 of 10: chr1:109,817,091')).toBeVisible();
+  await page.getByRole('button', { name: 'Next region' }).click();
+  expect(await violationsOf(page)).toEqual([]);
+  for (const width of [1440, 375]) {
+    await page.setViewportSize({ width, height: 812 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  }
+  await page.getByRole('button', { name: 'Hide the genome browser' }).click();
+  await expect(page.getByRole('button', { name: 'View your regions in the genome browser' })).toBeFocused();
+  await expect(page).not.toHaveURL(/region=/);
+  expect(apiRequests).toEqual([]);
+});
+
 test('each FASTA example job shows its files with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   for (const [tool, id] of [['Sei', '5154ea8d-3203-4c81-acc8-757faeb44e0c'], ['Beluga', '27d030ee-02d9-43ca-adec-e5d76265591a']]) {

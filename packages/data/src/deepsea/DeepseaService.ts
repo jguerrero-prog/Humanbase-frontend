@@ -1,6 +1,7 @@
 import type { DataClient } from '../DataClient';
 import type { GenomeLocation } from '../genome/GenomeLocation';
 import { VariantFileCheck, type InputKind, type VariantModel } from '../jobs/VariantFileCheck';
+import { BedRegion } from './BedRegion';
 import { DeepseaJob, type DeepseaJobRecord } from './DeepseaJob';
 import { deepseaModels, type Genome } from './DeepseaModel';
 import type { FeaturePredictionRecord, FeaturesRecord, ScoreType, VariantScoresRecord } from './DeepseaResult';
@@ -14,6 +15,12 @@ export interface PrecomputedSource {
   dataset?: string | undefined;
   /** Sent as score_type when the dataset takes one, such as seqweaver. */
   scoreType?: string | undefined;
+}
+
+export interface DeepseaInput {
+  /** Undefined when the file has none to count. */
+  count: number | undefined;
+  regions: BedRegion[];
 }
 
 export interface DeepseaRequest {
@@ -64,11 +71,12 @@ export class DeepseaService {
     return new DeepseaJob(await this.client.get<DeepseaJobRecord>(`deepsea/jobs/${id}/`));
   }
 
-  /** How many sequences or regions the job ran, counted from its input as submitted; undefined when the file has none to count. */
-  async inputCount(job: DeepseaJob): Promise<number | undefined> {
-    if (!job.uploadedQuery) return undefined;
-    const { count } = new VariantFileCheck(job.kind, job.model.id).check(await this.client.text(job.uploadedQuery.url));
-    return count || undefined;
+  /** The job's input as submitted, read once: how many sequences or regions it ran, and a BED job's regions. */
+  async input(job: DeepseaJob): Promise<DeepseaInput> {
+    if (!job.uploadedQuery) return { count: undefined, regions: [] };
+    const text = await this.client.text(job.uploadedQuery.url);
+    const { count } = new VariantFileCheck(job.kind, job.model.id).check(text);
+    return { count: count || undefined, regions: job.kind === 'bed' ? BedRegion.parse(text) : [] };
   }
 
   scoreTypes(id: string): Promise<ScoreType[]> {
