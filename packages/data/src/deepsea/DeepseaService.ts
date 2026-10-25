@@ -1,6 +1,7 @@
 import type { DataClient } from '../DataClient';
 import type { GenomeLocation } from '../genome/GenomeLocation';
 import { VariantFileCheck, type InputKind, type VariantModel } from '../jobs/VariantFileCheck';
+import { BedRegion } from './BedRegion';
 import { DeepseaJob, type DeepseaJobRecord } from './DeepseaJob';
 import { deepseaModels, type Genome } from './DeepseaModel';
 import type { FeaturePredictionRecord, FeaturesRecord, ScoreType, VariantScoresRecord } from './DeepseaResult';
@@ -69,6 +70,12 @@ export class DeepseaService {
     if (!job.uploadedQuery) return undefined;
     const { count } = new VariantFileCheck(job.kind, job.model.id).check(await this.client.text(job.uploadedQuery.url));
     return count || undefined;
+  }
+
+  /** A BED job's regions, read from its input as submitted; none for other jobs. */
+  async regions(job: DeepseaJob): Promise<BedRegion[]> {
+    if (job.kind !== 'bed' || !job.uploadedQuery) return [];
+    return BedRegion.parse(await this.client.text(job.uploadedQuery.url));
   }
 
   scoreTypes(id: string): Promise<ScoreType[]> {

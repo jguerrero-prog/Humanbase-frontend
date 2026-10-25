@@ -112,6 +112,12 @@ export function useDeepseaInputCount(job: DeepseaJob | undefined) {
   return useQuery({ queryKey: ['deepsea-input-count', job?.id], queryFn: () => api.deepsea.inputCount(job as DeepseaJob), enabled: job?.status === 'finished', staleTime: Infinity });
 }
 
+/** A BED job's regions, read from its input file only once asked for, such as when the genome browser opens. */
+export function useDeepseaRegions(job: DeepseaJob | undefined, enabled = true) {
+  const api = useHumanbase();
+  return useQuery({ queryKey: ['deepsea-regions', job?.id], queryFn: () => api.deepsea.regions(job as DeepseaJob), enabled: enabled && job?.status === 'finished' && job.kind === 'bed', staleTime: Infinity });
+}
+
 /** One sequence's in silico mutagenesis for one feature; each choice is one request, kept once loaded. */
 export function useInsilico(job: DeepseaJob | undefined, sequenceName: string | undefined, featureIndex: number | undefined) {
   const api = useHumanbase();

@@ -22,11 +22,12 @@ export { useNetwasExample, useNetwasJob, useNetwasResult } from './react/useNetw
 export { deepseaModels, genomeLabels, docsPage, modelOf, variantEffectsModels, variantListInputs, variantModels, type DeepseaModel, type EffectBins, type Genome } from './deepsea/DeepseaModel';
 export { DeepseaJob, type DeepseaFile, type DeepseaJobRecord, type ResultFile } from './deepsea/DeepseaJob';
 export { featureEffects, featureLabel, scoreTypeLabel, variantIdOf, jobScoreTypes, summaryScoreTypes, variantRows, type FeatureEffect, type FeaturePredictionRecord, type FeaturesRecord, type ModelFeature, type ScoreType, type VariantRow, type VariantScoresRecord, type VariantSequence } from './deepsea/DeepseaResult';
+export { BedRegion } from './deepsea/BedRegion';
 export { DeepseaService, type DeepseaRequest, type PrecomputedSource } from './deepsea/DeepseaService';
 export { SeiHgmdService, type HgmdOrder, type HgmdVariantRecord } from './deepsea/SeiHgmdService';
 export { deepseaExamples } from './deepsea/deepseaExamples';
 export { InsilicoResult, sequenceSpan, type InsilicoRecord, type PercentileStops, type Substitution } from './deepsea/InsilicoResult';
-export { useDeepseaFeatureCount, useDeepseaFeatures, useDeepseaInputCount, useDeepseaJob, useDeepseaVariants, useInsilico, usePrecomputedFeatures, usePrecomputedPredictions, useSeiHgmd, useViewPredictions } from './react/useDeepsea';
+export { useDeepseaFeatureCount, useDeepseaFeatures, useDeepseaInputCount, useDeepseaJob, useDeepseaRegions, useDeepseaVariants, useInsilico, usePrecomputedFeatures, usePrecomputedPredictions, useSeiHgmd, useViewPredictions } from './react/useDeepsea';
 export { ExpectoService, type ScoredVariant, type VariantQuery } from './expecto/ExpectoService';
 export { TissueVariants, strongestOf, tissueTitle, type EffectRow, type GenePosition, type PositionAxis, type TissueDatabase, type TissueEffects, type TissueVariantsRecord } from './expecto/TissueVariants';
 export { expectoTissues, type ExpectoTissue } from './expecto/expectoTissues';
