@@ -72,7 +72,7 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
     events.current = { onRegionChange, onStatusChange };
   });
   // The engine is built once per assembly, file reader and track set; region and selection changes go through it.
-  const first = useRef({ region, label });
+  const firstLabel = useRef(label);
   const latest = useRef({ hidden, arrangement, trackMenu });
   useLayoutEffect(() => {
     latest.current = { hidden, arrangement, trackMenu };
@@ -81,6 +81,13 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
   useImperativeHandle(ref, () => ({
     exportSvg: (options) => instance.current?.exportSvg(options) ?? Promise.reject(new Error('The genome browser hasn’t started yet.')),
   }), []);
+
+  // Before the mount below, so an engine that restarts as the region changes opens on the new region.
+  useEffect(() => {
+    if (!mounted || sameRegion(region, shown.current)) return;
+    shown.current = region;
+    instance.current?.showRegion(region);
+  }, [mounted, region]);
 
   useEffect(() => {
     const element = container.current;
@@ -91,9 +98,9 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
     events.current.onStatusChange?.('loading');
     browser
       .mount(element, {
-        label: first.current.label,
+        label: firstLabel.current,
         assembly,
-        region: first.current.region,
+        region: shown.current,
         tracks,
         hidden: latest.current.hidden,
         arrangement: latest.current.arrangement,
@@ -123,12 +130,6 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
       element.replaceChildren();
     };
   }, [engine, files, assembly, tracks, menuOf]);
-
-  useEffect(() => {
-    if (!mounted || sameRegion(region, shown.current)) return;
-    shown.current = region;
-    instance.current?.showRegion(region);
-  }, [mounted, region]);
 
   const hiddenKey = hidden.join('\n');
   useEffect(() => {

@@ -1,11 +1,11 @@
 import type { AsdFeatureSet } from '@humanbase/data';
 import { AsdExplorer, type AsdState, type AsdView } from '@humanbase/hb';
-import { useSearchParams } from 'react-router';
+import { useReadableSearchParams } from '../../useReadableSearchParams';
 import '../ToolPage.css';
 
 // The URL keeps the view, location, variant and feature set, so either view can be shared.
 export function AsdPage() {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useReadableSearchParams();
   const state: AsdState = {
     view: params.get('view') === 'table' ? 'table' : 'browser',
     location: params.get('location') ?? undefined,

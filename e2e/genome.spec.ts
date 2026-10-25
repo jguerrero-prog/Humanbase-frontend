@@ -35,7 +35,7 @@ test('a variant opens 50 kb around it, marked, and keeps the mark as the view mo
   const browser = page.getByRole('application', { name: /^Genome browser, chr5:150,201,123-150,251,123/ });
   await expect(browser.getByText('chr5:150,226,123', { exact: true })).toBeVisible();
   await page.getByRole('radio', { name: '500 kb' }).click();
-  await expect(page).toHaveURL(/variant=chr5%3A150226123/);
+  await expect(page).toHaveURL(/\?location=chr5:149,976,123-150,476,123&variant=chr5:150226123$/);
   await expect(page.getByRole('application', { name: /^Genome browser, chr5:149,976,123-150,476,123/ }).getByText('chr5:150,226,123', { exact: true })).toBeVisible();
   expect(apiRequests).toEqual([]);
 });

@@ -1,11 +1,11 @@
 import { SeiHgmdService } from '@humanbase/data';
 import { SeiHgmdBrowser, type SeiHgmdState } from '@humanbase/hb';
-import { useSearchParams } from 'react-router';
+import { useReadableSearchParams } from '../../useReadableSearchParams';
 import '../ToolPage.css';
 
 // The URL keeps the view, the heatmap's order, and the browser's range and variant, so each view can be shared.
 export function SeiHgmdPage() {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useReadableSearchParams();
   const state: SeiHgmdState = {
     view: params.get('view') === 'genome' ? 'genome' : 'heatmap',
     order: SeiHgmdService.orders.find((option) => option.value === params.get('sort'))?.value ?? 'default',
