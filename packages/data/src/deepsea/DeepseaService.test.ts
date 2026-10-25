@@ -1,10 +1,11 @@
+import type { DataClient } from '../DataClient';
 import { GenomeLocation } from '../genome/GenomeLocation';
 import { SampleClient } from '../sample/SampleClient';
 import { VariantFileCheck } from '../jobs/VariantFileCheck';
 import { deepseaExamples } from './deepseaExamples';
 import { DeepseaJob } from './DeepseaJob';
 import { deepseaModels } from './DeepseaModel';
-import { featureEffects, variantRows, variantScoreTypes } from './DeepseaResult';
+import { featureEffects, jobScoreTypes, summaryScoreTypes, variantRows } from './DeepseaResult';
 import { DeepseaService } from './DeepseaService';
 
 const exampleJob = '76aea8fe-8ec7-4698-a193-a186c7665edb';
@@ -19,10 +20,29 @@ describe('DeepseaService', () => {
     expect(job.genome).toBe('GRCh37/hg19');
     expect(job.resultFiles.map((file) => file.key)).toEqual(['variant_dis', 'variant_mean-evalue', 'feature_zscore', 'feature_evalue', 'feature_diffs', 'uploaded_query', 'gz_file']);
     expect(DeepseaService.pollDelay(job)).toBe(false);
+    expect(job.plotsScores).toBe(true);
+  });
+
+  it('reads each FASTA example job as files only, as humanbase.io shows them: no variant- or sequence-level score to plot', async () => {
+    for (const [id, tool] of [
+      ['5154ea8d-3203-4c81-acc8-757faeb44e0c', 'Sei'],
+      ['27d030ee-02d9-43ca-adec-e5d76265591a', 'Beluga'],
+      ['dbebecbe-f58a-4ce4-b4ba-04af819a9ad7', 'Seqweaver'],
+    ] as const) {
+      const job = await service.get(id);
+      expect(job.model.tool).toBe(tool);
+      expect(job.kind).toBe('fasta');
+      expect(job.plotsScores).toBe(false);
+      expect(jobScoreTypes(job.model, await service.scoreTypes(id))).toEqual([]);
+      const files = job.resultFiles;
+      expect(files.every((file) => file.url.startsWith('https://'))).toBe(true);
+      expect(files.find((file) => file.key === 'feature_predictions')).toMatchObject({ holds: 'Every feature for every sequence', format: 'TSV, gzipped' });
+      expect(files.map((file) => file.key)).toContain('gz_file');
+    }
   });
 
   it('merges the variant scores into one row per variant', async () => {
-    const sets = await Promise.all(['dis', 'mean-evalue'].map((type) => service.variantScores(exampleJob, type)));
+    const sets = await Promise.all(['dis', 'mean-evalue'].map((type) => service.scores(exampleJob, { level: 'VARIANT', short_name: type })));
     const rows = variantRows(sets);
     expect(rows).toHaveLength(10);
     const cebp = rows.find((row) => row.position === 109817590);
@@ -85,13 +105,26 @@ describe('DeepseaService', () => {
   });
 
   it('names ExPecto variants by their gene, as the real ExPecto job does', async () => {
-    const rows = variantRows([await service.variantScores('e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1', 'expecto')]);
+    const rows = variantRows([await service.scores('e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1', { level: 'VARIANT', short_name: 'expecto' })]);
     expect(rows.find((row) => row.position === 134871851)?.name).toBe('NEUROG1');
   });
 
-  it('loads only the expecto score for ExPecto, whose jobs also list scores the API can’t serve', () => {
+  it('plots only the expecto score for ExPecto, whose jobs also list scores the API can’t serve', () => {
     const types = ['expecto', 'dis', 'mean-evalue'].map((short_name) => ({ name: short_name, level: 'VARIANT' as const, short_name }));
-    expect(variantScoreTypes(deepseaModels.expecto, types).map((type) => type.short_name)).toEqual(['expecto']);
+    expect(jobScoreTypes(deepseaModels.expecto, types).map((type) => type.short_name)).toEqual(['expecto']);
+  });
+
+  it('plots variant- and sequence-level scores, as humanbase.io does, and reads a sequence-level one from sequence_scores', async () => {
+    const types = [
+      { name: 'Disease impact score', level: 'VARIANT' as const, short_name: 'dis' },
+      { name: 'Z-score', level: 'FEATURE' as const, short_name: 'zscore' },
+      { name: 'Sequence score', level: 'SEQUENCE' as const, short_name: 'seq' },
+    ];
+    expect(jobScoreTypes(deepseaModels.beluga, types).map((type) => type.short_name)).toEqual(['dis', 'seq']);
+    const paths: string[] = [];
+    const client = { get: (path: string) => (paths.push(path), Promise.resolve({ ds_model: 'Beluga', score_type: 'seq', scores: [] })) };
+    await new DeepseaService(client as unknown as DataClient).scores('x', { level: 'SEQUENCE', short_name: 'seq' });
+    expect(paths).toEqual(['deepsea/jobs/x/sequence_scores/']);
   });
 
   it('reads the real Sei example job: its summary score, top classes and sequence class names', async () => {
@@ -100,8 +133,9 @@ describe('DeepseaService', () => {
     expect(job.model.tool).toBe('Sei');
     const types = await service.scoreTypes(id);
     expect(types.filter((type) => type.level === 'VARIANT')).toHaveLength(41);
-    expect(variantScoreTypes(job.model, types).map((type) => type.short_name)).toEqual(['seqclass']);
-    const rows = variantRows([await service.variantScores(id, 'seqclass')]);
+    expect(jobScoreTypes(job.model, types)).toHaveLength(41);
+    expect(summaryScoreTypes(job.model, types).map((type) => type.short_name)).toEqual(['seqclass']);
+    const rows = variantRows([await service.scores(id, { level: 'VARIANT', short_name: 'seqclass' })]);
     expect(rows.find((row) => row.position === 49813589)).toMatchObject({ name: 'VWC2', topClass: 'P Promoter' });
     const [prediction] = await service.featurePredictions(id, 'seqclass', GenomeLocation.at('chr7', 49813589).withWidth(100_000));
     if (!prediction) throw new Error('No prediction recorded');

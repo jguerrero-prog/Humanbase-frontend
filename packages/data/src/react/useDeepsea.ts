@@ -1,7 +1,7 @@
 import { useQueries, useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import type { DeepseaJob } from '../deepsea/DeepseaJob';
-import { variantRows, variantScoreTypes, type FeaturePredictionRecord, type FeaturesRecord, type VariantRow, type VariantScoresRecord } from '../deepsea/DeepseaResult';
+import { jobScoreTypes, summaryScoreTypes, variantRows, type FeaturePredictionRecord, type FeaturesRecord, type VariantRow, type VariantScoresRecord } from '../deepsea/DeepseaResult';
 import { deepseaModels } from '../deepsea/DeepseaModel';
 import { DeepseaService, type PrecomputedSource } from '../deepsea/DeepseaService';
 import { SeiHgmdService } from '../deepsea/SeiHgmdService';
@@ -22,19 +22,34 @@ export function useDeepseaJob(id: string | undefined) {
   });
 }
 
-/** The finished job's score types, and every variant with each of its variant-level scores. */
-export function useDeepseaVariants(job: DeepseaJob | undefined) {
+/** The finished job's score types and every variant with its summary scores; the chosen score, such as one of Sei's 40 sequence classes, loads only once chosen. */
+export function useDeepseaVariants(job: DeepseaJob | undefined, chosenKey?: string) {
   const api = useHumanbase();
   const id = job?.status === 'finished' ? job.id : '';
   const types = useQuery({ queryKey: ['deepsea-score-types', id], queryFn: () => api.deepsea.scoreTypes(id), enabled: Boolean(id), staleTime: Infinity });
-  const variantTypes = job ? variantScoreTypes(job.model, types.data ?? []) : [];
+  const plotTypes = job ? jobScoreTypes(job.model, types.data ?? []) : [];
+  const summary = job ? summaryScoreTypes(job.model, types.data ?? []) : [];
+  const chosen = plotTypes.find((type) => type.short_name === chosenKey) ?? plotTypes[0];
+  const extra = chosen && !summary.includes(chosen) ? chosen : undefined;
   const sets = useQueries({
-    queries: variantTypes.map((type) => ({ queryKey: ['deepsea-variant-scores', id, type.short_name], queryFn: () => api.deepsea.variantScores(id, type.short_name), staleTime: Infinity })),
+    queries: [...summary, ...(extra ? [extra] : [])].map((type) => ({ queryKey: ['deepsea-scores', id, type.level, type.short_name], queryFn: () => api.deepsea.scores(id, type), staleTime: Infinity })),
   });
+  const summarySets = sets.slice(0, summary.length);
+  const chosenSet = extra ? sets[summary.length] : undefined;
   const loaded = sets.flatMap((set) => (set.data ? [set.data] : [])) satisfies VariantScoresRecord[];
-  const variants: VariantRow[] | undefined = types.isSuccess && loaded.length === variantTypes.length ? variantRows(loaded) : undefined;
-  const failed = [types, ...sets].filter((query) => query.isError);
-  return { scoreTypes: types.data, variants, error: failed[0]?.error, refetch: () => failed.forEach((query) => void query.refetch()) };
+  const variants: VariantRow[] | undefined = types.isSuccess && summarySets.every((set) => set.data) ? variantRows(loaded) : undefined;
+  const failed = [types, ...summarySets].filter((query) => query.isError);
+  return {
+    scoreTypes: types.data,
+    plotTypes,
+    summary,
+    chosen,
+    /** The chosen score's own request, when it isn't a summary score. */
+    chosenScores: chosenSet && { pending: chosenSet.isPending, error: chosenSet.error ?? undefined, refetch: () => void chosenSet.refetch() },
+    variants,
+    error: failed[0]?.error,
+    refetch: () => failed.forEach((query) => void query.refetch()),
+  };
 }
 
 /** Every variant's prediction on every feature in the genome browser's view, for one feature-level score, with the model's feature names. */

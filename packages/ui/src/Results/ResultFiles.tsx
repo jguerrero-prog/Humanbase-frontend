@@ -18,8 +18,9 @@ export interface ResultFilesProps {
 
 /** Every file a job writes, named in plain words, each with its own download. */
 export function ResultFiles({ files, caption = 'Result files' }: ResultFilesProps) {
+  // The file column keeps room for its name and description; on a phone the table scrolls instead.
   return (
-    <Table caption={caption} columnWidths={['auto', '220px', '160px']}>
+    <Table caption={caption} columnWidths={['auto', '220px', '160px']} minWidth="38rem">
       <thead>
         <tr>
           <HeaderCell>File</HeaderCell>

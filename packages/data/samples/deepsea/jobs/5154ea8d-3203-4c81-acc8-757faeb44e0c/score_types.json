@@ -1,0 +1,15 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "name": "Probability",
+      "level": "FEATURE",
+      "short_name": "predictions",
+      "range": [
+        0,
+        0.5,
+        1
+      ]
+    }
+  ]
+}

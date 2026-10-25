@@ -94,10 +94,13 @@ function newRow(id: string, sequence: VariantSequence): VariantRow {
   return row;
 }
 
-/** The variant-level scores a result shows: Sei's summary score only, not its 40 per-class scores. */
-export function variantScoreTypes(model: DeepseaModel, types: readonly ScoreType[]): ScoreType[] {
-  return types.filter((type) => type.level === 'VARIANT' && (!model.variantScores || model.variantScores.includes(type.short_name)));
+/** The scores a result plots and draws as tracks, as humanbase.io picks them: every variant- and sequence-level score, in the job's order. ExPecto jobs also list Beluga's dis and mean-evalue, which the API answers 500 for, so they keep only expecto. */
+export function jobScoreTypes(model: DeepseaModel, types: readonly ScoreType[]): ScoreType[] {
+  return types.filter((type) => (type.level === 'VARIANT' || type.level === 'SEQUENCE') && (!model.expecto || type.short_name === 'expecto'));
 }
+
+/** The job scores a result loads up front: all of them, or the model's summary when it has one. */
+export const summaryScoreTypes = (model: DeepseaModel, types: readonly ScoreType[]) => jobScoreTypes(model, types).filter((type) => !model.summaryScores || model.summaryScores.includes(type.short_name));
 
 /** A score type's name for display, with a true minus sign, such as Mean −log e-value. */
 export const scoreTypeLabel = (type: Pick<ScoreType, 'name'>) => type.name.replace('-log', '−log');

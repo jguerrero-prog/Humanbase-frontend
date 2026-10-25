@@ -1,0 +1,153 @@
+{
+  "status": 200,
+  "body": {
+    "ds_model": "Sei",
+    "score_type": "ctcf-ctcf-cohesin",
+    "scores": [
+      {
+        "sequence": {
+          "chromosome": "chr3",
+          "position": 12598855,
+          "id": "MKRN2",
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "strand": ".",
+          "max_seq_class": "E12 Erythroblast-like"
+        },
+        "value": 0.05450276374613239
+      },
+      {
+        "sequence": {
+          "chromosome": "chr3",
+          "position": 54158012,
+          "id": "CACNA2D3",
+          "ref_allele": "T",
+          "alt_allele": "C",
+          "strand": ".",
+          "max_seq_class": "PC1 Polycomb / Heterochromatin"
+        },
+        "value": 0.04569915450235307
+      },
+      {
+        "sequence": {
+          "chromosome": "chr5",
+          "position": 134871851,
+          "id": "NEUROG1",
+          "ref_allele": "A",
+          "alt_allele": "G",
+          "strand": ".",
+          "max_seq_class": "PC4 Polycomb / Bivalent stem cell Enh"
+        },
+        "value": 0.6586953446364614
+      },
+      {
+        "sequence": {
+          "chromosome": "chr6",
+          "position": 108879283,
+          "id": "FOXO3",
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "strand": ".",
+          "max_seq_class": "CTCF CTCF-Cohesin"
+        },
+        "value": -0.23829879025397815
+      },
+      {
+        "sequence": {
+          "chromosome": "chr7",
+          "position": 49813589,
+          "id": "VWC2",
+          "ref_allele": "G",
+          "alt_allele": "C",
+          "strand": ".",
+          "max_seq_class": "P Promoter"
+        },
+        "value": 2.0103878702112956
+      },
+      {
+        "sequence": {
+          "chromosome": "chr8",
+          "position": 74206149,
+          "id": "RDH10",
+          "ref_allele": "C",
+          "alt_allele": "G",
+          "strand": ".",
+          "max_seq_class": "E5 B-cell-like"
+        },
+        "value": -0.4683333651065773
+      },
+      {
+        "sequence": {
+          "chromosome": "chr10",
+          "position": 96305280,
+          "id": "HELLS",
+          "ref_allele": "T",
+          "alt_allele": "C",
+          "strand": ".",
+          "max_seq_class": "TF3 FOXA1 / AR / ESR1"
+        },
+        "value": -0.18068747074823222
+      },
+      {
+        "sequence": {
+          "chromosome": "chr11",
+          "position": 2435681,
+          "id": "TRPM5",
+          "ref_allele": "C",
+          "alt_allele": "T",
+          "strand": ".",
+          "max_seq_class": "TN4 Transcription"
+        },
+        "value": 0.01105004806278409
+      },
+      {
+        "sequence": {
+          "chromosome": "chr11",
+          "position": 69593819,
+          "id": "FGF4_a",
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "strand": ".",
+          "max_seq_class": "E7 Monocyte / Macrophage"
+        },
+        "value": -0.17734285088271706
+      },
+      {
+        "sequence": {
+          "chromosome": "chr17",
+          "position": 76352731,
+          "id": "SOCS3",
+          "ref_allele": "G",
+          "alt_allele": "A",
+          "strand": ".",
+          "max_seq_class": "E4 Multi-tissue"
+        },
+        "value": 0.4351446759060469
+      },
+      {
+        "sequence": {
+          "chromosome": "chr19",
+          "position": 1854681,
+          "id": "REXO1",
+          "ref_allele": "C",
+          "alt_allele": "G",
+          "strand": ".",
+          "max_seq_class": "PC2 Weak Polycomb"
+        },
+        "value": 0.05801723018178606
+      },
+      {
+        "sequence": {
+          "chromosome": "chr19",
+          "position": 59070227,
+          "id": "UBE2M",
+          "ref_allele": "C",
+          "alt_allele": "A",
+          "strand": ".",
+          "max_seq_class": "E4 Multi-tissue"
+        },
+        "value": -0.3900281013197464
+      }
+    ]
+  }
+}

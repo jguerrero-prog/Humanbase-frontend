@@ -232,6 +232,15 @@
   gap: var(--space-2);
 }
 
+/* Long pathway names wrap inside the row, as on humanbase.io, instead of running past it. */
+.search-suggestion-badges .badge {
+  flex: 0 1 auto;
+  block-size: auto;
+  min-block-size: 20px;
+  padding-block: 2px;
+  white-space: normal;
+}
+
 .search-suggestion-details,
 .search-suggestions-note {
   font: var(--type-caption);

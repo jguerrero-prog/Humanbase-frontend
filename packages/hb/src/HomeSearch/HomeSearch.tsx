@@ -14,7 +14,7 @@ import {
 } from '@humanbase/ui';
 import { useMemo, useState, type ClipboardEvent, type KeyboardEvent, type ReactNode } from 'react';
 import { analysisColumns, analysisOptions, categoryCrumbs } from '../content/product';
-import { matchOf, splitByVersion, suggestionOf } from './geneMatches';
+import { hitsOf, matchOf, splitByVersion, suggestionOf } from './geneMatches';
 import { genesWord, OutsideVersionAlert } from './OutsideVersionAlert';
 import './HomeSearch.css';
 
@@ -50,9 +50,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
   const add = (found: readonly TermMatches[]) => {
     const typedBefore = new Set(list.matches.flatMap((match) => match.typed.map((term) => term.toLowerCase())));
     const fresh = found.filter((term) => !typedBefore.has(term.typed.toLowerCase()));
-    const next = new Map(genes);
-    for (const term of fresh) for (const gene of term.genes) next.set(String(gene.entrez), gene);
-    setGenes(next);
+    setGenes(new Map([...genes, ...hitsOf(fresh)]));
     setList(new GeneMatchList([...list.matches, ...fresh.map(matchOf)]));
     setAnalysis('networks');
   };
@@ -93,8 +91,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
 
   const runExample = (symbol: string) => () => void match(async () => [{ typed: symbol, genes: await api.search.exact(symbol) }]);
 
-  const resolved = list.matches.filter((match) => match.status === 'matched' || match.status === 'alias' || (match.status === 'choose' && match.chosen));
-  const { entrez: runnable, outside, outsideGenes } = splitByVersion(list, resolved, genes, version);
+  const { entrez: runnable, outside, outsideGenes } = splitByVersion(list, genes, version);
 
   const remove = (ids: readonly string[]) => setList(list.remove(ids));
   const chooseVersion = (next: string) => {

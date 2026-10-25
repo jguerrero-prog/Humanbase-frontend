@@ -19,6 +19,17 @@ describe('GeneMatchTable', () => {
     expect(onRemove).toHaveBeenCalledWith(['FOOBAR1']);
   });
 
+  it('names the gene a term to check uses, the first until another is chosen', async () => {
+    const onChoose = vi.fn();
+    const candidates = [{ entrez: '3280', symbol: 'HES1', name: 'hes family bHLH transcription factor 1' }, { entrez: '8209', symbol: 'GATD3', name: 'glutamine amidotransferase class 1 domain containing 3' }];
+    render(<GeneMatchTable list={new GeneMatchList([{ id: 'HES1', typed: ['HES1'], status: 'choose', candidates }])} onChoose={onChoose} />);
+    const choice = screen.getByRole('group', { name: 'Gene for HES1' });
+    expect(within(choice).getByRole('radio', { name: /^HES1,/ })).toBeChecked();
+    expect(within(choice).getByText('Using HES1. Pick another gene to change it.')).toBeInTheDocument();
+    await userEvent.click(within(choice).getByRole('radio', { name: /^GATD3,/ }));
+    expect(onChoose).toHaveBeenCalledWith('HES1', '8209');
+  });
+
   it('folds matched genes until asked', async () => {
     render(<GeneMatchTable list={list} foldMatched />);
     expect(screen.queryByRole('rowheader', { name: 'IL1B' })).not.toBeInTheDocument();

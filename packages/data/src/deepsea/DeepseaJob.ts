@@ -34,6 +34,9 @@ export interface ResultFile extends DeepseaFile {
 }
 
 
+// The API links some files over http; as on humanbase.io, downloads use https.
+const secure = (url: string) => url.replace(/^http:\/\//i, 'https://');
+
 const isFile = (entry: DeepseaFile | Record<string, DeepseaFile>): entry is DeepseaFile => typeof entry.url === 'string';
 
 const perSequence: Record<string, Pick<ResultFile, 'name' | 'holds' | 'format'>> = {
@@ -41,9 +44,9 @@ const perSequence: Record<string, Pick<ResultFile, 'name' | 'holds' | 'format'>>
   diffs: { name: 'Diffs', holds: 'One file per sequence: change from the original sequence for every substitution', format: 'TSV' },
 };
 
-function describe(key: string, kind: InputKind): Pick<ResultFile, 'holds' | 'format'> {
+function describe(key: string, kind: InputKind, indexed: boolean): Pick<ResultFile, 'holds' | 'format'> {
   if (key.startsWith('variant_')) return { holds: 'One score per variant, as a genome track', format: 'bigWig (.bw)' };
-  if (key.startsWith('feature_')) return { holds: 'Every feature for every variant', format: 'TSV, gzipped, with tabix index' };
+  if (key.startsWith('feature_')) return { holds: `Every feature for every ${kind === 'fasta' ? 'sequence' : 'variant'}`, format: indexed ? 'TSV, gzipped, with tabix index' : 'TSV, gzipped' };
   if (key === 'uploaded_query') return { holds: 'The file as it was submitted', format: kind.toUpperCase() };
   return { holds: 'Every result file in one archive', format: 'tar.gz' };
 }
@@ -106,13 +109,14 @@ export class DeepseaJob {
 
   /** The files to download, without the tabix indexes, which only genome browsers read. */
   get resultFiles(): ResultFile[] {
-    const entries = Object.entries(this.record.files ?? {}).filter(([key]) => !key.endsWith('_index'));
+    const all = this.record.files ?? {};
+    const entries = Object.entries(all).filter(([key]) => !key.endsWith('_index'));
     const groups = entries.flatMap(([, entry]) => (isFile(entry) ? [] : [entry]));
     const nested = Object.entries(perSequence).flatMap(([key, about]) => {
       const first = groups.find((group) => group[key])?.[key];
-      return first ? [{ key, url: first.url, ...about }] : [];
+      return first ? [{ key, url: secure(first.url), ...about }] : [];
     });
-    const flat = entries.flatMap(([key, entry]) => (isFile(entry) ? [{ key, ...entry, ...describe(key, this.kind) }] : []));
+    const flat = entries.flatMap(([key, entry]) => (isFile(entry) ? [{ key, ...entry, url: secure(entry.url), ...describe(key, this.kind, `${key}_index` in all) }] : []));
     return [...nested, ...flat];
   }
 
@@ -120,6 +124,11 @@ export class DeepseaJob {
   scoreTrackFile(type: Pick<ScoreType, 'level' | 'short_name'>): DeepseaFile | undefined {
     const file = this.record.files?.[`${type.level.toLowerCase()}_${type.short_name}`];
     return file && isFile(file) ? file : undefined;
+  }
+
+  /** As on humanbase.io, a Sei, Beluga or Seqweaver job on sequences (FASTA) is scored but not plotted: its results are its files. */
+  get plotsScores(): boolean {
+    return this.kind !== 'fasta' || Boolean(this.record.insilico);
   }
 
   get archive(): DeepseaFile | undefined {
