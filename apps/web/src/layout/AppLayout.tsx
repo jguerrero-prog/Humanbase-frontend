@@ -1,4 +1,4 @@
-import { JobWatcher, TopBarSearch, productFooter, productSectionFor, productSections, useJobsMenuSummary } from '@humanbase/hb';
+import { JobWatcher, Notifications, TopBarSearch, productFooter, productSectionFor, productSections, useJobsMenuSummary } from '@humanbase/hb';
 import { Banner, Footer, SkipLink, TopBar } from '@humanbase/ui';
 import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router';
@@ -34,6 +34,7 @@ export function AppLayout() {
       <Footer {...productFooter} onDisplaySettings={() => setSettingsOpen(true)} />
       <DisplaySettings open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <JobWatcher />
+      <Notifications />
     </div>
   );
 }

@@ -120,6 +120,10 @@ const toasts = new ToastQueue();
 const id = toasts.show({ tone: 'loading', message: 'Submitting NetWAS job…' });
 toasts.update(id, { tone: 'success', message: 'NetWAS job submitted', action: { label: 'View job', href: jobUrl } });
 
+// In the product, screens post to the app's one queue instead.
+import { notifications } from '@humanbase/hb';
+notifications.show({ tone: 'info', message: 'Link copied' });
+
 <Alert tone="error" title="This file has no p-value column" action={{ label: 'See file format', href: '#format' }}>
   NetWAS needs a column named p or pvalue.
 </Alert>
@@ -268,7 +272,7 @@ toasts.update(id, { tone: 'success', message: 'NetWAS job submitted', action: { 
   <NoteCard title="Using the components in code">
     <ul>
       <li><code>Alert</code>, <code>Toast</code> and <code>Banner</code> share one message frame, so the icon, colors and Dismiss button are the same everywhere.</li>
-      <li>Render one <code>ToastRegion</code> per page and send toasts through its <code>ToastQueue</code>. The queue keeps the newest three and announces each new message in a live region; errors are announced at once.</li>
+      <li>The app has one <code>ToastRegion</code> and one <code>ToastQueue</code>, so toasts from any screen stack in one place. In the product, screens post to <code>notifications</code> from <code>@humanbase/hb</code>; the app shell mounts <code>Notifications</code> once. Don’t add a region to a screen. The queue keeps the newest three and announces each new message in a live region; errors are announced at once. Write each message so it makes sense alone, since toasts from different tools share the region.</li>
       <li><code>update</code> turns a loading toast into its result in place. Toasts without an action time out after 6 seconds plus 1 for every 20 words, and pause while hovered or focused.</li>
       <li>Actions take an <code>href</code> for links or <code>onSelect</code> for buttons. Alerts are not dismissible unless you pass <code>dismissible</code>; error banners never are.</li>
     </ul>
