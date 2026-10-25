@@ -65,6 +65,15 @@ describe('CodeBlock', () => {
     expect(screen.getByRole('button', { name: 'Copy Request' })).toBeInTheDocument();
   });
 
+  it('says so when the clipboard refuses, and keeps the Copy label', async () => {
+    vi.spyOn(navigator.clipboard, 'writeText').mockRejectedValue(new DOMException('Document is not focused.', 'NotAllowedError'));
+    render(<CodeBlock label="Request" code={request} />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Copy Request' }));
+    expect(screen.getByRole('status')).toHaveTextContent('Couldn’t copy to the clipboard. Select the text and copy it instead.');
+    expect(screen.getByRole('button', { name: 'Copy Request' })).toBeInTheDocument();
+  });
+
   it('leaves the copy button out when asked', () => {
     render(<CodeBlock label="Markup" code="<h3></h3>" copy={false} />);
     expect(screen.queryByRole('button')).toBeNull();

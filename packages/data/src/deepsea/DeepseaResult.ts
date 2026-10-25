@@ -4,7 +4,7 @@ import { tissueTitle } from '../expecto/TissueVariants';
 
 export interface ScoreType {
   name: string;
-  level: 'VARIANT' | 'FEATURE';
+  level: 'VARIANT' | 'SEQUENCE' | 'FEATURE';
   short_name: string;
   range?: number[];
   reverse_order?: boolean;

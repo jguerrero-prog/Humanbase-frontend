@@ -1,13 +1,16 @@
 import { scoreTypeLabel, type DeepseaJob, type ScoreType } from '@humanbase/data';
 import { scoreTrack, type GenomeScoreTrack } from '@humanbase/genome';
 
+const isExpecto = (type: ScoreType) => type.short_name === 'expecto';
 // humanbase.io's ranges for a job's tracks: ExPecto's signed expression effect over −0.5 to 0.5, every other score over 0 to 3.
-const rangeOf = (type: ScoreType): readonly [number, number] => (type.short_name === 'expecto' ? [-0.5, 0.5] : [0, 3]);
+const rangeOf = (type: ScoreType): readonly [number, number] => (isExpecto(type) ? [-0.5, 0.5] : [0, 3]);
 
-/** The job's own score files as genome tracks, one per variant-level score type that has a bigWig file, as humanbase.io draws them. */
+/** The job's own score files as genome tracks, as humanbase.io draws them: one per variant- or sequence-level score type with a bigWig file, in the job's score type order; an ExPecto job shows only its ExPecto score. */
 export function jobScoreTracks(job: DeepseaJob, types: readonly ScoreType[]): GenomeScoreTrack[] {
-  return types.flatMap((type) => {
-    const file = job.scoreTrackFile(type.short_name);
-    return file ? [scoreTrack({ name: scoreTypeLabel(type), source: 'This job', bigWigUrl: file.url, range: rangeOf(type) })] : [];
-  });
+  return types
+    .filter((type) => type.level !== 'FEATURE' && (job.model.id !== 'expecto' || isExpecto(type)))
+    .flatMap((type) => {
+      const file = job.scoreTrackFile(type);
+      return file ? [scoreTrack({ name: scoreTypeLabel(type), source: 'This job', bigWigUrl: file.url, range: rangeOf(type) })] : [];
+    });
 }
