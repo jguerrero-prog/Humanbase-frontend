@@ -1,7 +1,7 @@
-import { GeneSearchService, useGeneListMatches, type DataVersion, type GeneHit } from '@humanbase/data';
+import { GeneSearchService, useGeneListMatches, type DataVersion } from '@humanbase/data';
 import { Button, Dialog, GeneList, GeneMatchList, GeneMatchTable, Icon, useDebounced } from '@humanbase/ui';
 import { useId, useMemo, useState } from 'react';
-import { matchOf } from '../HomeSearch/geneMatches';
+import { hitsOf, matchOf, splitByVersion } from '../HomeSearch/geneMatches';
 import { genesWord, OutsideVersionAlert } from '../HomeSearch/OutsideVersionAlert';
 
 export interface EditGenesDialogProps {
@@ -33,10 +33,8 @@ function EditGenesForm({ open, symbols, version, onClose, onApply }: EditGenesDi
     return [...chosen].reduce((next, [id, entrez]) => (next.matches.some((match) => match.id === id) ? next.choose(id, entrez) : next), base);
   }, [matches.data, chosen]);
   const resolved = list.matches.filter((match) => match.status === 'matched' || match.status === 'alias' || (match.status === 'choose' && match.chosen));
-  const hits = useMemo(() => new Map((matches.data ?? []).flatMap((term) => term.genes).map((gene): [string, GeneHit] => [String(gene.entrez), gene])), [matches.data]);
-  const geneOf = (match: (typeof resolved)[number]) => hits.get(list.gene(match)?.entrez ?? '');
-  const outside = resolved.filter((match) => geneOf(match)?.isInVersion(version) === false);
-  const entrez = [...new Set(resolved.filter((match) => !outside.includes(match)).flatMap((match) => list.gene(match)?.entrez ?? []).map(Number))];
+  const hits = useMemo(() => hitsOf(matches.data ?? []), [matches.data]);
+  const { entrez, outside, outsideGenes } = splitByVersion(list, resolved, hits, version);
   const showTable = !pending && !matches.isError && list.matches.some((match) => match.status !== 'matched');
   const status: { text: string; tone?: 'success' | 'error' } =
     terms.length === 0
@@ -86,7 +84,7 @@ function EditGenesForm({ open, symbols, version, onClose, onApply }: EditGenesDi
           {status.tone && <Icon name={status.tone === 'success' ? 'check-circle' : 'alert-circle'} size={16} />}
           {status.text}
         </p>
-        {!pending && <OutsideVersionAlert outside={outside.flatMap((match) => geneOf(match) ?? [])} version={version} runnable={entrez.length} onRemove={() => removeTerms(outside.map((match) => match.id))} />}
+        {!pending && <OutsideVersionAlert outside={outsideGenes} version={version} runnable={entrez.length} onRemove={() => removeTerms(outside.map((match) => match.id))} />}
         {showTable && <GeneMatchTable list={list} caption="How your genes matched" onRemove={removeTerms} onChoose={(id, gene) => setChosen(new Map(chosen).set(id, gene))} />}
       </form>
     </Dialog>

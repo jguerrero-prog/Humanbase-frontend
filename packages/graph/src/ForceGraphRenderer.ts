@@ -12,6 +12,8 @@ const clusterGap = 190;
 const layoutTicks = 300;
 const padding = 40;
 const maxStretch = 1.8;
+const spiralStep = 8;
+const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
 interface PlacedNode extends SimulationNodeDatum, GraphNode {
   x: number;
@@ -49,6 +51,7 @@ export class ForceGraphRenderer implements GraphRenderer {
   private highlights: readonly GraphHighlight[] = [];
   private layoutKey: string | undefined;
   private positions = new Map<string, { x: number; y: number }>();
+  private largest = 1;
 
   mount(container: HTMLElement, options: MountOptions): void {
     this.options = options;
@@ -66,6 +69,7 @@ export class ForceGraphRenderer implements GraphRenderer {
   render(data: GraphData): void {
     const { svg, canvas } = this;
     if (!svg || !canvas) return;
+    this.largest = Math.max(1, ...data.nodes.map((node) => node.size ?? 1));
     const key = ForceGraphRenderer.layoutKeyOf(data);
     const fresh = key !== this.layoutKey;
     const placed = fresh ? this.placeAnew(data, svg) : this.placeAsBefore(data);
@@ -110,7 +114,7 @@ export class ForceGraphRenderer implements GraphRenderer {
 
   /** What the layout depends on; gene names and group labels are left out, so renaming moves nothing. */
   private static layoutKeyOf(data: GraphData): string {
-    const nodes = data.nodes.map((node) => (data.groups ? `${node.id}:${node.group ?? ''}` : `${node.id}:${node.query}`));
+    const nodes = data.nodes.map((node) => `${node.id}:${data.groups ? (node.group ?? '') : node.query}:${node.size ?? ''}`);
     const links = data.groups ? [] : data.links.map((link) => `${link.source}-${link.target}:${link.weight}`);
     return JSON.stringify([data.groups?.map((group) => group.id) ?? null, nodes, links]);
   }
@@ -160,7 +164,7 @@ export class ForceGraphRenderer implements GraphRenderer {
     const classes = ['force-graph-node', node.query && 'is-query', cluster && 'is-member'].filter(Boolean).join(' ');
     const group = svgElement('g', { class: classes, tabindex: 0, role: 'button', 'aria-label': `${node.label}, ${kind}`, transform: `translate(${node.x} ${node.y})` });
     if (cluster) group.style.setProperty('--node-color', `var(${cluster.color})`);
-    const r = cluster ? radius.member : node.query ? radius.query : radius.node;
+    const r = this.radiusOf(node, Boolean(cluster));
     this.placed.set(node.id, { x: node.x, y: node.y, r });
     group.append(svgElement('circle', { class: 'force-graph-ring', r: r + radius.ring }), svgElement('circle', { class: 'force-graph-dot', r }));
     if (!cluster) {
@@ -178,6 +182,12 @@ export class ForceGraphRenderer implements GraphRenderer {
     group.addEventListener('blur', hoverEnd);
     this.nodes.set(node.id, group);
     return group;
+  }
+
+  // Radius follows the square root of size, as in humanbase.io's d3 pack, between the node and query gene radii.
+  private radiusOf(node: GraphNode, member: boolean): number {
+    if (node.size !== undefined) return this.largest > 1 ? radius.node + ((radius.query - radius.node) * (Math.sqrt(node.size) - 1)) / (Math.sqrt(this.largest) - 1) : radius.node;
+    return member ? radius.member : node.query ? radius.query : radius.node;
   }
 
   private layout(data: GraphData): { nodes: PlacedNode[]; links: PlacedLink[] } {
@@ -198,16 +208,33 @@ export class ForceGraphRenderer implements GraphRenderer {
     const columns = Math.max(1, Math.ceil(Math.sqrt(groups.length * 1.6)));
     const centers = new Map(groups.map((group, index) => [group.id, { x: (index % columns) * clusterGap, y: Math.floor(index / columns) * clusterGap }]));
     const centerOf = (node: GraphNode) => centers.get(node.group ?? '') ?? { x: 0, y: 0 };
-    const nodes: PlacedNode[] = data.nodes.map((node, index) => ({ ...node, x: centerOf(node).x + Math.cos(index) * 20, y: centerOf(node).y + Math.sin(index) * 20 }));
+    const rank = ForceGraphRenderer.largestFirstInGroup(data.nodes);
+    const nodes: PlacedNode[] = data.nodes.map((node) => {
+      const at = rank.get(node.id) ?? 0;
+      const distance = spiralStep * Math.sqrt(at);
+      return { ...node, x: centerOf(node).x + Math.cos(at * goldenAngle) * distance, y: centerOf(node).y + Math.sin(at * goldenAngle) * distance };
+    });
     const links = ForceGraphRenderer.linksBetween(nodes, data.links);
     forceSimulation(nodes)
       .force('x', forceX<PlacedNode>((node) => centerOf(node).x).strength(0.35))
       .force('y', forceY<PlacedNode>((node) => centerOf(node).y).strength(0.35))
       .force('charge', forceManyBody().strength(-18))
-      .force('collide', forceCollide<PlacedNode>().radius(radius.member + 3))
+      .force('collide', forceCollide<PlacedNode>().radius((node) => this.radiusOf(node, true) + 3))
       .stop()
       .tick(layoutTicks);
     return { nodes, links };
+  }
+
+  /** Each gene's place in its group, largest first, so a group starts as a spiral around its most connected gene, as humanbase.io's pack centers it. */
+  private static largestFirstInGroup(nodes: readonly GraphNode[]): Map<string, number> {
+    const counted = new Map<string, number>();
+    const rank = new Map<string, number>();
+    for (const node of [...nodes].sort((a, b) => (b.size ?? 1) - (a.size ?? 1))) {
+      const group = node.group ?? '';
+      rank.set(node.id, counted.get(group) ?? 0);
+      counted.set(group, (counted.get(group) ?? 0) + 1);
+    }
+    return rank;
   }
 
   private drawGroupLabels(nodes: PlacedNode[], groups: readonly GraphGroup[]): SVGGElement {

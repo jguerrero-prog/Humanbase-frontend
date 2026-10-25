@@ -16,7 +16,8 @@ import {
 } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { analysisColumns, analysisOptions, categoryCrumbs } from '../content/product';
-import { matchOf } from '../HomeSearch/geneMatches';
+import { hitsOf, matchOf, splitByVersion } from '../HomeSearch/geneMatches';
+import { OutsideVersionAlert } from '../HomeSearch/OutsideVersionAlert';
 import { notifications } from '../Notifications/Notifications';
 import type { ModuleDraft } from '../Modules/ModuleExplorer';
 import '../HomeSearch/HomeSearch.css';
@@ -65,7 +66,9 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
     for (const [id, entrez] of chosen) next = next.choose(id, entrez);
     return next;
   }, [matches.data, removed, chosen]);
-  const entrez = [...new Set(list.matches.flatMap((match) => (match.status === 'not-found' ? [] : (list.gene(match)?.entrez ?? []))))].map(Number);
+  const hits = useMemo(() => hitsOf(matches.data ?? []), [matches.data]);
+  // Terms to check run as their chosen gene, the first one until another is picked.
+  const { entrez, outside, outsideGenes } = splitByVersion(list, list.matches.filter((match) => match.status !== 'not-found'), hits, version);
   const inRange = entrez.length >= ModuleService.minimumGenes && entrez.length <= ModuleService.maximumGenes;
 
   const type = (next: string) => {
@@ -192,6 +195,7 @@ export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afte
             </Alert>
           )}
           <GeneMatchSummary list={list} title={`How your ${genesWord(list.matches.length)} matched`} level={2} />
+          <OutsideVersionAlert outside={outsideGenes} version={version} runnable={entrez.length} onRemove={() => remove(outside.map((match) => match.id))} />
           <GeneMatchTable
             list={list}
             caption={`How your ${genesWord(list.matches.length)} matched`}
