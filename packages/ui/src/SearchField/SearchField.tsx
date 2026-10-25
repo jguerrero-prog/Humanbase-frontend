@@ -1,6 +1,7 @@
 import { useId, useMemo, useRef, useState, type ChangeEvent, type InputHTMLAttributes, type KeyboardEvent } from 'react';
 import { Badge } from '../Badge/Badge';
 import { Icon } from '../Icon/Icon';
+import { Alert } from '../Message/Alert';
 import { ListNavigator } from '../List/ListNavigator';
 import { useDismiss } from '../List/useDismiss';
 import { MenuPanel } from '../Menu/Menu';
@@ -36,6 +37,9 @@ export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElem
   onClear?: () => void;
   suggestions?: readonly SearchSuggestion[];
   suggestionsLoading?: boolean;
+  /** The suggestions couldn’t load. Shown instead of “No genes match”, with Try again calling onRetry. */
+  suggestionsFailed?: boolean;
+  onRetry?: () => void;
   onSuggestionSelect?: (suggestion: SearchSuggestion) => void;
   noMatchesText?: string;
   open?: boolean;
@@ -53,7 +57,7 @@ export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElem
 
 export function SearchField({
   label, size = 'large', loading = false, value, defaultValue = '', disabled, className, onChange, onClear, onKeyDown,
-  suggestions, suggestionsLoading = false, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, defaultHighlight = -1, heading, total, note, inlineSuggestions = false, matchNoun = 'genes', enterHint = 'open gene', ...rest
+  suggestions, suggestionsLoading = false, suggestionsFailed = false, onRetry, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, defaultHighlight = -1, heading, total, note, inlineSuggestions = false, matchNoun = 'genes', enterHint = 'open gene', ...rest
 }: SearchFieldProps) {
   const linkHref = useLinkHref();
   const id = useId();
@@ -136,7 +140,13 @@ export function SearchField({
   };
 
   const activeId = grid && destinationsOf(highlight).length > 0 ? cellId(highlight, column) : optionId(highlight);
-  const announcement = !open || suggestionsLoading ? '' : count === 0 ? `No ${matchNoun} match “${text}”` : `${count} ${count === 1 ? 'suggestion' : 'suggestions'}`;
+  const failure = new SuggestionsFailure(text);
+  const retry = () => {
+    input.current?.focus();
+    onRetry?.();
+  };
+  const announcement =
+    !open || suggestionsLoading ? '' : suggestionsFailed ? failure.announcement : count === 0 ? `No ${matchNoun} match “${text}”` : `${count} ${count === 1 ? 'suggestion' : 'suggestions'}`;
 
   return (
     <div ref={wrapper} className={['search-field-group', inlineSuggestions && 'search-field-inline', className].filter(Boolean).join(' ')}>
@@ -185,6 +195,10 @@ export function SearchField({
         <MenuPanel className="search-suggestions">
           {suggestionsLoading ? (
             <SuggestionsLoading />
+          ) : suggestionsFailed ? (
+            <Alert tone="error" title={SuggestionsFailure.title} live={false} className="search-suggestions-error" {...(onRetry && { action: { label: 'Try again', onSelect: retry } })}>
+              {failure.text}
+            </Alert>
           ) : count === 0 ? (
             <SuggestionsEmpty query={text} text={noMatchesText} noun={matchNoun} />
           ) : (
@@ -280,6 +294,21 @@ export function SuggestionsLoading() {
       Searching genes…
     </p>
   );
+}
+
+/** What the suggestions panel says when the request fails, so a failure never reads as “No genes match”. */
+class SuggestionsFailure {
+  static readonly title = 'Suggestions couldn’t load';
+
+  constructor(private readonly query: string) {}
+
+  get text(): string {
+    return `Humanbase didn’t answer, so “${this.query}” hasn’t been checked yet. What you typed is still here.`;
+  }
+
+  get announcement(): string {
+    return `Error: ${SuggestionsFailure.title}. ${this.text}`;
+  }
 }
 
 export function SuggestionsEmpty({ query, text, noun = 'genes' }: { query: string; text: string; noun?: string }) {

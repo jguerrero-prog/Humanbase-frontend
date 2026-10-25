@@ -139,6 +139,8 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
           onPaste={pasteList}
           suggestions={typingOne ? (suggestions.data?.map((gene) => suggestionOf(gene, text)) ?? []) : []}
           suggestionsLoading={typingOne && (suggestions.isFetching || settled !== text)}
+          suggestionsFailed={typingOne && suggestions.isError}
+          onRetry={() => void suggestions.refetch()}
           {...(!typingOne && { open: false })}
           onSuggestionSelect={chooseSuggestion}
           note="Choosing a gene switches the analysis to Networks. To search several genes, keep typing and separate them with spaces."

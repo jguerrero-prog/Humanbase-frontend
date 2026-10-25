@@ -1,3 +1,4 @@
+import { ApiError } from '../ApiError';
 import { Humanbase } from '../Humanbase';
 import { SampleClient } from '../sample/SampleClient';
 import { GeneSearchService } from './GeneSearchService';
@@ -14,6 +15,12 @@ describe('GeneSearchService', () => {
 
   it('returns no suggestions for an unknown symbol', async () => {
     await expect(samples().search.suggest('NOTAGENE123')).resolves.toEqual([]);
+  });
+
+  it('reads a missing recording as no match, but lets other failures through', async () => {
+    await expect(samples().search.suggest('NOTRECORDED')).resolves.toEqual([]);
+    const failing = { get: vi.fn().mockRejectedValue(new ApiError(502, 'genes/search/partial/')), post: vi.fn(), text: vi.fn() };
+    await expect(new GeneSearchService(failing).suggest('IL1B')).rejects.toThrow(ApiError);
   });
 
   it('matches a pasted list term by term', async () => {

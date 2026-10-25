@@ -1,3 +1,4 @@
+import { ApiError } from '../ApiError';
 import type { DataClient } from '../DataClient';
 import { GeneHit, type GeneHitRecord } from '../genes/GeneHit';
 
@@ -20,8 +21,14 @@ export class GeneSearchService {
 
   /** Genes whose symbol, alias or name starts with the text, for suggestions while typing. */
   async suggest(text: string): Promise<GeneHit[]> {
-    const records = await this.client.get<GeneHitRecord[]>('genes/search/partial/', { organism, q: text.trim() });
-    return records.map((record) => new GeneHit(record));
+    try {
+      const records = await this.client.get<GeneHitRecord[]>('genes/search/partial/', { organism, q: text.trim() });
+      return records.map((record) => new GeneHit(record));
+    } catch (error) {
+      // Not found means no gene matched, as when the API is off and nothing was recorded for this text.
+      if (error instanceof ApiError && error.isNotFound) return [];
+      throw error;
+    }
   }
 
   async exact(symbol: string): Promise<GeneHit[]> {

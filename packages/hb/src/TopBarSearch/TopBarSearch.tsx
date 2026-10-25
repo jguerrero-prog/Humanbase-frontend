@@ -22,6 +22,8 @@ export function TopBarSearch() {
       onClear={() => setText('')}
       suggestions={found.slice(0, shown).map((gene) => ({ ...suggestionOf(gene, text), destinations: geneDestinations(gene) }))}
       suggestionsLoading={genes.isFetching || settled !== text}
+      suggestionsFailed={genes.isError}
+      onRetry={() => void genes.refetch()}
       heading="Genes"
       total={found.length}
     />
