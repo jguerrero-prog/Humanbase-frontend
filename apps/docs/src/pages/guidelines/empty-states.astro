@@ -90,7 +90,7 @@ const writing = [
   </DocSection>
 
   <DocSection title="Humanbase examples" lead="One for each kind, in the place it appears.">
-    <div class="examples">
+    <div class="card-grid examples" style="--columns: 2">
       <figure>
         <figcaption><strong>Job history</strong> <span>First use</span></figcaption>
         <Table caption="Job history">
@@ -256,13 +256,6 @@ const writing = [
   .legend p {
     font: var(--type-body-sm);
     color: var(--text-secondary);
-  }
-
-  .examples {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6);
-    align-items: start;
   }
 
   .examples figure {

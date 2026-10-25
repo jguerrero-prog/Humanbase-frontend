@@ -15,7 +15,7 @@ const { caption, columns, widths = [] } = Astro.props;
       widths.length > 0 && (
         <colgroup>
           {widths.map((width) => (
-            <col style={`width: ${width}`} />
+            <col style={`--column-width: ${width}`} />
           ))}
         </colgroup>
       )

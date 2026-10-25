@@ -174,7 +174,7 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
   </DocSection>
 
   <DocSection title="Suggestions as you type" lead="As people type, the box suggests matching genes. Each suggestion says why it appeared, so an unexpected gene, like CASP1 for IL1B, explains itself.">
-    <div class="examples">
+    <div class="card-grid examples" style="--columns: 2">
       <div class="example">
         <h3>A symbol</h3>
         <SearchField label="Search genes, example with a symbol" value="IL1B" suggestions={symbolSuggestions} open inlineSuggestions defaultHighlight={0} note="Enter opens IL1B. To search several genes, keep typing and separate them with spaces." />
@@ -197,7 +197,7 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
   </DocSection>
 
   <DocSection title="Suggestions in the top bar" lead="The top bar suggests genes the same way, under a Genes heading, and adds an Open in row to each: the pages that gene can open in.">
-    <div class="examples">
+    <div class="card-grid examples" style="--columns: 2">
       <div class="example">
         <h3>A disease, with destinations</h3>
         <SearchField label="Search genes, example in the top bar" value="autism" suggestions={topBarSuggestions} open inlineSuggestions defaultHighlight={1} heading="Genes" total={21} />
@@ -293,10 +293,7 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
 
 <style>
   .examples {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 615px));
     gap: 46px;
-    align-items: start;
   }
 
   .example h3,
