@@ -32,4 +32,6 @@ export const seiHgmd: PrecomputedVariantSet = {
   start: firstVariant,
   sampleStart: firstVariant,
   scoreDocs: { label: 'Score type documentation', href: `${sei.docsHref}#output` },
+  // A curated list people read in its order, so Previous and Next go through all of it, as the heatmap lists it.
+  steps: 'list',
 };
