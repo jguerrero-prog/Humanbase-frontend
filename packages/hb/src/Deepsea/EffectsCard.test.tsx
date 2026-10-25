@@ -86,6 +86,19 @@ describe('EffectsCard', () => {
     width.mockRestore();
   });
 
+  it('spans the ruler over the columns, not the whole view, and says which part of a wide view they cover', () => {
+    const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(30);
+    // Two 15px slots across a 210 kb view leave room for two of the four variants.
+    const near = [at(2_334_400, [1, 1, 1]), at(2_334_900, [1, -5, 3]), at(2_336_000, [2, 2, 2]), at(2_336_900, [3, 3, 3])];
+    renderCard({ effects: near[1]?.effects ?? [], inView: { location: new GenomeLocation('chr1', 2_230_000, 2_440_000), variants: near, selected: 1 }, view: 'heatmap' });
+    expect(document.querySelector('.heatmap-summary')).toHaveTextContent(/^The 2 columns are the variants around the outlined one, chr1:2,334,900-2,336,000 \(1.1 kb\), out of 4 in the genome browser’s 210 kb view/);
+    expect(document.querySelector('.heatmap-axis-title')).toHaveTextContent('Position on chr1, GRCh37/hg19: 2,334,500 +');
+    // Four ticks 500 bases apart; on a 69px ruler only every third is labeled, so the labels never overlap.
+    expect(document.querySelectorAll('.heatmap-axis g')).toHaveLength(4);
+    expect([...document.querySelectorAll('.heatmap-axis text')].map((tick) => tick.textContent)).toEqual(['0', '1500']);
+    width.mockRestore();
+  });
+
   it('centers on a variant when its column is clicked, and moves the view when the cells are dragged', async () => {
     const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1000);
     const onSelect = vi.fn();

@@ -1,4 +1,4 @@
-import type { FeatureEffect, GenomeLocation } from '@humanbase/data';
+import { GenomeLocation, type FeatureEffect } from '@humanbase/data';
 import { Button, Heatmap, useWidth, type EffectScale } from '@humanbase/ui';
 
 export interface VariantInView {
@@ -37,7 +37,7 @@ export interface InViewHeatmapProps {
 }
 
 const count = new Intl.NumberFormat('en-US');
-const tickSteps = [1_000, 2_000, 5_000, 10_000, 20_000, 50_000, 100_000, 200_000, 500_000];
+const tickSteps = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1_000, 2_000, 5_000, 10_000, 20_000, 50_000, 100_000, 200_000, 500_000];
 // humanbase.io gives each variant a 15px slot across the heatmap's width and ignores drag moves over 100px.
 const slotWidth = 15;
 const longestMove = 100;
@@ -69,6 +69,14 @@ function fullColumns(variants: readonly VariantInView[], selected: number, locat
   return all.slice(first, first + slots);
 }
 
+/** A ruler over the columns, from round ticks around the first and last, in about five steps. */
+function columnRuler(first: number, last: number): { offset: number; ticks: number[] } {
+  const step = tickSteps.find((size) => (last - first) / size <= 5) ?? tickSteps.at(-1) ?? 1;
+  const offset = Math.floor(first / step) * step;
+  const steps = Math.max(1, Math.ceil((last - offset) / step));
+  return { offset, ticks: Array.from({ length: steps + 1 }, (_, index) => index * step) };
+}
+
 /** One column per variant in view, in genome order; rows ranked by the size of the center variant's effect, as on humanbase.io. */
 export function InViewHeatmap({ location, variants: all, selected: center, shown, limit, reversed, compact, scale, scoreName, featurePlural, onShowMore, onSelect, onMove }: InViewHeatmapProps) {
   const [box, width] = useWidth();
@@ -80,8 +88,14 @@ export function InViewHeatmap({ location, variants: all, selected: center, shown
   const ranked = [...shown].sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
   if (reversed) ranked.reverse();
   const top = ranked.slice(0, limit);
-  const step = tickSteps.find((size) => location.width / size <= 5) ?? location.width / 4;
-  const ticks = Array.from({ length: Math.floor(location.width / step) + 1 }, (_, index) => index * step);
+  const first = variants[0]?.position ?? location.start;
+  const last = variants.at(-1)?.position ?? location.end;
+  // The ruler spans the columns, not the whole view, so each line reaches its own place even when the view is wide.
+  const ruler = columnRuler(first, last);
+  const columnsCover =
+    !compact && kept.length < all.length
+      ? `The ${count.format(variants.length)} columns are the variants around the outlined one, ${location.chrom}:${count.format(first)}-${count.format(last)} (${GenomeLocation.widthInWords(last - first + 1)}), out of ${count.format(all.length)} in the genome browser’s ${GenomeLocation.widthInWords(location.width)} view, in genomic order`
+      : 'One column per variant in the genome browser’s view, in genomic order';
   const showing = top.length === ranked.length ? `all ${count.format(ranked.length)}` : `the ${reversed ? 'bottom' : 'top'} ${top.length} of ${count.format(ranked.length)}`;
   const drag = (dx: number) => {
     if (!onMove || !width || dx === 0 || Math.abs(dx) > longestMove) return;
@@ -92,14 +106,14 @@ export function InViewHeatmap({ location, variants: all, selected: center, shown
     <div className="effects-heatmap" ref={box}>
       <Heatmap
         title={`${scoreName}. Showing ${showing} ${featurePlural}, ranked by ${centerVariant?.name ?? 'the selected variant'}.`}
-        summary="One column per variant in the genome browser’s view, in genomic order; rows ranked by the size of the outlined variant’s effect."
+        summary={`${columnsCover}; rows ranked by the size of the outlined variant’s effect.`}
         scale={scale.legend}
         columns={variants.map((variant) => ({ label: variant.key, position: variant.position, name: variant.name, ...(variant.href && { href: variant.href }) }))}
         rows={top.map((effect) => ({ label: effect.label, values: variants.map((variant) => variant.effects?.[indexOf.get(effect) ?? -1]?.value ?? null) }))}
         rowHeader="Feature"
         columnHeader="Variant"
         valueLabel={scoreName}
-        axis={variants.length > 1 ? { title: `Position on ${location.chrom}, ${location.assemblyName}`, offset: location.start, ticks } : undefined}
+        axis={variants.length > 1 ? { title: `Position on ${location.chrom}, ${location.assemblyName}`, ...ruler } : undefined}
         decimals={scale.digits}
         showValues={variants.length === 1}
         selectedColumn={selected}
