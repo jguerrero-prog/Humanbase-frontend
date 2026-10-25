@@ -29,7 +29,8 @@ export interface FileCheckResult {
 
 const modelNames: Record<VariantModel, string> = { sei: 'Sei', beluga: 'Beluga', seqweaver: 'Seqweaver', expecto: 'ExPecto', insilico: 'Beluga' };
 export const inputKindNames: Record<InputKind, string> = { vcf: 'Variants (VCF)', bed: 'Regions (BED)', fasta: 'Sequences (FASTA)' };
-const nouns: Record<InputKind, [string, string]> = { vcf: ['variant', 'variants'], bed: ['region', 'regions'], fasta: ['sequence', 'sequences'] };
+/** What one item of each input is called, singular and plural. */
+export const inputNouns: Record<InputKind, readonly [string, string]> = { vcf: ['variant', 'variants'], bed: ['region', 'regions'], fasta: ['sequence', 'sequences'] };
 const bases = /^[ACGT]+$/;
 const whole = /^\d+$/;
 const number = new Intl.NumberFormat('en-US');
@@ -51,7 +52,7 @@ export class VariantFileCheck {
     const result: FileCheckResult = { count, problems, summary: this.summary(count, chromosomes, offLength.length > 0) };
     if (offLength.length) result.lengthWarning = this.lengthWarning(offLength);
     if (count > VariantFileCheck.maxVariants) {
-      result.limit = `This file has ${number.format(count)} ${nouns[this.kind][1]}; Humanbase runs up to ${number.format(VariantFileCheck.maxVariants)} per job. Split it into two files.`;
+      result.limit = `This file has ${number.format(count)} ${inputNouns[this.kind][1]}; Humanbase runs up to ${number.format(VariantFileCheck.maxVariants)} per job. Split it into two files.`;
     }
     if (otherKind && otherKind !== this.kind) result.otherKind = `This looks like a ${otherKind.toUpperCase()} file. Switch to ${inputKindNames[otherKind]} to use it.`;
     return result;
@@ -162,7 +163,7 @@ export class VariantFileCheck {
   }
 
   private summary(count: number, chromosomes: ReadonlySet<string>, offLength: boolean): string {
-    const [one, many] = nouns[this.kind];
+    const [one, many] = inputNouns[this.kind];
     const counted = `${number.format(count)} ${count === 1 ? one : many}`;
     if (this.kind === 'fasta') return offLength ? counted : `${counted}, ${number.format(VariantFileCheck.sequenceLength[this.model])} bp each`;
     const names = VariantFileCheck.chromosomeList(chromosomes);

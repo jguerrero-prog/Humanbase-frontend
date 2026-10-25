@@ -1,4 +1,4 @@
-import type { InputKind } from '../jobs/VariantFileCheck';
+import { inputNouns, type InputKind } from '../jobs/VariantFileCheck';
 import type { JobState } from '../jobs/JobHistory';
 import type { ScoreType } from './DeepseaResult';
 import { deepseaModels, genomeLabels, modelOf, type DeepseaModel, type Genome } from './DeepseaModel';
@@ -37,6 +37,8 @@ export interface ResultFile extends DeepseaFile {
 // The API links some files over http; as on humanbase.io, downloads use https.
 const secure = (url: string) => url.replace(/^http:\/\//i, 'https://');
 
+const count = new Intl.NumberFormat('en-US');
+
 const isFile = (entry: DeepseaFile | Record<string, DeepseaFile>): entry is DeepseaFile => typeof entry.url === 'string';
 
 const perSequence: Record<string, Pick<ResultFile, 'name' | 'holds' | 'format'>> = {
@@ -46,7 +48,7 @@ const perSequence: Record<string, Pick<ResultFile, 'name' | 'holds' | 'format'>>
 
 function describe(key: string, kind: InputKind, indexed: boolean): Pick<ResultFile, 'holds' | 'format'> {
   if (key.startsWith('variant_')) return { holds: 'One score per variant, as a genome track', format: 'bigWig (.bw)' };
-  if (key.startsWith('feature_')) return { holds: `Every feature for every ${kind === 'fasta' ? 'sequence' : 'variant'}`, format: indexed ? 'TSV, gzipped, with tabix index' : 'TSV, gzipped' };
+  if (key.startsWith('feature_')) return { holds: `Every feature for every ${inputNouns[kind][0]}`, format: indexed ? 'TSV, gzipped, with tabix index' : 'TSV, gzipped' };
   if (key === 'uploaded_query') return { holds: 'The file as it was submitted', format: kind.toUpperCase() };
   return { holds: 'Every result file in one archive', format: 'tar.gz' };
 }
@@ -126,9 +128,29 @@ export class DeepseaJob {
     return file && isFile(file) ? file : undefined;
   }
 
-  /** As on humanbase.io, a Sei, Beluga or Seqweaver job on sequences (FASTA) is scored but not plotted: its results are its files. */
+  /** As on humanbase.io, only the model's plotted inputs are plotted, such as a Sei VCF; other jobs' results are their files. */
   get plotsScores(): boolean {
-    return this.kind !== 'fasta' || Boolean(this.record.insilico);
+    return this.model.plotted.includes(this.kind);
+  }
+
+  /** The input as it was submitted, such as the regions of a BED job. */
+  get uploadedQuery(): DeepseaFile | undefined {
+    const file = this.record.files?.uploaded_query;
+    return file && isFile(file) ? { ...file, url: secure(file.url) } : undefined;
+  }
+
+  /** Its input, such as Sequences, FASTA. */
+  get inputLabel(): string {
+    const plural = inputNouns[this.kind][1];
+    return `${plural[0]?.toUpperCase()}${plural.slice(1)}, ${this.kind.toUpperCase()}`;
+  }
+
+  /** What a job shown as files predicted, leaving out either count when it couldn't be read. */
+  filesSummary(profiles?: number, inputs?: number): string {
+    const [one, many] = inputNouns[this.kind];
+    const predicted = [profiles && count.format(profiles), this.model.profiles ?? this.model.featurePlural].filter(Boolean).join(' ');
+    const each = inputs === 1 ? `for your ${one}` : `for each of your ${inputs ? `${count.format(inputs)} ` : ''}${many}`;
+    return `${this.model.tool} predicted ${predicted} ${each}. The results are files to download, one probability per profile and ${one}.`;
   }
 
   get archive(): DeepseaFile | undefined {
