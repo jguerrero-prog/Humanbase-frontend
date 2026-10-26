@@ -78,6 +78,7 @@ export const routes: RouteObject[] = [
           { path: 'download/*', element: <Navigate to="/downloads/" replace /> },
           page('about', async () => (await import('./pages/AboutPage')).AboutPage),
           page('cite', async () => (await import('./pages/CitePage')).CitePage),
+          page('whats-new', async () => (await import('./pages/WhatsNewPage')).WhatsNewPage),
           page('docs/*', async () => (await import('./pages/DocsPage')).DocsPage),
           page('jobs',async () => (await import('./pages/JobsPage')).JobsPage),
           { path: '*', element: <NotFoundPage /> },
