@@ -1,8 +1,9 @@
 import { Humanbase, HumanbaseProvider, SampleClient } from '@humanbase/data';
+import type { GenomeGene } from '@humanbase/genome';
 import { render, screen, within } from '@testing-library/react';
 import { GenomeGeneDrawer } from './GenomeGeneDrawer';
 
-const celsr2 = { name: 'CELSR2', chrom: 'chr1', start: 109_792_641, end: 109_818_372, strand: '+' as const, type: 'protein_coding', source: 'GENCODE 19' };
+const celsr2: GenomeGene = { name: 'CELSR2', chrom: 'chr1', start: 109_792_641, end: 109_818_372, strand: '+', type: 'protein_coding', source: 'GENCODE 19' };
 
 const renderDrawer = (gene = celsr2) =>
   render(
