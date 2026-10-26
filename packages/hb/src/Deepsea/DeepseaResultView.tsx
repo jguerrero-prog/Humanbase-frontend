@@ -11,6 +11,7 @@ import {
   ResultLayout,
   SearchField,
   Select,
+  rangeEffects,
   sequenceClassEffects,
   sequenceClassLegend,
   Skeleton,
@@ -60,9 +61,12 @@ const colorStyles = [
 ];
 const number = new Intl.NumberFormat('en-US');
 
-function effectScaleOf(model: DeepseaJob['model']): EffectScale {
+/** A feature score's scale: the model's own, z-score's bins, or else humanbase.io's range for the score, such as e-value or Probability diffs. */
+function effectScaleOf(model: DeepseaJob['model'], type: ScoreType): EffectScale {
   if (model.id === 'sei') return sequenceClassEffects;
-  return model.expecto ? expressionEffects : zEffects;
+  if (model.expecto) return expressionEffects;
+  if (type.short_name === 'zscore' || !type.range) return zEffects;
+  return rangeEffects(scoreTypeLabel(type), type.range, { reversed: type.reverse_order, insignificant: type.non_sig_range });
 }
 
 const scoreOptions = (types: readonly ScoreType[]) => types.map((type) => ({ value: type.short_name, label: scoreTypeLabel(type) }));
@@ -323,6 +327,7 @@ interface VariantEffectsCardProps {
 function VariantEffectsCard({ job, variant, variants, location, predictions: { features, predictions, error, refetch }, featureTypes, type, onTypeChange, scoreKey, onSelect, onMove, view, onViewChange }: VariantEffectsCardProps) {
   const model = job.model;
   const label = variantLabel(variant);
+  const scale = useMemo(() => effectScaleOf(model, type), [model, type]);
   const byId = useMemo(() => new Map(variants.map((row) => [row.id, row])), [variants]);
   const inView = useMemo(
     () =>
@@ -352,7 +357,7 @@ function VariantEffectsCard({ job, variant, variants, location, predictions: { f
       effects={inView[selected]?.effects}
       failed={Boolean(error)}
       onRetry={refetch}
-      scale={effectScaleOf(model)}
+      scale={scale}
       threshold={model.threshold}
       featureNoun={model.featureNoun}
       featurePlural={model.featurePlural}

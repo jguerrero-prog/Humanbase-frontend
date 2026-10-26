@@ -61,6 +61,8 @@ export function StrongestEffects({ effects, counts, threshold, expanded = [], on
   const lowers = shown.groups('lowers');
   const bars = useMemo(() => new EffectBars(effects.scale), [effects.scale]);
   const { prefix, bins } = effects.scale;
+  // A score without strength bins isn't offered here; humanbase.io only ranks it.
+  if (!bins) return null;
   const lowest = threshold ?? 0;
   const stats: [number, string][] = [
     [tally.strong, `strong, ${prefix}${bins.strong} or more`],

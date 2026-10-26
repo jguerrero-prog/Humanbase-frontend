@@ -142,7 +142,7 @@ export function Heatmap({ title, summary, scale: spec, columns, rows, rowHeader,
   const pendingFocus = useRef<Cell>(undefined);
   const narrow = columnWidth === 'narrow' || (columnWidth === 'auto' && !fits);
   const width = narrow ? narrowWidth : cellWidth;
-  const format = (value: number) => ScoreScale.number(Number(value.toFixed(decimals)));
+  const format = (value: number) => Number(value.toFixed(decimals)).toLocaleString('en-US', { maximumFractionDigits: decimals }).replace('-', '−');
   const columnLabel = (column: HeatmapColumn) => (column.position === undefined ? column.label : counts.format(column.position));
   const columnName = (column: HeatmapColumn) => column.name ?? columnLabel(column);
   const labels = rows.map((row) => row.label).join('\n');
