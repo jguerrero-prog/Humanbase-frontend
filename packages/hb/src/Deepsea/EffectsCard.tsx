@@ -109,7 +109,7 @@ export function EffectsCard({ label, heading, effects, failed, onRetry, scale, t
       onShowMore={() => setRows((shown) => shown + heatmapRows)}
     />
   ) : (
-    <AllFeaturesPlot values={plotted.map((effect) => effect.value)} labels={named.map((effect) => ({ label: effect.label, value: effect.value }))} scale={scale} summary={plotSummary} />
+    <AllFeaturesPlot values={plotted.map((effect) => ({ label: effect.label, value: effect.value }))} labels={named.map((effect) => ({ label: effect.label, value: effect.value }))} scale={scale} summary={plotSummary} />
   );
 
   return (
