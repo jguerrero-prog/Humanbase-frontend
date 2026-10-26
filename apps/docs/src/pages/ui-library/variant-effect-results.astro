@@ -60,7 +60,7 @@ const focus = exampleVariants.find((variant) => variant.id === selectedVariant)!
 const focusLabel = variantLabel(focus);
 const effects = new EffectGroups(topExperiments);
 const heatmapRows = topExperiments.map((experiment) => ({ experiment, values: [experiment.value] }));
-const allValues = [...illustrativeRanks, ...topExperiments.map((experiment) => experiment.value)];
+const allValues = [...illustrativeRanks.map((value) => ({ value })), ...topExperiments.map((experiment) => ({ label: experiment.label, value: experiment.value }))];
 const topLabels = topExperiments.slice(0, 5).map((experiment) => ({ label: experiment.label, value: experiment.value }));
 const genes = [
   { name: 'SARS', from: 109_768_000, to: 109_786_000, strand: '+' as const },
@@ -236,7 +236,7 @@ const effects = new EffectGroups(experiments); // feature, cell, context, label,
     </div>
   </DocSection>
 
-  <DocSection title="All features" lead="All features is the third tab of the same card. It plots every feature’s score for the selected variant, lowest to highest, so the few strong effects stand out against the rest, and marks where the heatmap’s top 20 come from. Hovering a point shows the cell tooltip; clicking it finds that row in the heatmap.">
+  <DocSection title="All features" lead="All features is the third tab of the same card. It plots every feature’s score for the selected variant, lowest to highest, so the few strong effects stand out against the rest, and marks where the heatmap’s top 20 come from. Hovering the plot names the nearest point and its score, as humanbase.io does.">
     <MolecularEffects variant={focusLabel} view="all">
       <EffectsControls scores={effectScores} score="z" />
       <div data-illustration>

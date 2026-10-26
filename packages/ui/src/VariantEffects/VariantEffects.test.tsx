@@ -1,7 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { AllFeaturesPlot } from './AllFeaturesPlot';
 import { EffectGroups, type EffectExperiment } from './EffectGroups';
 import { EffectsHeatmap } from './EffectsHeatmap';
+import { rangeEffects } from './EffectScale';
 import { chromosomeColor } from './ChromosomeColor';
 import { sequenceClassColor } from './SequenceClass';
 import { StrongestEffects } from './StrongestEffects';
@@ -88,6 +90,31 @@ describe('VariantScorePlot', () => {
     expect(window()).toBeLessThan(whole);
     await userEvent.keyboard('---');
     expect(window()).toBeCloseTo(whole);
+  });
+});
+
+describe('AllFeaturesPlot', () => {
+  const values = [
+    { label: 'K562 / QKI', value: 0.0027 },
+    { label: 'H9 / LIN28A', value: 0.000086 },
+    { value: 0.98 },
+  ];
+
+  it('names the point nearest the pointer and its score, as humanbase.io does, until the pointer leaves or Escape', () => {
+    const { container } = render(<AllFeaturesPlot values={values} summary="3 proteins." scale={rangeEffects('e-value', [0, 0.05], { reversed: true })} />);
+    const svg = container.querySelector('svg') as SVGSVGElement;
+    svg.getBoundingClientRect = () => ({ left: 0, top: 0, width: 485, height: 190 }) as DOMRect;
+    fireEvent.pointerMove(svg, { clientX: 28 });
+    expect(screen.getByRole('tooltip')).toHaveTextContent('H9 / LIN28Ae-value8.6 × 10⁻⁵');
+    fireEvent.pointerMove(svg, { clientX: 252 });
+    expect(screen.getByRole('tooltip')).toHaveTextContent('K562 / QKI');
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('tooltip')).toBeNull();
+    fireEvent.pointerMove(svg, { clientX: 477 });
+    expect(screen.queryByRole('tooltip')).toBeNull();
+    fireEvent.pointerMove(svg, { clientX: 252 });
+    fireEvent.pointerLeave(svg);
+    expect(screen.queryByRole('tooltip')).toBeNull();
   });
 });
 
