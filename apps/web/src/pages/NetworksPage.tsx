@@ -2,6 +2,7 @@ import { ExtendedUniverse, NetworkQuery, NetworkView } from '@humanbase/data';
 import { EmptyNetworkQuery, NetworkExplorer } from '@humanbase/hb';
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import './NetworksPage.css';
 
 export interface NetworksLocationState {
   fromSearch?: boolean;
@@ -29,10 +30,10 @@ export function NetworksPage() {
     <section className="page-section">
       <title>{query.isEmpty ? 'Networks · Humanbase' : `Networks · ${query.entrez.length} ${query.entrez.length === 1 ? 'gene' : 'genes'} · Humanbase`}</title>
       {query.isEmpty ? (
-        <>
+        <div className="networks-empty">
           <h1>Networks</h1>
           <EmptyNetworkQuery />
-        </>
+        </div>
       ) : (
         <NetworkExplorer
           query={query}
