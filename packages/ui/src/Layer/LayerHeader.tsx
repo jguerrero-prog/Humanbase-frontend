@@ -10,9 +10,11 @@ export interface LayerHeaderProps {
   className: string;
   /** Sits above the title, such as a drawer's Back button. */
   above?: ReactNode;
+  /** Sits under the subtitle, such as a link to the subject elsewhere on the site. */
+  below?: ReactNode;
 }
 
-export function LayerHeader({ titleId, title, subtitle, onClose, className, above }: LayerHeaderProps) {
+export function LayerHeader({ titleId, title, subtitle, onClose, className, above, below }: LayerHeaderProps) {
   return (
     <header className={`layer-header ${className}`}>
       <div className="layer-titles">
@@ -21,6 +23,7 @@ export function LayerHeader({ titleId, title, subtitle, onClose, className, abov
           {title}
         </h2>
         {subtitle && <p className="layer-subtitle">{subtitle}</p>}
+        {below}
       </div>
       {onClose && (
         <button type="button" className="layer-close" aria-label="Close" onClick={onClose}>

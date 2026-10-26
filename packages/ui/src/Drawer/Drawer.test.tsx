@@ -38,6 +38,16 @@ describe('Drawer', () => {
     expect(screen.queryByRole('button', { name: 'Back to M1' })).not.toBeInTheDocument();
   });
 
+  it('puts a header link under the subtitle, inside the header', () => {
+    render(
+      <Drawer open inline title="IL1R1" subtitle="interleukin 1 receptor type 1" headerLink={<a href="/genome/?gene=IL1R1">View in genome browser</a>}>
+        <p>Body</p>
+      </Drawer>,
+    );
+    const link = screen.getByRole('link', { name: 'View in genome browser' });
+    expect(link.closest('header')).toContainElement(screen.getByText('interleukin 1 receptor type 1'));
+  });
+
   it('opens over the page without trapping focus, and focuses its title', async () => {
     render(<GeneDetail />);
     await userEvent.click(screen.getByRole('button', { name: 'IL1R1' }));

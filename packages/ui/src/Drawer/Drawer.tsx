@@ -21,12 +21,14 @@ export interface DrawerProps {
   className?: string;
   /** Going one level deeper inside the drawer, such as from a module to one of its genes: a Back button above the title. */
   back?: { label: string; onSelect: () => void } | undefined;
+  /** A link about the subject under the subtitle, such as to a gene in the genome browser, so the footer keeps to the drawer's own actions. */
+  headerLink?: ReactNode;
   children: ReactNode;
 }
 
 const swipeToClose = 64;
 
-export function Drawer({ title, subtitle, open = false, onClose = () => {}, size = 'medium', placement = 'over', sheet, footer, inline = false, className, back, children }: DrawerProps) {
+export function Drawer({ title, subtitle, open = false, onClose = () => {}, size = 'medium', placement = 'over', sheet, footer, inline = false, className, back, headerLink, children }: DrawerProps) {
   const titleId = useId();
   const phone = useMediaQuery(PHONE_QUERY);
   const asSheet = sheet ?? phone;
@@ -72,6 +74,7 @@ export function Drawer({ title, subtitle, open = false, onClose = () => {}, size
               </Button>
             )
           }
+          below={headerLink && <p className="drawer-header-link">{headerLink}</p>}
         />
         {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the body scrolls, so it takes focus for arrow-key scrolling */}
         <div className="drawer-body" role="region" aria-labelledby={titleId} tabIndex={0}>

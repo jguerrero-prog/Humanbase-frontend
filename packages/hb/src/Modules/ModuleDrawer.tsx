@@ -35,7 +35,7 @@ export function ModuleDrawer({ result, module, gene, database, genes, integratio
   const databaseName = result.databaseName(database);
   const topTerm = terms[0]?.title;
 
-  const footer = (label: string, entrez: readonly number[], download: () => void, opened = label, genome?: string) => (
+  const footer = (label: string, entrez: readonly number[], download: () => void, opened = label) => (
     <>
       <a className="button button-primary" href={linkHref(new NetworkQuery(entrez, integration, version).href)}>
         Open {opened} in Networks
@@ -43,13 +43,13 @@ export function ModuleDrawer({ result, module, gene, database, genes, integratio
       <Button variant="ghost" onClick={download}>
         Download {label}
       </Button>
-      <ViewInGenomeBrowser href={genome} variant="ghost" />
     </>
   );
   const saveRows = (rows: readonly string[], name: string) => saveFile(rows.join('\n'), `${name}.tsv`, 'text/tab-separated-values');
 
   if (gene !== undefined) {
     const { symbol, name } = geneOf(gene);
+    const genome = genomeBrowserLink.gene(symbol);
     const geneTerms = result.termsOf(gene, database);
     const neighbors = result.neighbors(gene).map((neighbor) => ({ ...neighbor, gene: geneOf(neighbor.entrez) }));
     const download = () =>
@@ -68,7 +68,8 @@ export function ModuleDrawer({ result, module, gene, database, genes, integratio
         subtitle={[name, `in ${module.label}${topTerm ? ` ${topTerm}` : ''}`].filter(Boolean).join(', ')}
         back={{ label: `Back to ${module.label}`, onSelect: onBack }}
         onClose={onClose}
-        footer={footer(symbol, [gene], download, symbol, genomeBrowserLink.gene(symbol))}
+        headerLink={genome && <ViewInGenomeBrowser href={genome} />}
+        footer={footer(symbol, [gene], download, symbol)}
       >
         <SegmentedControl
           label={`${symbol} details`}

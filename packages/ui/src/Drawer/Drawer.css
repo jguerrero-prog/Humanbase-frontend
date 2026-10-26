@@ -52,6 +52,11 @@
   border-block-end: var(--border-width-1) solid var(--border-subtle);
 }
 
+.drawer-header-link {
+  margin-block-start: var(--space-1);
+  font: var(--type-body-sm);
+}
+
 .drawer-back {
   justify-self: start;
   margin-block-end: var(--space-0-5);
