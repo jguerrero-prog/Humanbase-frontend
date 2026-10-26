@@ -54,22 +54,3 @@ export const moduleFeatures: readonly Feature[] = [
     illustration: 'gwas',
   },
 ];
-
-export interface Update {
-  date: string;
-  title: string;
-  text: string;
-}
-
-export const updates: readonly Update[] = [
-  {
-    date: 'June 2026',
-    title: 'New example gene sets for functional module detection',
-    text: 'Two pre-loaded examples, a renal disease panel (kidney) and a synapse gene set (brain), each with its tissue chosen, so you can submit and inspect a result in one click.',
-  },
-  {
-    date: 'June 2026',
-    title: 'Updated Data sources page',
-    text: 'Data sources are now organized by era, with a tab for each window of Humanbase results and the source versions behind it.',
-  },
-];

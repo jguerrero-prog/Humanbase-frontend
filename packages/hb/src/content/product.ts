@@ -48,6 +48,7 @@ const resources: NavLink[] = [
 const about: NavLink[] = [
   { label: 'About Humanbase', href: '/about/', description: 'The platform and the paper' },
   { label: 'How to cite', href: '/cite/', description: 'Papers to cite for Humanbase and each tool' },
+  { label: 'What’s new', href: '/whats-new/', description: 'Updates to the tools and data' },
   { label: 'Mailing list', href: mailingListHref, description: 'Release notes by email' },
 ];
 

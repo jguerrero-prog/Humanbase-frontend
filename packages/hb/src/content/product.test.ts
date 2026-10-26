@@ -17,6 +17,7 @@ describe('product navigation', () => {
     expect(productSectionFor('/deepsea/jobs/abc123')).toBe('Variants & sequences');
     expect(productSectionFor('/sequence-tools/')).toBe('Variants & sequences');
     expect(productSectionFor('/cite/')).toBe('About');
+    expect(productSectionFor('/whats-new/')).toBe('About');
     expect(productSectionFor('/')).toBeUndefined();
   });
 

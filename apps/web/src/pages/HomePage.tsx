@@ -1,8 +1,8 @@
-import { HomeSearch, ModuleSearch } from '@humanbase/hb';
+import { HomeSearch, latestUpdates, ModuleSearch } from '@humanbase/hb';
 import { Icon, useLinkHref } from '@humanbase/ui';
 import heroArt from '@humanbase/ui/illustrations/hero-homepage.svg?url';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
-import { features, moduleFeatures, updates, type Feature } from './home/content';
+import { features, moduleFeatures, type Feature } from './home/content';
 import { GwasIllustration, HeatmapIllustration, NetworkIllustration } from './home/illustrations';
 import type { ModulesLocationState } from './ModulesPage';
 import './HomePage.css';
@@ -81,7 +81,7 @@ export function HomePage() {
             <a href={linkHref('/whats-new/')}>All updates</a>
           </div>
           <ul className="home-news-list">
-            {updates.map((update) => (
+            {latestUpdates.map((update) => (
               <li key={update.title}>
                 <p className="home-news-date">{update.date}</p>
                 <h3>{update.title}</h3>
