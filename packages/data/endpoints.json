@@ -14,7 +14,7 @@
         "/api/genes/3383/",
         "/api/genes/345611/",
         "/api/genes/5728/",
-        "/api/genes/1230/"
+        "/api/genes/1230/", "/api/genes/1952/", "/api/genes/84722/", "/api/genes/6272/", "/api/genes/6497/", "/api/genes/5192/"
       ],
       "usedBy": [
         "GeneService.get"
@@ -46,7 +46,13 @@
         "/api/genes/search/exact/?organism=homo-sapiens&q=BRCA1",
         "/api/genes/search/exact/?organism=homo-sapiens&q=PTEN",
         "/api/genes/search/exact/?organism=homo-sapiens&q=IRGM",
-        "/api/genes/search/exact/?organism=homo-sapiens&q=CCR1"
+        "/api/genes/search/exact/?organism=homo-sapiens&q=CCR1",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=CELSR2",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=PSRC1",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=SORT1",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=SKI",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=PEX10",
+        "/api/genes/search/exact/?organism=homo-sapiens&q=ICAM1"
       ],
       "usedBy": [
         "GeneSearchService.exact"

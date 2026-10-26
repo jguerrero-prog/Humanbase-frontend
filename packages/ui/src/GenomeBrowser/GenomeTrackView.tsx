@@ -78,6 +78,10 @@ export interface GenomeTrackViewProps {
   scores?: readonly ScoreTrackOf[] | undefined;
   segments?: readonly TrackOf<readonly SegmentShape[]>[] | undefined;
   genes?: TrackOf<readonly GeneShape[]> | undefined;
+  /** Clicking a gene calls this instead of opening its details popover, such as to open the page's gene drawer. */
+  onGene?: ((gene: GeneShape) => void) | undefined;
+  /** The gene whose drawer is open, ringed like an open item. */
+  openGene?: string | undefined;
   /** The selected position, drawn as an ink guide through every track with its label on a pill. */
   selected?: { position: number; label: string } | undefined;
   /** Track names in drawing order; tracks left out keep their usual place: sequence, scores, segments, then genes. */
@@ -221,10 +225,13 @@ interface TrackItem {
   label: string;
   details: ItemDetails;
   box: Box;
+  /** Opens the page's own view of the item instead of the popover. */
+  onSelect?: (() => void) | undefined;
+  open?: boolean | undefined;
 }
 
 /** The items with details, by track, in the order the tracks are drawn. */
-function itemGroupsOf({ width, scores = [], segments = [], genes }: GenomeTrackViewProps, { x, span, placed, topOf }: Layout): { track: string; items: TrackItem[] }[] {
+function itemGroupsOf({ width, scores = [], segments = [], genes, onGene, openGene }: GenomeTrackViewProps, { x, span, placed, topOf }: Layout): { track: string; items: TrackItem[] }[] {
   const scoreGroups = scores.map((track) => {
     const [top, height] = [topOf(`score-${track.name}`), track.height ?? scoreTrackHeight];
     return {
@@ -252,7 +259,14 @@ function itemGroupsOf({ width, scores = [], segments = [], genes }: GenomeTrackV
     };
   });
   const geneTop = topOf('genes');
-  const geneItems = genes?.state === 'ready' ? placed.flatMap((item) => (item.gene.details ? [{ key: geneKey(genes.name, item.gene), label: item.gene.name, details: item.gene.details, box: geneBox(item, geneTop, x, width) }] : [])) : [];
+  const geneItems = genes?.state === 'ready'
+    ? placed.flatMap((item) => {
+        const { gene } = item;
+        if (!gene.details) return [];
+        const selects = onGene && { onSelect: () => onGene(gene), open: openGene === gene.name };
+        return [{ key: geneKey(genes.name, gene), label: gene.name, details: gene.details, box: geneBox(item, geneTop, x, width), ...selects }];
+      })
+    : [];
   // Tab order follows the drawing order, which the page can change.
   return [...scoreGroups, ...segmentGroups, ...(genes ? [{ track: genes.name, top: geneTop, items: geneItems }] : [])]
     .filter((group) => group.items.length > 0)
@@ -419,6 +433,11 @@ export function GenomeTrackView(props: GenomeTrackViewProps) {
   const layout = layoutOf(props, true);
   const groups = itemGroupsOf(props, layout);
   const { frame, tip, ...details } = useItemDetails(groups, `${props.start}-${props.end} ${width}`);
+  const activate = (key: string) => {
+    const item = groups.flatMap((group) => group.items).find((each) => each.key === key);
+    if (item?.onSelect) item.onSelect();
+    else details.show(key);
+  };
   const onSegment = (hovered: SegmentHover | undefined) => {
     const box = frame.current;
     if (!hovered || !box || drag.current?.moved) return setHover(undefined);
@@ -460,7 +479,7 @@ export function GenomeTrackView(props: GenomeTrackViewProps) {
     const dragged = drag.current?.moved;
     drag.current = undefined;
     const key = !dragged && (event.target as Element).closest('[data-item]')?.getAttribute('data-item');
-    if (key) details.show(key);
+    if (key) activate(key);
   };
 
   return (
@@ -473,7 +492,7 @@ export function GenomeTrackView(props: GenomeTrackViewProps) {
         <svg className={onPan ? 'genome-tracks-area is-draggable' : 'genome-tracks-area'} width={width} height={layout.height} aria-hidden="true" focusable="false" onClick={onClick} {...pointer}>
           <TrackDrawing props={props} layout={layout} onSegment={onSegment} interactive />
         </svg>
-        <ItemButtons groups={groups} details={details} />
+        <ItemButtons groups={groups} details={details} onActivate={activate} />
       </div>
       {hover && !details.open && (
         <DataTooltip
@@ -535,7 +554,7 @@ function useItemDetails(groups: ReturnType<typeof itemGroupsOf>, view: string) {
 }
 
 /** The items as buttons over the drawing, one tab stop per track; arrow keys move between a track's items. */
-function ItemButtons({ groups, details }: { groups: ReturnType<typeof itemGroupsOf>; details: ItemDetailsState }) {
+function ItemButtons({ groups, details, onActivate }: { groups: ReturnType<typeof itemGroupsOf>; details: ItemDetailsState; onActivate: (key: string) => void }) {
   const [current, setCurrent] = useState<Record<string, string>>({});
   const move = (event: KeyboardEvent<HTMLButtonElement>, items: readonly TrackItem[], index: number) => {
     const next = { ArrowLeft: index - 1, ArrowUp: index - 1, ArrowRight: index + 1, ArrowDown: index + 1, Home: 0, End: items.length - 1 }[event.key];
@@ -551,7 +570,7 @@ function ItemButtons({ groups, details }: { groups: ReturnType<typeof itemGroups
         return (
           <div key={track} role="group" aria-label={`${track}, items`}>
             {items.map((item, index) => {
-              const isOpen = details.open?.item.key === item.key;
+              const isOpen = item.open ?? details.open?.item.key === item.key;
               return (
                 <button
                   key={item.key}
@@ -563,9 +582,9 @@ function ItemButtons({ groups, details }: { groups: ReturnType<typeof itemGroups
                   aria-label={item.label}
                   aria-haspopup="dialog"
                   aria-expanded={isOpen}
-                  aria-controls={isOpen ? details.id : undefined}
+                  aria-controls={isOpen && !item.onSelect ? details.id : undefined}
                   onFocus={() => setCurrent((was) => ({ ...was, [track]: item.key }))}
-                  onClick={() => details.show(item.key)}
+                  onClick={() => onActivate(item.key)}
                   onKeyDown={(event) => move(event, items, index)}
                 />
               );

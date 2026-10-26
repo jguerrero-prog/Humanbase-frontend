@@ -1,0 +1,50 @@
+{
+  "status": 200,
+  "body": {
+    "url": "http://hb.flatironinstitute.org/api/genes/5192/",
+    "entrez": 5192,
+    "systematic_name": "PEX10",
+    "standard_name": "PEX10",
+    "description": "peroxisomal biogenesis factor 10",
+    "xrefs": [
+      {
+        "xrid": "ENSG00000157911",
+        "crossrefdb": {
+          "name": "Ensembl",
+          "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+        }
+      },
+      {
+        "xrid": "5192",
+        "crossrefdb": {
+          "name": "Entrez",
+          "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+        }
+      },
+      {
+        "xrid": "602859",
+        "crossrefdb": {
+          "name": "MIM",
+          "url": "http://www.omim.org/entry/_REPL_"
+        }
+      },
+      {
+        "xrid": "HGNC:8851",
+        "crossrefdb": {
+          "name": "HGNC",
+          "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+        }
+      }
+    ],
+    "aliases": [
+      "RNF69",
+      "NALD",
+      "PBD6B",
+      "PBD6A"
+    ],
+    "versions_available": [
+      "v1",
+      "v3"
+    ]
+  }
+}

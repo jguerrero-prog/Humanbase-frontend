@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 5192,
+      "standard_name": "PEX10",
+      "aliases": "RNF69|NALD|PBD6B|PBD6A",
+      "xrefs": "ENSG00000157911|5192|602859|HGNC:8851",
+      "description": "peroxisomal biogenesis factor 10",
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}

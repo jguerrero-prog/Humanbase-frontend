@@ -1,6 +1,7 @@
 import type { components } from '../schema';
 
 export type GeneRecord = components['schemas']['GeneDetail'];
+export type CrossRef = components['schemas']['CrossRef'];
 export type DataVersion = 'v1' | 'v3';
 
 export class Gene {
@@ -20,6 +21,11 @@ export class Gene {
 
   get aliases(): readonly string[] {
     return this.record.aliases;
+  }
+
+  /** Its IDs elsewhere, such as Ensembl and HGNC, with each site's link pattern. */
+  get xrefs(): readonly CrossRef[] {
+    return this.record.xrefs;
   }
 
   get isInAnyNetwork(): boolean {

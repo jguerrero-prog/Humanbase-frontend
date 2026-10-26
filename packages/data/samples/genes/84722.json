@@ -1,0 +1,48 @@
+{
+  "status": 200,
+  "body": {
+    "url": "http://hb.flatironinstitute.org/api/genes/84722/",
+    "entrez": 84722,
+    "systematic_name": "PSRC1",
+    "standard_name": "PSRC1",
+    "description": "proline and serine rich coiled-coil 1",
+    "xrefs": [
+      {
+        "xrid": "613126",
+        "crossrefdb": {
+          "name": "MIM",
+          "url": "http://www.omim.org/entry/_REPL_"
+        }
+      },
+      {
+        "xrid": "ENSG00000134222",
+        "crossrefdb": {
+          "name": "Ensembl",
+          "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+        }
+      },
+      {
+        "xrid": "HGNC:24472",
+        "crossrefdb": {
+          "name": "HGNC",
+          "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+        }
+      },
+      {
+        "xrid": "84722",
+        "crossrefdb": {
+          "name": "Entrez",
+          "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+        }
+      }
+    ],
+    "aliases": [
+      "FP3214",
+      "DDA3"
+    ],
+    "versions_available": [
+      "v1",
+      "v3"
+    ]
+  }
+}

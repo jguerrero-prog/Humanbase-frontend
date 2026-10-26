@@ -166,6 +166,21 @@ describe('GenomeTrackView', () => {
       expect(screen.getByRole('tooltip')).toHaveTextContent('ReprW');
     });
 
+    it('calls the page instead of opening the popover when it takes gene clicks, and rings the gene whose drawer is open', async () => {
+      const onGene = vi.fn();
+      const genes = { name: 'Genes', meta: 'GENCODE 19', state: 'ready' as const, data: [{ ...gene, start: 500, end: 900, details }] };
+      const { container, rerender } = render(<GenomeTrackView start={1} end={1000} width={1000} genes={genes} onGene={onGene} />);
+      await userEvent.click(container.querySelector('.genome-tracks-gene-name') as Element);
+      expect(onGene).toHaveBeenCalledWith(expect.objectContaining({ name: 'PEX10', start: 500, end: 900 }));
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(screen.getByRole('button', { name: 'PEX10' })).toHaveAttribute('aria-expanded', 'false');
+      rerender(<GenomeTrackView start={1} end={1000} width={1000} genes={genes} onGene={onGene} openGene="PEX10" />);
+      expect(screen.getByRole('button', { name: 'PEX10' })).toHaveAttribute('aria-expanded', 'true');
+      screen.getByRole('button', { name: 'PEX10' }).focus();
+      await userEvent.keyboard('{Enter}');
+      expect(onGene).toHaveBeenCalledTimes(2);
+    });
+
     it('leaves items without details out of the keyboard and the popover', async () => {
       const { container } = render(<GenomeTrackView start={1} end={1000} width={1000} genes={{ name: 'Genes', meta: 'GENCODE 19', state: 'ready', data: [gene] }} />);
       expect(screen.queryByRole('button')).toBeNull();

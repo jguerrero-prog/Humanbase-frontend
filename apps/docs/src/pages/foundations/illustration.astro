@@ -1,5 +1,5 @@
 ---
-import { Illustration, illustrationNames, illustrations, type IllustrationFormat } from '@humanbase/ui';
+import { Illustration, illustrationNames, illustrations, type IllustrationFormat, type IllustrationName } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -37,6 +37,61 @@ const galleries: { format: IllustrationFormat; title: string; lead: string; colu
   { format: 'rail', title: 'Vertical rail', lead: 'One piece for the side of long reading pages. Shown at 0.4x.', columns: 5 },
   { format: 'hero', title: 'Hero', lead: 'The final homepage hero, then the six explorations it came from. Hero pieces are the one place soft gradients and glows appear, because they sit on dark emerald.', columns: 2 },
 ];
+
+// Natalie's scientific review of the library, shared October 26, 2026, in her words; her reference images are described, not copied.
+const reviewPages = [
+  ['About', 'Might make most sense to use the DNA ribbon illustration, and/or combine DNA ribbon with sequence tape. Maybe add some visual interest or complexity. Essentially needs something that reflects human genetics and genomics very broadly.'],
+  ['Data sources', 'I like the Reads illustration for this: almost all data we use does come from some kind of sequence read, so this is a nice image that reflects our data well.'],
+  ['Other pages', 'Not sure what other pages need band illustrations.'],
+];
+
+const notRelevant = 'Not really relevant to much on Humanbase.';
+const prettyNotRelevant = 'Pretty, but not really relevant to Humanbase.';
+const heroOutside = 'Doesn’t feel related to the site as a whole; the DNA helix and Chromosomes and GWAS heroes are the most relevant.';
+const review: Partial<Record<IllustrationName, string>> = {
+  'tissue-barcode': 'Not sure what this is supposed to be showing, or what a “tissue barcode” should look like. If we truly need a band that reflects tissue specificity, maybe a brain layer?',
+  'genome-ruler': 'Not particularly genomic-looking, but fine as a visual interest addition to a page. Doesn’t communicate much.',
+  'gwas-skyline': 'This filled-in distribution isn’t really what we think of for GWAS visualization. Scientists will immediately recognize something like a Manhattan plot, with dots instead of the smoothed line. Reference: one dot per variant, −log10(p-value) against position, colored by chromosome, with a dashed significance line.',
+  'cell-membrane': 'Nice illustration, but not particularly relevant to the content of Humanbase.',
+  'dna-ribbon': 'Might suit the About page, alone or combined with the sequence tape, with some added visual interest or complexity: it needs to reflect human genetics and genomics very broadly.',
+  'sequence-tape': 'Could combine with the DNA ribbon for the About page.',
+  reads: 'Good for Data sources: almost all data we use does come from some kind of sequence read, so this is a nice image that reflects our data well.',
+  'chromatin-seasons': 'A nice idea, but not quite right biologically: chromatin is highly structured, and this looks chaotic. Reference the known structures chromatin folds into: DNA, nucleosomes (beads on a string), the 30 nm fiber, the chromonema fiber and the chromatid.',
+  'messenger-rna': 'Good for Seqweaver, not necessarily relevant for most other parts of the site.',
+  threads: 'Very general. Maybe most appropriate on a data or data processing page.',
+  ridges: 'Nice illustration for Sei and Beluga.',
+  'intestinal-villi': notRelevant,
+  capillary: notRelevant,
+  'rna-band': notRelevant,
+  'chromatin-corner': 'Nice idea. Could include more details, like an open chromatin region, or a methylation marker.',
+  'epigenetic-landscape-light': 'Personally, I don’t look at this and think “epigenetics”.',
+  'cell-nucleus': 'Not the most relevant. If we keep something like this, make the chromosomes clearer and more DNA-looking than wiggly lines. But this isn’t the scale Humanbase operates at, so it doesn’t quite fit scientifically.',
+  'transcription-factor': 'Not the most exciting, but definitely relevant.',
+  'experiment-plate': 'Humanbase is very much a computational resource, so I’d rather have figures that reflect this than experiments, which we aren’t doing.',
+  'expression-mosaic': 'Humanbase is very much a computational resource, so I’d rather have figures that reflect this than experiments, which we aren’t doing.',
+  'tissue-tiles': 'I like the concept, but I wouldn’t know what the figure shows without a caption. Maybe show tissue differences with recognizable organs, such as brain, kidney, heart and blood.',
+  cells: 'I really like this, but it’s most appropriate for the models that do cell-type-specific analyses, mainly Sei and ExPecto SC. Not appropriate for Modules, as suggested.',
+  cortex: 'I like the idea of a cortex illustration, but I would never know that’s what this represents. Retiring the ASD Browser may make it less necessary, but looking forward, Seal is also brain-focused.',
+  trefoil: prettyNotRelevant,
+  'fine-roots': prettyNotRelevant,
+  mitochondria: prettyNotRelevant,
+  'dividing-cell': prettyNotRelevant,
+  'chromosome-spread': 'Nice, very general figure.',
+  'data-driven': 'I like this new visual of a hierarchical heatmap. The homepage cards may change, though.',
+  'tissue-specific': 'Not sure what these ring-like structures are. Blood cells, maybe? Not very recognizable.',
+  'network-guided': 'Nice for NetWAS and MAGE-WAS.',
+  'functional-modules': 'Not a good visualization of this. We can make ones closer to the data visualization we provide, such as humanbase.io’s module overview.',
+  'gene-function-prediction': 'Also not a great visualization. Not sure we need one (where would it go?).',
+  'tissue-specific-modules': 'Not sure what we need this for. Don’t love it.',
+  neuron: 'A nice neuron image if and when that’s relevant. Not sure we need more of these, or how useful it is without the ASD Browser.',
+  'hero-homepage': 'The landing page hero should be very clearly about genes and/or DNA.',
+  'hero-dna-helix': 'One of the two heroes most relevant to Humanbase.',
+  'hero-chromosomes-gwas': 'One of the two heroes most relevant to Humanbase.',
+  'hero-chromatin-fiber': heroOutside,
+  'hero-epigenetic-landscape': heroOutside,
+  'hero-tissue-section': heroOutside,
+  'hero-fluorescence-microscopy': heroOutside,
+};
 
 const drawnFromData = [
   ['Sequence tape', 'Reference bases around the strongest single change', 'In silico mutagenesis example, chr1:109,816,591 to 109,818,590'],
@@ -118,6 +173,19 @@ const usage = `import { Illustration } from '@humanbase/ui';
     </ul>
   </DocSection>
 
+  <DocSection title="Scientific review" lead="Natalie’s notes on the library, shared October 26, 2026, sit under each illustration below, in her words. They guide revisions; nothing has changed yet. Her notes on which pages carry bands:">
+    <DocTable caption="Band illustrations by page" columns={['Page', 'Feedback']} widths={['22%', '78%']}>
+      {
+        reviewPages.map(([page, note]) => (
+          <tr>
+            <th scope="row">{page}</th>
+            <td>{note}</td>
+          </tr>
+        ))
+      }
+    </DocTable>
+  </DocSection>
+
   {
     galleries.map((gallery) => (
       <DocSection title={gallery.title} lead={gallery.lead}>
@@ -133,6 +201,11 @@ const usage = `import { Illustration } from '@humanbase/ui';
                   </div>
                   <h3>{title}</h3>
                   <p>{use}</p>
+                  {review[name] && (
+                    <p class="review-note">
+                      <strong>Scientific review:</strong> {review[name]}
+                    </p>
+                  )}
                   <code>
                     {width} × {height}
                   </code>
@@ -204,6 +277,13 @@ const usage = `import { Illustration } from '@humanbase/ui';
 </DocsLayout>
 
 <style>
+  .review-note {
+    padding: var(--space-3);
+    font: var(--type-body-sm);
+    background: var(--surface-subtle);
+    border-inline-start: var(--border-width-2) solid var(--border-strong);
+  }
+
   .gallery-cards {
     margin: 0;
     padding: 0;

@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 84722,
+      "standard_name": "PSRC1",
+      "aliases": "FP3214|DDA3",
+      "xrefs": "613126|ENSG00000134222|HGNC:24472|84722",
+      "description": "proline and serine rich coiled-coil 1",
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}
