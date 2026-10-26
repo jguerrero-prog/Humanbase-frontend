@@ -76,7 +76,7 @@ export function productSectionFor(pathname: string): string | undefined {
 
 const footerLinks = (links: readonly NavLink[]) => links.map(({ label, href }) => ({ label, href }));
 
-export const productFooter: Omit<FooterProps, 'onDisplaySettings'> = {
+export const productFooter: FooterProps = {
   description: 'Humanbase is developed at the Flatiron Institute’s Center for Computational Biology to study gene function, regulation and disease.',
   groups: productSections.map((section) => ({ heading: section.label, links: footerLinks(section.columns?.flat().flatMap((group) => group.links) ?? []) })),
   legal: '© 2026 Simons Foundation. Flatiron Institute.',

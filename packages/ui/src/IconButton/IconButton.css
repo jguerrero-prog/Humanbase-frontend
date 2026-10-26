@@ -21,3 +21,16 @@
   cursor: not-allowed;
   background: transparent;
 }
+
+.icon-button-floating {
+  inline-size: 44px;
+  block-size: 44px;
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-elevation-3);
+}
+
+.icon-button-floating:hover {
+  background: var(--surface-subtle);
+}

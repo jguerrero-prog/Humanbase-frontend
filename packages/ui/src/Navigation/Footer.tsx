@@ -18,7 +18,6 @@ export interface FooterProps {
   legal: string;
   dataVersion: string;
   mailingListAction?: string;
-  onDisplaySettings?: () => void;
 }
 
 const mailingListId = 'mailing-list';
@@ -50,7 +49,7 @@ function LinkList({ links }: { links: readonly NavLink[] }) {
   );
 }
 
-export function Footer({ description, groups, legal, dataVersion, mailingListAction = '/subscribe', onDisplaySettings }: FooterProps) {
+export function Footer({ description, groups, legal, dataVersion, mailingListAction = '/subscribe' }: FooterProps) {
   const email = useRef<HTMLInputElement>(null);
   useFocusFromLinks(email);
   return (
@@ -88,9 +87,6 @@ export function Footer({ description, groups, legal, dataVersion, mailingListAct
         <div className="footer-bottom">
           <p>{legal}</p>
           <p>{dataVersion}</p>
-          <button type="button" className="footer-settings" onClick={onDisplaySettings}>
-            Display settings
-          </button>
         </div>
       </div>
     </footer>

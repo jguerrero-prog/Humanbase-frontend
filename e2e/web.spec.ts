@@ -119,6 +119,24 @@ test('Networks explains a gene that is in no network', async ({ page }) => {
   await expect(page.getByText('AUTS12 is not in this network')).toBeVisible();
 });
 
+test('Display settings open from a gear floating at the bottom left, not the footer', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(web);
+  const gear = page.getByRole('button', { name: 'Display settings' });
+  await expect(gear).toHaveCount(1);
+  await expect(page.locator('footer').getByRole('button', { name: 'Display settings' })).toHaveCount(0);
+  const fromCorner = await gear.evaluate((button) => {
+    const box = button.getBoundingClientRect();
+    return { left: box.left, bottom: window.innerHeight - box.bottom };
+  });
+  expect(fromCorner.left).toBeLessThan(40);
+  expect(fromCorner.bottom).toBeLessThan(40);
+  await page.keyboard.press('End');
+  await expect(gear).toBeInViewport();
+  await gear.click();
+  await expect(page.getByRole('dialog', { name: 'Display settings' })).toBeVisible();
+});
+
 test('Display settings saves reduced motion in this browser', async ({ page }) => {
   await apiOff(page);
   await page.goto(web);

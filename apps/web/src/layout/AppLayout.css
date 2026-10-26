@@ -1,4 +1,8 @@
 .app-layout {
+  /* Toasts and the footer's last row clear the Display settings button. */
+  --toast-offset: calc(var(--space-6) + 44px + var(--space-3));
+  --footer-clearance: calc(44px + var(--space-6));
+
   display: flex;
   flex-direction: column;
   min-block-size: 100vh;
@@ -28,5 +32,26 @@
 @media (width < 40rem) {
   .page-section {
     padding: var(--space-8) var(--layout-margin-mobile);
+  }
+}
+
+/* Display settings float at the bottom left. */
+.display-settings-button {
+  position: fixed;
+  z-index: var(--z-sticky);
+  inset-block-end: var(--space-6);
+  inset-inline-start: var(--space-6);
+}
+
+/* On phones the audio player spans the bottom, so the button rises above it. */
+@media (width < 40rem) {
+  .app-layout:has(.audio-dock) .display-settings-button {
+    inset-block-end: calc(var(--space-6) + 50px + var(--space-3));
+  }
+}
+
+@media print {
+  .display-settings-button {
+    display: none;
   }
 }
