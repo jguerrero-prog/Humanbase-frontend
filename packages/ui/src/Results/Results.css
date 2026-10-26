@@ -263,6 +263,11 @@
   cursor: pointer;
 }
 
+.annotation-skeleton {
+  display: grid;
+  gap: var(--space-2);
+}
+
 .annotation-identifier {
   display: block;
   padding-inline-start: var(--space-6);

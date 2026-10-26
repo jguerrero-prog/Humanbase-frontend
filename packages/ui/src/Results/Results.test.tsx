@@ -142,3 +142,14 @@ describe('JobDetails', () => {
     expect(screen.getByText('GWAS file').nextElementSibling).toHaveTextContent('bmi-2012.out.txt');
   });
 });
+
+describe('RankedAnnotationTable while loading', () => {
+  it('keeps its header over skeleton rows shaped like real ones, marked busy', () => {
+    render(<RankedAnnotationTable narrow caption="Gene Ontology (BP) terms" termLabel="Term" scoreLabel="Confidence" rows={undefined} />);
+    const table = screen.getByRole('table', { name: 'Gene Ontology (BP) terms' });
+    expect(within(table).getAllByRole('columnheader').map((header) => header.textContent)).toEqual(['Term', 'Confidence', 'Evidence']);
+    const body = table.querySelector('tbody');
+    expect(body).toHaveAttribute('aria-busy', 'true');
+    expect(body?.querySelectorAll('tr')).toHaveLength(6);
+  });
+});
