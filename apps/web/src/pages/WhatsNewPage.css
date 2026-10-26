@@ -1,0 +1,25 @@
+.whats-new-entry {
+  display: grid;
+  gap: var(--space-2);
+  padding-block-start: var(--space-3);
+}
+
+.whats-new-entry h3 {
+  font: var(--type-h4);
+  letter-spacing: var(--type-h4-tracking);
+}
+
+.whats-new-entry :is(p, ul, blockquote) {
+  margin: 0;
+}
+
+.whats-new-entry ul {
+  display: grid;
+  gap: var(--space-1);
+  padding-inline-start: var(--space-6);
+}
+
+.whats-new-entry blockquote {
+  padding-inline-start: var(--space-4);
+  border-inline-start: 2px solid var(--border-subtle);
+}
