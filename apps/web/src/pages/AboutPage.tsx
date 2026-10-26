@@ -1,4 +1,4 @@
-import { aboutArticle } from '@humanbase/hb';
+import { aboutArticle, showIllustrations } from '@humanbase/hb';
 import { ArticleFigure, ArticleLayout, ArticleSection, AudioPlayer, DropCapParagraph } from '@humanbase/ui';
 
 export function AboutPage() {
@@ -11,6 +11,7 @@ export function AboutPage() {
         lead={lead}
         source={source}
         doi={doi}
+        band={showIllustrations ? 'capillary' : null}
         player={<AudioPlayer src={narration.src} duration={narration.duration} />}
         backMatter={backMatter.map((section) => (
           <ArticleSection key={section.title} kind="back" title={section.title}>
@@ -18,7 +19,7 @@ export function AboutPage() {
           </ArticleSection>
         ))}
       >
-        <DropCapParagraph>{opening}</DropCapParagraph>
+        <DropCapParagraph cells={showIllustrations}>{opening}</DropCapParagraph>
         {sections.map((section) => (
           <ArticleSection key={section.title} title={section.title}>
             <p>{section.text}</p>

@@ -65,6 +65,11 @@
     url("./drop-cap-cells-right.svg") right center / 24px 80px no-repeat;
 }
 
+.article-drop-cap-plain::first-letter {
+  padding: 0;
+  background: none;
+}
+
 .article-section {
   display: grid;
   gap: var(--space-3);
