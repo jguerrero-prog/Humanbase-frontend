@@ -10,35 +10,39 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import { highlighter } from '../../syntax';
 
 const samples = {
-  networkRequest: 'curl -X GET "https://humanbase.io/api/integrations/networks/{slug}/?entrez=3553"',
-  jobRequest: 'curl -X POST "https://humanbase.io/api/netwas/jobs/" -F "file=@bmi_gwas_2012.txt"',
+  networkRequest: 'curl -X GET "https://humanbase.io/api/integrations/{slug}/network/?entrez=3553"',
+  jobRequest: 'curl -X POST "https://humanbase.io/api/netwas/" -F "gwas_file=@bmi-vegas.txt" -F "tissue=adipose-tissue" -F "p_value=0.01"',
   jobResponse: `{
-  "job_id": string (uuid),
-  "status": "queued" or "running" or "finished",
-  "queue_position": integer or null
+  "id": string (uuid),
+  "created": string (date-time),
+  "status": string, "completed" when done,
+  "tissue": string,
+  "version": "v1" or "v3",
+  "results_file": string (URL),
+  "log_file": string (URL)
 }`,
   fileFormat: 'gene\tp\nIL1B\t0.00012\nTNF\t0.0031\nIL6\t0.044',
 };
 
 const languageSources: { language: string; lang: 'bash' | 'python' | 'r'; code: string }[] = [
-  { language: 'curl', lang: 'bash', code: 'curl -X GET "https://humanbase.io/api/integrations/networks/blood-vessel/?entrez=3553"' },
+  { language: 'curl', lang: 'bash', code: 'curl -X GET "https://humanbase.io/api/integrations/blood-vessel/network/?entrez=3553"' },
   {
     language: 'Python',
     lang: 'python',
     code: `import requests
 
-url = "https://humanbase.io/api/integrations/networks/blood-vessel/"
+url = "https://humanbase.io/api/integrations/blood-vessel/network/"
 response = requests.get(url, params={"entrez": 3553})
-genes = response.json()`,
+network = response.json()`,
   },
   {
     language: 'R',
     lang: 'r',
     code: `library(httr)
 
-url <- "https://humanbase.io/api/integrations/networks/blood-vessel/"
+url <- "https://humanbase.io/api/integrations/blood-vessel/network/"
 response <- GET(url, query = list(entrez = 3553))
-genes <- content(response)`,
+network <- content(response)`,
   },
 ];
 const languages: CodeExample[] = await Promise.all(
@@ -160,7 +164,7 @@ const usage = `import { CodeBlock, CodeTabs, InlineCode } from '@humanbase/ui';
 
   <DocSection title="Inline code" lead="For code inside a sentence: endpoints, parameters, field names and file names. Not for gene symbols, which are words in their own right.">
     <div class="inline-example">
-      <p>Send the genes to <InlineCode>/api/modules/</InlineCode> as <InlineCode>{'{"entrez": [3553, 7124]}'}</InlineCode> and read <InlineCode>queue_position</InlineCode> to show progress.</p>
+      <p>Submit a VCF to <InlineCode>/api/deepsea/jobs/</InlineCode>, then read <InlineCode>{'/api/deepsea/jobs/{job_id}/queue_position/'}</InlineCode> to show its place in the queue.</p>
       <p>Upload <InlineCode>bmi_gwas_2012.txt</InlineCode> with columns <InlineCode>gene</InlineCode> and <InlineCode>p</InlineCode>.</p>
     </div>
     <p class="caption">Atkinson Hyperlegible Mono 14 on grey 100, 4px corners, 4px side padding. It sits on the text baseline and never wraps mid-token. For a long line that must fit a phone, such as a file’s column layout on Downloads, pass <InlineCode>wrap</InlineCode>: it then wraps at spaces, or anywhere if a token is still too long, and keeps its background on each line.</p>

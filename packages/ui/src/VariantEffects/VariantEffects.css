@@ -404,6 +404,10 @@
   align-items: start;
 }
 
+.all-features-plot {
+  position: relative;
+}
+
 .all-features-labels {
   display: grid;
   gap: var(--space-1);
