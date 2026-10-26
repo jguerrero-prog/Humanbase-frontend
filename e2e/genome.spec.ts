@@ -31,6 +31,24 @@ test('a gene opens the genome browser page on that gene, with humanbase.io’s /
   expect(apiRequests).toEqual([]);
 });
 
+test('clicking a gene opens its drawer beside the view, rings the gene, and closes back to it, with the API off', async ({ page }) => {
+  const apiRequests = await apiOff(page);
+  await page.goto(`${web}/genome/?gene=ICAM1`);
+  const gene = page.getByRole('group', { name: 'Genes, items' }).getByRole('button', { name: 'ICAM1' });
+  await page.locator('.genome-tracks-gene-name', { hasText: /^ICAM1/ }).click();
+  const drawer = page.getByRole('dialog', { name: 'ICAM1' });
+  await expect(drawer.getByText('intercellular adhesion molecule 1')).toBeVisible();
+  await expect(drawer).toContainText('forward strand (GRCh37/hg19)');
+  await expect(drawer).toContainText('protein_coding (GENCODE 19)');
+  await expect(drawer.getByRole('link', { name: 'Open ICAM1 in Networks' })).toHaveAttribute('href', /entrez=3383/);
+  await expect(gene).toHaveAttribute('aria-expanded', 'true');
+  expect(await violationsOf(page)).toEqual([]);
+  await page.keyboard.press('Escape');
+  await expect(drawer).toHaveCount(0);
+  await expect(gene).toHaveAttribute('aria-expanded', 'false');
+  expect(apiRequests).toEqual([]);
+});
+
 test('a variant opens 50 kb around it, marked, and keeps the mark as the view moves, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/genome/?location=chr5:150226123`);

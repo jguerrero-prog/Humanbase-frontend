@@ -1,11 +1,11 @@
-import type { NetworkGene } from '@humanbase/data';
+import type { CrossRef } from '@humanbase/data';
 import type { GeneIdLink } from '@humanbase/ui';
 
 const order = ['MIM', 'Ensembl', 'HGNC', 'Entrez'];
 const sites: Record<string, string> = { MIM: 'OMIM', Ensembl: 'Ensembl', HGNC: 'HGNC', Entrez: 'NCBI Gene' };
 
 /** A gene's cross-references as links, in the order the design shows them. */
-export function geneIdLinks(gene: NetworkGene): GeneIdLink[] {
+export function geneIdLinks(gene: { xrefs: readonly CrossRef[] }): GeneIdLink[] {
   return gene.xrefs
     .filter((xref) => order.includes(xref.crossrefdb.name))
     .sort((a, b) => order.indexOf(a.crossrefdb.name) - order.indexOf(b.crossrefdb.name))

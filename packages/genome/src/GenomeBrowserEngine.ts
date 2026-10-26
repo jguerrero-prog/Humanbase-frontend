@@ -61,6 +61,19 @@ export interface GenomeTrackLayout {
   height: number;
 }
 
+/** A gene someone clicked in the genes track, as the track's file has it. */
+export interface GenomeGene {
+  name: string;
+  chrom: string;
+  start: number;
+  end: number;
+  strand: '+' | '-' | '';
+  /** The transcript type, such as protein_coding. */
+  type: string;
+  /** The genes track's source, such as GENCODE 19. */
+  source: string;
+}
+
 export interface GenomeBrowserEvents {
   /** Called after someone drags or zooms inside the engine. */
   onRegionChange?: (region: GenomeRegion) => void;
@@ -69,6 +82,8 @@ export interface GenomeBrowserEvents {
    * gets the design system's track headers; one that draws its own labels can leave this out.
    */
   onTrackLayout?: (tracks: readonly GenomeTrackLayout[]) => void;
+  /** Called when someone clicks a gene; with it, the engine leaves the gene's details to the page. */
+  onGeneSelect?: ((gene: GenomeGene) => void) | undefined;
 }
 
 export interface GenomeMountOptions extends GenomeBrowserEvents {
@@ -111,6 +126,8 @@ export interface GenomeBrowserEngine {
   showTracks(hidden: readonly string[]): void;
   /** Draws the tracks in this order, with these settings. */
   arrangeTracks(arrangement: GenomeTrackArrangement): void;
+  /** Rings the gene whose details the page shows; undefined clears it. Engines that don't report gene clicks can leave it out. */
+  markGene?(name: string | undefined): void;
   /** The current view as an SVG file. */
   exportSvg(options: GenomeExportOptions): Promise<Blob>;
   destroy(): void;

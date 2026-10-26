@@ -14,6 +14,7 @@ export interface TrackEngineView {
   highlight: { chrom: string; position: number } | undefined;
   hidden: readonly string[];
   arrangement: GenomeTrackArrangement;
+  markedGene: string | undefined;
 }
 
 export type DrawnTracks = Omit<GenomeTrackViewProps, 'onPan' | 'shift'>;
@@ -30,7 +31,7 @@ export class TrackEngine implements GenomeBrowserEngine {
   private drawn: DrawnTracks | undefined;
 
   constructor(private readonly files: GenomeTracks) {
-    this.view = { region: { chrom: 'chr1', start: 1, end: 1 }, highlight: undefined, hidden: [], arrangement: noArrangement };
+    this.view = { region: { chrom: 'chr1', start: 1, end: 1 }, highlight: undefined, hidden: [], arrangement: noArrangement, markedGene: undefined };
   }
 
   mount(container: HTMLElement, options: GenomeMountOptions): Promise<void> {
@@ -48,6 +49,7 @@ export class TrackEngine implements GenomeBrowserEngine {
         assembly={options.assembly}
         tracks={options.tracks}
         trackMenu={options.trackMenu}
+        onGeneSelect={options.onGeneSelect}
         onRegionChange={(region) => {
           this.update({ region });
           options.onRegionChange?.(region);
@@ -71,6 +73,10 @@ export class TrackEngine implements GenomeBrowserEngine {
 
   arrangeTracks(arrangement: GenomeTrackArrangement): void {
     this.update({ arrangement });
+  }
+
+  markGene(name: string | undefined): void {
+    this.update({ markedGene: name });
   }
 
   /** Keeps what the panel last drew, so an export draws the same tracks and data. */

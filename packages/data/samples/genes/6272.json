@@ -1,0 +1,50 @@
+{
+  "status": 200,
+  "body": {
+    "url": "http://hb.flatironinstitute.org/api/genes/6272/",
+    "entrez": 6272,
+    "systematic_name": "SORT1",
+    "standard_name": "SORT1",
+    "description": "sortilin 1",
+    "xrefs": [
+      {
+        "xrid": "6272",
+        "crossrefdb": {
+          "name": "Entrez",
+          "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+        }
+      },
+      {
+        "xrid": "ENSG00000134243",
+        "crossrefdb": {
+          "name": "Ensembl",
+          "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+        }
+      },
+      {
+        "xrid": "HGNC:11186",
+        "crossrefdb": {
+          "name": "HGNC",
+          "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+        }
+      },
+      {
+        "xrid": "602458",
+        "crossrefdb": {
+          "name": "MIM",
+          "url": "http://www.omim.org/entry/_REPL_"
+        }
+      }
+    ],
+    "aliases": [
+      "NT3",
+      "LDLCQ6",
+      "NTR3",
+      "Gp95"
+    ],
+    "versions_available": [
+      "v1",
+      "v3"
+    ]
+  }
+}

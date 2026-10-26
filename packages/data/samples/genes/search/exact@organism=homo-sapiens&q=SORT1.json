@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 6272,
+      "standard_name": "SORT1",
+      "aliases": "NT3|LDLCQ6|NTR3|Gp95",
+      "xrefs": "6272|ENSG00000134243|HGNC:11186|602458",
+      "description": "sortilin 1",
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}

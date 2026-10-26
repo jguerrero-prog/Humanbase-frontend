@@ -1,0 +1,51 @@
+{
+  "status": 200,
+  "body": {
+    "url": "http://hb.flatironinstitute.org/api/genes/1952/",
+    "entrez": 1952,
+    "systematic_name": "CELSR2",
+    "standard_name": "CELSR2",
+    "description": "cadherin EGF LAG seven-pass G-type receptor 2",
+    "xrefs": [
+      {
+        "xrid": "ENSG00000143126",
+        "crossrefdb": {
+          "name": "Ensembl",
+          "url": "http://www.ensembl.org/Gene/Summary?g=_REPL_"
+        }
+      },
+      {
+        "xrid": "1952",
+        "crossrefdb": {
+          "name": "Entrez",
+          "url": "http://www.ncbi.nlm.nih.gov/gene/_REPL_"
+        }
+      },
+      {
+        "xrid": "HGNC:3231",
+        "crossrefdb": {
+          "name": "HGNC",
+          "url": "http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=_REPL_"
+        }
+      },
+      {
+        "xrid": "604265",
+        "crossrefdb": {
+          "name": "MIM",
+          "url": "http://www.omim.org/entry/_REPL_"
+        }
+      }
+    ],
+    "aliases": [
+      "CDHF10",
+      "ADGRC2",
+      "EGFL2",
+      "Flamingo1",
+      "MEGF3"
+    ],
+    "versions_available": [
+      "v1",
+      "v3"
+    ]
+  }
+}

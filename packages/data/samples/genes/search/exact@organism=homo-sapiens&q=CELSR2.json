@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 1952,
+      "standard_name": "CELSR2",
+      "aliases": "CDHF10|ADGRC2|EGFL2|Flamingo1|MEGF3",
+      "xrefs": "ENSG00000143126|1952|HGNC:3231|604265",
+      "description": "cadherin EGF LAG seven-pass G-type receptor 2",
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}
