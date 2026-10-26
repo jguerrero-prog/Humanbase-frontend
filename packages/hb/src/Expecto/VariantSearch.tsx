@@ -86,7 +86,7 @@ export function VariantSearch({ query, onQueryChange, geneHref }: VariantSearchP
                       <Cell type="id">{variant.change}</Cell>
                       {genome && (
                         <Cell>
-                          <ViewInGenomeBrowser href={genomeBrowserLink.variant(variant.chromosome, variant.position)} context={`at ${variant.chromosome}:${counts.format(variant.position)}`} />
+                          <ViewInGenomeBrowser href={genomeBrowserLink.variant(variant.chromosome, variant.position, 'expression-effects')} context={`at ${variant.chromosome}:${counts.format(variant.position)}`} />
                         </Cell>
                       )}
                     </tr>

@@ -12,8 +12,10 @@ test('a gene opens the genome browser page on that gene, with humanbase.io’s /
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&gene=3383`);
   await page.getByRole('dialog', { name: 'ICAM1' }).getByRole('link', { name: 'View in genome browser' }).click();
 
-  await expect(page).toHaveURL(/\/genome\/\?gene=ICAM1$/);
+  await expect(page).toHaveURL(/\/genome\/\?gene=ICAM1&from=networks$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Genome browser' })).toBeVisible();
+  // The trail names the tool the link came from, not the page's place under Variants & sequences.
+  await expect(page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('listitem')).toHaveText(['Genes & gene sets', 'Networks', 'Genome browser']);
   await expect(page.getByRole('link', { name: 'Read the proposal on GitHub' })).toHaveAttribute('href', /\/issues\/457$/);
   const browser = page.getByRole('application', { name: /^Genome browser, chr19:10,381,510-10,397,291, GRCh37\/hg19/ });
   await expect(browser.getByText('ICAM1 →')).toBeVisible();
@@ -25,7 +27,7 @@ test('a gene opens the genome browser page on that gene, with humanbase.io’s /
 
   // Moving keeps the gene the link named, beside the new view.
   await page.getByRole('radio', { name: '50 kb' }).click();
-  await expect(page).toHaveURL(/gene=ICAM1&location=chr19/);
+  await expect(page).toHaveURL(/gene=ICAM1&from=networks&location=chr19/);
   expect(apiRequests).toEqual([]);
 });
 

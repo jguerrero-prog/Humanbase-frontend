@@ -49,7 +49,7 @@ export function ModuleDrawer({ result, module, gene, database, genes, integratio
 
   if (gene !== undefined) {
     const { symbol, name } = geneOf(gene);
-    const genome = genomeBrowserLink.gene(symbol);
+    const genome = genomeBrowserLink.gene(symbol, 'modules');
     const geneTerms = result.termsOf(gene, database);
     const neighbors = result.neighbors(gene).map((neighbor) => ({ ...neighbor, gene: geneOf(neighbor.entrez) }));
     const download = () =>

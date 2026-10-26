@@ -51,7 +51,7 @@ function ResultGenes({ text, job }: { text: string; job: NetwasJob }) {
     if (gene) return new NetworkQuery([gene.entrez], tissue, job.version).href;
     return matches.isSuccess ? null : undefined;
   };
-  return <NetwasGenes file={text} names={names} networkHref={hrefOf} genomeHref={genomeBrowserLink.gene} onShownChange={onShownChange} />;
+  return <NetwasGenes file={text} names={names} networkHref={hrefOf} genomeHref={(symbol) => genomeBrowserLink.gene(symbol, 'netwas')} onShownChange={onShownChange} />;
 }
 
 export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {

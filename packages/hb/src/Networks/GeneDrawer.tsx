@@ -21,7 +21,7 @@ const strongest = (functions: readonly GeneFunction[] | undefined) => functions 
 export function GeneDrawer({ gene, queryNames, networkTitle, onAdd, onClose }: GeneDrawerProps) {
   const processes = useGeneFunctions(gene.entrez, 'gene-ontology-bp');
   const diseases = useGeneFunctions(gene.entrez, 'disease-ontology');
-  const genome = genomeBrowserLink.gene(gene.symbol);
+  const genome = genomeBrowserLink.gene(gene.symbol, 'networks');
 
   return (
     <Drawer
