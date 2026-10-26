@@ -177,7 +177,7 @@ describe('GenomeTrackView', () => {
         { start: 200, end: 200, value: 1.2, details: [['Score', '1.2']] as const },
         { start: 200, end: 200, value: 2.4, details: [['Score', '2.4']] as const },
       ];
-      const { container } = render(<GenomeTrackView start={1} end={1000} width={1000} scores={[{ name: 'Seqweaver gnomAD', meta: 'Model score, 1.5 to 3', state: 'ready', data: { min: 1.5, max: 3, values } }]} />);
+      const { container } = render(<GenomeTrackView start={1} end={1000} width={1000} scores={[{ name: 'Seqweaver gnomAD', meta: 'log e-value, 1.5 to 3', state: 'ready', data: { min: 1.5, max: 3, values } }]} />);
       expect(new Set([...container.querySelectorAll('.genome-tracks-bar')].map((bar) => bar.getAttribute('data-item'))).size).toBe(2);
     });
 
