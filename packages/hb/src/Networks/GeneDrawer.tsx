@@ -29,14 +29,8 @@ export function GeneDrawer({ gene, queryNames, networkTitle, onAdd, onClose }: G
       title={gene.symbol}
       subtitle={gene.name}
       onClose={onClose}
-      footer={
-        (onAdd || genome) && (
-          <>
-            {onAdd && <Button onClick={onAdd}>Add to query</Button>}
-            <ViewInGenomeBrowser href={genome} variant="ghost" />
-          </>
-        )
-      }
+      headerLink={genome && <ViewInGenomeBrowser href={genome} />}
+      footer={onAdd && <Button onClick={onAdd}>Add to query</Button>}
     >
       <GeneDetail
         {...(gene.isQuery
