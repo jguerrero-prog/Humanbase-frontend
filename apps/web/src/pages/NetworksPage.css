@@ -1,0 +1,4 @@
+.networks-empty {
+  display: grid;
+  gap: var(--space-4);
+}
