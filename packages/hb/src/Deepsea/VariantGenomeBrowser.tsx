@@ -1,7 +1,8 @@
 import { GenomeLocation, useHumanbase } from '@humanbase/data';
-import { defaultGenomeEngine, GenomeEngineView, withChr, type Assembly, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
+import { defaultGenomeEngine, GenomeEngineView, withChr, type Assembly, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeGene, type GenomeRegion } from '@humanbase/genome';
 import { Alert, GenomeBrowserToolbar } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
+import { GenomeGeneDrawer } from '../GenomeBrowser/GenomeGeneDrawer';
 import { useGenomeBrowserTools } from '../GenomeBrowser/useGenomeBrowserTools';
 
 export interface VariantGenomeBrowserProps {
@@ -35,6 +36,7 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
   const { genomeTracks } = api;
   const [failure, setFailure] = useState<Error>();
   const [locationError, setLocationError] = useState<string>();
+  const [gene, setGene] = useState<GenomeGene>();
   const chrom = withChr(chromosome);
   const region = useMemo(() => ({ chrom: location.chrom, start: location.start, end: location.end }), [location]);
 
@@ -101,6 +103,8 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
         trackMenu={tools.trackMenu}
         selected={position === undefined ? undefined : { chrom, position }}
         onRegionChange={onRegionChange}
+        onGeneSelect={setGene}
+        markedGene={gene?.name}
         onStatusChange={(status, error) => setFailure(status === 'failed' ? error : undefined)}
         onCommand={(command) => {
           if (tools.onCommand(command)) return;
@@ -110,6 +114,7 @@ export function VariantGenomeBrowser({ assembly, chromosome, position, label, lo
           else if (command === 'nextVariant') onNextVariant?.();
         }}
       />
+      {gene && <GenomeGeneDrawer key={`${gene.name} ${gene.start}`} gene={gene} assembly={assembly} onClose={() => setGene(undefined)} />}
     </section>
   );
 }

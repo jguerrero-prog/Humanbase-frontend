@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 6497,
+      "standard_name": "SKI",
+      "aliases": "SKV|SGS",
+      "xrefs": "6497|164780|ENSG00000157933|HGNC:10896",
+      "description": "SKI proto-oncogene",
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}

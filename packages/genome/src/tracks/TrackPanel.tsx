@@ -1,7 +1,7 @@
 import type { GeneModel, GenomeTracks, ScorePoint, SequenceSpan } from '@humanbase/data';
 import { GenomeTrackView, type ActionMenuItem, type GeneShape, type TrackOf } from '@humanbase/ui';
 import { useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { isSegmentTrack, trackFile, withChr, type Assembly, type GenomeDataTrack, type GenomeRegion, type GenomeScoreTrack } from '../GenomeBrowserEngine';
+import { isSegmentTrack, trackFile, withChr, type Assembly, type GenomeDataTrack, type GenomeGene, type GenomeRegion, type GenomeScoreTrack } from '../GenomeBrowserEngine';
 import { builtInTracks, genesTrack, genomeTrackList, sequenceTrack } from '../genomeTrackList';
 import { geneDetails, scoreDetails, segmentDetails } from './itemDetails';
 import type { DrawnTracks, TrackEngine } from './TrackEngine';
@@ -14,6 +14,7 @@ interface TrackPanelProps {
   tracks: readonly GenomeDataTrack[];
   trackMenu?: ((id: string) => readonly ActionMenuItem[]) | undefined;
   onRegionChange: (region: GenomeRegion) => void;
+  onGeneSelect?: ((gene: GenomeGene) => void) | undefined;
 }
 
 const readableBase = 7;
@@ -37,8 +38,8 @@ function useAreaWidth() {
   return { element, width };
 }
 
-export function TrackPanel({ engine, files, assembly, tracks: allTracks, trackMenu, onRegionChange }: TrackPanelProps) {
-  const { region, highlight, hidden, arrangement } = useSyncExternalStore(engine.subscribe, engine.snapshot);
+export function TrackPanel({ engine, files, assembly, tracks: allTracks, trackMenu, onRegionChange, onGeneSelect }: TrackPanelProps) {
+  const { region, highlight, hidden, arrangement, markedGene } = useSyncExternalStore(engine.subscribe, engine.snapshot);
   // Data tracks use their name as id; the view orders tracks by name.
   const nameOf = new Map(genomeTrackList(assembly, allTracks).map((track) => [track.id, track.name]));
   const menu = (id: string) => ({ menu: trackMenu?.(id) });
@@ -103,10 +104,16 @@ export function TrackPanel({ engine, files, assembly, tracks: allTracks, trackMe
   useLayoutEffect(() => {
     engine.remember(drawn);
   });
+  const selectGene =
+    onGeneSelect &&
+    ((shape: GeneShape) => {
+      const gene = genesInReach.data?.find((model) => model.name === shape.name && model.start === shape.start);
+      if (gene) onGeneSelect({ name: gene.name, chrom, start: gene.start, end: gene.end, strand: gene.strand, type: gene.type, source: named.genes.meta });
+    });
 
   return (
     <div ref={element} className="track-engine">
-      <GenomeTrackView {...drawn} onPan={pan} shift={shift} />
+      <GenomeTrackView {...drawn} onPan={pan} shift={shift} onGene={selectGene} openGene={markedGene} />
     </div>
   );
 }

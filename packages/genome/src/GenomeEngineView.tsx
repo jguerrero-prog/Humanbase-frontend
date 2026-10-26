@@ -1,7 +1,7 @@
 import { GenomeLocation, type GenomeTracks } from '@humanbase/data';
 import { Alert, genomeCommand, SegmentTable, TrackHeader, type ActionMenuItem, type GenomeCommand } from '@humanbase/ui';
 import { useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState, type Ref } from 'react';
-import { sameRegion, trackFile, withChr, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeExportOptions, type GenomeRegion, type GenomeTrackArrangement, type GenomeTrackLayout } from './GenomeBrowserEngine';
+import { sameRegion, trackFile, withChr, type Assembly, type GenomeBrowserEngine, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeExportOptions, type GenomeGene, type GenomeRegion, type GenomeTrackArrangement, type GenomeTrackLayout } from './GenomeBrowserEngine';
 import { noArrangement } from './genomeTrackList';
 import { useOutside, useSegmentTracks } from './tracks/useTrackData';
 import './genome.css';
@@ -30,6 +30,10 @@ export interface GenomeEngineViewProps {
   /** The selected position, marked across every track. */
   selected?: { chrom: string; position: number } | undefined;
   onRegionChange?: (region: GenomeRegion) => void;
+  /** With it, clicking a gene calls this instead of opening the gene's details popover. */
+  onGeneSelect?: ((gene: GenomeGene) => void) | undefined;
+  /** The gene the page shows details for, ringed in the genes track. */
+  markedGene?: string | undefined;
   onStatusChange?: (status: EngineStatus, error?: Error) => void;
   /** Keyboard commands from the genome browser's key map; with it, the tracks take focus and keys. */
   onCommand?: ((command: GenomeCommand) => void) | undefined;
@@ -59,7 +63,7 @@ function keepingFocus(items: readonly ActionMenuItem[]): ActionMenuItem[] {
 /** Mounts a genome browser engine and keeps it on the page's region and selection. */
 const noneHidden: readonly string[] = [];
 
-export function GenomeEngineView({ engine, files, label, assembly, region, tracks, hidden = noneHidden, arrangement = noArrangement, trackMenu, selected, onRegionChange, onStatusChange, onCommand, ref }: GenomeEngineViewProps) {
+export function GenomeEngineView({ engine, files, label, assembly, region, tracks, hidden = noneHidden, arrangement = noArrangement, trackMenu, selected, onRegionChange, onGeneSelect, markedGene, onStatusChange, onCommand, ref }: GenomeEngineViewProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GenomeBrowserEngine | null>(null);
   // The engine in view once it has mounted; a new one, such as after the tracks change, runs the effects below again.
@@ -67,10 +71,12 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
   const ready = mounted !== null;
   const [layout, setLayout] = useState<readonly GenomeTrackLayout[]>([]);
   const shown = useRef(region);
-  const events = useRef({ onRegionChange, onStatusChange });
+  const events = useRef({ onRegionChange, onStatusChange, onGeneSelect });
   useLayoutEffect(() => {
-    events.current = { onRegionChange, onStatusChange };
+    events.current = { onRegionChange, onStatusChange, onGeneSelect };
   });
+  // Read once at mount: a page either opens its own gene details or keeps the popover.
+  const selectsGenes = useRef(Boolean(onGeneSelect));
   // The engine is built once per assembly, file reader and track set; region and selection changes go through it.
   const firstLabel = useRef(label);
   const latest = useRef({ hidden, arrangement, trackMenu });
@@ -112,6 +118,7 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
         onTrackLayout: (tracks) => {
           if (live) setLayout(tracks);
         },
+        ...(selectsGenes.current && { onGeneSelect: (gene: GenomeGene) => events.current.onGeneSelect?.(gene) }),
       })
       .then(() => {
         if (!live) return;
@@ -130,6 +137,10 @@ export function GenomeEngineView({ engine, files, label, assembly, region, track
       element.replaceChildren();
     };
   }, [engine, files, assembly, tracks, menuOf]);
+
+  useEffect(() => {
+    if (mounted) instance.current?.markGene?.(markedGene);
+  }, [mounted, markedGene]);
 
   const hiddenKey = hidden.join('\n');
   useEffect(() => {

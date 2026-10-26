@@ -32,6 +32,8 @@ export interface AnnotationSource {
 }
 
 export interface GeneDetailProps {
+  /** Facts from where the gene was found, such as its location in a genome browser's genes track; they come first. */
+  facts?: readonly { label: string; value: string }[];
   /** Left out for a query gene, which has no connection score to itself. */
   score?: { label: string; value: number; text: string };
   aliases?: readonly string[];
@@ -39,11 +41,16 @@ export interface GeneDetailProps {
   annotations?: { label: string; sources: readonly AnnotationSource[] };
 }
 
-export function GeneDetail({ score, aliases = [], ids = [], annotations }: GeneDetailProps) {
+export function GeneDetail({ facts = [], score, aliases = [], ids = [], annotations }: GeneDetailProps) {
   const [chosen, setChosen] = useState<string>();
   const source = annotations?.sources.find((item) => item.value === chosen) ?? annotations?.sources[0];
   return (
     <>
+      {facts.map(({ label, value }) => (
+        <DrawerSection key={label} label={label}>
+          <p className="result-detail-text">{value}</p>
+        </DrawerSection>
+      ))}
       {score && <ScoreMeter {...score} />}
       {aliases.length > 0 && (
         <DrawerSection label="Also known as">

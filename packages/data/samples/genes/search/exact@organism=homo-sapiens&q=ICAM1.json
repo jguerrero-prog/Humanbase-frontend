@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 3383,
+      "standard_name": "ICAM1",
+      "aliases": "BB2|P3.58|CD54",
+      "xrefs": "147840|ENSG00000090339|3383|HGNC:5344",
+      "description": "intercellular adhesion molecule 1",
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}
