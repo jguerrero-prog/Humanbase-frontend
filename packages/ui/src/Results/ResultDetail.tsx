@@ -3,7 +3,6 @@ import { Badge } from '../Badge/Badge';
 import { DrawerSection } from '../Drawer/Drawer';
 import { Icon } from '../Icon/Icon';
 import { SegmentedControl } from '../SegmentedControl/SegmentedControl';
-import { Skeleton } from '../Skeleton/Skeleton';
 import { Cell, HeaderCell, ScoreCell, Table } from '../Table/Table';
 import { ValueFormat } from '../Table/ValueFormat';
 import type { GeneIdLink } from './GeneIdsMenu';
@@ -68,11 +67,7 @@ export function GeneDetail({ score, aliases = [], ids = [], annotations }: GeneD
       {annotations && source && (
         <DrawerSection label={annotations.label}>
           <SegmentedControl label="Annotation source" hideLabel size="small" segments={annotations.sources.map(({ value, label }) => ({ value, label }))} value={source.value} onChange={setChosen} />
-          {!source.rows ? (
-            <p className="result-detail-text" aria-busy="true">
-              <Skeleton width="80%" />
-            </p>
-          ) : source.rows.length === 0 ? (
+          {source.rows?.length === 0 ? (
             <p className="result-detail-text">No {source.label} terms for this gene.</p>
           ) : (
             <RankedAnnotationTable narrow caption={`${source.label} terms`} termLabel="Term" scoreLabel="Confidence" rows={source.rows} />

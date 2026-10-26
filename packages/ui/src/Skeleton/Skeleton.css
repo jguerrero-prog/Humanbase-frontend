@@ -1,6 +1,34 @@
 .skeleton {
   display: inline-block;
   vertical-align: middle;
-  background: var(--surface-sunken);
+  background: linear-gradient(90deg, var(--surface-sunken) 30%, var(--surface-subtle) 50%, var(--surface-sunken) 70%) 0 0 / 300% 100%;
   border-radius: var(--radius-xs);
+  animation: skeleton-shimmer 1.6s var(--motion-easing-linear) infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* Reduced motion swaps the sweep for a fade, as root.css keeps fades but removes movement. */
+@keyframes skeleton-fade {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="full"]) .skeleton {
+    animation-name: skeleton-fade;
+  }
+}
+
+:root[data-motion="reduce"] .skeleton {
+  animation-name: skeleton-fade;
 }

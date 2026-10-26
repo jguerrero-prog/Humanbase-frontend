@@ -290,7 +290,7 @@ export function SearchField({
 export function SuggestionsLoading() {
   return (
     <p className="search-suggestions-status">
-      <Icon name="refresh" size={16} />
+      <Spinner size={16} />
       Searching genes…
     </p>
   );
