@@ -1,7 +1,6 @@
 import { assemblyNames, GenomeLocation, useGeneLocation, useHumanbase } from '@humanbase/data';
 import { defaultGenomeEngine, diseaseImpactTracks, seqweaverGnomadTrack, type GenomeBrowserEngineFactory, type GenomeDataTrack } from '@humanbase/genome';
 import { Alert, ResultHeader, ResultLayout, Skeleton } from '@humanbase/ui';
-import { categoryCrumbs } from '../content/product';
 import { genomeBrowserLink, type GenomeBrowserView } from '../content/genomeBrowser';
 import { VariantGenomeBrowser } from '../Deepsea/VariantGenomeBrowser';
 import '../Deepsea/Deepsea.css';
@@ -49,7 +48,7 @@ export function GenomeBrowserPreview({ view, onLocationChange, proposalHref, eng
     <ResultLayout
       header={
         <ResultHeader
-          crumbs={[categoryCrumbs.variants, { label: 'Genome browser' }]}
+          crumbs={genomeBrowserLink.crumbs(view)}
           title="Genome browser"
           context={[{ name: 'Genome', value: assemblyName }, ...(view.gene ? [{ name: 'Gene', value: view.gene }] : []), ...(view.variant ? [{ name: 'Variant', value: `${view.variant.chrom}:${view.variant.start.toLocaleString('en-US')}` }] : [])]}
         />
