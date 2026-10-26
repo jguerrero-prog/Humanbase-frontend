@@ -4,13 +4,14 @@ import { LinkBaseProvider } from '@humanbase/ui';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router';
-import { applyMotion, motionSetting } from './layout/DisplaySettings';
+import { applyMotion, applyTheme, motionSetting, themeSetting } from './layout/DisplaySettings';
 import { appBase, router } from './routes';
 
 const root = document.getElementById('root');
 if (!root) throw new Error('index.html is missing <div id="root">.');
 
 applyMotion(motionSetting.get());
+applyTheme(themeSetting.get());
 
 void loadAppConfig(`${appBase}/config.json`).then((config) =>
   createRoot(root).render(

@@ -1,4 +1,4 @@
-import { doiLink, humanbaseCitation, humanbaseCitationText, methodCitations } from '@humanbase/hb';
+import { doiLink, humanbaseCitation, humanbaseCitationText, methodCitations, showIllustrations } from '@humanbase/hb';
 import { ArticleLayout, ArticleSection, Button, Divider, useCopy } from '@humanbase/ui';
 import './CitePage.css';
 
@@ -27,7 +27,7 @@ export function CitePage() {
   return (
     <>
       <title>How to cite Humanbase</title>
-      <ArticleLayout title="How to cite Humanbase" lead="Your citations help us demonstrate impact and sustain the platform for the research community." band="threads">
+      <ArticleLayout title="How to cite Humanbase" lead="Your citations help us demonstrate impact and sustain the platform for the research community." band={showIllustrations ? 'threads' : null}>
         <ArticleSection title="Citing Humanbase">
           <p>If Humanbase has contributed to your research, please cite:</p>
           <HumanbaseCitation />

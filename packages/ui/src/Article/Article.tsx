@@ -61,9 +61,9 @@ export function ArticleLayout({ backMatter, children, ...hero }: ArticleLayoutPr
   );
 }
 
-/** The opening paragraph, whose first letter becomes a drop cap without splitting the word. */
-export function DropCapParagraph({ children }: { children: ReactNode }) {
-  return <p className="article-drop-cap">{children}</p>;
+/** The opening paragraph, whose first letter becomes a drop cap without splitting the word; cells false leaves out the illustrated cells beside it. */
+export function DropCapParagraph({ children, cells = true }: { children: ReactNode; cells?: boolean }) {
+  return <p className={cells ? 'article-drop-cap' : 'article-drop-cap article-drop-cap-plain'}>{children}</p>;
 }
 
 export interface ArticleSectionProps {

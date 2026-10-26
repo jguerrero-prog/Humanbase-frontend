@@ -1,4 +1,4 @@
-import { HomeSearch, latestUpdates, ModuleSearch } from '@humanbase/hb';
+import { HomeSearch, latestUpdates, ModuleSearch, showIllustrations } from '@humanbase/hb';
 import { Icon, useLinkHref } from '@humanbase/ui';
 import heroArt from '@humanbase/ui/illustrations/hero-homepage.svg?url';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
@@ -31,9 +31,11 @@ export function HomePage() {
     <>
       <title>{modules ? 'Modules · Humanbase' : 'Humanbase'}</title>
       <section className="home-hero" aria-labelledby="home-title">
-        <div className="home-hero-backdrop" aria-hidden="true">
-          <img className="home-hero-art" src={heroArt} alt="" width={1440} height={1200} />
-        </div>
+        {showIllustrations && (
+          <div className="home-hero-backdrop" aria-hidden="true">
+            <img className="home-hero-art" src={heroArt} alt="" width={1440} height={1200} />
+          </div>
+        )}
         <div className="home-inner home-hero-inner">
           <h1 id="home-title">Predictions of gene function, regulation and interactions in human</h1>
           <p className="home-hero-lead">{modules ? leads.modules : leads.networks}</p>
@@ -65,9 +67,11 @@ export function HomePage() {
                     <Icon name="arrow-right" size={24} />
                   </a>
                 </div>
-                <div className="home-feature-image">
-                  <Illustration />
-                </div>
+                {showIllustrations && (
+                  <div className="home-feature-image">
+                    <Illustration />
+                  </div>
+                )}
               </article>
             );
           })}

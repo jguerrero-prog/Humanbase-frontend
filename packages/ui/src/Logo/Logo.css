@@ -1,0 +1,16 @@
+.logo {
+  display: block;
+  flex: none;
+}
+
+.logo-on-light .logo-mark {
+  fill: var(--action-primary);
+}
+
+.logo-on-light .logo-wordmark {
+  fill: var(--text-default);
+}
+
+.logo-on-green path {
+  fill: var(--text-on-brand);
+}
