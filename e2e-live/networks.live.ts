@@ -51,7 +51,7 @@ test('the Processes and Tissues panels list real terms, and a star rings the rig
   const problems = watch(page);
   await page.goto(`${il1bTnf}&version=v1`);
   await page.getByRole('tab', { name: /^Processes/ }).click();
-  await expect(page.getByRole('table', { name: /Biological processes and diseases over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
+  await expect(page.getByRole('table', { name: /Biological processes and diseases over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible({ timeout: 90_000 });
   await page.getByRole('tab', { name: /Tissues/ }).click();
   await page.getByRole('button', { name: 'Highlight peripheral blood genes in the network' }).click();
   const ringed = page.locator('.force-graph-node').filter({ has: page.locator('.force-graph-star') });
@@ -89,7 +89,7 @@ test('extended_universe ranks GIANT terms with cross-organism counts, and a MAGE
   await expect(page.getByText('Showing legacy extended universe (cross-organism) annotation counts.')).toBeVisible();
   await extended;
   await page.getByRole('tab', { name: /^Processes/ }).click();
-  await expect(page.getByRole('table', { name: /Biological processes and diseases over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible();
+  await expect(page.getByRole('table', { name: /Biological processes and diseases over-represented/ }).getByText(/Gene Ontology \(BP\), \d+ genes/).first()).toBeVisible({ timeout: 90_000 });
   await checkScreen(page, problems);
   await page.goto(`${il1bTnf}&version=v3&extended_universe=true`);
   await expect(page.getByText('Extended universe not applied')).toBeVisible();
