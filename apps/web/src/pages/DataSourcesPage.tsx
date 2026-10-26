@@ -1,4 +1,4 @@
-import { dataEraFrom, dataEras, dataSourcesFor, dataSourcesPage, type DataSection } from '@humanbase/hb';
+import { dataEraFrom, dataEras, dataSourcesFor, dataSourcesPage, showIllustrations, type DataSection } from '@humanbase/hb';
 import { Alert, ArticleHero, Cell, HeaderCell, Table, Tabs } from '@humanbase/ui';
 import { useId } from 'react';
 import { useSearchParams } from 'react-router';
@@ -51,7 +51,7 @@ export function DataSourcesPage() {
   return (
     <>
       <title>Data sources · Humanbase</title>
-      <ArticleHero title={dataSourcesPage.title} lead={dataSourcesPage.lead} band="reads" />
+      <ArticleHero title={dataSourcesPage.title} lead={dataSourcesPage.lead} band={showIllustrations ? 'reads' : null} />
       <div className="data-sources">
         <Tabs label="Data era" tabs={dataEras} value={era} onChange={chooseEra}>
           <div className="data-sources-eras">

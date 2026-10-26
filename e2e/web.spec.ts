@@ -130,6 +130,40 @@ test('Display settings saves reduced motion in this browser', async ({ page }) =
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduce');
 });
 
+test('Display settings switches to Theme 2, keeps it in this browser, and passes WCAG 2.2 AA in it', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(web);
+  const brand = () => page.locator('header').first().evaluate((bar) => getComputedStyle(bar).backgroundColor);
+  const themeOne = await brand();
+  await page.getByRole('button', { name: 'Display settings' }).click();
+  await page.getByRole('radio', { name: /Theme 2/ }).check();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', '2');
+  expect(await brand()).not.toBe(themeOne);
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', '2');
+  for (const path of ['/', '/networks/?entrez=3553&entrez=7124&version=v1']) {
+    await page.goto(`${web}${path}`);
+    await settleAnimations(page);
+    const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+    expect(violations.map((v) => `${path} ${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
+  }
+});
+
+test('the app shows no illustrations while the library is revised', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(web);
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(page.locator('.home-hero-art, [data-illustration]')).toHaveCount(0);
+  for (const path of ['/about/', '/cite/', '/data-sources/']) {
+    await page.goto(`${web}${path}`);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.locator('.article-band')).toHaveCount(0);
+  }
+  await page.goto(`${web}/about/`);
+  await expect(page.locator('.article-drop-cap-plain')).toHaveCount(1);
+});
+
 test('the homepage with genes matched has no WCAG 2.2 AA violations', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(web);

@@ -37,12 +37,22 @@ const declarations = sources.flatMap(([file, prefix]) =>
   flattenTokens(JSON.parse(readFileSync(new URL(`./src/${file}`, import.meta.url), 'utf8')), prefix).flatMap(toDeclarations),
 );
 
+// Each theme overrides some primitives on the root when Display settings choose it; Theme 1 is the base above.
+const themes = [['2', 'theme-2.tokens.json']];
+const themeBlocks = themes.flatMap(([theme, file]) => [
+  `:root[data-theme="${theme}"] {`,
+  ...flattenTokens(JSON.parse(readFileSync(new URL(`./src/${file}`, import.meta.url), 'utf8'))).flatMap(toDeclarations).map(([name, value]) => `  ${name}: ${value};`),
+  '}',
+  '',
+]);
+
 const css = [
   '/* Generated from src/*.tokens.json by build.mjs. Edit the token files, then run pnpm tokens. */',
   ':root {',
   ...declarations.map(([name, value]) => `  ${name}: ${value};`),
   '}',
   '',
+  ...themeBlocks,
 ].join('\n');
 
 writeFileSync(new URL('./tokens.css', import.meta.url), css);
