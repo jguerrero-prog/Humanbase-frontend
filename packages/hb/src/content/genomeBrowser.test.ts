@@ -10,7 +10,7 @@ describe('genomeBrowserLink', () => {
   });
 
   it('opens humanbase.io’s /genome view on GRCh37/hg19 when the link names nothing', () => {
-    expect(read('')).toEqual({ assembly: 'hg19', gene: undefined, location: undefined, variant: undefined });
+    expect(read('')).toEqual({ assembly: 'hg19', gene: undefined, location: undefined, variant: undefined, from: undefined });
     expect(genomeBrowserLink.start('hg19').format()).toBe('chr1:2,230,000-2,440,000');
   });
 
@@ -32,6 +32,19 @@ describe('genomeBrowserLink', () => {
     const view = read('location=chr1:900,000-950,000&variant=chr1:877047');
     expect(view.location?.format()).toBe('chr1:900,000-950,000');
     expect(view.variant?.start).toBe(877047);
+  });
+
+  it('names the tool the link came from in the breadcrumbs, under its category', () => {
+    const on = (href: string) => (genomeBrowserPreview ? href : undefined);
+    expect(genomeBrowserLink.gene('HNF1B', 'modules')).toBe(on('/genome/?gene=HNF1B&from=modules'));
+    expect(genomeBrowserLink.crumbs(read('gene=HNF1B&from=modules')).map((crumb) => crumb.label)).toEqual(['Genes & gene sets', 'Modules', 'Genome browser']);
+    expect(genomeBrowserLink.crumbs(read('location=chr5:150226123&from=expression-effects')).map((crumb) => crumb.label)).toEqual(['Variants & sequences', 'Expression effects', 'Genome browser']);
+  });
+
+  it('keeps Variants & sequences, where #457 places the page, for a link with no source or one it doesn’t know', () => {
+    for (const query of ['gene=IL1B', 'gene=IL1B&from=elsewhere', 'gene=IL1B&from=toString']) {
+      expect(genomeBrowserLink.crumbs(read(query)).map((crumb) => crumb.label)).toEqual(['Variants & sequences', 'Genome browser']);
+    }
   });
 
   it('leaves out a place it can’t read', () => {

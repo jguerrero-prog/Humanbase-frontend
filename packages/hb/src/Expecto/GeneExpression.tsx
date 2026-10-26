@@ -104,7 +104,7 @@ export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: G
       settings={
         <>
           {copyButton}
-          <ViewInGenomeBrowser href={gene.data && genomeBrowserLink.gene(gene.data.symbol)} variant="secondary" />
+          <ViewInGenomeBrowser href={gene.data && genomeBrowserLink.gene(gene.data.symbol, 'expression-effects')} variant="secondary" />
           <Button variant="secondary" icon="download" disabled={!table} onClick={() => table && download(rows, table, fileName)}>
             Download
           </Button>

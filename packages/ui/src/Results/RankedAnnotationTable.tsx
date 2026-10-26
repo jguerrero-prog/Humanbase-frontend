@@ -37,10 +37,43 @@ export interface RankedAnnotationTableProps {
   scoreLabel: string;
   /** Column headers for several genes, such as "IL1B confidence"; they replace the single score column. */
   scoreLabels?: readonly string[];
-  rows: readonly RankedAnnotation[];
+  /** Undefined while loading: the table's header over skeleton rows. */
+  rows: readonly RankedAnnotation[] | undefined;
   defaultExpanded?: readonly string[];
   /** For drawers: the identifier sits under the term instead of in its own column. */
   narrow?: boolean;
+}
+
+const termWidths = ['72%', '56%', '84%', '64%', '48%', '76%'];
+
+/** Loading rows shaped like real ones: term over identifier, each score, then the evidence badge over its source count. */
+function SkeletonRows({ narrow, scores }: { narrow: boolean; scores: number }) {
+  return termWidths.map((width) => (
+    <tr key={width} aria-hidden="true">
+      <Cell wrap={narrow}>
+        <span className="annotation-skeleton">
+          <Skeleton width={width} height="14px" />
+          {narrow && <Skeleton width="72px" height="12px" />}
+        </span>
+      </Cell>
+      {!narrow && (
+        <Cell>
+          <Skeleton width="88px" />
+        </Cell>
+      )}
+      {Array.from({ length: scores }, (_, column) => (
+        <Cell key={column} type="number">
+          <Skeleton width="80px" />
+        </Cell>
+      ))}
+      <Cell wrap={narrow}>
+        <span className="annotation-skeleton">
+          <Skeleton width="84px" height="20px" />
+          <Skeleton width="56px" height="12px" />
+        </span>
+      </Cell>
+    </tr>
+  ));
 }
 
 const sourceCount = (count: number) => `${count} ${count === 1 ? 'source' : 'sources'}`;
@@ -70,8 +103,9 @@ export function RankedAnnotationTable({ caption, termLabel, scoreLabel, scoreLab
           <HeaderCell>Evidence</HeaderCell>
         </tr>
       </thead>
-      <tbody>
-        {rows.map((row, index) => {
+      <tbody aria-busy={!rows}>
+        {!rows && <SkeletonRows narrow={narrow} scores={scoreLabels.length} />}
+        {rows?.map((row, index) => {
           const open = expanded.has(row.name);
           const panelId = `${id}-${index}`;
           const evidence = row.evidence ?? [];
