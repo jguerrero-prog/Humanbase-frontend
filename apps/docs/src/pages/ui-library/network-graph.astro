@@ -1,0 +1,317 @@
+---
+import { withBase } from '../../withBase';
+import { edgeBandsFrom } from '@humanbase/graph';
+import { ActionMenu, Checkbox, GraphToolbar, KeyLegend, Slider, type GraphAction } from '@humanbase/ui';
+import { Code } from 'astro:components';
+import DocSection from '../../components/docs/DocSection.astro';
+import DocTable from '../../components/docs/DocTable.astro';
+import Intro from '../../components/docs/Intro.astro';
+import KeyRules from '../../components/docs/KeyRules.astro';
+import NoteCard from '../../components/docs/NoteCard.astro';
+import NetworkDiagram from '../../components/viz/NetworkDiagram.astro';
+import { modules } from '../../data/viz-examples';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const toolbar: GraphAction[][] = [
+  [
+    { label: 'Zoom in', icon: 'zoom-in' },
+    { label: 'Zoom out', icon: 'zoom-out' },
+    { label: 'Fit to screen', icon: 'fit' },
+    { label: 'Expand', icon: 'maximize', pressed: false },
+  ],
+];
+const downloads = [{ label: 'Download as PNG' }, { label: 'Download as SVG' }, { label: 'Download visible network as text' }, { label: 'Download entire network as text' }];
+const starred = [{ label: 'Star a process or tissue to highlight its genes', disabled: true }];
+const edgeItems = [...edgeBandsFrom(0.84)].reverse().map(({ label, color, width, opacity }) => ({ label, color, width, opacity }));
+const moduleItems = modules.map(({ id, label }) => ({ label, color: id === 'other' ? '--viz-cat-other' : `--viz-module-${id}` }));
+
+const anatomy = [
+  ['1. Toolbar', 'A toolbar named “Graph controls”: the view buttons, then Download network and Starred sets after a divider, and the View as table link at the end.'],
+  ['2. Graph area', 'The drawing, on a white canvas with a 1px border.subtle edge, 403px tall at every width. It is named for screen readers with one sentence, such as “Network of IL1B and 15 related genes”.'],
+  ['3. Legend and result line', 'The Connection legend lists only the bands the minimum confidence leaves on screen. The result line beside it says what is drawn: “Showing 15 of 50 genes: 1 query gene and 14 related genes, 108 connections above 0.84.”'],
+  ['4. Filters', 'Minimum confidence (0 to 1, steps of 0.01) and Genes shown (5 to 50) sliders, each with a number field. They redraw the graph without running the analysis again.'],
+  ['5. Prioritize by uniqueness', 'A checkbox, “Prioritize by uniqueness to the query genes”, that reranks the genes as humanbase.io does. The graph, table and result line update together.'],
+  ['6. View as table', 'The text link at the end of the toolbar. It swaps the drawing for a table of the same data and reads View as graph while the table shows. Toolbar, legend and filters stay.'],
+];
+
+const controls = [
+  ['Zoom in', 'Icon button', 'Zooms in by 1.3 times, around the middle.'],
+  ['Zoom out', 'Icon button', 'Zooms out by 1.3 times.'],
+  ['Fit to screen', 'Icon button', 'Returns to the starting view, with every gene and label inside the panel.'],
+  ['Expand', 'Toggle button, aria-pressed', 'Takes the full width of the result, hiding the companion table, and is pressed while it does. The design also takes it full screen on a second press, with Escape returning; the reference build does the first step only. Off when two networks are compared.'],
+  ['Download network', 'Menu button', 'Download as PNG, Download as SVG, Download visible network as text, Download entire network as text. PNG and SVG are disabled in the table view, with “Switch to the graph to download it”.'],
+  ['Starred sets, 2', 'Menu button; the name counts the sets', 'Lists each starred set with its color swatch and how many of its genes are in the graph; choosing one removes it, and Clear all starred sets removes them all. With nothing starred it holds one disabled item, “Star a process or tissue to highlight its genes”. Hidden in the table view.'],
+  ['View as table, View as graph', 'Text button', 'Switches between the drawing and its table. In the table view the toolbar keeps only Expand and Download network.'],
+];
+
+const states = [
+  ['Default', 'Genes are 12px white circles with a 1.5px grey 600 outline; the query gene is 20px with a 2.5px ink outline. Connections take their band’s darkness, width and opacity.'],
+  ['Hover or focus on a gene', 'A 1.5px dashed ink ring and the data tooltip: the gene’s symbol, name, and its score, or “Query gene: Yes”, with “Click for details”. Genes and connections it doesn’t touch fade to 20%. Keyboard focus draws the 2px solid ring instead of the dashed one.'],
+  ['Hover on a connection', 'It thickens by 2px, and the data tooltip names both genes and its confidence, with “Click for evidence”.'],
+  ['Gene selected', 'A 2px solid ink ring 4px out from the gene. Genes and connections it doesn’t touch fade to 30%, and the gene drawer opens. Nothing moves.'],
+  ['Connection selected', 'The line turns ink and 2px wider, the rest fades to 30%, and the connection drawer opens with its evidence.'],
+  ['Starred set', 'Each of the set’s genes gets a 3.5px ring in the set’s categorical color, with a light hull of that color behind the set and a 1px ink edge outside the last ring. A gene in several sets gets one ring per set, stacked outward in starring order.'],
+];
+
+const behavior = [
+  ['One selection at a time', 'Selecting a gene clears a selected connection, and the other way round. Escape or a click on empty space clears it.'],
+  ['Starred sets and selection together', 'Both can be on. The rings stay while a selection fades the rest.'],
+  ['View as table keeps the view', 'Filters, the selection and the starred sets carry over to the table and back.'],
+  ['Everything is in the URL', 'Filters, View as table, Expand, the selected gene or connection and the starred sets (?star=…), so a refresh or shared link shows the same view.'],
+  ['No layout controls', 'The layout settles before it is drawn, so there is nothing to pause or rerun. Changing a filter adds or removes genes; a new name alone moves nothing.'],
+];
+
+const moduleRules = [
+  ['Colors', 'Each module takes a color by its place among all of the result’s modules, so hiding some never repaints the rest. Modules 1 to 8 are filled with viz.module.1 to .8.'],
+  ['Rings after the eighth', 'Modules 9 to 16 reuse the eight colors as 2px rings with a dashed outline, so a second cue tells them apart from the module that shares their color.'],
+  ['Grey after 16', 'Every module past the 16th is grey (viz.cat.other) and the legend groups them as Other modules.'],
+  ['Labels on outlines', 'Each module has a soft outline in its color, with its name on the top edge in a white pill, 14px on screen at any zoom. The outline and label are buttons that open the module drawer.'],
+  ['Gene size', 'Module genes grow from 12px to 20px with 1 plus their connections in the result, as on humanbase.io; network genes stay one size.'],
+  ['Hover linked both ways', 'Hovering a module’s row in the Modules table brings that module and its links to other modules forward in the graph; hovering its outline or label in the graph highlights its row.'],
+  ['Toolbar', 'Zoom in, Zoom out, Fit to screen and Expand, then View as table. Downloads sit in the result header, and modules have no starred sets.'],
+  ['Show edges', 'When off, connections still shape the layout and the hover, but aren’t drawn. A hovered or selected gene still draws its own.'],
+];
+
+const tables = [
+  ['Networks: connections', 'View as table', 'One row per connection, strongest first: Gene, Connected to, Weight. The gene is a button that opens the connection drawer, and the selected connection is marked. Shows 8 rows, then Show 25 more.'],
+  ['Networks: genes', 'The companion table, Genes tab', 'One row per gene with its score with the query genes, filterable and downloadable. It sits beside the graph and stays there in both views.'],
+  ['Modules: genes', 'View as table', 'One row per gene, by module and then symbol: Module, with its color swatch, and Gene, with its name. Both are buttons, opening the module or the gene in the drawer.'],
+];
+
+const encoding = [
+  ['Connection strength', 'Stepped sequential blue bands, by darkness, width and opacity together, so strength reads in grey scale and without color. 0.9 and up: viz.seq.7, 2.5px, full; 0.75 to 0.9: seq.6, 1.75px, 80%; 0.5 to 0.75: seq.5, 1px, 60%. The weakest band starts at the minimum confidence, such as 0.84 to 0.9. Over 80 connections, every line drops to 55% of its opacity.'],
+  ['Modules', 'The categorical module palette, eight colors, none of them green, each 3:1 or more on white. Inside a module, connections take its color; between modules they are grey at 45%.'],
+  ['Selection', 'Ink rings and ink lines, never a color from the data.'],
+  ['Why not green to red', 'humanbase.io colors connections from green to red. That pairing loses most of its difference under red-green color blindness, and green means selected in this system. The bands follow accessibility practice instead (#613).'],
+];
+
+const access = [
+  ['Tab', 'Moves through the genes, then the module labels. Focus shows the solid ring and the data tooltip.'],
+  ['Enter or Space', 'Selects the focused gene or module and opens its drawer.'],
+  ['Escape', 'Clears the selection. Closing the drawer returns focus to what opened it.'],
+  ['Screen readers', 'The graph is a group named with one sentence. Each gene is a button named with its symbol and role, such as “IL1R1, related gene” or, in modules, “CXCL8, M1”; each module label is a button such as “M1, 64 genes”. Gene labels and starred-set rings are hidden from screen readers, since the buttons carry their words.'],
+  ['Connections', 'Are reached with the pointer in the graph, and with the keyboard through View as table, where every connection is a row with a button.'],
+  ['Result line', 'A status region, so a filter change is read out with the new counts.'],
+];
+
+const methods = [
+  ['mount(container, options)', 'Draws into the element the front end gives it. Options carry the graph’s screen-reader name and the event handlers below.'],
+  ['render(data)', 'Draws genes, connections and groups. Lays the graph out again only when genes, groups or connections change; new names alone keep every position.'],
+  ['setLabel(label)', 'Renames the graph for screen readers without redrawing.'],
+  ['select(selection)', 'Shows a selected gene, connection or group, or none with null. A gene selection can carry its own connections to draw.'],
+  ['hover(focus)', 'Rings a gene with the dashed ring, draws its connections and fades the genes it doesn’t touch; null clears it. Hover from a table row comes in this way.'],
+  ['hoverGroup(id)', 'Brings a group and its links forward and fades the rest; null clears it.'],
+  ['highlight(sets)', 'Rings each starred set’s genes in its color, in the order given, and shades the area around them. An empty list clears them.'],
+  ['zoomBy(factor), fit()', 'Behind Zoom in, Zoom out and Fit to screen.'],
+  ['exportSvg()', 'A standalone SVG of what is drawn, with colors resolved. The PNG and SVG downloads come from it.'],
+  ['destroy()', 'Removes everything it drew and its listeners.'],
+];
+
+const events = [
+  ['onSelectNode(id)', 'A gene is clicked, or chosen with Enter or Space.'],
+  ['onSelectLink(source, target)', 'A connection is clicked.'],
+  ['onSelectGroup(id)', 'A module outline or label is chosen.'],
+  ['onHoverNode(id, anchor)', 'A gene is hovered or focused, with its place on screen for the tooltip; null when it no longer is.'],
+  ['onHoverLink(link)', 'A connection is under the pointer, with the pointer’s place; null when it no longer is.'],
+  ['onHoverGroup(id)', 'A module is hovered or focused; null when it no longer is.'],
+  ['onClearSelection()', 'Empty space is clicked, or Escape is pressed in the graph.'],
+];
+
+const reference = [
+  ['Layout settles first', 'Runs the d3 force simulation to the end before the first draw (300 steps; 200 per module), so nothing moves once the graph appears. Query genes are pulled to the middle.'],
+  ['Modules packed', 'Each module is laid out on its own connections, its hubs in the middle, then the modules are packed largest first from the center outward with a gap between them.'],
+  ['Curved connections', 'Every connection is a gentle arc that bends the same way, so lines that would overlap as straight lines separate. The same curve draws the diagrams on this page.'],
+  ['Labels never overlap', 'Query genes and the best connected genes are placed first. A label sits above its gene, or below, right or left when that spot is taken; with no free spot, it shows only on hover or selection. Labels draw over every connection.'],
+  ['Everything fits', 'The view box holds every gene and label, with room above for module labels, and the panel’s width stretches the network up to 1.8 times wider than tall.'],
+  ['Zoom and pan', 'Mouse wheel, pinch and drag, from 0.25 to 6 times. Module labels keep their size on screen at any zoom.'],
+];
+
+const usage = `import type { GraphRenderer, GraphRendererFactory } from '@humanbase/graph';
+
+class TeamGraphRenderer implements GraphRenderer {
+  // mount, render, setLabel, select, hover, hoverGroup,
+  // highlight, zoomBy, fit, exportSvg, destroy
+}
+
+// Defined once, outside a component: a new factory remounts the graph.
+const teamGraph: GraphRendererFactory = () => new TeamGraphRenderer();
+
+<NetworkExplorer query={query} view={view} renderer={teamGraph} />
+<ModuleExplorer bodyTag={bodyTag} view={view} renderer={teamGraph} />`;
+---
+
+<DocsLayout title="Network graph" description="The network and module graph panels: their parts, states and rules, and the renderer contract a new drawing implements.">
+  <Intro
+    lead="The network graph and the functional module graph are the heart of the Networks and Modules results. The drawing itself is a stand-in: the Humanbase team will replace it with graphs of their own. This page documents what stays when it does, the panel around the drawing, its states and rules, and the contract a new renderer implements."
+    status="Updated October 27, 2026 · UI library · Reference renderer: packages/graph"
+  >
+    <KeyRules
+      rules={[
+        { title: 'The drawing can be replaced', text: 'The front end talks to the graph only through GraphRenderer. A new renderer gets the same data and events and changes nothing else.' },
+        { title: 'The panel stays', text: 'Toolbar, legend, result line, filters, drawer and table views are system components, the same with any drawing.' },
+        { title: 'Same words as the table', text: 'Every gene and connection in the graph is also a row in View as table, so nothing depends on seeing the drawing.' },
+      ]}
+    />
+  </Intro>
+
+  <DocSection title="Anatomy" lead="Six parts, top to bottom, inside the 8-column main view of the Results layout. The drawing is the only part a new renderer changes.">
+    <figure class="panel">
+      <GraphToolbar label="Graph controls" groups={toolbar} tableHref="#anatomy">
+        <ActionMenu label="Download network" icon="download" items={downloads} />
+        <ActionMenu label="Starred sets" icon="star" items={starred} />
+      </GraphToolbar>
+      <NetworkDiagram mode="strength" />
+      <div class="graph-meta">
+        <KeyLegend title="Connection" mark="line" items={edgeItems} />
+        <p class="result-line">Showing 15 of 50 genes: 1 query gene and 14 related genes, 108 connections above 0.84.</p>
+      </div>
+      <div class="graph-filters">
+        <Slider label="Minimum confidence" min={0} max={1} step={0.01} defaultValue={0.84} />
+        <Slider label="Genes shown" min={5} max={50} step={1} defaultValue={15} />
+      </div>
+      <Checkbox label="Prioritize by uniqueness to the query genes" />
+      <figcaption class="visually-hidden">The network graph panel: toolbar, graph, connection legend and result line, filters, and the uniqueness checkbox.</figcaption>
+    </figure>
+    <DocTable caption="Parts of the graph panel" columns={['Part', 'What it is']} widths={['300px']}>
+      {anatomy.map(([part, text]) => <tr><th scope="row">{part}</th><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Controls" lead="Every control is a system component with a tooltip, and its accessible name is the text below. There are no layout controls.">
+    <DocTable caption="Graph panel controls" columns={['Accessible name', 'Kind', 'What it does']} widths={['240px', '220px']}>
+      {controls.map(([name, kind, text]) => <tr><th scope="row">{name}</th><td>{kind}</td><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="States" lead="Genes and connections show five states. Hover fades the rest to 20%, selection to 30%; nothing moves in any of them.">
+    <div class="state-row">
+      <figure class="diagram">
+        <figcaption>
+          <h3>Diagram: IL1R1 selected</h3>
+          <p class="visually-hidden">IL1R1 selected with an ink ring; genes not connected to it fade to 30%.</p>
+        </figcaption>
+        <NetworkDiagram mode="selected" />
+      </figure>
+      <DocTable caption="States of genes and connections" columns={['State', 'Looks like']} widths={['200px']}>
+        {states.map(([state, text]) => <tr><th scope="row">{state}</th><td>{text}</td></tr>)}
+      </DocTable>
+    </div>
+    <h3 class="subhead">Behavior</h3>
+    <DocTable caption="Graph behavior" columns={['Rule', 'Detail']} widths={['300px']}>
+      {behavior.map(([rule, text]) => <tr><th scope="row">{rule}</th><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Module view" lead="The Modules result draws genes as one labeled cluster per module, with the Modules table beside it. The toolbar, legend, drawer and View as table work as on Networks.">
+    <div class="state-row">
+      <figure class="diagram">
+        <figcaption>
+          <h3>Diagram: by module</h3>
+          <p class="visually-hidden">Genes colored by module: inflammation, cytokine signaling, cell adhesion and other.</p>
+        </figcaption>
+        <NetworkDiagram mode="module" />
+        <KeyLegend title="Module" items={moduleItems} />
+      </figure>
+      <DocTable caption="Module view rules" columns={['Rule', 'Detail']} widths={['200px']}>
+        {moduleRules.map(([rule, text]) => <tr><th scope="row">{rule}</th><td>{text}</td></tr>)}
+      </DocTable>
+    </div>
+    <p class="caption">The module filters, Show edges, Hide modules with no enriched terms and Minimum module size, sit under the legend; the result line reads “Showing 12 enriched modules of 3 genes or more. Edges shown.”</p>
+  </DocSection>
+
+  <DocSection title="Table views" lead="View as table is the graph’s text alternative and keeps its filters, selection and starred sets. Each uses the Tables components.">
+    <DocTable caption="Table views of the graphs" columns={['Table', 'Where', 'Rows']} widths={['220px', '220px']}>
+      {tables.map(([table, where, rows]) => <tr><th scope="row">{table}</th><td>{where}</td><td>{rows}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="Encoding" lead="These rules hold for any renderer. Values and tokens are in the specs on the Data visualization page.">
+    <DocTable caption="How the graphs encode data" columns={['What', 'Rule']} widths={['240px']}>
+      {encoding.map(([what, rule]) => <tr><th scope="row">{what}</th><td>{rule}</td></tr>)}
+    </DocTable>
+    <p class="caption">Color scales and contrast checks: <a href={withBase('/guidelines/data-visualization/#network-graphs-2d-3d-views-need-d3-js')}>Data visualization, network graphs</a>.</p>
+  </DocSection>
+
+  <DocSection title="Keyboard and screen readers" lead="A new renderer keeps these, since the drawing is the only part of the panel that can’t be read out on its own.">
+    <DocTable caption="Keyboard and screen-reader behavior" columns={['Key or reader', 'What happens']} widths={['240px']}>
+      {access.map(([key, text]) => <tr><th scope="row">{key}</th><td>{text}</td></tr>)}
+    </DocTable>
+  </DocSection>
+
+  <DocSection title="The GraphRenderer contract" lead="packages/graph/src/GraphRenderer.ts. NetworkGraph, the React component every graph panel uses, calls these methods and listens for these events; the panel does the rest: tooltips, drawers, menus, URL and tables.">
+    <h3 class="subhead">Methods a renderer implements</h3>
+    <DocTable caption="GraphRenderer methods" columns={['Method', 'What it does']} widths={['300px']}>
+      {methods.map(([method, text]) => <tr><th scope="row"><code>{method}</code></th><td>{text}</td></tr>)}
+    </DocTable>
+    <h3 class="subhead">Events it calls</h3>
+    <DocTable caption="GraphRenderer events" columns={['Event', 'When']} widths={['300px']}>
+      {events.map(([event, text]) => <tr><th scope="row"><code>{event}</code></th><td>{text}</td></tr>)}
+    </DocTable>
+    <ul class="points">
+      <li>Data comes as genes (id, label, query, and for modules a group and size), connections with a confidence from 0 to 1, and optional groups with a color token and a ring flag. Colors arrive as token names, such as <code>--viz-module-1</code>, so a renderer uses the system’s colors.</li>
+      <li>The renderer draws and reports; it never fetches data, opens drawers or changes the URL.</li>
+    </ul>
+  </DocSection>
+
+  <NoteCard title="Swapping the renderer">
+    <p>NetworkExplorer and ModuleExplorer take a <code>renderer</code> prop and pass it down to every NetworkGraph, in compared networks too. Without one, they use ForceGraphRenderer.</p>
+    <Code code={usage} lang="tsx" theme="css-variables" />
+  </NoteCard>
+
+  <DocSection title="The reference implementation" lead="ForceGraphRenderer, d3 in SVG, is the stand-in in packages/graph. These are its choices, not requirements; a new renderer can solve them its own way.">
+    <DocTable caption="What the reference renderer does" columns={['Choice', 'How']} widths={['240px']}>
+      {reference.map(([choice, how]) => <tr><th scope="row">{choice}</th><td>{how}</td></tr>)}
+    </DocTable>
+  </DocSection>
+</DocsLayout>
+
+<style>
+  .panel {
+    display: grid;
+    max-inline-size: 866px;
+    gap: var(--space-4);
+    margin: 0;
+    padding: var(--space-5);
+    background: var(--surface-page);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .state-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .diagram {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+  }
+
+  .diagram h3 {
+    font: var(--docs-card-title);
+  }
+
+  .subhead {
+    font: var(--type-h4);
+  }
+
+  .caption {
+    font: var(--type-body-sm);
+    color: var(--text-secondary);
+  }
+
+  @media (width < 48rem) {
+    .panel {
+      padding: var(--space-4);
+    }
+  }
+
+  @media (width < 64rem) {
+    .state-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
