@@ -1,6 +1,6 @@
 # Working in this repository
 
-Read this before changing anything. It applies to people and coding agents alike.
+Read this before changing anything. It applies to people and coding agents alike. The product and design decisions behind the code, and why they were made, are in [DECISIONS.md](DECISIONS.md); read them too.
 
 ## Code standards
 
