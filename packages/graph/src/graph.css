@@ -81,6 +81,12 @@
   --edge-color: var(--text-default);
 }
 
+/* A line thickens under the pointer, and stays thick while its connection is open. */
+.force-graph-links line.is-hovered,
+.force-graph-links line.is-selected {
+  stroke-width: calc(var(--edge-width) + 2px);
+}
+
 @keyframes force-graph-in {
   from {
     opacity: 0;

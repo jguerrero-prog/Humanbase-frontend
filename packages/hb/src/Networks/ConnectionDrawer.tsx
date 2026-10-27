@@ -21,7 +21,9 @@ export function ConnectionDrawer({ source, target, weight, slug, version, networ
   const [allDatasets, setAllDatasets] = useState(false);
   const [filter, setFilter] = useState('');
   const pair = `${source.symbol} and ${target.symbol}`;
-  const evidence = useConnectionEvidence(slug, source.entrez, target.entrez);
+  // The API keeps dataset evidence for GIANT only, so a MAGE connection says so, as humanbase.io does, instead of asking.
+  const hasEvidence = version !== 'v3';
+  const evidence = useConnectionEvidence(slug, source.entrez, target.entrez, hasEvidence);
   const elsewhere = useConnectionInAllNetworks(source.entrez, target.entrez, view === 'all');
   const networkName = sentenceCase(networkTitle);
 
@@ -54,7 +56,9 @@ export function ConnectionDrawer({ source, target, weight, slug, version, networ
       {view === 'this' ? (
         <>
           <ScoreMeter label="Connection weight" value={weight} text={`How likely ${pair} are to work together in the ${networkTitle} network, from all the evidence combined.`} />
-          {evidence.isError ? (
+          {!hasEvidence ? (
+            <Alert tone="info">Dataset evidence is not available for MAGE networks.</Alert>
+          ) : evidence.isError ? (
             <Alert tone="error" title="The evidence couldn’t load" action={{ label: 'Try again', onSelect: () => void evidence.refetch() }}>
               The connection weight above is still correct.
             </Alert>
