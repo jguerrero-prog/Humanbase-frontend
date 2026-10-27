@@ -2,7 +2,7 @@ export { ApiClient } from './ApiClient';
 export type { DataClient, Query, QueryValue } from './DataClient';
 export { SampleClient, type RecordedResponse, type SampleLoaders } from './sample/SampleClient';
 export { sampleKey, type SampleMethod } from './sample/sampleKey';
-export { ApiError } from './ApiError';
+export { ApiError, SampleMissingError } from './ApiError';
 export { readableSearch } from './readableSearch';
 export { loadAppConfig, type AppConfig } from './AppConfig';
 export { Humanbase } from './Humanbase';

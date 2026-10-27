@@ -1,6 +1,6 @@
 # Working in this repository
 
-Read this before changing anything. It applies to people and coding agents alike.
+Read this before changing anything. It applies to people and coding agents alike. The product and design decisions behind the code, and why they were made, are in [DECISIONS.md](DECISIONS.md); read them too.
 
 ## Code standards
 
@@ -13,7 +13,7 @@ Read this before changing anything. It applies to people and coding agents alike
 
 ## Where things go
 
-- **API calls** happen only in `packages/data`, through a `DataClient`: `ApiClient` when the API is on, `SampleClient` when it is off. Components never call `fetch` or build URLs, and never check which client is in use.
+- **API calls** happen only in `packages/data`, through a `DataClient`: `ApiClient` when the API is on, `SampleClient` when it is off. Components never call `fetch` or build URLs, and never check which client is in use. A screen that explains sample-data limits checks `error instanceof SampleMissingError` (no sample was recorded) or `api.examplesOnly` (the client answers only for recorded examples), never the client's type.
 - **New endpoints** need four things: a method on the right service, an entry in `packages/data/endpoints.json` (mark `documented: false` if the endpoint is missing from `/api/schema/`), the `samples` that endpoint's screens request, recorded with `pnpm samples:record`, and a test. Every state a screen shows with the API on (found, empty, not found) needs a sample so it also shows with the API off. Mark a POST `readOnly: true` only if it never creates a job.
 - **Pure components** go in `packages/ui`: props in, markup out, every state (loading, empty, error) controlled by props.
 - **Connected components** go in `packages/hb`: a hook from `packages/data` plus a pure component from `packages/ui`.
