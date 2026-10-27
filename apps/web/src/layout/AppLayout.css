@@ -56,3 +56,29 @@
     display: none;
   }
 }
+
+/* Toasts sit just under the top bar, lined up with the Jobs link, so a finished job's toast reads as part of Jobs. Inside a drawer or dialog the region moves there and keeps its own place. */
+.app-layout .top-bar {
+  anchor-name: --top-bar;
+}
+
+.app-layout .jobs-menu {
+  anchor-name: --jobs-menu;
+}
+
+.app-layout > .toast-region {
+  --toast-enter-from: calc(-1 * var(--motion-distance-sm));
+
+  position-anchor: --top-bar;
+  inset-block: calc(var(--layout-topbar-height) + var(--space-2)) auto;
+  inset-inline: auto var(--space-4);
+  inset-block-start: calc(anchor(bottom, var(--layout-topbar-height)) + var(--space-2));
+  inset-inline-end: anchor(--jobs-menu right, var(--space-4));
+}
+
+/* On phones Jobs sits in the menu, so toasts span the width under the bar. */
+@media (width < 40rem) {
+  .app-layout > .toast-region {
+    inset-inline: var(--space-4);
+  }
+}

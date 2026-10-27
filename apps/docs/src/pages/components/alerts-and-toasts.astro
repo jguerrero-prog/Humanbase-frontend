@@ -47,10 +47,10 @@ const toastTypes: { label: string; text: string; props: ToastProps }[] = [
 ];
 
 const placement = [
-  'Bottom left, 24px from the edges, above the sidebar. This keeps them clear of the graph controls and zoom buttons on the right.',
+  'Top right, 8px under the top bar, with their right edge lined up with the Jobs link. Most toasts are about jobs, so they read as part of Jobs, by proximity. They follow the bar as the page scrolls, and drop in from above.',
   'Newest at the bottom. At most 3 at once; older ones leave when a fourth arrives.',
-  'On phones they span the width with 16px margins, above the bottom of the screen.',
-  'While a dialog is open, toasts show above it in the usual place, clear of its buttons. While a bottom sheet is open on a phone, they move to the top of the screen, 16px below the safe area, so they never cover the sheet’s actions.',
+  'On phones, where Jobs sits in the menu, they span the width under the bar with 16px margins.',
+  'While a dialog or drawer is open, toasts show above it at the bottom left of the screen, 24px from the edges, clear of its header and buttons. While a bottom sheet is open on a phone, they move to the top of the screen, 16px below the safe area, so they never cover the sheet’s actions.',
   'Moving above a dialog or sheet keeps each toast’s time left and doesn’t replay its entrance.',
 ];
 
@@ -59,7 +59,7 @@ const toastTiming = [
   ['With an action, like View job or Undo', 'Until dismissed, or until people leave the page. People may need longer than 6 seconds to reach it.'],
   ['Error', 'Until dismissed. It also appears in job history, so it can be found later.'],
   ['Loading', 'Until the task ends, then turns into a success or error toast in place.'],
-  ['Motion', 'Arrives with a fade and 8px rise over 200ms; leaves with a 150ms fade. Fade only with reduced motion.'],
+  ['Motion', 'Arrives with a fade and 8px drop from above over 200ms; leaves with a 150ms fade. Fade only with reduced motion.'],
 ];
 
 const lifecycle: { step: string; text: string; props: ToastProps }[] = [
@@ -101,7 +101,7 @@ const specs = [
   ['toast.width', '400px desktop; full width minus 16px margins on phones'],
   ['toast.surface', 'white, 1px border.subtle, elevation 3, radius.md 12px'],
   ['toast.height', '52px minimum; message wraps to two lines at most'],
-  ['toast.position', 'bottom left, 24px from the edges; max 3; z.toast 500'],
+  ['toast.position', 'top right, 8px under the top bar, right edge on the Jobs link; bottom left of the screen, 24px from the edges, while a dialog or drawer is open; max 3; z.toast 500'],
   ['toast / banner message', 'Lato 16/25 ink'],
   ['toast.action', 'Lato Bold 15 emerald 600, underlined'],
   ['banner.height', '52px minimum, full width, under the top bar'],
@@ -172,12 +172,13 @@ notifications.show({ tone: 'info', message: 'Link copied' });
           <span class="screen-side"></span>
           <span class="screen-graph"></span>
           <span class="screen-controls"></span>
+          <span class="screen-jobs">Jobs</span>
           <ol class="screen-toasts">
             <li><Toast tone="success" message="NetWAS job submitted" action={act('View job')} /></li>
             <li><Toast tone="info" message="Link copied" /></li>
           </ol>
         </div>
-        <figcaption class="visually-hidden">Two toasts stacked at the bottom left of a results page, clear of the graph controls on the right.</figcaption>
+        <figcaption class="visually-hidden">Two toasts stacked at the top right of a results page, just under the Jobs link in the top bar.</figcaption>
       </figure>
       <ul class="points">{placement.map((point) => <li>{point}</li>)}</ul>
     </div>
@@ -390,10 +391,17 @@ notifications.show({ tone: 'info', message: 'Link copied' });
     border-radius: var(--radius-sm);
   }
 
+  .screen-jobs {
+    inset-block-start: 14px;
+    inset-inline-end: var(--space-4);
+    font: var(--type-label-sm);
+    color: var(--text-on-brand);
+  }
+
   .screen-toasts {
     position: absolute;
-    inset-block-end: 20px;
-    inset-inline-start: var(--space-6);
+    inset-block-start: 56px;
+    inset-inline-end: var(--space-4);
     display: grid;
     gap: var(--space-2);
     inline-size: 360px;
