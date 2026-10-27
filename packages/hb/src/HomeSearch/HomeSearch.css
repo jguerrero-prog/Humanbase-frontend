@@ -47,3 +47,11 @@
     padding: var(--space-4);
   }
 }
+
+.home-search-single .home-search-row {
+  grid-template-columns: minmax(0, 604px);
+}
+
+.home-search-light .home-search-panel {
+  border: var(--border-width-1) solid var(--border-subtle);
+}

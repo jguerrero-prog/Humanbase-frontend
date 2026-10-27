@@ -1,5 +1,5 @@
 import { ExtendedUniverse, NetworkQuery, NetworkView } from '@humanbase/data';
-import { EmptyNetworkQuery, NetworkExplorer } from '@humanbase/hb';
+import { HomeSearch, NetworkExplorer } from '@humanbase/hb';
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import './NetworksPage.css';
@@ -32,7 +32,8 @@ export function NetworksPage() {
       {query.isEmpty ? (
         <div className="networks-empty">
           <h1>Networks</h1>
-          <EmptyNetworkQuery />
+          <p className="networks-empty-lead">Search a gene, or paste a list, then choose Show network to see how they work together in a tissue.</p>
+          <HomeSearch surface="light" onShowNetwork={(next) => void navigate(next.href, { state: { fromSearch: true } satisfies NetworksLocationState })} />
         </div>
       ) : (
         <NetworkExplorer

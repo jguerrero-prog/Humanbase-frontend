@@ -28,7 +28,7 @@ export { SeiHgmdBrowser, type SeiHgmdBrowserProps, type SeiHgmdState, type SeiHg
 export { InsilicoResultView, type InsilicoResultViewProps } from './Deepsea/InsilicoResultView';
 export { HomeSearch, type HomeSearchProps } from './HomeSearch/HomeSearch';
 export { TopBarSearch } from './TopBarSearch/TopBarSearch';
-export { EmptyNetworkQuery, NetworkExplorer, type NetworkDetailContext, type NetworkExplorerProps } from './Networks/NetworkExplorer';
+export { NetworkExplorer, type NetworkDetailContext, type NetworkExplorerProps } from './Networks/NetworkExplorer';
 export { NetworkDetail } from './Networks/NetworkDetail';
 export { tissueConfidenceScale } from './Networks/tabs/scales';
 export { ModuleSearch, type ModuleSearchProps } from './ModuleSearch/ModuleSearch';
