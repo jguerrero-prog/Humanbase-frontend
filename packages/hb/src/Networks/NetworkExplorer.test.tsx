@@ -1,5 +1,5 @@
 import { Humanbase, HumanbaseProvider, NetworkQuery, NetworkView, SampleClient } from '@humanbase/data';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NetworkExplorer, type NetworkDetailContext, type NetworkExplorerProps } from './NetworkExplorer';
 
@@ -166,6 +166,23 @@ describe('NetworkExplorer', () => {
     expect(within(drawer).getByText(/GSEA perturbations, Co-expression|Co-expression, GSEA perturbations/)).toBeInTheDocument();
     await userEvent.click(within(drawer).getByRole('radio', { name: 'All networks' }));
     expect(await within(drawer).findByRole('table', { name: /Connection weight in each network/ })).toBeInTheDocument();
+  });
+
+  it('asks for the pair in every network as soon as the connection opens, and says the wait can be long', async () => {
+    const client = SampleClient.bundled();
+    const answer = client.get.bind(client);
+    // The API's slow first answer, held open so the waiting state shows.
+    const get = vi.spyOn(client, 'get').mockImplementation((path, query) => (path.startsWith('integrations/edges/') ? new Promise(() => undefined) : answer(path, query)));
+    render(
+      <HumanbaseProvider api={new Humanbase(client)}>
+        <NetworkExplorer query={new NetworkQuery([3553, 7124], undefined, 'v1')} view={new NetworkView().with({ selection: { kind: 'connection', source: 7185, target: 6348 } })} onQueryChange={vi.fn()} onViewChange={vi.fn()} />
+      </HumanbaseProvider>,
+    );
+    const drawer = await screen.findByRole('dialog', { name: 'TRAF1 and CCL3' });
+    await waitFor(() => expect(get.mock.calls.some(([path]) => path.startsWith('integrations/edges/'))).toBe(true));
+    await userEvent.click(within(drawer).getByRole('radio', { name: 'All networks' }));
+    expect(within(drawer).getByRole('status')).toHaveTextContent('Checking every network for TRAF1 and CCL3…');
+    expect(within(drawer).getByText('This can take up to 20 seconds the first time a connection is opened.')).toBeInTheDocument();
   });
 
   it('says a MAGE connection has no dataset evidence, as humanbase.io does, without asking the API', async () => {
