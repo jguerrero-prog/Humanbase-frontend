@@ -59,7 +59,7 @@ const toastTiming = [
   ['With an action, like View job or Undo', 'Until dismissed, or until people leave the page. People may need longer than 6 seconds to reach it.'],
   ['Error', 'Until dismissed. It also appears in job history, so it can be found later.'],
   ['Loading', 'Until the task ends, then turns into a success or error toast in place.'],
-  ['Motion', 'Arrives with a fade and 8px rise over 200ms; leaves with a 150ms fade. Fade only with reduced motion.'],
+  ['Motion', 'Arrives with a fade and 8px drop from above over 200ms; leaves with a 150ms fade. Fade only with reduced motion.'],
 ];
 
 const lifecycle: { step: string; text: string; props: ToastProps }[] = [
