@@ -8,4 +8,6 @@ export interface DataClient {
   post<T>(path: string, body: unknown, query?: Query, signal?: AbortSignal): Promise<T>;
   /** A text file the API links to, such as a job's result file, by its full URL. */
   text(url: string, signal?: AbortSignal): Promise<string>;
+  /** True when the client answers only for recorded examples, as SampleClient does; screens then explain why other genes or regions have no data. */
+  readonly examplesOnly?: boolean;
 }
