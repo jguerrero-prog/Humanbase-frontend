@@ -296,7 +296,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
   }
 
   if (comparing && query.compared) {
-    const choose = (pane: NetworkPane) => (selection: NetworkSelection) => onViewChange(view.with({ selection, focus: pane }));
+    const choose = (pane: NetworkPane) => (selection: NetworkSelection | undefined) => onViewChange(view.with({ selection, focus: pane }));
     const paneFile = (pane: NetworkQuery) => `${symbols.join('-')}_${pane.slug}_${pane.version}`;
     return (
       <>
@@ -402,6 +402,7 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
             onViewChange={onViewChange}
             onSelectGene={(entrez) => select({ kind: 'gene', entrez })}
             onSelectConnection={(source, target) => select({ kind: 'connection', source, target })}
+            onClearSelection={() => select(undefined)}
             extendedUniverse={extendedUniverse}
             renderer={renderer}
           />

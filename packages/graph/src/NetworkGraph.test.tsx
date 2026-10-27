@@ -11,6 +11,7 @@ function spyRenderer() {
     setLabel: vi.fn(),
     select: vi.fn(),
     hover: vi.fn(),
+    hoverGroup: vi.fn(),
     highlight: vi.fn(),
     zoomBy: vi.fn(),
     fit: vi.fn(),

@@ -10,10 +10,18 @@
   cursor: grabbing;
 }
 
-.force-graph-links line {
+.force-graph-links path {
+  fill: none;
   stroke: var(--edge-color);
   stroke-width: var(--edge-width);
+  stroke-opacity: var(--edge-opacity, 1);
   stroke-linecap: round;
+  transition: opacity var(--motion-duration-fast) var(--motion-easing-linear);
+}
+
+/* With many connections, every one recedes, so bundles read darker and a hovered one stands out. */
+:where(.force-graph.is-dense) .force-graph-links path {
+  stroke-opacity: calc(var(--edge-opacity, 1) * 0.55);
 }
 
 /* Inside .force-graph-links, so it outranks the visible line's rule and keeps a wide, clickable stroke. */
@@ -21,6 +29,29 @@
   stroke: transparent;
   stroke-width: 10px;
   cursor: pointer;
+}
+
+/* State colors set stroke itself, since each path carries its band's color inline. */
+.force-graph-links path.is-between {
+  stroke: var(--border-strong);
+  stroke-opacity: 0.45;
+}
+
+.force-graph-links path.is-raised {
+  stroke: var(--text-secondary);
+  stroke-opacity: 0.9;
+}
+
+.force-graph-links path.is-selected {
+  stroke: var(--text-default);
+  stroke-opacity: 1;
+}
+
+/* A line thickens under the pointer, and stays thick while its connection is open. */
+.force-graph-links path.is-hovered,
+.force-graph-links path.is-selected {
+  stroke-width: calc(var(--edge-width) + 2px);
+  stroke-opacity: 1;
 }
 
 .force-graph-node {
@@ -35,8 +66,8 @@
 }
 
 .is-query .force-graph-dot {
-  fill: var(--text-default);
   stroke: var(--text-default);
+  stroke-width: 2.5px;
 }
 
 .force-graph-ring {
@@ -60,31 +91,39 @@
   pointer-events: none;
 }
 
-.force-graph-node text {
-  font: 700 12px Lato, sans-serif;
-  fill: var(--text-default);
-  paint-order: stroke;
-  stroke: var(--surface-page);
-  stroke-width: 3px;
+.force-graph-labels {
   pointer-events: none;
 }
 
-.is-query text {
-  font-size: 14px;
+.force-graph-label rect {
+  fill: var(--surface-page);
+  fill-opacity: 0.85;
+}
+
+.force-graph-label text {
+  font: 700 var(--label-size, 12px) Lato, sans-serif;
+  fill: var(--text-default);
+}
+
+.force-graph-label.is-query {
+  --label-size: 14px;
+}
+
+/* A label with no free spot shows only for its hovered or selected gene. */
+.force-graph-label.is-collapsed:not(.is-hovered, .is-selected) {
+  display: none;
 }
 
 .force-graph .is-faded {
-  opacity: 0.35;
+  opacity: 0.3;
 }
 
-.force-graph-links line.is-selected {
-  --edge-color: var(--text-default);
+.force-graph.is-dimming .is-dimmed {
+  opacity: 0.2;
 }
 
-/* A line thickens under the pointer, and stays thick while its connection is open. */
-.force-graph-links line.is-hovered,
-.force-graph-links line.is-selected {
-  stroke-width: calc(var(--edge-width) + 2px);
+.force-graph.is-dimming .force-graph-links path:not(.is-dimmed) {
+  stroke-opacity: 1;
 }
 
 @keyframes force-graph-in {
@@ -99,23 +138,57 @@
   stroke-width: 1px;
 }
 
+/* Groups past the palette reuse its colors as rings, so a color and a fill together tell them apart. */
+.is-member.is-ring .force-graph-dot {
+  fill: var(--surface-page);
+  stroke: var(--node-color);
+  stroke-width: 2px;
+}
+
+.force-graph-group-hull {
+  fill: var(--group-color);
+  fill-opacity: 0.07;
+  stroke: var(--group-color);
+  stroke-opacity: 0.4;
+  stroke-width: 1px;
+  stroke-linejoin: round;
+  cursor: pointer;
+}
+
+.force-graph-group-hull.is-ring {
+  stroke-dasharray: 4 3;
+  stroke-opacity: 0.7;
+}
+
+.force-graph-group-hull.is-hovered {
+  fill-opacity: 0.14;
+  stroke-opacity: 0.9;
+}
+
 .force-graph-group {
   cursor: pointer;
   outline: none;
 }
 
-.force-graph-group text {
-  font: 700 13px Lato, sans-serif;
-  fill: var(--text-default);
-  paint-order: stroke;
-  stroke: var(--surface-page);
-  stroke-width: 3px;
+.force-graph-group-scale {
+  transform: scale(var(--group-label-scale, 1));
 }
 
-.force-graph-group.is-selected text,
-.force-graph-group:focus-visible text {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.force-graph-group rect {
+  fill: var(--surface-page);
+  stroke: var(--group-color);
+  stroke-width: 1.5px;
+}
+
+.force-graph-group text {
+  font: 700 14px Lato, sans-serif;
+  fill: var(--text-default);
+}
+
+.force-graph-group.is-hovered rect,
+.force-graph-group.is-selected rect,
+.force-graph-group:focus-visible rect {
+  stroke-width: 3px;
 }
 
 .force-graph-hull {
@@ -125,6 +198,7 @@
   stroke-linejoin: round;
   stroke-linecap: round;
   opacity: 0.12;
+  pointer-events: none;
 }
 
 .force-graph-star {

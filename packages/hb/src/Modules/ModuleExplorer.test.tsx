@@ -15,6 +15,7 @@ class BlankRenderer implements GraphRenderer {
   setLabel() {}
   select() {}
   hover() {}
+  hoverGroup() {}
   highlight() {}
   zoomBy() {}
   fit() {}

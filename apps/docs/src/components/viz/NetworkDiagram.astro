@@ -1,5 +1,5 @@
 ---
-import { edgeBand, networkEdges, networkNodes, queryGene } from '../../data/viz-examples';
+import { edgeBand, edgeCurve, networkEdges, networkNodes, queryGene } from '../../data/viz-examples';
 
 interface Props {
   mode: 'strength' | 'module' | 'selected';
@@ -16,13 +16,16 @@ const edges = networkEdges.flatMap((edge) => {
   if (!band || !from || !to) return [];
   return [{ ...edge, band, from, to, faded: mode === 'selected' && ![edge.from, edge.to].includes(selected) }];
 });
-const fill = (module: (typeof networkNodes)[number]['module']) => (mode === 'module' ? `var(--viz-cat-${module})` : 'var(--surface-page)');
+const fill = (module: (typeof networkNodes)[number]['module']) => (mode === 'module' ? (module === 'other' ? 'var(--viz-cat-other)' : `var(--viz-module-${module})`) : 'var(--surface-page)');
+// Labels sit above each gene on a pill, sized as the renderer sizes them.
+const pill = (text: string, size: number) => ({ width: text.length * size * 0.62 + 10, height: size + 6 });
+const queryPill = pill(queryGene.gene, 14);
 ---
 
 <svg class="network-diagram" viewBox="0 0 680 420" aria-hidden="true">
   {
     edges.map(({ from, to, band, faded }) => (
-      <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} class:list={{ faded }} style={`stroke: var(${band.color}); stroke-width: var(${band.width})`} />
+      <path d={edgeCurve(from, to)} class:list={['edge', { faded }]} style={`stroke: var(${band.color}); stroke-width: var(${band.width}); stroke-opacity: ${band.opacity}`} />
     ))
   }
   {
@@ -30,12 +33,25 @@ const fill = (module: (typeof networkNodes)[number]['module']) => (mode === 'mod
       <g class:list={{ faded: !related(node.gene) }}>
         {mode === 'selected' && node.gene === selected && <circle class="selection" cx={node.x} cy={node.y} r="11" />}
         <circle class="node" cx={node.x} cy={node.y} r="6" style={`fill: ${fill(node.module)}`} />
-        <text x={node.x + 10} y={node.y + 4}>{node.gene}</text>
       </g>
     ))
   }
   <circle class="query" cx={queryGene.x} cy={queryGene.y} r="10" />
-  <text class="query-label" x={queryGene.x + 14} y={queryGene.y + 5}>{queryGene.gene}</text>
+  {
+    networkNodes.map((node) => {
+      const { width, height } = pill(node.gene, 12);
+      return (
+        <g class:list={['label', { faded: !related(node.gene) }]} transform={`translate(${node.x} ${node.y - 9 - height / 2})`}>
+          <rect x={-width / 2} y={-height / 2} width={width} height={height} rx="4" />
+          <text text-anchor="middle" dy="0.35em">{node.gene}</text>
+        </g>
+      );
+    })
+  }
+  <g class="label query-label" transform={`translate(${queryGene.x} ${queryGene.y - 13 - queryPill.height / 2})`}>
+    <rect x={-queryPill.width / 2} y={-queryPill.height / 2} width={queryPill.width} height={queryPill.height} rx="4" />
+    <text text-anchor="middle" dy="0.35em">{queryGene.gene}</text>
+  </g>
 </svg>
 
 <style>
@@ -53,8 +69,15 @@ const fill = (module: (typeof networkNodes)[number]['module']) => (mode === 'mod
     stroke-width: 1.5px;
   }
 
+  .edge {
+    fill: none;
+    stroke-linecap: round;
+  }
+
   .query {
-    fill: var(--text-default);
+    fill: var(--surface-page);
+    stroke: var(--text-default);
+    stroke-width: 2.5px;
   }
 
   .selection {
@@ -63,19 +86,21 @@ const fill = (module: (typeof networkNodes)[number]['module']) => (mode === 'mod
     stroke-width: 2px;
   }
 
+  .label rect {
+    fill: var(--surface-page);
+    fill-opacity: 0.85;
+  }
+
   text {
     font: 700 12px Lato, sans-serif;
     fill: var(--text-default);
-    paint-order: stroke;
-    stroke: var(--surface-page);
-    stroke-width: 3px;
   }
 
-  .query-label {
+  .query-label text {
     font-size: 14px;
   }
 
   .faded {
-    opacity: 0.35;
+    opacity: 0.3;
   }
 </style>

@@ -56,7 +56,7 @@ export const modules = [
   { id: 'other', label: 'Other' },
 ] as const;
 
-export { edgeBand, edgeBands } from '@humanbase/graph';
+export { edgeBand, edgeBands, edgeCurve } from '@humanbase/graph';
 
 export const tissueScores = {
   columns: ['Blood vessel', 'Liver', 'Lung', 'Brain', 'Kidney', 'Heart', 'Skin', 'Spleen'],

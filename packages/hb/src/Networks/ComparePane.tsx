@@ -16,7 +16,7 @@ export interface ComparePaneProps {
   selection: GraphSelection;
   onQueryChange: (query: NetworkQuery) => void;
   onViewChange: (view: NetworkView) => void;
-  onSelect: (selection: NetworkSelection) => void;
+  onSelect: (selection: NetworkSelection | undefined) => void;
   onRemove: () => void;
   renderer?: GraphRendererFactory | undefined;
 }
@@ -62,6 +62,7 @@ export function ComparePane({ query, view, title, integrations, queryNames, sele
           onViewChange={onViewChange}
           onSelectGene={(entrez) => onSelect({ kind: 'gene', entrez })}
           onSelectConnection={(source, target) => onSelect({ kind: 'connection', source, target })}
+          onClearSelection={() => onSelect(undefined)}
           renderer={renderer}
         />
       )}

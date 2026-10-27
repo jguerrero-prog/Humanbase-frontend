@@ -1,8 +1,9 @@
 import type { Network, NetworkEdge, NetworkSubset, NetworkView } from '@humanbase/data';
-import { edgeBandsFrom, NetworkGraph, type GraphData, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
-import { ActionMenu, Checkbox, GraphToolbar, KeyLegend, Slider, Spinner, useExportMenu, useImageFormats, type ActionMenuItem, type GraphAction } from '@humanbase/ui';
-import { useMemo, useRef, type ReactNode } from 'react';
+import { edgeBandsFrom, NetworkGraph, type GraphData, type GraphFocus, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
+import { ActionMenu, Checkbox, DataTooltip, GraphToolbar, KeyLegend, Slider, Spinner, useExportMenu, useImageFormats, type ActionMenuItem, type GraphAction } from '@humanbase/ui';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { ConnectionsTable } from './ConnectionsTable';
+import { tooltipAt } from './graphTooltip';
 import { networkFileName, networkText } from './networkExport';
 import { useStarredHighlights } from './starredSets';
 
@@ -39,11 +40,18 @@ export interface GraphPanelProps {
   onViewChange: (view: NetworkView) => void;
   onSelectGene: (entrez: number) => void;
   onSelectConnection: (source: number, target: number) => void;
+  /** Empty space in the graph is clicked, or Escape is pressed there. */
+  onClearSelection?: () => void;
   renderer?: GraphRendererFactory | undefined;
 }
 
-export function GraphPanel({ network, subset, view, minConfidence, label, tableCaption, networkTitle, selection, loading, canExpand = true, extendedUniverse = false, onViewChange, onSelectGene, onSelectConnection, renderer }: GraphPanelProps) {
+type Hovered = { kind: 'gene'; entrez: number; at: { x: number; y: number } } | { kind: 'connection'; source: number; target: number; at: { x: number; y: number } };
+
+export function GraphPanel({ network, subset, view, minConfidence, label, tableCaption, networkTitle, selection, loading, canExpand = true, extendedUniverse = false, onViewChange, onSelectGene, onSelectConnection, onClearSelection, renderer }: GraphPanelProps) {
   const graph = useRef<NetworkGraphHandle>(null);
+  const graphArea = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState<Hovered>();
+  const hover = useMemo<GraphFocus | null>(() => (hovered?.kind === 'gene' ? { id: String(hovered.entrez), links: [] } : null), [hovered]);
   const data = useMemo<GraphData | undefined>(
     () =>
       subset && {
@@ -52,7 +60,7 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
       },
     [subset],
   );
-  const legendItems = useMemo(() => [...edgeBandsFrom(minConfidence)].reverse().map(({ label, color, width }) => ({ label, color, width })), [minConfidence]);
+  const legendItems = useMemo(() => [...edgeBandsFrom(minConfidence)].reverse().map(({ label, color, width, opacity }) => ({ label, color, width, opacity })), [minConfidence]);
   const highlights = useStarredHighlights(network, subset?.genes, view.starred, extendedUniverse);
   const starredItems: ActionMenuItem[] = highlights.length
     ? [
@@ -106,18 +114,37 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
           onSelectConnection={onSelectConnection}
         />
       ) : (
-      <div className="graph-area" aria-busy={!data || undefined}>
+      <div className="graph-area" ref={graphArea} aria-busy={!data || undefined}>
         {data ? (
-          <NetworkGraph
-            ref={graph}
-            data={data}
-            label={label}
-            selection={selection}
-            highlights={highlights}
-            renderer={renderer}
-            onSelectNode={(id) => onSelectGene(Number(id))}
-            onSelectLink={(source, target) => onSelectConnection(Number(source), Number(target))}
-          />
+          <>
+            <NetworkGraph
+              ref={graph}
+              data={data}
+              label={label}
+              selection={selection}
+              highlights={highlights}
+              hover={hover}
+              renderer={renderer}
+              onSelectNode={(id) => {
+                setHovered(undefined);
+                onSelectGene(Number(id));
+              }}
+              onSelectLink={(source, target) => {
+                setHovered(undefined);
+                onSelectConnection(Number(source), Number(target));
+              }}
+              onHoverNode={(id, anchor) => {
+                const at = anchor && tooltipAt(graphArea.current, anchor);
+                setHovered(id !== null && at ? { kind: 'gene', entrez: Number(id), at } : undefined);
+              }}
+              onHoverLink={(link) => {
+                const at = link && tooltipAt(graphArea.current, link.anchor);
+                setHovered(link && at ? { kind: 'connection', source: Number(link.source), target: Number(link.target), at } : undefined);
+              }}
+              {...(onClearSelection && { onClearSelection })}
+            />
+            {hovered && network && <GraphTooltip hovered={hovered} network={network} />}
+          </>
         ) : (
           loading
         )}
@@ -138,6 +165,25 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
       <Checkbox label="Prioritize by uniqueness to the query genes" checked={view.prioritizeUniqueness} onChange={(event) => onViewChange(view.with({ prioritizeUniqueness: event.target.checked }))} />
     </>
   );
+}
+
+function GraphTooltip({ hovered, network }: { hovered: Hovered; network: Network }) {
+  if (hovered.kind === 'gene') {
+    const found = network.genes.find((gene) => gene.entrez === hovered.entrez);
+    if (!found) return null;
+    return (
+      <DataTooltip
+        title={found.symbol}
+        subtitle={found.name}
+        rows={[found.isQuery ? ['Query gene', 'Yes'] : ['Score', Number.isNaN(found.score) ? 'None' : found.score.toFixed(2)]]}
+        hint="Click for details"
+        position={hovered.at}
+      />
+    );
+  }
+  const edge = network.edgeBetween(hovered.source, hovered.target);
+  if (!edge) return null;
+  return <DataTooltip title={`${edge.source.symbol} and ${edge.target.symbol}`} rows={[['Confidence', edge.weight.toFixed(2)]]} hint="Click for evidence" position={hovered.at} />;
 }
 
 export function GraphLoading({ title, text, note }: { title?: string | undefined; text?: string | undefined; note?: string | undefined }) {

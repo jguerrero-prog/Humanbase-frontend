@@ -140,8 +140,8 @@ test('clicking a line in the Networks graph opens that connection, as on humanba
   await settleAnimations(page);
   // The middle of a line, where nothing else is drawn, so the mouse lands on the line itself.
   const point = await graph.evaluate((svg) => {
-    for (const hit of svg.querySelectorAll<SVGLineElement>('.force-graph-hit')) {
-      const middle = new DOMPoint((hit.x1.baseVal.value + hit.x2.baseVal.value) / 2, (hit.y1.baseVal.value + hit.y2.baseVal.value) / 2).matrixTransform(hit.getScreenCTM() ?? undefined);
+    for (const hit of svg.querySelectorAll<SVGPathElement>('.force-graph-hit')) {
+      const middle = DOMPoint.fromPoint(hit.getPointAtLength(hit.getTotalLength() / 2)).matrixTransform(hit.getScreenCTM() ?? undefined);
       if (document.elementFromPoint(middle.x, middle.y) === hit) return { x: middle.x, y: middle.y };
     }
     return null;
@@ -149,20 +149,34 @@ test('clicking a line in the Networks graph opens that connection, as on humanba
   expect(point, 'a line whose middle can be clicked').not.toBeNull();
   const widthOfLine = () => graph.evaluate((svg, at) => {
     const hit = document.elementFromPoint(at.x, at.y);
-    const line = hit?.previousElementSibling ?? svg.querySelector('line.is-selected');
+    const line = hit?.previousElementSibling ?? svg.querySelector('.force-graph-links path.is-selected');
     return line ? parseFloat(getComputedStyle(line).strokeWidth) : 0;
   }, point ?? { x: 0, y: 0 });
   const resting = await widthOfLine();
   await page.mouse.move(point?.x ?? 0, point?.y ?? 0);
   expect(await widthOfLine(), 'thicker under the pointer').toBeGreaterThan(resting);
+  await expect(page.getByRole('tooltip')).toContainText(/ and .*Confidence/);
   await page.mouse.click(point?.x ?? 0, point?.y ?? 0);
   await expect(page.getByRole('dialog', { name: / and / })).toContainText(/Connection in the .+ network/);
   await expect(page.getByRole('radio', { name: 'All networks' })).toBeVisible();
   // The clicked line stays thick once the pointer has moved on.
   await page.mouse.move(0, 0);
-  const selected = graph.locator('.force-graph-links line.is-selected');
+  const selected = graph.locator('.force-graph-links path.is-selected');
   await expect(selected).toHaveCount(1);
   expect(await selected.evaluate((line) => parseFloat(getComputedStyle(line).strokeWidth))).toBeGreaterThan(resting);
+});
+
+test('hovering a gene in the Networks graph names it and fades the genes it doesn’t connect to, with the API off', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&version=v1`);
+  const gene = page.locator('.force-graph-node[aria-label="IL1RN, related gene"]');
+  await gene.scrollIntoViewIfNeeded();
+  await settleAnimations(page);
+  await gene.hover({ force: true });
+  await expect(page.getByRole('tooltip')).toContainText('IL1RN');
+  await expect(page.locator('.force-graph-node.is-dimmed').first()).toBeAttached();
+  await expect(page.locator('.force-graph-node[aria-label="IL1B, query gene"]')).not.toHaveClass(/is-dimmed/);
+  await expect(page.getByRole('group', { name: 'Connection' }).getByRole('listitem')).toHaveText(['0.84 to 0.9', '0.9 and up']);
 });
 
 test('the cancer example opens the gene suggestions for cancer, as humanbase.io’s does, with the API off', async ({ page }) => {
