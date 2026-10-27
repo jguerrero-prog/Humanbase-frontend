@@ -47,6 +47,6 @@
 }
 
 .action-menu-panel .menu-item:focus {
-  outline: none;
+  outline: 2px solid transparent;
   background: var(--surface-sunken);
 }
