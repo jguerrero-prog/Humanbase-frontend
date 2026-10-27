@@ -1,3 +1,5 @@
+// The ASD Browser is retired (DECISIONS.md, "Retire, don't delete"), so this suite is skipped and kept.
+// Set asdBrowserRetired to false in packages/hb/src/content/asdBrowser.ts to bring the browser and this suite back.
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { sampleKey } from '../packages/data/src/sample/sampleKey.ts';
