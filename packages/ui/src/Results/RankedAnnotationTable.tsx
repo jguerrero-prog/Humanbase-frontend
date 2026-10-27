@@ -120,7 +120,7 @@ export function RankedAnnotationTable({ caption, termLabel, scoreLabel, scoreLab
                       {row.name}
                     </button>
                   ) : (
-                    <span className="annotation-name">{row.name}</span>
+                    row.name
                   )}
                   {narrow && <span className="annotation-identifier">{row.identifier}</span>}
                 </Cell>
