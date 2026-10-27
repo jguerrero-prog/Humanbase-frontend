@@ -1,7 +1,7 @@
-import { useId, useMemo, type CSSProperties } from 'react';
+import { useMemo, type CSSProperties } from 'react';
+import { LegendFrame } from '../Legend/Legend';
 import { ScoreScale, type ScaleSpec } from './ScoreScale';
 import './Heatmap.css';
-import '../Legend/Legend.css';
 
 export interface LegendSteppedProps {
   spec: ScaleSpec;
@@ -12,20 +12,15 @@ export interface LegendSteppedProps {
 }
 
 export function LegendStepped({ spec, highlighted, onHighlight, className }: LegendSteppedProps) {
-  const id = useId();
   const scale = useMemo(() => new ScoreScale(spec), [spec]);
   const steps = Array.from({ length: scale.steps }, (_, index) => index + 1);
   const [low, high] = spec.ends ?? [];
   return (
-    <div
-      className={['legend', 'legend-stepped', `legend-stepped-${spec.kind}`, className].filter(Boolean).join(' ')}
-      role="group"
-      aria-labelledby={id}
+    <LegendFrame
+      title={spec.title}
+      className={['legend-stepped', `legend-stepped-${spec.kind}`, className].filter(Boolean).join(' ')}
       style={{ '--legend-steps': scale.steps } as CSSProperties}
     >
-      <p id={id} className="legend-title">
-        {spec.title}
-      </p>
       <ol className="legend-step-list">
         {steps.map((step) => (
           <li
@@ -53,6 +48,6 @@ export function LegendStepped({ spec, highlighted, onHighlight, className }: Leg
         <span>{spec.words[0]}</span>
         <span>{spec.words[1]}</span>
       </p>
-    </div>
+    </LegendFrame>
   );
 }

@@ -1,3 +1,7 @@
+import { tissueConfidenceScale } from '@humanbase/hb';
+import type { HeatmapRow, ScaleSpec } from '@humanbase/ui';
+import { expressionGeneLegend } from './score-legends';
+
 // Example data drawn on the Data visualization page, transcribed from the Figma diagrams.
 export interface NetworkNode {
   gene: string;
@@ -59,28 +63,30 @@ export const modules = [
 export { edgeBand, edgeBands, edgeCurve } from '@humanbase/graph';
 
 export const tissueScores = {
+  scale: { ...tissueConfidenceScale, title: 'Score with IL1B' } satisfies ScaleSpec,
   columns: ['Blood vessel', 'Liver', 'Lung', 'Brain', 'Kidney', 'Heart', 'Skin', 'Spleen'],
   rows: [
-    ['IL1R1', [7, 5, 6, 4, 5, 6, 5, 7]],
-    ['PTGS2', [7, 4, 6, 3, 4, 5, 6, 6]],
-    ['TNFAIP6', [7, 3, 5, 2, 3, 4, 5, 6]],
-    ['ICAM1', [7, 5, 6, 4, 6, 5, 5, 7]],
-    ['CXCL8', [7, 4, 6, 3, 3, 5, 6, 6]],
-    ['IL6', [7, 5, 6, 4, 4, 5, 5, 6]],
-    ['CCL2', [7, 4, 6, null, 4, 5, 4, 6]],
-    ['SOD2', [6, 6, 5, 3, 5, 6, 3, 5]],
-  ] as [string, (number | null)[]][],
+    { label: 'IL1R1', values: [0.93, 0.76, 0.84, 0.64, 0.75, 0.83, 0.76, 0.94] },
+    { label: 'PTGS2', values: [0.95, 0.6, 0.86, 0.44, 0.64, 0.75, 0.83, 0.86] },
+    { label: 'TNFAIP6', values: [0.97, 0.45, 0.73, 0.33, 0.44, 0.64, 0.75, 0.83] },
+    { label: 'ICAM1', values: [0.94, 0.77, 0.85, 0.6, 0.86, 0.74, 0.77, 0.95] },
+    { label: 'CXCL8', values: [0.96, 0.61, 0.87, 0.45, 0.43, 0.76, 0.84, 0.87] },
+    { label: 'IL6', values: [0.93, 0.76, 0.84, 0.64, 0.62, 0.73, 0.76, 0.84] },
+    { label: 'CCL2', values: [0.95, 0.6, 0.86, null, 0.64, 0.75, 0.6, 0.86] },
+    { label: 'SOD2', values: [0.87, 0.85, 0.73, 0.46, 0.74, 0.84, 0.45, 0.73] },
+  ] satisfies HeatmapRow[],
 };
 
 export const variantEffects = {
+  scale: expressionGeneLegend,
   columns: ['Blood vessel', 'Liver', 'Lung', 'Brain', 'Spleen', 'Skin'],
   rows: [
-    ['rs1143634', [-2, -1, -1, 0, -2, -1]],
-    ['rs16944', [2, 0, 1, 0, 3, 1]],
-    ['rs1143627', [1, 0, 1, 0, 1, 0]],
-    ['rs4848306', [0, -1, 0, null, -1, 0]],
-    ['rs33944208', [3, 1, 2, 0, 2, 1]],
-  ] as [string, (number | null)[]][],
+    { label: 'rs1143634', values: [-0.62, -0.19, -0.21, 0.02, -0.6, -0.22] },
+    { label: 'rs16944', values: [0.6, -0.02, 0.21, -0.01, 1, 0.2] },
+    { label: 'rs1143627', values: [0.22, 0, 0.18, 0.01, 0.19, 0.02] },
+    { label: 'rs4848306', values: [-0.01, -0.18, 0, null, -0.19, -0.01] },
+    { label: 'rs33944208', values: [1, 0.19, 0.62, 0, 0.58, 0.21] },
+  ] satisfies HeatmapRow[],
 };
 
 export const enrichedTerms: [string, number][] = [
