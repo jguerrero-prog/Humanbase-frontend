@@ -3,7 +3,8 @@ import { Badge } from '../Badge/Badge';
 import { DrawerSection } from '../Drawer/Drawer';
 import { Icon } from '../Icon/Icon';
 import { SegmentedControl } from '../SegmentedControl/SegmentedControl';
-import { Cell, HeaderCell, ScoreCell, Table } from '../Table/Table';
+import { Skeleton } from '../Skeleton/Skeleton';
+import { Cell, HeaderCell, ScoreCell, Table, TableSkeleton } from '../Table/Table';
 import { ValueFormat } from '../Table/ValueFormat';
 import type { GeneIdLink } from './GeneIdsMenu';
 import { RankedAnnotationTable, type RankedAnnotation } from './RankedAnnotationTable';
@@ -39,9 +40,13 @@ export interface GeneDetailProps {
   aliases?: readonly string[];
   ids?: readonly GeneIdLink[];
   annotations?: { label: string; sources: readonly AnnotationSource[] };
+  /** The aliases and IDs are still on their way, so their sections show skeleton lines. */
+  loading?: boolean;
 }
 
-export function GeneDetail({ facts = [], score, aliases = [], ids = [], annotations }: GeneDetailProps) {
+const idSkeletonWidths = ['52%', '44%', '60%', '40%'];
+
+export function GeneDetail({ facts = [], score, aliases = [], ids = [], annotations, loading = false }: GeneDetailProps) {
   const [chosen, setChosen] = useState<string>();
   const source = annotations?.sources.find((item) => item.value === chosen) ?? annotations?.sources[0];
   return (
@@ -52,6 +57,24 @@ export function GeneDetail({ facts = [], score, aliases = [], ids = [], annotati
         </DrawerSection>
       ))}
       {score && <ScoreMeter {...score} />}
+      {loading && (
+        <>
+          <DrawerSection label="Also known as">
+            <p className="result-detail-text" aria-busy="true">
+              <Skeleton width="48%" />
+            </p>
+          </DrawerSection>
+          <DrawerSection label="Gene IDs">
+            <ul className="result-detail-ids" aria-busy="true">
+              {idSkeletonWidths.map((width) => (
+                <li key={width}>
+                  <Skeleton width={width} />
+                </li>
+              ))}
+            </ul>
+          </DrawerSection>
+        </>
+      )}
       {aliases.length > 0 && (
         <DrawerSection label="Also known as">
           <p className="result-detail-text">{aliases.join(', ')}</p>
@@ -91,10 +114,10 @@ export interface EvidenceRow {
   contribution: number;
 }
 
-export function EvidenceTable({ rows, note }: { rows: readonly EvidenceRow[]; note: ReactNode }) {
+export function EvidenceTable({ rows, note, loading = false }: { rows: readonly EvidenceRow[]; note: ReactNode; loading?: boolean }) {
   return (
     <DrawerSection label="Evidence by dataset">
-      <Table caption="Evidence by dataset" density="compact" columnWidths={['112px', 'auto', '136px']}>
+      <Table caption="Evidence by dataset" density="compact" columnWidths={['112px', 'auto', '136px']} busy={loading}>
         <thead>
           <tr>
             <HeaderCell>Contribution</HeaderCell>
@@ -103,6 +126,7 @@ export function EvidenceTable({ rows, note }: { rows: readonly EvidenceRow[]; no
           </tr>
         </thead>
         <tbody>
+          {loading && <TableSkeleton columns={3} rows={6} />}
           {rows.map((row) => (
             <tr key={row.dataset}>
               <Cell type="number">
@@ -129,7 +153,26 @@ export interface NetworkWeight {
   weight: number;
 }
 
-export function WeightHistogram({ counts, current, caption }: { counts: readonly number[]; current: number; caption: string }) {
+// Bar heights, as a share of the chart, that a loading histogram shows.
+const skeletonBars = [0.8, 0.45, 0.3, 0.2, 0.25, 0.15, 0.3, 0.2, 0.35, 0.5];
+
+export function WeightHistogram({ counts, current, caption, loading = false }: { counts: readonly number[]; current: number; caption: string; loading?: boolean }) {
+  if (loading) {
+    return (
+      <figure className="weight-histogram">
+        <div className="weight-histogram-skeleton" aria-hidden="true">
+          {skeletonBars.map((share, index) => (
+            <Skeleton key={index} width="100%" height={`${share * 100}%`} />
+          ))}
+        </div>
+        <p className="weight-histogram-axis" aria-hidden="true">
+          <span>0</span>
+          <span>1</span>
+        </p>
+        <figcaption>{caption}</figcaption>
+      </figure>
+    );
+  }
   const tallest = Math.max(...counts, 1);
   const bin = Math.min(counts.length - 1, Math.floor(current * counts.length));
   return (
@@ -149,9 +192,9 @@ export function WeightHistogram({ counts, current, caption }: { counts: readonly
   );
 }
 
-export function NetworkWeightTable({ rows }: { rows: readonly NetworkWeight[] }) {
+export function NetworkWeightTable({ rows, loading = false }: { rows: readonly NetworkWeight[]; loading?: boolean }) {
   return (
-    <Table caption="Connection weight in each network, strongest first" density="compact" columnWidths={['auto', '160px']}>
+    <Table caption="Connection weight in each network, strongest first" density="compact" columnWidths={['auto', '160px']} busy={loading}>
       <thead>
         <tr>
           <HeaderCell>Network</HeaderCell>
@@ -159,6 +202,7 @@ export function NetworkWeightTable({ rows }: { rows: readonly NetworkWeight[] })
         </tr>
       </thead>
       <tbody>
+        {loading && <TableSkeleton columns={2} rows={8} />}
         {rows.map((row) => (
           <tr key={row.network}>
             <Cell>{row.network}</Cell>
