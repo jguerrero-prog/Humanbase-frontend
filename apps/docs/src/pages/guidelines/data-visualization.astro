@@ -51,8 +51,6 @@ const chromosomeItems = [...Array.from({ length: 22 }, (_, i) => `chr${i + 1}`),
 const moduleItems = modules.map(({ id, label }) => ({ label, color: id === 'other' ? '--viz-cat-other' : `--viz-module-${id}` }));
 const edgeItems = [...edgeBands].reverse();
 
-const scoreSteps = ['0 to 0.14', '0.14 to 0.29', '0.29 to 0.43', '0.43 to 0.57', '0.57 to 0.71', '0.71 to 0.86', '0.86 to 1'];
-const effectSteps = ['Strong decrease', 'Decrease', 'Slight decrease', 'No change', 'Slight increase', 'Increase', 'Strong increase'];
 
 const aroundRenderer: [string, string, { text: string; href: string }?][] = [
   ['Toolbar above the graph', 'Icon buttons with tooltips and accessible names (Tooltips page): zoom, fit, expand, download and starred sets.'],
@@ -289,28 +287,24 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
       <HeatmapDiagram
         title="Sequential: score with IL1B by tissue"
         summary="Scores with IL1B for 8 genes across 8 tissues; blood vessel is highest for every gene, and CCL2 in brain is not available."
-        scale="sequential"
+        scale={tissueScores.scale}
         columns={tissueScores.columns}
         rows={tissueScores.rows}
         rowLabel="gene"
-        legend={{ title: 'Score with IL1B', ticks: ['0', '0.5', '1'] }}
-        steps={scoreSteps}
       />
       <HeatmapDiagram
         title="Diverging: predicted effect on IL1B expression"
         summary="Predicted effect of 5 variants on IL1B expression in 6 tissues; rs33944208 and rs16944 increase it most, rs1143634 lowers it."
-        scale="diverging"
+        scale={variantEffects.scale}
         columns={variantEffects.columns}
         rows={variantEffects.rows}
         rowLabel="variant"
-        legend={{ title: 'Effect on expression', ticks: ['Decrease', '0', 'Increase'] }}
-        steps={effectSteps}
       />
     </div>
     <ul class="points">
       <li>Cells are separated by a 1px white gap, so neighboring cells of similar color still read as separate values.</li>
       <li>Missing values are white with a grey outline and a diagonal line, labeled “Not available” in the tooltip. Never a color from the scale, and never zero.</li>
-      <li>Values are binned into the seven steps for display; the tooltip and the table view show the exact number.</li>
+      <li>Values are binned into the legend’s steps for display, five on a sequential scale and seven on a diverging one; the tooltip and the table view show the exact number.</li>
       <li>Clustering dendrograms are 1px grey 500 lines; they never use color.</li>
       <li>Variant IDs use the mono font; gene symbols are Lato Bold. Long column labels rotate 50°, never 90°.</li>
     </ul>
