@@ -426,7 +426,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
         <Dialog inline kind="form" size="medium" title="Display settings">
           <div class="settings-body">
             <p>{displaySettingsNote}</p>
-            <RadioGroup legend="Theme" options={themeOptions} defaultValue="1" />
+            <RadioGroup legend="Theme" options={themeOptions} defaultValue="2" />
             <RadioGroup legend="Motion" options={motionOptions('full motion')} defaultValue="device" />
           </div>
           <Fragment slot="actions">
@@ -496,7 +496,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     <ul>
       <li><code>TopBar</code> takes the sections as data. Sections with <code>columns</code> open a menu; sections with an <code>href</code> are plain links. It switches between the desktop, tablet and phone bars with container queries, so it fits whatever space it is given.</li>
       <li>Put <code>SkipLink</code> first in the body and give <code>main</code> the id it targets. Use <code>Breadcrumbs compact</code> below 768px.</li>
-      <li>Display settings are the page’s job: a floating <code>IconButton</code> with the gear, fixed 24px from the bottom left, opens a <code>Dialog</code> that saves the choices in this browser. Toasts sit above it and the footer leaves room under its last row.</li>
+      <li>Display settings are the page’s job: a floating <code>IconButton</code> with the gear, fixed 24px from the bottom left, opens a <code>Dialog</code> that saves the choices in this browser. The footer leaves room under its last row, and toasts shown inside a dialog sit above it.</li>
     </ul>
     <Code code={usage} lang="tsx" theme="css-variables" />
   </NoteCard>

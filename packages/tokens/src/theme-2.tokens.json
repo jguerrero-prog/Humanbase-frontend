@@ -635,5 +635,29 @@
       "$type": "color",
       "$value": "{color.emerald.700}"
     }
+  },
+  "button": {
+    "secondary": {
+      "$type": "color",
+      "$value": "{color.grey.900}"
+    },
+    "secondary-hover": {
+      "$type": "color",
+      "$value": "{color.grey.800}"
+    },
+    "secondary-pressed": {
+      "$type": "color",
+      "$value": "{color.grey.700}"
+    },
+    "on-secondary": {
+      "$type": "color",
+      "$value": "{color.white}"
+    }
+  },
+  "syntax": {
+    "string": {
+      "$type": "color",
+      "$value": "{color.success.700}"
+    }
   }
 }

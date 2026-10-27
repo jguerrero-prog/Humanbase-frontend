@@ -188,6 +188,10 @@
   --action-ghost-hover: #11713C14;
   --action-ghost-pressed: #11713C29;
   --action-ghost-selected: #11713C3D;
+  --button-secondary: var(--action-secondary);
+  --button-secondary-hover: var(--action-secondary-hover);
+  --button-secondary-pressed: var(--action-secondary-pressed);
+  --button-on-secondary: var(--text-default);
   --overlay-on-brand-hover: #FFFFFF1F;
   --overlay-on-brand-open: #FFFFFF24;
   --overlay-on-brand-selected: #FFFFFF52;
@@ -333,4 +337,9 @@
   --color-info-200: #9FCDF1;
   --color-info-700: #03669C;
   --text-link: var(--color-emerald-700);
+  --button-secondary: var(--color-grey-900);
+  --button-secondary-hover: var(--color-grey-800);
+  --button-secondary-pressed: var(--color-grey-700);
+  --button-on-secondary: var(--color-white);
+  --syntax-string: var(--color-success-700);
 }

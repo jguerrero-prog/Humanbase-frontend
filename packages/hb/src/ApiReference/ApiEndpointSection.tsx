@@ -1,13 +1,13 @@
 import type { ApiEndpoint, ApiExample } from '@humanbase/data';
-import { Badge, Cell, CodeBlock, CopyButton, Disclosure, DocsMarkdown, HeaderCell, InlineCode, Table, Tabs } from '@humanbase/ui';
+import { Badge, Cell, CodeBlock, type CodeLanguage, CopyButton, Disclosure, DocsMarkdown, HeaderCell, InlineCode, Table, Tabs } from '@humanbase/ui';
 import { useId, useState } from 'react';
 import { TryRequest } from './TryRequest';
 
-function Examples({ label, examples }: { label: string; examples: readonly ApiExample[] }) {
+function Examples({ label, examples, language }: { label: string; examples: readonly ApiExample[]; language?: CodeLanguage | undefined }) {
   const [selected, setSelected] = useState(examples[0]?.label ?? '');
   const shown = examples.find((example) => example.label === selected) ?? examples[0];
   if (!shown) return null;
-  const block = <CodeBlock label={`${label}: ${shown.label}`} code={shown.value} />;
+  const block = <CodeBlock label={`${label}: ${shown.label}`} code={shown.value} {...(language && { language })} />;
   if (examples.length === 1) return block;
   return (
     <Tabs label={label} tabs={examples.map((example) => ({ value: example.label, label: example.label }))} value={shown.label} onChange={setSelected}>
@@ -81,7 +81,7 @@ export function ApiEndpointSection({ endpoint, base }: { endpoint: ApiEndpoint; 
               ))}
             </ul>
           )}
-          <Examples label="Request body example" examples={body.examples} />
+          <Examples label="Request body example" examples={body.examples} language={body.contentType === 'application/json' ? 'json' : undefined} />
         </div>
       )}
 
@@ -100,7 +100,7 @@ export function ApiEndpointSection({ endpoint, base }: { endpoint: ApiEndpoint; 
         {responses
           .filter((response) => response.shape)
           .map((response) => (
-            <CodeBlock key={response.code} label={`${response.code} response fields`} code={response.shape ?? ''} collapseAfter={24} previewLines={12} expandLabel="Show every field" />
+            <CodeBlock key={response.code} label={`${response.code} response fields`} code={response.shape ?? ''} language="json" collapseAfter={24} previewLines={12} expandLabel="Show every field" />
           ))}
       </div>
 

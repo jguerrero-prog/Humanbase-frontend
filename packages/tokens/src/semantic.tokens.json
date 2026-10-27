@@ -157,6 +157,24 @@
       }
     }
   },
+  "button": {
+    "secondary": {
+      "$type": "color",
+      "$value": "{action.secondary}"
+    },
+    "secondary-hover": {
+      "$type": "color",
+      "$value": "{action.secondary-hover}"
+    },
+    "secondary-pressed": {
+      "$type": "color",
+      "$value": "{action.secondary-pressed}"
+    },
+    "on-secondary": {
+      "$type": "color",
+      "$value": "{text.default}"
+    }
+  },
   "overlay": {
     "on-brand-hover": {
       "$type": "color",

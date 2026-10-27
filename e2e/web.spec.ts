@@ -54,6 +54,24 @@ test('toasts from different screens stack in the one app region instead of overl
   await page.getByRole('menuitem', { name: 'Copy link' }).click();
   const toasts = region.getByRole('listitem');
   await expect(toasts).toHaveText([/Seqweaver finished: IL1B region variants/, /Link copied/]);
+  // Just under the top bar, lined up with the Jobs link, and still there once the page scrolls under the bar.
+  const placement = () =>
+    page.evaluate(() => {
+      const bar = document.querySelector('.top-bar')?.getBoundingClientRect();
+      const jobs = document.querySelector('.jobs-menu')?.getBoundingClientRect();
+      const toast = document.querySelector('.toast-list li')?.getBoundingClientRect();
+      return bar && jobs && toast ? { gap: toast.top - bar.bottom, rightEdges: Math.abs(toast.right - jobs.right) } : null;
+    });
+  for (const scroll of [0, 400]) {
+    await page.evaluate(async (y) => {
+      window.scrollTo(0, y);
+      await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
+    }, scroll);
+    const at = await placement();
+    expect(at?.gap, `toast below the bar, scrolled ${scroll}px`).toBeGreaterThanOrEqual(0);
+    expect(at?.gap, `toast close to the bar, scrolled ${scroll}px`).toBeLessThanOrEqual(16);
+    expect(at?.rightEdges).toBeLessThanOrEqual(1);
+  }
   await expect(page.locator('.toast-region')).toHaveCount(1);
   await settleAnimations(page);
   const [first, second] = await Promise.all([toasts.nth(0).boundingBox(), toasts.nth(1).boundingBox()]);
@@ -182,18 +200,24 @@ test('Display settings saves reduced motion in this browser', async ({ page }) =
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduce');
 });
 
-test('Display settings switches to Theme 2, keeps it in this browser, and passes WCAG 2.2 AA in it', async ({ page }) => {
+test('Theme 2 is the default; Display settings switches to Theme 1, keeps it in this browser, and passes WCAG 2.2 AA in it', async ({ page }) => {
   await apiOff(page);
   await page.goto(web);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', '2');
   const brand = () => page.locator('header').first().evaluate((bar) => getComputedStyle(bar).backgroundColor);
-  const themeOne = await brand();
+  const themeTwo = await brand();
+  // Secondary buttons, such as the footer's Subscribe, are black in Theme 2 and yellow in Theme 1.
+  const secondary = () => page.locator('.button-secondary').first().evaluate((button) => getComputedStyle(button).backgroundColor);
+  expect(await secondary()).toBe('rgb(23, 23, 23)');
   await page.getByRole('button', { name: 'Display settings' }).click();
-  await page.getByRole('radio', { name: /Theme 2/ }).check();
+  await expect(page.getByRole('radio', { name: /Theme 2/ })).toBeChecked();
+  await page.getByRole('radio', { name: /Theme 1/ }).check();
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', '2');
-  expect(await brand()).not.toBe(themeOne);
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme');
+  expect(await brand()).not.toBe(themeTwo);
+  expect(await secondary()).toBe('rgb(255, 213, 61)');
   await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', '2');
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme');
   for (const path of ['/', '/networks/?entrez=3553&entrez=7124&version=v1']) {
     await page.goto(`${web}${path}`);
     await settleAnimations(page);

@@ -13,8 +13,8 @@ export function applyMotion(choice: MotionChoice): void {
   else document.documentElement.dataset.motion = choice;
 }
 
-// Theme 1, emerald and yellow, is the tokens' base; another theme overrides primitives under data-theme.
-export const themeSetting = new BrowserSetting<ThemeChoice>('humanbase:theme', '1', ['1', '2']);
+// Theme 2, blue and gold, is the default. Theme 1, emerald and yellow, is the tokens' base; another theme overrides primitives under data-theme.
+export const themeSetting = new BrowserSetting<ThemeChoice>('humanbase:theme', '2', ['1', '2']);
 
 export function applyTheme(choice: ThemeChoice): void {
   if (choice === '1') delete document.documentElement.dataset.theme;
