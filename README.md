@@ -112,6 +112,18 @@ Every change starts as a GitHub issue, labeled feature, bug, enhancement, access
 
 The code standards are in [AGENTS.md](AGENTS.md). They apply to people and coding agents alike.
 
+## Taking over the repo
+
+A new owner, or a fork, works through this once:
+
+1. **Owner details:** edit `apps/docs/src/data/site.ts` (maintainer, contact email, repository, demo and Figma links) and `.github/CODEOWNERS`.
+2. **GitHub Pages:** turn it on with GitHub Actions as the source, so `master` publishes the design system and the API-off demo.
+3. **Branch protection:** protect `master` and `development`, require the CI checks ("Typecheck, lint, test and build" and "Accessibility scan"), and require one approving review once there is more than one maintainer.
+4. **Security:** turn on private vulnerability reporting (Settings, Code security), which SECURITY.md points to.
+5. **Dependencies:** Dependabot opens grouped updates monthly against `development` (`.github/dependabot.yml`); review them like any pull request.
+6. **Releases:** tag the handoff as v1.0.0 and follow the release steps in CHANGELOG.md.
+7. **Decisions:** read DECISIONS.md; change a decision through an issue, as it describes.
+
 ## License
 
 The front end and design system in this repository are [MIT licensed](LICENSE). The license does not cover the Humanbase API, the data it serves, or any graph renderer added to `packages/graph` under its own license; those belong to their owners. Vendored third-party code keeps its own licenses: Biodalliance 0.13 and the Bootstrap and Font Awesome files it bundles, listed in `packages/genome/vendor/biodalliance-0.13/`.
