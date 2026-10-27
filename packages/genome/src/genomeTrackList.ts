@@ -54,7 +54,7 @@ export function moveTrack(order: readonly string[], hidden: readonly string[], i
 /** Tracks the live site offers beside the page's own, from the same files; hg19 only, as no GRCh38 copies exist. */
 export const suggestedTracks: Record<Assembly, readonly GenomeDataTrack[]> = {
   hg19: [
-    scoreTrack({ name: 'Conservation', source: 'phastCons 46-way', bigWigUrl: `${humanbaseTracks}/phastCons46way.bw`, range: [0, 1] }),
+    scoreTrack({ name: 'Conservation', source: 'phastCons 46-way', bigWigUrl: `${humanbaseTracks}phastCons46way.bw`, range: [0, 1] }),
     chromHmmTrack,
   ],
   hg38: [],

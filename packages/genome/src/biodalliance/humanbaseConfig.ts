@@ -28,10 +28,10 @@ const gencode19 = {
   name: 'GENCODE 19',
   title: 'Genes',
   desc: 'GENCODE 19',
-  bwgURI: `${humanbaseTracks}/gencode.bb`,
+  bwgURI: `${humanbaseTracks}gencode.bb`,
   style: humanbaseGeneStyle,
   collapseSuperGroups: true,
-  trixURI: `${humanbaseTracks}/geneIndex.ix`,
+  trixURI: `${humanbaseTracks}geneIndex.ix`,
 };
 
 /** The live site's GM12878 ChromHMM style: BGITEM fills each segment with the file's own itemRgb. */
@@ -57,7 +57,7 @@ export const humanbaseAssemblies: Record<Assembly, BiodallianceAssembly> = {
   hg19: {
     coordSystem: grch37,
     sources: [
-      { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}/hg19.2bit`, tier_type: 'sequence', pinned: true },
+      { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}hg19.2bit`, tier_type: 'sequence', pinned: true },
       gencode19,
       // Conservation and GM12878 ChromHMM are page tracks (suggestedTracks), so the Tracks drawer can show and hide them.
     ],
@@ -65,15 +65,15 @@ export const humanbaseAssemblies: Record<Assembly, BiodallianceAssembly> = {
   hg38: {
     coordSystem: grch38,
     sources: [
-      { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}/GRCh38/hg38.2bit`, tier_type: 'sequence', pinned: true },
+      { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}GRCh38/hg38.2bit`, tier_type: 'sequence', pinned: true },
       {
         name: 'GENCODE 21',
         title: 'Genes',
         desc: 'GENCODE 21',
-        bwgURI: `${humanbaseTracks}/GRCh38/gencode.v21.annotation.bb`,
+        bwgURI: `${humanbaseTracks}GRCh38/gencode.v21.annotation.bb`,
         style: humanbaseGeneStyle,
         collapseSuperGroups: true,
-        trixURI: `${humanbaseTracks}/GRCh38/gencode.v21.annotation.ix`,
+        trixURI: `${humanbaseTracks}GRCh38/gencode.v21.annotation.ix`,
       },
       { ...gencode19, mapping: 'hg19ToHg38', disabled: true },
     ],
@@ -90,7 +90,7 @@ export const humanbaseBrowserOptions: Record<string, unknown> = {
   maxHeight: 1000,
   noPersist: true,
   disablePoweredBy: true,
-  chains: { hg19ToHg38: { uri: `${humanbaseTracks}/GRCh38/hg19ToHg38.bb`, type: 'bigbed', coords: grch37 } },
+  chains: { hg19ToHg38: { uri: `${humanbaseTracks}GRCh38/hg19ToHg38.bb`, type: 'bigbed', coords: grch37 } },
   // The page draws location, zoom and variant controls, so Biodalliance's own toolbar is hidden.
   noLocationField: true,
   noZoomSlider: true,

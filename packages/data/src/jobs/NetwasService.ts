@@ -1,6 +1,7 @@
 import { ApiError } from '../ApiError';
 import type { DataClient } from '../DataClient';
 import type { DataVersion } from '../genes/Gene';
+import { filesBucket } from '../origins';
 import { NetwasJob, type NetwasJobRecord } from './NetwasJob';
 import { NetwasResult } from './NetwasResult';
 
@@ -29,7 +30,7 @@ export interface SubmitProblem {
   message: string;
 }
 
-const examplesUrl = 'https://s3-us-west-2.amazonaws.com/humanbase/netwas/examples/';
+const examplesUrl = `${filesBucket}/netwas/examples/`;
 const example = (name: string, format: string): NetwasExample => ({ name, format, url: `${examplesUrl}${name}` });
 
 /** NetWAS runs as a job: submit a GWAS file once, then read the job until it finishes. */
