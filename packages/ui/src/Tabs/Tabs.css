@@ -77,7 +77,7 @@
 
 .tab:focus-visible,
 .tab[data-state="focus"] {
-  outline: none;
+  outline: 2px solid transparent;
   box-shadow: var(--shadow-focus-ring);
 }
 
@@ -104,6 +104,6 @@
 }
 
 .tabs-panel:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
   box-shadow: var(--shadow-focus-ring);
 }

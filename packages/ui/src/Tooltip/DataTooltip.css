@@ -75,7 +75,7 @@
 }
 
 a.data-tooltip-link:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
   border-radius: var(--radius-xs);
   box-shadow: var(--shadow-focus-ring);
 }

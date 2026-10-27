@@ -59,20 +59,24 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
   const networks = useIntegrations();
   const tissues = useMemo(() => (networks.data ? IntegrationService.pick(networks.data, 'tissue', version) : []), [networks.data, version]);
 
+  // Searches finish late, so each update builds on the current state rather than the one the search started from.
   const add = (found: readonly TermMatches[]) => {
-    const typedBefore = new Set(list.matches.flatMap((match) => match.typed.map((term) => term.toLowerCase())));
-    const fresh = found.filter((term) => !typedBefore.has(term.typed.toLowerCase()));
-    setGenes(new Map([...genes, ...hitsOf(fresh)]));
-    setList(new GeneMatchList([...list.matches, ...fresh.map(matchOf)]));
+    setGenes((current) => new Map([...current, ...hitsOf(found)]));
+    setList((current) => {
+      const typedBefore = new Set(current.matches.flatMap((match) => match.typed.map((term) => term.toLowerCase())));
+      const fresh = found.filter((term) => !typedBefore.has(term.typed.toLowerCase()));
+      return new GeneMatchList([...current.matches, ...fresh.map(matchOf)]);
+    });
     setAnalysis('networks');
   };
 
   const match = async (find: () => Promise<TermMatches[]>) => {
+    const searched = text;
     setMatching(true);
     setFailed(false);
     try {
       add(await find());
-      setText('');
+      setText((current) => (current === searched ? '' : current));
     } catch {
       setFailed(true);
     } finally {
@@ -109,7 +113,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
 
   const { entrez: runnable, outside, outsideGenes } = splitByVersion(list, genes, version);
 
-  const remove = (ids: readonly string[]) => setList(list.remove(ids));
+  const remove = (ids: readonly string[]) => setList((current) => current.remove(ids));
   const chooseVersion = (next: string) => {
     setVersion(next as DataVersion);
     setTissue('');
@@ -190,7 +194,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
           </div>
           <GeneMatchSummary list={list} level={2} />
           <OutsideVersionAlert outside={outsideGenes} version={version} runnable={runnable.length} onRemove={() => remove(outside.map((match) => match.id))} />
-          <GeneMatchTable list={list} caption="How your genes matched" onRemove={remove} onChoose={(id, entrez) => setList(list.choose(id, entrez))} />
+          <GeneMatchTable list={list} caption="How your genes matched" onRemove={remove} onChoose={(id, entrez) => setList((current) => current.choose(id, entrez))} />
         </section>
       )}
     </div>

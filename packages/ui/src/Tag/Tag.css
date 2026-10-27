@@ -54,7 +54,7 @@
 }
 
 .remove-button:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
   box-shadow: none;
 }
 

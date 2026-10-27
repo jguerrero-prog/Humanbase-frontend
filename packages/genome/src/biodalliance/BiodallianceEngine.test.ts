@@ -13,6 +13,8 @@ class FakeTier {
 
 class FakeBrowser {
   static last: FakeBrowser;
+  /** When set, the browser waits to report it is ready until the test calls `ready`. */
+  static held: { ready?: () => void } | undefined;
   views: ((chr: string, min: number, max: number) => void)[] = [];
   calls: string[] = [];
   orders: string[] = [];
@@ -25,7 +27,8 @@ class FakeBrowser {
     this.orders.push(this.tiers.map((tier) => tier.dasSource.name).join(', '));
   }
   addInitListener(listener: () => void) {
-    queueMicrotask(listener);
+    if (FakeBrowser.held) FakeBrowser.held.ready = listener;
+    else queueMicrotask(listener);
   }
   addViewListener(listener: (chr: string, min: number, max: number) => void) {
     this.views.push(listener);
@@ -55,7 +58,7 @@ class FakeBrowser {
 }
 
 class FakeResizeObserver {
-  static last: FakeResizeObserver;
+  static last: FakeResizeObserver | undefined;
   constructor(readonly resized: () => void) {
     FakeResizeObserver.last = this;
   }
@@ -73,6 +76,8 @@ describe('BiodallianceEngine', () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
   });
   afterEach(() => {
+    FakeBrowser.held = undefined;
+    FakeResizeObserver.last = undefined;
     vi.useRealTimers();
     vi.unstubAllGlobals();
     delete (globalThis as unknown as { Browser?: unknown }).Browser;
@@ -104,6 +109,20 @@ describe('BiodallianceEngine', () => {
     view?.('1', 2_310_000, 2_520_000);
     vi.advanceTimersByTime(150);
     expect(onRegionChange).toHaveBeenCalledExactlyOnceWith({ chrom: 'chr1', start: 2_310_000, end: 2_520_000 });
+  });
+
+  it('stops listening when it is destroyed while Biodalliance loads its tracks', async () => {
+    const held: { ready?: () => void } = {};
+    FakeBrowser.held = held;
+    const engine = new BiodallianceEngine();
+    const mounted = engine.mount(document.createElement('div'), { label: 'Genome browser', assembly: 'hg19', region, tracks: [], onRegionChange: vi.fn() });
+    for (let tick = 0; tick < 20 && !held.ready; tick++) await Promise.resolve();
+    engine.destroy();
+    expect(vi.getTimerCount()).toBe(0);
+    held.ready?.();
+    await mounted;
+    expect(FakeBrowser.last.views).toHaveLength(0);
+    expect(FakeResizeObserver.last).toBeUndefined();
   });
 
   it('draws nothing when it is destroyed while Biodalliance loads', async () => {
@@ -163,7 +182,7 @@ describe('BiodallianceEngine', () => {
     const engine = new BiodallianceEngine();
     await engine.mount(document.createElement('div'), { label: 'Genome browser', assembly: 'hg19', region, tracks: [] });
     engine.showRegion(region);
-    FakeResizeObserver.last.resized();
+    FakeResizeObserver.last?.resized();
     expect(FakeBrowser.last.calls.slice(-2)).toEqual(['resize', 'setLocation chr1 2230000 2440000']);
   });
 });
