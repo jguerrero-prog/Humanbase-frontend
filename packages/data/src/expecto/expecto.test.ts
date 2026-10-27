@@ -14,6 +14,8 @@ describe('ExpectoService.parse', () => {
     expect(ExpectoService.parse(' rs531708574 ')).toEqual({ kind: 'rsid', rsid: 'rs531708574' });
     expect(ExpectoService.parse('chr1:877,047')).toEqual({ kind: 'position', chromosome: 'chr1', position: 877047 });
     expect(ExpectoService.parse('x:12')).toEqual({ kind: 'position', chromosome: 'chrX', position: 12 });
+    expect(ExpectoService.parse('chrMT:100')).toEqual({ kind: 'position', chromosome: 'chrM', position: 100 });
+    expect(ExpectoService.parse('chr1:100-200')).toBeUndefined();
     expect(ExpectoService.parse('irgm')).toEqual({ kind: 'gene', symbol: 'IRGM' });
     expect(ExpectoService.parse('   ')).toBeUndefined();
     expect(ExpectoService.parse('two words')).toBeUndefined();

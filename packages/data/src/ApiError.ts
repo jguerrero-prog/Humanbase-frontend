@@ -12,6 +12,16 @@ export class ApiError extends Error {
   get isNotFound(): boolean {
     return this.status === 404;
   }
+
+  /** The request's answer, or undefined when it isn't found, as when the API is off and nothing was recorded for it. */
+  static async unlessNotFound<T>(request: Promise<T>): Promise<T | undefined> {
+    try {
+      return await request;
+    } catch (error) {
+      if (error instanceof ApiError && error.isNotFound) return undefined;
+      throw error;
+    }
+  }
 }
 
 /** No sample was recorded for this request, so a client that answers only for recorded examples can't answer it. */
