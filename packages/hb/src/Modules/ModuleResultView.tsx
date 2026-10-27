@@ -1,12 +1,12 @@
 import { dataVersionNames, useModuleGenes, type GeneHit, type Integration, type ModuleResult, type ModuleView } from '@humanbase/data';
 import { NetworkGraph, type GraphData, type GraphFocus, type GraphLink, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
-import { ActionMenu, Button, Cell, Checkbox, DataTooltip, GraphToolbar, HeaderCell, KeyLegend, ResultHeader, ResultLayout, SearchField, Select, Table, TextInput, type GraphAction } from '@humanbase/ui';
+import { ActionMenu, Button, Checkbox, DataTooltip, GraphToolbar, HeaderCell, KeyLegend, ResultHeader, ResultLayout, SearchField, Select, Table, TableSkeleton, TextInput, type GraphAction } from '@humanbase/ui';
 import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { ModuleDrawer } from './ModuleDrawer';
 import { colorOf, moduleColors } from './moduleColors';
 import { useModuleDownloads } from './moduleExport';
-import { ModuleGenesTable } from './ModuleGenesTable';
-import { ModulesTable, ModuleSwatch } from './ModulesTable';
+import { ModuleGeneRow, moduleGenes, ModuleGenesTable } from './ModuleGenesTable';
+import { ModulesTable } from './ModulesTable';
 import { tooltipAt } from '../Networks/graphTooltip';
 import '../Networks/Networks.css';
 import './Modules.css';
@@ -205,25 +205,19 @@ export function ModuleResultView({ result, title, view, tissues, starting, notic
     <>
       <GraphToolbar label="Graph controls" groups={toolbar} tableLabel={asTable ? 'View as graph' : 'View as table'} onViewTable={() => onViewChange(view.with({ display: asTable ? 'graph' : 'table' }))} />
       {asTable ? (
-        <Table caption={`Genes in the modules of ${title}`} density="compact" columnWidths={['88px', 'auto']}>
+        <Table className="module-graph-table" caption={`Genes in the modules of ${title}`} density="compact" columnWidths={['88px', 'auto']} busy={!names.data}>
           <thead>
             <tr>
               <HeaderCell>Module</HeaderCell>
-              <HeaderCell>Genes</HeaderCell>
+              <HeaderCell>Gene</HeaderCell>
             </tr>
           </thead>
           <tbody>
-            {shown.map((module) => (
-              <tr key={module.id}>
-                <Cell rowHeader>
-                  <button type="button" className="result-gene-button module-button" onClick={() => selectModule(module.id)}>
-                    <ModuleSwatch color={colorOf(colors, module.id)} />
-                    {module.label}
-                  </button>
-                </Cell>
-                <Cell>{module.genes.map((entrez) => names.data?.get(entrez)?.symbol ?? entrez).join(', ')}</Cell>
-              </tr>
-            ))}
+            {names.data ? (
+              moduleGenes(shown, names.data).map((row) => <ModuleGeneRow key={row.gene.entrez} {...row} colors={colors} onSelectModule={selectModule} onSelectGene={selectGene} />)
+            ) : (
+              <TableSkeleton columns={2} rows={8} />
+            )}
           </tbody>
         </Table>
       ) : (

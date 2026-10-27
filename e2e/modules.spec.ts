@@ -75,8 +75,12 @@ test('the module result has no WCAG 2.2 AA violations in each view, with the API
   await expect(page.getByRole('table', { name: 'Genes in each module' }).getByText('ABCB11')).toBeVisible();
   await page.getByRole('button', { name: 'View as table' }).click();
   // Opened directly, the result has no name in this browser, and examples are sent without a title.
-  await expect(page.getByRole('table', { name: 'Genes in the modules of Untitled module search' })).toBeVisible();
+  const asTable = page.getByRole('table', { name: 'Genes in the modules of Untitled module search' });
+  await expect(asTable.getByRole('row', { name: /HNF1B/ })).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
+  await asTable.getByRole('button', { name: /^HNF1B/ }).click();
+  await expect(page).toHaveURL(/gene=6928/);
+  await expect(page.getByRole('dialog', { name: 'HNF1B' })).toBeVisible();
   expect(apiRequests).toEqual([]);
 });
 
