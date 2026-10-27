@@ -2,3 +2,8 @@
   display: grid;
   gap: var(--space-4);
 }
+
+.networks-empty-lead {
+  max-inline-size: 640px;
+  color: var(--text-secondary);
+}

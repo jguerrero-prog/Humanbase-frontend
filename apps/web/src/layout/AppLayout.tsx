@@ -12,8 +12,10 @@ export function AppLayout() {
   const [bannerShown, setBannerShown] = useState(() => whatsNew.get() === 'shown');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const jobs = useJobsMenuSummary();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const onHomepage = pathname === '/';
+  // Networks with no genes chosen shows the homepage's search, so the top bar leaves its own out, as on the homepage.
+  const pageHasSearch = onHomepage || (pathname === '/networks/' && !new URLSearchParams(search).has('entrez'));
   const current = productSectionFor(pathname);
   const dismissBanner = () => {
     whatsNew.set('dismissed');
@@ -27,7 +29,7 @@ export function AppLayout() {
           We’ve made some changes to Humanbase and we’d like to show you around.
         </Banner>
       )}
-      <TopBar sections={productSections} jobs={jobs} search={!onHomepage} searchField={<TopBarSearch />} {...(current ? { current } : {})} />
+      <TopBar sections={productSections} jobs={jobs} search={!pageHasSearch} searchField={<TopBarSearch />} {...(current ? { current } : {})} />
       <main id="main" tabIndex={-1}>
         <Outlet />
       </main>

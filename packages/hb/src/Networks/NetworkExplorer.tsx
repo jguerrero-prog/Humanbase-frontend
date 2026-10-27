@@ -430,11 +430,3 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
     </>
   );
 }
-
-export function EmptyNetworkQuery() {
-  return (
-    <Alert tone="info" title="No genes chosen yet" action={{ label: 'Search for genes', href: '/' }}>
-      Search a gene or paste a list on the homepage, then choose Show network.
-    </Alert>
-  );
-}

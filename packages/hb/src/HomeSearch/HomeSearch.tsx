@@ -20,8 +20,12 @@ import './HomeSearch.css';
 
 export interface HomeSearchProps {
   onShowNetwork: (query: NetworkQuery) => void;
-  onChooseAnalysis: (analysis: string) => void;
-  onExampleSet: () => void;
+  /** Shows the analysis menu; left out on the Networks page, which is the analysis. */
+  onChooseAnalysis?: (analysis: string) => void;
+  /** Adds the Autism gene set example, which opens Modules. */
+  onExampleSet?: () => void;
+  /** brand on the homepage's dark hero; light on a white page, such as Networks with no genes chosen. */
+  surface?: 'brand' | 'light';
   /** Shown under the example searches, above the selected genes. */
   afterExamples?: ReactNode;
 }
@@ -31,7 +35,7 @@ const exampleGenes = ['IL1B', 'BRCA1', 'PTEN'];
 const exampleTerm = 'cancer';
 const versionOptions = (Object.keys(dataVersionNames) as DataVersion[]).map((version) => ({ value: version, label: dataVersionNames[version] }));
 
-export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afterExamples }: HomeSearchProps) {
+export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afterExamples, surface = 'brand' }: HomeSearchProps) {
   const linkHref = useLinkHref();
   const api = useHumanbase();
   const [analysis, setAnalysis] = useState<string>();
@@ -112,24 +116,26 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
   };
 
   return (
-    <div className="home-search">
+    <div className={['home-search', `home-search-${surface}`, !onChooseAnalysis && 'home-search-single'].filter(Boolean).join(' ')}>
       <div className="home-search-row">
-        <Select
-          label="Analysis"
-          hideLabel
-          placeholder="Select an analysis"
-          options={analysisOptions}
-          columns={analysisColumns}
-          {...(analysis && { value: analysis })}
-          triggerIcon={analysis === 'networks' ? 'gene-network' : 'analysis'}
-          size="large"
-          footer={
-            <p>
-              Not sure which tool? <a href={linkHref(categoryCrumbs.variants.href)}>Compare them</a>
-            </p>
-          }
-          onChange={(value) => (value === 'networks' ? setAnalysis(value) : onChooseAnalysis(value))}
-        />
+        {onChooseAnalysis && (
+          <Select
+            label="Analysis"
+            hideLabel
+            placeholder="Select an analysis"
+            options={analysisOptions}
+            columns={analysisColumns}
+            {...(analysis && { value: analysis })}
+            triggerIcon={analysis === 'networks' ? 'gene-network' : 'analysis'}
+            size="large"
+            footer={
+              <p>
+                Not sure which tool? <a href={linkHref(categoryCrumbs.variants.href)}>Compare them</a>
+              </p>
+            }
+            onChange={(value) => (value === 'networks' ? setAnalysis(value) : onChooseAnalysis(value))}
+          />
+        )}
         <SearchField
           ref={searchInput}
           label="Search genes"
@@ -146,12 +152,16 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
           onRetry={() => void suggestions.refetch()}
           {...(!typingOne && { open: false })}
           onSuggestionSelect={chooseSuggestion}
-          note="Choosing a gene switches the analysis to Networks. To search several genes, keep typing and separate them with spaces."
+          note={`${onChooseAnalysis ? 'Choosing a gene switches the analysis to Networks. ' : ''}To search several genes, keep typing and separate them with spaces.`}
         />
       </div>
       <SearchExamples
-        surface="brand"
-        examples={[...exampleGenes.map((symbol) => ({ label: symbol, onSelect: runExample(symbol) })), { label: exampleTerm, onSelect: suggestTerm(exampleTerm) }, { label: 'Autism gene set', onSelect: onExampleSet }]}
+        surface={surface}
+        examples={[
+          ...exampleGenes.map((symbol) => ({ label: symbol, onSelect: runExample(symbol) })),
+          { label: exampleTerm, onSelect: suggestTerm(exampleTerm) },
+          ...(onExampleSet ? [{ label: 'Autism gene set', onSelect: onExampleSet }] : []),
+        ]}
       />
       {afterExamples}
       {failed && (
