@@ -1,4 +1,4 @@
-import { useId, useMemo, useRef, useState, type ChangeEvent, type InputHTMLAttributes, type KeyboardEvent } from 'react';
+import { useId, useMemo, useRef, useState, type ChangeEvent, type InputHTMLAttributes, type KeyboardEvent, type Ref } from 'react';
 import { Badge } from '../Badge/Badge';
 import { Icon } from '../Icon/Icon';
 import { Alert } from '../Message/Alert';
@@ -30,6 +30,7 @@ export interface SearchSuggestion {
 
 export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'id' | 'type' | 'value' | 'defaultValue'> {
   label: string;
+  ref?: Ref<HTMLInputElement>;
   size?: SearchFieldSize;
   loading?: boolean;
   value?: string;
@@ -57,7 +58,7 @@ export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElem
 
 export function SearchField({
   label, size = 'large', loading = false, value, defaultValue = '', disabled, className, onChange, onClear, onKeyDown,
-  suggestions, suggestionsLoading = false, suggestionsFailed = false, onRetry, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, defaultHighlight = -1, heading, total, note, inlineSuggestions = false, matchNoun = 'genes', enterHint = 'open gene', ...rest
+  suggestions, suggestionsLoading = false, suggestionsFailed = false, onRetry, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, defaultHighlight = -1, heading, total, note, inlineSuggestions = false, matchNoun = 'genes', enterHint = 'open gene', ref, onFocus, ...rest
 }: SearchFieldProps) {
   const linkHref = useLinkHref();
   const id = useId();
@@ -157,12 +158,21 @@ export function SearchField({
         <Icon name="search" size={iconSize} />
         <input
           {...rest}
-          ref={input}
+          ref={(node) => {
+            input.current = node;
+            if (typeof ref === 'function') ref(node);
+            else if (ref) ref.current = node;
+          }}
           id={id}
           type="search"
           value={text}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
+          // Coming back to text already typed, or set by an example, shows its suggestions again.
+          onFocus={(event) => {
+            if (text) setOwnOpen(true);
+            onFocus?.(event);
+          }}
           disabled={disabled}
           aria-busy={loading || undefined}
           className="search-field-input"
