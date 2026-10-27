@@ -52,7 +52,8 @@ export function useConnectionEvidence(slug: string, a: number, b: number, enable
   return useQuery({ queryKey: ['connection-evidence', slug, Math.min(a, b), Math.max(a, b)], queryFn: () => api.connections.evidence(slug, a, b), enabled, staleTime: Infinity });
 }
 
-export function useConnectionInAllNetworks(a: number, b: number, enabled: boolean) {
+/** The pair in every network. The API can take 15 seconds or more the first time, so the drawer asks as soon as it opens. */
+export function useConnectionInAllNetworks(a: number, b: number) {
   const api = useHumanbase();
-  return useQuery({ queryKey: ['connection-networks', Math.min(a, b), Math.max(a, b)], queryFn: () => api.connections.inAllNetworks(a, b), enabled, staleTime: Infinity });
+  return useQuery({ queryKey: ['connection-networks', Math.min(a, b), Math.max(a, b)], queryFn: () => api.connections.inAllNetworks(a, b), staleTime: Infinity });
 }
