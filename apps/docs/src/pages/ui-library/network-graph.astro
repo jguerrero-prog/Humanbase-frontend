@@ -160,7 +160,7 @@ const teamGraph: GraphRendererFactory = () => new TeamGraphRenderer();
         <ActionMenu label="Download network" icon="download" items={downloads} />
         <ActionMenu label="Starred sets" icon="star" items={starred} />
       </GraphToolbar>
-      <NetworkDiagram mode="strength" />
+      <NetworkDiagram mode="strength" minimum={0.84} />
       <div class="graph-meta">
         <KeyLegend title="Connection" mark="line" items={edgeItems} />
         <p class="result-line">Showing 15 of 50 genes: 1 query gene and 14 related genes, 108 connections above 0.84.</p>
