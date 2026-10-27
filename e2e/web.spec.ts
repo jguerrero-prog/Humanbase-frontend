@@ -113,6 +113,27 @@ test('Networks keeps filters and the selected gene in the URL, so a refresh show
   await expect(page.locator('.force-graph-node.is-selected')).toHaveAttribute('aria-label', 'ICAM1, related gene');
 });
 
+test('clicking a line in the Networks graph opens that connection, as on humanbase.io', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1`);
+  const graph = page.locator('.force-graph');
+  await expect(graph.locator('.force-graph-hit')).not.toHaveCount(0);
+  await graph.scrollIntoViewIfNeeded();
+  await settleAnimations(page);
+  // The middle of a line, where nothing else is drawn, so the mouse lands on the line itself.
+  const point = await graph.evaluate((svg) => {
+    for (const hit of svg.querySelectorAll<SVGLineElement>('.force-graph-hit')) {
+      const middle = new DOMPoint((hit.x1.baseVal.value + hit.x2.baseVal.value) / 2, (hit.y1.baseVal.value + hit.y2.baseVal.value) / 2).matrixTransform(hit.getScreenCTM() ?? undefined);
+      if (document.elementFromPoint(middle.x, middle.y) === hit) return { x: middle.x, y: middle.y };
+    }
+    return null;
+  });
+  expect(point, 'a line whose middle can be clicked').not.toBeNull();
+  await page.mouse.click(point?.x ?? 0, point?.y ?? 0);
+  await expect(page.getByRole('dialog', { name: / and / })).toContainText(/Connection in the .+ network/);
+  await expect(page.getByRole('radio', { name: 'All networks' })).toBeVisible();
+});
+
 test('Networks explains a gene that is in no network', async ({ page }) => {
   await apiOff(page);
   await page.goto(`${web}/networks/?entrez=100188314&version=v1`);
