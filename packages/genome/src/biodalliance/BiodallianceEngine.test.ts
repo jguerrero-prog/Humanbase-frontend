@@ -173,7 +173,7 @@ describe('BiodallianceEngine', () => {
     const engine = new BiodallianceEngine();
     await engine.mount(document.createElement('div'), { label: 'Genome browser', assembly: 'hg19', region, tracks: suggestedTracks.hg19, hidden: ['Conservation', 'GM12878 ChromHMM'] });
     const sources = FakeBrowser.last.options.sources as Record<string, unknown>[];
-    expect(sources.find((source) => source.name === 'GM12878 ChromHMM')).toEqual({ name: 'GM12878 ChromHMM', bwgURI: 'https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb', pinned: true, style: chromHmm.style, disabled: true });
+    expect(sources.find((source) => source.name === 'GM12878 ChromHMM')).toEqual({ name: 'GM12878 ChromHMM', bwgURI: 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/gm12878.ChromHMM.bb', pinned: true, style: chromHmm.style, disabled: true });
     engine.showTracks(['Conservation']);
     expect(FakeBrowser.last.calls).toEqual(['add GM12878 ChromHMM']);
   });

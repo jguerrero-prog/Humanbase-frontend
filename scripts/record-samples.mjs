@@ -1,11 +1,12 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { apiOrigin } from '../packages/data/src/origins.ts';
 import { sampleKey } from '../packages/data/src/sample/sampleKey.ts';
 
 const args = process.argv.slice(2);
 const only = args.find((arg) => arg.startsWith('--only='))?.slice('--only='.length);
-const target = (args.find((arg) => !arg.startsWith('--')) ?? process.env.HB_API_PROXY_TARGET ?? 'https://hb.flatironinstitute.org').replace(/\/$/, '');
+const target = apiOrigin(args.find((arg) => !arg.startsWith('--')) || process.env.HB_API_PROXY_TARGET);
 const { endpoints, geneLookups, genomeTracks } = JSON.parse(readFileSync(new URL('../packages/data/endpoints.json', import.meta.url), 'utf8'));
 const samplesDir = fileURLToPath(new URL('../packages/data/samples/', import.meta.url));
 
@@ -73,7 +74,7 @@ async function record(endpoint, sample) {
 async function recordGene(name) {
   const { S3GeneLocator } = await import('../packages/data/src/genome/S3GeneLocator.ts');
   const key = `genome/genes/${name.toLowerCase()}`;
-  const span = await new S3GeneLocator(geneLookups.tracks).locate(name);
+  const span = await new S3GeneLocator().locate(name);
   if (!span) return { sample: key, result: 'not found, no file' };
   writeSample(join(samplesDir, `${key}.json`), { status: 200, body: span });
   return { sample: key, result: `${span.chrom}:${span.start}-${span.end}` };
@@ -82,7 +83,7 @@ async function recordGene(name) {
 // Genome tracks read static files on S3 too; every window goes into one sample the API-off genome browser reads.
 async function recordGenomeTracks() {
   const { S3GenomeTracks } = await import('../packages/data/src/genome/S3GenomeTracks.ts');
-  const files = new S3GenomeTracks(genomeTracks.tracks);
+  const files = new S3GenomeTracks();
   const windows = await Promise.all(
     genomeTracks.windows.map(async ({ assembly, region, scores: listed, segments: segmentFiles = [] }) => {
       const scores = listed.map((score) => (typeof score === 'string' ? { url: score } : score));
