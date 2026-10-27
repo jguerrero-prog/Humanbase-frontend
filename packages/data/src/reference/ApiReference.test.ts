@@ -22,6 +22,7 @@ describe('ApiReference', () => {
     expect(network.title).toBe('Network');
     expect(network.description).toBe('Query a functional network and return the relevant gene subnetwork.');
     expect(endpoint('GET', '/api/genes/{entrez}/').title).toBe('Retrieve a gene by entrez id');
+    expect(endpoint('GET', '/api/deepsea/jobs/{job_id}/').title).toBe('Returns the job specified by the job_id');
   });
 
   it('keeps headings inside a description under the endpoint’s own', () => {

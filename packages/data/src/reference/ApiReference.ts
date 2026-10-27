@@ -136,7 +136,8 @@ export class ApiEndpoint {
     reader: SchemaReader,
   ) {
     const { title, text } = titleAndText(operation);
-    this.title = title;
+    // A title reads as plain text in the sidebar and its heading, without the description's Markdown.
+    this.title = title.replace(/`([^`]+)`|\*\*([^*]+)\*\*/g, (_, code?: string, bold?: string) => code ?? bold ?? '');
     this.description = underEndpoint(text);
     // Path parameters come first, then the required ones, as a request is built.
     const order = (parameter: OpenApiParameter) => (parameter.in === 'path' ? 0 : parameter.required ? 1 : 2);
