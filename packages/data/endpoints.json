@@ -1,5 +1,5 @@
 {
-  "$description": "Every Humanbase API endpoint this front end calls. pnpm api:verify checks each GET example against a target API. pnpm samples:record saves each listed sample as the data shown when the API is off.",
+  "$description": "Every Humanbase API endpoint this front end calls. pnpm api:verify checks each GET example against a target API. pnpm samples:record saves each listed sample as the data shown when the API is off, only when it answers the sample's status (200 unless it names another, such as 404 for a not-found case). Files under handBuiltSamples and recordedByHandSamples were made or recorded by hand; the recorder never touches them.",
   "endpoints": [
     {
       "method": "GET",
@@ -9,7 +9,7 @@
       "samples": [
         "/api/genes/3553/",
         "/api/genes/7124/",
-        "/api/genes/0/",
+        { "path": "/api/genes/0/", "status": 404 },
         "/api/genes/100188314/",
         "/api/genes/3383/",
         "/api/genes/345611/",
@@ -142,7 +142,7 @@
         "/api/integrations/global-v3/network/?entrez=3553&entrez=7124&giant_version=v3",
         "/api/integrations/global-v3/network/?entrez=3553&giant_version=v3",
         "/api/integrations/mononuclear-phagocyte/network/?entrez=3553&entrez=7124&giant_version=v1",
-        "/api/integrations/global/network/?entrez=100188314&giant_version=v1",
+        { "path": "/api/integrations/global/network/?entrez=100188314&giant_version=v1", "status": 404 },
         "/api/integrations/acute-inflammatory-response/network/?entrez=3553&entrez=7124&giant_version=v1",
         "/api/integrations/global/network/?entrez=3383&entrez=3553&entrez=7124&giant_version=v1"
       ],
@@ -337,7 +337,7 @@
       "path": "/api/netwas/{id}/",
       "documented": true,
       "samples": [
-        "/api/netwas/00000000-0000-4000-8000-000000000000/",
+        { "path": "/api/netwas/00000000-0000-4000-8000-000000000000/", "status": 404 },
         "/api/netwas/c66b3d05-2f49-4522-b910-1605609e4083/"
       ],
       "usedBy": [
@@ -401,7 +401,7 @@
       "samples": [
         "/api/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/",
         "/api/deepsea/jobs/0576e894-a2c5-48bb-9bdf-227962495d5f/",
-        "/api/deepsea/jobs/00000000-0000-4000-8000-000000000000/",
+        { "path": "/api/deepsea/jobs/00000000-0000-4000-8000-000000000000/", "status": 404 },
         "/api/deepsea/jobs/2e18fedf-3de7-4d08-a894-9a937a2b860b/",
         "/api/deepsea/jobs/8b26a498-278c-4c73-a6a4-5f2550c30073/",
         "/api/deepsea/jobs/e504e3cc-6a9a-4f35-99e3-9185d6f5c4a1/",
@@ -644,8 +644,8 @@
           "path": "/api/genes/5728/tissue_variants/?database=clever-tissues&collapse=true",
           "digits": 2
         },
-        "/api/genes/100188314/tissue_variants/?database=expecto-tissues&collapse=true",
-        "/api/genes/100188314/tissue_variants/?database=clever-tissues&collapse=true"
+        { "path": "/api/genes/100188314/tissue_variants/?database=expecto-tissues&collapse=true", "status": 404 },
+        { "path": "/api/genes/100188314/tissue_variants/?database=clever-tissues&collapse=true", "status": 404 }
       ],
       "usedBy": [
         "ExpectoService.tissueVariants"
