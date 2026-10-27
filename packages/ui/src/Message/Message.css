@@ -165,7 +165,7 @@
   position: fixed;
   z-index: var(--z-toast);
   inset: auto;
-  inset-block-end: var(--space-6);
+  inset-block-end: var(--toast-offset, var(--space-6));
   inset-inline-start: var(--space-6);
   margin: 0;
   padding: 0;

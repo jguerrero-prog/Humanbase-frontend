@@ -1,5 +1,5 @@
 import { JobWatcher, Notifications, TopBarSearch, productFooter, productSectionFor, productSections, useJobsMenuSummary } from '@humanbase/hb';
-import { Banner, Footer, SkipLink, TopBar } from '@humanbase/ui';
+import { Banner, Footer, IconButton, SkipLink, TopBar } from '@humanbase/ui';
 import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { BrowserSetting } from './BrowserSetting';
@@ -31,7 +31,8 @@ export function AppLayout() {
       <main id="main" tabIndex={-1}>
         <Outlet />
       </main>
-      <Footer {...productFooter} onDisplaySettings={() => setSettingsOpen(true)} />
+      <Footer {...productFooter} />
+      <IconButton floating className="display-settings-button" label="Display settings" icon="settings" placement="right" onClick={() => setSettingsOpen(true)} />
       <DisplaySettings open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <JobWatcher />
       <Notifications />

@@ -469,7 +469,7 @@ a.nav-item,
 .footer-inner {
   display: grid;
   gap: var(--space-10);
-  padding: var(--space-16) var(--space-16) var(--space-8);
+  padding: var(--space-16) var(--space-16) calc(var(--space-8) + var(--footer-clearance, 0px));
 }
 
 .footer-top {
@@ -546,24 +546,10 @@ a.nav-item,
   flex: 1;
 }
 
-.footer-settings {
-  padding: 0;
-  font: var(--type-label-sm);
-  color: var(--text-default);
-  background: none;
-  border: 0;
-  border-radius: var(--radius-xs);
-  cursor: pointer;
-}
-
-.footer-settings:hover {
-  text-decoration: underline;
-}
-
 @container (width < 768px) {
   .footer-inner {
     gap: var(--space-6);
-    padding: var(--space-8) var(--space-4) var(--space-6);
+    padding: var(--space-8) var(--space-4) calc(var(--space-6) + var(--footer-clearance, 0px));
   }
 
   .footer-top {
