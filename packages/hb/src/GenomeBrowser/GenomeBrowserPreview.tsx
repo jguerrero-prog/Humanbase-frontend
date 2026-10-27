@@ -9,8 +9,6 @@ export interface GenomeBrowserPreviewProps {
   view: GenomeBrowserView;
   /** The page keeps the view in its URL, with the gene and variant the link named. */
   onLocationChange: (location: GenomeLocation) => void;
-  /** The proposal this page previews, linked from its notice. */
-  proposalHref: string;
   engine?: GenomeBrowserEngineFactory | undefined;
 }
 
@@ -21,7 +19,7 @@ const tracks: Record<GenomeBrowserView['assembly'], readonly GenomeDataTrack[]> 
 };
 
 /** The genome around a gene or a variant, with humanbase.io's /genome tracks: a preview of a proposal under review. */
-export function GenomeBrowserPreview({ view, onLocationChange, proposalHref, engine = defaultGenomeEngine }: GenomeBrowserPreviewProps) {
+export function GenomeBrowserPreview({ view, onLocationChange, engine = defaultGenomeEngine }: GenomeBrowserPreviewProps) {
   const { showsSamples } = useHumanbase();
   const found = useGeneLocation(view.location ? undefined : view.gene, view.assembly);
   const assemblyName = assemblyNames[view.assembly];
@@ -56,9 +54,6 @@ export function GenomeBrowserPreview({ view, onLocationChange, proposalHref, eng
       mainLabel="Genome browser"
       main={
         <div className="deepsea-result">
-          <Alert tone="info" title="Preview" action={{ label: 'Read the proposal on GitHub', href: proposalHref }}>
-            This page is a proposal under review: a genome browser you open from a gene or a variant. It may change or be taken out.
-          </Alert>
           {view.assembly === 'hg38' && (
             <Alert tone="info" title="Genes only on GRCh38/hg38">
               The disease impact and Seqweaver gnomAD scores were computed on GRCh37/hg19, so this assembly shows genes and sequence.

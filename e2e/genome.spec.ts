@@ -7,7 +7,7 @@ const web = 'http://localhost:4173';
 
 test.skip(!genomeBrowserPreview, 'The genome browser preview is switched off.');
 
-test('a gene opens the genome browser page on that gene, with humanbase.io’s /genome tracks and the preview notice, with the API off', async ({ page }) => {
+test('a gene opens the genome browser page on that gene, with humanbase.io’s /genome tracks and no preview notice, with the API off', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&gene=3383`);
   await page.getByRole('dialog', { name: 'ICAM1' }).getByRole('link', { name: 'View in genome browser' }).click();
@@ -16,7 +16,7 @@ test('a gene opens the genome browser page on that gene, with humanbase.io’s /
   await expect(page.getByRole('heading', { level: 1, name: 'Genome browser' })).toBeVisible();
   // The trail names the tool the link came from, not the page's place under Variants & sequences.
   await expect(page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('listitem')).toHaveText(['Genes & gene sets', 'Networks', 'Genome browser']);
-  await expect(page.getByRole('link', { name: 'Read the proposal on GitHub' })).toHaveAttribute('href', /\/issues\/457$/);
+  await expect(page.getByRole('link', { name: 'Read the proposal on GitHub' })).toHaveCount(0);
   const browser = page.getByRole('application', { name: /^Genome browser, chr19:10,381,510-10,397,291, GRCh37\/hg19/ });
   await expect(browser.getByText('ICAM1 →')).toBeVisible();
   await expect(page.locator('.genome-engine .track-header-name')).toHaveText(['Sequence', 'Seqweaver gnomAD', 'DNA disease impact score (de novo ASD)', 'RNA disease impact score (de novo ASD)', 'Genes']);
