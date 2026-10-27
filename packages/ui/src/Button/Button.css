@@ -41,18 +41,18 @@
 }
 
 .button-secondary {
-  color: var(--text-default);
-  background: var(--action-secondary);
+  color: var(--button-on-secondary);
+  background: var(--button-secondary);
 }
 
 .button-secondary:hover,
 .button-secondary[data-state="hover"] {
-  background: var(--action-secondary-hover);
+  background: var(--button-secondary-hover);
 }
 
 .button-secondary:active,
 .button-secondary[data-state="pressed"] {
-  background: var(--action-secondary-pressed);
+  background: var(--button-secondary-pressed);
 }
 
 .button-ghost {
