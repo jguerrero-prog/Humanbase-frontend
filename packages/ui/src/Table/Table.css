@@ -240,8 +240,14 @@
   color: var(--text-secondary);
 }
 
+/* It follows the table and sticks to the bottom of the screen while the table scrolls, then rests under the last row. */
 .table-selection-bar {
+  position: sticky;
+  z-index: var(--z-sticky);
+  inset-block-end: var(--selection-bar-offset, var(--space-4));
+  box-shadow: var(--shadow-elevation-3);
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2);
   align-items: center;
   padding: 6px 6px 6px var(--space-4);
@@ -251,7 +257,7 @@
 }
 
 .table-selection-bar p {
-  flex: 1;
+  flex: 1 1 12rem;
   font: 700 15px/20px Lato, sans-serif;
 }
 
