@@ -40,7 +40,7 @@ test('every design system page fits a 390px phone without scrolling sideways', a
   }
 });
 
-const phoneRoutes = ['/', '/networks/', '/modules/', '/netwas/', '/netwas/c66b3d05-2f49-4522-b910-1605609e4083/', '/variant-effects/', '/variant-effects/hgmd/', '/expression-effects/', '/seqweaver/', '/downloads/', '/about/', '/cite/', '/data-sources/', '/docs/', '/jobs/', '/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/'];
+const phoneRoutes = ['/', '/networks/', '/modules/', '/netwas/', '/netwas/c66b3d05-2f49-4522-b910-1605609e4083/', '/variant-effects/', '/variant-effects/hgmd/', '/expression-effects/', '/seqweaver/', '/downloads/', '/about/', '/cite/', '/data-sources/', '/docs/', '/humanbase-api/', '/jobs/', '/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/'];
 const finishedJob = { id: '76aea8fe-8ec7-4698-a193-a186c7665edb', tool: 'Seqweaver', status: 'finished', startedAt: '2026-10-20T21:02:00.000Z', link: '/deepsea/jobs/76aea8fe-8ec7-4698-a193-a186c7665edb/', title: 'IL1B region variants', detail: 'Seqweaver, example.vcf' };
 const pageScrollsSideways = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth || window.scrollX > 0);
 

@@ -79,6 +79,7 @@ export const routes: RouteObject[] = [
           page('about', async () => (await import('./pages/AboutPage')).AboutPage),
           page('cite', async () => (await import('./pages/CitePage')).CitePage),
           page('whats-new', async () => (await import('./pages/WhatsNewPage')).WhatsNewPage),
+          page('humanbase-api', async () => (await import('./pages/ApiReferencePage')).ApiReferencePage),
           page('docs/*', async () => (await import('./pages/DocsPage')).DocsPage),
           page('jobs',async () => (await import('./pages/JobsPage')).JobsPage),
           { path: '*', element: <NotFoundPage /> },

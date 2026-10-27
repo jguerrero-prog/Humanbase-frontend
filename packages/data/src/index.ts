@@ -69,3 +69,7 @@ export { useModuleResult } from './react/useModuleResult';
 export { moduleExamples, type ModuleExample } from './modules/moduleExamples';
 export { ModuleView, type ModuleDisplay, type ModuleTab } from './modules/ModuleView';
 export { useModuleGenes } from './react/useModuleGenes';
+export { ApiEndpoint, ApiReference, type ApiBody, type ApiBodyField, type ApiExample, type ApiGroup, type ApiMethod, type ApiParameter, type ApiRequest, type ApiRequestInput, type ApiResponse } from './reference/ApiReference';
+export { ApiReferenceService, type ApiResult } from './reference/ApiReferenceService';
+export type { OpenApiDocument } from './reference/OpenApi';
+export { useApiReference, useApiRequest } from './react/useApiReference';

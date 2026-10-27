@@ -690,6 +690,18 @@
       "usedBy": [
         "AsdService.columns"
       ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/schema/",
+      "documented": false,
+      "example": "/api/schema/?format=json",
+      "samples": [
+        "/api/schema/?format=json"
+      ],
+      "usedBy": [
+        "ApiReferenceService.reference"
+      ]
     }
   ],
   "geneLookups": {
