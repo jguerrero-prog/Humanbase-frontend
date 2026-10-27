@@ -91,7 +91,24 @@ test('the module result keeps its view in the URL, so a refresh shows the same t
   await expect(page).toHaveURL(/edges=1&all=1/);
   await page.reload();
   await expect(page.getByText('Showing 20 modules of 2 genes or more. Edges shown.')).toBeVisible();
-  await expect(page.locator('.force-graph-links line').first()).toBeAttached();
+  await expect(page.locator('.force-graph-links path').first()).toBeAttached();
+});
+
+test('a module hovered in the table is brought forward in the graph, and modules past the eighth are drawn as rings, with the API off', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(renal);
+  await expect(page.locator('.force-graph-group-hull').first()).toBeAttached();
+  await page.locator('.modules-table tbody tr').filter({ hasText: 'M3' }).hover();
+  await expect(page.locator('.force-graph-group.is-hovered')).toHaveAttribute('aria-label', /^M3, /);
+  await expect(page.locator('.force-graph-node.is-dimmed').first()).toBeAttached();
+  await page.mouse.move(0, 0);
+  await expect(page.locator('.force-graph-node.is-dimmed')).toHaveCount(0);
+
+  await page.locator('.force-graph-group[aria-label^="M1,"]').hover({ force: true });
+  await expect(page.locator('.modules-table tbody tr[data-state="hover"]')).toContainText('M1');
+  const legend = page.getByRole('group', { name: 'Module' });
+  await expect(legend.locator('.legend-ring').first()).toBeAttached();
+  await expect(page.locator('.force-graph-node.is-ring').first()).toBeAttached();
 });
 
 test('a gene opens in the module drawer, chains to its neighbors and goes back, with the API off', async ({ page }) => {
@@ -110,7 +127,7 @@ test('a gene opens in the module drawer, chains to its neighbors and goes back, 
   await expect(gene.getByRole('heading', { level: 2, name: 'HNF1B' })).toBeFocused();
   await expect(gene.getByRole('table', { name: 'Enriched terms of M1 that include HNF1B' }).getByRole('row')).toHaveCount(10);
   await expect(page.locator('.force-graph-node.is-selected')).toHaveAttribute('aria-label', 'HNF1B, M1');
-  await expect(page.locator('.force-graph-focus-links line')).toHaveCount(2);
+  await expect(page.locator('.force-graph-focus-links path')).toHaveCount(2);
   expect(await violationsOf(page)).toEqual([]);
 
   await gene.getByRole('radio', { name: 'Gene neighbors' }).click();

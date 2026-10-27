@@ -516,7 +516,8 @@
   position: relative;
   block-size: 403px;
   overflow: hidden;
-  background: var(--surface-subtle);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-subtle);
   border-radius: var(--radius-sm);
 }
 

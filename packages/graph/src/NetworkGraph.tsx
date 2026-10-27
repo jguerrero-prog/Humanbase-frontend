@@ -1,6 +1,6 @@
 import { useEffect, useImperativeHandle, useLayoutEffect, useRef, type Ref } from 'react';
 import { ForceGraphRenderer } from './ForceGraphRenderer';
-import type { GraphData, GraphFocus, GraphHighlight, GraphRenderer, GraphRendererFactory, GraphSelection } from './GraphRenderer';
+import type { GraphData, GraphEvents, GraphFocus, GraphHighlight, GraphRenderer, GraphRendererFactory, GraphSelection } from './GraphRenderer';
 import './graph.css';
 
 export interface NetworkGraphHandle {
@@ -9,7 +9,7 @@ export interface NetworkGraphHandle {
   exportSvg(): Blob;
 }
 
-export interface NetworkGraphProps {
+export interface NetworkGraphProps extends GraphEvents {
   data: GraphData;
   label: string;
   selection?: GraphSelection;
@@ -17,10 +17,8 @@ export interface NetworkGraphProps {
   highlights?: readonly GraphHighlight[];
   /** The gene to ring with a dashed ring, with the links to draw from it. */
   hover?: GraphFocus | null;
-  onSelectNode?: (id: string) => void;
-  onSelectLink?: (source: string, target: string) => void;
-  onSelectGroup?: (id: string) => void;
-  onHoverNode?: (id: string | null, anchor?: DOMRect) => void;
+  /** The group to bring forward, such as a module hovered in a table. */
+  hoverGroup?: string | null;
   /** Swap in another renderer, such as the live site's. Defaults to the plain force-directed one. */
   renderer?: GraphRendererFactory | undefined;
   className?: string;
@@ -30,12 +28,12 @@ export interface NetworkGraphProps {
 const defaultRenderer: GraphRendererFactory = () => new ForceGraphRenderer();
 const noHighlights: readonly GraphHighlight[] = [];
 
-export function NetworkGraph({ data, label, selection = null, highlights = noHighlights, hover = null, onSelectNode, onSelectLink, onSelectGroup, onHoverNode, renderer, className, ref }: NetworkGraphProps) {
+export function NetworkGraph({ data, label, selection = null, highlights = noHighlights, hover = null, hoverGroup = null, renderer, className, ref, ...handlers }: NetworkGraphProps) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<GraphRenderer | null>(null);
-  const events = useRef({ label, onSelectNode, onSelectLink, onSelectGroup, onHoverNode });
+  const events = useRef<GraphEvents & { label: string }>({ label, ...handlers });
   useLayoutEffect(() => {
-    events.current = { label, onSelectNode, onSelectLink, onSelectGroup, onHoverNode };
+    events.current = { label, ...handlers };
   });
 
   useEffect(() => {
@@ -47,6 +45,9 @@ export function NetworkGraph({ data, label, selection = null, highlights = noHig
       onSelectLink: (source, target) => events.current.onSelectLink?.(source, target),
       onSelectGroup: (id) => events.current.onSelectGroup?.(id),
       onHoverNode: (id, anchor) => events.current.onHoverNode?.(id, anchor),
+      onHoverLink: (link) => events.current.onHoverLink?.(link),
+      onHoverGroup: (id) => events.current.onHoverGroup?.(id),
+      onClearSelection: () => events.current.onClearSelection?.(),
     });
     instance.current = graph;
     return () => {
@@ -60,6 +61,7 @@ export function NetworkGraph({ data, label, selection = null, highlights = noHig
   useEffect(() => instance.current?.select(selection), [selection, data, renderer]);
   useEffect(() => instance.current?.highlight(highlights), [highlights, data, renderer]);
   useEffect(() => instance.current?.hover(hover), [hover, data, renderer]);
+  useEffect(() => instance.current?.hoverGroup(hoverGroup), [hoverGroup, data, renderer]);
 
   useImperativeHandle(ref, () => ({
     zoomBy: (factor) => instance.current?.zoomBy(factor),

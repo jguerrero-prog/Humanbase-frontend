@@ -9,6 +9,12 @@
   inline-size: 12px;
   block-size: 12px;
   border-radius: 50%;
+  background: var(--module-color);
+}
+
+.module-swatch-ring {
+  background: var(--surface-page);
+  border: 2px solid var(--module-color);
 }
 
 .module-terms {

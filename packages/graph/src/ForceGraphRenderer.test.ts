@@ -1,7 +1,7 @@
 import { forceSimulation } from 'd3-force';
 import { edgeBand, edgeBands, edgeBandsFrom } from './edgeBands';
 import { ForceGraphRenderer } from './ForceGraphRenderer';
-import type { GraphData } from './GraphRenderer';
+import type { GraphData, GraphGroup } from './GraphRenderer';
 
 vi.mock('d3-force', async (original) => {
   const actual = await original<typeof import('d3-force')>();
@@ -40,9 +40,13 @@ describe('edgeBand', () => {
     expect(edgeBand(0.3)).toBeUndefined();
   });
 
-  it('starts the weakest band at a minimum confidence below 0.5', () => {
+  it('lists only the bands a minimum confidence leaves, the weakest starting at the minimum', () => {
     expect(edgeBandsFrom(0.4807).map((band) => band.label)).toEqual(['0.9 and up', '0.75 to 0.9', '0.48 to 0.75']);
-    expect(edgeBandsFrom(0.6)).toBe(edgeBands);
+    expect(edgeBandsFrom(0.5)).toBe(edgeBands);
+    expect(edgeBandsFrom(0.6).map((band) => band.label)).toEqual(['0.9 and up', '0.75 to 0.9', '0.6 to 0.75']);
+    expect(edgeBandsFrom(0.84).map((band) => band.label)).toEqual(['0.9 and up', '0.84 to 0.9']);
+    expect(edgeBandsFrom(0.75).map((band) => band.label)).toEqual(['0.9 and up', '0.75 to 0.9']);
+    expect(edgeBandsFrom(0.95).map((band) => band.label)).toEqual(['0.95 and up']);
   });
 });
 
@@ -72,6 +76,60 @@ describe('ForceGraphRenderer', () => {
     expect(container.querySelectorAll('.force-graph-hit')).toHaveLength(3);
   });
 
+  it('draws each connection once as a gentle curve, weaker bands fainter', () => {
+    const { container } = mounted();
+    const lines = [...container.querySelectorAll<SVGPathElement>('.force-graph-links path:not(.force-graph-hit)')];
+    expect(lines).toHaveLength(3);
+    expect(lines.every((line) => /^M[-\d. ]+Q[-\d. ]+$/.test(line.getAttribute('d') ?? ''))).toBe(true);
+    expect(lines.map((line) => line.style.getPropertyValue('--edge-opacity'))).toEqual(['1', '0.6', '0.8']);
+  });
+
+  it('labels every gene on a layer above the connections, with no two labels overlapping', () => {
+    const { container } = mounted();
+    const layers = [...(container.querySelector('svg > g')?.children ?? [])].map((layer) => layer.getAttribute('class'));
+    expect(layers.indexOf('force-graph-labels')).toBeGreaterThan(layers.indexOf('force-graph-links'));
+    const labels = [...container.querySelectorAll<SVGGElement>('.force-graph-label')];
+    expect(labels.map((label) => label.textContent)).toEqual(['IL1B', 'TNF', 'AQP9', 'IL1R1']);
+    const boxes = labels.map((label) => {
+      const [x, y] = (label.getAttribute('transform')?.match(/[-\d.]+/g) ?? []).map(Number);
+      const rect = label.querySelector('rect') as SVGRectElement;
+      return { x: (x ?? 0) + Number(rect.getAttribute('x')), y: (y ?? 0) + Number(rect.getAttribute('y')), width: Number(rect.getAttribute('width')), height: Number(rect.getAttribute('height')) };
+    });
+    for (const [index, a] of boxes.entries()) for (const b of boxes.slice(index + 1)) expect(a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height).toBe(false);
+  });
+
+  it('keeps query genes nearer the middle than the genes around them', () => {
+    const { container } = mounted();
+    const at = (name: string) => (container.querySelector(`[aria-label^="${name},"]`)?.getAttribute('transform')?.match(/[-\d.]+/g) ?? []).map(Number) as [number, number];
+    const middle = ['IL1B', 'IL1R1', 'TNF', 'AQP9'].map(at).reduce(([x, y], [a, b]) => [x + a / 4, y + b / 4], [0, 0]);
+    const distance = (name: string) => Math.hypot(at(name)[0] - middle[0], at(name)[1] - middle[1]);
+    expect(Math.max(distance('IL1B'), distance('TNF'))).toBeLessThan(Math.min(distance('IL1R1'), distance('AQP9')));
+  });
+
+  it('dims genes and connections a hovered gene does not touch', () => {
+    const { container, renderer } = mounted();
+    renderer.hover({ id: '3554', links: [] });
+    const dimmed = (name: string) => container.querySelector(`[aria-label^="${name},"]`)?.classList.contains('is-dimmed');
+    expect(container.querySelector('svg')?.classList.contains('is-dimming')).toBe(true);
+    expect([dimmed('IL1R1'), dimmed('IL1B'), dimmed('TNF'), dimmed('AQP9')]).toEqual([false, false, true, true]);
+    expect(container.querySelectorAll('.force-graph-links path.is-dimmed')).toHaveLength(2);
+    renderer.hover(null);
+    expect(container.querySelectorAll('.is-dimmed')).toHaveLength(0);
+  });
+
+  it('clears the selection from a click on empty space or Escape', () => {
+    const container = document.createElement('div');
+    const onClearSelection = vi.fn();
+    const renderer = new ForceGraphRenderer();
+    renderer.mount(container, { label: 'Network', onClearSelection });
+    renderer.render(data);
+    const svg = container.querySelector('svg') as SVGSVGElement;
+    svg.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    (container.querySelector('.force-graph-node') as SVGGElement).dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    svg.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(onClearSelection).toHaveBeenCalledTimes(2);
+  });
+
   it('places every gene at a finite position, the same way every time', () => {
     const positions = () => [...mounted().container.querySelectorAll('.force-graph-node')].map((n) => n.getAttribute('transform'));
     const first = positions();
@@ -84,20 +142,26 @@ describe('ForceGraphRenderer', () => {
     const il1r1 = container.querySelector('[aria-label="IL1R1, related gene"]') as SVGGElement;
     il1r1.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     il1r1.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-    (container.querySelector('.force-graph-hit') as SVGLineElement).dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    (container.querySelector('.force-graph-hit') as SVGPathElement).dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(onSelectNode).toHaveBeenNthCalledWith(1, '3554');
     expect(onSelectNode).toHaveBeenCalledTimes(2);
     expect(onSelectLink).toHaveBeenCalledWith('3553', '3554');
   });
 
-  it('thickens a connection under the pointer, until the pointer leaves', () => {
-    const { container } = mounted();
-    const hit = container.querySelector('.force-graph-hit') as SVGLineElement;
-    const line = hit.previousElementSibling as SVGLineElement;
+  it('thickens a connection under the pointer and reports it, until the pointer leaves', () => {
+    const container = document.createElement('div');
+    const onHoverLink = vi.fn();
+    const renderer = new ForceGraphRenderer();
+    renderer.mount(container, { label: 'Network', onHoverLink });
+    renderer.render(data);
+    const hit = container.querySelector('.force-graph-hit') as SVGPathElement;
+    const line = hit.previousElementSibling as SVGPathElement;
     hit.dispatchEvent(new PointerEvent('pointerenter'));
     expect(line.classList.contains('is-hovered')).toBe(true);
+    expect(onHoverLink).toHaveBeenLastCalledWith({ source: '3553', target: '3554', anchor: expect.anything() });
     hit.dispatchEvent(new PointerEvent('pointerleave'));
     expect(line.classList.contains('is-hovered')).toBe(false);
+    expect(onHoverLink).toHaveBeenLastCalledWith(null);
   });
 
   it('rings the selected gene and fades genes it does not connect to', () => {
@@ -206,13 +270,13 @@ describe('ForceGraphRenderer with groups', () => {
   it('selects a gene with its own links, keeping its module and neighbors at full strength', () => {
     const { container, renderer } = mountedGroups();
     renderer.select({ kind: 'node', id: '2', links: [{ source: '2', target: '3', weight: 0.6 }] });
-    expect(container.querySelectorAll('.force-graph-focus-links line')).toHaveLength(1);
+    expect(container.querySelectorAll('.force-graph-focus-links path')).toHaveLength(1);
     expect(container.querySelector('[aria-label="HNF1B, M1"]')?.classList.contains('is-selected')).toBe(true);
     expect(container.querySelector('[aria-label="CCDC40, M3"]')?.classList.contains('is-faded')).toBe(false);
     expect(container.querySelector('[aria-label="FGF8, M1"]')?.classList.contains('is-faded')).toBe(true);
     expect(container.querySelector('[aria-label="M1, 2 genes"]')?.classList.contains('is-selected')).toBe(true);
     renderer.select(null);
-    expect(container.querySelectorAll('.force-graph-focus-links line')).toHaveLength(0);
+    expect(container.querySelectorAll('.force-graph-focus-links path')).toHaveLength(0);
   });
 
   it('reports hover and focus on a gene, and rings the hovered gene with its links', () => {
@@ -228,9 +292,61 @@ describe('ForceGraphRenderer with groups', () => {
     expect(onHoverNode).toHaveBeenLastCalledWith(null);
     renderer.hover({ id: '1', links: [{ source: '1', target: '2', weight: 0.9 }] });
     expect(fgf8.classList.contains('is-hovered')).toBe(true);
-    expect(container.querySelectorAll('.force-graph-focus-links line')).toHaveLength(1);
+    expect(container.querySelectorAll('.force-graph-focus-links path')).toHaveLength(1);
     renderer.hover(null);
     expect(fgf8.classList.contains('is-hovered')).toBe(false);
-    expect(container.querySelectorAll('.force-graph-focus-links line')).toHaveLength(0);
+    expect(container.querySelectorAll('.force-graph-focus-links path')).toHaveLength(0);
+  });
+
+  it('outlines each group in its color, rings the genes of a ring group and labels no single gene', () => {
+    const container = document.createElement('div');
+    const renderer = new ForceGraphRenderer();
+    renderer.mount(container, { label: 'Modules' });
+    renderer.render({ ...grouped, groups: [grouped.groups?.[0] as GraphGroup, { id: 'm3', label: 'M3', color: '--viz-module-1', ring: true }] });
+    const hulls = [...container.querySelectorAll<SVGPathElement>('.force-graph-group-hull')];
+    expect(hulls.map((hull) => [hull.style.getPropertyValue('--group-color'), hull.classList.contains('is-ring')])).toEqual([
+      ['var(--viz-cat-1)', false],
+      ['var(--viz-module-1)', true],
+    ]);
+    expect(container.querySelector('[aria-label="CCDC40, M3"]')?.classList.contains('is-ring')).toBe(true);
+    expect(container.querySelectorAll('.force-graph-label')).toHaveLength(0);
+  });
+
+  it('keeps hidden links for the layout and the hover, colors links inside a group and keeps those between groups neutral', () => {
+    const container = document.createElement('div');
+    const renderer = new ForceGraphRenderer();
+    renderer.mount(container, { label: 'Modules' });
+    const linked: GraphData = { ...grouped, links: [{ source: '1', target: '2', weight: 0.9 }, { source: '2', target: '3', weight: 0.6 }], linksHidden: true };
+    renderer.render(linked);
+    expect(container.querySelectorAll('.force-graph-links path')).toHaveLength(0);
+    renderer.hover({ id: '1', links: [] });
+    expect(container.querySelector('[aria-label="HNF1B, M1"]')?.classList.contains('is-dimmed')).toBe(false);
+    expect(container.querySelector('[aria-label="CCDC40, M3"]')?.classList.contains('is-dimmed')).toBe(true);
+    renderer.hover(null);
+
+    renderer.render({ ...linked, linksHidden: false });
+    const [inside, between] = [...container.querySelectorAll<SVGPathElement>('.force-graph-links path:not(.force-graph-hit)')];
+    expect(inside?.classList.contains('is-within')).toBe(true);
+    expect(inside?.style.getPropertyValue('--edge-color')).toBe('var(--viz-cat-1)');
+    expect(between?.classList.contains('is-between')).toBe(true);
+  });
+
+  it('reports a hovered group and brings it and its links to other groups forward', () => {
+    const container = document.createElement('div');
+    const onHoverGroup = vi.fn();
+    const renderer = new ForceGraphRenderer();
+    renderer.mount(container, { label: 'Modules', onHoverGroup });
+    renderer.render({ ...grouped, links: [{ source: '2', target: '3', weight: 0.6 }] });
+    const label = container.querySelector('[aria-label="M3, 1 gene"]') as SVGGElement;
+    label.dispatchEvent(new Event('pointerenter'));
+    expect(onHoverGroup).toHaveBeenLastCalledWith('m3');
+    label.dispatchEvent(new Event('pointerleave'));
+    expect(onHoverGroup).toHaveBeenLastCalledWith(null);
+    renderer.hoverGroup('m3');
+    expect(container.querySelector('[aria-label="FGF8, M1"]')?.classList.contains('is-dimmed')).toBe(true);
+    expect(container.querySelector('[aria-label="M1, 2 genes"]')?.classList.contains('is-dimmed')).toBe(true);
+    expect(container.querySelector('.force-graph-links path.is-between')?.classList.contains('is-raised')).toBe(true);
+    renderer.hoverGroup(null);
+    expect(container.querySelectorAll('.is-dimmed, .is-raised')).toHaveLength(0);
   });
 });
