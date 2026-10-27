@@ -206,12 +206,16 @@ test('Theme 2 is the default; Display settings switches to Theme 1, keeps it in 
   await expect(page.locator('html')).toHaveAttribute('data-theme', '2');
   const brand = () => page.locator('header').first().evaluate((bar) => getComputedStyle(bar).backgroundColor);
   const themeTwo = await brand();
+  // Secondary buttons, such as the footer's Subscribe, are black in Theme 2 and yellow in Theme 1.
+  const secondary = () => page.locator('.button-secondary').first().evaluate((button) => getComputedStyle(button).backgroundColor);
+  expect(await secondary()).toBe('rgb(23, 23, 23)');
   await page.getByRole('button', { name: 'Display settings' }).click();
   await expect(page.getByRole('radio', { name: /Theme 2/ })).toBeChecked();
   await page.getByRole('radio', { name: /Theme 1/ }).check();
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.locator('html')).not.toHaveAttribute('data-theme');
   expect(await brand()).not.toBe(themeTwo);
+  expect(await secondary()).toBe('rgb(255, 213, 61)');
   await page.reload();
   await expect(page.locator('html')).not.toHaveAttribute('data-theme');
   for (const path of ['/', '/networks/?entrez=3553&entrez=7124&version=v1']) {
