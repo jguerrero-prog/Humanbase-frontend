@@ -23,8 +23,8 @@ describe('Icon', () => {
     expect(strokeOf(render(<Icon name="dna" size={24} />).container)).toBe(1.5);
   });
 
-  // The 49 Figma icons plus star, for starred sets; Figma doesn't draw star yet.
+  // The 50 Figma icons plus star, for starred sets; Figma doesn't draw star yet.
   it('includes every icon from Figma, plus star', () => {
-    expect(iconNames).toHaveLength(50);
+    expect(iconNames).toHaveLength(51);
   });
 });
