@@ -54,6 +54,24 @@ test('toasts from different screens stack in the one app region instead of overl
   await page.getByRole('menuitem', { name: 'Copy link' }).click();
   const toasts = region.getByRole('listitem');
   await expect(toasts).toHaveText([/Seqweaver finished: IL1B region variants/, /Link copied/]);
+  // Just under the top bar, lined up with the Jobs link, and still there once the page scrolls under the bar.
+  const placement = () =>
+    page.evaluate(() => {
+      const bar = document.querySelector('.top-bar')?.getBoundingClientRect();
+      const jobs = document.querySelector('.jobs-menu')?.getBoundingClientRect();
+      const toast = document.querySelector('.toast-list li')?.getBoundingClientRect();
+      return bar && jobs && toast ? { gap: toast.top - bar.bottom, rightEdges: Math.abs(toast.right - jobs.right) } : null;
+    });
+  for (const scroll of [0, 400]) {
+    await page.evaluate(async (y) => {
+      window.scrollTo(0, y);
+      await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
+    }, scroll);
+    const at = await placement();
+    expect(at?.gap, `toast below the bar, scrolled ${scroll}px`).toBeGreaterThanOrEqual(0);
+    expect(at?.gap, `toast close to the bar, scrolled ${scroll}px`).toBeLessThanOrEqual(16);
+    expect(at?.rightEdges).toBeLessThanOrEqual(1);
+  }
   await expect(page.locator('.toast-region')).toHaveCount(1);
   await settleAnimations(page);
   const [first, second] = await Promise.all([toasts.nth(0).boundingBox(), toasts.nth(1).boundingBox()]);
