@@ -9,10 +9,10 @@ export function useModuleGenes(result: ModuleResult | undefined) {
   const entrez = result?.entrez ?? [];
   return useQuery({
     queryKey: ['module-genes', [...entrez]],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       const own = result?.geneRecords();
       if (own) return new Map(own.map((record) => [record.entrez, new GeneHit(record)] as const));
-      const matches = await api.search.list(entrez.map(String));
+      const matches = await api.search.list(entrez.map(String), signal);
       return new Map<number, GeneHit>(matches.flatMap((term) => term.genes.slice(0, 1).map((gene) => [gene.entrez, gene] as const)));
     },
     enabled: entrez.length > 0,

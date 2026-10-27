@@ -38,6 +38,12 @@ describe('SampleClient', () => {
     expect((error as ApiError).isNotFound).toBe(true);
   });
 
+  it('rejects a request already cancelled', async () => {
+    const controller = new AbortController();
+    controller.abort();
+    await expect(client.get('genes/3553/', {}, controller.signal)).rejects.toMatchObject({ name: 'AbortError' });
+  });
+
   it('treats a request with no sample as not found', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     await expect(client.get('genes/1/')).rejects.toMatchObject({ status: 404 });
