@@ -110,7 +110,19 @@ The design system site (`pnpm dev:docs`) documents every token and component.
 
 Every change starts as a GitHub issue, labeled feature, bug, enhancement, accessibility, code quality, documentation or api. Work happens on a branch named after the issue, such as `feature/12-gene-search`, and merges into `development` through a pull request once CI passes. `development` merges into `master` for releases. Both branches are protected.
 
-The code standards are in [AGENTS.md](AGENTS.md). They apply to people and coding agents alike.
+The code standards are in [AGENTS.md](AGENTS.md). They apply to people and coding agents alike. The product and design decisions, such as matching humanbase.io on science and keeping legends stepped, are in [DECISIONS.md](DECISIONS.md) with the reason for each.
+
+## Taking over the repo
+
+A new owner, or a fork, works through this once:
+
+1. **Owner details:** edit `apps/docs/src/data/site.ts` (maintainer, contact email, repository, demo and Figma links) and `.github/CODEOWNERS`.
+2. **GitHub Pages:** turn it on with GitHub Actions as the source, so `master` publishes the design system and the API-off demo.
+3. **Branch protection:** protect `master` and `development`, require the CI checks ("Typecheck, lint, test and build" and "Accessibility scan"), and require one approving review once there is more than one maintainer.
+4. **Security:** turn on private vulnerability reporting (Settings, Code security), which SECURITY.md points to.
+5. **Dependencies:** Dependabot opens grouped updates monthly against `development` (`.github/dependabot.yml`); review them like any pull request.
+6. **Releases:** tag the handoff as v1.0.0 and follow the release steps in CHANGELOG.md.
+7. **Decisions:** read DECISIONS.md; change a decision through an issue, as it describes.
 
 ## License
 

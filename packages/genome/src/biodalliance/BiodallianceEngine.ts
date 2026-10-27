@@ -108,6 +108,7 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
   /** Track ids in their usual order: sequence, the page's tracks, then genes. */
   #usualOrder: readonly string[] = [];
   #destroyed = false;
+  #late: ReturnType<typeof setTimeout> | undefined;
 
   constructor(private readonly options: BiodallianceOptions = {}) {}
 
@@ -143,12 +144,13 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
     });
     this.#browser = browser;
     await new Promise<void>((resolve, reject) => {
-      const late = setTimeout(() => reject(new Error('Biodalliance didn’t finish loading its tracks.')), this.options.readyMs ?? 30_000);
+      this.#late = setTimeout(() => reject(new Error('Biodalliance didn’t finish loading its tracks.')), this.options.readyMs ?? 30_000);
       browser.addInitListener(() => {
-        clearTimeout(late);
+        clearTimeout(this.#late);
         resolve();
       });
     });
+    if (this.#destroyed) return;
     this.#usualOrder = genomeTrackList(assembly, tracks).map((track) => track.id);
     this.arrangeTracks(arrangement);
     if (onTrackLayout) this.#reportLayout(browser, holder, tracks, onTrackLayout);
@@ -283,6 +285,7 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
   destroy(): void {
     this.#destroyed = true;
     clearTimeout(this.#settle);
+    clearTimeout(this.#late);
     this.#images?.disconnect();
     this.#layout?.disconnect();
     this.#resize?.disconnect();
