@@ -1,5 +1,5 @@
 const svgNs = 'http://www.w3.org/2000/svg';
-const painted = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-linejoin', 'opacity', 'font', 'paint-order'];
+const painted = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-linejoin', 'stroke-linecap', 'stroke-dasharray', 'opacity', 'display', 'transform', 'font', 'paint-order'];
 
 /** An SVG file of a drawing on the page, with the page's computed colors and fonts written onto each element, since a file can't read the page's CSS. */
 export function standaloneSvg(svg: SVGSVGElement): Blob {

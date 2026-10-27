@@ -980,6 +980,105 @@
         }
       }
     },
+    "module": {
+      "1": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.4471,
+            0.698
+          ],
+          "hex": "#0072B2"
+        }
+      },
+      "2": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.8353,
+            0.3686,
+            0
+          ],
+          "hex": "#D55E00"
+        }
+      },
+      "3": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.6,
+            0.5333
+          ],
+          "hex": "#009988"
+        }
+      },
+      "4": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.4824,
+            0.3804,
+            1
+          ],
+          "hex": "#7B61FF"
+        }
+      },
+      "5": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.6941,
+            0.349,
+            0.1569
+          ],
+          "hex": "#B15928"
+        }
+      },
+      "6": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.4157,
+            0.2392,
+            0.6039
+          ],
+          "hex": "#6A3D9A"
+        }
+      },
+      "7": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.7882,
+            0.5216,
+            0
+          ],
+          "hex": "#C98500"
+        }
+      },
+      "8": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.6667,
+            0.2,
+            0.4667
+          ],
+          "hex": "#AA3377"
+        }
+      },
+      "$description": "Module colors in fixed order, none green, each at least 3:1 on white and checked for color-blind separation between neighbors. Modules past the eighth reuse them as hollow rings."
+    },
     "seqclass": {
       "enhancer": {
         "$type": "color",

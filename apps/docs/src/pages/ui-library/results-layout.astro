@@ -171,7 +171,7 @@ const notes = {
     'The drawer replaces the companion table while it’s open; closing it brings the table back where it was.',
     'Clicking another gene updates the drawer instead of opening a second one.',
     'Escape or the close button returns focus to IL1R1 in the graph or table.',
-    'The selected gene is marked with the ink ring from Data visualization; the rest of the graph fades to 35%.',
+    'The selected gene is marked with the ink ring from Data visualization; the rest of the graph fades to 30%.',
   ],
   edge: [
     'The selected line thickens and the rest of the graph fades, the same as a selected gene.',
@@ -282,7 +282,7 @@ const il1r1Terms = [
     <ul class="points">{notes.regions.map((note) => <li>{note}</li>)}</ul>
   </DocSection>
 
-  <DocSection title="A network result" lead="IL1B in blood vessel, Tissue network tab. Every part is a system component; the graph area is a diagram standing in for the existing renderer.">
+  <DocSection title="A network result" lead="IL1B in blood vessel, Tissue network tab. Every part is a system component; the graph area is a diagram standing in for the network graph.">
     <figure class="screen" id="network-result">
       <TopBar sections={productSections} current="Genes & gene sets" jobs={productJobs} scrolled={false} />
       <div class="screen-body">
@@ -300,7 +300,7 @@ const il1r1Terms = [
           </ResultHeader>
           <Fragment slot="main">
             <GraphToolbar label="Graph controls" groups={toolbar} tableHref="#network-result" />
-            <div class="graph-area"><NetworkSketch /><p class="graph-label">Existing renderer, shown as a diagram</p></div>
+            <div class="graph-area"><NetworkSketch /><p class="graph-label">Network graph, shown as a diagram</p></div>
             <div class="graph-meta">
               <KeyLegend title="Connection" mark="line" items={edgeItems} />
               <p class="result-line">Showing 15 of 50 genes: 1 query gene and 14 related genes, 108 connections above 0.84.</p>

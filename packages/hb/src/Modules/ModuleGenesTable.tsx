@@ -1,13 +1,14 @@
 import type { GeneHit, Module } from '@humanbase/data';
 import { Button, Cell, HeaderCell, SearchField, Table, TableMessage, TableSkeleton } from '@humanbase/ui';
 import { useState } from 'react';
+import { colorOf, type ModuleColor } from './moduleColors';
 import { ModuleSwatch } from './ModulesTable';
 
 export interface ModuleGenesTableProps {
   modules: readonly Module[];
   /** Undefined while gene names load. */
   genes: ReadonlyMap<number, GeneHit> | undefined;
-  colors: ReadonlyMap<number, string>;
+  colors: ReadonlyMap<number, ModuleColor>;
   onSelectModule: (id: number) => void;
 }
 
@@ -52,7 +53,7 @@ export function ModuleGenesTable({ modules, genes, colors, onSelectModule }: Mod
               <tr key={gene.entrez}>
                 <Cell>
                   <button type="button" className="result-gene-button module-button" onClick={() => onSelectModule(module.id)}>
-                    <ModuleSwatch color={colors.get(module.id)} />
+                    <ModuleSwatch color={colorOf(colors, module.id)} />
                     {module.label}
                   </button>
                 </Cell>

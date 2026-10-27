@@ -1,26 +1,30 @@
 import type { Module, ModuleResult } from '@humanbase/data';
 import { Button, Cell, HeaderCell, Table, TableMessage, ValueFormat } from '@humanbase/ui';
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
+import { colorOf, type ModuleColor } from './moduleColors';
 
 export interface ModulesTableProps {
   result: ModuleResult;
   modules: readonly Module[];
   database: string;
-  colors: ReadonlyMap<number, string>;
+  colors: ReadonlyMap<number, ModuleColor>;
   selected: number | undefined;
+  /** The module hovered here or in the graph. */
+  hovered?: number | undefined;
   onSelectModule: (id: number) => void;
+  onHoverModule?: (id: number | undefined) => void;
 }
 
 const format = new ValueFormat();
 const firstRows = 5;
 const topTerms = 3;
 
-export function ModuleSwatch({ color }: { color: string | undefined }) {
-  return <span className="module-swatch" style={{ background: `var(${color ?? '--viz-cat-other'})` }} aria-hidden="true" />;
+export function ModuleSwatch({ color }: { color: ModuleColor }) {
+  return <span className={color.ring ? 'module-swatch module-swatch-ring' : 'module-swatch'} style={{ '--module-color': `var(${color.color})` } as CSSProperties} aria-hidden="true" />;
 }
 
 /** One row per module: its strongest terms, their q-values and how many genes and terms it has. */
-export function ModulesTable({ result, modules, database, colors, selected, onSelectModule }: ModulesTableProps) {
+export function ModulesTable({ result, modules, database, colors, selected, hovered, onSelectModule, onHoverModule }: ModulesTableProps) {
   const [showAll, setShowAll] = useState(false);
   const rows = showAll ? modules : modules.slice(0, firstRows);
   const hidden = modules.length - rows.length;
@@ -43,10 +47,18 @@ export function ModulesTable({ result, modules, database, colors, selected, onSe
             rows.map((module) => {
               const terms = result.terms(module.id, database);
               return (
-                <tr key={module.id} data-selected={selected === module.id || undefined}>
+                <tr
+                  key={module.id}
+                  data-selected={selected === module.id || undefined}
+                  data-state={hovered === module.id ? 'hover' : undefined}
+                  onPointerEnter={() => onHoverModule?.(module.id)}
+                  onPointerLeave={() => onHoverModule?.(undefined)}
+                  onFocus={() => onHoverModule?.(module.id)}
+                  onBlur={() => onHoverModule?.(undefined)}
+                >
                   <Cell rowHeader>
                     <button type="button" className="result-gene-button module-button" onClick={() => onSelectModule(module.id)}>
-                      <ModuleSwatch color={colors.get(module.id)} />
+                      <ModuleSwatch color={colorOf(colors, module.id)} />
                       {module.label}
                     </button>
                   </Cell>

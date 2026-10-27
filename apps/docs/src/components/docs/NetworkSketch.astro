@@ -1,4 +1,6 @@
 ---
+import { edgeCurve } from '@humanbase/graph';
+
 const center = [426, 205];
 const neighbors = [
   [306, 145],
@@ -14,7 +16,7 @@ const neighbors = [
 ---
 
 <svg class="network-sketch" viewBox="0 0 852 410" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
-  {neighbors.map(([x, y]) => <line x1={center[0]} y1={center[1]} x2={x} y2={y} />)}
+  {neighbors.map(([x = 0, y = 0]) => <path d={edgeCurve({ x: center[0] ?? 0, y: center[1] ?? 0 }, { x, y })} />)}
   {neighbors.map(([x, y]) => <circle cx={x} cy={y} r="6" />)}
   <circle class="network-sketch-query" cx={center[0]} cy={center[1]} r="9" />
 </svg>
@@ -23,20 +25,24 @@ const neighbors = [
   .network-sketch {
     inline-size: 100%;
     block-size: 100%;
-    background: var(--surface-subtle);
+    background: var(--surface-page);
     border-radius: var(--radius-sm);
   }
 
-  line {
+  path {
+    fill: none;
     stroke: var(--border-default);
     stroke-width: 1.5;
   }
 
   circle {
-    fill: var(--text-secondary);
+    fill: var(--surface-page);
+    stroke: var(--text-secondary);
+    stroke-width: 1.5;
   }
 
   .network-sketch-query {
-    fill: var(--text-default);
+    stroke: var(--text-default);
+    stroke-width: 2.5;
   }
 </style>

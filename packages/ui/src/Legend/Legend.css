@@ -60,4 +60,10 @@
   inline-size: var(--space-6);
   block-size: var(--legend-width, var(--viz-edge-weak));
   background: var(--legend-color);
+  opacity: var(--legend-opacity, 1);
+}
+
+.legend-swatch.legend-ring {
+  background: var(--surface-page);
+  border: 2px solid var(--legend-color);
 }
