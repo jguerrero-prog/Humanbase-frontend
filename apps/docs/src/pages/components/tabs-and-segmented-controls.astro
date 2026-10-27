@@ -8,6 +8,7 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
+import { hex } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const geneTabs: TabItem[] = [
@@ -85,18 +86,18 @@ const tables = {
   ],
   specs: [
     ['tab.height / padding / gap', '48px / 0 16px / 4px between tabs'],
-    ['tab.label', 'Lato Bold 16/24; grey 600 #4A4A4A, ink #1A1A1A when hovered or selected'],
-    ['tab.indicator', '3px emerald 600 #11713C, 2px top radius; hover 2px grey 300 #D1D1D1'],
-    ['tab.list.border', '1px border.subtle #E8E8E8'],
+    ['tab.label', `Lato Bold 16/24; grey 600 ${hex('color.grey.600')}, ink ${hex('color.grey.900')} when hovered or selected`],
+    ['tab.indicator', `3px emerald 600 ${hex('color.emerald.600')}, 2px top radius; hover 2px grey 300 ${hex('color.grey.300')}`],
+    ['tab.list.border', `1px border.subtle ${hex('border.subtle')}`],
     ['tab.count', 'Lato Bold 12/18, 6px side padding, radius.xs 4px, grey 100; emerald 50 with emerald 700 text when selected'],
-    ['segmented.track', 'grey 100 #EFEFEF, 4px padding, 4px gap, radius 12px (Medium) / 8px (Small)'],
+    ['segmented.track', `grey 100 ${hex('color.grey.100')}, 4px padding, 4px gap, radius 12px (Medium) / 8px (Small)`],
     ['segment.height.md / .sm', '36px / 28px, so the control is 44px / 36px'],
     ['segment.radius.md / .sm', 'radius.sm 8px / radius.xs 4px'],
-    ['segment.selected', 'white, 1px border.default #D1D1D1, Lato Bold'],
-    ['segment.hover', 'grey 200 #E8E8E8'],
+    ['segment.selected', `white, 1px border.default ${hex('border.default')}, Lato Bold`],
+    ['segment.hover', `grey 200 ${hex('color.grey.200')}`],
     ['radio.size', '20px ring in a 24px box, 12px gap to the label'],
-    ['radio.ring', '1.5px grey 500 #6B6B6B; hover 2px ink; selected 2px emerald with 10px center; error 2px #B42318'],
-    ['focus.ring', '0 0 0 2px #FFFFFF, 0 0 0 5px #1A1A1A'],
+    ['radio.ring', `1.5px grey 500 ${hex('color.grey.500')}; hover 2px ink; selected 2px emerald with 10px center; error 2px ${hex('border.error')}`],
+    ['focus.ring', `0 0 0 2px ${hex('color.white')}, 0 0 0 5px ${hex('focus.ring')}`],
   ],
 };
 

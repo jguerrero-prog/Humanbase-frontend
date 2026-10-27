@@ -9,6 +9,7 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
+import { hex } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const tissues: SelectOption[] = ['Adipose tissue', 'Blood vessel', 'Brain', 'Heart', 'Liver'].map((label) => ({ value: label, label }));
@@ -118,16 +119,16 @@ const tables = {
     ['select.height.md / .sm', '44px / 36px'],
     ['select.padding.md / .sm', '0 12px 0 16px / 0 8px 0 12px'],
     ['select.radius.md / .sm', 'radius.md 12px / radius.sm 8px'],
-    ['select.border / hover / open / error', 'border.strong #6B6B6B / #333333 / 2px border.selected / 2px border.error'],
+    ['select.border / hover / open / error', `border.strong ${hex('border.strong')} / ${hex('color.grey.700')} / 2px border.selected / 2px border.error`],
     ['menu.surface', 'surface.overlay: white, border.subtle, elevation.2'],
     ['menu.radius / padding', 'radius.md 12px / 6px'],
     ['menu.offset', '4px from the field'],
     ['menu.width', 'min field width, max 480px'],
     ['menu.max-height', '320px, then scrolls'],
     ['menu.item.height / padding / radius', 'min 40px / 10px 12px / radius.sm 8px'],
-    ['menu.item.hover', 'grey 100 #EFEFEF'],
-    ['menu.item.selected', 'Lato Bold label, 20px check in emerald 600 #11713C'],
-    ['menu.item.destructive', 'error 700 #B42318'],
+    ['menu.item.hover', `grey 100 ${hex('color.grey.100')}`],
+    ['menu.item.selected', `Lato Bold label, 20px check in emerald 600 ${hex('color.emerald.600')}`],
+    ['menu.item.destructive', `error 700 ${hex('color.error.700')}`],
     ['menu.group-label', 'Lato Bold 12px, uppercase, 6% tracking, grey 500'],
     ['z.dropdown', '200'],
   ],

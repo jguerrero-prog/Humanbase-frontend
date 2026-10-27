@@ -11,6 +11,7 @@ import NoteCard from '../../components/docs/NoteCard.astro';
 import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
 import ProductScreen from '../../components/docs/ProductScreen.astro';
+import { hex } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import { DocsNavExample, OnThisPageExample } from '../../components/docs/DocsLayoutExample';
 import { withBase } from '../../withBase';
@@ -158,18 +159,18 @@ const questions = [
 
 const specs = [
   ['topbar.height', '64px desktop and tablet, 56px phone'],
-  ['topbar.surface', 'emerald 600 #11713C; elevation 3 once the page scrolls; z.sticky 100'],
+  ['topbar.surface', `emerald 600 ${hex('color.emerald.600')}; elevation 3 once the page scrolls; z.sticky 100`],
   ['topbar.padding', '0 24px 0 32px desktop; 0 16px 0 24px tablet; 0 8px 0 16px phone'],
   ['nav.item', '40px tall, 12px side padding, radius.sm 8px, Lato Bold 15 white'],
   ['nav.item.hover / open', 'white at 12% / 14%'],
-  ['nav.item.current', '3px yellow 500 #FFD53D bar, 12px in from each side'],
+  ['nav.item.current', `3px yellow 500 ${hex('color.yellow.500')} bar, 12px in from each side`],
   ['nav.focus', '2px emerald gap, then 2px white ring'],
   ['nav.menu', '380px wide, white, border.subtle, elevation 2, radius.md 12px, 4px below the bar; z.dropdown 200'],
   ['jobs.count', 'white pill, Lato Bold 12 emerald, radius.xs 4px'],
   ['breadcrumb', 'Lato 14/20 grey 600 links, Lato Bold 14 ink current; 16px chevron in grey 400; 4px gap; 24px below the bar'],
   ['phone.menu.row', '52px; sections Lato Bold 16; tools Lato 16 with a 13px description'],
   ['breakpoints', 'full bar 1280px and up; tablet bar 960 to 1279px; phone bar below 960px'],
-  ['footer', 'grey 50 #F7F7F7, 1px border.subtle above; 56px 64px padding desktop, 32px 16px phone'],
+  ['footer', `grey 50 ${hex('color.grey.50')}, 1px border.subtle above; 56px 64px padding desktop, 32px 16px phone`],
   ['footer.links', 'Lato Bold 14 ink headings, Lato 14 grey 600 links, 12px apart; 160px columns'],
 ];
 
