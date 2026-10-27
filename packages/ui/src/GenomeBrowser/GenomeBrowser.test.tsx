@@ -30,7 +30,8 @@ describe('GenomeBrowserToolbar', () => {
     expect(onZoomStop).toHaveBeenCalledWith(2000);
     const field = screen.getByRole('searchbox', { name: 'Location or gene' });
     fireEvent.change(field, { target: { value: 'SORT1' } });
-    fireEvent.submit(screen.getByRole('search'));
+    expect(field.closest('search')).toBeInTheDocument();
+    fireEvent.submit(field);
     expect(onLocation).toHaveBeenCalledWith('SORT1');
   });
 

@@ -23,7 +23,7 @@ test('Variant effects opens on Sei with a variant list, and the model and tab li
   await page.goto(`${web}/variant-effects/`);
   await expect(page.getByRole('heading', { level: 1, name: 'Variant effects' })).toBeVisible();
   await expect(page.getByRole('tab', { name: 'Variant list' })).toHaveAttribute('aria-selected', 'true');
-  await expect(page.getByRole('radiogroup', { name: 'What are you submitting?' }).getByRole('radio')).toHaveCount(2);
+  await expect(page.getByRole('group', { name: 'What are you submitting?' }).getByRole('radio')).toHaveCount(2);
   await expect(page.getByText('Variants anywhere in the genome can be scored.')).toBeVisible();
   await page.getByRole('combobox', { name: 'Model' }).click();
   await page.getByRole('option', { name: /^Beluga \(DNA, 2019\)/ }).click();
