@@ -16,7 +16,8 @@
   stroke-linecap: round;
 }
 
-.force-graph-hit {
+/* Inside .force-graph-links, so it outranks the visible line's rule and keeps a wide, clickable stroke. */
+.force-graph-links .force-graph-hit {
   stroke: transparent;
   stroke-width: 10px;
   cursor: pointer;

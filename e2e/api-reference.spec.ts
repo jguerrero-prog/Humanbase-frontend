@@ -17,6 +17,9 @@ test('the Humanbase API page lists every endpoint from the API’s schema but th
   await expect(page.locator('.api-endpoint')).toHaveCount(45);
   await expect(page.locator('main').getByText(/newsletter/i)).toHaveCount(0);
   await expect(page.getByText('The API is off')).toBeVisible();
+  // Getting started names the public API, not the address serving this copy.
+  await expect(page.locator('.api-facts')).toContainText('https://humanbase.io/api/');
+  await expect(page.locator('.api-facts')).not.toContainText('localhost');
   expect(await violationsOf(page)).toEqual([]);
   expect(apiRequests).toEqual([]);
 });

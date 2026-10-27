@@ -29,7 +29,13 @@ function useScrollToHash(ready: boolean) {
 }
 
 /** Every endpoint the API's schema describes, in one page: a sidebar to jump between them, and each one fully shown. */
-export function ApiReferenceView({ location }: { location: string }) {
+export interface ApiReferenceViewProps {
+  location: string;
+  /** The public API's address, which Getting started names wherever the page is served. */
+  publicApi: string;
+}
+
+export function ApiReferenceView({ location, publicApi }: ApiReferenceViewProps) {
   const api = useHumanbase();
   const reference = useApiReference();
   const [words, setWords] = useState('');
@@ -62,7 +68,7 @@ export function ApiReferenceView({ location }: { location: string }) {
             <div>
               <dt>Address</dt>
               <dd>
-                <InlineCode wrap>{`${base}/`}</InlineCode>
+                <InlineCode wrap>{`${publicApi}/`}</InlineCode>
               </dd>
             </div>
             <div>
@@ -76,7 +82,7 @@ export function ApiReferenceView({ location }: { location: string }) {
             <div>
               <dt>Version</dt>
               <dd>
-                {reference.data.version}, described in OpenAPI at <a href={`${base}/schema/`}>{`${base}/schema/`}</a>
+                {reference.data.version}, described in OpenAPI at <a href={`${publicApi}/schema/`}>{`${publicApi}/schema/`}</a>
                 {reference.data.license && `, ${reference.data.license} license`}
               </dd>
             </div>
