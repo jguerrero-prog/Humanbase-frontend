@@ -19,6 +19,7 @@ import { NetwasService } from './jobs/NetwasService';
 import { IntegrationService } from './networks/IntegrationService';
 import { ModuleService } from './modules/ModuleService';
 import { NetworkService } from './networks/NetworkService';
+import { ApiReferenceService } from './reference/ApiReferenceService';
 import { SampleClient } from './sample/SampleClient';
 import { GeneSearchService } from './search/GeneSearchService';
 
@@ -36,6 +37,7 @@ export class Humanbase {
   readonly seiHgmd: SeiHgmdService;
   readonly expecto: ExpectoService;
   readonly asd: AsdService;
+  readonly apiReference: ApiReferenceService;
   /** Finds a gene's span by name, for genome browser searches. */
   readonly geneLocator: GeneLocator;
   readonly genomeTracks: GenomeTracks;
@@ -45,6 +47,8 @@ export class Humanbase {
   constructor(
     readonly client: DataClient,
     readonly showsSamples = client instanceof SampleClient,
+    /** Where the API answers, as the app's config names it; the API reference shows full addresses from it. */
+    apiBase = '/api',
   ) {
     this.genes = new GeneService(client);
     this.search = new GeneSearchService(client);
@@ -58,6 +62,7 @@ export class Humanbase {
     this.deepsea = new DeepseaService(client);
     this.seiHgmd = new SeiHgmdService(client);
     this.expecto = new ExpectoService(client);
+    this.apiReference = new ApiReferenceService(client, apiBase);
     // Gene lookups and genome tracks read static files on S3, which also stay off while the API is off.
     this.geneLocator = showsSamples ? new SampleGeneLocator(client) : new S3GeneLocator();
     this.asd = new AsdService(client, this.geneLocator);
@@ -67,6 +72,7 @@ export class Humanbase {
   }
 
   static fromConfig(config: AppConfig): Humanbase {
-    return new Humanbase(config.api ? new ApiClient(config.apiBase) : SampleClient.bundled());
+    const client = config.api ? new ApiClient(config.apiBase) : SampleClient.bundled();
+    return new Humanbase(client, client instanceof SampleClient, config.apiBase);
   }
 }

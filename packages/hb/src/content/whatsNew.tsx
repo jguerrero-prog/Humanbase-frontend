@@ -1,5 +1,6 @@
 import { docsPage } from '@humanbase/data';
 import type { ReactNode } from 'react';
+import { apiReferenceHref } from './apiReference';
 import { humanbaseCitation } from './cite';
 import { reproducibilityHref } from './data-sources';
 
@@ -153,7 +154,7 @@ export const whatsNew: readonly WhatsNewMonth[] = [
           <>
             <p>We added interactivity to all endpoints with working examples in the API documentation. This allows users to experiment with the API directly from the documentation page.</p>
             <p>
-              Check out the new API documentation <a href="/api/docs/">here</a>.
+              Check out the new API documentation <a href={apiReferenceHref}>here</a>.
             </p>
           </>
         ),

@@ -35,6 +35,8 @@ export interface DocsNavProps {
   groups: readonly DocsNavGroup[];
   /** The "Search the docs" field, above the groups. */
   search?: ReactNode;
+  /** The navigation landmark's name. */
+  label?: string;
 }
 
 type Toggles = ReadonlyMap<string, boolean>;
@@ -98,7 +100,7 @@ function Group({ group, isExpanded, onToggle, reading }: { group: DocsNavGroup; 
 }
 
 /** The docs sidebar: a search field, then the pages in groups. The open page lists its sections; any page's chevron shows them. */
-export function DocsNav({ groups, search }: DocsNavProps) {
+export function DocsNav({ groups, search, label = 'Docs' }: DocsNavProps) {
   const items = groups.flatMap((group) => group.items);
   const open = items.find((item) => item.current === 'page');
   const reading = useCurrentSection(open?.sections?.flatMap((section) => (section.id ? [section.id] : [])) ?? []);
@@ -109,7 +111,7 @@ export function DocsNav({ groups, search }: DocsNavProps) {
   const isExpanded = (item: DocsNavItem) => toggles.get(item.href) ?? item.current !== undefined;
   const toggle = (item: DocsNavItem) => setToggled({ key: openKey, toggles: new Map(toggles).set(item.href, !isExpanded(item)) });
   return (
-    <nav className="docs-nav" aria-label="Docs">
+    <nav className="docs-nav" aria-label={label}>
       {search && <div className="docs-nav-search">{search}</div>}
       {groups.map((group) => (
         <Group key={group.label} group={group} isExpanded={isExpanded} onToggle={toggle} reading={reading} />

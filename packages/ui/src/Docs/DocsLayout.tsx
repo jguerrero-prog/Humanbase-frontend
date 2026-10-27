@@ -22,11 +22,13 @@ export interface DocsLayoutProps {
   narrow?: boolean;
   /** 2 when the layout is shown inside another page, such as a design system example. */
   titleLevel?: 1 | 2;
+  /** What the sidebar holds, naming its menu on narrow screens: "Docs menu". */
+  menuTitle?: string;
   children: ReactNode;
 }
 
 /** A docs page: sidebar, the 748px reading column and On this page, which move into a menu and under the title below 1200px. */
-export function DocsLayout({ nav, breadcrumbs, title, titleId, sections, location = title, narrow: forceNarrow = false, titleLevel = 1, children }: DocsLayoutProps) {
+export function DocsLayout({ nav, breadcrumbs, title, titleId, sections, location = title, narrow: forceNarrow = false, titleLevel = 1, menuTitle = 'Docs', children }: DocsLayoutProps) {
   const narrowScreen = useMediaQuery(DOCS_NARROW_QUERY);
   const narrow = forceNarrow || narrowScreen;
   const [menuOpenAt, setMenuOpenAt] = useState<string | null>(null);
@@ -36,7 +38,7 @@ export function DocsLayout({ nav, breadcrumbs, title, titleId, sections, locatio
   return (
     <div className={['docs-layout', narrow && 'docs-layout-narrow'].filter(Boolean).join(' ')}>
       {narrow ? (
-        <Drawer title="Docs" open={menuOpenAt === location} onClose={() => setMenuOpenAt(null)} className="docs-layout-menu">
+        <Drawer title={menuTitle} open={menuOpenAt === location} onClose={() => setMenuOpenAt(null)} className="docs-layout-menu">
           {nav}
         </Drawer>
       ) : (
@@ -45,7 +47,7 @@ export function DocsLayout({ nav, breadcrumbs, title, titleId, sections, locatio
       <article className="docs-layout-main" aria-labelledby={headingId}>
         {narrow && (
           <Button variant="secondary" size="small" icon="menu" className="docs-layout-menu-button" aria-haspopup="dialog" aria-expanded={menuOpenAt === location} onClick={() => setMenuOpenAt(location)}>
-            Docs menu
+            {menuTitle} menu
           </Button>
         )}
         <header className="docs-layout-header">
