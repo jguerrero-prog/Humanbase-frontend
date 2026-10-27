@@ -247,7 +247,7 @@
     {
       "area": "Module graph",
       "existing": "One force layout with all 14 modules colored and node sizes that vary",
-      "proposed": "Each module packed in its own cluster; 6 modules colored, the rest gray; zoom, fit, expand and view as table",
+      "proposed": "Each module laid out as its own cluster with a soft outline and its label; 8 module colors, then the same colors as rings, then gray; zoom, fit, expand and View as table with one row per gene",
       "status": "Changed",
       "evidence": "modules-2 captures"
     },
