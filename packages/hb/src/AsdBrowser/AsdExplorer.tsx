@@ -1,7 +1,4 @@
-import {
-  ApiError, AsdVariant, featureEffects, GenomeLocation, useAsdColumns, useAsdEffects, useAsdPage, docsPage, useAsdRange, useHumanbase,
-  type AsdFeatureSet, type AsdVariantRow, type FeaturePredictionRecord,
-} from '@humanbase/data';
+import { type AsdFeatureSet, AsdVariant, type AsdVariantRow, docsPage, featureEffects, type FeaturePredictionRecord, GenomeLocation, SampleMissingError, useAsdColumns, useAsdEffects, useAsdPage, useAsdRange, useHumanbase } from '@humanbase/data';
 import { defaultGenomeEngine, diseaseImpactTracks, GenomeEngineView, type EngineStatus, type GenomeBrowserEngineFactory, type GenomeDataTrack, type GenomeRegion } from '@humanbase/genome';
 import { Alert, GenomeBrowserToolbar, ResultLayout, Skeleton, asdEffects, defaultEffectsView, type EffectsView } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
@@ -44,7 +41,6 @@ type SearchBox = 'page' | 'browser';
 
 const keyOf = (row: Pick<AsdVariantRow, 'chromosome' | 'position'>) => `${row.chromosome}:${row.position}`;
 const labelOf = (row: AsdVariantRow) => `${new AsdVariant(row).position} ${row.ref}>${row.alt}`;
-const isMissingSample = (error: unknown, showsSamples: boolean) => showsSamples && error instanceof ApiError && error.isNotFound;
 
 function locationOf(text: string | undefined): GenomeLocation {
   const parsed = text ? GenomeLocation.parse(text) : undefined;
@@ -71,7 +67,7 @@ export function AsdExplorer({ state, onStateChange, engine = defaultGenomeEngine
       const found = await api.asd.find(text);
       if (!found) {
         const gene = typed && !(typed instanceof GenomeLocation) ? typed.gene : undefined;
-        fail(gene ? (api.showsSamples ? sampleHelp : GenomeLocation.geneNotFound(gene)) : 'Enter a gene such as CHD8, a region such as chr1:2,230,000-2,440,000 or a position such as chr1:2,337,101.');
+        fail(gene ? (api.examplesOnly ? sampleHelp : GenomeLocation.geneNotFound(gene)) : 'Enter a gene such as CHD8, a region such as chr1:2,230,000-2,440,000 or a position such as chr1:2,337,101.');
         return;
       }
       const { location: kept, message } = found.location.fit();
@@ -132,7 +128,7 @@ interface BrowserViewProps {
 }
 
 function BrowserView({ engine, location, state, onStateChange, onLocation, locationError, searchedGene }: BrowserViewProps) {
-  const { showsSamples, genomeTracks } = useHumanbase();
+  const { genomeTracks } = useHumanbase();
   // The effects tab stays as the browser moves and the variants below reload.
   const [effectsView, setEffectsView] = useState<EffectsView>(defaultEffectsView);
   const [engineStatus, setEngineStatus] = useState<{ status: EngineStatus; error?: Error | undefined }>({ status: 'loading' });
@@ -163,7 +159,7 @@ function BrowserView({ engine, location, state, onStateChange, onLocation, locat
 
   let body;
   if (range.isError) {
-    body = isMissingSample(range.error, showsSamples) ? (
+    body = range.error instanceof SampleMissingError ? (
       <Alert tone="info" title="The sample data doesn’t include this range">{sampleHelp}</Alert>
     ) : (
       <Alert tone="error" title="These variants couldn’t load" action={{ label: 'Try again', onSelect: () => void range.refetch() }}>
@@ -251,7 +247,6 @@ interface VariantEffectsProps {
 const positionKey = (record: Pick<FeaturePredictionRecord, 'chromosome' | 'position'>) => `${record.chromosome.startsWith('chr') ? record.chromosome : `chr${record.chromosome}`}:${record.position}`;
 
 function VariantEffects({ location, rows, selected, set, onSetChange, view, onViewChange, onSelect, onMove }: VariantEffectsProps) {
-  const { showsSamples } = useHumanbase();
   const { features, predictions } = useAsdEffects(location, set);
   const byPosition = useMemo(() => new Map((predictions.data ?? []).map((record) => [positionKey(record), record])), [predictions.data]);
   const prediction = byPosition.get(keyOf(selected));
@@ -269,7 +264,7 @@ function VariantEffects({ location, rows, selected, set, onSetChange, view, onVi
   const scale = asdEffects(set === 'dna' ? 'DNA' : 'RNA');
   const failed = predictions.isError || features.isError;
 
-  if (failed && (isMissingSample(predictions.error, showsSamples) || isMissingSample(features.error, showsSamples))) {
+  if (failed && (predictions.error instanceof SampleMissingError || features.error instanceof SampleMissingError)) {
     return <Alert tone="info" title={`The sample data doesn’t include ${noun}s for this range`}>{sampleHelp}</Alert>;
   }
   if (predictions.data && !prediction) {
@@ -307,7 +302,6 @@ interface TableViewProps {
 }
 
 function TableView({ location, rangeOnly, onRangeOnlyChange, onSelect }: TableViewProps) {
-  const { showsSamples } = useHumanbase();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
   const [chromosome, setChromosome] = useState('all');
@@ -321,7 +315,7 @@ function TableView({ location, rangeOnly, onRangeOnlyChange, onSelect }: TableVi
   };
 
   const notice = table.isError ? (
-    isMissingSample(table.error, showsSamples) ? (
+    table.error instanceof SampleMissingError ? (
       <Alert tone="info" title="The sample data doesn’t include these rows">{sampleHelp}</Alert>
     ) : (
       <Alert tone="error" title="These variants couldn’t load" action={{ label: 'Try again', onSelect: () => void table.refetch() }}>

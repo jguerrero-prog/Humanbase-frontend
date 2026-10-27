@@ -1,4 +1,4 @@
-import { ApiError } from '../ApiError';
+import { ApiError, SampleMissingError } from '../ApiError';
 import type { DataClient, Query } from '../DataClient';
 import { sampleKey, type SampleMethod } from './sampleKey';
 
@@ -11,6 +11,8 @@ export type SampleLoaders = Record<string, () => Promise<unknown>>;
 
 /** Answers requests from recorded responses. It never touches the network. */
 export class SampleClient implements DataClient {
+  readonly examplesOnly = true;
+
   constructor(private readonly loaders: SampleLoaders) {}
 
   static bundled(): SampleClient {
@@ -40,7 +42,7 @@ export class SampleClient implements DataClient {
     const load = this.loaders[key];
     if (!load) {
       console.warn(`No sample recorded for ${method} ${key}. Add it to endpoints.json and run pnpm samples:record.`);
-      throw new ApiError(404, `sample:${key}`);
+      throw new SampleMissingError(`sample:${key}`);
     }
     const recorded = (await load()) as RecordedResponse;
     if (recorded.status >= 400) throw new ApiError(recorded.status, `sample:${key}`, recorded.body ?? undefined);

@@ -26,7 +26,7 @@ function Remounting({ model }: { model: VariantModel }) {
 
 function renderWith(client: DataClient, ui: ReactNode) {
   const get = vi.spyOn(client, 'get');
-  render(<HumanbaseProvider api={new Humanbase(client, true)}>{ui}</HumanbaseProvider>);
+  render(<HumanbaseProvider api={new Humanbase(client)}>{ui}</HumanbaseProvider>);
   return (path: string) => get.mock.calls.filter(([called]) => called === path).length;
 }
 
