@@ -1,5 +1,6 @@
 import { Integration, type IntegrationRecord } from '../networks/Integration';
 
+// The schema leaves the response undescribed; this is what GET /api/integrations/{slug}/evidence/ returns.
 export interface EvidenceRecord {
   datatypes: readonly { title: string; weight: number }[];
   datasets: readonly {
