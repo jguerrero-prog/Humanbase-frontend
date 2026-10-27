@@ -177,3 +177,8 @@
   display: grid;
   gap: var(--space-3);
 }
+
+.connection-docs {
+  justify-self: start;
+  margin: 0;
+}

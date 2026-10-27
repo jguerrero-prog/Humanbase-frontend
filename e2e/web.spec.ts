@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { apiOff } from './apiOff';
 import { downloadFrom } from './downloads';
-import { settleAnimations } from './violations';
+import { settleAnimations, violationsOf } from './violations';
 
 const web = 'http://localhost:4173';
 const pages = ['/', '/networks/?entrez=3553&entrez=7124&version=v1', '/jobs/', '/not-built-yet/'];
@@ -163,6 +163,51 @@ test('clicking a line in the Networks graph opens that connection, as on humanba
   const selected = graph.locator('.force-graph-links line.is-selected');
   await expect(selected).toHaveCount(1);
   expect(await selected.evaluate((line) => parseFloat(getComputedStyle(line).strokeWidth))).toBeGreaterThan(resting);
+});
+
+test('the cancer example opens the gene suggestions for cancer, as humanbase.io’s does, with the API off', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(web);
+  const examples = page.locator('.search-examples').first();
+  await expect(examples.getByRole('button')).toHaveText(['IL1B', 'BRCA1', 'PTEN', 'cancer', 'Autism gene set']);
+  await examples.getByRole('button', { name: 'cancer' }).click();
+  const search = page.getByRole('combobox', { name: 'Search genes' });
+  await expect(search).toHaveValue('cancer');
+  await expect(search).toBeFocused();
+  await expect(page.getByRole('option').first()).toBeVisible();
+});
+
+test('a connection’s All networks downloads every network’s weight for the pair, as humanbase.io’s does, with the API off', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&connection=7185-6348`);
+  const drawer = page.getByRole('dialog', { name: 'TRAF1 and CCL3' });
+  await expect(drawer.getByRole('link', { name: 'Evidence documentation' })).toHaveAttribute('href', '/docs/functional-networks/#evidence');
+  await drawer.getByRole('radio', { name: 'All networks' }).click();
+  const [download] = await Promise.all([page.waitForEvent('download'), drawer.getByRole('button', { name: 'Download networks' }).click()]);
+  expect(download.suggestedFilename()).toBe('TRAF1-CCL3-networks.csv');
+  const chunks: Buffer[] = [];
+  for await (const chunk of await download.createReadStream()) chunks.push(chunk as Buffer);
+  const [header, ...rows] = Buffer.concat(chunks).toString('utf8').split('\n');
+  expect(header).toBe('NETWORK,SCORE');
+  expect(rows.length).toBe(await drawer.getByRole('table', { name: /Connection weight in each network/ }).getByRole('row').count() - 1);
+  expect(rows[0]).toMatch(/^[^,]+,0?\.?\d/);
+});
+
+test('Networks with no genes chosen offers the homepage’s gene search and opens the network, with the API off', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(`${web}/networks/`);
+  await expect(page.getByRole('heading', { level: 1, name: 'Networks' })).toBeVisible();
+  await expect(page.getByText('No genes chosen yet')).toHaveCount(0);
+  // The page's own search stands in for the top bar's, as on the homepage.
+  await expect(page.getByRole('combobox', { name: 'Search genes' })).toHaveCount(1);
+  await expect(page.getByRole('combobox', { name: 'Analysis' })).toHaveCount(0);
+  const examples = page.locator('.search-examples');
+  await expect(examples.getByRole('button')).toHaveText(['IL1B', 'BRCA1', 'PTEN', 'cancer']);
+  await examples.getByRole('button', { name: 'IL1B' }).click();
+  await page.getByRole('button', { name: 'Show network for 1 gene' }).click();
+  await expect(page).toHaveURL(/\/networks\/\?entrez=3553/);
+  await expect(page.getByRole('heading', { level: 1, name: /IL1B/ })).toBeVisible();
+  expect(await violationsOf(page)).toEqual([]);
 });
 
 test('Networks explains a gene that is in no network', async ({ page }) => {

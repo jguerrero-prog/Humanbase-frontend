@@ -30,6 +30,7 @@
         "/api/genes/search/partial/?organism=homo-sapiens&q=IL1B",
         "/api/genes/search/partial/?organism=homo-sapiens&q=SHANK3",
         "/api/genes/search/partial/?organism=homo-sapiens&q=autism",
+        "/api/genes/search/partial/?organism=homo-sapiens&q=cancer",
         "/api/genes/search/partial/?organism=homo-sapiens&q=NOTAGENE123"
       ],
       "usedBy": [

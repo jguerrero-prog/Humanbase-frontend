@@ -1,6 +1,6 @@
 import { assemblyNames, GenomeLocation, NetworkQuery, useGeneBySymbol, useHumanbase, type Assembly } from '@humanbase/data';
 import type { GenomeGene } from '@humanbase/genome';
-import { Alert, Drawer, GeneDetail, Skeleton, useLinkHref } from '@humanbase/ui';
+import { Alert, Drawer, GeneDetail, useLinkHref } from '@humanbase/ui';
 import { geneIdLinks } from '../Networks/geneIds';
 
 export interface GenomeGeneDrawerProps {
@@ -52,8 +52,7 @@ export function GenomeGeneDrawer({ gene, assembly, onClose }: GenomeGeneDrawerPr
         )
       }
     >
-      <GeneDetail facts={facts} {...(record && { aliases: record.aliases, ids: geneIdLinks(record) })} />
-      {found.isPending && <Skeleton width="60%" />}
+      <GeneDetail facts={facts} loading={found.isPending} {...(record && { aliases: record.aliases, ids: geneIdLinks(record) })} />
       {notice}
     </Drawer>
   );

@@ -1,5 +1,5 @@
-import { sentenceCase, useConnectionEvidence, useConnectionInAllNetworks, type DataVersion, type NetworkGene } from '@humanbase/data';
-import { Alert, Button, Drawer, DrawerSection, EvidenceTable, NetworkWeightTable, ScoreMeter, SearchField, SegmentedControl, Skeleton, Spinner, WeightHistogram } from '@humanbase/ui';
+import { docsPage, sentenceCase, useConnectionEvidence, useConnectionInAllNetworks, type ConnectionInNetwork, type DataVersion, type NetworkGene } from '@humanbase/data';
+import { Alert, Button, DocsLink, Drawer, DrawerSection, EvidenceTable, IconButton, NetworkWeightTable, saveFile, ScoreMeter, SearchField, SegmentedControl, Skeleton, Spinner, WeightHistogram } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 
 export interface ConnectionDrawerProps {
@@ -14,6 +14,13 @@ export interface ConnectionDrawerProps {
 }
 
 const firstDatasets = 10;
+const evidenceDocs = `${docsPage('functional-networks')}#evidence`;
+
+/** The pair's weight in every network of the version, as humanbase.io's download lists it: NETWORK,SCORE. */
+function networksCsv(networks: readonly ConnectionInNetwork[]): string {
+  const field = (text: string) => (/[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text);
+  return ['NETWORK,SCORE', ...networks.map((item) => `${field(item.network.name)},${item.weight}`)].join('\n');
+}
 const bins = 10;
 
 export function ConnectionDrawer({ source, target, weight, slug, version, networkTitle, onClose }: ConnectionDrawerProps) {
@@ -56,6 +63,11 @@ export function ConnectionDrawer({ source, target, weight, slug, version, networ
       {view === 'this' ? (
         <>
           <ScoreMeter label="Connection weight" value={weight} text={`How likely ${pair} are to work together in the ${networkTitle} network, from all the evidence combined.`} />
+          {hasEvidence && (
+            <p className="connection-docs">
+              <DocsLink href={evidenceDocs}>Evidence documentation</DocsLink>
+            </p>
+          )}
           {!hasEvidence ? (
             <Alert tone="info">Dataset evidence is not available for MAGE networks.</Alert>
           ) : evidence.isError ? (
@@ -63,11 +75,14 @@ export function ConnectionDrawer({ source, target, weight, slug, version, networ
               The connection weight above is still correct.
             </Alert>
           ) : !evidence.data ? (
-            <DrawerSection label="Evidence by dataset">
-              <p className="result-detail-text" aria-busy="true">
-                <Skeleton width="90%" />
-              </p>
-            </DrawerSection>
+            <>
+              <DrawerSection label="Data types">
+                <p className="result-detail-text" aria-busy="true">
+                  <Skeleton width="56%" />
+                </p>
+              </DrawerSection>
+              <EvidenceTable loading rows={[]} note="Contribution is how much one dataset raises the chance of this connection on its own, so contributions don’t add up to the weight." />
+            </>
           ) : (
             <>
               <DrawerSection label="Data types">
@@ -90,20 +105,30 @@ export function ConnectionDrawer({ source, target, weight, slug, version, networ
           Check your connection, then try again.
         </Alert>
       ) : !elsewhere.data ? (
-        <div role="status" className="connection-waiting">
-          <p className="graph-loading-inline">
-            <Spinner size={16} /> Checking every network for {pair}…
-          </p>
-          <p className="result-detail-text">This can take up to 20 seconds the first time a connection is opened.</p>
-          <Skeleton width="100%" height="96px" />
-        </div>
+        <>
+          <div role="status" className="connection-waiting">
+            <p className="graph-loading-inline">
+              <Spinner size={16} /> Checking every network for {pair}…
+            </p>
+            <p className="result-detail-text">This can take up to 20 seconds the first time a connection is opened.</p>
+          </div>
+          <DrawerSection label="Connection weight in each network">
+            <WeightHistogram loading counts={[]} current={weight} caption={`Number of networks at each weight, with ${networkName} marked.`} />
+          </DrawerSection>
+          <DrawerSection label="Networks, strongest first">
+            <NetworkWeightTable loading rows={[]} />
+          </DrawerSection>
+        </>
       ) : (
         <>
           <DrawerSection label="Connection weight in each network">
             <WeightHistogram counts={histogram} current={weight} caption={`Number of networks at each weight. The dark bar holds the network you are viewing: ${networkName}, ${weight.toFixed(2)}.`} />
           </DrawerSection>
           <DrawerSection label="Networks, strongest first">
-            <SearchField label="Filter networks" placeholder="Filter networks" size="medium" value={filter} onChange={(event) => setFilter(event.target.value)} onClear={() => setFilter('')} />
+            <div className="companion-search">
+              <SearchField label="Filter networks" placeholder="Filter networks" size="medium" value={filter} onChange={(event) => setFilter(event.target.value)} onClear={() => setFilter('')} />
+              <IconButton label="Download networks" icon="download" onClick={() => saveFile(networksCsv(networks), `${source.symbol}-${target.symbol}-networks.csv`, 'text/csv')} />
+            </div>
             <NetworkWeightTable rows={rows} />
           </DrawerSection>
         </>
