@@ -655,7 +655,10 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
 
   .tablet {
     position: relative;
+    display: grid;
+    gap: 10px;
     margin: 0;
+    overflow-x: auto;
   }
 
   .topbar-stage :global(.top-bar),
@@ -885,12 +888,6 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
   .result-body {
     block-size: 216px;
     padding: var(--space-6) var(--space-10) var(--space-8);
-  }
-
-  .tablet {
-    display: grid;
-    gap: 10px;
-    overflow-x: auto;
   }
 
   .tablet :global(.top-bar) {
