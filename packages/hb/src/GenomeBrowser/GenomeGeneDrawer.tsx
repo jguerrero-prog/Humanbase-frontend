@@ -13,7 +13,7 @@ const strands = { '+': 'forward strand', '-': 'reverse strand', '': '' } as cons
 
 /** A gene clicked in the genome browser: where the genes track places it, then its name, aliases and IDs from gene search. */
 export function GenomeGeneDrawer({ gene, assembly, onClose }: GenomeGeneDrawerProps) {
-  const { showsSamples } = useHumanbase();
+  const { examplesOnly } = useHumanbase();
   const linkHref = useLinkHref();
   const found = useGeneBySymbol(gene.name);
   const record = found.data;
@@ -32,8 +32,8 @@ export function GenomeGeneDrawer({ gene, assembly, onClose }: GenomeGeneDrawerPr
     );
   } else if (record === null) {
     notice = (
-      <Alert tone="info" title={showsSamples ? 'Sample data covers a few genes' : `${gene.name} isn’t in the gene index`}>
-        {showsSamples ? `Turn the API on to see ${gene.name}’s name, aliases and IDs.` : `Humanbase has no record for ${gene.name}, so only the genes track’s details show.`}
+      <Alert tone="info" title={examplesOnly ? 'Sample data covers a few genes' : `${gene.name} isn’t in the gene index`}>
+        {examplesOnly ? `Turn the API on to see ${gene.name}’s name, aliases and IDs.` : `Humanbase has no record for ${gene.name}, so only the genes track’s details show.`}
       </Alert>
     );
   }

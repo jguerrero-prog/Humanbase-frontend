@@ -1,4 +1,4 @@
-import { ApiError, deepseaExamples, deepseaModels, JobHistory, useHumanbase, VariantFileCheck, type DeepseaModel, type InputKind, type VariantModel } from '@humanbase/data';
+import { ApiError, deepseaExamples, type DeepseaModel, deepseaModels, type InputKind, JobHistory, SampleMissingError, useHumanbase, VariantFileCheck, type VariantModel } from '@humanbase/data';
 import { AboutPanel, Alert, type AboutPanelProps, DocsLink, saveFile, type Crumb } from '@humanbase/ui';
 import { useState } from 'react';
 import { categoryCrumbs } from '../content/product';
@@ -71,7 +71,7 @@ export function DeepseaForm({ model, onModelChange, models, inputs, onStarted }:
       onStarted(link);
     } catch (error) {
       if (error instanceof ApiError && error.status === 429) setFailure('busy');
-      else if (api.showsSamples) setFailure('off');
+      else if (error instanceof SampleMissingError) setFailure('off');
       else if (error instanceof ApiError && error.status === 400) setFailure('refused');
       else setFailure('failed');
       setRunning(false);

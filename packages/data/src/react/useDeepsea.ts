@@ -60,14 +60,14 @@ export function useViewPredictions(job: DeepseaJob | undefined, scoreType: strin
   const model = job?.model.id;
   const named = model && deepseaModels[model].classFeatures?.scoreType === scoreType ? scoreType : undefined;
   const features = useQuery({ ...featuresQuery(api, model ?? 'sei', named), enabled: Boolean(model) });
-  return useInViewPredictions(features, view, ['deepsea-predictions', id, scoreType ?? ''], (range) => api.deepsea.featurePredictions(id, scoreType ?? '', range), Boolean(id && scoreType));
+  return useInViewPredictions(features, view, ['deepsea-predictions', id, scoreType ?? ''], (range, signal) => api.deepsea.featurePredictions(id, scoreType ?? '', range, signal), Boolean(id && scoreType));
 }
 
 /** The same for a model's precomputed variants, such as Seqweaver's gnomAD variants, which no job holds. */
 export function usePrecomputedPredictions(source: PrecomputedSource, view: GenomeLocation | undefined) {
   const api = useHumanbase();
   const features = usePrecomputedFeatures(source);
-  return useInViewPredictions(features, view, ['precomputed-predictions', source.dataset ?? source.model, source.scoreType ?? ''], (range) => api.deepsea.precomputedPredictions(source, range), true);
+  return useInViewPredictions(features, view, ['precomputed-predictions', source.dataset ?? source.model, source.scoreType ?? ''], (range, signal) => api.deepsea.precomputedPredictions(source, range, signal), true);
 }
 
 /** The features a set of precomputed variants is scored on; they never change, so they load once. */
@@ -76,9 +76,9 @@ export function usePrecomputedFeatures(source: PrecomputedSource) {
   return useQuery({ queryKey: ['precomputed-features', source.dataset ?? source.model, source.scoreType], queryFn: () => api.deepsea.precomputedFeatures(source), staleTime: Infinity });
 }
 
-function useInViewPredictions(features: UseQueryResult<FeaturesRecord>, view: GenomeLocation | undefined, key: readonly string[], read: (range: GenomeLocation) => Promise<FeaturePredictionRecord[]>, enabled: boolean) {
+function useInViewPredictions(features: UseQueryResult<FeaturesRecord>, view: GenomeLocation | undefined, key: readonly string[], read: (range: GenomeLocation, signal: AbortSignal) => Promise<FeaturePredictionRecord[]>, enabled: boolean) {
   const range = useReadRange(view, key.join(' '));
-  const predictions = useQuery(rangeQuery([...key, range?.variantRange], () => read(range as GenomeLocation), Boolean(enabled && range)));
+  const predictions = useQuery(rangeQuery([...key, range?.variantRange], (signal) => read(range as GenomeLocation, signal), Boolean(enabled && range)));
   const inView = useMemo(() => view && predictions.data?.filter((record) => view.includes(record.chromosome, record.position)).sort((a, b) => a.position - b.position), [view, predictions.data]);
   const failed = [features, predictions].filter((query) => query.isError);
   return { features: features.data, predictions: inView, error: failed[0]?.error, refetch: () => failed.forEach((query) => void query.refetch()) };
