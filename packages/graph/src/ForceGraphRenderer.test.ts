@@ -90,6 +90,16 @@ describe('ForceGraphRenderer', () => {
     expect(onSelectLink).toHaveBeenCalledWith('3553', '3554');
   });
 
+  it('thickens a connection under the pointer, until the pointer leaves', () => {
+    const { container } = mounted();
+    const hit = container.querySelector('.force-graph-hit') as SVGLineElement;
+    const line = hit.previousElementSibling as SVGLineElement;
+    hit.dispatchEvent(new PointerEvent('pointerenter'));
+    expect(line.classList.contains('is-hovered')).toBe(true);
+    hit.dispatchEvent(new PointerEvent('pointerleave'));
+    expect(line.classList.contains('is-hovered')).toBe(false);
+  });
+
   it('rings the selected gene and fades genes it does not connect to', () => {
     const { container, renderer } = mounted();
     renderer.select({ kind: 'node', id: '3554' });

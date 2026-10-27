@@ -168,6 +168,20 @@ describe('NetworkExplorer', () => {
     expect(await within(drawer).findByRole('table', { name: /Connection weight in each network/ })).toBeInTheDocument();
   });
 
+  it('says a MAGE connection has no dataset evidence, as humanbase.io does, without asking the API', async () => {
+    const client = SampleClient.bundled();
+    const get = vi.spyOn(client, 'get');
+    render(
+      <HumanbaseProvider api={new Humanbase(client)}>
+        <NetworkExplorer query={new NetworkQuery([3553, 7124], undefined, 'v3')} view={new NetworkView().with({ selection: { kind: 'connection', source: 3553, target: 7124 } })} onQueryChange={vi.fn()} onViewChange={vi.fn()} />
+      </HumanbaseProvider>,
+    );
+    const drawer = await screen.findByRole('dialog', { name: 'IL1B and TNF' });
+    expect(within(drawer).getByText('Dataset evidence is not available for MAGE networks.')).toBeInTheDocument();
+    expect(within(drawer).queryByText('The evidence couldn’t load')).not.toBeInTheDocument();
+    expect(get.mock.calls.some(([path]) => path.includes('/evidence/'))).toBe(false);
+  });
+
   it('lists the connections as a table and switches back to the graph', async () => {
     const { onViewChange } = renderExplorer(new NetworkQuery([3553, 7124], undefined, 'v1'), { view: new NetworkView().with({ display: 'table' }) });
     const table = await screen.findByRole('table', { name: /Connections between the genes in the global network graph/ });
