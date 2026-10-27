@@ -9,6 +9,7 @@ import NoteCard from '../../components/docs/NoteCard.astro';
 import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
 import { hex } from '../../data/colors';
+import { required } from '../../data/required';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const geneTabs: TabItem[] = [
@@ -280,7 +281,7 @@ const usage = `import { RadioGroup, SegmentedControl, Tabs } from '@humanbase/ui
         <p>Radio buttons sit in the form with the other fields and are sent with it. A safe default is selected, so most people can submit without changing it.</p>
       </div>
       <form class="job-fields" aria-label="NetWAS job example">
-        <RadioGroup legend="Network" options={[networks[0]!, { value: 'global', label: 'Global network', description: 'Uses all tissues.' }]} defaultValue="tissue" name="network" />
+        <RadioGroup legend="Network" options={[required(networks[0], 'first network'), { value: 'global', label: 'Global network', description: 'Uses all tissues.' }]} defaultValue="tissue" name="network" />
         <Select label="Tissue network" placeholder="Choose a tissue" hint="Pick the tissue closest to your study." options={tissues} defaultValue="Blood vessel" />
       </form>
     </section>

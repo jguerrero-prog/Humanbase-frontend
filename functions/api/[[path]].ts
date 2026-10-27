@@ -14,7 +14,7 @@ export async function onRequest({ request, env }: Context): Promise<Response> {
   return fetch(target, {
     method: request.method,
     headers,
-    body: request.method === 'GET' || request.method === 'HEAD' ? undefined : request.body,
+    body: request.method === 'GET' || request.method === 'HEAD' ? null : request.body,
     redirect: 'manual',
   });
 }
