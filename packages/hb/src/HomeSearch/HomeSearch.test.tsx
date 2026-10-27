@@ -1,5 +1,5 @@
 import { ApiError, Humanbase, HumanbaseProvider, SampleClient, type NetworkQuery } from '@humanbase/data';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HomeSearch } from './HomeSearch';
 import { hes1List } from './recordedLists.testdata';
@@ -22,6 +22,15 @@ describe('HomeSearch', () => {
     expect(within(table).getByText('interleukin 1 beta')).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Analysis' })).toHaveTextContent('Networks');
     expect(screen.getByRole('button', { name: 'Show network for 1 gene' })).toBeEnabled();
+  });
+
+  it('keeps both genes when two example searches finish out of order', async () => {
+    renderSearch();
+    fireEvent.click(screen.getByRole('button', { name: 'IL1B' }));
+    fireEvent.click(screen.getByRole('button', { name: 'BRCA1' }));
+    const table = await screen.findByRole('table', { name: 'How your genes matched' });
+    expect(await within(table).findByText('BRCA1 DNA repair associated')).toBeInTheDocument();
+    expect(within(table).getByText('interleukin 1 beta')).toBeInTheDocument();
   });
 
   it('warns about a gene that is in no network and leaves it out of the network', async () => {
