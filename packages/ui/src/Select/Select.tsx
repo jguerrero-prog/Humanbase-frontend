@@ -1,4 +1,5 @@
 import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
+import { useControlled } from '../hooks/useControlled';
 import { Field, type FieldSize } from '../Field/Field';
 import { Icon, type IconName } from '../Icon/Icon';
 import { ListNavigator } from '../List/ListNavigator';
@@ -37,6 +38,8 @@ export interface SelectProps {
   footer?: ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Draws the list open in place, for documentation. */
+  preview?: boolean;
   defaultHighlight?: number;
   defaultQuery?: string;
   name?: string;
@@ -69,7 +72,7 @@ function placeNextTo(panel: HTMLElement, box: DOMRect, above: boolean) {
 
 export function Select({
   label, options, value, defaultValue, onChange, placeholder, hint, error, size = 'medium', disabled = false,
-  searchable = false, filterLabel = 'Filter', columns, footer, open: openProp, onOpenChange, defaultHighlight = -1, defaultQuery = '', name, className, hideLabel = false, triggerIcon, 'data-state': dataState,
+  searchable = false, filterLabel = 'Filter', columns, footer, open: openProp, onOpenChange, preview = false, defaultHighlight = -1, defaultQuery = '', name, className, hideLabel = false, triggerIcon, 'data-state': dataState,
 }: SelectProps) {
   const id = useId();
   const listboxId = `${id}-listbox`;
@@ -79,14 +82,13 @@ export function Select({
   const filterInput = useRef<HTMLInputElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   const [ownValue, setOwnValue] = useState(defaultValue);
-  const [ownOpen, setOwnOpen] = useState(false);
   const [query, setQuery] = useState(defaultQuery);
   const [highlight, setHighlight] = useState(defaultHighlight);
   const [above, setAbove] = useState(false);
   const [shift, setShift] = useState(0);
   const current = value ?? ownValue;
-  const open = openProp ?? ownOpen;
-  const preview = openProp !== undefined;
+  const [shown, setShown] = useControlled(openProp, false);
+  const open = preview || shown;
   const selected = options.find((option) => option.value === current);
   const looksOpen = open || dataState === 'open';
   const reserveIcon = options.some((option) => option.icon || option.image);
@@ -105,10 +107,10 @@ export function Select({
   }, [visible]);
 
   const setOpen = useCallback((next: boolean) => {
-    setOwnOpen(next);
+    setShown(next);
     onOpenChange?.(next);
     if (!next) setQuery('');
-  }, [onOpenChange]);
+  }, [setShown, onOpenChange]);
 
   const close = useCallback(() => setOpen(false), [setOpen]);
   useDismiss(wrapper, open && !preview, close);

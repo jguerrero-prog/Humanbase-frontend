@@ -1,4 +1,5 @@
-import { useCallback, useId, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useId, useLayoutEffect, useRef, type CSSProperties } from 'react';
+import { useControlled } from '../hooks/useControlled';
 import { Icon } from '../Icon/Icon';
 import { usePinned } from '../List/useDismiss';
 import { anchorSupported, placeUnder } from './placement';
@@ -12,36 +13,44 @@ export interface ToggletipProps {
   link?: { label: string; href: string };
   size?: 'header' | 'default';
   open?: boolean | undefined;
+  onOpenChange?: (open: boolean) => void;
+  /** Draws the toggletip open in place, for documentation. */
+  preview?: boolean;
   className?: string | undefined;
 }
 
-export function Toggletip({ term, title = term, body, link, size = 'default', open: openProp, className }: ToggletipProps) {
+export function Toggletip({ term, title = term, body, link, size = 'default', open: openProp, onOpenChange, preview = false, className }: ToggletipProps) {
   const linkHref = useLinkHref();
   const id = useId();
   const wrapper = useRef<HTMLSpanElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLSpanElement>(null);
   const anchor = `--toggletip-${id.replace(/[^\w-]/g, '')}`;
-  const [ownOpen, setOwnOpen] = useState(false);
-  const open = openProp ?? ownOpen;
-  const close = useCallback(() => setOwnOpen(false), []);
-  usePinned(wrapper, ownOpen, close, () => button.current);
+  const [shown, setShown] = useControlled(openProp, false);
+  const open = preview || shown;
+  const live = shown && !preview;
+  const setOpen = useCallback((next: boolean) => {
+    setShown(next);
+    onOpenChange?.(next);
+  }, [setShown, onOpenChange]);
+  const close = useCallback(() => setOpen(false), [setOpen]);
+  usePinned(wrapper, live, close, () => button.current);
 
   useLayoutEffect(() => {
     const node = panel.current;
-    if (!ownOpen || !node) return;
+    if (!live || !node) return;
     node.showPopover();
     if (!anchorSupported && button.current) placeUnder(node, button.current);
-  }, [ownOpen]);
+  }, [live]);
 
   return (
     <span ref={wrapper} className={['toggletip', className].filter(Boolean).join(' ')}>
-      <button ref={button} type="button" className={`toggletip-button toggletip-button-${size}`} aria-label={`About ${term}`} aria-expanded={open} aria-controls={id} style={{ anchorName: anchor } as CSSProperties} onClick={() => setOwnOpen(!ownOpen)}>
+      <button ref={button} type="button" className={`toggletip-button toggletip-button-${size}`} aria-label={`About ${term}`} aria-expanded={open} aria-controls={id} style={{ anchorName: anchor } as CSSProperties} onClick={() => setOpen(!shown)}>
         <Icon name="info" size={16} />
       </button>
       <span id={id} role="status" className="toggletip-region">
         {open && (
-          <span ref={panel} className="toggletip-panel" popover={openProp === undefined ? 'manual' : undefined} style={{ positionAnchor: anchor } as CSSProperties}>
+          <span ref={panel} className="toggletip-panel" popover={preview ? undefined : 'manual'} style={{ positionAnchor: anchor } as CSSProperties}>
             <strong className="toggletip-title">{title}</strong>
             <span className="toggletip-body">{body}</span>
             {link && (
