@@ -1,5 +1,5 @@
 import { sentenceCase, useConnectionEvidence, useConnectionInAllNetworks, type DataVersion, type NetworkGene } from '@humanbase/data';
-import { Alert, Button, Drawer, DrawerSection, EvidenceTable, NetworkWeightTable, ScoreMeter, SearchField, SegmentedControl, Skeleton, WeightHistogram } from '@humanbase/ui';
+import { Alert, Button, Drawer, DrawerSection, EvidenceTable, NetworkWeightTable, ScoreMeter, SearchField, SegmentedControl, Skeleton, Spinner, WeightHistogram } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
 
 export interface ConnectionDrawerProps {
@@ -24,7 +24,7 @@ export function ConnectionDrawer({ source, target, weight, slug, version, networ
   // The API keeps dataset evidence for GIANT only, so a MAGE connection says so, as humanbase.io does, instead of asking.
   const hasEvidence = version !== 'v3';
   const evidence = useConnectionEvidence(slug, source.entrez, target.entrez, hasEvidence);
-  const elsewhere = useConnectionInAllNetworks(source.entrez, target.entrez, view === 'all');
+  const elsewhere = useConnectionInAllNetworks(source.entrez, target.entrez);
   const networkName = sentenceCase(networkTitle);
 
   const networks = useMemo(() => (elsewhere.data ?? []).filter((item) => item.network.version === version), [elsewhere.data, version]);
@@ -90,9 +90,13 @@ export function ConnectionDrawer({ source, target, weight, slug, version, networ
           Check your connection, then try again.
         </Alert>
       ) : !elsewhere.data ? (
-        <p className="result-detail-text" aria-busy="true">
-          <Skeleton width="90%" />
-        </p>
+        <div role="status" className="connection-waiting">
+          <p className="graph-loading-inline">
+            <Spinner size={16} /> Checking every network for {pair}…
+          </p>
+          <p className="result-detail-text">This can take up to 20 seconds the first time a connection is opened.</p>
+          <Skeleton width="100%" height="96px" />
+        </div>
       ) : (
         <>
           <DrawerSection label="Connection weight in each network">
