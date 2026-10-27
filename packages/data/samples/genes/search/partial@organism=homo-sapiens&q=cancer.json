@@ -1,0 +1,907 @@
+{
+  "status": 200,
+  "body": [
+    {
+      "entrez": 3621,
+      "standard_name": "ING1",
+      "aliases": "p47ING1a|p47|p33|p24ING1c|p33ING1b|p33ING1",
+      "xrefs": "HGNC:6062|601566|ENSG00000153487|3621",
+      "description": "inhibitor of growth family member 1",
+      "terms": [
+        "cancer",
+        "head and neck cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 23022,
+      "standard_name": "PALLD",
+      "aliases": "MYN|CGI151|SIH002|PNCA1|CGI-151",
+      "xrefs": "23022|HGNC:17068|608092|ENSG00000129116",
+      "description": "palladin, cytoskeletal associated protein",
+      "terms": [
+        "cancer",
+        "pancreatic cancer",
+        "endocrine gland cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 23301,
+      "standard_name": "EHBP1",
+      "aliases": "HPC12|NACSIN",
+      "xrefs": "ENSG00000115504|609922|23301|HGNC:29144",
+      "description": "EH domain binding protein 1",
+      "terms": [
+        "cancer",
+        "prostate cancer",
+        "male reproductive organ cancer",
+        "reproductive organ cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 200942,
+      "standard_name": "KLHDC8B",
+      "aliases": "CHL",
+      "xrefs": "200942|ENSG00000185909|613169|HGNC:28557",
+      "description": "kelch domain containing 8B",
+      "terms": [
+        "hematologic cancer",
+        "immune system cancer",
+        "cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 4330,
+      "standard_name": "MN1",
+      "aliases": "CEBALID|dJ353E16.2|MGCR1|MGCR|MGCR1-PEN",
+      "xrefs": "4330|156100|ENSG00000169184|HGNC:7180",
+      "description": "MN1 proto-oncogene, transcriptional regulator",
+      "terms": [
+        "cancer",
+        "central nervous system cancer",
+        "nervous system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 26511,
+      "standard_name": "CHIC2",
+      "aliases": "BTL",
+      "xrefs": "HGNC:1935|604332|26511|ENSG00000109220",
+      "description": "cysteine rich hydrophobic domain 2",
+      "terms": [
+        "hematologic cancer",
+        "immune system cancer",
+        "cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 6887,
+      "standard_name": "TAL2",
+      "aliases": "",
+      "xrefs": "HGNC:11557|186855|ENSG00000186051|6887",
+      "description": "TAL bHLH transcription factor 2",
+      "terms": [
+        "hematologic cancer",
+        "immune system cancer",
+        "cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 4477,
+      "standard_name": "MSMB",
+      "aliases": "PSP-94|MSPB|HPC13|PN44|PRPS|PSP94|IGBF|PSP57|PSP|MSP",
+      "xrefs": "ENSG00000263639|HGNC:7372|4477|157145",
+      "description": "microseminoprotein beta",
+      "terms": [
+        "cancer",
+        "prostate cancer",
+        "male reproductive organ cancer",
+        "reproductive organ cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 4978,
+      "standard_name": "OPCML",
+      "aliases": "IGLON1|OPCM|OBCAM",
+      "xrefs": "4978|HGNC:8143|ENSG00000183715|600632",
+      "description": "opioid binding protein/cell adhesion molecule like",
+      "terms": [
+        "cancer",
+        "reproductive organ cancer",
+        "ovarian cancer",
+        "female reproductive organ cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 2130,
+      "standard_name": "EWSR1",
+      "aliases": "bK984G1.4|EWS-FLI1|EWS",
+      "xrefs": "2130|133450|HGNC:3508|ENSG00000182944",
+      "description": "EWS RNA binding protein 1",
+      "terms": [
+        "connective tissue cancer",
+        "cancer",
+        "bone cancer",
+        "musculoskeletal system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 4026,
+      "standard_name": "LPP",
+      "aliases": "",
+      "xrefs": "ENSG00000145012|600700|4026|HGNC:6679",
+      "description": "LIM domain containing preferred translocation partner in lipoma",
+      "terms": [
+        "hematologic cancer",
+        "immune system cancer",
+        "cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 5157,
+      "standard_name": "PDGFRL",
+      "aliases": "PRLTS|PDGRL",
+      "xrefs": "604584|ENSG00000104213|HGNC:8805|5157",
+      "description": "platelet derived growth factor receptor like",
+      "terms": [
+        "intestinal cancer",
+        "cancer",
+        "gastrointestinal system cancer",
+        "colorectal cancer",
+        "large intestine cancer",
+        "liver cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 5081,
+      "standard_name": "PAX7",
+      "aliases": "HUP1|RMS2|PAX7B|MYOSCO",
+      "xrefs": "167410|5081|ENSG00000009709|HGNC:8621",
+      "description": "paired box 7",
+      "terms": [
+        "cancer",
+        "musculoskeletal system cancer",
+        "muscle cancer",
+        "skeletal muscle cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 79695,
+      "standard_name": "GALNT12",
+      "aliases": "CRCS1|GalNAc-T12",
+      "xrefs": "HGNC:19877|ENSG00000119514|79695|610290",
+      "description": "polypeptide N-acetylgalactosaminyltransferase 12",
+      "terms": [
+        "intestinal cancer",
+        "cancer",
+        "gastrointestinal system cancer",
+        "colorectal cancer",
+        "large intestine cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 5079,
+      "standard_name": "PAX5",
+      "aliases": "ALL3|PAX-5|BSAP",
+      "xrefs": "167414|ENSG00000196092|5079|HGNC:8619",
+      "description": "paired box 5",
+      "terms": [
+        "hematologic cancer",
+        "cancer",
+        "immune system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3161,
+      "standard_name": "HMMR",
+      "aliases": "IHABP|CD168|RHAMM",
+      "xrefs": "3161|ENSG00000072571|600936|HGNC:5012",
+      "description": "hyaluronan mediated motility receptor",
+      "terms": [
+        "cancer",
+        "thoracic cancer",
+        "breast cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 9562,
+      "standard_name": "MINPP1",
+      "aliases": "MINPP2|MIPP|HIPER1|PCH16",
+      "xrefs": "HGNC:7102|9562|605391|ENSG00000107789",
+      "description": "multiple inositol-polyphosphate phosphatase 1",
+      "terms": [
+        "cancer",
+        "endocrine gland cancer",
+        "thyroid cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 57522,
+      "standard_name": "SRGAP1",
+      "aliases": "NMTC2|ARHGAP13",
+      "xrefs": "57522|606523|ENSG00000196935|HGNC:17382",
+      "description": "SLIT-ROBO Rho GTPase activating protein 1",
+      "terms": [
+        "cancer",
+        "endocrine gland cancer",
+        "thyroid cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 27030,
+      "standard_name": "MLH3",
+      "aliases": "HNPCC7",
+      "xrefs": "604395|HGNC:7128|27030|ENSG00000119684",
+      "description": "mutL homolog 3",
+      "terms": [
+        "cancer",
+        "colorectal cancer",
+        "intestinal cancer",
+        "endometrial cancer",
+        "uterine cancer",
+        "reproductive organ cancer",
+        "large intestine cancer",
+        "gastrointestinal system cancer",
+        "female reproductive organ cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 23092,
+      "standard_name": "ARHGAP26",
+      "aliases": "GRAF|GRAF1|OPHN1L1|OPHN1L",
+      "xrefs": "23092|ENSG00000145819|605370|HGNC:17073",
+      "description": "Rho GTPase activating protein 26",
+      "terms": [
+        "hematologic cancer",
+        "cancer",
+        "bone marrow cancer",
+        "immune system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3482,
+      "standard_name": "IGF2R",
+      "aliases": "M6P/IGF2R|CIMPR|CI-M6PR|MPR1|MPR 300|CD222|M6P-R|MPRI|MPR300",
+      "xrefs": "ENSG00000197081|3482|HGNC:5467|147280",
+      "description": "insulin like growth factor 2 receptor",
+      "terms": [
+        "cancer",
+        "gastrointestinal system cancer",
+        "liver cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 23095,
+      "standard_name": "KIF1B",
+      "aliases": "HMSNII|CMT2A|CMT2|KLP|CMT2A1|NBLST1",
+      "xrefs": "23095|605995|ENSG00000054523|HGNC:16636",
+      "description": "kinesin family member 1B",
+      "terms": [
+        "cancer",
+        "nervous system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 9821,
+      "standard_name": "RB1CC1",
+      "aliases": "FIP200|PPP1R131|CC1|ATG17",
+      "xrefs": "606837|HGNC:15574|ENSG00000023287|9821",
+      "description": "RB1 inducible coiled-coil 1",
+      "terms": [
+        "cancer",
+        "thoracic cancer",
+        "breast cancer",
+        "WP PI3K AKT MTOR SIGNALING PATHWAY AND THERAPEUTIC OPPORTUNITIES IN PROSTATE CANCER"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 4595,
+      "standard_name": "MUTYH",
+      "aliases": "MYH",
+      "xrefs": "HGNC:7527|ENSG00000132781|4595|604933",
+      "description": "mutY DNA glycosylase",
+      "terms": [
+        "cancer",
+        "stomach cancer",
+        "gastrointestinal system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 4953,
+      "standard_name": "ODC1",
+      "aliases": "ODC|BABS|NEDBIA|NEDBA",
+      "xrefs": "HGNC:8109|4953|165640|ENSG00000115758",
+      "description": "ornithine decarboxylase 1",
+      "terms": [
+        "cancer",
+        "colorectal cancer",
+        "intestinal cancer",
+        "large intestine cancer",
+        "gastrointestinal system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 8643,
+      "standard_name": "PTCH2",
+      "aliases": "PTC2",
+      "xrefs": "ENSG00000117425|8643|HGNC:9586|603673",
+      "description": "patched 2",
+      "terms": [
+        "infratentorial cancer",
+        "cancer",
+        "central nervous system cancer",
+        "skin cancer",
+        "KEGG PATHWAYS IN CANCER",
+        "nervous system cancer",
+        "brain cancer",
+        "integumentary system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 5546,
+      "standard_name": "PRCC",
+      "aliases": "RCCP1|TPRC",
+      "xrefs": "5546|HGNC:9343|179755|ENSG00000143294",
+      "description": "proline rich mitotic checkpoint control factor",
+      "terms": [
+        "cancer",
+        "kidney cancer",
+        "urinary system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 6391,
+      "standard_name": "SDHC",
+      "aliases": "SDH3|QPS1|CYBL|CYB560|PGL3",
+      "xrefs": "ENSG00000143252|HGNC:10682|602413|6391",
+      "description": "succinate dehydrogenase complex subunit C",
+      "terms": [
+        "cancer",
+        "endocrine gland cancer",
+        "gastrointestinal system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 10019,
+      "standard_name": "SH2B3",
+      "aliases": "IDDM20|LNK",
+      "xrefs": "HGNC:29605|ENSG00000111252|605093|10019",
+      "description": "SH2B adaptor protein 3",
+      "terms": [
+        "hematologic cancer",
+        "cancer",
+        "bone marrow cancer",
+        "immune system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 11178,
+      "standard_name": "LZTS1",
+      "aliases": "FEZ1|F37",
+      "xrefs": "11178|606551|ENSG00000061337|HGNC:13861",
+      "description": "leucine zipper tumor suppressor 1",
+      "terms": [
+        "cancer",
+        "esophageal cancer",
+        "gastrointestinal system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 5002,
+      "standard_name": "SLC22A18",
+      "aliases": "p45-BWR1A|HET|ITM|BWSCR1A|BWR1A|ORCTL2|TSSC5|SLC22A1L|IMPT1",
+      "xrefs": "5002|602631|HGNC:10964|ENSG00000110628",
+      "description": "solute carrier family 22 member 18",
+      "terms": [
+        "cancer",
+        "lung cancer",
+        "respiratory system cancer",
+        "musculoskeletal system cancer",
+        "thoracic cancer",
+        "muscle cancer",
+        "breast cancer",
+        "skeletal muscle cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 6390,
+      "standard_name": "SDHB",
+      "aliases": "MC2DN4|SDHIP|IP|PGL4|SDH2|CWS2|SDH|SDH1",
+      "xrefs": "185470|HGNC:10681|ENSG00000117118|6390",
+      "description": "succinate dehydrogenase complex iron sulfur subunit B",
+      "terms": [
+        "cancer",
+        "endocrine gland cancer",
+        "WP METABOLIC REPROGRAMMING IN COLON CANCER",
+        "gastrointestinal system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 8438,
+      "standard_name": "RAD54L",
+      "aliases": "RAD54A|hHR54|hRAD54|HR54",
+      "xrefs": "ENSG00000085999|8438|HGNC:9826|603615",
+      "description": "RAD54 like",
+      "terms": [
+        "hematologic cancer",
+        "cancer",
+        "thoracic cancer",
+        "breast cancer",
+        "immune system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 613,
+      "standard_name": "BCR",
+      "aliases": "PHL|D22S11|ALL|CML|D22S662|BCR1",
+      "xrefs": "ENSG00000186716|613|HGNC:1014|151410",
+      "description": "BCR activator of RhoGEF and GTPase",
+      "terms": [
+        "hematologic cancer",
+        "cancer",
+        "KEGG PATHWAYS IN CANCER",
+        "immune system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 1630,
+      "standard_name": "DCC",
+      "aliases": "IGDCC1|CRCR1|CRC18|HGPPS2|MRMV1|NTN1R1",
+      "xrefs": "ENSG00000187323|1630|120470|HGNC:2701",
+      "description": "DCC netrin 1 receptor",
+      "terms": [
+        "cancer",
+        "colorectal cancer",
+        "WP CHROMOSOMAL AND MICROSATELLITE INSTABILITY IN COLORECTAL CANCER",
+        "intestinal cancer",
+        "KEGG PATHWAYS IN CANCER",
+        "esophageal cancer",
+        "KEGG COLORECTAL CANCER",
+        "large intestine cancer",
+        "gastrointestinal system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 1326,
+      "standard_name": "MAP3K8",
+      "aliases": "ESTF|c-COT|EST|COT|TPL2|MEKK8|AURA2|Tpl-2",
+      "xrefs": "HGNC:6860|1326|191195|ENSG00000107968",
+      "description": "mitogen-activated protein kinase kinase kinase 8",
+      "terms": [
+        "cancer",
+        "lung cancer",
+        "respiratory system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 25788,
+      "standard_name": "RAD54B",
+      "aliases": "RDH54",
+      "xrefs": "604289|ENSG00000197275|25788|HGNC:17228",
+      "description": "RAD54 homolog B",
+      "terms": [
+        "hematologic cancer",
+        "cancer",
+        "colorectal cancer",
+        "intestinal cancer",
+        "large intestine cancer",
+        "immune system cancer",
+        "gastrointestinal system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 171023,
+      "standard_name": "ASXL1",
+      "aliases": "BOPS|MDS",
+      "xrefs": "ENSG00000171456|612990|HGNC:18318|171023",
+      "description": "ASXL transcriptional regulator 1",
+      "terms": [
+        "hematologic cancer",
+        "cancer",
+        "bone marrow cancer",
+        "immune system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 701,
+      "standard_name": "BUB1B",
+      "aliases": "hBUBR1|SSK1|Bub1A|MVA1|BUBR1|MAD3L|BUB1beta",
+      "xrefs": "602860|HGNC:1149|701|ENSG00000156970",
+      "description": "BUB1 mitotic checkpoint serine/threonine kinase B",
+      "terms": [
+        "cancer",
+        "colorectal cancer",
+        "intestinal cancer",
+        "large intestine cancer",
+        "gastrointestinal system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 54904,
+      "standard_name": "NSD3",
+      "aliases": "pp14328|KMT3F|KMT3G|WHSC1L1|WHISTLE",
+      "xrefs": "ENSG00000147548|54904|607083|HGNC:12767",
+      "description": "nuclear receptor binding SET domain protein 3",
+      "terms": [
+        "hematologic cancer",
+        "cancer",
+        "immune system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 23451,
+      "standard_name": "SF3B1",
+      "aliases": "PRPF10|Hsh155|MDS|PRP10|SAP155|SF3b155",
+      "xrefs": "ENSG00000115524|605590|HGNC:10768|23451",
+      "description": "splicing factor 3b subunit 1",
+      "terms": [
+        "hematologic cancer",
+        "cancer",
+        "bone marrow cancer",
+        "immune system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 79058,
+      "standard_name": "ASPSCR1",
+      "aliases": "ASPCR1|RCC17|UBXD9|UBXN9|TUG|ASPS|ASPL",
+      "xrefs": "606236|79058|ENSG00000169696|HGNC:13825",
+      "description": "ASPSCR1 tether for SLC2A4, UBX domain containing",
+      "terms": [
+        "cancer",
+        "musculoskeletal system cancer",
+        "muscle cancer",
+        "skeletal muscle cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 4352,
+      "standard_name": "MPL",
+      "aliases": "THCYT2|CD110|THPOR|MPLV|C-MPL|TPOR",
+      "xrefs": "HGNC:7217|159530|4352|ENSG00000117400",
+      "description": "MPL proto-oncogene, thrombopoietin receptor",
+      "terms": [
+        "hematologic cancer",
+        "cancer",
+        "bone marrow cancer",
+        "immune system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 8493,
+      "standard_name": "PPM1D",
+      "aliases": "IDDGIP|WIP1|JDVS|PP2C-DELTA",
+      "xrefs": "ENSG00000170836|605100|8493|HGNC:9277",
+      "description": "protein phosphatase, Mg2+/Mn2+ dependent 1D",
+      "terms": [
+        "cancer",
+        "thoracic cancer",
+        "breast cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 3417,
+      "standard_name": "IDH1",
+      "aliases": "HEL-S-26|IDP|IDH|IDCD|IDPC|PICD|HEL-216",
+      "xrefs": "3417|147700|HGNC:5382|ENSG00000138413",
+      "description": "isocitrate dehydrogenase (NADP(+)) 1",
+      "terms": [
+        "cancer",
+        "cell type cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 8379,
+      "standard_name": "MAD1L1",
+      "aliases": "PIG9|TP53I9|TXBP181|MAD1",
+      "xrefs": "HGNC:6762|602686|ENSG00000002822|8379",
+      "description": "mitotic arrest deficient 1 like 1",
+      "terms": [
+        "cancer",
+        "prostate cancer",
+        "male reproductive organ cancer",
+        "reproductive organ cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 238,
+      "standard_name": "ALK",
+      "aliases": "ALK1|CD246|NBLST3",
+      "xrefs": "ENSG00000171094|105590|238|HGNC:427",
+      "description": "ALK receptor tyrosine kinase",
+      "terms": [
+        "cancer",
+        "REACTOME SIGNALING BY ALK IN CANCER",
+        "WP MAPK PATHWAY IN CONGENITAL THYROID CANCER",
+        "WP NON SMALL CELL LUNG CANCER",
+        "nervous system cancer",
+        "REACTOME NUCLEAR EVENTS STIMULATED BY ALK SIGNALING IN CANCER"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 1788,
+      "standard_name": "DNMT3A",
+      "aliases": "DNMT3A2|M.HsaIIIA|TBRS|HESJAS",
+      "xrefs": "HGNC:2978|602769|1788|ENSG00000119772",
+      "description": "DNA methyltransferase 3 alpha",
+      "terms": [
+        "cancer",
+        "immune system cancer",
+        "hematologic cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 7066,
+      "standard_name": "THPO",
+      "aliases": "MKCSF|THCYT1|TPO|MGDF|ML|MPLLG",
+      "xrefs": "HGNC:11795|600044|7066|ENSG00000090534",
+      "description": "thrombopoietin",
+      "terms": [
+        "hematologic cancer",
+        "cancer",
+        "bone marrow cancer",
+        "immune system cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    },
+    {
+      "entrez": 6392,
+      "standard_name": "SDHD",
+      "aliases": "CBT1|CII-4|cybS|QPs3|CWS3|PGL|MC2DN3|SDH4|PGL1",
+      "xrefs": "6392|602690|ENSG00000204370|HGNC:10683",
+      "description": "succinate dehydrogenase complex subunit D",
+      "terms": [
+        "cancer",
+        "endocrine gland cancer"
+      ],
+      "organism": "homo-sapiens",
+      "versions_available": [
+        "v1",
+        "v3"
+      ]
+    }
+  ]
+}

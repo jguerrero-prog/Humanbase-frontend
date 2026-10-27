@@ -12,7 +12,7 @@ import {
   type SearchSuggestion,
   useLinkHref,
 } from '@humanbase/ui';
-import { useMemo, useState, type ClipboardEvent, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ClipboardEvent, type KeyboardEvent, type ReactNode } from 'react';
 import { analysisColumns, analysisOptions, categoryCrumbs } from '../content/product';
 import { hitsOf, matchOf, splitByVersion, suggestionOf } from './geneMatches';
 import { genesWord, OutsideVersionAlert } from './OutsideVersionAlert';
@@ -27,6 +27,8 @@ export interface HomeSearchProps {
 }
 
 const exampleGenes = ['IL1B', 'BRCA1', 'PTEN'];
+// As on humanbase.io: a term, not a gene, so it opens the suggestions for genes annotated to it.
+const exampleTerm = 'cancer';
 const versionOptions = (Object.keys(dataVersionNames) as DataVersion[]).map((version) => ({ value: version, label: dataVersionNames[version] }));
 
 export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afterExamples }: HomeSearchProps) {
@@ -34,6 +36,12 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
   const api = useHumanbase();
   const [analysis, setAnalysis] = useState<string>();
   const [text, setText] = useState('');
+  const searchInput = useRef<HTMLInputElement>(null);
+  // An example term focuses the search once its text is in, so the field opens its suggestions.
+  const [termShown, setTermShown] = useState(0);
+  useEffect(() => {
+    if (termShown) searchInput.current?.focus();
+  }, [termShown]);
   const [list, setList] = useState(() => new GeneMatchList([]));
   const [genes, setGenes] = useState<ReadonlyMap<string, GeneHit>>(new Map());
   const [matching, setMatching] = useState(false);
@@ -90,6 +98,10 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
   };
 
   const runExample = (symbol: string) => () => void match(async () => [{ typed: symbol, genes: await api.search.exact(symbol) }]);
+  const suggestTerm = (term: string) => () => {
+    setText(term);
+    setTermShown((count) => count + 1);
+  };
 
   const { entrez: runnable, outside, outsideGenes } = splitByVersion(list, genes, version);
 
@@ -119,6 +131,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
           onChange={(value) => (value === 'networks' ? setAnalysis(value) : onChooseAnalysis(value))}
         />
         <SearchField
+          ref={searchInput}
           label="Search genes"
           placeholder={list.matches.length > 0 ? 'Add more genes, for example TNF' : 'Search a gene, for example IL1B'}
           value={text}
@@ -138,7 +151,7 @@ export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afte
       </div>
       <SearchExamples
         surface="brand"
-        examples={[...exampleGenes.map((symbol) => ({ label: symbol, onSelect: runExample(symbol) })), { label: 'Autism gene set', onSelect: onExampleSet }]}
+        examples={[...exampleGenes.map((symbol) => ({ label: symbol, onSelect: runExample(symbol) })), { label: exampleTerm, onSelect: suggestTerm(exampleTerm) }, { label: 'Autism gene set', onSelect: onExampleSet }]}
       />
       {afterExamples}
       {failed && (

@@ -165,6 +165,18 @@ test('clicking a line in the Networks graph opens that connection, as on humanba
   expect(await selected.evaluate((line) => parseFloat(getComputedStyle(line).strokeWidth))).toBeGreaterThan(resting);
 });
 
+test('the cancer example opens the gene suggestions for cancer, as humanbase.io’s does, with the API off', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(web);
+  const examples = page.locator('.search-examples').first();
+  await expect(examples.getByRole('button')).toHaveText(['IL1B', 'BRCA1', 'PTEN', 'cancer', 'Autism gene set']);
+  await examples.getByRole('button', { name: 'cancer' }).click();
+  const search = page.getByRole('combobox', { name: 'Search genes' });
+  await expect(search).toHaveValue('cancer');
+  await expect(search).toBeFocused();
+  await expect(page.getByRole('option').first()).toBeVisible();
+});
+
 test('a connection’s All networks downloads every network’s weight for the pair, as humanbase.io’s does, with the API off', async ({ page }) => {
   await apiOff(page);
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&connection=7185-6348`);
