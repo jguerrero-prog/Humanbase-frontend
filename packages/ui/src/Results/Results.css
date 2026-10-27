@@ -283,13 +283,13 @@
 
 .annotation-identifier {
   display: block;
-  padding-inline-start: var(--space-6);
   font: var(--type-code-sm);
   color: var(--text-secondary);
 }
 
-.annotation-name {
-  padding-inline-start: 24px;
+/* Under a term with a chevron, the ID lines up with the term, past the 16px icon. */
+.annotation-toggle + .annotation-identifier {
+  padding-inline-start: calc(16px + var(--space-2));
 }
 
 .annotation-evidence,
