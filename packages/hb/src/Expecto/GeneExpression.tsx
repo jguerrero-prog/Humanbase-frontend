@@ -121,7 +121,7 @@ export function GeneExpression({ tool: toolId, entrez, state, onStateChange }: G
         {missing ? (
           <EmptyState
             title={`${tool.name} has no predictions for ${symbol}`}
-            text={api.showsSamples ? `This copy of Humanbase shows sample data, which covers ${tool.examples[0]} only. Turn the API on to see every gene.` : `${tool.name} scores positions near a gene’s start; this gene isn’t in its set. Try another gene.`}
+            text={api.examplesOnly ? `This copy of Humanbase shows sample data, which covers ${tool.examples[0]} only. Turn the API on to see every gene.` : `${tool.name} scores positions near a gene’s start; this gene isn’t in its set. Try another gene.`}
             actions={
               <a className="button button-secondary" href={linkHref(expressionEffectsLink({ model: toolId }))}>
                 Search another gene
