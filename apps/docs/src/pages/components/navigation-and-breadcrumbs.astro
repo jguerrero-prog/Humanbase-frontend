@@ -1,6 +1,6 @@
 ---
-import { Alert, Breadcrumbs, Button, Dialog, Footer, Icon, IconButton, NavMenu, NavPanelContent, RadioGroup, SegmentedControl, Select, SkipLink, Tabs, TopBar, type NavSection } from '@humanbase/ui';
-import { productFooter } from '@humanbase/hb';
+import { Alert, Breadcrumbs, Button, Dialog, Footer, Icon, IconButton, NavMenu, NavPanelContent, RadioGroup, Select, SkipLink, Tabs, TopBar, type NavSection } from '@humanbase/ui';
+import { displaySettingsNote, motionOptions, productFooter, themeOptions } from '@humanbase/hb';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -122,15 +122,6 @@ const phoneNotes = [
 ];
 
 const footer = productFooter;
-const motionOptions = [
-  { value: 'device', label: 'Match my device', description: 'Currently: full motion' },
-  { value: 'reduce', label: 'Reduce motion', description: 'Fades only, no movement' },
-  { value: 'full', label: 'Full motion', description: 'Even if my device asks to reduce it' },
-];
-const densities = [
-  { value: 'comfortable', label: 'Comfortable' },
-  { value: 'compact', label: 'Compact' },
-];
 const footerNotes = [
   'Link groups use the same names as the top bar sections, in the same order.',
   'The data version in the bottom row says which networks results come from, on every page.',
@@ -434,9 +425,9 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
         <IconButton floating label="Display settings" icon="settings" placement="right" />
         <Dialog inline kind="form" size="medium" title="Display settings">
           <div class="settings-body">
-            <RadioGroup legend="Motion" options={motionOptions} defaultValue="device" />
-            <SegmentedControl label="Table rows" segments={densities} defaultValue="comfortable" />
-            <p class="settings-note">Saved in this browser. Humanbase has no accounts.</p>
+            <p>{displaySettingsNote}</p>
+            <RadioGroup legend="Theme" options={themeOptions} defaultValue="1" />
+            <RadioGroup legend="Motion" options={motionOptions('full motion')} defaultValue="device" />
           </div>
           <Fragment slot="actions">
             <Button variant="ghost">Cancel</Button>
@@ -967,11 +958,6 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
   .settings-body {
     display: grid;
     gap: var(--space-5);
-  }
-
-  .settings-note {
-    font: var(--type-body-sm);
-    color: var(--text-secondary);
   }
 
   .skip-stage {

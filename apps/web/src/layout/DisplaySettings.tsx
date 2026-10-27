@@ -1,3 +1,4 @@
+import { displaySettingsNote, motionOptions, themeOptions } from '@humanbase/hb';
 import { Button, Dialog, RadioGroup } from '@humanbase/ui';
 import { useState } from 'react';
 import { BrowserSetting } from './BrowserSetting';
@@ -20,11 +21,6 @@ export function applyTheme(choice: ThemeChoice): void {
   else document.documentElement.dataset.theme = choice;
 }
 
-const themes = [
-  { value: '1', label: 'Theme 1', description: 'Emerald and yellow' },
-  { value: '2', label: 'Theme 2', description: 'Blue and gold' },
-];
-
 const deviceMotion = () => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'reduced motion' : 'full motion');
 
 interface DisplaySettingsProps {
@@ -42,11 +38,6 @@ export function DisplaySettings({ open, onClose }: DisplaySettingsProps) {
     applyTheme(theme);
     onClose();
   };
-  const options = [
-    { value: 'device', label: 'Match my device', description: `Currently: ${deviceMotion()}` },
-    { value: 'reduce', label: 'Reduce motion', description: 'Fades only, no movement' },
-    { value: 'full', label: 'Full motion', description: 'Even if my device asks to reduce it' },
-  ];
   return (
     <Dialog
       title="Display settings"
@@ -63,9 +54,9 @@ export function DisplaySettings({ open, onClose }: DisplaySettingsProps) {
         </>
       }
     >
-      <p>Saved in this browser only.</p>
-      <RadioGroup legend="Theme" options={themes} value={theme} onChange={(value) => setTheme(value as ThemeChoice)} />
-      <RadioGroup legend="Motion" options={options} value={motion} onChange={(value) => setMotion(value as MotionChoice)} />
+      <p>{displaySettingsNote}</p>
+      <RadioGroup legend="Theme" options={themeOptions} value={theme} onChange={(value) => setTheme(value as ThemeChoice)} />
+      <RadioGroup legend="Motion" options={motionOptions(deviceMotion())} value={motion} onChange={(value) => setMotion(value as MotionChoice)} />
     </Dialog>
   );
 }

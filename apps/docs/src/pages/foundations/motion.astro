@@ -1,4 +1,5 @@
 ---
+import { motionOptions } from '@humanbase/hb';
 import { MenuItem, MenuPanel, RadioGroup } from '@humanbase/ui';
 import { flattenTokens, type TokenEntry } from '@humanbase/tokens/catalog';
 import motion from '@humanbase/tokens/src/motion.tokens.json';
@@ -87,11 +88,6 @@ const timing = [...group('delay'), ...group('hold')]
   .sort((a, b) => amount(a).value - amount(b).value)
   .map((entry) => ({ name: tokenName(entry), value: timingLabels[tokenName(entry)] ?? `${amount(entry).value}ms`, rule: entry.token.$description }));
 
-const motionOptions = [
-  { value: 'device', label: 'Match my device', description: 'Currently: full motion' },
-  { value: 'reduce', label: 'Reduce motion', description: 'Fades only, no movement' },
-  { value: 'full', label: 'Full motion', description: 'Even if my device asks to reduce it' },
-];
 
 const reducedChanges = [
   'Movement becomes a fade: menus, toasts, dialogs, drawers and expanding sections.',
@@ -307,7 +303,7 @@ const usage = `.menu {
     <div class="reduced">
       <figure class="setting">
         <figcaption>Display settings, opened from the gear and saved in this browser</figcaption>
-        <RadioGroup legend="Motion" hint="Small animations help show what changed." options={motionOptions} defaultValue="device" name="motion-example" />
+        <RadioGroup legend="Motion" hint="Small animations help show what changed." options={motionOptions('full motion')} defaultValue="device" name="motion-example" />
       </figure>
       <ul class="points">
         {reducedChanges.map((change) => <li>{change}</li>)}

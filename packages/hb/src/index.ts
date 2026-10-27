@@ -4,6 +4,7 @@ export { AsdBrowser, type AsdBrowserProps, type AsdView } from './AsdBrowser/Asd
 export { AsdExplorer, type AsdExplorerProps, type AsdState } from './AsdBrowser/AsdExplorer';
 export { AsdHeader, AsdVariantTable, type AsdHeaderProps, type AsdVariantTableProps } from './AsdBrowser/AsdParts';
 export { aboutArticle, type AboutSection } from './content/about/about';
+export { displaySettingsNote, motionOptions, themeOptions } from './content/displaySettings';
 export { doiLink, humanbaseCitation, humanbaseCitationText, methodCitations, netwasCitation, type MethodCitation, type PlatformCitation } from './content/cite';
 export { DocsLibrary, docsLibrary, docsRoute, parsePage, type DocsGroup, type DocsPage } from './content/docs/DocsLibrary';
 export { DocsSearch, type DocsSearchProps } from './content/docs/DocsSearch';
