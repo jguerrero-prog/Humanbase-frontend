@@ -341,4 +341,5 @@
   --button-secondary-hover: var(--color-grey-800);
   --button-secondary-pressed: var(--color-grey-700);
   --button-on-secondary: var(--color-white);
+  --syntax-string: var(--color-success-700);
 }

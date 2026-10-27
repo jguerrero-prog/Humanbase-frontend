@@ -1,8 +1,9 @@
-import { useId, useRef, useState, type ReactNode } from 'react';
+import { useId, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Disclosure } from '../Disclosure/Disclosure';
 import { useCopy } from '../hooks/useCopy';
 import { useOverflow } from '../hooks/useOverflow';
 import { Icon } from '../Icon/Icon';
+import { codeLines, type CodeLanguage } from './codeSyntax';
 import './CodeBlock.css';
 
 export type SyntaxRole = 'text' | 'key' | 'command' | 'string' | 'type' | 'param' | 'flag' | 'comment';
@@ -57,6 +58,8 @@ export interface CodeBlockProps {
   label: string;
   code: string;
   lines?: readonly CodeLine[];
+  /** Colors the code itself when it is JSON or a curl command and no lines are given. */
+  language?: CodeLanguage;
   copy?: boolean;
   className?: string;
   /** Blocks longer than this many lines start collapsed. */
@@ -71,7 +74,8 @@ export interface CodeBlockProps {
 export function CodeBlock({
   label,
   code,
-  lines,
+  lines: givenLines,
+  language,
   copy = true,
   className,
   collapseAfter = 40,
@@ -81,6 +85,7 @@ export function CodeBlock({
   defaultExpanded = false,
 }: CodeBlockProps) {
   const labelId = useId();
+  const lines = useMemo(() => givenLines ?? (language ? codeLines(code, language) : undefined), [givenLines, language, code]);
   const codeId = useId();
   const pre = useRef<HTMLPreElement>(null);
   const [expanded, setExpanded] = useState(defaultExpanded);
