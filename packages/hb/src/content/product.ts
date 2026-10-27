@@ -1,4 +1,5 @@
 import { mailingListHref, type Crumb, type FooterProps, type NavLink, type NavSection, type SelectOption } from '@humanbase/ui';
+import { apiReferenceHref } from './apiReference';
 import expecto from './analysis-icons/expecto_fa-magic.svg?url';
 import expectoSc from './analysis-icons/expecto-sc_dendritic_cell.png?url';
 import netwas from './analysis-icons/gwas-netwas_fa-list-ol.svg?url';
@@ -41,7 +42,7 @@ const variantTools: NavLink[] = [productTools.variantEffects, productTools.seqwe
 const resources: NavLink[] = [
   { label: 'Data sources', href: '/data-sources/', description: 'Datasets behind each network' },
   { label: 'Downloads', href: '/downloads/', description: 'Networks and models to download' },
-  { label: 'Humanbase API', href: '/api/docs/', description: 'Query Humanbase from code' },
+  { label: 'Humanbase API', href: apiReferenceHref, description: 'Query Humanbase from code' },
   { label: 'Docs', href: '/docs/', description: 'How to use each tool' },
 ];
 
