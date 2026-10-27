@@ -129,9 +129,22 @@ test('clicking a line in the Networks graph opens that connection, as on humanba
     return null;
   });
   expect(point, 'a line whose middle can be clicked').not.toBeNull();
+  const widthOfLine = () => graph.evaluate((svg, at) => {
+    const hit = document.elementFromPoint(at.x, at.y);
+    const line = hit?.previousElementSibling ?? svg.querySelector('line.is-selected');
+    return line ? parseFloat(getComputedStyle(line).strokeWidth) : 0;
+  }, point ?? { x: 0, y: 0 });
+  const resting = await widthOfLine();
+  await page.mouse.move(point?.x ?? 0, point?.y ?? 0);
+  expect(await widthOfLine(), 'thicker under the pointer').toBeGreaterThan(resting);
   await page.mouse.click(point?.x ?? 0, point?.y ?? 0);
   await expect(page.getByRole('dialog', { name: / and / })).toContainText(/Connection in the .+ network/);
   await expect(page.getByRole('radio', { name: 'All networks' })).toBeVisible();
+  // The clicked line stays thick once the pointer has moved on.
+  await page.mouse.move(0, 0);
+  const selected = graph.locator('.force-graph-links line.is-selected');
+  await expect(selected).toHaveCount(1);
+  expect(await selected.evaluate((line) => parseFloat(getComputedStyle(line).strokeWidth))).toBeGreaterThan(resting);
 });
 
 test('Networks explains a gene that is in no network', async ({ page }) => {

@@ -87,6 +87,8 @@ export class ForceGraphRenderer implements GraphRenderer {
       const line = this.drawLine(link.source, link.target, link.weight);
       const hit = svgElement('line', { class: 'force-graph-hit', x1: link.source.x, y1: link.source.y, x2: link.target.x, y2: link.target.y });
       hit.addEventListener('click', () => this.options?.onSelectLink?.(link.source.id, link.target.id));
+      hit.addEventListener('pointerenter', () => line.classList.add('is-hovered'));
+      hit.addEventListener('pointerleave', () => line.classList.remove('is-hovered'));
       linkLayer.append(line, hit);
       this.links.push({ element: line, source: link.source.id, target: link.target.id });
     }

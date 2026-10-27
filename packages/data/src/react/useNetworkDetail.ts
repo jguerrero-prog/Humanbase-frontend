@@ -47,9 +47,9 @@ export function useGenesFunctions(entrez: readonly number[], database: FunctionD
   });
 }
 
-export function useConnectionEvidence(slug: string, a: number, b: number) {
+export function useConnectionEvidence(slug: string, a: number, b: number, enabled = true) {
   const api = useHumanbase();
-  return useQuery({ queryKey: ['connection-evidence', slug, Math.min(a, b), Math.max(a, b)], queryFn: () => api.connections.evidence(slug, a, b), staleTime: Infinity });
+  return useQuery({ queryKey: ['connection-evidence', slug, Math.min(a, b), Math.max(a, b)], queryFn: () => api.connections.evidence(slug, a, b), enabled, staleTime: Infinity });
 }
 
 export function useConnectionInAllNetworks(a: number, b: number, enabled: boolean) {
