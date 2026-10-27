@@ -17,6 +17,9 @@ describe('GenomeGeneDrawer', () => {
     renderDrawer();
     const drawer = screen.getByRole('dialog', { name: 'CELSR2' });
     expect(drawer).toHaveTextContent('chr1:109,792,641-109,818,372, forward strand (GRCh37/hg19)');
+    // While the record loads, its sections show skeleton lines where the aliases and IDs will be.
+    expect(within(drawer).getByRole('region', { name: 'Also known as' }).querySelectorAll('.skeleton')).toHaveLength(1);
+    expect(within(drawer).getByRole('region', { name: 'Gene IDs' }).querySelectorAll('.skeleton')).toHaveLength(4);
     expect(drawer).toHaveTextContent('protein_coding (GENCODE 19)');
     expect(await within(drawer).findByText('cadherin EGF LAG seven-pass G-type receptor 2')).toBeInTheDocument();
     expect(drawer).toHaveTextContent('CDHF10, ADGRC2, EGFL2, Flamingo1, MEGF3');
