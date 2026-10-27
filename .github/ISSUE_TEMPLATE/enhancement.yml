@@ -1,0 +1,28 @@
+name: Enhancement
+description: An improvement to something that already works.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: What and why
+      description: What should change, and who it helps.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What is in, and what is out.
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: How we know it is finished.
+    validations:
+      required: true
+  - type: textarea
+    id: figma
+    attributes:
+      label: Figma or API reference
+      description: Link the Figma frame, the docs page, or the API endpoint involved.
