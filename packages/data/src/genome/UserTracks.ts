@@ -114,6 +114,8 @@ export class UserTracks implements GenomeTracks {
   }
 
   remove(group: string, key: string): Promise<void> {
+    this.added.delete(key);
+    this.reader.removeFile(key);
     return this.store.remove(group, key);
   }
 
