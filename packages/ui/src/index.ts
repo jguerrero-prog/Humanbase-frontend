@@ -112,6 +112,7 @@ export { saveFile } from './utils/saveFile';
 export { bytesOf, cssColor, svgToPng, useExportMenu, useImageFormats, zipFormat, type ExportFormat, type SvgSource } from './utils/exportFiles';
 export { standaloneSvg } from './utils/standaloneSvg';
 export { StoredChoice } from './utils/StoredChoice';
+export { genesWord, listJoin } from './utils/wording';
 export { Toggletip, type ToggletipProps } from './Tooltip/Toggletip';
 export { Tooltip, type TooltipProps } from './Tooltip/Tooltip';
 export { TooltipController, tooltips } from './Tooltip/TooltipController';

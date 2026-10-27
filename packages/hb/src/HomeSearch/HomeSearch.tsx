@@ -5,6 +5,7 @@ import {
   GeneMatchList,
   GeneMatchSummary,
   GeneMatchTable,
+  genesWord,
   SearchExamples,
   SearchField,
   Select,
@@ -16,7 +17,7 @@ import { useEffect, useMemo, useRef, useState, type ClipboardEvent, type Keyboar
 import { versionOptions } from '../content/dataVersions';
 import { analysisColumns, analysisOptions, categoryCrumbs } from '../content/product';
 import { hitsOf, matchOf, splitByVersion, suggestionOf } from './geneMatches';
-import { genesWord, OutsideVersionAlert } from './OutsideVersionAlert';
+import { OutsideVersionAlert } from './OutsideVersionAlert';
 import './HomeSearch.css';
 
 export interface HomeSearchProps {

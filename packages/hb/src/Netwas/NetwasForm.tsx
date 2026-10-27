@@ -45,6 +45,10 @@ function toolOf(version: DataVersion): string {
   return version === 'v3' ? 'MAGE-WAS' : 'NetWAS';
 }
 
+export function netwasJobLink(id: string): string {
+  return `/netwas/${id}/`;
+}
+
 export function NetwasForm({ draft, docsHref, onStarted }: NetwasFormProps) {
   const id = useId();
   const ids = { file: `${id}-file`, pValue: `${id}-p`, email: `${id}-email` };
@@ -152,7 +156,7 @@ export function NetwasForm({ draft, docsHref, onStarted }: NetwasFormProps) {
     setSubmitting(true);
     try {
       const job = await api.netwas.submit({ file: file.bytes, tissue, version, pValue: version === 'v1' ? threshold : undefined, mhc: version === 'v3' ? mhc : undefined, title, email });
-      const link = `/netwas/${job.id}/`;
+      const link = netwasJobLink(job.id);
       new JobHistory().add({ id: job.id, tool: job.tool, status: job.status, startedAt: job.created.toISOString(), link, title: title.trim() || undefined, detail: `${job.tool}, ${tissueName}` });
       onStarted(link);
     } catch (error) {
