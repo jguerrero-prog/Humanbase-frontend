@@ -1,4 +1,4 @@
-import { ApiError } from '../ApiError';
+import { ApiError, SampleMissingError } from '../ApiError';
 import { Humanbase } from '../Humanbase';
 import { SampleClient } from './SampleClient';
 import { sampleKey } from './sampleKey';
@@ -23,6 +23,16 @@ describe('sampleKey', () => {
 });
 
 describe('SampleClient', () => {
+  it('tells a request with no recorded sample from a recorded not-found answer', async () => {
+    const client = new SampleClient({ 'genes/1': async () => ({ status: 404, body: { detail: 'Not found.' } }) });
+    const missing = await client.get('genes/2').catch((error: unknown) => error);
+    expect(missing).toBeInstanceOf(SampleMissingError);
+    expect((missing as ApiError).isNotFound).toBe(true);
+    const recorded = await client.get('genes/1').catch((error: unknown) => error);
+    expect(recorded).toBeInstanceOf(ApiError);
+    expect(recorded).not.toBeInstanceOf(SampleMissingError);
+  });
+
   const client = new SampleClient({
     'genes/3553': () => Promise.resolve({ status: 200, body: { entrez: 3553 } }),
     'genes/0': () => Promise.resolve({ status: 404, body: null }),
@@ -52,11 +62,11 @@ describe('the API switch', () => {
     const humanbase = Humanbase.fromConfig({ api: false, apiBase: '/api' });
     const gene = await humanbase.genes.get(3553);
     expect(gene.symbol).toBe('IL1B');
-    expect(humanbase.showsSamples).toBe(true);
+    expect(humanbase.examplesOnly).toBe(true);
     expect(fetch).not.toHaveBeenCalled();
   });
 
   it('uses the API when it is on', () => {
-    expect(Humanbase.fromConfig({ api: true, apiBase: '/api' }).showsSamples).toBe(false);
+    expect(Humanbase.fromConfig({ api: true, apiBase: '/api' }).examplesOnly).toBe(false);
   });
 });
