@@ -62,5 +62,5 @@ export {
 export { PrecomputedVariantBrowser, type PrecomputedVariantBrowserProps, type PrecomputedVariantList, type PrecomputedVariantSet, type PrecomputedVariantState } from './PrecomputedVariants/PrecomputedVariantBrowser';
 export { seqweaverGnomad, seqweaverGnomadHref } from './PrecomputedVariants/seqweaverGnomad';
 export { seiHgmd, seiHgmdLink } from './PrecomputedVariants/seiHgmd';
-export { ApiReferenceView } from './ApiReference/ApiReferenceView';
+export { ApiReferenceView, type ApiReferenceViewProps } from './ApiReference/ApiReferenceView';
 export { apiGroupLabel, apiGroups, apiReferenceHref } from './content/apiReference';
