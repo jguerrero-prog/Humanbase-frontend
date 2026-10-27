@@ -70,3 +70,8 @@
   vertical-align: top;
 }
 
+
+/* In place of the graph, the table keeps the graph's height and scrolls under its header. */
+.module-graph-table {
+  --table-max-height: 403px;
+}
