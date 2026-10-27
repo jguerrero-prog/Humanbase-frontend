@@ -182,18 +182,20 @@ test('Display settings saves reduced motion in this browser', async ({ page }) =
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduce');
 });
 
-test('Display settings switches to Theme 2, keeps it in this browser, and passes WCAG 2.2 AA in it', async ({ page }) => {
+test('Theme 2 is the default; Display settings switches to Theme 1, keeps it in this browser, and passes WCAG 2.2 AA in it', async ({ page }) => {
   await apiOff(page);
   await page.goto(web);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', '2');
   const brand = () => page.locator('header').first().evaluate((bar) => getComputedStyle(bar).backgroundColor);
-  const themeOne = await brand();
+  const themeTwo = await brand();
   await page.getByRole('button', { name: 'Display settings' }).click();
-  await page.getByRole('radio', { name: /Theme 2/ }).check();
+  await expect(page.getByRole('radio', { name: /Theme 2/ })).toBeChecked();
+  await page.getByRole('radio', { name: /Theme 1/ }).check();
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', '2');
-  expect(await brand()).not.toBe(themeOne);
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme');
+  expect(await brand()).not.toBe(themeTwo);
   await page.reload();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', '2');
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme');
   for (const path of ['/', '/networks/?entrez=3553&entrez=7124&version=v1']) {
     await page.goto(`${web}${path}`);
     await settleAnimations(page);
