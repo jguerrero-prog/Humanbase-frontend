@@ -1,6 +1,7 @@
 .app-layout {
   /* Toasts and the footer's last row clear the Display settings button. */
   --toast-offset: calc(var(--space-6) + 44px + var(--space-3));
+  --selection-bar-offset: calc(var(--space-6) + 44px + var(--space-3));
   --footer-clearance: calc(44px + var(--space-6));
 
   display: flex;

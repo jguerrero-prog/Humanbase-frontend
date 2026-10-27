@@ -69,17 +69,6 @@ export function GeneMatchTable({
 
   return (
     <div className="gene-match">
-      {selectable && selection.count > 0 && (
-        <SelectionBar label={`${GeneMatchList.pluralGenes(selection.count)} selected: ${selectedMatches.map((match) => list.gene(match)?.symbol ?? match.typed[0]).join(', ')}`}>
-          {tooFew && <span className="gene-match-reason">{minimum.reason}</span>}
-          <Button variant="ghost" size="small" icon="trash" disabled={tooFew} onClick={() => onRemove?.(selectedMatches.map((match) => match.id))}>
-            Remove from list
-          </Button>
-          <Button variant="ghost" size="small" icon="x" onClick={selection.clear}>
-            Clear selection
-          </Button>
-        </SelectionBar>
-      )}
       <Table caption={caption} columnWidths={[...(selectable ? ['56px'] : []), '200px', 'auto', '140px', '200px', '140px']} minWidth={selectable ? '1016px' : '960px'} pinFirstColumn={!selectable}>
         <thead>
           <tr>
@@ -114,6 +103,17 @@ export function GeneMatchTable({
           {(!foldMatched || expanded) && resolved.map(row)}
         </tbody>
       </Table>
+      {selectable && selection.count > 0 && (
+        <SelectionBar label={`${GeneMatchList.pluralGenes(selection.count)} selected: ${selectedMatches.map((match) => list.gene(match)?.symbol ?? match.typed[0]).join(', ')}`}>
+          {tooFew && <span className="gene-match-reason">{minimum.reason}</span>}
+          <Button variant="ghost" size="small" icon="trash" disabled={tooFew} onClick={() => onRemove?.(selectedMatches.map((match) => match.id))}>
+            Remove from list
+          </Button>
+          <Button variant="ghost" size="small" icon="x" onClick={selection.clear}>
+            Clear selection
+          </Button>
+        </SelectionBar>
+      )}
     </div>
   );
 }

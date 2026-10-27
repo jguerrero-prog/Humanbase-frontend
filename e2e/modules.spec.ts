@@ -24,6 +24,31 @@ test('Modules on the homepage checks an example list and starts a job, with the 
   expect(apiRequests).toEqual([]);
 });
 
+test('the gene selection bar floats at the bottom of the screen, and rests under the last gene at the end, with the API off', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(`${web}/modules/`);
+  await page.getByRole('button', { name: 'renal disease panel' }).click();
+  await expect(page.getByText('468 matched', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: /^Show all \d+/ }).click();
+  const boxes = page.getByRole('checkbox', { name: /^Select / });
+  const middle = Math.floor((await boxes.count()) / 2);
+  await boxes.nth(middle).check();
+  await boxes.nth(middle + 1).check();
+  const bar = page.locator('.table-selection-bar');
+  await expect(bar).toContainText('2 genes selected');
+  await expect(bar.getByRole('button', { name: 'Clear selection' })).toBeInViewport();
+  const viewport = page.viewportSize()?.height ?? 0;
+  const floating = await bar.boundingBox();
+  expect((floating?.y ?? 0) + (floating?.height ?? 0)).toBeLessThanOrEqual(viewport);
+
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  const resting = await bar.boundingBox();
+  const lastRow = await page.locator('.gene-match tbody tr').last().boundingBox();
+  expect(resting?.y ?? 0, 'below the last gene').toBeGreaterThanOrEqual((lastRow?.y ?? 0) + (lastRow?.height ?? 0));
+  await bar.getByRole('button', { name: 'Clear selection' }).click();
+  await expect(bar).toHaveCount(0);
+});
+
 test('a module result that no longer exists says so', async ({ page }) => {
   const apiRequests = await apiOff(page);
   await page.goto(`${web}/modules/?body_tag=0000`);
