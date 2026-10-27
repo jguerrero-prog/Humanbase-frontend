@@ -33,6 +33,11 @@ export class S3GenomeTracks implements GenomeTracks {
     this.blobs.set(key, file);
   }
 
+  removeFile(key: string): void {
+    this.blobs.delete(key);
+    this.opened.delete(key);
+  }
+
   async header(url: string): Promise<TrackFileHeader> {
     const [{ BigWig }, , handles] = await readers();
     const header = await new BigWig({ filehandle: this.handle(url, handles) }).getHeader();
