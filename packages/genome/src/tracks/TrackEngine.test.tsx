@@ -4,6 +4,12 @@ import { hiddenByDefault, suggestedTracks } from '../genomeTrackList';
 import { TrackEngine } from './TrackEngine';
 
 describe('TrackEngine', () => {
+  // A test that fails before its own cleanup would leave its browser behind for the next one to find.
+  afterEach(() => {
+    for (const element of [...document.body.children]) element.remove();
+    vi.restoreAllMocks();
+  });
+
   it('draws the genes in view from the track files and follows the page’s region and selection', async () => {
     // jsdom has no layout: the panel is 1220px wide with its 220px header column.
     vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
@@ -11,10 +17,20 @@ describe('TrackEngine', () => {
     });
     const container = document.createElement('div');
     document.body.append(container);
-    const engine = new TrackEngine(new SampleGenomeTracks(SampleClient.bundled()));
+    const files = new SampleGenomeTracks(SampleClient.bundled());
+    // The genes wait until the loading text has been seen, however fast the samples arrive.
+    const genes = files.genes.bind(files);
+    let release = () => {};
+    const held = new Promise<void>((resolve) => (release = resolve));
+    vi.spyOn(files, 'genes').mockImplementation(async (assembly, span) => {
+      await held;
+      return genes(assembly, span);
+    });
+    const engine = new TrackEngine(files);
     const onRegionChange = vi.fn();
     await act(() => engine.mount(container, { label: 'Genome browser', assembly: 'hg19', region: { chrom: 'chr1', start: 2_230_000, end: 2_440_000 }, tracks: [], onRegionChange }));
     expect(screen.getByText('Loading Genes…')).toBeInTheDocument();
+    release();
     expect(await screen.findByText('← PEX10')).toBeInTheDocument();
     act(() => engine.highlight({ chrom: 'chr1', position: 2_337_101 }));
     expect(screen.getByText('chr1:2,337,101')).toBeInTheDocument();
