@@ -163,6 +163,7 @@ describe('NetworkExplorer', () => {
     );
     const drawer = await screen.findByRole('dialog', { name: 'TRAF1 and CCL3' });
     expect(await within(drawer).findByText('MSigDB CGP')).toBeInTheDocument();
+    expect(within(drawer).getByRole('link', { name: 'Evidence documentation' })).toHaveAttribute('href', '/docs/functional-networks/#evidence');
     expect(within(drawer).getByText(/GSEA perturbations, Co-expression|Co-expression, GSEA perturbations/)).toBeInTheDocument();
     await userEvent.click(within(drawer).getByRole('radio', { name: 'All networks' }));
     expect(await within(drawer).findByRole('table', { name: /Connection weight in each network/ })).toBeInTheDocument();
@@ -181,8 +182,14 @@ describe('NetworkExplorer', () => {
     const drawer = await screen.findByRole('dialog', { name: 'TRAF1 and CCL3' });
     await waitFor(() => expect(get.mock.calls.some(([path]) => path.startsWith('integrations/edges/'))).toBe(true));
     await userEvent.click(within(drawer).getByRole('radio', { name: 'All networks' }));
-    expect(within(drawer).getByRole('status')).toHaveTextContent('Checking every network for TRAF1 and CCL3…');
+    expect(within(drawer).getByText(/Checking every network for TRAF1 and CCL3…/).closest('[role="status"]')).not.toBeNull();
     expect(within(drawer).getByText('This can take up to 20 seconds the first time a connection is opened.')).toBeInTheDocument();
+    // Shaped like what arrives: the histogram's bars and the table's rows, under its real headers.
+    expect(drawer.querySelectorAll('.weight-histogram-skeleton .skeleton')).toHaveLength(10);
+    const table = within(drawer).getByRole('table', { name: /Connection weight in each network/ });
+    expect(table).toHaveAttribute('aria-busy', 'true');
+    expect(within(table).getByRole('columnheader', { name: 'Network' })).toBeInTheDocument();
+    expect(table.querySelectorAll('.table-skeleton-row')).toHaveLength(8);
   });
 
   it('says a MAGE connection has no dataset evidence, as humanbase.io does, without asking the API', async () => {
@@ -195,6 +202,7 @@ describe('NetworkExplorer', () => {
     );
     const drawer = await screen.findByRole('dialog', { name: 'IL1B and TNF' });
     expect(within(drawer).getByText('Dataset evidence is not available for MAGE networks.')).toBeInTheDocument();
+    expect(within(drawer).queryByRole('link', { name: 'Evidence documentation' })).not.toBeInTheDocument();
     expect(within(drawer).queryByText('The evidence couldn’t load')).not.toBeInTheDocument();
     expect(get.mock.calls.some(([path]) => path.includes('/evidence/'))).toBe(false);
   });
