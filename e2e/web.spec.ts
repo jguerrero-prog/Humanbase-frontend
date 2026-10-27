@@ -165,6 +165,22 @@ test('clicking a line in the Networks graph opens that connection, as on humanba
   expect(await selected.evaluate((line) => parseFloat(getComputedStyle(line).strokeWidth))).toBeGreaterThan(resting);
 });
 
+test('a connection’s All networks downloads every network’s weight for the pair, as humanbase.io’s does, with the API off', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&connection=7185-6348`);
+  const drawer = page.getByRole('dialog', { name: 'TRAF1 and CCL3' });
+  await expect(drawer.getByRole('link', { name: 'Evidence documentation' })).toHaveAttribute('href', '/docs/functional-networks/#evidence');
+  await drawer.getByRole('radio', { name: 'All networks' }).click();
+  const [download] = await Promise.all([page.waitForEvent('download'), drawer.getByRole('button', { name: 'Download networks' }).click()]);
+  expect(download.suggestedFilename()).toBe('TRAF1-CCL3-networks.csv');
+  const chunks: Buffer[] = [];
+  for await (const chunk of await download.createReadStream()) chunks.push(chunk as Buffer);
+  const [header, ...rows] = Buffer.concat(chunks).toString('utf8').split('\n');
+  expect(header).toBe('NETWORK,SCORE');
+  expect(rows.length).toBe(await drawer.getByRole('table', { name: /Connection weight in each network/ }).getByRole('row').count() - 1);
+  expect(rows[0]).toMatch(/^[^,]+,0?\.?\d/);
+});
+
 test('Networks explains a gene that is in no network', async ({ page }) => {
   await apiOff(page);
   await page.goto(`${web}/networks/?entrez=100188314&version=v1`);

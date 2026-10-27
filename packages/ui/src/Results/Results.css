@@ -230,6 +230,19 @@
   block-size: 120px;
 }
 
+.weight-histogram-skeleton {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 2px;
+  align-items: end;
+  block-size: 120px;
+}
+
+.weight-histogram-skeleton .skeleton {
+  border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+}
+
 .weight-histogram rect {
   fill: var(--color-grey-300);
 }
