@@ -6,5 +6,7 @@ export const site = {
   repoUrl: 'https://github.com/jguerrero-prog/Humanbase-frontend',
   // The public front end with the API off, published to GitHub Pages from master.
   demoUrl: 'https://jguerrero-prog.github.io/Humanbase-frontend/app/',
+  // The public Humanbase API, named on the API reference page wherever this copy is served.
+  publicApi: 'https://humanbase.io/api',
   figmaFile: 'https://www.figma.com/design/qc47Wo9Vj5lYjo9U7zdvWa/?node-id=68-188',
 } as const;
