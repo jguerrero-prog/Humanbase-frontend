@@ -1,16 +1,12 @@
 ---
 import { toCssVar } from '@humanbase/tokens/catalog';
-import { ColorCatalog } from '@humanbase/tokens/color';
-import primitives from '@humanbase/tokens/src/primitives.tokens.json';
-import semantic from '@humanbase/tokens/src/semantic.tokens.json';
 import { Button, Checkbox, RadioGroup, Select, Tag, TextInput } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
+import { colors } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
-
-const colors = new ColorCatalog(primitives, semantic);
 
 const stateTokens = [
   { state: 'Hover', path: 'action.primary-hover', use: 'Primary button hover' },

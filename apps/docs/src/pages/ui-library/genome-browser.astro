@@ -9,6 +9,7 @@ import GenomeTracksSketch from '../../components/docs/GenomeTracksSketch.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import { hex } from '../../data/colors';
 import { scoreLegends } from '../../data/score-legends';
 import { required } from '../../data/required';
 import DocsLayout from '../../layouts/DocsLayout.astro';
@@ -91,7 +92,7 @@ const keyboard = [
 const integration = [
   ['Hide the built-in toolbar and panels', 'The system toolbar, Tracks drawer and dialogs replace them; Biodalliance already drives location, zoom, tracks and export through its API.'],
   ['Track header column', 'Names, sources and scales move out of the data area into a fixed column, so labels never sit on top of bars.'],
-  ['Track colors from the system', 'Score tracks use viz.seq step 6 (#1F5FAE); the selected variant is ink. Gene exons stay grey 600.'],
+  ['Track colors from the system', `Score tracks use viz.seq step 6 (${hex('viz.seq.6')}); the selected variant is ink. Gene exons stay grey 600.`],
   ['Location in words', 'Show chr1:109,767,590-109,867,590 with commas and the assembly beside it; accept today’s 1:109,767,590..109,867,590 format too.'],
   ['Linked heatmap', 'Column positions and the center variant come from the browser’s view, as today; the connectors read the same positions.'],
   ['Remember choices', 'Tracks, their order and settings are kept in this browser, like other preferences (no accounts). Reset to default tracks puts all three back.'],

@@ -8,6 +8,7 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
+import { hex } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const approaches = [
@@ -59,7 +60,7 @@ const specs = [
   ['pagination.height', '52px bar; 36px controls'],
   ['pagination.gap', '16px below the table; 24px between range, rows per page and pages; 4px between page buttons'],
   ['page.button', 'min 36 × 36px, radius.sm 8px, Lato 15; current Lato Bold ink, white, 1px grey 500 border'],
-  ['page.button.hover', 'grey 100 #EFEFEF'],
+  ['page.button.hover', `grey 100 ${hex('color.grey.100')}`],
   ['page.step', 'Previous and Next, Lato Bold 15 ink with an 18px chevron; disabled grey 400'],
   ['pagination.range', 'Lato 14/20 grey 600'],
   ['pagination.slots', '7 at most: first, last, current, two neighbors, two ellipses'],
