@@ -3,10 +3,12 @@ import { Alert, Button, CodeBlock, Field, FileField, Select, Spinner, TextInput 
 import { useState, type FormEvent } from 'react';
 
 const pretty = (body: unknown) => (typeof body === 'string' ? body : JSON.stringify(body, null, 2));
+// A response that isn't JSON, such as an error page's text, shows uncolored.
+const languageOf = (body: unknown) => (typeof body === 'string' ? {} : { language: 'json' as const });
 
 function Result({ result }: { result: ApiResult }) {
   const { showsSamples } = useHumanbase();
-  if (result.ok) return <CodeBlock label="Response" code={pretty(result.body)} expandLabel="Show the full response" />;
+  if (result.ok) return <CodeBlock label="Response" code={pretty(result.body)} {...languageOf(result.body)} expandLabel="Show the full response" />;
   if (result.sampleMissing && showsSamples) {
     return (
       <Alert tone="info" title="No sample data for this request">
@@ -19,7 +21,7 @@ function Result({ result }: { result: ApiResult }) {
       <Alert tone="error" title={`The API answered ${result.status}`}>
         {result.status === 404 ? 'Nothing was found for these values. Check them and send again.' : 'The request wasn’t accepted. The response below says why.'}
       </Alert>
-      {result.body !== null && <CodeBlock label={`${result.status} response`} code={pretty(result.body)} />}
+      {result.body !== null && <CodeBlock label={`${result.status} response`} code={pretty(result.body)} {...languageOf(result.body)} />}
     </>
   );
 }
@@ -122,7 +124,7 @@ export function TryRequest({ endpoint, base }: { endpoint: ApiEndpoint; base: st
         </Button>
       </div>
 
-      {ready && <CodeBlock label="The same request with curl" code={endpoint.curl(input, base)} />}
+      {ready && <CodeBlock label="The same request with curl" code={endpoint.curl(input, base)} language="curl" />}
       <div aria-live="polite" className="api-try-result">
         {send.isPending && (
           <p className="api-try-sending">

@@ -653,5 +653,11 @@
       "$type": "color",
       "$value": "{color.white}"
     }
+  },
+  "syntax": {
+    "string": {
+      "$type": "color",
+      "$value": "{color.success.700}"
+    }
   }
 }
