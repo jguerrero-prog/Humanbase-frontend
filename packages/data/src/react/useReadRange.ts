@@ -17,6 +17,6 @@ export function keepSameData<T>(key: readonly unknown[]) {
 }
 
 /** Options for data read for a genome range, which is the key's last part: kept once loaded, and kept while a moved range loads (see keepSameData). */
-export function rangeQuery<T>(queryKey: readonly unknown[], queryFn: () => Promise<T>, enabled: boolean) {
-  return { queryKey, queryFn, enabled, staleTime: Infinity, placeholderData: keepSameData<T>(queryKey) };
+export function rangeQuery<T>(queryKey: readonly unknown[], read: (signal: AbortSignal) => Promise<T>, enabled: boolean) {
+  return { queryKey, queryFn: ({ signal }: { signal: AbortSignal }) => read(signal), enabled, staleTime: Infinity, placeholderData: keepSameData<T>(queryKey) };
 }

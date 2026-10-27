@@ -7,16 +7,16 @@ export class ApiClient implements DataClient {
     private readonly fetcher: typeof fetch = globalThis.fetch.bind(globalThis),
   ) {}
 
-  get<T>(path: string, query?: Query): Promise<T> {
-    return this.request<T>('GET', path, query);
+  get<T>(path: string, query?: Query, signal?: AbortSignal): Promise<T> {
+    return this.request<T>('GET', path, query, undefined, signal);
   }
 
-  post<T>(path: string, body: unknown, query?: Query): Promise<T> {
-    return this.request<T>('POST', path, query, body);
+  post<T>(path: string, body: unknown, query?: Query, signal?: AbortSignal): Promise<T> {
+    return this.request<T>('POST', path, query, body, signal);
   }
 
-  async text(url: string): Promise<string> {
-    const response = await this.fetcher(url);
+  async text(url: string, signal?: AbortSignal): Promise<string> {
+    const response = await this.fetcher(url, { signal: signal ?? null });
     if (!response.ok) throw new ApiError(response.status, url);
     return response.text();
   }
@@ -30,9 +30,9 @@ export class ApiClient implements DataClient {
     return `${this.baseUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}${search}`;
   }
 
-  private async request<T>(method: 'GET' | 'POST', path: string, query?: Query, body?: unknown): Promise<T> {
+  private async request<T>(method: 'GET' | 'POST', path: string, query?: Query, body?: unknown, signal?: AbortSignal): Promise<T> {
     const url = this.url(path, query);
-    const init: RequestInit = { method, headers: { Accept: 'application/json' } };
+    const init: RequestInit = { method, headers: { Accept: 'application/json' }, signal: signal ?? null };
     if (body instanceof FormData) init.body = body;
     else if (body !== undefined) {
       init.headers = { ...init.headers, 'Content-Type': 'application/json' };
