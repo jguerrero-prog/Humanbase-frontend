@@ -14,8 +14,6 @@ interface DataTrackBase {
   name: string;
   /** The line under the track's name, such as "Model score, −0.4 to 3". */
   meta?: string;
-  /** The page's own description of how to draw it, one rule or several; each engine reads the parts it understands. Colors may be design tokens, such as var(--viz-seq-6). */
-  style?: Record<string, unknown> | readonly Record<string, unknown>[];
 }
 
 /** A score track a page adds to the engine's own tracks, such as the ASD disease impact scores. */
@@ -29,6 +27,8 @@ export interface GenomeScoreTrack extends DataTrackBase {
 /** A segment track, such as chromatin states: a bigBed file whose segments are drawn in the file's own colors. */
 export interface GenomeSegmentTrack extends DataTrackBase {
   bigBedUrl: string;
+  /** A design token for segments the file gives no color, such as var(--viz-seq-6); left out, each engine uses its own. */
+  fallbackColor?: string;
 }
 
 export type GenomeDataTrack = GenomeScoreTrack | GenomeSegmentTrack;

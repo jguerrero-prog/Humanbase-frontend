@@ -1,6 +1,6 @@
 import { suggestedTracks } from '../genomeTrackList';
 import { BiodallianceEngine, markImagesDecorative, resolveTokens } from './BiodallianceEngine';
-import { chromHmm } from './humanbaseConfig';
+import { chromHmmStyle, trackStyle } from './humanbaseConfig';
 
 class FakeTier {
   pinned = false;
@@ -67,7 +67,7 @@ class FakeResizeObserver {
 }
 
 const region = { chrom: 'chr1', start: 2_230_000, end: 2_440_000 };
-const dna = { name: 'DNA Disease Impact Score', bigWigUrl: 'https://example.org/dis_dna.bw', style: { type: 'default' } };
+const dna = { name: 'DNA Disease Impact Score', bigWigUrl: 'https://example.org/dis_dna.bw', range: [-0.4, 3] as const };
 
 describe('BiodallianceEngine', () => {
   beforeEach(() => {
@@ -173,9 +173,15 @@ describe('BiodallianceEngine', () => {
     const engine = new BiodallianceEngine();
     await engine.mount(document.createElement('div'), { label: 'Genome browser', assembly: 'hg19', region, tracks: suggestedTracks.hg19, hidden: ['Conservation', 'GM12878 ChromHMM'] });
     const sources = FakeBrowser.last.options.sources as Record<string, unknown>[];
-    expect(sources.find((source) => source.name === 'GM12878 ChromHMM')).toEqual({ name: 'GM12878 ChromHMM', bwgURI: 'https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb', pinned: true, style: chromHmm.style, disabled: true });
+    expect(sources.find((source) => source.name === 'GM12878 ChromHMM')).toEqual({ name: 'GM12878 ChromHMM', bwgURI: 'https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb', pinned: true, style: chromHmmStyle, disabled: true });
     engine.showTracks(['Conservation']);
     expect(FakeBrowser.last.calls).toEqual(['add GM12878 ChromHMM']);
+  });
+
+  it('draws score tracks as viz-seq-6 bars over their range, and segments without itemRgb in their fallback color', () => {
+    expect(trackStyle(dna)).toEqual([{ type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: 60, MIN: -0.4, MAX: 3 } }]);
+    const segments = trackStyle({ name: 'states', bigBedUrl: 'file:1/states.bb', fallbackColor: 'var(--viz-seq-6)' });
+    expect(segments.map((rule) => rule.style)).toEqual(chromHmmStyle.map((rule) => ({ ...rule.style, BGCOLOR: 'var(--viz-seq-6)' })));
   });
 
   it('keeps the region it shows when the page resizes', async () => {
