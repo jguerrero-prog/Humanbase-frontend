@@ -43,7 +43,7 @@
   min-inline-size: 120px;
   block-size: 32px;
   padding: 0 var(--space-1);
-  font: 400 15px/1.4 Lato, sans-serif;
+  font: 400 15px/1.4 var(--font-family-body);
   color: var(--text-default);
   background: transparent;
   border: 0;

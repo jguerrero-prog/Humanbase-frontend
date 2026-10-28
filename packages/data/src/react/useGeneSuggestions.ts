@@ -7,5 +7,5 @@ const minimumLength = 2;
 export function useGeneSuggestions(text: string) {
   const api = useHumanbase();
   const term = text.trim();
-  return useQuery({ queryKey: ['gene-suggestions', term], queryFn: () => api.search.suggest(term), enabled: term.length >= minimumLength });
+  return useQuery({ queryKey: ['gene-suggestions', term], queryFn: ({ signal }) => api.search.suggest(term, signal), enabled: term.length >= minimumLength });
 }

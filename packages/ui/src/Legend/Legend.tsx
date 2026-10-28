@@ -18,12 +18,14 @@ export interface LegendItem {
 interface LegendFrameProps {
   title: string;
   children: ReactNode;
+  className?: string | undefined;
+  style?: CSSProperties | undefined;
 }
 
-function LegendFrame({ title, children }: LegendFrameProps) {
+export function LegendFrame({ title, children, className, style }: LegendFrameProps) {
   const id = useId();
   return (
-    <div className="legend" role="group" aria-labelledby={id}>
+    <div className={['legend', className].filter(Boolean).join(' ')} role="group" aria-labelledby={id} style={style}>
       <p id={id} className="legend-title">
         {title}
       </p>

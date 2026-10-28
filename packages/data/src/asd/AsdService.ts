@@ -42,14 +42,14 @@ export class AsdService {
   }
 
   /** One table page of any size, read from the API's pages of 20 that cover it. */
-  async page(page: number, size: number, where?: AsdWhere): Promise<AsdPage> {
+  async page(page: number, size: number, where?: AsdWhere, signal?: AbortSignal): Promise<AsdPage> {
     const first = (page - 1) * size;
     const from = Math.floor(first / AsdService.apiPageSize) + 1;
     const to = Math.floor((first + size - 1) / AsdService.apiPageSize) + 1;
-    const head = await this.client.get<AsdPageRecord>('variants/', this.query(from, where));
+    const head = await this.client.get<AsdPageRecord>('variants/', this.query(from, where), signal);
     // A page past the last one is a 404, so only pages the total says exist are read.
     const last = Math.min(to, Math.ceil(head.count / AsdService.apiPageSize));
-    const rest = await Promise.all(Array.from({ length: Math.max(0, last - from) }, (_, index) => this.client.get<AsdPageRecord>('variants/', this.query(from + index + 1, where))));
+    const rest = await Promise.all(Array.from({ length: Math.max(0, last - from) }, (_, index) => this.client.get<AsdPageRecord>('variants/', this.query(from + index + 1, where), signal)));
     const pages = [head, ...rest];
     const rows = pages.flatMap((one) => one.results.map(AsdVariant.fromRecord));
     const skip = first - (from - 1) * AsdService.apiPageSize;
@@ -57,10 +57,10 @@ export class AsdService {
   }
 
   /** Every variant in a range, up to rangeLimit, in genome order. */
-  async inRange(range: GenomeLocation): Promise<AsdVariantRow[]> {
+  async inRange(range: GenomeLocation, signal?: AbortSignal): Promise<AsdVariantRow[]> {
     const rows: AsdVariantRow[] = [];
     for (let page = 1; rows.length < AsdService.rangeLimit; page += 1) {
-      const one = await this.client.get<AsdPageRecord>('variants/', this.query(page, range));
+      const one = await this.client.get<AsdPageRecord>('variants/', this.query(page, range), signal);
       rows.push(...one.results.map(AsdVariant.fromRecord));
       if (!one.next) break;
     }
@@ -74,8 +74,8 @@ export class AsdService {
   }
 
   /** Predicted effects on every DNA or RNA feature for each variant in a range. */
-  predictions(range: GenomeLocation, set: AsdFeatureSet): Promise<FeaturePredictionRecord[]> {
-    return this.client.get<FeaturePredictionRecord[]>(`deepsea/${predictionSets[set]}/feature_predictions/`, { chr_and_variant_range: range.variantRange });
+  predictions(range: GenomeLocation, set: AsdFeatureSet, signal?: AbortSignal): Promise<FeaturePredictionRecord[]> {
+    return this.client.get<FeaturePredictionRecord[]>(`deepsea/${predictionSets[set]}/feature_predictions/`, { chr_and_variant_range: range.variantRange }, signal);
   }
 
   features(set: AsdFeatureSet): Promise<FeaturesRecord> {
@@ -84,11 +84,9 @@ export class AsdService {
 
   /** Reads a search as a range, a position (shown at 2 kb) or a gene; undefined when nothing matches. */
   async find(text: string): Promise<{ location: GenomeLocation; gene?: string } | undefined> {
-    const position = /^(?:chr)?([0-9]{1,2}|X|Y):([\d,]+)$/i.exec(text.trim().replace(/\s+/g, ''));
-    if (position) {
-      const [, chrom = '', at = ''] = position;
-      const center = Number(at.replaceAll(',', ''));
-      return { location: new GenomeLocation(`chr${chrom.toUpperCase()}`, Math.max(0, center - 1_000), center + 1_000) };
+    const position = GenomeLocation.place(text);
+    if (position && position.end === undefined) {
+      return { location: new GenomeLocation(position.chrom, Math.max(0, position.start - 1_000), position.start + 1_000) };
     }
     const parsed = GenomeLocation.parse(text);
     if (!parsed) return undefined;

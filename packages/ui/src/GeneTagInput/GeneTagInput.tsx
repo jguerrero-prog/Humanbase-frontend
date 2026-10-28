@@ -2,6 +2,7 @@ import { useState, type ChangeEvent, type ClipboardEvent, type KeyboardEvent } f
 import { Field } from '../Field/Field';
 import { parseGeneList } from '../GeneList/GeneList';
 import { Tag } from '../Tag/Tag';
+import { listJoin } from '../utils/wording';
 import './GeneTagInput.css';
 
 const separators = new Set([',', ' ', 'Enter']);
@@ -9,8 +10,7 @@ const separators = new Set([',', ' ', 'Enter']);
 export function unknownGenesMessage(genes: string[]): string | undefined {
   if (genes.length === 0) return undefined;
   if (genes.length === 1) return `${genes[0]} isn’t a known human gene. Check the spelling or remove it.`;
-  const names = `${genes.slice(0, -1).join(', ')} and ${genes.at(-1)}`;
-  return `${names} aren’t known human genes. Check the spelling or remove them.`;
+  return `${listJoin(genes)} aren’t known human genes. Check the spelling or remove them.`;
 }
 
 export interface GeneTagInputProps {

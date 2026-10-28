@@ -6,8 +6,8 @@ import { useHumanbase } from './HumanbaseProvider';
 export function useNetwork(query: NetworkQuery) {
   const api = useHumanbase();
   return useQuery({
-    queryKey: ['network', query.slug, query.version, [...query.entrez], [...query.dataTypes]],
-    queryFn: () => api.networks.get(query),
+    queryKey: ['network', query.slug, query.version, [...query.entrez].sort((a, b) => a - b), [...query.dataTypes]],
+    queryFn: ({ signal }) => api.networks.get(query, signal),
     enabled: !query.isEmpty,
     retry: false,
     placeholderData: keepPreviousData,

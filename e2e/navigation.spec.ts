@@ -25,7 +25,7 @@ test('the top bar names its menus for what people bring, and Docs sits under Res
 
 test('the top bar marks the section of the open page', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  for (const [path, section] of [['/docs/', 'Resources'], ['/docs/sei/', 'Resources'], ['/netwas/', 'Genes & gene sets'], ['/seqweaver/', 'Variants & sequences'], ['/cite/', 'About']]) {
+  for (const [path, section] of [['/docs/', 'Resources'], ['/docs/sei/', 'Resources'], ['/netwas/', 'Genes & gene sets'], ['/seqweaver/', 'Variants & sequences'], ['/cite/', 'About']] as const) {
     await page.goto(`${web}${path}`);
     await expect(page.getByRole('navigation', { name: 'Main' }).locator('[aria-current="true"]')).toHaveText(section);
   }

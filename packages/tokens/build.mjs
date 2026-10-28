@@ -11,9 +11,10 @@ const sources = [
 ];
 
 const toHex = (color) => color.hex + (color.alpha === undefined ? '' : Math.round(color.alpha * 255).toString(16).padStart(2, '0').toUpperCase());
+const toColor = (color) => (typeof color === 'string' ? `var(${toCssVar(aliasPath(color))})` : toHex(color));
 const toLength = ({ value, unit }) => (value === 0 ? '0' : `${value}${unit}`);
-const toShadow = (layers) => (layers.length === 0 ? 'none' : layers.map((l) => [l.offsetX, l.offsetY, l.blur, l.spread].map(toLength).join(' ') + ` ${toHex(l.color)}`).join(', '));
-const toGradient = (stops) => stops.map((s) => `${toHex(s.color)} ${s.position * 100}%`).join(', ');
+const toShadow = (layers) => (layers.length === 0 ? 'none' : layers.map((l) => [l.offsetX, l.offsetY, l.blur, l.spread].map(toLength).join(' ') + ` ${toColor(l.color)}`).join(', '));
+const toGradient = (stops) => stops.map((s) => `${toColor(s.color)} ${s.position * 100}%`).join(', ');
 const toFontFamily = (families) => families.map((f) => (f.includes(' ') ? `"${f}"` : f)).join(', ');
 
 function toDeclarations({ cssVar, token: { $type, $value } }) {

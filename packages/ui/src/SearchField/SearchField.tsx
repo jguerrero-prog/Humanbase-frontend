@@ -6,6 +6,7 @@ import { ListNavigator } from '../List/ListNavigator';
 import { useDismiss } from '../List/useDismiss';
 import { MenuPanel } from '../Menu/Menu';
 import { Spinner } from '../Spinner/Spinner';
+import { useControlled } from '../hooks/useControlled';
 import { useLinkHref } from '../hooks/useLinkHref';
 import './SearchField.css';
 
@@ -44,6 +45,9 @@ export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElem
   onSuggestionSelect?: (suggestion: SearchSuggestion) => void;
   noMatchesText?: string;
   open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Draws the suggestions open in place, for documentation. */
+  preview?: boolean;
   defaultHighlight?: number;
   heading?: string;
   /** How many matched in all, shown beside the heading as “5 of 21” when more matched than are suggested. */
@@ -58,7 +62,7 @@ export interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElem
 
 export function SearchField({
   label, size = 'large', loading = false, value, defaultValue = '', disabled, className, onChange, onClear, onKeyDown,
-  suggestions, suggestionsLoading = false, suggestionsFailed = false, onRetry, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, defaultHighlight = -1, heading, total, note, inlineSuggestions = false, matchNoun = 'genes', enterHint = 'open gene', ref, onFocus, ...rest
+  suggestions, suggestionsLoading = false, suggestionsFailed = false, onRetry, onSuggestionSelect, noMatchesText = 'Check the symbol, or search by Entrez ID or gene name.', open: openProp, onOpenChange, preview = false, defaultHighlight = -1, heading, total, note, inlineSuggestions = false, matchNoun = 'genes', enterHint = 'open gene', ref, onFocus, ...rest
 }: SearchFieldProps) {
   const linkHref = useLinkHref();
   const id = useId();
@@ -66,13 +70,13 @@ export function SearchField({
   const wrapper = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const [ownText, setOwnText] = useState(defaultValue);
-  const [ownOpen, setOwnOpen] = useState(false);
+  const [shown, setShown] = useControlled(openProp, false);
   const [highlight, setHighlight] = useState(defaultHighlight);
   const [column, setColumn] = useState(0);
   const text = value ?? ownText;
   const iconSize = size === 'large' ? 24 : 20;
   const offersSuggestions = suggestions !== undefined;
-  const open = offersSuggestions && text.length > 0 && (openProp ?? ownOpen);
+  const open = offersSuggestions && text.length > 0 && (preview || shown);
   const navigator = useMemo(() => new ListNavigator(suggestions ?? []), [suggestions]);
   const count = suggestions?.length ?? 0;
   const grid = suggestions?.some((suggestion) => suggestion.destinations?.length) ?? false;
@@ -84,11 +88,16 @@ export function SearchField({
     setColumn((current) => Math.max(0, Math.min(current, destinationsOf(row).length - 1)));
   };
 
+  const setOpen = (next: boolean) => {
+    setShown(next);
+    if (next !== shown) onOpenChange?.(next);
+  };
+
   const close = () => {
-    setOwnOpen(false);
+    setOpen(false);
     setHighlight(-1);
   };
-  useDismiss(wrapper, open && openProp === undefined, close);
+  useDismiss(wrapper, open && !preview, close);
 
   const clear = () => {
     setOwnText('');
@@ -99,7 +108,7 @@ export function SearchField({
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setOwnText(event.target.value);
-    setOwnOpen(true);
+    setOpen(true);
     setHighlight(-1);
     onChange?.(event);
   };
@@ -119,7 +128,7 @@ export function SearchField({
       else if (text) clear();
     } else if (offersSuggestions && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
       event.preventDefault();
-      setOwnOpen(true);
+      setOpen(true);
       highlightRow(event.key === 'ArrowDown' ? navigator.next(highlight) : navigator.previous(highlight));
     } else if (grid && open && highlight >= 0 && (event.key === 'ArrowRight' || event.key === 'ArrowLeft')) {
       event.preventDefault();
@@ -129,7 +138,7 @@ export function SearchField({
       event.preventDefault();
       if (highlight >= 0 && open) openDestination(highlight, column);
       else if (count > 0) {
-        setOwnOpen(true);
+        setOpen(true);
         setHighlight(0);
         setColumn(0);
       }
@@ -170,7 +179,7 @@ export function SearchField({
           onKeyDown={handleKeyDown}
           // Coming back to text already typed, or set by an example, shows its suggestions again.
           onFocus={(event) => {
-            if (text) setOwnOpen(true);
+            if (text) setOpen(true);
             onFocus?.(event);
           }}
           disabled={disabled}
