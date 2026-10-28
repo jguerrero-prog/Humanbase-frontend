@@ -6,6 +6,7 @@ import { RadioGroup } from '../RadioGroup/RadioGroup';
 import { SearchField, type SearchSuggestion } from '../SearchField/SearchField';
 import { Cell, HeaderCell, SelectAllCell, SelectCell, SelectionBar, Table, useRowSelection } from '../Table/Table';
 import { RemoveButton } from '../Tag/Tag';
+import { listJoin } from '../utils/wording';
 import { GeneMatchList, statusLabels, type GeneCandidate, type GeneMatch, type MatchStatus } from './GeneMatchList';
 import './GeneMatch.css';
 
@@ -86,7 +87,7 @@ export function GeneMatchTable({
           {shownProblems.map(row)}
           {hiddenProblems.length > 0 && (
             <FoldRow columns={columns} action={<Button variant="ghost" size="small" onClick={() => setShowAllProblems(true)}>{`Show ${hiddenProblems.length} more`}</Button>}>
-              <span>{`${hiddenProblems.length} more to check: ${joinWords(hiddenProblems.map((match) => match.typed[0] ?? ''))}`}</span>
+              <span>{`${hiddenProblems.length} more to check: ${listJoin(hiddenProblems.map((match) => match.typed[0] ?? ''))}`}</span>
             </FoldRow>
           )}
           {foldMatched && resolved.length > 0 && (
@@ -233,7 +234,5 @@ function GeneSummary({ gene, alias }: { gene: GeneCandidate; alias: string | und
 
 const candidateDetails = (gene: GeneCandidate) => `Entrez ${gene.entrez}${gene.aliases?.length ? `. Also known as ${gene.aliases.join(', ')}` : ''}`;
 
-const joinWords = (words: readonly string[]) => (words.length < 2 ? (words[0] ?? '') : `${words.slice(0, -1).join(', ')} and ${words.at(-1)}`);
-
 const preview = (symbols: readonly string[], shown = 6) =>
-  symbols.length <= shown ? joinWords(symbols) : `${symbols.slice(0, shown).join(', ')} and ${symbols.length - shown} more`;
+  symbols.length <= shown ? listJoin(symbols) : `${symbols.slice(0, shown).join(', ')} and ${symbols.length - shown} more`;

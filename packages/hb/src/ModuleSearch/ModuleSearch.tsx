@@ -6,6 +6,7 @@ import {
   GeneMatchList,
   GeneMatchSummary,
   GeneMatchTable,
+  genesWord,
   parseGeneList,
   SearchExamples,
   Select,
@@ -35,7 +36,6 @@ export interface ModuleSearchProps {
   afterExamples?: ReactNode;
 }
 
-const genesWord = (count: number) => (count === 1 ? '1 gene' : `${count.toLocaleString('en-US')} genes`);
 const rangeHint = `Enter ${ModuleService.minimumGenes} to ${ModuleService.maximumGenes.toLocaleString('en-US')} genes.`;
 
 export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afterExamples }: ModuleSearchProps) {

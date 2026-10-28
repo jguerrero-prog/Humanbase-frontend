@@ -1,6 +1,6 @@
 import { JobHistory, type JobEntry, type JobState } from '@humanbase/data';
 import { Alert, Breadcrumbs, Button, Dialog, EmptyState, JobSteps, Skeleton, StatusBadge, TextInput, useLinkHref, type Crumb, type JobStep } from '@humanbase/ui';
-import { useId, useState, type ReactNode } from 'react';
+import { useId, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { useCopyLink } from './useCopyLink';
 import './JobPage.css';
 
@@ -24,7 +24,9 @@ export function elapsed(since: Date, now = Date.now()): string {
 /** The job's title, and Rename, which keeps a new title in this browser's job history because no endpoint renames a job. */
 export function useJobTitle(job: JobIdentity | undefined, fallback = job ? `Untitled ${job.tool} job` : '') {
   const [renamed, setRenamed] = useState<string | undefined>();
-  const saved = job ? new JobHistory().list().find((entry) => entry.id === job.id)?.title : undefined;
+  const stored = useSyncExternalStore(JobHistory.subscribe, () => JobHistory.snapshot(), () => '');
+  const id = job?.id;
+  const saved = useMemo(() => (id ? new JobHistory({ getItem: () => stored, setItem: () => undefined }).list().find((entry) => entry.id === id)?.title : undefined), [stored, id]);
   // What the job was named or renamed to; an empty rename goes back to the job's own title.
   const given = (renamed ?? saved) || job?.title || undefined;
   const rename = (next: string) => {
