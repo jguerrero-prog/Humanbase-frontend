@@ -28,6 +28,7 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import ProductScreen from '../../components/docs/ProductScreen.astro';
 import { exampleVariants, featureTotal, illustrativeRanks, selectedVariant, strengthCounts, topExperiments } from '../../data/variant-effects';
+import { required } from '../../data/required';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const crumbs = [categoryCrumbs.variants, productTools.seqweaver, { label: 'Example variants' }];
@@ -56,7 +57,7 @@ const plotStyles = [
   { value: 'rank', label: 'Score Rank' },
 ];
 
-const focus = exampleVariants.find((variant) => variant.id === selectedVariant)!;
+const focus = required(exampleVariants.find((variant) => variant.id === selectedVariant), 'selected variant');
 const focusLabel = variantLabel(focus);
 const effects = new EffectGroups(topExperiments);
 const heatmapRows = topExperiments.map((experiment) => ({ experiment, values: [experiment.value] }));

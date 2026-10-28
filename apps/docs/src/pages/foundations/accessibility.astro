@@ -1,15 +1,12 @@
 ---
-import { ColorCatalog } from '@humanbase/tokens/color';
-import primitives from '@humanbase/tokens/src/primitives.tokens.json';
-import semantic from '@humanbase/tokens/src/semantic.tokens.json';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
+import { colors } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import { navigation } from '../../navigation';
 
-const colors = new ColorCatalog(primitives, semantic);
 const cssVar = (path: string) => `var(--${path.replaceAll('.', '-')})`;
 const needs = { text: { label: '4.5:1 text', min: 4.5 }, edge: { label: '3:1 control edge', min: 3 }, focus: { label: '3:1 focus', min: 3 }, none: { label: 'None', min: 0 }, exempt: { label: 'Exempt', min: 0 } };
 type Need = keyof typeof needs;

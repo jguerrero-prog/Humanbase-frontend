@@ -1,8 +1,7 @@
-import { Fragment, useEffect, useId, useRef, type KeyboardEvent } from 'react';
+import { Fragment, useId } from 'react';
 import { Divider } from '../Divider/Divider';
-import { useControlled } from '../hooks/useControlled';
+import { useDisclosureMenu } from '../hooks/useDisclosureMenu';
 import { Icon } from '../Icon/Icon';
-import { ListNavigator } from '../List/ListNavigator';
 import { NavLinkContent, sectionHasImages } from './NavLinkContent';
 import type { NavGroup, NavItemState, NavSection } from './types';
 import { useLinkHref } from '../hooks/useLinkHref';
@@ -17,20 +16,7 @@ export interface NavMenuProps {
 
 export function NavMenu({ section, current = false, open, onOpenChange, 'data-state': dataState }: NavMenuProps) {
   const linkHref = useLinkHref();
-  const id = useId();
-  const button = useRef<HTMLButtonElement>(null);
-  const panel = useRef<HTMLDivElement>(null);
-  const focusFirst = useRef(false);
-  const [isOpen, setOwnOpen] = useControlled(open, false);
-  const setOpen = (next: boolean) => {
-    setOwnOpen(next);
-    onOpenChange?.(next);
-  };
-
-  useEffect(() => {
-    if (isOpen && focusFirst.current) panel.current?.querySelector('a')?.focus();
-    focusFirst.current = false;
-  }, [isOpen]);
+  const { isOpen, root, button, panel, buttonProps, panelProps } = useDisclosureMenu({ open, onOpenChange });
 
   const ariaCurrent = current ? 'true' : undefined;
   if (!section.columns) {
@@ -41,64 +27,20 @@ export function NavMenu({ section, current = false, open, onOpenChange, 'data-st
     );
   }
 
-  const openFromKeyboard = (event: KeyboardEvent) => {
-    if (event.key !== 'ArrowDown') return;
-    event.preventDefault();
-    focusFirst.current = true;
-    setOpen(true);
-  };
-
-  const moveInPanel = (event: KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      setOpen(false);
-      button.current?.focus();
-      return;
-    }
-    const links = [...(panel.current?.querySelectorAll('a') ?? [])];
-    const navigator = new ListNavigator(links.map((link) => ({ label: link.textContent ?? '' })));
-    const from = links.indexOf(document.activeElement as HTMLAnchorElement);
-    const moves: Record<string, () => number> = {
-      ArrowDown: () => navigator.next(from),
-      ArrowUp: () => navigator.previous(from),
-      Home: () => navigator.first(),
-      End: () => navigator.last(),
-    };
-    const move = moves[event.key];
-    if (!move) return;
-    event.preventDefault();
-    links[move()]?.focus();
-  };
-
   return (
-    <div className="nav-menu">
-      <button
-        ref={button}
-        type="button"
-        className="nav-item"
-        aria-expanded={isOpen}
-        aria-controls={`${id}-panel`}
-        aria-current={ariaCurrent}
-        data-state={dataState}
-        onClick={() => setOpen(!isOpen)}
-        onKeyDown={openFromKeyboard}
-      >
+    <div ref={root} className="nav-menu">
+      <button ref={button} {...buttonProps} type="button" className="nav-item" aria-current={ariaCurrent} data-state={dataState}>
         {section.label}
         <Icon name={isOpen || dataState === 'open' ? 'chevron-up' : 'chevron-down'} size={16} />
       </button>
-      <div ref={panel} id={`${id}-panel`} className="nav-menu-panel" hidden={!isOpen}>
-        <NavPanelContent section={section} onLinkKeyDown={moveInPanel} />
+      <div ref={panel} {...panelProps} className="nav-menu-panel">
+        <NavPanelContent section={section} />
       </div>
     </div>
   );
 }
 
-interface NavPanelContentProps {
-  section: NavSection;
-  onLinkKeyDown?: ((event: KeyboardEvent) => void) | undefined;
-}
-
-export function NavPanelContent({ section, onLinkKeyDown }: NavPanelContentProps) {
+export function NavPanelContent({ section }: { section: NavSection }) {
   const linkHref = useLinkHref();
   return (
     <>
@@ -108,7 +50,7 @@ export function NavPanelContent({ section, onLinkKeyDown }: NavPanelContentProps
             {column.map((group, groupIndex) => (
               <Fragment key={group.label ?? groupIndex}>
                 {groupIndex > 0 && <Divider className="nav-menu-divider" />}
-                <NavLinkGroup group={group} reserveImage={sectionHasImages(section)} onLinkKeyDown={onLinkKeyDown} />
+                <NavLinkGroup group={group} reserveImage={sectionHasImages(section)} />
               </Fragment>
             ))}
           </div>
@@ -117,14 +59,14 @@ export function NavPanelContent({ section, onLinkKeyDown }: NavPanelContentProps
       {section.footer && (
         <p className="nav-menu-footer">
           {section.footer.lead}{' '}
-          <a href={linkHref(section.footer.link.href)} onKeyDown={onLinkKeyDown}>{section.footer.link.label}</a>
+          <a href={linkHref(section.footer.link.href)}>{section.footer.link.label}</a>
         </p>
       )}
     </>
   );
 }
 
-function NavLinkGroup({ group, reserveImage, onLinkKeyDown }: { group: NavGroup; reserveImage: boolean; onLinkKeyDown: NavPanelContentProps['onLinkKeyDown'] }) {
+function NavLinkGroup({ group, reserveImage }: { group: NavGroup; reserveImage: boolean }) {
   const linkHref = useLinkHref();
   const id = useId();
   return (
@@ -137,7 +79,7 @@ function NavLinkGroup({ group, reserveImage, onLinkKeyDown }: { group: NavGroup;
       <ul aria-labelledby={group.label ? id : undefined}>
         {group.links.map((link) => (
           <li key={link.href}>
-            <a className="nav-menu-link" href={linkHref(link.href)} onKeyDown={onLinkKeyDown}>
+            <a className="nav-menu-link" href={linkHref(link.href)}>
               <NavLinkContent link={link} reserveImage={reserveImage} />
             </a>
           </li>
