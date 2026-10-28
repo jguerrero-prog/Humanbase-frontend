@@ -1,6 +1,7 @@
 import { ApiError, type DataVersion, dataVersionNames, type GwasCheckResult, GwasFileCheck, IntegrationService, JobHistory, type Mhc, type NetwasExample, NetwasService, NetworkQuery, SampleMissingError, useHumanbase, useIntegrations } from '@humanbase/data';
 import { AboutPanel, Accordion, AccordionItem, Alert, Button, ErrorSummary, FileDrop, saveFile, SegmentedControl, Select, TextInput, type ChosenFile, type ErrorSummaryItem } from '@humanbase/ui';
 import { useId, useMemo, useState, type FormEvent } from 'react';
+import { versionOptions } from '../content/dataVersions';
 import '../Jobs/JobForm.css';
 import './Netwas.css';
 
@@ -28,7 +29,6 @@ interface GwasFile extends ChosenFile {
   bytes: File;
 }
 
-const versionOptions = (Object.keys(dataVersionNames) as DataVersion[]).map((version) => ({ value: version, label: dataVersionNames[version] }));
 const mhcOptions = [
   { value: 'exclude', label: 'Exclude' },
   { value: 'keep', label: 'Keep' },
