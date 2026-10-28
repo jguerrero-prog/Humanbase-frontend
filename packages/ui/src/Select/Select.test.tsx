@@ -72,7 +72,21 @@ describe('Select', () => {
   });
 
   it('draws a docs preview in place', () => {
-    renderSelect({ open: true });
+    renderSelect({ preview: true });
     expect(screen.getByRole('listbox').parentElement).not.toHaveAttribute('popover');
+  });
+
+  it('is controlled with open and onOpenChange, and still closes on a click outside', async () => {
+    const onOpenChange = vi.fn();
+    render(
+      <>
+        <Select label="Tissue network" options={tissues} open onOpenChange={onOpenChange} />
+        <button type="button">Elsewhere</button>
+      </>,
+    );
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Elsewhere' }));
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
 });

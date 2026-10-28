@@ -177,7 +177,7 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
     <div class="card-grid examples" style="--columns: 2">
       <div class="example">
         <h3>A symbol</h3>
-        <SearchField label="Search genes, example with a symbol" value="IL1B" suggestions={symbolSuggestions} open inlineSuggestions defaultHighlight={0} note="Enter opens IL1B. To search several genes, keep typing and separate them with spaces." />
+        <SearchField label="Search genes, example with a symbol" value="IL1B" suggestions={symbolSuggestions} preview inlineSuggestions defaultHighlight={0} note="Enter opens IL1B. To search several genes, keep typing and separate them with spaces." />
       </div>
       <div class="example">
         <h3>A disease</h3>
@@ -185,7 +185,7 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
           label="Search genes, example with a disease"
           value="autism"
           suggestions={diseaseSuggestions}
-          open
+          preview
           inlineSuggestions
           defaultHighlight={0}
           heading="Genes linked to autism"
@@ -200,7 +200,7 @@ const versions = ['MAGE (current)', 'GIANT'].map((version) => ({ value: version,
     <div class="card-grid examples" style="--columns: 2">
       <div class="example">
         <h3>A disease, with destinations</h3>
-        <SearchField label="Search genes, example in the top bar" value="autism" suggestions={topBarSuggestions} open inlineSuggestions defaultHighlight={1} heading="Genes" total={21} />
+        <SearchField label="Search genes, example in the top bar" value="autism" suggestions={topBarSuggestions} preview inlineSuggestions defaultHighlight={1} heading="Genes" total={21} />
       </div>
     </div>
     <ul class="points">{topBarNotes.map((note) => <li>{note}</li>)}</ul>
