@@ -4,6 +4,7 @@ import { Icon, type IconName } from '../Icon/Icon';
 import { ListNavigator } from '../List/ListNavigator';
 import { useDismiss } from '../List/useDismiss';
 import { MenuGroupLabel, MenuItem, MenuPanel } from '../Menu/Menu';
+import { anchorSupported } from '../Tooltip/placement';
 import './Select.css';
 
 export interface SelectOption {
@@ -59,12 +60,20 @@ function groupOptions(options: readonly SelectOption[]): Group[] {
   return groups;
 }
 
+// Without CSS anchor positioning, the open list is placed against the field once.
+function placeNextTo(panel: HTMLElement, box: DOMRect, above: boolean) {
+  panel.style.minInlineSize = `${box.width}px`;
+  panel.style.insetInlineStart = `${box.left}px`;
+  panel.style.insetBlockStart = above ? `${box.top - panel.offsetHeight - 8}px` : `${box.bottom}px`;
+}
+
 export function Select({
   label, options, value, defaultValue, onChange, placeholder, hint, error, size = 'medium', disabled = false,
   searchable = false, filterLabel = 'Filter', columns, footer, open: openProp, onOpenChange, defaultHighlight = -1, defaultQuery = '', name, className, hideLabel = false, triggerIcon, 'data-state': dataState,
 }: SelectProps) {
   const id = useId();
   const listboxId = `${id}-listbox`;
+  const anchor = `--select-${id.replace(/[^\w-]/g, '')}`;
   const wrapper = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const filterInput = useRef<HTMLInputElement>(null);
@@ -77,6 +86,7 @@ export function Select({
   const [shift, setShift] = useState(0);
   const current = value ?? ownValue;
   const open = openProp ?? ownOpen;
+  const preview = openProp !== undefined;
   const selected = options.find((option) => option.value === current);
   const looksOpen = open || dataState === 'open';
   const reserveIcon = options.some((option) => option.icon || option.image);
@@ -101,18 +111,24 @@ export function Select({
   }, [onOpenChange]);
 
   const close = useCallback(() => setOpen(false), [setOpen]);
-  useDismiss(wrapper, open && openProp === undefined, close);
+  useDismiss(wrapper, open && !preview, close);
 
+  // The list opens in the top layer, so a scrolling dialog body never clips it.
   useLayoutEffect(() => {
-    if (!open || !panel.current || !wrapper.current) return;
+    const node = panel.current;
+    if (!open || !node || !wrapper.current) return;
+    if (!preview) node.showPopover();
     const box = wrapper.current.getBoundingClientRect();
     const room = window.innerHeight - box.bottom;
-    setAbove(room < panel.current.offsetHeight + 4 && box.top > room);
+    const flip = room < node.offsetHeight + 4 && box.top > room;
+    setAbove(flip);
     // A wide menu moves left so it ends 16px inside the window, never past the window's left edge.
-    const overflow = box.left + panel.current.offsetWidth - (document.documentElement.clientWidth - 16);
-    setShift(overflow > 0 ? -Math.min(overflow, Math.max(0, box.left - 16)) : 0);
-    if (searchable && openProp === undefined) filterInput.current?.focus();
-  }, [open, searchable, openProp]);
+    const overflow = box.left + node.offsetWidth - (document.documentElement.clientWidth - 16);
+    const nudge = overflow > 0 ? -Math.min(overflow, Math.max(0, box.left - 16)) : 0;
+    setShift(nudge);
+    if (!preview && !anchorSupported) placeNextTo(node, box, flip);
+    if (searchable && !preview) filterInput.current?.focus();
+  }, [open, searchable, preview]);
 
   const openList = () => {
     if (disabled) return;
@@ -183,6 +199,7 @@ export function Select({
             disabled={disabled}
             data-state={dataState}
             className="field-control select-trigger"
+            style={{ anchorName: anchor } as CSSProperties}
             onClick={() => (open ? close() : openList())}
             onKeyDown={handleKeys}
           >
@@ -192,7 +209,12 @@ export function Select({
           </button>
           {name && <input type="hidden" name={name} value={current ?? ''} />}
           {open && (
-            <MenuPanel ref={panel} className={['select-panel', above && 'select-panel-above', columns && 'select-panel-columns'].filter(Boolean).join(' ')} style={shift ? { insetInlineStart: shift } : undefined}>
+            <MenuPanel
+              ref={panel}
+              popover={preview ? undefined : 'manual'}
+              className={['select-panel', above && 'select-panel-above', columns && 'select-panel-columns'].filter(Boolean).join(' ')}
+              style={{ positionAnchor: anchor, marginInlineStart: shift || undefined } as CSSProperties}
+            >
               {searchable && (
                 <div className="select-filter">
                   <Icon name="search" size={16} />
