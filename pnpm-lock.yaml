@@ -322,8 +322,8 @@ importers:
   packages/data:
     dependencies:
       '@gmod/bbi':
-        specifier: 11.3.2
-        version: 11.3.2
+        specifier: 12.0.0
+        version: 12.0.0
       '@gmod/trix':
         specifier: 3.1.0
         version: 3.1.0
@@ -1196,8 +1196,8 @@ packages:
   '@fontsource/lato@5.3.0':
     resolution: {integrity: sha512-0WhF/4rhrw+ErIyneKvhHn2YAl+xf8GDtllgOgOzDmeaSlLQtjpChXaQOpWhG2BchQW0WJy2zLV12Hdg0ndOMw==}
 
-  '@gmod/bbi@11.3.2':
-    resolution: {integrity: sha512-u5K9sRQSLlKiWGcU4ypqaX+lPwE8+emblz3NFoKlng80Z+iiVLM2k3qBfkVn6pXyCRnSiZscSRJ97VtkNmBN9g==}
+  '@gmod/bbi@12.0.0':
+    resolution: {integrity: sha512-2MogiH2Ic1nY8Ndam2NBYOnguGzs5XObQxGcunCxratvl5nkZj3L3Vwfm20rnVOUI63q0IIAZVOTbQu3N7p37w==}
 
   '@gmod/shared-read-cache@2.1.0':
     resolution: {integrity: sha512-AyiUt0hiEGl7lWc1fuigbXR/RToIw3h72dalaRoSNau9WL9ux9rEfkcsXDYTgSDudehfAEQac1jTvn2zrfnELQ==}
@@ -5361,7 +5361,7 @@ snapshots:
 
   '@fontsource/lato@5.3.0': {}
 
-  '@gmod/bbi@11.3.2':
+  '@gmod/bbi@12.0.0':
     dependencies:
       '@gmod/shared-read-cache': 2.1.0
       generic-filehandle2: 2.5.1
