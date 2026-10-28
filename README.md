@@ -30,7 +30,7 @@ pnpm dev:web    # the front end
 pnpm dev:docs   # the design system site
 ```
 
-Before the first `pnpm test:e2e` or `pnpm test:live`, install the browser the tests use: `pnpm exec playwright install chromium`.
+Before the first `pnpm test:e2e` or `pnpm test:live`, install the browser the tests use: `pnpm exec playwright install chromium`. Run it again after a Playwright update, since each version needs its own browser build; until then every test fails at launch. CI installs it on each run.
 
 | Command | What it does |
 | --- | --- |
