@@ -3,6 +3,7 @@ export type { DataClient, Query, QueryValue } from './DataClient';
 export { SampleClient, type RecordedResponse, type SampleLoaders } from './sample/SampleClient';
 export { sampleKey, type SampleMethod } from './sample/sampleKey';
 export { ApiError, SampleMissingError } from './ApiError';
+export { apiOrigin, filesBucket, publicApi, tracksBase } from './origins';
 export { readableSearch } from './readableSearch';
 export { loadAppConfig, type AppConfig } from './AppConfig';
 export { Humanbase } from './Humanbase';
