@@ -26,7 +26,7 @@ const areas = [
 ];
 
 // Keeps proper nouns such as NetWAS and ASD Browser as written; lowercases ordinary first words.
-const inSentence = (label: string) => (/[A-Z]/.test(label.split(' ')[0]!.slice(1)) ? label : label[0]!.toLowerCase() + label.slice(1));
+const inSentence = (label: string) => (/[A-Z]/.test((label.split(' ')[0] ?? '').slice(1)) ? label : label.charAt(0).toLowerCase() + label.slice(1));
 const listOf = (labels: string[]) => [labels[0], ...labels.slice(1).map(inSentence)].join(', ').replace(/, ([^,]+)$/, ' and $1');
 
 const cards = areas.map((area) => {
