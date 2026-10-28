@@ -255,15 +255,7 @@
       "$type": "shadow",
       "$value": [
         {
-          "color": {
-            "colorSpace": "srgb",
-            "components": [
-              1,
-              1,
-              1
-            ],
-            "hex": "#FFFFFF"
-          },
+          "color": "{color.white}",
           "offsetX": {
             "value": 0,
             "unit": "px"
@@ -282,15 +274,7 @@
           }
         },
         {
-          "color": {
-            "colorSpace": "srgb",
-            "components": [
-              0.102,
-              0.102,
-              0.102
-            ],
-            "hex": "#1A1A1A"
-          },
+          "color": "{color.grey.900}",
           "offsetX": {
             "value": 0,
             "unit": "px"
