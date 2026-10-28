@@ -5,7 +5,8 @@ export {
 export { GenomeEngineView, type EngineStatus, type GenomeEngineHandle, type GenomeEngineViewProps } from './GenomeEngineView';
 export { genesTrack, genomeTrackList, hiddenByDefault, inOrder, moveTrack, noArrangement, sequenceTrack, suggestedTracks, userDataTrack, type GenomeTrackEntry } from './genomeTrackList';
 export { BiodallianceEngine, biodallianceBaseUrl, loadBiodalliance, type BiodallianceOptions } from './biodalliance/BiodallianceEngine';
-export { humanbaseAssemblies, humanbaseBrowserOptions, humanbaseTracks, type BiodallianceAssembly } from './biodalliance/humanbaseConfig';
+export { humanbaseAssemblies, humanbaseBrowserOptions, type BiodallianceAssembly } from './biodalliance/humanbaseConfig';
+export { chromHmmTrack, humanbaseTracks } from './humanbaseFiles';
 export { scoreTrack, type ScoreTrackOptions } from './scoreTrack';
 export { diseaseImpactTracks, seqweaverGnomadTrack } from './precomputedTracks';
 export { defaultGenomeEngine } from './defaultGenomeEngine';

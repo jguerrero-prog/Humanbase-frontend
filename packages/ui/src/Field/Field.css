@@ -14,7 +14,7 @@
 
 .field-control {
   inline-size: 100%;
-  font: 400 16px/1.55 Lato, sans-serif;
+  font: var(--type-body);
   color: var(--text-default);
   background: var(--surface-page);
   border: var(--border-width-1) solid var(--border-strong);

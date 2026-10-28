@@ -1,35 +1,23 @@
-export interface TermDatabaseRecord {
-  name: string;
-  slug: string;
-}
+import type { components } from '../schema';
 
-export interface TermRecord {
-  title: string;
-  identifier: string;
+type Schemas = components['schemas'];
+
+export type TermDatabaseRecord = Pick<Schemas['Database'], 'name' | 'slug'>;
+
+// Only the fields read here: samples drop each term's description and url.
+export type TermRecord = Pick<Schemas['Term'], 'title' | 'identifier'> & {
   database: TermDatabaseRecord;
-  slim_terms?: readonly { title: string; identifier: string }[];
-  annotation_count?: number;
-}
+  slim_terms?: readonly Pick<Schemas['Slim'], 'title' | 'identifier'>[];
+  annotation_count?: Schemas['Term']['annotation_count'];
+};
 
-export interface PublicationRecord {
-  pmid: number;
-  title: string;
-  authors: string;
-  date: string;
-  journal: string;
-}
+// The schema lets pmid be empty, but every paper the API returns has one.
+export type PublicationRecord = Pick<Schemas['Publication'], 'title' | 'authors' | 'date' | 'journal'> & { pmid: NonNullable<Schemas['Publication']['pmid']> };
 
-export interface AnnotationRecord {
-  term: TermRecord;
-  database: TermDatabaseRecord;
-  pub: PublicationRecord | null;
-  evidence: string;
-}
+// The schema says pub is always there, but annotations without a paper answer null.
+export type AnnotationRecord = Pick<Schemas['Annotation'], 'evidence'> & { term: TermRecord; database: TermDatabaseRecord; pub: PublicationRecord | null };
 
-export interface PredictionRecord {
-  score: number;
-  term: TermRecord;
-}
+export type PredictionRecord = Pick<Schemas['Prediction'], 'score'> & { term: TermRecord };
 
 export interface FunctionEvidence {
   source: string;

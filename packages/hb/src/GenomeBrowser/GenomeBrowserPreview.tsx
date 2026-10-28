@@ -20,7 +20,7 @@ const tracks: Record<GenomeBrowserView['assembly'], readonly GenomeDataTrack[]> 
 
 /** The genome around a gene or a variant, with humanbase.io's /genome tracks: a preview of a proposal under review. */
 export function GenomeBrowserPreview({ view, onLocationChange, engine = defaultGenomeEngine }: GenomeBrowserPreviewProps) {
-  const { showsSamples } = useHumanbase();
+  const { examplesOnly } = useHumanbase();
   const found = useGeneLocation(view.location ? undefined : view.gene, view.assembly);
   const assemblyName = assemblyNames[view.assembly];
   const location = view.location ?? found.data ?? genomeBrowserLink.start(view.assembly);
@@ -31,7 +31,7 @@ export function GenomeBrowserPreview({ view, onLocationChange, engine = defaultG
   if (found.data === null && view.gene) {
     geneNote = (
       <Alert tone="warning" title={`${view.gene} isn’t in the gene index`}>
-        {showsSamples ? `With the API off, the sample data finds a few example genes only. Turn the API on to find ${view.gene}. Showing ${location.format()}.` : `${GenomeLocation.geneNotFound(view.gene, view.assembly)} Showing ${location.format()}.`}
+        {examplesOnly ? `With the API off, the sample data finds a few example genes only. Turn the API on to find ${view.gene}. Showing ${location.format()}.` : `${GenomeLocation.geneNotFound(view.gene, view.assembly)} Showing ${location.format()}.`}
       </Alert>
     );
   } else if (found.isError) {
