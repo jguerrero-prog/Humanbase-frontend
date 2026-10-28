@@ -17,12 +17,12 @@ describe('contrastRatio', () => {
 
 describe('ColorCatalog', () => {
   const catalog = new ColorCatalog(
-    { color: { emerald: { 600: { $type: 'color', $value: { hex: '#11713C' } } } } },
-    { action: { primary: { $type: 'color', $value: '{color.emerald.600}' } } },
+    { color: { primary: { 600: { $type: 'color', $value: { hex: '#11713C' } } } } },
+    { action: { primary: { $type: 'color', $value: '{color.primary.600}' } } },
   );
 
   it('follows aliases to the primitive value', () => {
-    expect(catalog.target('action.primary')).toBe('color.emerald.600');
+    expect(catalog.target('action.primary')).toBe('color.primary.600');
     expect(catalog.hex('action.primary')).toBe('#11713C');
   });
 

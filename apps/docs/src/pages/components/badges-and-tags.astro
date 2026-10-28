@@ -25,7 +25,7 @@ const contrast = [
   ['Running', `Info 700 ${hex('color.info.700')} on white`, `${ratio('color.info.700', 'surface.page', 1)}`],
   ['Finished', `Success 700 ${hex('color.success.700')} on white`, `${ratio('color.success.700', 'surface.page', 1)}`],
   ['Failed', `Error 700 ${hex('color.error.700')} on white`, `${ratio('color.error.700', 'surface.page', 1)}`],
-  ['On emerald', 'Emerald 600 on white', '6.1:1'],
+  ['On primary', `text.link ${hex('text.link')} on white`, `${ratio('text.link', 'surface.page', 1)}`],
 ];
 
 const statusWords: { status: JobStatus; means: string; after: string }[] = [
@@ -58,7 +58,7 @@ const specs = [
   ['badge.radius', 'radius.xs 4px'],
   ['badge.neutral', `grey 100 ${hex('color.grey.100')} fill, grey 600 ${hex('color.grey.600')} text`],
   ['badge.status', 'no fill; 12 or 14px icon and word in info, success or error 700; Queued in grey 600'],
-  ['badge.on-emerald', 'white fill, emerald 600 text'],
+  ['badge.on-primary', 'white fill, text.link text'],
   ['tag.height / radius', '32px / radius.sm 8px'],
   ['tag.border', `1px grey 300 ${hex('color.grey.300')}; hover grey 500; invalid 1.5px error 700`],
   ['tag.text', 'Lato Bold 14/20 ink'],
@@ -113,10 +113,10 @@ const usage = `import { Badge, ContextLabel, GeneTagInput, StatusBadge } from '@
         ))
       }
     </div>
-    <div class="on-emerald">
+    <div class="on-primary">
       <strong>Jobs</strong>
-      <Badge size="small" tone="on-emerald">1 running</Badge>
-      <span>On the emerald top bar only: white with emerald text (6.1:1).</span>
+      <Badge size="small" tone="on-primary">1 running</Badge>
+      <span>On the primary top bar only: white with text.link text ({ratio('text.link', 'surface.page', 1)}).</span>
     </div>
     <DocTable caption="Badge colors and contrast" columns={['Type', 'Colors', 'Contrast']} widths={['244px', '404px']}>
       {contrast.map(([type, colors, ratio]) => <tr><th scope="row">{type}</th><td>{colors}</td><td><code>{ratio}</code></td></tr>)}
@@ -227,8 +227,8 @@ const usage = `import { Badge, ContextLabel, GeneTagInput, StatusBadge } from '@
       </li>
       <li class="pair pair-dont">
         <div class="pair-stage" aria-hidden="true">
-          <span class="mock-pill mock-pill-mint">Network</span>
-          <span class="mock-pill mock-pill-yellow">Variant</span>
+          <span class="mock-pill mock-pill-accent">Network</span>
+          <span class="mock-pill mock-pill-secondary">Variant</span>
           <span class="mock-pill mock-pill-blue">Expression</span>
         </div>
         <h3>Don’t. Rainbow pills for categories</h3>
@@ -293,7 +293,7 @@ const usage = `import { Badge, ContextLabel, GeneTagInput, StatusBadge } from '@
     color: var(--text-muted);
   }
 
-  .on-emerald {
+  .on-primary {
     display: flex;
     gap: var(--space-4);
     align-items: center;
@@ -303,11 +303,11 @@ const usage = `import { Badge, ContextLabel, GeneTagInput, StatusBadge } from '@
     border-radius: var(--radius-md);
   }
 
-  .on-emerald strong {
+  .on-primary strong {
     font: 700 15px/1.4 Lato, sans-serif;
   }
 
-  .on-emerald span:last-child {
+  .on-primary span:last-child {
     font: var(--type-body-sm);
   }
 
@@ -472,21 +472,21 @@ const usage = `import { Badge, ContextLabel, GeneTagInput, StatusBadge } from '@
   }
 
   .mock-dot-success {
-    background: var(--color-mint-500);
+    background: var(--color-accent-500);
   }
 
   .mock-dot-error {
     background: var(--status-error-fg);
   }
 
-  .mock-pill-mint {
-    color: var(--color-mint-800);
-    background: var(--color-mint-50);
+  .mock-pill-accent {
+    color: var(--color-accent-800);
+    background: var(--color-accent-50);
   }
 
-  .mock-pill-yellow {
-    color: var(--color-yellow-800);
-    background: var(--color-yellow-100);
+  .mock-pill-secondary {
+    color: var(--color-secondary-800);
+    background: var(--color-secondary-100);
   }
 
   .mock-pill-blue {
@@ -508,9 +508,9 @@ const usage = `import { Badge, ContextLabel, GeneTagInput, StatusBadge } from '@
   .mock-new {
     padding: 2px var(--space-2);
     font: 700 11px/1.4 Lato, sans-serif;
-    color: var(--color-yellow-800);
+    color: var(--color-secondary-800);
     letter-spacing: 0.06em;
-    background: var(--color-yellow-50);
+    background: var(--color-secondary-50);
     border-radius: var(--radius-full);
   }
 

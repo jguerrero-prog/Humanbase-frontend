@@ -30,8 +30,8 @@ const interfaceIcons = iconNames.filter((name) => !scienceNames.has(name));
 
 const colorExamples = [
   { icon: 'search', label: 'Search genes', title: 'On white', caption: 'Ink, the same as body text', tone: 'ink' },
-  { icon: 'download', label: 'Download results', title: 'Links and actions', caption: 'Emerald, matching the link', tone: 'link' },
-  { icon: 'arrow-right', label: 'Explore the network', title: 'On emerald', caption: 'White on the brand color', tone: 'brand' },
+  { icon: 'download', label: 'Download results', title: 'Links and actions', caption: 'text.link, matching the link', tone: 'link' },
+  { icon: 'arrow-right', label: 'Explore the network', title: 'On the brand color', caption: 'White on primary 600', tone: 'brand' },
   { icon: 'alert-circle', label: 'Gene not found', title: 'Status', caption: 'Status 600, always with a word', tone: 'error' },
 ] as const;
 
@@ -457,7 +457,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
 }
 
 .construction-margin {
-    fill: var(--color-yellow-500);
+    fill: var(--color-secondary-500);
     fill-opacity: 0.18;
   }
 
@@ -472,7 +472,7 @@ const usage = `import { Button, Icon } from '@humanbase/ui';
 
   .construction-keyline {
     fill: none;
-    stroke: var(--color-mint-500);
+    stroke: var(--color-accent-500);
   }
 
   .color-examples {

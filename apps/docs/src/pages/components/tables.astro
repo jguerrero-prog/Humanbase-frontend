@@ -44,11 +44,11 @@ const headerStates = [
 ] as const;
 
 const cellTypes = [
-  ['Gene', 'Gene symbols. Link to the gene page.', 'Lato Bold, ink. Links to the gene page, underlined on hover and focus. Green is kept for selection.'],
+  ['Gene', 'Gene symbols. Link to the gene page.', 'Lato Bold, ink. Links to the gene page, underlined on hover and focus. The primary color is kept for selection.'],
   ['Text', 'Names and descriptions.', 'Lato 15, grey 600. One line, cut off with an ellipsis and shown in full on hover. Descriptions can wrap instead (Wrapping text).'],
   ['Number', 'Counts, p-values, sizes.', 'Lato 15, right-aligned, tabular figures, thousands separated by commas.'],
   ['ID', 'GO, Entrez and dataset IDs.', 'Atkinson Hyperlegible Mono 14, so 0 and O never look alike.'],
-  ['Score', 'Network scores from 0 to 1.', 'Number with an 80px grey bar. The number carries the value; the bar helps scanning. Green is kept for selection.'],
+  ['Score', 'Network scores from 0 to 1.', 'Number with an 80px grey bar. The number carries the value; the bar helps scanning. The primary color is kept for selection.'],
   ['Checkbox', 'Row selection for bulk actions.', '56px column, 20px checkbox.'],
 ];
 
@@ -113,7 +113,7 @@ const specs = [
   ['table.score.bar', `80 × 6px, radius 2px, grey 100 ${hex('color.grey.100')} track, grey 600 ${hex('color.grey.600')} fill`],
   ['table.checkbox.column', '56px'],
   ['table.pinned.edge', 'shadow/pinned-edge: 8px, ink at 12% to 0%. Hidden until the table scrolls sideways; fades in over the first 8px of scroll'],
-  ['checkbox.box', `20px in a 24px box, radius.xs 4px, 1.5px grey 500 ${hex('color.grey.500')}; checked emerald 600 with a white 2.5px check`],
+  ['checkbox.box', `20px in a 24px box, radius.xs 4px, 1.5px grey 500 ${hex('color.grey.500')}; checked primary 600 with a white 2.5px check`],
 ];
 
 const usage = `import { Cell, HeaderCell, ScoreCell, Table, useTableSort } from '@humanbase/ui';

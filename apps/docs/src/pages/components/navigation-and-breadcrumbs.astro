@@ -11,7 +11,7 @@ import NoteCard from '../../components/docs/NoteCard.astro';
 import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
 import ProductScreen from '../../components/docs/ProductScreen.astro';
-import { hex } from '../../data/colors';
+import { hex, ratio } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import { DocsNavExample, OnThisPageExample } from '../../components/docs/DocsLayoutExample';
 import { withBase } from '../../withBase';
@@ -54,7 +54,7 @@ const toolSections = sections.filter((section) => section.columns?.flat().some((
 const toolNames = toolSections.flatMap((section) => section.columns?.flat().flatMap((group) => group.links.map((link) => link.label)) ?? []);
 const topBarParts = [
   ['Logo', 'Links home. The only way to reach the homepage, so breadcrumbs never start with Home.'],
-  ['Current section', 'Bold white with a 3px Simons Yellow bar (4.3:1 on emerald). aria-current="true".'],
+  ['Current section', `Bold white with a 3px secondary bar (${ratio('action.secondary', 'action.primary', 1)} on primary 600). aria-current="true".`],
   ['Open menu', 'White at 14% behind the item; the chevron flips. Opens on click, not hover.'],
   ['Tool icons', `Each tool in the ${toolSections.map((section) => section.label).join(' and ')} menus (${toolNames.join(', ')}) shows its analysis icon at 20px, the same icon as in the homepage’s Analysis menu.`],
   ['Search', 'Search genes. Each suggested gene lists the pages it opens in, and nothing opens until one is chosen (Gene search and matching, Suggestions in the top bar).'],
@@ -64,9 +64,9 @@ const topBarParts = [
 const itemStates = [
   { title: 'Default', text: 'No fill', props: {} },
   { title: 'Hover', text: 'White at 12%', props: { 'data-state': 'hover' as const } },
-  { title: 'Current', text: '3px yellow bar', props: { current: true } },
+  { title: 'Current', text: '3px secondary bar', props: { current: true } },
   { title: 'Open', text: 'White at 14%, chevron up', props: { 'data-state': 'open' as const } },
-  { title: 'Focus', text: '2px white ring with a 2px emerald gap', props: { 'data-state': 'focus' as const } },
+  { title: 'Focus', text: '2px white ring with a 2px primary gap', props: { 'data-state': 'focus' as const } },
 ];
 const stateSection: NavSection = { label: 'Genes & gene sets', columns: [[{ links: [] }]] };
 
@@ -159,14 +159,14 @@ const questions = [
 
 const specs = [
   ['topbar.height', '64px desktop and tablet, 56px phone'],
-  ['topbar.surface', `emerald 600 ${hex('color.emerald.600')}; elevation 3 once the page scrolls; z.sticky 100`],
+  ['topbar.surface', `primary 600 ${hex('color.primary.600')}; elevation 3 once the page scrolls; z.sticky 100`],
   ['topbar.padding', '0 24px 0 32px desktop; 0 16px 0 24px tablet; 0 8px 0 16px phone'],
   ['nav.item', '40px tall, 12px side padding, radius.sm 8px, Lato Bold 15 white'],
   ['nav.item.hover / open', 'white at 12% / 14%'],
-  ['nav.item.current', `3px yellow 500 ${hex('color.yellow.500')} bar, 12px in from each side`],
-  ['nav.focus', '2px emerald gap, then 2px white ring'],
+  ['nav.item.current', `3px action.secondary ${hex('action.secondary')} bar, 12px in from each side`],
+  ['nav.focus', '2px primary gap, then 2px white ring'],
   ['nav.menu', '380px wide, white, border.subtle, elevation 2, radius.md 12px, 4px below the bar; z.dropdown 200'],
-  ['jobs.count', 'white pill, Lato Bold 12 emerald, radius.xs 4px'],
+  ['jobs.count', 'white pill, Lato Bold 12 text.link, radius.xs 4px'],
   ['breadcrumb', 'Lato 14/20 grey 600 links, Lato Bold 14 ink current; 16px chevron in grey 400; 4px gap; 24px below the bar'],
   ['phone.menu.row', '52px; sections Lato Bold 16; tools Lato 16 with a 13px description'],
   ['breakpoints', 'full bar 1280px and up; tablet bar 960 to 1279px; phone bar below 960px'],
@@ -295,7 +295,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     </div>
   </DocSection>
 
-  <DocSection title="Top bar" lead="64px, emerald, on every page. It stays at the top when the page scrolls, with elevation 3 once content passes under it.">
+  <DocSection title="Top bar" lead="64px, primary 600, on every page. It stays at the top when the page scrolls, with elevation 3 once content passes under it.">
     <figure class="topbar-specimen">
       <figcaption class="variant-label">1280px and up, with the Variants & sequences menu open. Scroll sideways for search and Jobs.</figcaption>
       <div class="topbar-frame">
@@ -316,7 +316,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     </figure>
   </DocSection>
 
-  <DocSection title="Nav item states" lead="White Lato Bold 15 on emerald (6.1:1) in every state. States change the background or add a bar, never the text color.">
+  <DocSection title="Nav item states" lead={`White Lato Bold 15 on primary 600 (${ratio('text.on-brand', 'action.primary', 1)}) in every state. States change the background or add a bar, never the text color.`}>
     <ul class="item-states">
       {
         itemStates.map((state) => (
@@ -328,7 +328,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
         ))
       }
     </ul>
-    <p class="doc-note">Focus on emerald uses a white ring instead of the usual ink one, because ink on emerald is only 2.9:1. White on emerald is 6.1:1.</p>
+    <p class="doc-note">Focus on the brand color uses a white ring instead of the usual ink one, because ink on primary 600 is only {ratio('focus.ring', 'action.primary', 1)}. White on primary 600 is {ratio('text.on-brand', 'action.primary', 1)}.</p>
   </DocSection>
 
   <DocSection title="Section menus" lead="Each section opens a panel listing its tools by name, with one line about what each does. Names stay exactly as in the docs and papers.">

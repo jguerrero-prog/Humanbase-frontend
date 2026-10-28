@@ -33,7 +33,7 @@ const fiveGenes = ['IL1B', 'CCL2', 'IL6', 'PTGS2', 'ICAM1'].join('\n');
 const search = { label: 'Search genes', placeholder: 'Search a gene, for example IL1B', tabIndex: -1 };
 const searchStates = [
   { title: 'Default', text: 'Placeholder gives an example of what to type.', props: {} },
-  { title: 'Focus', text: '2px emerald border. Suggestions open after two characters.', props: { 'data-state': 'focus' } },
+  { title: 'Focus', text: '2px primary border. Suggestions open after two characters.', props: { 'data-state': 'focus' } },
   { title: 'Filled', text: 'A clear button appears. Escape also clears the field.', props: { defaultValue: 'IL1B' } },
   { title: 'Loading', text: 'A spinner replaces the clear button while matches load.', props: { defaultValue: 'IL1B', loading: true } },
   { title: 'Disabled', text: 'Only while the page is loading data it depends on.', props: { disabled: true } },
@@ -57,7 +57,7 @@ const specs = [
   ['Corners', '12px; 8px Small', '12px', '12px'],
   ['Border', '1px grey 500', '1px grey 500', '1px grey 500'],
   ['Hover border', 'grey 700', 'grey 700', 'grey 700'],
-  ['Focus', '2px emerald 600', '2px emerald 600', '2px emerald 600'],
+  ['Focus', '2px primary 600', '2px primary 600', '2px primary 600'],
   ['Error', '2px error 600, icon, bold message', 'Message in the suggestions panel', '2px error 600, red count'],
   ['Label', 'Lato Bold 15px, 8px above the field', 'Visually hidden', 'Lato Bold 15px'],
   ['Icon', 'Optional, 20px', 'Search 24px / 20px, clear button', 'None'],
@@ -88,7 +88,7 @@ const usage = `import { GeneList, SearchField, TextInput } from '@humanbase/ui';
     <div class="card-grid" style="--columns: 3">
       <StateCard title="Default" text="Grey 500 border, placeholder in grey 500."><TextInput {...jobTitle} /></StateCard>
       <StateCard title="Hover" text="Border darkens to grey 700."><TextInput {...jobTitle} data-state="hover" /></StateCard>
-      <StateCard title="Focus" text="2px emerald border and a text cursor."><TextInput {...jobTitle} data-state="focus" /></StateCard>
+      <StateCard title="Focus" text="2px primary border and a text cursor."><TextInput {...jobTitle} data-state="focus" /></StateCard>
       <StateCard title="Filled" text="Value in ink. Helper text stays visible."><TextInput {...jobTitle} defaultValue={filled} /></StateCard>
       <StateCard title="Error" text="2px error border, an icon and a message that leads with the fix. Screen readers hear “Error” first."><TextInput {...jobTitle} defaultValue={filled} error={tooLong} /></StateCard>
       <StateCard title="Disabled" text="Grey 50 fill, grey 400 label and value. The helper stays grey 600 so it can explain why the field is disabled."><TextInput {...jobTitle} disabled /></StateCard>
@@ -122,8 +122,8 @@ const usage = `import { GeneList, SearchField, TextInput } from '@humanbase/ui';
       }
     </ul>
 
-    <section class="search-panel search-panel-brand" aria-labelledby="search-on-green">
-      <h3 id="search-on-green">On the green header</h3>
+    <section class="search-panel search-panel-brand" aria-labelledby="search-on-brand">
+      <h3 id="search-on-brand">On the brand header</h3>
       <div class="search-row">
         <Select label="Analysis" hideLabel placeholder="Select an analysis" options={analysisOptions} columns={analysisColumns} triggerIcon="analysis" size="large" />
         <SearchField {...search} />
@@ -138,7 +138,7 @@ const usage = `import { GeneList, SearchField, TextInput } from '@humanbase/ui';
         <SearchField {...search} />
       </div>
       <SearchExamples examples={examples} surface="light" />
-      <p class="search-panel-note">For white or light grey pages, such as results pages, the docs and the 404 page. The search field is unchanged; example chips switch to emerald text on an 8% emerald tint, and “Try” uses grey 500. Chip text measures 5.1:1 and “Try” 5.0:1, both passing AA.</p>
+      <p class="search-panel-note">For white or light grey pages, such as results pages, the docs and the 404 page. The search field is unchanged; example chips switch to text.link on an 8% primary tint, and “Try” uses grey 500. Both pass AA.</p>
     </section>
   </DocSection>
 
@@ -147,7 +147,7 @@ const usage = `import { GeneList, SearchField, TextInput } from '@humanbase/ui';
       <StateCard title="Default" text="Placeholder explains the accepted formats."><GeneList {...geneList} /></StateCard>
       <StateCard title="Filled" text="A live count sits on the right of the helper text."><GeneList {...geneList} defaultValue={sevenGenes} /></StateCard>
       <StateCard title="Error" text="The count turns red and the message gives the number entered."><GeneList {...geneList} defaultValue={fiveGenes} error="Add at least 20 genes so modules can be found. You’ve entered 5." /></StateCard>
-      <StateCard title="Focus" text="2px emerald border while typing or pasting."><GeneList {...geneList} data-state="focus" /></StateCard>
+      <StateCard title="Focus" text="2px primary border while typing or pasting."><GeneList {...geneList} data-state="focus" /></StateCard>
     </div>
     <p class="doc-note">After submitting, ambiguous genes are resolved in the gene matching step (UI library: Gene search and matching), which lists only the genes that need a choice.</p>
   </DocSection>
@@ -315,7 +315,7 @@ const usage = `import { GeneList, SearchField, TextInput } from '@humanbase/ui';
   }
 
   .search-panel-brand .search-panel-note {
-    color: var(--color-mint-100);
+    color: var(--text-on-brand);
   }
 
   .error-message {

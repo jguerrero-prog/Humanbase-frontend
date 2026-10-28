@@ -4,6 +4,7 @@ import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
+import { ratio } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const today = [
@@ -62,7 +63,7 @@ const accessibility = [
   ['Linked to the field', 'aria-invalid="true" on the field and aria-describedby pointing to its message.'],
   ['Focus', 'After a failed submit, focus moves to the error summary; each link in it moves focus to its field.'],
   ['Announced', 'Errors that appear without a submit, such as an unknown gene, use a polite live region.'],
-  ['Contrast', 'Error 700 on white is 6.6:1; the error alert’s icon on its fill is 6.1:1.'],
+  ['Contrast', `Error 700 on white is ${ratio('status.error.fg', 'surface.page', 1)}; the error alert’s icon on its fill is ${ratio('status.error.fg', 'status.error.bg', 1)}.`],
 ];
 ---
 

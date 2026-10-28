@@ -28,14 +28,14 @@ const anatomy = [
   ['Label', 'Lato Bold 15. Says what is being set, with units if it has any.'],
   ['Number field', '64px wide, 36px tall. Accepts typing; clamps to the range on blur.'],
   ['Track', '4px, grey 300, 2px corners.'],
-  ['Fill', 'Emerald 600 from the start of the range to the thumb, so the chosen part is clear.'],
-  ['Thumb', '20px white circle with a 2px emerald ring; the touch area is 44px.'],
+  ['Fill', 'Primary 600 from the start of the range to the thumb, so the chosen part is clear.'],
+  ['Thumb', '20px white circle with a 2px primary ring; the touch area is 44px.'],
   ['Ends', 'Min and max in Lato 13 grey 600.'],
 ];
 
 const states = [
   { title: 'Default', text: 'Light shadow under the thumb', props: {} },
-  { title: 'Hover', text: 'Emerald halo at 16%', props: { 'data-state': 'hover' as const } },
+  { title: 'Hover', text: 'Primary halo at 16%', props: { 'data-state': 'hover' as const } },
   { title: 'Focus', text: 'System focus ring', props: { 'data-state': 'focus' as const } },
   { title: 'Dragging', text: 'Halo at 24%, 3px ring', props: { 'data-state': 'dragging' as const } },
   { title: 'Disabled', text: 'Grey track, fill and thumb; the field is read-only', props: { disabled: true } },
@@ -60,9 +60,9 @@ const behavior = [
 
 const specs = [
   ['slider.track', `4px, grey 300 ${hex('color.grey.300')}, radius 2px; disabled grey 200`],
-  ['slider.fill', `emerald 600 ${hex('color.emerald.600')}; disabled grey 400`],
-  ['slider.thumb', '20px, white, 2px emerald ring (3px while dragging), light shadow'],
-  ['slider.thumb.hover / dragging', 'emerald halo, 6px, at 16% / 24%'],
+  ['slider.fill', `primary 600 ${hex('color.primary.600')}; disabled grey 400`],
+  ['slider.thumb', '20px, white, 2px primary ring (3px while dragging), light shadow'],
+  ['slider.thumb.hover / dragging', 'primary halo, 6px, at 16% / 24%'],
   ['slider.thumb.focus', 'system focus ring'],
   ['slider.touch-area', '44 × 44px around each thumb'],
   ['slider.field', '64 × 36px, Lato 14, 1px grey 500, radius.sm 8px'],

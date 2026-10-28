@@ -117,7 +117,7 @@ const usage = `@import url("@humanbase/ui/root.css");
     <NoteCard title="Using the system in code">
       <ul>
         <li>Import the root stylesheet once; every token is then a CSS custom property.</li>
-        <li>Components use semantic roles such as <code>--action-primary</code>, never primitives such as <code>--color-emerald-600</code>, so a change in Figma reaches every component through one token.</li>
+        <li>Components use semantic roles such as <code>--action-primary</code>, never primitives such as <code>--color-primary-600</code>, so a change in Figma reaches every component through one token.</li>
       </ul>
       <Code code={usage} lang="css" theme="css-variables" />
     </NoteCard>
@@ -132,7 +132,7 @@ const usage = `@import url("@humanbase/ui/root.css");
     gap: var(--space-5);
     margin-block: var(--space-16);
     padding: calc(var(--space-12) + var(--space-2));
-    background: var(--color-emerald-50);
+    background: var(--color-primary-50);
     border-radius: var(--radius-md);
   }
 

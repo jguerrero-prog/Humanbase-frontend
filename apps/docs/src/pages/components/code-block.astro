@@ -61,7 +61,7 @@ const syntaxRoles = [
   { role: 'Text and punctuation', sample: [{ text: '{ } : , [ ]', className: '' }], color: `Ink ${hex('color.grey.900')}`, contrast: `${ratio('syntax.text', 'surface.subtle')}` },
   { role: 'JSON keys', sample: [{ text: '"slug"', className: 'syntax-key' }], color: 'Ink, bold', contrast: `${ratio('syntax.key', 'surface.subtle')}` },
   { role: 'Commands and methods', sample: [{ text: 'curl GET POST', className: 'syntax-command' }], color: `Info 700 ${hex('color.info.700')}, bold`, contrast: `${ratio('syntax.command', 'surface.subtle')}` },
-  { role: 'Strings and URLs', sample: [{ text: '"https://humanbase.io/api/"', className: 'syntax-string' }], color: `Emerald 700 ${hex('color.emerald.700')}`, contrast: `${ratio('syntax.string', 'surface.subtle')}` },
+  { role: 'Strings and URLs', sample: [{ text: '"https://humanbase.io/api/"', className: 'syntax-string' }], color: `Success 700 ${hex('syntax.string')}`, contrast: `${ratio('syntax.string', 'surface.subtle')}` },
   { role: 'Types and values', sample: [{ text: 'string integer null v1', className: 'syntax-type' }], color: `Warning 700 ${hex('color.warning.700')}`, contrast: `${ratio('syntax.type', 'surface.subtle')}` },
   { role: 'Path parameters', sample: [{ text: '{job_id}', className: 'syntax-param' }], color: 'Warning 700, bold', contrast: `${ratio('syntax.param', 'surface.subtle')}` },
   {
@@ -81,7 +81,7 @@ const tables = {
     ['Long blocks', 'Up to 480px tall, then the block scrolls. Response shapes over 40 lines start collapsed with “Show full response”.'],
     ['Keyboard', 'A block that scrolls can take focus (tabindex 0, labeled by its label) so arrow keys scroll it. Copy is a real button.'],
     ['Screen readers', 'The block is a pre element with its label as the accessible name. Syntax colors are not announced.'],
-    ['Selection', 'Text can be selected by hand; the selection color is emerald 50 so every syntax color stays readable.'],
+    ['Selection', 'Text can be selected by hand; the selection color is primary 50 so every syntax color stays readable.'],
   ],
   specs: [
     ['code.surface', `grey 50 ${hex('color.grey.50')}, 1px border.subtle ${hex('border.subtle')}, radius.sm 8px`],
@@ -92,7 +92,7 @@ const tables = {
     ['code.max-height', '480px, then scrolls'],
     ['syntax.text / key', 'ink; keys bold'],
     ['syntax.command', `info 700 ${hex('color.info.700')}, bold`],
-    ['syntax.string', `emerald 700 ${hex('color.emerald.700')}`],
+    ['syntax.string', `success 700 ${hex('syntax.string')}`],
     ['syntax.type / param', `warning 700 ${hex('color.warning.700')}; params bold`],
     ['syntax.flag / comment', `grey 600 ${hex('color.grey.600')}; comments italic`],
     ['code.inline', 'Atkinson Hyperlegible Mono 14 on grey 100, radius.xs 4px, 1px 4px padding'],
@@ -376,11 +376,11 @@ const usage = `import { CodeBlock, CodeTabs, InlineCode } from '@humanbase/ui';
   }
 
   .wrong-string {
-    color: var(--color-emerald-600);
+    color: var(--color-primary-600);
   }
 
   .wrong-type {
-    color: var(--color-yellow-300);
+    color: var(--color-secondary-300);
   }
 
   @media (width < 64rem) {

@@ -1,7 +1,7 @@
 {
-  "$description": "Theme 2: the primitives that differ from Theme 1, from Figma’s Primitives collection, mode “Theme 2” (October 26, 2026). Semantic tokens alias these, so they follow. Links step one shade darker than Theme 1 (emerald/700), since emerald/600 here falls under 4.5:1 on cream and grey surfaces.",
+  "$description": "Theme 2: the primitives that differ from Theme 1, from Figma’s Primitives collection, mode “Theme 2” (October 26, 2026). Semantic tokens alias these, so they follow. Links step one shade darker than Theme 1 (primary/700), since primary/600 here falls under 4.5:1 on cream and grey surfaces.",
   "color": {
-    "emerald": {
+    "primary": {
       "50": {
         "$type": "color",
         "$value": {
@@ -123,7 +123,7 @@
         }
       }
     },
-    "yellow": {
+    "secondary": {
       "50": {
         "$type": "color",
         "$value": {
@@ -245,7 +245,7 @@
         }
       }
     },
-    "mint": {
+    "accent": {
       "50": {
         "$type": "color",
         "$value": {
@@ -633,10 +633,15 @@
   "text": {
     "link": {
       "$type": "color",
-      "$value": "{color.emerald.700}"
+      "$value": "{color.primary.700}"
     }
   },
   "action": {
+    "secondary": {
+      "$type": "color",
+      "$value": "{color.secondary.200}",
+      "$description": "The current page mark in the top bar. Gold 500 measures 2.4:1 on primary 600 here; 200 passes the 3:1 that state indicators need."
+    },
     "ghost-hover": {
       "$type": "color",
       "$value": {

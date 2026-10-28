@@ -12,7 +12,7 @@ interface TypeValue {
 const weightNames: Record<number, string> = { 400: 'Regular', 500: 'Medium', 600: 'SemiBold', 700: 'Bold' };
 
 const names: Record<string, [name: string, use: string]> = {
-  display: ['Display', 'Hero title in the green header, once per page'],
+  display: ['Display', 'Hero title in the brand header, once per page'],
   h1: ['Heading 1', 'Page title under the header'],
   h2: ['Heading 2', 'Section titles'],
   h3: ['Heading 3', 'Card and panel titles'],
