@@ -655,7 +655,7 @@ const multiSelectRules = [
     gap: var(--space-4);
     align-items: center;
     justify-content: space-between;
-    inline-size: 560px;
+    inline-size: min(560px, 100%);
     padding: var(--space-4) var(--space-3) var(--space-4) var(--space-5);
     background: var(--surface-page);
     border: var(--border-width-1) solid var(--border-subtle);
@@ -683,9 +683,28 @@ const multiSelectRules = [
     inline-size: 320px;
   }
 
+  /* The homepage field width; the open list takes its own width and height below it, so nothing is left empty. */
   .grouped-specimen {
-    inline-size: 845px;
-    min-block-size: 540px;
+    inline-size: 264px;
+  }
+
+  .grouped-specimen :global(.select) {
+    min-inline-size: 0;
+  }
+
+  .grouped-specimen :global(.select-panel) {
+    position: static;
+    margin-block-start: var(--space-1);
+  }
+
+  @media (width < 45rem) {
+    .grouped-specimen {
+      inline-size: auto;
+    }
+
+    .grouped-specimen :global(.select-panel) {
+      max-inline-size: 100%;
+    }
   }
 
   .menu-pairs :global(.pair-stage) {
