@@ -179,7 +179,7 @@ const multiSelectRules = [
   <DocSection title="Anatomy" lead="An open select. The panel matches the field width and sits 4px below it.">
     <figure class="anatomy-stage">
       <div class="anatomy-specimen">
-        <Select label={tissueField.label} options={tissues} defaultValue="Blood vessel" open defaultHighlight={2} />
+        <Select label={tissueField.label} options={tissues} defaultValue="Blood vessel" preview defaultHighlight={2} />
       </div>
       <ol class="anatomy-notes">
         {anatomyNotes.map((note) => <li class={`anatomy-note anatomy-note-${note.side}`} style={`top: ${note.top}px`}><span>{note.n}</span>{note.text}</li>)}
@@ -243,7 +243,7 @@ const multiSelectRules = [
           </ul>
         </div>
         <div class="pattern-stage pattern-stage-tissue">
-          <Select label="Tissue network" options={tissueSearch} defaultValue="vessel" searchable filterLabel="Filter tissues" defaultQuery="vessel" open defaultHighlight={1} />
+          <Select label="Tissue network" options={tissueSearch} defaultValue="vessel" searchable filterLabel="Filter tissues" defaultQuery="vessel" preview defaultHighlight={1} />
           <p class="pattern-aside">Typed text filters the list. The value only changes when an option is chosen.</p>
         </div>
       </section>
@@ -259,7 +259,7 @@ const multiSelectRules = [
           </ul>
         </div>
         <div class="pattern-stage pattern-stage-version">
-          <Select label="Data version" options={versions} defaultValue="mage" size="small" open defaultHighlight={1}>
+          <Select label="Data version" options={versions} defaultValue="mage" size="small" preview defaultHighlight={1}>
             <a slot="footer" href="#pattern-version">What changed between versions</a>
           </Select>
         </div>
@@ -277,7 +277,7 @@ const multiSelectRules = [
         </div>
         <div class="pattern-stage pattern-stage-suggestions">
           <div class="suggestions-main">
-            <SearchField label="Search genes" size="medium" defaultValue="IL1" suggestions={genes} open defaultHighlight={1} />
+            <SearchField label="Search genes" size="medium" defaultValue="IL1" suggestions={genes} preview defaultHighlight={1} />
           </div>
           <div class="suggestions-states">
             <figure>
@@ -308,7 +308,7 @@ const multiSelectRules = [
               <p class="job-row-title">BMI GWAS, adipose tissue</p>
               <p class="job-row-meta">NetWAS Finished October 15, 2026</p>
             </div>
-            <ActionMenu label="Actions for BMI GWAS, adipose tissue" items={jobActions} open defaultHighlight={1} />
+            <ActionMenu label="Actions for BMI GWAS, adipose tissue" items={jobActions} preview defaultHighlight={1} />
           </div>
         </div>
       </section>
@@ -325,7 +325,7 @@ const multiSelectRules = [
         placeholder="Select an analysis"
         options={analyses}
         columns={analysisColumns}
-        open
+        preview
       >
         <p slot="footer">Not sure which tool? <a href="#grouped-select-multi-column">Compare them</a></p>
       </Select>
@@ -339,7 +339,7 @@ const multiSelectRules = [
   <DocSection title="Multi-select" lead="For choosing several options from a short list, such as the network's data types. The trigger stays one line, and the choice applies when the menu closes.">
     <div class="multi-select-specimens">
       <MultiSelect label="Data types" noun="types" options={dataTypes} value={[]} onChange={() => undefined} size="medium" />
-      <MultiSelect label="Data types" noun="types" options={dataTypes} value={['coexp', 'interaction', 'tf-binding']} onChange={() => undefined} size="medium" open />
+      <MultiSelect label="Data types" noun="types" options={dataTypes} value={['coexp', 'interaction', 'tf-binding']} onChange={() => undefined} size="medium" preview />
     </div>
     <DocTable caption="Rules for the multi-select" columns={['Rule', 'Detail']} widths={['304px']}>
       {multiSelectRules.map(([rule, detail]) => <tr class="doc-table-roomy"><th scope="row">{rule}</th><td>{detail}</td></tr>)}
@@ -400,6 +400,7 @@ const multiSelectRules = [
       <li><code>Select</code> is a select-only combobox: a button with <code>role="combobox"</code> that opens a listbox. It supports <code>size</code>, <code>hint</code>, <code>error</code>, option <code>description</code>, <code>icon</code> and <code>group</code>, a <code>footer</code>, <code>searchable</code> lists and <code>columns</code> of groups. Give it <code>name</code> to submit with a form. The list opens in the top layer as a <code>popover</code>, so a scrolling dialog or table never clips it.</li>
       <li><code>SearchField</code> becomes an editable combobox when it gets <code>suggestions</code>; <code>onSuggestionSelect</code> runs on click or Enter, and <code>suggestionsLoading</code> shows the searching state.</li>
       <li><code>ActionMenu</code> follows the menu button pattern. Each item has a <code>label</code>, optional <code>icon</code>, <code>destructive</code> and <code>dividerBefore</code>, and an <code>onSelect</code> command. Pass <code>trigger="text"</code> to show the label on a ghost button instead of the more icon, as the ASD Browser does for Columns.</li>
+      <li>Each opens and closes on its own. To control one, pass <code>open</code> with <code>onOpenChange</code>, as the Networks page does to open the process list from its empty state. <code>preview</code> draws the open state in place for these pages, with dismissal off; <code>MultiSelect</code> takes <code>preview</code> too.</li>
     </ul>
     <Code code={usage} lang="tsx" theme="css-variables" />
   </NoteCard>
