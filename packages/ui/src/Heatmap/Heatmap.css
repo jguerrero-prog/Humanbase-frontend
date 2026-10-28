@@ -308,7 +308,7 @@
 }
 
 .heatmap-axis-pick:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
   box-shadow: var(--shadow-focus-ring);
 }
 

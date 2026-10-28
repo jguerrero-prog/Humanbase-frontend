@@ -8,7 +8,12 @@ export function useOverflow(ref: RefObject<HTMLElement | null>) {
     const measure = () => setOverflows(element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight);
     const observer = new ResizeObserver(measure);
     observer.observe(element);
-    return () => observer.disconnect();
+    // A web font arriving late widens the text without resizing the element.
+    document.fonts?.addEventListener('loadingdone', measure);
+    return () => {
+      observer.disconnect();
+      document.fonts?.removeEventListener('loadingdone', measure);
+    };
   }, [ref]);
   return overflows;
 }
