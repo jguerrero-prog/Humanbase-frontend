@@ -1,18 +1,4 @@
-import {
-  ApiError,
-  dataVersionNames,
-  GwasFileCheck,
-  IntegrationService,
-  JobHistory,
-  NetwasService,
-  NetworkQuery,
-  useHumanbase,
-  useIntegrations,
-  type DataVersion,
-  type GwasCheckResult,
-  type Mhc,
-  type NetwasExample,
-} from '@humanbase/data';
+import { ApiError, type DataVersion, dataVersionNames, type GwasCheckResult, GwasFileCheck, IntegrationService, JobHistory, type Mhc, type NetwasExample, NetwasService, NetworkQuery, SampleMissingError, useHumanbase, useIntegrations } from '@humanbase/data';
 import { AboutPanel, Accordion, AccordionItem, Alert, Button, ErrorSummary, FileDrop, saveFile, SegmentedControl, Select, TextInput, type ChosenFile, type ErrorSummaryItem } from '@humanbase/ui';
 import { useId, useMemo, useState, type FormEvent } from 'react';
 import '../Jobs/JobForm.css';
@@ -173,7 +159,7 @@ export function NetwasForm({ draft, docsHref, onStarted }: NetwasFormProps) {
       const problems = NetwasService.problemsOf(error);
       if (error instanceof ApiError && error.status === 400 && problems.length) setServerProblems(Object.fromEntries(problems.map(({ field, message }) => [field, message])));
       else if (error instanceof ApiError && error.status === 429) setFailure('busy');
-      else if (api.showsSamples) setFailure('off');
+      else if (error instanceof SampleMissingError) setFailure('off');
       else setFailure('failed');
       setSubmitting(false);
     }

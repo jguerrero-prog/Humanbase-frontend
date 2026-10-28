@@ -39,7 +39,7 @@
   flex: 1;
   min-inline-size: 0;
   padding: 0;
-  font: 400 18px/1.55 Lato, sans-serif;
+  font: var(--type-body-lg);
   color: var(--text-default);
   background: transparent;
   border: 0;
@@ -52,7 +52,7 @@
 
 .search-field-input:focus,
 .search-field-input:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
   box-shadow: none;
 }
 
@@ -126,7 +126,7 @@
 .search-suggestion-label {
   flex: none;
   min-inline-size: 64px;
-  font: 400 15px/1.4 Lato, sans-serif;
+  font: 400 15px/1.4 var(--font-family-body);
 }
 
 .search-suggestion-label strong {
@@ -168,7 +168,7 @@
 .search-suggestions-keys kbd {
   margin-inline-end: 6px;
   padding: 1px 6px;
-  font: 400 12px/1.4 "Atkinson Hyperlegible Mono", monospace;
+  font: 400 12px/1.4 var(--font-family-mono);
   color: var(--text-default);
   background: var(--surface-page);
   border: var(--border-width-1) solid var(--border-default);
@@ -193,7 +193,7 @@
 }
 
 .search-suggestions-empty .search-suggestions-empty-title {
-  font: 700 15px/1.4 Lato, sans-serif;
+  font: 700 15px/1.4 var(--font-family-body);
   color: var(--text-default);
 }
 

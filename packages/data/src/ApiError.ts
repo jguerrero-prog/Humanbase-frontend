@@ -13,3 +13,11 @@ export class ApiError extends Error {
     return this.status === 404;
   }
 }
+
+/** No sample was recorded for this request, so a client that answers only for recorded examples can't answer it. */
+export class SampleMissingError extends ApiError {
+  constructor(url: string) {
+    super(404, url);
+    this.name = 'SampleMissingError';
+  }
+}

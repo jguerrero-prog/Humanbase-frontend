@@ -1,4 +1,4 @@
-import { ApiError, featureEffects, GenomeLocation, scoreTypeLabel, useDeepseaVariants, useHumanbase, useViewPredictions, variantIdOf, type DeepseaJob, type ScoreType, type VariantRow } from '@humanbase/data';
+import { type DeepseaJob, featureEffects, GenomeLocation, SampleMissingError, type ScoreType, scoreTypeLabel, useDeepseaVariants, useHumanbase, useViewPredictions, variantIdOf, type VariantRow } from '@humanbase/data';
 import {
   ActionMenu,
   Alert,
@@ -87,7 +87,7 @@ const matches = (variant: VariantRow, text: string) => `${variantLabel(variant)}
 /** A finished Sei, Beluga or Seqweaver job: variant scores as a plot and table, then the selected variant's molecular effects. */
 export function DeepseaResultView({ job, title, tools, variant: chosen, onVariantChange }: DeepseaResultViewProps) {
   const model = job.model;
-  const { showsSamples } = useHumanbase();
+  const { examplesOnly } = useHumanbase();
   const [scoreKey, setScoreKey] = useState<string>();
   const { scoreTypes, plotTypes, summary, chosen: plotted, chosenScores, variants, error, refetch } = useDeepseaVariants(job, scoreKey);
   const scoreTracks = useMemo(() => jobScoreTracks(job, scoreTypes ?? []), [job, scoreTypes]);
@@ -206,7 +206,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
             </div>
             {byClass && <KeyLegend title="Sequence class" items={sequenceClassLegend} />}
             {chosenScores?.error ? (
-              <ScoreAlert error={chosenScores.error} showsSamples={showsSamples} onRetry={chosenScores.refetch} />
+              <ScoreAlert error={chosenScores.error} onRetry={chosenScores.refetch} />
             ) : chosenScores?.pending ? (
               <Skeleton width="100%" height="320px" />
             ) : (
@@ -277,7 +277,7 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
               onTypeChange={setFeatureKey}
               scoreKey={score.short_name}
               onSelect={select}
-              {...(!showsSamples && { onMove: (bases: number) => browse(location.move(bases / location.width)) })}
+              {...(!examplesOnly && { onMove: (bases: number) => browse(location.move(bases / location.width)) })}
               view={effectsView}
               onViewChange={setEffectsView}
             />
@@ -289,8 +289,8 @@ export function DeepseaResultView({ job, title, tools, variant: chosen, onVarian
 }
 
 /** The chosen score didn't load: with the API off, the sample data holds only a few of Sei's per-class scores. */
-function ScoreAlert({ error, showsSamples, onRetry }: { error: Error; showsSamples: boolean; onRetry: () => void }) {
-  if (showsSamples && error instanceof ApiError && error.isNotFound) {
+function ScoreAlert({ error, onRetry }: { error: Error; onRetry: () => void }) {
+  if (error instanceof SampleMissingError) {
     return (
       <Alert tone="info" title="The sample data doesn’t include this score">
         With the API off, Sei results show Max sequence class score and the CTCF CTCF-Cohesin, E12 Erythroblast-like and P Promoter scores. Choose one of those, or turn the API on.

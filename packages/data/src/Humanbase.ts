@@ -44,12 +44,15 @@ export class Humanbase {
   /** The tracks people add from their own files or by address; also what genomeTracks reads through. */
   readonly userTracks: UserTracks;
 
+  /** The data covers only recorded examples, as with the API off (see DataClient.examplesOnly). */
+  readonly examplesOnly: boolean;
+
   constructor(
     readonly client: DataClient,
-    readonly showsSamples = client instanceof SampleClient,
     /** Where the API answers, as the app's config names it; the API reference shows full addresses from it. */
     apiBase = '/api',
   ) {
+    this.examplesOnly = client.examplesOnly ?? false;
     this.genes = new GeneService(client);
     this.search = new GeneSearchService(client);
     this.integrations = new IntegrationService(client);
@@ -64,15 +67,15 @@ export class Humanbase {
     this.expecto = new ExpectoService(client);
     this.apiReference = new ApiReferenceService(client, apiBase);
     // Gene lookups and genome tracks read static files on S3, which also stay off while the API is off.
-    this.geneLocator = showsSamples ? new SampleGeneLocator(client) : new S3GeneLocator();
+    this.geneLocator = this.examplesOnly ? new SampleGeneLocator(client) : new S3GeneLocator();
     this.asd = new AsdService(client, this.geneLocator);
     const files = new S3GenomeTracks();
-    this.userTracks = new UserTracks(showsSamples ? new SampleGenomeTracks(client) : files, files);
+    this.userTracks = new UserTracks(this.examplesOnly ? new SampleGenomeTracks(client) : files, files);
     this.genomeTracks = this.userTracks;
   }
 
   static fromConfig(config: AppConfig): Humanbase {
     const client = config.api ? new ApiClient(config.apiBase) : SampleClient.bundled();
-    return new Humanbase(client, client instanceof SampleClient, config.apiBase);
+    return new Humanbase(client, config.apiBase);
   }
 }

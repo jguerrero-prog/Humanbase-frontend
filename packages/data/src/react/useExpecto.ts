@@ -8,7 +8,7 @@ export function useTissueVariants(entrez: number | undefined, database: TissueDa
   const api = useHumanbase();
   return useQuery({
     queryKey: ['tissue-variants', database, entrez],
-    queryFn: () => api.expecto.tissueVariants(entrez ?? 0, database),
+    queryFn: ({ signal }) => api.expecto.tissueVariants(entrez ?? 0, database, signal),
     enabled: entrez !== undefined,
     retry: false,
     staleTime: Infinity,
@@ -17,7 +17,7 @@ export function useTissueVariants(entrez: number | undefined, database: TissueDa
 
 export function useVariantSearch(query: VariantQuery | undefined) {
   const api = useHumanbase();
-  return useQuery({ queryKey: ['expecto-variants', query], queryFn: () => api.expecto.searchVariants(query as VariantQuery), enabled: query !== undefined, staleTime: Infinity });
+  return useQuery({ queryKey: ['expecto-variants', query], queryFn: ({ signal }) => api.expecto.searchVariants(query as VariantQuery, signal), enabled: query !== undefined, staleTime: Infinity });
 }
 
 export function useVariantTotal() {

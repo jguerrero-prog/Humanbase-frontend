@@ -62,4 +62,17 @@ describe('Select', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Elsewhere' }));
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
+
+  it('opens the list in the top layer, so a scrolling dialog never clips it', async () => {
+    renderSelect();
+    await userEvent.click(screen.getByRole('combobox'));
+    const panel = screen.getByRole('listbox').parentElement;
+    expect(panel).toHaveAttribute('popover', 'manual');
+    expect(panel).toHaveStyle({ display: 'block' });
+  });
+
+  it('draws a docs preview in place', () => {
+    renderSelect({ open: true });
+    expect(screen.getByRole('listbox').parentElement).not.toHaveAttribute('popover');
+  });
 });
