@@ -74,7 +74,7 @@
 
 .side-menu .side-menu-title {
   padding-block-end: 20px;
-  font: 500 24px/29px Cabin, sans-serif;
+  font: 500 24px/29px var(--font-family-heading);
   letter-spacing: -0.02em;
   text-transform: none;
   color: var(--text-default);

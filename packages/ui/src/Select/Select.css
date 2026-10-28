@@ -140,7 +140,7 @@
 }
 
 .select-filter input:focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
   box-shadow: none;
 }
 

@@ -45,8 +45,8 @@ export class ExpectoService {
     return undefined;
   }
 
-  async tissueVariants(entrez: number, database: TissueDatabase): Promise<TissueVariants> {
-    return new TissueVariants(await this.client.get<TissueVariantsRecord>(`genes/${entrez}/tissue_variants/`, { database, collapse: true }));
+  async tissueVariants(entrez: number, database: TissueDatabase, signal?: AbortSignal): Promise<TissueVariants> {
+    return new TissueVariants(await this.client.get<TissueVariantsRecord>(`genes/${entrez}/tissue_variants/`, { database, collapse: true }, signal));
   }
 
   /** How many variants ExPecto lists, for the tab's lead. */
@@ -55,7 +55,7 @@ export class ExpectoService {
   }
 
   /** Every variant matching the query. A gene search keeps only that gene, since the API matches the start of the symbol. */
-  async searchVariants(query: VariantQuery): Promise<ScoredVariant[]> {
+  async searchVariants(query: VariantQuery, signal?: AbortSignal): Promise<ScoredVariant[]> {
     const filter: Query =
       query.kind === 'gene'
         ? { gene__standard_name__istartswith: query.symbol }
@@ -64,7 +64,7 @@ export class ExpectoService {
           : { chromosome: query.chromosome, position__gte: query.position, position__lte: query.position };
     const rows: VariantRecord[] = [];
     for (let page = 1; page <= pageLimit; page++) {
-      const answer = await this.client.get<VariantPage>('variants/', { version, ...filter, page });
+      const answer = await this.client.get<VariantPage>('variants/', { version, ...filter, page }, signal);
       rows.push(...answer.results);
       if (!answer.next) break;
     }

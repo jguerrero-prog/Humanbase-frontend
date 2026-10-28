@@ -1,5 +1,6 @@
 import type { DataVersion } from '../genes/Gene';
 
+// The schema leaves the response undescribed; this is what GET /api/integrations/ returns.
 export interface IntegrationRecord {
   slug: string;
   context: {

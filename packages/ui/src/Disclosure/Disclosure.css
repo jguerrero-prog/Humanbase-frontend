@@ -4,7 +4,7 @@
   align-items: center;
   block-size: 32px;
   padding: 0 var(--space-2) 0 var(--space-1);
-  font: 700 15px/1.4 Lato, sans-serif;
+  font: 700 15px/1.4 var(--font-family-body);
   color: var(--text-link);
   background: none;
   border: 0;

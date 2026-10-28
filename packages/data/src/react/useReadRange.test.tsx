@@ -28,4 +28,19 @@ describe('rangeQuery', () => {
     finish(['moved']);
     await waitFor(() => expect(result.current.data).toEqual(['moved']));
   });
+
+  it('cancels the read for a range the view has left', async () => {
+    const client = new QueryClient();
+    const wrapper = ({ children }: { children: ReactNode }) => <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+    const signals: AbortSignal[] = [];
+    const read = (signal: AbortSignal) => {
+      signals.push(signal);
+      return new Promise<string[]>(() => undefined);
+    };
+    const { rerender } = renderHook(({ range }) => useQuery(rangeQuery(['asd-range', range], read, true)), { wrapper, initialProps: { range: 'first' } });
+    await waitFor(() => expect(signals).toHaveLength(1));
+    rerender({ range: 'moved' });
+    await waitFor(() => expect(signals[0]?.aborted).toBe(true));
+    expect(signals[1]?.aborted).toBe(false);
+  });
 });
