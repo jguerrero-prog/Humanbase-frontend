@@ -30,9 +30,9 @@ jobs:
       contents: read
       issues: write
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -40,14 +40,14 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:live
       - if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: live-report
           path: test-results/
           retention-days: 14
       - name: Open an issue when the weekly run fails
         if: ${{ failure() && github.event_name == 'schedule' }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { openOrComment } = await import('${{ github.workspace }}/.github/scripts/live-run-issue.mjs');
@@ -59,9 +59,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
