@@ -16,8 +16,8 @@ export function useGeneBySymbol(symbol: string | undefined) {
   return useQuery({
     queryKey: ['gene-symbol', symbol],
     enabled: Boolean(symbol),
-    queryFn: async () => {
-      const hits = await api.search.exact(symbol ?? '').catch((error: unknown) => {
+    queryFn: async ({ signal }) => {
+      const hits = await api.search.exact(symbol ?? '', signal).catch((error: unknown) => {
         // Not found means no gene matched, as when the API is off and nothing was recorded for this symbol.
         if (error instanceof ApiError && error.isNotFound) return [];
         throw error;

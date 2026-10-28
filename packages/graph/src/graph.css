@@ -101,7 +101,7 @@
 }
 
 .force-graph-label text {
-  font: 700 var(--label-size, 12px) Lato, sans-serif;
+  font: 700 var(--label-size, 12px) var(--font-family-body);
   fill: var(--text-default);
 }
 
@@ -181,7 +181,7 @@
 }
 
 .force-graph-group text {
-  font: 700 14px Lato, sans-serif;
+  font: var(--type-label-sm);
   fill: var(--text-default);
 }
 

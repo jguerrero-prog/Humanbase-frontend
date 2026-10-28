@@ -88,7 +88,7 @@ export function ApiReferenceView({ location, publicApi }: ApiReferenceViewProps)
             </div>
           </dl>
           <p>Each endpoint below lists its parameters, request body and responses. Open Try it to send a request from this page, starting from the API’s examples, and copy the same request as a curl command.</p>
-          {api.showsSamples && (
+          {api.examplesOnly && (
             <Alert tone="info" title="The API is off">
               This reference comes from a recorded copy of the API’s description. Try it answers only requests that have recorded sample data.
             </Alert>
