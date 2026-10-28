@@ -1,6 +1,6 @@
 import { dataVersionNames, useModuleGenes, type GeneHit, type Integration, type ModuleResult, type ModuleView } from '@humanbase/data';
 import { NetworkGraph, type GraphData, type GraphFocus, type GraphLink, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
-import { ActionMenu, Button, Checkbox, DataTooltip, GraphToolbar, HeaderCell, KeyLegend, ResultHeader, ResultLayout, SearchField, Select, Table, TableSkeleton, TextInput } from '@humanbase/ui';
+import { ActionMenu, Button, Checkbox, DataTooltip, genesWord, GraphToolbar, HeaderCell, KeyLegend, ResultHeader, ResultLayout, SearchField, Select, Table, TableSkeleton, TextInput } from '@humanbase/ui';
 import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { ModuleDrawer } from './ModuleDrawer';
 import { colorOf, moduleColors } from './moduleColors';
@@ -29,7 +29,6 @@ export interface ModuleResultViewProps {
 }
 
 const linksOf = (result: ModuleResult, entrez: number): GraphLink[] => result.neighbors(entrez).map((neighbor) => ({ source: String(entrez), target: String(neighbor.entrez), weight: neighbor.weight }));
-const genesWord = (count: number) => (count === 1 ? '1 gene' : `${count} genes`);
 
 export function ModuleResultView({ result, title, view, tissues, starting, notice, onViewChange, onRename, onEditGenes, onTissueChange, renderer }: ModuleResultViewProps) {
   const graph = useRef<NetworkGraphHandle>(null);

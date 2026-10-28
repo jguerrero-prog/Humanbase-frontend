@@ -23,6 +23,16 @@ describe('GeneSearchService', () => {
     await expect(new GeneSearchService(failing).suggest('IL1B')).rejects.toThrow(ApiError);
   });
 
+  it('finds a gene by its exact symbol only, never by an alias', async () => {
+    const hit = (symbol: string, entrez: number, aliases = '') => ({ entrez, standard_name: symbol, aliases, description: '', versions_available: [] });
+    const client = { get: vi.fn().mockResolvedValue([hit('IL1B', 3553), hit('TP53', 7157, 'P53')]), post: vi.fn(), text: vi.fn() };
+    expect((await new GeneSearchService(client).symbol('tp53'))?.entrez).toBe(7157);
+    expect(await new GeneSearchService(client).symbol('P53')).toBeNull();
+    await expect(samples().search.symbol('NOTRECORDED')).resolves.toBeNull();
+    client.get.mockRejectedValue(new ApiError(502, 'genes/search/exact/'));
+    await expect(new GeneSearchService(client).symbol('TP53')).rejects.toThrow(ApiError);
+  });
+
   it('matches a pasted list term by term', async () => {
     const terms = GeneSearchService.terms('IL1B, TNF\nAUTS12;NOTAGENE123  p53');
     const matches = await samples().search.list(terms);

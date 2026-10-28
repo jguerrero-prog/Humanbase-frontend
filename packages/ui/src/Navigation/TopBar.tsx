@@ -46,7 +46,7 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchField, s
   const open = openSection ?? ownOpen;
   const [phoneMenu, setPhoneMenu] = useState(menuOpen ?? false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const searchArea = useRef<HTMLDivElement>(null);
+  const searchArea = useRef<HTMLElement>(null);
   useEffect(() => {
     if (searchOpen) searchArea.current?.querySelector('input')?.focus();
   }, [searchOpen]);
@@ -73,9 +73,9 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchField, s
         </nav>
         {search && (
           <>
-            <div ref={searchArea} className="top-bar-search" role="search">
+            <search ref={searchArea} className="top-bar-search">
               {searchField ?? <SearchField size="medium" label={topBarSearchLabel} placeholder={topBarSearchLabel} />}
-            </div>
+            </search>
             <button type="button" className="top-bar-icon-button top-bar-search-button" aria-label="Search" aria-expanded={searchOpen} onClick={() => setSearchOpen(!searchOpen)}>
               <Icon name={searchOpen ? 'x' : 'search'} size={20} />
             </button>

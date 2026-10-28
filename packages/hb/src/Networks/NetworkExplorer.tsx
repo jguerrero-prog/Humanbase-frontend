@@ -16,7 +16,7 @@ import {
   type NetworkView,
 } from '@humanbase/data';
 import type { GraphRendererFactory, GraphSelection } from '@humanbase/graph';
-import { Alert, Button, EmptyState, ResultHeader, ResultLayout, saveFile, SegmentedControl } from '@humanbase/ui';
+import { Alert, Button, EmptyState, listJoin, ResultHeader, ResultLayout, saveFile, SegmentedControl } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { CompareDialog } from './CompareDialog';
 import { ComparePane } from './ComparePane';
@@ -63,7 +63,6 @@ export interface NetworkExplorerProps {
   renderer?: GraphRendererFactory | undefined;
 }
 
-const listJoin = (items: readonly string[]) => (items.length < 2 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
 
 const tabs: { value: NetworkTab; label: string }[] = [
   { value: 'network', label: 'Tissue network' },

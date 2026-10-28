@@ -6,6 +6,7 @@ import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import { hex, ratio } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const statuses: JobStatus[] = ['queued', 'running', 'finished', 'failed'];
@@ -21,9 +22,9 @@ const resultTabs: TabItem[] = [
 
 const contrast = [
   ['Label, Count, Queued', 'Grey 600 on grey 100; Queued on white', '7.7:1; 8.9:1'],
-  ['Running', 'Info 700 #175CD3 on white', '6.0:1'],
-  ['Finished', 'Success 700 #067647 on white', '5.7:1'],
-  ['Failed', 'Error 700 #B42318 on white', '6.6:1'],
+  ['Running', `Info 700 ${hex('color.info.700')} on white`, `${ratio('color.info.700', 'surface.page', 1)}`],
+  ['Finished', `Success 700 ${hex('color.success.700')} on white`, `${ratio('color.success.700', 'surface.page', 1)}`],
+  ['Failed', `Error 700 ${hex('color.error.700')} on white`, `${ratio('color.error.700', 'surface.page', 1)}`],
   ['On emerald', 'Emerald 600 on white', '6.1:1'],
 ];
 
@@ -55,11 +56,11 @@ const specs = [
   ['badge.padding.sm / md', '0 6px / 0 8px; none for status'],
   ['badge.text', 'Lato Bold 12/16 (sm), 13/18 (md)'],
   ['badge.radius', 'radius.xs 4px'],
-  ['badge.neutral', 'grey 100 #EFEFEF fill, grey 600 #4A4A4A text'],
+  ['badge.neutral', `grey 100 ${hex('color.grey.100')} fill, grey 600 ${hex('color.grey.600')} text`],
   ['badge.status', 'no fill; 12 or 14px icon and word in info, success or error 700; Queued in grey 600'],
   ['badge.on-emerald', 'white fill, emerald 600 text'],
   ['tag.height / radius', '32px / radius.sm 8px'],
-  ['tag.border', '1px grey 300 #D1D1D1; hover grey 500; invalid 1.5px error 700'],
+  ['tag.border', `1px grey 300 ${hex('color.grey.300')}; hover grey 500; invalid 1.5px error 700`],
   ['tag.text', 'Lato Bold 14/20 ink'],
   ['tag.remove', '24px button, 14px x icon, grey 100 on hover'],
   ['context.height / radius', '28px / radius.xs 4px'],

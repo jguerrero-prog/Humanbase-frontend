@@ -1,7 +1,8 @@
 import { ExtendedUniverse, NetworkQuery, NetworkView } from '@humanbase/data';
 import { HomeSearch, NetworkExplorer } from '@humanbase/hb';
 import { useEffect } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import { useReadableSearchParams } from '../useReadableSearchParams';
 import './NetworksPage.css';
 
 export interface NetworksLocationState {
@@ -10,7 +11,7 @@ export interface NetworksLocationState {
 }
 
 export function NetworksPage() {
-  const [search, setSearch] = useSearchParams();
+  const [search, setSearch] = useReadableSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
   const query = NetworkQuery.fromSearch(search);
@@ -21,10 +22,14 @@ export function NetworksPage() {
   const ignoresFlag = query.extendedUniverseStatus === 'ignored';
   useEffect(() => {
     if (!ignoresFlag) return;
-    const next = new URLSearchParams(search);
-    next.delete(ExtendedUniverse.param);
-    void navigate(`?${next}`, { replace: true, state: { ...state, extendedUniverseIgnored: true } satisfies NetworksLocationState });
-  }, [ignoresFlag, search, state, navigate]);
+    setSearch(
+      (current) => {
+        current.delete(ExtendedUniverse.param);
+        return current;
+      },
+      { replace: true, state: { ...state, extendedUniverseIgnored: true } satisfies NetworksLocationState },
+    );
+  }, [ignoresFlag, state, setSearch]);
 
   return (
     <section className="page-section">
@@ -44,7 +49,7 @@ export function NetworksPage() {
           extendedUniverseIgnored={state?.extendedUniverseIgnored ?? false}
           onQueryChange={(next) => {
             const kept = view.with({ selection: undefined, ...(next.compare ? {} : { focus: 'main' as const }) }).applyTo(next.toSearch());
-            void navigate(`/networks/?${next.compare ? compareView.with({ selection: undefined }).applyTo(kept, 'compare') : kept}`);
+            setSearch(next.compare ? compareView.with({ selection: undefined }).applyTo(kept, 'compare') : kept);
           }}
           onViewChange={(next, pane) => setSearch(next.applyTo(search, pane), { replace: true })}
         />

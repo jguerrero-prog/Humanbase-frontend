@@ -1,8 +1,6 @@
 import { dataVersionNames, type DataVersion, type GeneHit } from '@humanbase/data';
-import { Alert } from '@humanbase/ui';
+import { Alert, genesWord, listJoin } from '@humanbase/ui';
 
-export const genesWord = (count: number) => (count === 1 ? '1 gene' : `${count} genes`);
-export const listText = (items: readonly string[]) => (items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
 
 export interface OutsideVersionAlertProps {
   /** Matched genes that aren't in the chosen data version. */
@@ -22,7 +20,7 @@ const reason = (gene: GeneHit, version: DataVersion) =>
 export function OutsideVersionAlert({ outside, version, runnable, onRemove }: OutsideVersionAlertProps) {
   if (outside.length === 0) return null;
   return (
-    <Alert tone="warning" title={`${genesWord(runnable)} will be analyzed in ${dataVersionNames[version]}`} action={{ label: `Remove ${listText(outside.map((gene) => gene.symbol))} from the list`, onSelect: onRemove }}>
+    <Alert tone="warning" title={`${genesWord(runnable)} will be analyzed in ${dataVersionNames[version]}`} action={{ label: `Remove ${listJoin(outside.map((gene) => gene.symbol))} from the list`, onSelect: onRemove }}>
       {outside.map((gene) => (
         <p key={gene.entrez}>{reason(gene, version)}</p>
       ))}

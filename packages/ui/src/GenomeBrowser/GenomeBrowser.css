@@ -9,9 +9,12 @@
 }
 
 .genome-location {
+  inline-size: min(100%, 400px);
+}
+
+.genome-location form {
   display: grid;
   gap: var(--space-1);
-  inline-size: min(100%, 400px);
 }
 
 .genome-location-help {

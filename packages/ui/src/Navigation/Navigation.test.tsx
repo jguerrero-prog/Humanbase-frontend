@@ -30,8 +30,8 @@ describe('TopBar', () => {
   });
 
   it('leaves the search out when the page has its own', () => {
-    render(<TopBar sections={sections} jobs={jobs} search={false} />);
-    expect(screen.queryByRole('search')).not.toBeInTheDocument();
+    const { container } = render(<TopBar sections={sections} jobs={jobs} search={false} />);
+    expect(container.querySelector('search')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Search' })).not.toBeInTheDocument();
   });
 

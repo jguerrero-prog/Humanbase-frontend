@@ -1,4 +1,4 @@
-import { dataVersionNames, IntegrationService, JobHistory, moduleExamples, ModuleService, NetworkQuery, useGeneListMatches, useHumanbase, useIntegrations, type DataVersion, type ModuleExample } from '@humanbase/data';
+import { IntegrationService, JobHistory, moduleExamples, ModuleService, NetworkQuery, useGeneListMatches, useHumanbase, useIntegrations, type DataVersion, type ModuleExample } from '@humanbase/data';
 import {
   Alert,
   Button,
@@ -6,6 +6,7 @@ import {
   GeneMatchList,
   GeneMatchSummary,
   GeneMatchTable,
+  genesWord,
   parseGeneList,
   SearchExamples,
   Select,
@@ -15,6 +16,7 @@ import {
   useLinkHref,
 } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
+import { versionOptions } from '../content/dataVersions';
 import { analysisColumns, analysisOptions, categoryCrumbs } from '../content/product';
 import { hitsOf, matchOf, splitByVersion } from '../HomeSearch/geneMatches';
 import { OutsideVersionAlert } from '../HomeSearch/OutsideVersionAlert';
@@ -34,8 +36,6 @@ export interface ModuleSearchProps {
   afterExamples?: ReactNode;
 }
 
-const versionOptions = (Object.keys(dataVersionNames) as DataVersion[]).map((version) => ({ value: version, label: dataVersionNames[version] }));
-const genesWord = (count: number) => (count === 1 ? '1 gene' : `${count.toLocaleString('en-US')} genes`);
 const rangeHint = `Enter ${ModuleService.minimumGenes} to ${ModuleService.maximumGenes.toLocaleString('en-US')} genes.`;
 
 export function ModuleSearch({ onChooseAnalysis, onStarted, example, draft, afterExamples }: ModuleSearchProps) {

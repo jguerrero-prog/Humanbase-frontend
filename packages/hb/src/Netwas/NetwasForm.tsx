@@ -1,6 +1,7 @@
 import { ApiError, type DataVersion, dataVersionNames, type GwasCheckResult, GwasFileCheck, IntegrationService, JobHistory, type Mhc, type NetwasExample, NetwasService, NetworkQuery, SampleMissingError, useHumanbase, useIntegrations } from '@humanbase/data';
 import { AboutPanel, Accordion, AccordionItem, Alert, Button, ErrorSummary, FileDrop, saveFile, SegmentedControl, Select, TextInput, type ChosenFile, type ErrorSummaryItem } from '@humanbase/ui';
 import { useId, useMemo, useState, type FormEvent } from 'react';
+import { versionOptions } from '../content/dataVersions';
 import '../Jobs/JobForm.css';
 import './Netwas.css';
 
@@ -28,7 +29,6 @@ interface GwasFile extends ChosenFile {
   bytes: File;
 }
 
-const versionOptions = (Object.keys(dataVersionNames) as DataVersion[]).map((version) => ({ value: version, label: dataVersionNames[version] }));
 const mhcOptions = [
   { value: 'exclude', label: 'Exclude' },
   { value: 'keep', label: 'Keep' },
@@ -43,6 +43,10 @@ const number = new Intl.NumberFormat('en-US');
 
 function toolOf(version: DataVersion): string {
   return version === 'v3' ? 'MAGE-WAS' : 'NetWAS';
+}
+
+export function netwasJobLink(id: string): string {
+  return `/netwas/${id}/`;
 }
 
 export function NetwasForm({ draft, docsHref, onStarted }: NetwasFormProps) {
@@ -152,7 +156,7 @@ export function NetwasForm({ draft, docsHref, onStarted }: NetwasFormProps) {
     setSubmitting(true);
     try {
       const job = await api.netwas.submit({ file: file.bytes, tissue, version, pValue: version === 'v1' ? threshold : undefined, mhc: version === 'v3' ? mhc : undefined, title, email });
-      const link = `/netwas/${job.id}/`;
+      const link = netwasJobLink(job.id);
       new JobHistory().add({ id: job.id, tool: job.tool, status: job.status, startedAt: job.created.toISOString(), link, title: title.trim() || undefined, detail: `${job.tool}, ${tissueName}` });
       onStarted(link);
     } catch (error) {

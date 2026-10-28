@@ -8,6 +8,7 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
+import { hex } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const confidence = { label: 'Minimum confidence', min: 0, max: 1, step: 0.01, defaultValue: 0.84 };
@@ -58,8 +59,8 @@ const behavior = [
 ];
 
 const specs = [
-  ['slider.track', '4px, grey 300 #D1D1D1, radius 2px; disabled grey 200'],
-  ['slider.fill', 'emerald 600 #11713C; disabled grey 400'],
+  ['slider.track', `4px, grey 300 ${hex('color.grey.300')}, radius 2px; disabled grey 200`],
+  ['slider.fill', `emerald 600 ${hex('color.emerald.600')}; disabled grey 400`],
   ['slider.thumb', '20px, white, 2px emerald ring (3px while dragging), light shadow'],
   ['slider.thumb.hover / dragging', 'emerald halo, 6px, at 16% / 24%'],
   ['slider.thumb.focus', 'system focus ring'],
