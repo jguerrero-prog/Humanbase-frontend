@@ -134,7 +134,7 @@ const footerNotes = [
 
 const keyboard = [
   ['Tab order', 'Skip link, logo, the four sections, search, Jobs, then the page. Eight stops at most before the content. The footer comes last.'],
-  ['Enter, Space or Down Arrow on a section', 'Opens its menu and focuses the first tool.'],
+  ['Enter, Space or Down Arrow on a section', 'Opens its menu and focuses the first tool. Up Arrow opens it on the last.'],
   ['Up and Down Arrow in a menu', 'Move between tools. Home and End jump to the first and last.'],
   ['Escape', 'Closes the menu and returns focus to its section.'],
   ['Landmarks', 'header, nav labeled “Main”, nav labeled “Breadcrumb”, main. Screen reader users can jump straight to each.'],
@@ -655,7 +655,10 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
 
   .tablet {
     position: relative;
+    display: grid;
+    gap: 10px;
     margin: 0;
+    overflow-x: auto;
   }
 
   .topbar-stage :global(.top-bar),
@@ -885,12 +888,6 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
   .result-body {
     block-size: 216px;
     padding: var(--space-6) var(--space-10) var(--space-8);
-  }
-
-  .tablet {
-    display: grid;
-    gap: 10px;
-    overflow-x: auto;
   }
 
   .tablet :global(.top-bar) {

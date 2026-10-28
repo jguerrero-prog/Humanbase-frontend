@@ -1,4 +1,4 @@
-import { ApiError } from '../ApiError';
+import { ApiError, SampleMissingError } from '../ApiError';
 import type { DataClient } from '../DataClient';
 import { ApiReference, type ApiRequest } from './ApiReference';
 import type { OpenApiDocument } from './OpenApi';
@@ -27,7 +27,7 @@ export class ApiReferenceService {
       return { ok: true, body };
     } catch (error) {
       if (!(error instanceof ApiError)) throw error;
-      return { ok: false, status: error.status, body: error.details ?? null, sampleMissing: error.url.startsWith('sample:') };
+      return { ok: false, status: error.status, body: error.details ?? null, sampleMissing: error instanceof SampleMissingError };
     }
   }
 }

@@ -1,10 +1,10 @@
 import { ApiError, NetworkQuery, useGeneListMatches, useIntegrations, useNetwasJob, useNetwasResult, type NetwasJob } from '@humanbase/data';
-import { Alert, Button, ContextLabel, EmptyState, JobDetails, NetwasGuide, ResultHeader, ResultLayout, saveFile, Skeleton, StatusBadge, type JobStep, useLinkHref } from '@humanbase/ui';
+import { Alert, Button, ContextLabel, JobDetails, NetwasGuide, ResultHeader, ResultLayout, saveFile, StatusBadge, useLinkHref } from '@humanbase/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { netwasCitation as citation } from '../content/cite';
 import { genomeBrowserLink } from '../content/genomeBrowser';
 import { categoryCrumbs, productTools } from '../content/product';
-import { elapsed, jobDateTime as dateTime, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
+import { jobDateTime as dateTime, JobLoadError, JobLoading, jobProgress, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
 import { NetwasGenes } from '../NetwasGenes/NetwasGenes';
 import type { NetwasDraft } from './NetwasForm';
 import './Netwas.css';
@@ -17,13 +17,6 @@ export interface NetwasJobViewProps {
 
 const usualTime = 'NetWAS jobs usually take 10 to 30 minutes.';
 const date = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-function stepsOf(job: NetwasJob, now: number): JobStep[] {
-  const submitted: JobStep = { label: 'Submitted', detail: dateTime.format(job.created), state: 'done' };
-  if (job.status === 'queued') return [submitted, { label: 'Queued', detail: 'Waiting to start', state: 'current' }, { label: 'Running', state: 'upcoming' }, { label: 'Results ready', state: 'upcoming' }];
-  if (job.status === 'failed') return [submitted, { label: 'Queued', state: 'done' }, { label: 'Running', detail: job.failure ? `Stopped: ${job.failure}` : 'Stopped before it finished', state: 'stopped' }];
-  return [submitted, { label: 'Queued', state: 'done' }, { label: 'Running', detail: `${elapsed(job.created, now)} so far. ${usualTime}`, state: 'current' }, { label: 'Results ready', state: 'upcoming' }];
-}
 
 // The API names the reason; the file rules come from the API's description of the upload.
 function whatToDo(job: NetwasJob): string {
@@ -73,32 +66,16 @@ export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {
   }, [data, integrations.data]);
 
   if (job.isError) {
-    const missing = job.error instanceof ApiError && job.error.isNotFound;
-    return missing ? (
-      <EmptyState
-        title="This NetWAS job isn’t available"
-        text="No job has this link. Check that it was copied whole, or run NetWAS again."
-        actions={
-          <a className="button button-secondary" href={linkHref('/netwas/')}>
-            Run NetWAS
-          </a>
-        }
+    return (
+      <JobLoadError
+        missing={job.error instanceof ApiError && job.error.isNotFound}
+        notFound={{ title: 'This NetWAS job isn’t available', text: 'No job has this link. Check that it was copied whole, or run NetWAS again.', run: { label: 'Run NetWAS', href: '/netwas/' } }}
+        onRetry={() => void job.refetch()}
       />
-    ) : (
-      <Alert tone="error" title="This job couldn’t load" action={{ label: 'Try again', onSelect: () => void job.refetch() }}>
-        Humanbase didn’t answer. The job keeps running, so trying again in a moment is safe.
-      </Alert>
     );
   }
 
-  if (!data) {
-    return (
-      <div className="job-page" aria-busy="true">
-        <Skeleton width="240px" />
-        <Skeleton width="420px" />
-      </div>
-    );
-  }
+  if (!data) return <JobLoading />;
 
   const tissueName = integrations.data?.find((network) => network.slug === data.tissue)?.name ?? data.tissue;
   const network = `${tissueName}, ${data.version === 'v3' ? 'MAGE' : 'GIANT'}`;
@@ -179,7 +156,7 @@ export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {
     );
   }
 
-  const badge = data.status === 'queued' ? 'Queued' : data.status === 'running' ? `Running for ${elapsed(data.created, now)}` : `Failed${data.failure ? `: ${data.failure}` : ''}`;
+  const { badge, note, steps } = jobProgress(data, now, usualTime);
   return (
     <>
       <title>{`${badge} · ${title} · Humanbase`}</title>
@@ -188,7 +165,7 @@ export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {
         crumbs={crumbs}
         status={data.status}
         badge={badge}
-        note={data.status === 'running' ? `${elapsed(data.created, now)} so far. ${usualTime}` : data.status === 'queued' ? 'Waiting for a worker to start it.' : undefined}
+        note={note}
         next={data.status === 'failed' ? { title: 'What to do', text: whatToDo(data) } : { title: 'You can leave this page', text: 'Jobs in the top bar shows its progress from any page, and the link works on any device. If you gave an email address, the results link is sent there too.' }}
         actions={
           data.status === 'failed' && (
@@ -207,7 +184,7 @@ export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {
             </>
           )
         }
-        steps={stepsOf(data, now)}
+        steps={steps}
         details={
           <>
             <ContextLabel name="Tool" value={data.tool} />

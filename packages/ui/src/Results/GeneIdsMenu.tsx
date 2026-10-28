@@ -1,8 +1,6 @@
-import { useId, useRef, type KeyboardEvent } from 'react';
 import { Button } from '../Button/Button';
-import { useControlled } from '../hooks/useControlled';
+import { useDisclosureMenu } from '../hooks/useDisclosureMenu';
 import { Icon } from '../Icon/Icon';
-import { useDismiss } from '../List/useDismiss';
 import { MenuPanel } from '../Menu/Menu';
 import './Results.css';
 
@@ -17,31 +15,22 @@ export interface GeneIdsMenuProps {
   gene: string;
   links: readonly GeneIdLink[];
   open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function GeneIdsMenu({ gene, links, open }: GeneIdsMenuProps) {
-  const id = useId();
-  const root = useRef<HTMLDivElement>(null);
-  const [isOpen, setOpen] = useControlled(open, false);
-  useDismiss(root, isOpen, () => setOpen(false));
-
-  const closeOnEscape = (event: KeyboardEvent) => {
-    if (event.key !== 'Escape' || !isOpen) return;
-    event.preventDefault();
-    setOpen(false);
-    root.current?.querySelector('button')?.focus();
-  };
+export function GeneIdsMenu({ gene, links, open, onOpenChange }: GeneIdsMenuProps) {
+  const { root, button, panel, buttonProps, panelProps } = useDisclosureMenu({ open, onOpenChange });
 
   return (
     <div ref={root} className="gene-ids">
-      <Button variant="ghost" size="small" aria-expanded={isOpen} aria-controls={id} onKeyDown={closeOnEscape} onClick={() => setOpen(!isOpen)}>
+      <Button variant="ghost" size="small" ref={button} {...buttonProps}>
         Gene IDs
       </Button>
-      <MenuPanel id={id} className="gene-ids-panel" hidden={!isOpen}>
+      <MenuPanel ref={panel} {...panelProps} className="gene-ids-panel">
         <ul aria-label={`${gene} in other databases`}>
           {links.map((link) => (
             <li key={link.source}>
-              <a className="menu-item" href={link.href} target="_blank" rel="noreferrer" onKeyDown={closeOnEscape}>
+              <a className="menu-item" href={link.href} target="_blank" rel="noreferrer">
                 <span className="menu-item-text">
                   <span className="menu-item-label">
                     {link.source} <span className="gene-ids-value">{link.id}</span>

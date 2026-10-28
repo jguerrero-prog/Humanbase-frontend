@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
+import { apiOrigin } from '../packages/data/src/origins.ts';
 
-const target = (process.argv[2] ?? process.env.HB_API_PROXY_TARGET ?? 'https://hb.flatironinstitute.org').replace(/\/$/, '');
+const target = apiOrigin(process.argv[2] || process.env.HB_API_PROXY_TARGET);
 const { endpoints } = JSON.parse(readFileSync(new URL('../packages/data/endpoints.json', import.meta.url), 'utf8'));
 
 async function check({ method, path, example, documented }) {

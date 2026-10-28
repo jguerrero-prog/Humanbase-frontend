@@ -1,10 +1,11 @@
+import { tracksBase } from '../origins';
 import { SampleClient } from '../sample/SampleClient';
 import { geneModels, segmentOf, transcriptOf } from './GenomeTracks';
 import { SampleGenomeTracks } from './SampleGenomeTracks';
 
-const dna = 'https://s3-us-west-2.amazonaws.com/humanbase/tracks/dis_dna.bw';
+const dna = `${tracksBase}dis_dna.bw`;
 const view = { chrom: 'chr1', start: 2_230_000, end: 2_440_000 };
-const chromHmm = 'https://humanbase.s3.amazonaws.com/tracks/gm12878.ChromHMM.bb';
+const chromHmm = `${tracksBase}gm12878.ChromHMM.bb`;
 
 describe('geneModels', () => {
   it('reads GENCODE lines 1-based and merges a gene’s transcripts', () => {

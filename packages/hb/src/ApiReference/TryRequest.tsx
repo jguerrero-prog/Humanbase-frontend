@@ -1,4 +1,4 @@
-import { useApiRequest, useHumanbase, type ApiEndpoint, type ApiRequestInput, type ApiResult } from '@humanbase/data';
+import { useApiRequest, type ApiEndpoint, type ApiRequestInput, type ApiResult } from '@humanbase/data';
 import { Alert, Button, CodeBlock, Field, FileField, Select, Spinner, TextInput } from '@humanbase/ui';
 import { useState, type FormEvent } from 'react';
 
@@ -7,9 +7,8 @@ const pretty = (body: unknown) => (typeof body === 'string' ? body : JSON.string
 const languageOf = (body: unknown) => (typeof body === 'string' ? {} : { language: 'json' as const });
 
 function Result({ result }: { result: ApiResult }) {
-  const { showsSamples } = useHumanbase();
   if (result.ok) return <CodeBlock label="Response" code={pretty(result.body)} {...languageOf(result.body)} expandLabel="Show the full response" />;
-  if (result.sampleMissing && showsSamples) {
+  if (result.sampleMissing) {
     return (
       <Alert tone="info" title="No sample data for this request">
         With the API off, only requests that have recorded sample data answer. Turn the API on to send this one.
