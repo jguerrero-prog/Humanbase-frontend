@@ -4,18 +4,22 @@ import { edgeBand, edgeCurve, networkEdges, networkNodes, queryGene } from '../.
 interface Props {
   mode: 'strength' | 'module' | 'selected';
   selected?: string;
+  /** Connections below this weight are left out, as the Minimum confidence filter does. */
+  minimum?: number;
 }
 
-const { mode, selected = 'IL1R1' } = Astro.props;
+const { mode, selected = 'IL1R1', minimum = 0 } = Astro.props;
 const points = new Map([[queryGene.gene, queryGene], ...networkNodes.map((node) => [node.gene, node] as const)]);
 const related = (gene: string) => mode !== 'selected' || gene === selected || networkEdges.some((e) => [e.from, e.to].includes(gene) && [e.from, e.to].includes(selected));
 const edges = networkEdges.flatMap((edge) => {
   const band = edgeBand(edge.weight);
   const from = points.get(edge.from);
   const to = points.get(edge.to);
-  if (!band || !from || !to) return [];
+  if (!band || !from || !to || edge.weight < minimum) return [];
   return [{ ...edge, band, from, to, faded: mode === 'selected' && ![edge.from, edge.to].includes(selected) }];
 });
+// As in the graph, a related gene left without a connection above the minimum is hidden.
+const shown = networkNodes.filter((node) => edges.some(({ from, to }) => from.gene === node.gene || to.gene === node.gene));
 const fill = (module: (typeof networkNodes)[number]['module']) => (mode === 'module' ? (module === 'other' ? 'var(--viz-cat-other)' : `var(--viz-module-${module})`) : 'var(--surface-page)');
 // Labels sit above each gene on a pill, sized as the renderer sizes them.
 const pill = (text: string, size: number) => ({ width: text.length * size * 0.62 + 10, height: size + 6 });
@@ -29,7 +33,7 @@ const queryPill = pill(queryGene.gene, 14);
     ))
   }
   {
-    networkNodes.map((node) => (
+    shown.map((node) => (
       <g class:list={{ faded: !related(node.gene) }}>
         {mode === 'selected' && node.gene === selected && <circle class="selection" cx={node.x} cy={node.y} r="11" />}
         <circle class="node" cx={node.x} cy={node.y} r="6" style={`fill: ${fill(node.module)}`} />
@@ -38,7 +42,7 @@ const queryPill = pill(queryGene.gene, 14);
   }
   <circle class="query" cx={queryGene.x} cy={queryGene.y} r="10" />
   {
-    networkNodes.map((node) => {
+    shown.map((node) => {
       const { width, height } = pill(node.gene, 12);
       return (
         <g class:list={['label', { faded: !related(node.gene) }]} transform={`translate(${node.x} ${node.y - 9 - height / 2})`}>
