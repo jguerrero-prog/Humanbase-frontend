@@ -1,5 +1,5 @@
-import { JobHistory, type JobState } from '@humanbase/data';
-import { Breadcrumbs, Button, Dialog, JobSteps, StatusBadge, TextInput, type Crumb, type JobStep } from '@humanbase/ui';
+import { JobHistory, type JobEntry, type JobState } from '@humanbase/data';
+import { Alert, Breadcrumbs, Button, Dialog, EmptyState, JobSteps, Skeleton, StatusBadge, TextInput, useLinkHref, type Crumb, type JobStep } from '@humanbase/ui';
 import { useId, useState, type ReactNode } from 'react';
 import { useCopyLink } from './useCopyLink';
 import './JobPage.css';
@@ -22,41 +22,38 @@ export function elapsed(since: Date, now = Date.now()): string {
 }
 
 /** The job's title, and Rename, which keeps a new title in this browser's job history because no endpoint renames a job. */
-export function useJobTitle(job: JobIdentity | undefined) {
+export function useJobTitle(job: JobIdentity | undefined, fallback = job ? `Untitled ${job.tool} job` : '') {
   const [renamed, setRenamed] = useState<string | undefined>();
-  const fallback = job ? `Untitled ${job.tool} job` : '';
   const saved = job ? new JobHistory().list().find((entry) => entry.id === job.id)?.title : undefined;
-  const title = renamed ?? saved ?? job?.title ?? fallback;
+  // What the job was named or renamed to; an empty rename goes back to the job's own title.
+  const given = (renamed ?? saved) || job?.title || undefined;
   const rename = (next: string) => {
     if (!job) return;
     const history = new JobHistory();
     const entry = history.list().find((item) => item.id === job.id);
     if (entry) history.add({ ...entry, title: next || undefined });
-    setRenamed(next || job.title || fallback);
+    setRenamed(next);
   };
-  return { title, rename };
+  return { title: given ?? fallback, given, rename };
 }
 
-/** Copy link and Rename, with the dialog Rename needs. */
-export function useJobActions(title: string, rename: (title: string) => void) {
+/** Copy link and Rename, with the dialog Rename needs, titled "Rename this job" or another subject. */
+export function useJobActions(title: string, rename: (title: string) => void, subject = 'job') {
   const [renaming, setRenaming] = useState(false);
   const [draft, setDraft] = useState('');
   const { copyButton } = useCopyLink();
+  const startRename = () => {
+    setDraft(title);
+    setRenaming(true);
+  };
   const renameButton = (
-    <Button
-      variant="ghost"
-      size="small"
-      onClick={() => {
-        setDraft(title);
-        setRenaming(true);
-      }}
-    >
+    <Button variant="ghost" size="small" onClick={startRename}>
       Rename
     </Button>
   );
   const overlays = (
     <Dialog
-      title="Rename this job"
+      title={`Rename this ${subject}`}
       open={renaming}
       onClose={() => setRenaming(false)}
       actions={
@@ -78,15 +75,91 @@ export function useJobActions(title: string, rename: (title: string) => void) {
       <TextInput label="Title" value={draft} hint="Kept in this browser and shown in your job list." onChange={(event) => setDraft(event.target.value)} />
     </Dialog>
   );
-  return { copyButton, renameButton, overlays };
+  return { copyButton, renameButton, startRename, overlays };
+}
+
+/** Sets a job's status in this browser's job list. A job missing from the list is added only when newEntry is given. */
+export function syncJobStatus(id: string, status: JobState, newEntry?: Omit<JobEntry, 'status'>) {
+  const history = new JobHistory();
+  const entry = history.list().find((item) => item.id === id);
+  if (entry?.status === status) return;
+  const next = entry ?? newEntry;
+  if (next) history.add({ ...next, status });
 }
 
 /** Keeps this browser's job list in step with what the job page last read. */
 export function syncJobHistory(job: JobIdentity & { status: JobState; created: Date }, link: string, detail: string) {
-  const history = new JobHistory();
-  const entry = history.list().find((item) => item.id === job.id);
-  if (entry?.status === job.status) return;
-  history.add({ ...(entry ?? { id: job.id, tool: job.tool, startedAt: job.created.toISOString(), link, title: job.title, detail }), status: job.status });
+  syncJobStatus(job.id, job.status, { id: job.id, tool: job.tool, startedAt: job.created.toISOString(), link, title: job.title, detail });
+}
+
+export interface TimedJob {
+  status: JobState;
+  created: Date;
+  failure?: string | undefined;
+}
+
+/** A queued, running or failed job's badge, note and steps. usualTime follows the time so far, such as "Jobs usually take 10 minutes." */
+export function jobProgress(job: TimedJob, now: number, usualTime?: string): { badge: string; note: string | undefined; steps: JobStep[] } {
+  const submitted: JobStep = { label: 'Submitted', detail: jobDateTime.format(job.created), state: 'done' };
+  if (job.status === 'queued') {
+    return {
+      badge: 'Queued',
+      note: 'Waiting for a worker to start it.',
+      steps: [submitted, { label: 'Queued', detail: 'Waiting to start', state: 'current' }, { label: 'Running', state: 'upcoming' }, { label: 'Results ready', state: 'upcoming' }],
+    };
+  }
+  if (job.status === 'failed') {
+    return {
+      badge: `Failed${job.failure ? `: ${job.failure}` : ''}`,
+      note: undefined,
+      steps: [submitted, { label: 'Queued', state: 'done' }, { label: 'Running', detail: job.failure ? `Stopped: ${job.failure}` : 'Stopped before it finished', state: 'stopped' }],
+    };
+  }
+  const soFar = [`${elapsed(job.created, now)} so far.`, usualTime].filter(Boolean).join(' ');
+  return {
+    badge: `Running for ${elapsed(job.created, now)}`,
+    note: soFar,
+    steps: [submitted, { label: 'Queued', state: 'done' }, { label: 'Running', detail: soFar, state: 'current' }, { label: 'Results ready', state: 'upcoming' }],
+  };
+}
+
+export interface JobLoadErrorProps {
+  /** True when the API says no job has this link. */
+  missing: boolean;
+  /** What the page says when no job has this link, and where to run one. */
+  notFound: { title: string; text: string; run: { label: string; href: string } };
+  failedTitle?: string;
+  onRetry: () => void;
+}
+
+/** A job page whose job couldn't be read: gone for good, or worth trying again. */
+export function JobLoadError({ missing, notFound, failedTitle = 'This job couldn’t load', onRetry }: JobLoadErrorProps) {
+  const linkHref = useLinkHref();
+  return missing ? (
+    <EmptyState
+      title={notFound.title}
+      text={notFound.text}
+      actions={
+        <a className="button button-secondary" href={linkHref(notFound.run.href)}>
+          {notFound.run.label}
+        </a>
+      }
+    />
+  ) : (
+    <Alert tone="error" title={failedTitle} action={{ label: 'Try again', onSelect: onRetry }}>
+      Humanbase didn’t answer. The job keeps running, so trying again in a moment is safe.
+    </Alert>
+  );
+}
+
+/** A job page while its job is first read. */
+export function JobLoading() {
+  return (
+    <div className="job-page" aria-busy="true">
+      <Skeleton width="240px" />
+      <Skeleton width="420px" />
+    </div>
+  );
 }
 
 export interface JobWaitingProps {

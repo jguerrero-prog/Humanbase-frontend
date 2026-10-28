@@ -10,9 +10,9 @@ export class NetworkService {
   constructor(private readonly client: DataClient) {}
 
   /** The query genes and the 50 genes most related to them, with every connection's weight. */
-  async get(query: NetworkQuery): Promise<Network> {
+  async get(query: NetworkQuery, signal?: AbortSignal): Promise<Network> {
     const params = { entrez: [...query.entrez].sort((a, b) => a - b), giant_version: query.version, datatypes: query.dataTypes.length ? [...query.dataTypes] : undefined };
-    return new Network(await this.client.get<NetworkRecord>(`integrations/${query.slug}/network/`, params));
+    return new Network(await this.client.get<NetworkRecord>(`integrations/${query.slug}/network/`, params, signal));
   }
 
   async dataTypes(version: DataVersion): Promise<DataType[]> {
