@@ -1,7 +1,6 @@
 ---
 import { withBase } from '../../withBase';
-import { ColorCatalog, contrastRatio, lightness } from '@humanbase/tokens/color';
-import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import { contrastRatio, lightness } from '@humanbase/tokens/color';
 import { chromosomeColor, KeyLegend, ScaleLegend, sequenceClassLegend, VariantScorePlot } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -12,12 +11,12 @@ import EffectTrack from '../../components/viz/EffectTrack.astro';
 import HeatmapDiagram from '../../components/viz/HeatmapDiagram.astro';
 import NetworkDiagram from '../../components/viz/NetworkDiagram.astro';
 import ScaleRamp from '../../components/viz/ScaleRamp.astro';
+import { colors } from '../../data/colors';
 import { exampleVariants, selectedVariant } from '../../data/variant-effects';
 import { edgeBands, enrichedTerms, modules, promoterTrack, tissueScores, variantEffects } from '../../data/viz-examples';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
-const white = '#FFFFFF';
-const colors = new ColorCatalog(primitives);
+const white = colors.hex('color.white');
 const ratio = (hex: string) => `${contrastRatio(hex, white).toFixed(2)}:1`;
 const step = (key: string) => {
   const hex = colors.hex(`viz.${key}`);
@@ -43,16 +42,14 @@ const moduleScale = ['Blue', 'Vermilion', 'Teal', 'Violet', 'Brown', 'Purple', '
 });
 
 const bandItems = [
-  { label: 'Dark #787878', color: '--viz-band-dark' },
-  { label: 'Light #BBBBBB', color: '--viz-band-light' },
-  { label: 'Neutral #D3D3D3', color: '--viz-band-neutral' },
+  { label: `Dark ${colors.hex('viz.band.dark')}`, color: '--viz-band-dark' },
+  { label: `Light ${colors.hex('viz.band.light')}`, color: '--viz-band-light' },
+  { label: `Neutral ${colors.hex('viz.band.neutral')}`, color: '--viz-band-neutral' },
 ];
 const chromosomeItems = [...Array.from({ length: 22 }, (_, i) => `chr${i + 1}`), 'chrX', 'chrY'].map((label) => ({ label, color: chromosomeColor(label) ?? '' }));
 const moduleItems = modules.map(({ id, label }) => ({ label, color: id === 'other' ? '--viz-cat-other' : `--viz-module-${id}` }));
 const edgeItems = [...edgeBands].reverse();
 
-const scoreSteps = ['0 to 0.14', '0.14 to 0.29', '0.29 to 0.43', '0.43 to 0.57', '0.57 to 0.71', '0.71 to 0.86', '0.86 to 1'];
-const effectSteps = ['Strong decrease', 'Decrease', 'Slight decrease', 'No change', 'Slight increase', 'Increase', 'Strong increase'];
 
 const aroundRenderer: [string, string, { text: string; href: string }?][] = [
   ['Toolbar above the graph', 'Icon buttons with tooltips and accessible names (Tooltips page): zoom, fit, expand, download and starred sets.'],
@@ -289,28 +286,24 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
       <HeatmapDiagram
         title="Sequential: score with IL1B by tissue"
         summary="Scores with IL1B for 8 genes across 8 tissues; blood vessel is highest for every gene, and CCL2 in brain is not available."
-        scale="sequential"
+        scale={tissueScores.scale}
         columns={tissueScores.columns}
         rows={tissueScores.rows}
         rowLabel="gene"
-        legend={{ title: 'Score with IL1B', ticks: ['0', '0.5', '1'] }}
-        steps={scoreSteps}
       />
       <HeatmapDiagram
         title="Diverging: predicted effect on IL1B expression"
         summary="Predicted effect of 5 variants on IL1B expression in 6 tissues; rs33944208 and rs16944 increase it most, rs1143634 lowers it."
-        scale="diverging"
+        scale={variantEffects.scale}
         columns={variantEffects.columns}
         rows={variantEffects.rows}
         rowLabel="variant"
-        legend={{ title: 'Effect on expression', ticks: ['Decrease', '0', 'Increase'] }}
-        steps={effectSteps}
       />
     </div>
     <ul class="points">
       <li>Cells are separated by a 1px white gap, so neighboring cells of similar color still read as separate values.</li>
       <li>Missing values are white with a grey outline and a diagonal line, labeled “Not available” in the tooltip. Never a color from the scale, and never zero.</li>
-      <li>Values are binned into the seven steps for display; the tooltip and the table view show the exact number.</li>
+      <li>Values are binned into the legend’s steps for display, five on a sequential scale and seven on a diverging one; the tooltip and the table view show the exact number.</li>
       <li>Clustering dendrograms are 1px grey 500 lines; they never use color.</li>
       <li>Variant IDs use the mono font; gene symbols are Lato Bold. Long column labels rotate 50°, never 90°.</li>
     </ul>

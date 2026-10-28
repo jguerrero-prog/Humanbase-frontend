@@ -1,7 +1,7 @@
-import { ApiError, useDeepseaJob, type DeepseaJob } from '@humanbase/data';
-import { Alert, ContextLabel, EmptyState, Skeleton, type JobStep, useLinkHref } from '@humanbase/ui';
+import { ApiError, useDeepseaJob } from '@humanbase/data';
+import { ContextLabel, useLinkHref } from '@humanbase/ui';
 import { useEffect } from 'react';
-import { elapsed, jobDateTime, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
+import { JobLoadError, JobLoading, jobProgress, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
 import { DeepseaFilesView, DeepseaResultFiles } from './DeepseaFilesView';
 import { deepseaFormLink, deepseaJobCrumbs, deepseaJobLink } from './DeepseaForm';
 import { DeepseaResultView } from './DeepseaResultView';
@@ -15,13 +15,6 @@ export interface DeepseaJobViewProps {
   /** A BED job's region open in its genome browser. */
   region?: string | undefined;
   onRegionChange?: ((region: string | undefined) => void) | undefined;
-}
-
-function stepsOf(job: DeepseaJob, now: number): JobStep[] {
-  const submitted: JobStep = { label: 'Submitted', detail: jobDateTime.format(job.created), state: 'done' };
-  if (job.status === 'queued') return [submitted, { label: 'Queued', detail: 'Waiting to start', state: 'current' }, { label: 'Running', state: 'upcoming' }, { label: 'Results ready', state: 'upcoming' }];
-  if (job.status === 'failed') return [submitted, { label: 'Queued', state: 'done' }, { label: 'Running', detail: job.failure ? `Stopped: ${job.failure}` : 'Stopped before it finished', state: 'stopped' }];
-  return [submitted, { label: 'Queued', state: 'done' }, { label: 'Running', detail: `${elapsed(job.created, now)} so far.`, state: 'current' }, { label: 'Results ready', state: 'upcoming' }];
 }
 
 /** A Sei, Beluga or Seqweaver job: its progress while it runs, then its results. */
@@ -39,31 +32,16 @@ export function DeepseaJobView({ id, variant, onVariantChange, region, onRegionC
   }, [data]);
 
   if (job.isError) {
-    return job.error instanceof ApiError && job.error.isNotFound ? (
-      <EmptyState
-        title="This job isn’t available"
-        text="No job has this link. Check that it was copied whole, or run Sei, Beluga or Seqweaver again."
-        actions={
-          <a className="button button-secondary" href={linkHref(deepseaFormLink('sei'))}>
-            Run a sequence model
-          </a>
-        }
+    return (
+      <JobLoadError
+        missing={job.error instanceof ApiError && job.error.isNotFound}
+        notFound={{ title: 'This job isn’t available', text: 'No job has this link. Check that it was copied whole, or run Sei, Beluga or Seqweaver again.', run: { label: 'Run a sequence model', href: deepseaFormLink('sei') } }}
+        onRetry={() => void job.refetch()}
       />
-    ) : (
-      <Alert tone="error" title="This job couldn’t load" action={{ label: 'Try again', onSelect: () => void job.refetch() }}>
-        Humanbase didn’t answer. The job keeps running, so trying again in a moment is safe.
-      </Alert>
     );
   }
 
-  if (!data) {
-    return (
-      <div className="job-page" aria-busy="true">
-        <Skeleton width="240px" />
-        <Skeleton width="420px" />
-      </div>
-    );
-  }
+  if (!data) return <JobLoading />;
 
   const tools = (
     <>
@@ -91,7 +69,7 @@ export function DeepseaJobView({ id, variant, onVariantChange, region, onRegionC
   const tool = data.model.tool;
   const named = data.model.inSentence ?? tool;
   const sequences = data.sequenceNames.length;
-  const badge = data.status === 'queued' ? 'Queued' : data.status === 'running' ? `Running for ${elapsed(data.created, now)}` : `Failed${data.failure ? `: ${data.failure}` : ''}`;
+  const { badge, note, steps } = jobProgress(data, now);
   return (
     <>
       <title>{`${badge} · ${title} · Humanbase`}</title>
@@ -100,7 +78,7 @@ export function DeepseaJobView({ id, variant, onVariantChange, region, onRegionC
         crumbs={deepseaJobCrumbs(data.model, title)}
         status={data.status}
         badge={badge}
-        note={data.status === 'running' ? `${elapsed(data.created, now)} so far.` : data.status === 'queued' ? 'Waiting for a worker to start it.' : undefined}
+        note={note}
         next={
           data.status === 'failed'
             ? { title: 'What to do', text: `The job stopped before it finished. Check the file against the ${tool} rules and run it again.` }
@@ -113,7 +91,7 @@ export function DeepseaJobView({ id, variant, onVariantChange, region, onRegionC
             </a>
           )
         }
-        steps={stepsOf(data, now)}
+        steps={steps}
         details={
           <>
             <ContextLabel name="Tool" value={tool} />

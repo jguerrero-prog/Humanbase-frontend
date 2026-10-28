@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Accordion, AccordionItem } from '../Accordion/Accordion';
 import { Icon } from '../Icon/Icon';
 import { activeJobCount, JobsMenu, type JobsMenuSummary } from '../Jobs/JobsMenu';
-import { useDismiss } from '../List/useDismiss';
 import { Logo } from '../Logo/Logo';
 import { SearchField } from '../SearchField/SearchField';
 import { NavLinkContent, sectionHasImages } from './NavLinkContent';
@@ -43,17 +42,15 @@ function useScrolled(forced: boolean | undefined) {
 
 export function TopBar({ sections, current, jobs, homeHref = '/', searchField, search = true, openSection, menuOpen, scrolled, className }: TopBarProps) {
   const linkHref = useLinkHref();
-  const nav = useRef<HTMLElement>(null);
-  const [open, setOpen] = useState(openSection);
+  const [ownOpen, setOpen] = useState<string>();
+  const open = openSection ?? ownOpen;
   const [phoneMenu, setPhoneMenu] = useState(menuOpen ?? false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const searchArea = useRef<HTMLDivElement>(null);
+  const searchArea = useRef<HTMLElement>(null);
   useEffect(() => {
     if (searchOpen) searchArea.current?.querySelector('input')?.focus();
   }, [searchOpen]);
   const isScrolled = useScrolled(scrolled);
-  const closeMenus = useCallback(() => setOpen(undefined), []);
-  useDismiss(nav, open !== undefined && openSection === undefined, closeMenus);
 
   const running = jobs ? activeJobCount(jobs.jobs) : 0;
 
@@ -63,7 +60,7 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchField, s
         <a className="top-bar-home" href={linkHref(homeHref)}>
           <Logo surface="green" />
         </a>
-        <nav ref={nav} className="top-bar-sections" aria-label="Main">
+        <nav className="top-bar-sections" aria-label="Main">
           {sections.map((section) => (
             <NavMenu
               key={section.label}
@@ -76,9 +73,9 @@ export function TopBar({ sections, current, jobs, homeHref = '/', searchField, s
         </nav>
         {search && (
           <>
-            <div ref={searchArea} className="top-bar-search" role="search">
+            <search ref={searchArea} className="top-bar-search">
               {searchField ?? <SearchField size="medium" label={topBarSearchLabel} placeholder={topBarSearchLabel} />}
-            </div>
+            </search>
             <button type="button" className="top-bar-icon-button top-bar-search-button" aria-label="Search" aria-expanded={searchOpen} onClick={() => setSearchOpen(!searchOpen)}>
               <Icon name={searchOpen ? 'x' : 'search'} size={20} />
             </button>

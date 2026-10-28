@@ -4,7 +4,7 @@
 
 .table-compact {
   --row-height: 36px;
-  --cell-font: 400 14px/20px "Lato", sans-serif;
+  --cell-font: 400 14px/20px var(--font-family-body);
 }
 
 /* Positioned, so visually hidden text in cells scrolls with the table instead of widening the page. */
@@ -110,7 +110,7 @@
 .table-cell {
   block-size: var(--row-height, 48px);
   padding: var(--space-2) var(--space-4);
-  font: var(--cell-font, 400 15px/20px Lato, sans-serif);
+  font: var(--cell-font, 400 15px/20px var(--font-family-body));
   text-align: start;
   vertical-align: middle;
   color: var(--text-secondary);
@@ -231,7 +231,7 @@
 .table-toolbar h2,
 .table-toolbar h3,
 .table-toolbar h4 {
-  font: 600 20px/1.3 Cabin, sans-serif;
+  font: 600 20px/1.3 var(--font-family-heading);
   color: var(--text-default);
 }
 
@@ -258,7 +258,7 @@
 
 .table-selection-bar p {
   flex: 1 1 12rem;
-  font: 700 15px/20px Lato, sans-serif;
+  font: 700 15px/20px var(--font-family-body);
 }
 
 .table-selection-bar .button-ghost {

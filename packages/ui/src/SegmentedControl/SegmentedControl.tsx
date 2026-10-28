@@ -33,10 +33,8 @@ export function SegmentedControl({ label, segments, value, defaultValue, onChang
   };
 
   return (
-    <div role="radiogroup" aria-labelledby={`${id}-label`} className={['segmented', `segmented-${size}`, className].filter(Boolean).join(' ')}>
-      <span id={`${id}-label`} className={hideLabel ? 'visually-hidden' : 'segmented-label'}>
-        {label}
-      </span>
+    <fieldset className={['segmented', `segmented-${size}`, className].filter(Boolean).join(' ')}>
+      <legend className={hideLabel ? 'visually-hidden' : 'segmented-label'}>{label}</legend>
       <div className="segmented-track">
         {segments.map((segment) => (
           <label key={segment.value} className="segment" data-state={segment['data-state']}>
@@ -55,6 +53,6 @@ export function SegmentedControl({ label, segments, value, defaultValue, onChang
           </label>
         ))}
       </div>
-    </div>
+    </fieldset>
   );
 }

@@ -3,6 +3,7 @@ import type { GeneFunction } from '../functions/GeneFunction';
 import type { FunctionDatabase } from '../functions/GeneFunctionService';
 import type { TermDatabase } from '../functions/TermService';
 import { useHumanbase } from './HumanbaseProvider';
+import { queryFailures } from './queryFailures';
 
 /** Every term the network's genes are annotated to; the panels rank them against the genes shown. */
 export function useAnnotatedTerms(entrez: readonly number[] | undefined, databases: readonly TermDatabase[], extendedUniverse = false) {
@@ -34,7 +35,7 @@ function combineGenes(results: UseQueryResult<GeneFunction[]>[]): GenesFunctions
   return {
     data: results.length > 0 && results.every((result) => result.data) ? results.map((result) => result.data as GeneFunction[]) : undefined,
     isError: results.some((result) => result.isError),
-    retry: () => results.filter((result) => result.isError).forEach((result) => void result.refetch()),
+    retry: queryFailures(results).refetch,
   };
 }
 

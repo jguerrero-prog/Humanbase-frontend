@@ -1,6 +1,7 @@
 // Also imported by scripts/record-samples.mjs, so it imports only packages and uses only syntax Node can strip.
 import type { Assembly } from './GenomeLocation';
 import { trackFiles } from './GenomeTracks.ts';
+import { tracksBase } from '../origins.ts';
 
 /** Where a gene sits on the genome: the span of its transcripts. */
 export interface GeneSpan {
@@ -20,7 +21,7 @@ const transcriptsRead = 10;
 export class S3GeneLocator implements GeneLocator {
   private readonly tracks: string;
 
-  constructor(tracks = 'https://humanbase.s3.amazonaws.com/tracks/') {
+  constructor(tracks = tracksBase) {
     this.tracks = tracks;
   }
 
