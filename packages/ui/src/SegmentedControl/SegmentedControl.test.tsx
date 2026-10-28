@@ -9,9 +9,9 @@ const views = [
 ];
 
 describe('SegmentedControl', () => {
-  it('is a radio group named by its visible label', () => {
+  it('is a group of radios named by its visible label', () => {
     render(<SegmentedControl label="View" segments={views} />);
-    expect(screen.getByRole('radiogroup', { name: 'View' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'View' })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: 'Network' })).toBeChecked();
   });
 
@@ -27,7 +27,7 @@ describe('SegmentedControl', () => {
 
   it('keeps the label for screen readers when it is hidden', () => {
     render(<SegmentedControl label="Show top" hideLabel size="small" segments={[{ value: '10', label: '10' }, { value: '25', label: '25' }]} defaultValue="25" />);
-    expect(screen.getByRole('radiogroup', { name: 'Show top' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Show top' })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: '25' })).toBeChecked();
   });
 });

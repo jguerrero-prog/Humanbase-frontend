@@ -1,5 +1,4 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { ApiError } from '../ApiError';
 import type { Gene } from '../genes/Gene';
 import { useHumanbase } from './HumanbaseProvider';
 
@@ -16,13 +15,8 @@ export function useGeneBySymbol(symbol: string | undefined) {
   return useQuery({
     queryKey: ['gene-symbol', symbol],
     enabled: Boolean(symbol),
-    queryFn: async () => {
-      const hits = await api.search.exact(symbol ?? '').catch((error: unknown) => {
-        // Not found means no gene matched, as when the API is off and nothing was recorded for this symbol.
-        if (error instanceof ApiError && error.isNotFound) return [];
-        throw error;
-      });
-      const hit = hits.find((each) => each.symbol.toUpperCase() === symbol?.toUpperCase()) ?? hits[0];
+    queryFn: async ({ signal }) => {
+      const hit = await api.search.symbol(symbol ?? '', signal);
       return hit ? api.genes.get(hit.entrez) : null;
     },
   });

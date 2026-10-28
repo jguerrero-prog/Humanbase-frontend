@@ -44,6 +44,8 @@ describe('GenomeLocation', () => {
     expect(GenomeLocation.chromosomes('hg38').chr1).toBe(248_956_422);
     expect(new GenomeLocation('chrM', 1, 10, 'hg38').chromosomeLength).toBe(16_569);
     expect((GenomeLocation.parse('MT:1-100') as GenomeLocation).chrom).toBe('chrM');
+    expect(GenomeLocation.place('chrMT:100')).toEqual(GenomeLocation.place('chrM:100'));
+    expect(GenomeLocation.place('chrMT:100')).toEqual({ chrom: 'chrM', start: 100 });
   });
 
   it('pans and zooms no further than the ends of the chromosome', () => {

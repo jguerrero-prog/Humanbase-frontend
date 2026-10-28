@@ -85,7 +85,7 @@ const sections: NavSection[] = [
       { label: 'Gene search and matching', href: '/ui-library/gene-search-and-matching/' },
       { label: 'Job submission', href: '/ui-library/job-submission/' },
       { label: 'Job status and queue', href: '/ui-library/job-status-and-queue/' },
-      { label: 'Network graph' },
+      { label: 'Network graph', href: '/ui-library/network-graph/' },
       { label: 'Variant effect results', href: '/ui-library/variant-effect-results/' },
       { label: 'Genome browser', href: '/ui-library/genome-browser/' },
       { label: 'Heatmaps and score legends', href: '/ui-library/heatmaps-and-score-legends/' },

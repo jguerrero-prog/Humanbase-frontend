@@ -8,20 +8,21 @@ export interface TooltipProps {
   children: ReactElement<{ 'aria-describedby'?: string }>;
   placement?: Placement;
   describes?: boolean;
-  open?: boolean | undefined;
+  /** Draws the tooltip shown, for documentation. */
+  preview?: boolean;
   className?: string | undefined;
 }
 
 const offset = 8;
 
-export function Tooltip({ text, children, placement = 'top', describes = false, open: openProp, className }: TooltipProps) {
+export function Tooltip({ text, children, placement = 'top', describes = false, preview = false, className }: TooltipProps) {
   const id = useId();
   const anchor = useRef<HTMLSpanElement>(null);
   const bubble = useRef<HTMLSpanElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [shown, setShown] = useState(false);
   const [side, setSide] = useState(placement);
-  const open = openProp ?? shown;
+  const open = preview || shown;
 
   const hideNow = useCallback(() => {
     clearTimeout(timer.current);

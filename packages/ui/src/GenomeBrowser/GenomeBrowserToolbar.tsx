@@ -56,16 +56,18 @@ export function GenomeBrowserToolbar({
           </Button>
         </div>
       )}
-      <form role="search" className="genome-location" onSubmit={submit}>
-        <SearchField key={location} label="Location or gene" size="medium" name="location" defaultValue={location} aria-describedby={helpId} aria-invalid={locationError ? true : undefined} />
-        <p id={helpId} className={locationError ? 'genome-location-help genome-location-error' : 'genome-location-help'}>
-          {locationError ?? (
-            <>
-              <strong>{assembly}</strong> {widthHelp}
-            </>
-          )}
-        </p>
-      </form>
+      <search className="genome-location">
+        <form onSubmit={submit}>
+          <SearchField key={location} label="Location or gene" size="medium" name="location" defaultValue={location} aria-describedby={helpId} aria-invalid={locationError ? true : undefined} />
+          <p id={helpId} className={locationError ? 'genome-location-help genome-location-error' : 'genome-location-help'}>
+            {locationError ?? (
+              <>
+                <strong>{assembly}</strong> {widthHelp}
+              </>
+            )}
+          </p>
+        </form>
+      </search>
       <div className="genome-zoom">
         <IconButton label="Zoom out" icon="zoom-out" shortcut={keys.zoomOut} onClick={() => onZoom?.('out')} />
         <SegmentedControl

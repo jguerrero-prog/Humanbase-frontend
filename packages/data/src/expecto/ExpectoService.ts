@@ -1,4 +1,5 @@
 import type { DataClient, Query } from '../DataClient';
+import { GenomeLocation } from '../genome/GenomeLocation';
 import { TissueVariants, type TissueDatabase, type TissueVariantsRecord } from './TissueVariants';
 
 export type VariantQuery = { kind: 'gene'; symbol: string } | { kind: 'rsid'; rsid: string } | { kind: 'position'; chromosome: string; position: number };
@@ -39,14 +40,14 @@ export class ExpectoService {
     const typed = text.trim().replace(/,/g, '');
     if (!typed) return undefined;
     if (/^rs\d+$/i.test(typed)) return { kind: 'rsid', rsid: typed.toLowerCase() };
-    const place = /^(?:chr)?([0-9]{1,2}|X|Y|M):(\d+)$/i.exec(typed);
-    if (place?.[1] && place[2]) return { kind: 'position', chromosome: `chr${place[1].toUpperCase()}`, position: Number(place[2]) };
+    const place = GenomeLocation.place(typed);
+    if (place && place.end === undefined) return { kind: 'position', chromosome: place.chrom, position: place.start };
     if (/^[A-Za-z0-9][\w.-]*$/.test(typed)) return { kind: 'gene', symbol: typed.toUpperCase() };
     return undefined;
   }
 
-  async tissueVariants(entrez: number, database: TissueDatabase): Promise<TissueVariants> {
-    return new TissueVariants(await this.client.get<TissueVariantsRecord>(`genes/${entrez}/tissue_variants/`, { database, collapse: true }));
+  async tissueVariants(entrez: number, database: TissueDatabase, signal?: AbortSignal): Promise<TissueVariants> {
+    return new TissueVariants(await this.client.get<TissueVariantsRecord>(`genes/${entrez}/tissue_variants/`, { database, collapse: true }, signal));
   }
 
   /** How many variants ExPecto lists, for the tab's lead. */
@@ -55,7 +56,7 @@ export class ExpectoService {
   }
 
   /** Every variant matching the query. A gene search keeps only that gene, since the API matches the start of the symbol. */
-  async searchVariants(query: VariantQuery): Promise<ScoredVariant[]> {
+  async searchVariants(query: VariantQuery, signal?: AbortSignal): Promise<ScoredVariant[]> {
     const filter: Query =
       query.kind === 'gene'
         ? { gene__standard_name__istartswith: query.symbol }
@@ -64,7 +65,7 @@ export class ExpectoService {
           : { chromosome: query.chromosome, position__gte: query.position, position__lte: query.position };
     const rows: VariantRecord[] = [];
     for (let page = 1; page <= pageLimit; page++) {
-      const answer = await this.client.get<VariantPage>('variants/', { version, ...filter, page });
+      const answer = await this.client.get<VariantPage>('variants/', { version, ...filter, page }, signal);
       rows.push(...answer.results);
       if (!answer.next) break;
     }

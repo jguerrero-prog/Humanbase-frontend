@@ -1,5 +1,5 @@
-import { dataVersionNames, type DataVersion } from '@humanbase/data';
-import { downloadsPage, giantNetworks, mageNetworks, type TissueNetworks } from '@humanbase/hb';
+import type { DataVersion } from '@humanbase/data';
+import { downloadsPage, giantNetworks, mageNetworks, type TissueNetworks, versionOptions } from '@humanbase/hb';
 import { ArticleHero, SegmentedControl, Tabs } from '@humanbase/ui';
 import { useSearchParams } from 'react-router';
 import { TissueNetworkFiles } from './TissueNetworkFiles';
@@ -11,7 +11,6 @@ const tabs = [
   { value: 'variant-effects', label: 'Variant effects' },
 ] as const;
 
-const versions = (Object.keys(dataVersionNames) as DataVersion[]).map((version) => ({ value: version, label: dataVersionNames[version] }));
 const networksOf: Record<DataVersion, TissueNetworks> = { v3: mageNetworks, v1: giantNetworks };
 
 /** humanbase.io/download: tissue networks (MAGE or GIANT) and variant effect files, each tab and version in the URL. */
@@ -33,7 +32,7 @@ export function DownloadsPage() {
             <div className="downloads-group">
               <div className="downloads-section">
                 <p className="downloads-intro">Download Humanbase predicted tissue-specific interaction networks.</p>
-                <SegmentedControl label="Data version" hideLabel segments={versions} value={version} onChange={chooseVersion} />
+                <SegmentedControl label="Data version" hideLabel segments={versionOptions} value={version} onChange={chooseVersion} />
               </div>
               <TissueNetworkFiles networks={networksOf[version]} />
             </div>

@@ -6,6 +6,7 @@ import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import { hex } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const format = new ValueFormat();
@@ -96,23 +97,23 @@ const formatting = [
 ];
 
 const specs = [
-  ['table.container', 'white, 1px border.subtle #E8E8E8, radius.md 12px'],
+  ['table.container', `white, 1px border.subtle ${hex('border.subtle')}, radius.md 12px`],
   ['table.header.height', '44px in both densities'],
-  ['table.header', 'grey 50 #F7F7F7, 1px grey 300 #D1D1D1 bottom line, Lato Bold 14/20 ink'],
-  ['table.header.hover', 'grey 100 #EFEFEF, sort arrow in grey 500'],
+  ['table.header', `grey 50 ${hex('color.grey.50')}, 1px grey 300 ${hex('color.grey.300')} bottom line, Lato Bold 14/20 ink`],
+  ['table.header.hover', `grey 100 ${hex('color.grey.100')}, sort arrow in grey 500`],
   ['table.sort.icon', '16px chevron, 1.5px stroke, 4px from the label'],
   ['table.row.height', '48px comfortable, 36px compact'],
   ['table.cell.padding', '8px 16px; rows still 48px comfortable and 36px compact, and grow for two-line cells'],
   ['table.cell.wrap', 'Text wraps and the row grows; 12px top and bottom (8px compact), long words break anywhere'],
   ['table.note', 'A note under a table sits 16px below it, in caption text'],
   ['table.cell.text', 'Lato 15/20 (14/20 compact); grey 600 for text, ink for numbers'],
-  ['table.row.line', '1px border.subtle #E8E8E8'],
-  ['table.row.hover', 'grey 50 #F7F7F7'],
+  ['table.row.line', `1px border.subtle ${hex('border.subtle')}`],
+  ['table.row.hover', `grey 50 ${hex('color.grey.50')}`],
   ['table.row.selected', 'Checked checkbox only. The selection bar above the table shows the count.'],
-  ['table.score.bar', '80 × 6px, radius 2px, grey 100 #EFEFEF track, grey 600 #4A4A4A fill'],
+  ['table.score.bar', `80 × 6px, radius 2px, grey 100 ${hex('color.grey.100')} track, grey 600 ${hex('color.grey.600')} fill`],
   ['table.checkbox.column', '56px'],
   ['table.pinned.edge', 'shadow/pinned-edge: 8px, ink at 12% to 0%. Hidden until the table scrolls sideways; fades in over the first 8px of scroll'],
-  ['checkbox.box', '20px in a 24px box, radius.xs 4px, 1.5px grey 500 #6B6B6B; checked emerald 600 with a white 2.5px check'],
+  ['checkbox.box', `20px in a 24px box, radius.xs 4px, 1.5px grey 500 ${hex('color.grey.500')}; checked emerald 600 with a white 2.5px check`],
 ];
 
 const usage = `import { Cell, HeaderCell, ScoreCell, Table, useTableSort } from '@humanbase/ui';

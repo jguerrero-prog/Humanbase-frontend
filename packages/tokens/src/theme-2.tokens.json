@@ -636,6 +636,47 @@
       "$value": "{color.emerald.700}"
     }
   },
+  "action": {
+    "ghost-hover": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0,
+          0.4863,
+          0.7373
+        ],
+        "hex": "#007CBC",
+        "alpha": 0.0784
+      }
+    },
+    "ghost-pressed": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0,
+          0.4863,
+          0.7373
+        ],
+        "hex": "#007CBC",
+        "alpha": 0.1608
+      }
+    },
+    "ghost-selected": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0.0,
+          0.4863,
+          0.7373
+        ],
+        "hex": "#007CBC",
+        "alpha": 0.2392
+      }
+    }
+  },
   "button": {
     "secondary": {
       "$type": "color",

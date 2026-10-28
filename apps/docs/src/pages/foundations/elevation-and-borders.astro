@@ -3,14 +3,13 @@ import { flattenTokens, type TokenEntry } from '@humanbase/tokens/catalog';
 import effects from '@humanbase/tokens/src/effects.tokens.json';
 import layers from '@humanbase/tokens/src/layers.tokens.json';
 import primitives from '@humanbase/tokens/src/primitives.tokens.json';
-import semantic from '@humanbase/tokens/src/semantic.tokens.json';
-import { ColorCatalog } from '@humanbase/tokens/color';
 import { Divider, Icon, IconButton } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
+import { colors } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import { displayColor, displayValue } from '../../tokenDisplay';
 
@@ -33,7 +32,6 @@ const dividerUsage = `import { Divider } from '@humanbase/ui';
 
 const byName = (entries: TokenEntry[]) => new Map(entries.map((entry) => [entry.path.join('.'), entry]));
 const effectTokens = byName(flattenTokens(effects));
-const colors = new ColorCatalog(primitives, semantic);
 const primitiveTokens = byName(flattenTokens(primitives));
 const layerTokens = flattenTokens(layers);
 const layerByName = byName(layerTokens);
@@ -100,7 +98,7 @@ const sceneSuggestions = ['IL1A interleukin 1 alpha', 'IL1B interleukin 1 beta',
 <DocsLayout title="Elevation and borders" description="Elevation levels, layer order, borders, surfaces and card states.">
   <Intro
     lead="Elevation shows what sits on top of what. Most of Humanbase is flat and separated by thin borders, which keeps dense scientific screens calm. Shadows are kept for things that float above the page, such as menus, the scrolled top bar and dialogs, so a shadow always means “this is on top and can be dismissed”."
-    status="Updated October 22, 2026 · Shadows use ink (#1A1A1A) at low opacity, never color"
+    status={`Updated October 22, 2026 · Shadows use ink (${colors.hex('color.grey.900')}) at low opacity, never color`}
   >
     <KeyRules
       rules={[

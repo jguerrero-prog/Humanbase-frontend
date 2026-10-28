@@ -191,7 +191,20 @@ describe('ForceGraphRenderer', () => {
     expect(forceSimulation).toHaveBeenCalledTimes(1);
   });
 
-  it('removes everything it drew', () => {
+  it('keeps keyboard focus on the same gene when new data is drawn', () => {
+    const { container, renderer } = mounted();
+    document.body.append(container);
+    (container.querySelector('[aria-label="TNF, query gene"]') as SVGGElement).focus();
+    renderer.render({ ...data, nodes: data.nodes.map((node) => ({ ...node, label: `${node.label} renamed` })) });
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('TNF renamed, query gene');
+    renderer.render({ ...data, links: data.links.slice(1) });
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('TNF, query gene');
+    renderer.render({ ...data, nodes: data.nodes.filter((node) => node.id !== '7124') });
+    expect(document.activeElement).toBe(document.body);
+    container.remove();
+  });
+
+    it('removes everything it drew', () => {
     const { container, renderer } = mounted();
     renderer.destroy();
     expect(container.childElementCount).toBe(0);
@@ -257,7 +270,16 @@ describe('ForceGraphRenderer with groups', () => {
     expect(radii()).toEqual([6, 8, 10]);
   });
 
-  it('selects a group from its label and fades the other groups', () => {
+  it('keeps keyboard focus on the same group label when new data is drawn', () => {
+    const { container, renderer } = mountedGroups();
+    document.body.append(container);
+    (container.querySelector('[aria-label="M3, 1 gene"]') as SVGGElement).focus();
+    renderer.render({ ...grouped, nodes: grouped.nodes.map((node) => ({ ...node, label: node.label.toLowerCase() })) });
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('M3, 1 gene');
+    container.remove();
+  });
+
+    it('selects a group from its label and fades the other groups', () => {
     const { container, renderer, onSelectGroup } = mountedGroups();
     (container.querySelector('[aria-label="M3, 1 gene"]') as SVGGElement).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
     expect(onSelectGroup).toHaveBeenCalledWith('m3');
