@@ -1,6 +1,7 @@
 ---
 import { withBase } from '../../withBase';
 import {
+  ActionMenu,
   Button,
   Cell,
   Checkbox,
@@ -60,12 +61,6 @@ const toolbar: GraphAction[][] = [
     { label: 'Fit to screen', icon: 'fit' },
     { label: 'Expand', icon: 'maximize' },
   ],
-  [
-    { label: 'Layout: query genes in the center', icon: 'query-gene' },
-    { label: 'Pause layout', icon: 'pause' },
-    { label: 'Starred sets', icon: 'bookmark' },
-  ],
-  [{ label: 'Download', icon: 'download' }],
 ];
 
 const related = [
@@ -236,7 +231,7 @@ const specs = [
   ['grid', '1440px: 64px margins, 12 columns of 87px, 24px gutters'],
   ['result header', '24px below the top bar; title Cabin Medium 36; 14px between rows; tabs at the bottom'],
   ['main view', '8 columns (866px at 1440), white, 1px border.subtle, radius.md 12px, 20px padding, 16px on a phone'],
-  ['graph toolbar', '36px icon buttons, 8px apart, in groups split by dividers: view (zoom, fit, expand), output (download), then the Starred sets menu. Each has a tooltip and an accessible name.'],
+  ['graph toolbar', '36px icon buttons, 8px apart, in one group (zoom, fit, expand), then the Download network and Starred sets menus. Each has a tooltip and an accessible name.'],
   ['companion', '4 columns (421px at 1440); table or summary'],
   ['companion tabs', 'Genes, Processes, Tissues, each with a count; search and download sit above the table'],
   ['star toggle', '32px button with a 16px star, grey 600; pressed, the star fills with its set’s viz.cat color inside an ink outline; aria-pressed, named “Highlight <term> genes in the network”'],
@@ -299,7 +294,10 @@ const il1r1Terms = [
             </Fragment>
           </ResultHeader>
           <Fragment slot="main">
-            <GraphToolbar label="Graph controls" groups={toolbar} tableHref="#network-result" />
+            <GraphToolbar label="Graph controls" groups={toolbar} tableHref="#network-result">
+              <ActionMenu label="Download network" icon="download" items={[{ label: 'Download as PNG' }, { label: 'Download as SVG' }, { label: 'Download visible network as text' }, { label: 'Download entire network as text' }]} />
+              <ActionMenu label="Starred sets" icon="star" items={[{ label: 'Star a process or tissue to highlight its genes', disabled: true }]} />
+            </GraphToolbar>
             <div class="graph-area"><NetworkSketch /><p class="graph-label">Network graph, shown as a diagram</p></div>
             <div class="graph-meta">
               <KeyLegend title="Connection" mark="line" items={edgeItems} />

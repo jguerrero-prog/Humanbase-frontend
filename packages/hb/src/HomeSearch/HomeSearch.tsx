@@ -1,4 +1,4 @@
-import { dataVersionNames, GeneSearchService, IntegrationService, NetworkQuery, useGeneSuggestions, useHumanbase, useIntegrations, type DataVersion, type GeneHit, type TermMatches } from '@humanbase/data';
+import { GeneSearchService, IntegrationService, NetworkQuery, useGeneSuggestions, useHumanbase, useIntegrations, type DataVersion, type GeneHit, type TermMatches } from '@humanbase/data';
 import {
   Alert,
   Button,
@@ -13,6 +13,7 @@ import {
   useLinkHref,
 } from '@humanbase/ui';
 import { useEffect, useMemo, useRef, useState, type ClipboardEvent, type KeyboardEvent, type ReactNode } from 'react';
+import { versionOptions } from '../content/dataVersions';
 import { analysisColumns, analysisOptions, categoryCrumbs } from '../content/product';
 import { hitsOf, matchOf, splitByVersion, suggestionOf } from './geneMatches';
 import { genesWord, OutsideVersionAlert } from './OutsideVersionAlert';
@@ -33,7 +34,6 @@ export interface HomeSearchProps {
 const exampleGenes = ['IL1B', 'BRCA1', 'PTEN'];
 // As on humanbase.io: a term, not a gene, so it opens the suggestions for genes annotated to it.
 const exampleTerm = 'cancer';
-const versionOptions = (Object.keys(dataVersionNames) as DataVersion[]).map((version) => ({ value: version, label: dataVersionNames[version] }));
 
 export function HomeSearch({ onShowNetwork, onChooseAnalysis, onExampleSet, afterExamples, surface = 'brand' }: HomeSearchProps) {
   const linkHref = useLinkHref();

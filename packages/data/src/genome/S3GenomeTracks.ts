@@ -3,6 +3,7 @@ import type { BigBed, BigWig } from '@gmod/bbi';
 import type { TwoBitFile } from '@gmod/twobit';
 import type { GenericFilehandle } from 'generic-filehandle2';
 import type { Assembly } from './GenomeLocation';
+import { tracksBase } from '../origins.ts';
 import { geneModels, segmentOf, trackFiles, transcriptOf, type GeneModel, type GenomeSpan, type GenomeTracks, type ScorePoint, type Segment, type SequenceSpan } from './GenomeTracks.ts';
 
 /** What a bigWig or bigBed file says about itself before any data is read. */
@@ -24,13 +25,18 @@ export class S3GenomeTracks implements GenomeTracks {
   private readonly segmentReads = new Map<string, Promise<Segment[]>>();
   private readonly blobs = new Map<string, Blob>();
 
-  constructor(tracks = 'https://humanbase.s3.amazonaws.com/tracks/') {
+  constructor(tracks = tracksBase) {
     this.tracks = tracks;
   }
 
   /** Reads the file under this key from the person's own computer instead of an address. */
   addFile(key: string, file: Blob): void {
     this.blobs.set(key, file);
+  }
+
+  removeFile(key: string): void {
+    this.blobs.delete(key);
+    this.opened.delete(key);
   }
 
   async header(url: string): Promise<TrackFileHeader> {

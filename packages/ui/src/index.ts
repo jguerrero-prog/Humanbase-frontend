@@ -99,7 +99,7 @@ export {
 } from './Table/Table';
 export { ValueFormat, type FormattedValue } from './Table/ValueFormat';
 export { ViewAsTable, type ViewAsTableProps } from './Table/ViewAsTable';
-export { PageLink, Pagination, ShowMore, pageSizeMemory, rowsPerPage, type PageLinkProps, type PaginationProps, type ShowMoreProps } from './Pagination/Pagination';
+export { PageLink, Pagination, ShowMore, rowsPerPage, type PageLinkProps, type PaginationProps, type ShowMoreProps } from './Pagination/Pagination';
 export { PageWindow, type PageSlot } from './Pagination/PageWindow';
 export { Breadcrumbs, SkipLink, type BreadcrumbsProps, type Crumb } from './Navigation/Breadcrumbs';
 export { Footer, mailingListHref, type FooterGroup, type FooterProps } from './Navigation/Footer';

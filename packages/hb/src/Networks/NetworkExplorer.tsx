@@ -91,6 +91,12 @@ export function NetworkExplorer({ query, view, compareView = view, onQueryChange
   const extendedUniverse = query.extendedUniverseStatus === 'active';
   const [missingDismissed, setMissingDismissed] = useState(false);
   const [processMenuOpen, setProcessMenuOpen] = useState(false);
+  const [shownHref, setShownHref] = useState(query.href);
+  if (shownHref !== query.href) {
+    setShownHref(query.href);
+    setMissingDismissed(false);
+    setProcessMenuOpen(false);
+  }
   const [editingGenes, setEditingGenes] = useState(false);
   const [addingNetwork, setAddingNetwork] = useState(false);
 
