@@ -1,7 +1,6 @@
 ---
 import { withBase } from '../../withBase';
-import { ColorCatalog, contrastRatio, lightness } from '@humanbase/tokens/color';
-import primitives from '@humanbase/tokens/src/primitives.tokens.json';
+import { contrastRatio, lightness } from '@humanbase/tokens/color';
 import { chromosomeColor, KeyLegend, ScaleLegend, sequenceClassLegend, VariantScorePlot } from '@humanbase/ui';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
@@ -12,12 +11,12 @@ import EffectTrack from '../../components/viz/EffectTrack.astro';
 import HeatmapDiagram from '../../components/viz/HeatmapDiagram.astro';
 import NetworkDiagram from '../../components/viz/NetworkDiagram.astro';
 import ScaleRamp from '../../components/viz/ScaleRamp.astro';
+import { colors } from '../../data/colors';
 import { exampleVariants, selectedVariant } from '../../data/variant-effects';
 import { edgeBands, enrichedTerms, modules, promoterTrack, tissueScores, variantEffects } from '../../data/viz-examples';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
-const white = '#FFFFFF';
-const colors = new ColorCatalog(primitives);
+const white = colors.hex('color.white');
 const ratio = (hex: string) => `${contrastRatio(hex, white).toFixed(2)}:1`;
 const step = (key: string) => {
   const hex = colors.hex(`viz.${key}`);
@@ -43,9 +42,9 @@ const moduleScale = ['Blue', 'Vermilion', 'Teal', 'Violet', 'Brown', 'Purple', '
 });
 
 const bandItems = [
-  { label: 'Dark #787878', color: '--viz-band-dark' },
-  { label: 'Light #BBBBBB', color: '--viz-band-light' },
-  { label: 'Neutral #D3D3D3', color: '--viz-band-neutral' },
+  { label: `Dark ${colors.hex('viz.band.dark')}`, color: '--viz-band-dark' },
+  { label: `Light ${colors.hex('viz.band.light')}`, color: '--viz-band-light' },
+  { label: `Neutral ${colors.hex('viz.band.neutral')}`, color: '--viz-band-neutral' },
 ];
 const chromosomeItems = [...Array.from({ length: 22 }, (_, i) => `chr${i + 1}`), 'chrX', 'chrY'].map((label) => ({ label, color: chromosomeColor(label) ?? '' }));
 const moduleItems = modules.map(({ id, label }) => ({ label, color: id === 'other' ? '--viz-cat-other' : `--viz-module-${id}` }));
