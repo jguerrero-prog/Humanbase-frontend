@@ -53,4 +53,18 @@ describe('ActionMenu', () => {
     await userEvent.click(button);
     expect(screen.getByRole('menuitem', { name: 'Show AS 200bp' })).toHaveFocus();
   });
+
+  it('is controlled with open and onOpenChange, and focuses the first command when opened', async () => {
+    const onOpenChange = vi.fn();
+    render(<ActionMenu label="Track options" items={[{ label: 'Settings' }, { label: 'Remove' }]} open onOpenChange={onOpenChange} />);
+    expect(screen.getByRole('menuitem', { name: 'Settings' })).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+  });
+
+  it('draws a docs preview in place, outside the top layer', () => {
+    render(<ActionMenu label="Track options" items={[{ label: 'Settings' }]} preview />);
+    expect(screen.getByRole('menu').parentElement).not.toHaveAttribute('popover');
+  });
 });

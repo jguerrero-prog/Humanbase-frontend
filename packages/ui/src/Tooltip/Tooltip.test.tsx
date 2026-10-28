@@ -96,4 +96,12 @@ describe('Toggletip', () => {
     await userEvent.click(button);
     expect(button).toHaveAttribute('aria-expanded', 'false');
   });
+
+  it('is controlled with open and onOpenChange', async () => {
+    const onOpenChange = vi.fn();
+    render(<Toggletip term="MAGE" body="Networks built from 7,463 datasets." open onOpenChange={onOpenChange} />);
+    await userEvent.click(screen.getByRole('button', { name: 'About MAGE' }));
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(screen.getByRole('status')).toHaveTextContent('Networks built');
+  });
 });

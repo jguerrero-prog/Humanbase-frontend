@@ -9,9 +9,12 @@
 }
 
 .genome-location {
+  inline-size: min(100%, 400px);
+}
+
+.genome-location form {
   display: grid;
   gap: var(--space-1);
-  inline-size: min(100%, 400px);
 }
 
 .genome-location-help {
@@ -90,12 +93,12 @@
 }
 
 .track-header-name {
-  font: 700 13px/1.4 Lato, sans-serif;
+  font: 700 13px/1.4 var(--font-family-body);
   color: var(--text-default);
 }
 
 .track-header-meta {
-  font: 400 12px/1.4 Lato, sans-serif;
+  font: 400 12px/1.4 var(--font-family-body);
   color: var(--text-secondary);
 }
 
@@ -125,7 +128,7 @@
 
 .tracks-source {
   padding-inline-start: 36px;
-  font: 400 12px/1.4 Lato, sans-serif;
+  font: 400 12px/1.4 var(--font-family-body);
   color: var(--text-secondary);
 }
 
@@ -191,7 +194,7 @@
 }
 
 .score-tracks-tick {
-  font: 400 11px "Atkinson Hyperlegible Mono", monospace;
+  font: 400 11px var(--font-family-mono);
   fill: var(--text-secondary);
 }
 
@@ -277,7 +280,7 @@
 }
 
 .genome-tracks-base {
-  font: 400 11px "Atkinson Hyperlegible Mono", monospace;
+  font: 400 11px var(--font-family-mono);
   fill: var(--text-secondary);
 }
 
@@ -300,7 +303,7 @@
 }
 
 .genome-tracks-value {
-  font: 700 11px Lato, sans-serif;
+  font: 700 11px var(--font-family-body);
   fill: var(--text-default);
 }
 
@@ -322,7 +325,7 @@
 }
 
 .genome-tracks-gene-name {
-  font: 700 12px Lato, sans-serif;
+  font: 700 12px var(--font-family-body);
   fill: var(--text-default);
 }
 
@@ -336,7 +339,7 @@
 }
 
 .genome-tracks-pill-text {
-  font: 400 12px "Atkinson Hyperlegible Mono", monospace;
+  font: 400 12px var(--font-family-mono);
   fill: var(--text-on-brand);
 }
 
@@ -367,12 +370,12 @@
 
 .genome-figure-title,
 .genome-figure-name {
-  font: 700 13px Lato, sans-serif;
+  font: 700 13px var(--font-family-body);
   fill: var(--text-default);
 }
 
 .genome-figure-meta {
-  font: 400 12px Lato, sans-serif;
+  font: 400 12px var(--font-family-body);
   fill: var(--text-secondary);
 }
 

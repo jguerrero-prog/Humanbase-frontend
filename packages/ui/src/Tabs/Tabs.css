@@ -38,7 +38,7 @@
   align-items: center;
   block-size: 48px;
   padding: 0 var(--space-4);
-  font: 700 16px/24px Lato, sans-serif;
+  font: 700 16px/24px var(--font-family-body);
   color: var(--text-secondary);
   white-space: nowrap;
   cursor: pointer;

@@ -1,13 +1,13 @@
 import type { Network, NetworkEdge, NetworkSubset, NetworkView } from '@humanbase/data';
 import { edgeBandsFrom, NetworkGraph, type GraphData, type GraphFocus, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
-import { ActionMenu, Checkbox, DataTooltip, GraphToolbar, KeyLegend, Slider, Spinner, useExportMenu, useImageFormats, type ActionMenuItem, type GraphAction } from '@humanbase/ui';
+import { ActionMenu, Checkbox, DataTooltip, GraphToolbar, KeyLegend, Slider, Spinner, useExportMenu, useImageFormats, type ActionMenuItem } from '@humanbase/ui';
 import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { ConnectionsTable } from './ConnectionsTable';
+import { useGraphToolbar } from './useGraphToolbar';
 import { tooltipAt } from './graphTooltip';
 import { networkFileName, networkText } from './networkExport';
 import { useStarredHighlights } from './starredSets';
 
-const zoomStep = 1.3;
 const count = (n: number, noun: string) => `${n} ${noun}${n === 1 ? '' : 's'}`;
 
 function resultLine({ genes, edges, hidden }: NetworkSubset, total: number, minConfidence: number): string {
@@ -76,7 +76,6 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
   const total = network?.genes.length ?? 0;
 
   const asTable = view.display === 'table';
-  const expand: GraphAction[] = canExpand ? [{ label: 'Expand', icon: 'maximize', pressed: view.expanded, onSelect: () => onViewChange(view.with({ expanded: !view.expanded })) }] : [];
   const images = useImageFormats(asTable ? undefined : graph, pngWidth);
   const text = (edges: readonly NetworkEdge[] | undefined) => ({ extension: 'txt', type: 'text/plain', disabled: !edges, make: () => networkText(edges ?? []) });
   const downloads = useExportMenu(
@@ -87,18 +86,7 @@ export function GraphPanel({ network, subset, view, minConfidence, label, tableC
       { label: 'Download entire network as text', ...text(network?.edges) },
     ],
   );
-  // Zoom and fit only apply to the drawing, so the table keeps just Expand.
-  const groups: GraphAction[][] = asTable
-    ? [expand]
-    : [
-        [
-          { label: 'Zoom in', icon: 'zoom-in', onSelect: () => graph.current?.zoomBy(zoomStep) },
-          { label: 'Zoom out', icon: 'zoom-out', onSelect: () => graph.current?.zoomBy(1 / zoomStep) },
-          { label: 'Fit to screen', icon: 'fit', onSelect: () => graph.current?.fit() },
-          ...expand,
-        ],
-      ];
-  const toolbar = groups.filter((group) => group.length > 0);
+  const toolbar = useGraphToolbar(graph, { asTable, expand: canExpand ? { expanded: view.expanded, onToggle: () => onViewChange(view.with({ expanded: !view.expanded })) } : undefined });
 
   return (
     <>

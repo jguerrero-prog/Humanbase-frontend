@@ -24,7 +24,7 @@ export interface MultiSelectProps {
   legend?: string;
   size?: FieldSize;
   /** Draws the menu open in place, for documentation. */
-  open?: boolean;
+  preview?: boolean;
 }
 
 export function multiSelectSummary(options: readonly MultiSelectOption[], chosen: ReadonlySet<string>, noun: string): string {
@@ -33,7 +33,7 @@ export function multiSelectSummary(options: readonly MultiSelectOption[], chosen
   return `${chosen.size} of ${options.length} ${noun}`;
 }
 
-export function MultiSelect({ label, noun, options, value, onChange, legend = label, size = 'small', open = false }: MultiSelectProps) {
+export function MultiSelect({ label, noun, options, value, onChange, legend = label, size = 'small', preview = false }: MultiSelectProps) {
   const id = useId();
   const panelId = `${id}-panel`;
   const anchor = `--multi-${id.replace(/[^\w-]/g, '')}`;
@@ -66,14 +66,14 @@ export function MultiSelect({ label, noun, options, value, onChange, legend = la
     <Field label={label} size={size}>
       {(control) => (
         <div className={`select select-${size} multi-select`}>
-          <button {...control} ref={button} type="button" className="field-control select-trigger" popoverTarget={open ? undefined : panelId} aria-expanded={open || undefined} style={{ anchorName: anchor } as CSSProperties}>
+          <button {...control} ref={button} type="button" className="field-control select-trigger" popoverTarget={preview ? undefined : panelId} aria-expanded={preview || undefined} style={{ anchorName: anchor } as CSSProperties}>
             <span className="select-value">{multiSelectSummary(options, chosen, noun)}</span>
             <Icon name="chevron-down" size={16} />
           </button>
           <MenuPanel
             id={panelId}
-            popover={open ? undefined : 'auto'}
-            className={open ? 'multi-select-panel is-static' : 'multi-select-panel'}
+            popover={preview ? undefined : 'auto'}
+            className={preview ? 'multi-select-panel is-static' : 'multi-select-panel'}
             style={{ positionAnchor: anchor } as CSSProperties}
             onBlur={closeOnLeave}
             onToggle={(event) => {

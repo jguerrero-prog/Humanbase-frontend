@@ -1,5 +1,6 @@
 import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 import { Button } from '../Button/Button';
+import { useControlled } from '../hooks/useControlled';
 import { Icon, type IconName } from '../Icon/Icon';
 import { ListNavigator } from '../List/ListNavigator';
 import { useDismiss } from '../List/useDismiss';
@@ -23,6 +24,9 @@ export interface ActionMenuProps {
   label: string;
   items: readonly ActionMenuItem[];
   open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Draws the menu open in place, for documentation. */
+  preview?: boolean;
   defaultHighlight?: number;
   size?: 'medium' | 'small';
   /** `text` shows the label on a ghost button instead of the more icon. */
@@ -32,41 +36,48 @@ export interface ActionMenuProps {
   className?: string;
 }
 
-export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1, size = 'medium', trigger = 'icon', icon = 'more-horizontal', className }: ActionMenuProps) {
+export function ActionMenu({ label, items, open: openProp, onOpenChange, preview = false, defaultHighlight = -1, size = 'medium', trigger = 'icon', icon = 'more-horizontal', className }: ActionMenuProps) {
   const id = useId();
   const wrapper = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const panel = useRef<HTMLDivElement>(null);
   const anchor = `--action-menu-${id.replace(/[^\w-]/g, '')}`;
-  const [ownOpen, setOwnOpen] = useState(false);
-  const [focused, setFocused] = useState(defaultHighlight);
-  const open = openProp ?? ownOpen;
+  const [shown, setShown] = useControlled(openProp, false);
+  const [chosen, setChosen] = useState(defaultHighlight);
+  const open = preview || shown;
+  const live = shown && !preview;
   const navigator = useMemo(() => new ListNavigator(items), [items]);
+  const focused = live && chosen < 0 ? navigator.first() : chosen;
+
+  const setOpen = useCallback((next: boolean) => {
+    setShown(next);
+    onOpenChange?.(next);
+  }, [setShown, onOpenChange]);
 
   const close = useCallback((returnFocus = false) => {
-    setOwnOpen(false);
-    setFocused(-1);
+    setOpen(false);
+    setChosen(-1);
     if (returnFocus) button.current?.focus();
-  }, []);
+  }, [setOpen]);
   const dismiss = useCallback(() => close(), [close]);
-  useDismiss(wrapper, open && openProp === undefined, dismiss);
+  useDismiss(wrapper, live, dismiss);
 
   // The menu opens in the top layer, so a scrolling or clipped container, such as a genome track's header, never cuts it off.
   useLayoutEffect(() => {
     const node = panel.current;
-    if (!ownOpen || !node) return;
+    if (!live || !node) return;
     node.showPopover();
     if (!anchorSupported && button.current) placeUnder(node, button.current);
-  }, [ownOpen]);
+  }, [live]);
 
   useEffect(() => {
-    if (ownOpen && focused >= 0) itemRefs.current[focused]?.focus();
-  }, [ownOpen, focused]);
+    if (live && focused >= 0) itemRefs.current[focused]?.focus();
+  }, [live, focused]);
 
   const openAt = (index: number) => {
-    setOwnOpen(true);
-    setFocused(index);
+    setOpen(true);
+    setChosen(index);
   };
 
   const run = (item: ActionMenuItem | undefined) => {
@@ -95,7 +106,7 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
     const move = moves[event.key];
     if (move) {
       event.preventDefault();
-      setFocused(move());
+      setChosen(move());
     } else if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       run(items[focused]);
@@ -105,7 +116,7 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
     } else if (event.key === 'Tab') {
       close();
     } else if (event.key.length === 1) {
-      setFocused(navigator.typeAhead(focused, event.key));
+      setChosen(navigator.typeAhead(focused, event.key));
     }
   };
 
@@ -130,7 +141,7 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
         </button>
       )}
       {open && (
-        <MenuPanel ref={panel} className="action-menu-panel" popover={openProp === undefined ? 'manual' : undefined} style={{ positionAnchor: anchor } as CSSProperties}>
+        <MenuPanel ref={panel} className="action-menu-panel" popover={preview ? undefined : 'manual'} style={{ positionAnchor: anchor } as CSSProperties}>
           <div id={`${id}-menu`} role="menu" aria-label={label} tabIndex={-1} className="menu-list" onKeyDown={handleMenuKeys}>
             {items.map((item, index) => (
               <Fragment key={item.label}>
@@ -149,7 +160,7 @@ export function ActionMenu({ label, items, open: openProp, defaultHighlight = -1
                   destructive={item.destructive}
                   highlighted={index === focused}
                   onClick={() => run(item)}
-                  onPointerEnter={() => !item.disabled && setFocused(index)}
+                  onPointerEnter={() => !item.disabled && setChosen(index)}
                 />
               </Fragment>
             ))}

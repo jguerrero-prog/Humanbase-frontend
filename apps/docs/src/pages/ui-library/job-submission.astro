@@ -9,6 +9,7 @@ import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import ProductScreen from '../../components/docs/ProductScreen.astro';
+import { required } from '../../data/required';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const inputTypes = [
@@ -187,7 +188,7 @@ new VariantFileCheck('vcf', 'seqweaver').check(text);
     <div class="sequence">
       <div class="sequence-form job-form" inert>
         <SegmentedControl label="What are you submitting?" segments={inputTypes} defaultValue="fasta" />
-        <SegmentedControl label="Add the sequences" segments={[...sources.slice(0, 2), { value: 'genome', label: 'From the genome' }, sources[2]!]} defaultValue="genome" />
+        <SegmentedControl label="Add the sequences" segments={[...sources.slice(0, 2), { value: 'genome', label: 'From the genome' }, required(sources[2], 'third sequence source')]} defaultValue="genome" />
         <div class="position-row">
           <TextInput label="Chromosome and position" defaultValue="chr2:113,594,867" hint="Or a range of exactly 1,000 bp, such as chr2:113,594,367-113,595,366" />
           <Select label="Genome assembly" options={assemblies} defaultValue="hg19" hint="Same as the form" />

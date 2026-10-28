@@ -8,6 +8,7 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
+import { hex } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const kinds = [
@@ -76,14 +77,14 @@ const writing = [
 ];
 
 const specs = [
-  ['tooltip.surface', 'surface.inverse: ink #1A1A1A, elevation 2, radius.sm 8px'],
+  ['tooltip.surface', `surface.inverse: ink ${hex('surface.inverse')}, elevation 2, radius.sm 8px`],
   ['tooltip.padding / max-width', '6px 10px / 280px'],
   ['tooltip.text', 'Lato 14/20 white'],
   ['tooltip.arrow', '12 × 6px, ink'],
   ['tooltip.offset', '8px from the trigger; data tooltips 12px from the pointer'],
   ['tooltip.delay', 'motion.delay.tooltip 400ms; 0ms on focus'],
   ['data-tooltip.width', '240px; padding 10px 12px'],
-  ['data-tooltip.text', 'title Lato Bold 14 white; labels Lato 13 grey 300 #D1D1D1; values Lato Bold 13 white'],
+  ['data-tooltip.text', `title Lato Bold 14 white; labels Lato 13 grey 300 ${hex('color.grey.300')}; values Lato Bold 13 white`],
   ['toggletip.surface', 'white, 1px border.subtle, elevation 2, radius.md 12px, 16px padding, 320px wide'],
   ['z.tooltip', '600, above everything, including dialogs'],
 ];
@@ -142,7 +143,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
         <div class="graph-controls">
           {
             controls.map((control, index) => (
-              <Tooltip text={control.label} placement="left" open={index === 0 ? true : undefined}>
+              <Tooltip text={control.label} placement="left" preview={index === 0}>
                 <button type="button" class:list={['graph-control', { 'graph-control-hover': index === 0 }]} aria-label={control.label}>
                   <Icon name={control.icon} size={20} />
                 </button>
@@ -157,7 +158,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
             <li>
               <strong>{item.title}</strong>
               <span class:list={['placement-specimen', `placement-${item.placement}`]}>
-                <Tooltip text={item.text} placement={item.placement} open>
+                <Tooltip text={item.text} placement={item.placement} preview>
                   <span class="placement-anchor" />
                 </Tooltip>
               </span>
@@ -239,7 +240,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
           <thead>
             <tr>
               <HeaderCell>Term</HeaderCell>
-              <HeaderCell align="end">q-value <Toggletip {...qValue} size="header" open /></HeaderCell>
+              <HeaderCell align="end">q-value <Toggletip {...qValue} size="header" preview /></HeaderCell>
             </tr>
           </thead>
           <tbody>
@@ -279,7 +280,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
     <PairList>
       <Pair kind="do" title="Do. Label icon-only buttons" text="The icon alone can be read more than one way.">
         <span class="pair-specimen">
-          <Tooltip text="Fit to screen" open>
+          <Tooltip text="Fit to screen" preview>
             <button type="button" class="graph-control" aria-label="Fit to screen"><Icon name="maximize" size={20} /></button>
           </Tooltip>
         </span>
@@ -311,6 +312,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
       <li>All tooltips share one <code>TooltipController</code>, which keeps one open at a time and skips the delay while moving between triggers.</li>
       <li><code>DataTooltip</code> only draws the values. The graph or heatmap passes a position from <code>placeNearPoint</code>, which keeps it inside the view.</li>
       <li><code>Toggletip</code> opens in the top layer as a popover, anchored under its button, so a scrolling table can’t clip it. It flips sideways or above when there isn’t room.</li>
+      <li><code>Toggletip</code> takes <code>open</code> with <code>onOpenChange</code> to be controlled. On both components, <code>preview</code> draws the open state in place for these pages.</li>
     </ul>
     <Code code={usage} lang="tsx" theme="css-variables" />
   </NoteCard>
