@@ -45,6 +45,7 @@ describe('AsdService', () => {
     expect((await service.find('CHD8'))?.location.format()).toBe('chr14:21,853,352-21,905,457');
     expect((await service.find('chr1:2,230,000-2,440,000'))?.location.format()).toBe('chr1:2,230,000-2,440,000');
     expect((await service.find('chr1:2,337,101'))?.location.width).toBe(2000);
+    expect((await service.find('chrMT:100'))?.location.chrom).toBe('chrM');
     expect(await service.find('NOTAGENE1')).toBeUndefined();
   });
 

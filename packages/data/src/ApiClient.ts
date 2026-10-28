@@ -40,6 +40,12 @@ export class ApiClient implements DataClient {
     }
     const response = await this.fetcher(url, init);
     if (!response.ok) throw new ApiError(response.status, url, await response.json().catch(() => undefined));
-    return (await response.json()) as T;
+    // A body that isn't JSON, such as an app page served in the API's place, is an API error too.
+    const text = await response.text();
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      throw new ApiError(response.status, url, text || undefined);
+    }
   }
 }

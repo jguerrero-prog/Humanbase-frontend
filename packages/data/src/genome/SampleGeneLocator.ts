@@ -9,11 +9,6 @@ export class SampleGeneLocator implements GeneLocator {
 
   async locate(name: string, assembly: Assembly = 'hg19'): Promise<GeneSpan | undefined> {
     const prefix = assembly === 'hg19' ? '' : `${assembly}/`;
-    try {
-      return await this.client.get<GeneSpan>(`genome/genes/${prefix}${name.trim().toLowerCase()}`);
-    } catch (error) {
-      if (error instanceof ApiError && error.isNotFound) return undefined;
-      throw error;
-    }
+    return ApiError.unlessNotFound(this.client.get<GeneSpan>(`genome/genes/${prefix}${name.trim().toLowerCase()}`));
   }
 }
