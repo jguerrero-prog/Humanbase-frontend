@@ -5,7 +5,7 @@ export type Assembly = 'hg19' | 'hg38';
 export const assemblyNames: Record<Assembly, string> = { hg19: 'GRCh37/hg19', hg38: 'GRCh38/hg38' };
 
 const count = new Intl.NumberFormat('en-US');
-const range = /^(?:chr)?([0-9]{1,2}|X|Y|M|MT):([\d,]+)(?:-|\.\.)([\d,]+)$/i;
+const place = /^(?:chr)?([0-9]{1,2}|X|Y|MT|M):([\d,]+)(?:(?:-|\.\.)([\d,]+))?$/i;
 const geneName = /^[A-Za-z][A-Za-z0-9.-]*$/;
 
 export class GenomeLocation {
@@ -24,14 +24,19 @@ export class GenomeLocation {
   // Reads "chr1:109,792,590-109,842,590", today's "1:109,767,590..109,867,590", or a gene name.
   static parse(text: string, assembly: Assembly = 'hg19'): GenomeLocation | { gene: string } | undefined {
     const typed = text.trim();
-    const match = range.exec(typed.replace(/\s+/g, ''));
-    if (match) {
-      const [, chrom = '', from = '', to = ''] = match;
-      const [start, end] = [from, to].map((value) => Number(value.replaceAll(',', ''))) as [number, number];
-      const name = chrom.toUpperCase() === 'MT' ? 'M' : chrom.toUpperCase();
-      return new GenomeLocation(`chr${name}`, Math.min(start, end), Math.max(start, end), assembly);
-    }
+    const read = GenomeLocation.place(typed);
+    if (read?.end !== undefined) return new GenomeLocation(read.chrom, Math.min(read.start, read.end), Math.max(read.start, read.end), assembly);
     return geneName.test(typed) ? { gene: typed } : undefined;
+  }
+
+  /** Reads a position such as "chr1:877,047" or a range such as "1:100..200"; M and MT both mean chrM. */
+  static place(text: string): { chrom: string; start: number; end?: number } | undefined {
+    const match = place.exec(text.trim().replace(/\s+/g, ''));
+    if (!match) return undefined;
+    const [, chrom = '', start = '', end] = match;
+    const base = (value: string) => Number(value.replaceAll(',', ''));
+    const name = chrom.toUpperCase() === 'MT' ? 'M' : chrom.toUpperCase();
+    return { chrom: `chr${name}`, start: base(start), ...(end !== undefined && { end: base(end) }) };
   }
 
   /** The main chromosomes' lengths in bases, recorded from UCSC by scripts/record-chrom-sizes.mjs. */

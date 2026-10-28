@@ -26,6 +26,7 @@ describe('genomeBrowserLink', () => {
     const view = read('location=chr1:877047');
     expect(view.location?.format()).toBe('chr1:852,047-902,047');
     expect(view.variant?.start).toBe(877047);
+    expect(read('location=chrMT:100').variant?.chrom).toBe('chrM');
   });
 
   it('keeps the marked variant once the view has moved', () => {
