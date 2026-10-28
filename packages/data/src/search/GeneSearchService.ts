@@ -21,19 +21,19 @@ export class GeneSearchService {
 
   /** Genes whose symbol, alias or name starts with the text, for suggestions while typing. */
   async suggest(text: string, signal?: AbortSignal): Promise<GeneHit[]> {
-    try {
-      const records = await this.client.get<GeneHitRecord[]>('genes/search/partial/', { organism, q: text.trim() }, signal);
-      return records.map((record) => new GeneHit(record));
-    } catch (error) {
-      // Not found means no gene matched, as when the API is off and nothing was recorded for this text.
-      if (error instanceof ApiError && error.isNotFound) return [];
-      throw error;
-    }
+    const records = await ApiError.unlessNotFound(this.client.get<GeneHitRecord[]>('genes/search/partial/', { organism, q: text.trim() }, signal));
+    return (records ?? []).map((record) => new GeneHit(record));
   }
 
   async exact(symbol: string, signal?: AbortSignal): Promise<GeneHit[]> {
     const records = await this.client.get<GeneHitRecord[]>('genes/search/exact/', { organism, q: symbol.trim() }, signal);
     return records.map((record) => new GeneHit(record));
+  }
+
+  /** The gene with exactly this symbol; null when none has it, so an alias match never stands in for another gene. */
+  async symbol(symbol: string, signal?: AbortSignal): Promise<GeneHit | null> {
+    const hits = (await ApiError.unlessNotFound(this.exact(symbol, signal))) ?? [];
+    return hits.find((hit) => hit.symbol.toUpperCase() === symbol.trim().toUpperCase()) ?? null;
   }
 
   /** Matches every term of a pasted or typed list in one request. */

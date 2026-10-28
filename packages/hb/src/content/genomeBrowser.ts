@@ -28,12 +28,9 @@ export type GenomeSource = keyof typeof sources;
 
 const isSource = (value: string | null): value is GenomeSource => value !== null && Object.hasOwn(sources, value);
 
-const position = /^((?:chr)?(?:[0-9]{1,2}|X|Y|M|MT)):([\d,]+)$/i;
-
 function variantAt(text: string | null, assembly: Assembly): GenomeLocation | undefined {
-  const place = position.exec(text?.replaceAll(/\s/g, '') ?? '');
-  const parsed = place && GenomeLocation.parse(`${place[1]}:${place[2]}-${place[2]}`, assembly);
-  return parsed instanceof GenomeLocation ? parsed.fit().location : undefined;
+  const place = GenomeLocation.place(text ?? '');
+  return place && place.end === undefined ? new GenomeLocation(place.chrom, place.start, place.start, assembly).fit().location : undefined;
 }
 
 const href = (params: Record<string, string>, from?: GenomeSource): string | undefined => (genomeBrowserPreview ? `/genome/?${readableSearch(from ? { ...params, from } : params)}` : undefined);
