@@ -1,4 +1,4 @@
-import { ApiError, featureLabel, sequenceSpan, useDeepseaFeatures, useHumanbase, useInsilico, type DeepseaJob, type InsilicoResult } from '@humanbase/data';
+import { type DeepseaJob, featureLabel, type InsilicoResult, SampleMissingError, sequenceSpan, useDeepseaFeatures, useInsilico } from '@humanbase/data';
 import { ActionMenu, Alert, Button, Cell, DocsLink, HeaderCell, ResultHeader, ResultLayout, saveFile, ScoreScale, Select, Skeleton, SubstitutionMap, Table, type ScaleSpec } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
 import { jobDateTime } from '../Jobs/JobPage';
@@ -37,7 +37,6 @@ function sequenceOption(name: string) {
 
 /** A finished in silico mutagenesis job: every substitution of one sequence, for one chromatin feature. */
 export function InsilicoResultView({ job, title, tools }: InsilicoResultViewProps) {
-  const { showsSamples } = useHumanbase();
   const names = job.sequenceNames;
   const [sequence, setSequence] = useState(names[0]);
   const [featureIndex, setFeatureIndex] = useState(startFeature);
@@ -103,7 +102,7 @@ export function InsilicoResultView({ job, title, tools }: InsilicoResultViewProp
 
   let body: ReactNode;
   if (result.isError) {
-    const missing = result.error instanceof ApiError && result.error.isNotFound && showsSamples;
+    const missing = result.error instanceof SampleMissingError;
     body = missing ? (
       <Alert tone="info" title="The sample data doesn’t include this choice">
         With the API off, results show HepG2 / CEBPB for the first two sequences. Choose one of those, or turn the API on.
