@@ -1,9 +1,13 @@
 import { ColorCatalog } from '@humanbase/tokens/color';
 import primitives from '@humanbase/tokens/src/primitives.tokens.json';
 import semantic from '@humanbase/tokens/src/semantic.tokens.json';
+import themeTwo from '@humanbase/tokens/src/theme-2.tokens.json';
 
-/** Theme 1 colors, which the design system site shows, so docs prose quotes the tokens instead of typed values. */
-export const colors = new ColorCatalog(primitives, semantic);
+/** Theme 1 colors: the tokens' base, chosen in Display settings. */
+export const themeOneColors = new ColorCatalog(primitives, semantic);
+
+/** Theme 2 colors, the default, which the design system site shows, so docs prose quotes the tokens instead of typed values. */
+export const colors = new ColorCatalog(primitives, semantic, themeTwo);
 
 export const hex = (path: string): string => colors.hex(path);
 

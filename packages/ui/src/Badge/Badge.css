@@ -29,7 +29,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.badge-on-emerald {
+.badge-on-primary {
   color: var(--text-link);
   background: var(--surface-page);
 }

@@ -27,7 +27,7 @@ const states = [
 const itemStates = [
   { title: 'Default', text: 'White, ink label', props: {} },
   { title: 'Hover', text: 'Hover or arrow-key highlight, grey 100 fill', props: { highlighted: true } },
-  { title: 'Selected', text: 'Bold label, emerald check', props: { selected: true } },
+  { title: 'Selected', text: 'Bold label, primary check', props: { selected: true } },
   { title: 'Disabled', text: 'Grey 400 text, skipped by arrow keys', props: { disabled: true } },
   { title: 'Destructive', text: 'Error 700 text and icon, last in the menu', props: { destructive: true, icon: 'trash' as const, label: 'Delete job' } },
 ];
@@ -64,7 +64,7 @@ const analyses = analysisOptions;
 
 const anatomyNotes = [
   { n: 1, text: 'Label', side: 'start', top: 56 },
-  { n: 2, text: 'Field, 1px grey 500 border, 2px emerald when open', side: 'start', top: 94 },
+  { n: 2, text: 'Field, 1px grey 500 border, 2px primary when open', side: 'start', top: 94 },
   { n: 4, text: 'Panel, elevation 2, 12px radius, 6px padding', side: 'start', top: 144 },
   { n: 3, text: 'Chevron flips up when open', side: 'end', top: 94 },
   { n: 5, text: 'Selected option: bold label and check', side: 'end', top: 188 },
@@ -127,7 +127,7 @@ const tables = {
     ['menu.max-height', '320px, then scrolls'],
     ['menu.item.height / padding / radius', 'min 40px / 10px 12px / radius.sm 8px'],
     ['menu.item.hover', `grey 100 ${hex('color.grey.100')}`],
-    ['menu.item.selected', `Lato Bold label, 20px check in emerald 600 ${hex('color.emerald.600')}`],
+    ['menu.item.selected', `Lato Bold label, 20px check in primary 600 ${hex('color.primary.600')}`],
     ['menu.item.destructive', `error 700 ${hex('color.error.700')}`],
     ['menu.group-label', 'Lato Bold 12px, uppercase, 6% tracking, grey 500'],
     ['z.dropdown', '200'],
@@ -376,7 +376,7 @@ const multiSelectRules = [
         <Pair kind="do" title="Do. Mark selection with a check" text="The selected option is bold with a check, and the panel stays white.">
           <MenuPanel>{['Adipose tissue', 'Blood vessel', 'Brain', 'Heart'].map((label) => <MenuItem label={label} selected={label === 'Blood vessel'} />)}</MenuPanel>
         </Pair>
-        <Pair kind="dont" title="Don’t. Fill the selected option green" text="A colored fill reads like a hover or an error and fails for people who can’t tell the colors apart.">
+        <Pair kind="dont" title="Don’t. Fill the selected option with color" text="A colored fill reads like a hover or an error and fails for people who can’t tell the colors apart.">
           <MenuPanel>{['Adipose tissue', 'Blood vessel', 'Brain', 'Heart'].map((label) => <MenuItem label={label} className={label === 'Blood vessel' ? 'bad-fill' : undefined} />)}</MenuPanel>
         </Pair>
         <Pair kind="do" title="Do. Use a select for one value" text="Keep commands in an action menu and values in a select.">
@@ -722,7 +722,7 @@ const multiSelectRules = [
 
   .menu-pairs :global(.bad-fill) {
     color: var(--text-default);
-    background: var(--color-emerald-50);
+    background: var(--color-primary-50);
   }
 
   @media (width < 64rem) {

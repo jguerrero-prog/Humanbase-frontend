@@ -23,7 +23,7 @@
     },
     "link": {
       "$type": "color",
-      "$value": "{color.emerald.600}"
+      "$value": "{color.primary.600}"
     },
     "error": {
       "$type": "color",
@@ -52,9 +52,14 @@
       "$type": "color",
       "$value": "{color.grey.900}"
     },
+    "brand": {
+      "$type": "color",
+      "$value": "{color.primary.600}",
+      "$description": "The top bar"
+    },
     "brand-deep": {
       "$type": "color",
-      "$value": "{color.emerald.900}",
+      "$value": "{color.primary.900}",
       "$description": "Deepest brand band, such as the homepage hero behind its illustration"
     }
   },
@@ -73,7 +78,7 @@
     },
     "selected": {
       "$type": "color",
-      "$value": "{color.emerald.600}"
+      "$value": "{color.primary.600}"
     },
     "error": {
       "$type": "color",
@@ -83,27 +88,27 @@
   "action": {
     "primary": {
       "$type": "color",
-      "$value": "{color.emerald.600}"
+      "$value": "{color.primary.600}"
     },
     "primary-hover": {
       "$type": "color",
-      "$value": "{color.emerald.700}"
+      "$value": "{color.primary.700}"
     },
     "primary-pressed": {
       "$type": "color",
-      "$value": "{color.emerald.800}"
+      "$value": "{color.primary.800}"
     },
     "secondary": {
       "$type": "color",
-      "$value": "{color.yellow.500}"
+      "$value": "{color.secondary.500}"
     },
     "secondary-hover": {
       "$type": "color",
-      "$value": "{color.yellow.600}"
+      "$value": "{color.secondary.600}"
     },
     "secondary-pressed": {
       "$type": "color",
-      "$value": "{color.yellow.700}"
+      "$value": "{color.secondary.700}"
     },
     "destructive": {
       "$type": "color",
@@ -239,7 +244,7 @@
   "data": {
     "highlight": {
       "$type": "color",
-      "$value": "{color.mint.300}"
+      "$value": "{color.accent.300}"
     }
   },
   "status": {
@@ -329,7 +334,7 @@
     },
     "string": {
       "$type": "color",
-      "$value": "{color.emerald.700}"
+      "$value": "{color.primary.700}"
     },
     "type": {
       "$type": "color",
@@ -349,7 +354,7 @@
     },
     "selection": {
       "$type": "color",
-      "$value": "{color.emerald.50}"
+      "$value": "{color.primary.50}"
     }
   }
 }

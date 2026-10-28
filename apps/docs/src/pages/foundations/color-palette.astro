@@ -1,8 +1,7 @@
 ---
 import { Button, TextInput } from '@humanbase/ui';
-import { ColorCatalog, contrastRating } from '@humanbase/tokens/color';
-import primitives from '@humanbase/tokens/src/primitives.tokens.json';
-import semantic from '@humanbase/tokens/src/semantic.tokens.json';
+import { contrastRating, type ColorCatalog } from '@humanbase/tokens/color';
+import { colors, themeOneColors } from '../../data/colors';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import DoDont from '../../components/docs/DoDont.astro';
@@ -10,7 +9,6 @@ import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
-const colors = new ColorCatalog(primitives, semantic);
 const ink = 'color.grey.900';
 const white = 'color.white';
 const cssVar = (path: string) => `var(${colors.entry(path).cssVar})`;
@@ -18,17 +16,41 @@ const ratio = (value: number, decimals = 1) => value.toFixed(decimals);
 const onWhite = (path: string) => colors.contrast(white, path) >= 4.5;
 
 const brands = [
-  { name: 'Emerald', role: 'Primary', path: 'color.emerald.600', use: 'Brand header, primary buttons, links, selected states' },
-  { name: 'Simons Yellow', role: 'Secondary', path: 'color.yellow.500', use: 'Highlights, the query gene, key data points, buttons on dark backgrounds' },
-  { name: 'Mint', role: 'Accent', path: 'color.mint.300', use: 'Supporting data such as medium-confidence links, accents on emerald' },
-  { name: 'Ink', role: 'Text', path: ink, use: 'Headings and body text, focus rings' },
+  { name: 'Blue', role: 'Primary', path: 'color.primary.600', use: 'Primary buttons and selected states. The top bar and links use primary 700 in this theme.' },
+  { name: 'Gold', role: 'Secondary', path: 'color.secondary.500', use: 'The current page in the top bar, the article drop cap and other small marks on the brand color' },
+  { name: 'Light blue', role: 'Accent', path: 'color.accent.300', use: 'Data highlights, such as the query gene, and accents on the brand color' },
+  { name: 'Ink', role: 'Text', path: ink, use: 'Headings and body text, secondary buttons and focus rings' },
+];
+
+// The primitive step a semantic token ends at, such as "primary.700".
+const stepOf = (catalog: ColorCatalog, path: string): string => {
+  const target = catalog.target(path);
+  return target ? stepOf(catalog, target) : path.replace(/^color\./, '');
+};
+
+const themes = [
+  { name: 'Theme 2', note: 'Blue and gold. The default.', catalog: colors },
+  { name: 'Theme 1', note: 'Emerald and Simons Yellow. Chosen in Display settings.', catalog: themeOneColors },
+];
+const themeSwatches = [
+  { label: 'Primary 600', path: 'color.primary.600' },
+  { label: 'Secondary 500', path: 'color.secondary.500' },
+  { label: 'Accent 300', path: 'color.accent.300' },
+  { label: 'Ink', path: ink },
+];
+const themeRoles = [
+  { label: 'Links', path: 'text.link' },
+  { label: 'Top bar', path: 'surface.brand' },
+  { label: 'Secondary button', path: 'button.secondary' },
+  { label: 'Text on the secondary button', path: 'button.on-secondary' },
+  { label: 'Data highlight', path: 'data.highlight' },
 ];
 
 const steps = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
 const scales = [
-  { title: 'Emerald', role: 'Primary', name: 'emerald', brand: '600' },
-  { title: 'Simons Yellow', role: 'Secondary', name: 'yellow', brand: '500' },
-  { title: 'Mint', role: 'Accent', name: 'mint', brand: '300' },
+  { title: 'Primary', role: 'Blue', name: 'primary', brand: '600' },
+  { title: 'Secondary', role: 'Gold', name: 'secondary', brand: '500' },
+  { title: 'Accent', role: 'Light blue', name: 'accent', brand: '300' },
   { title: 'Grey', role: 'Neutral', name: 'grey', brand: '' },
 ];
 
@@ -43,7 +65,7 @@ const tintGroups = [
     ],
   },
   {
-    title: 'On emerald',
+    title: 'On the brand color',
     surface: 'brand',
     tints: [
       { label: 'Hover', path: 'overlay.on-brand-hover' },
@@ -63,26 +85,27 @@ const statuses = [
 const statusSteps = (name: string) => ['bg', 'border', 'fg'].map((role) => colors.target(`status.${name}.${role}`) ?? '');
 
 const stateColumns = ['Default', 'Hover', 'Pressed', 'Focus', 'Disabled'];
+const states = (base: string) => [stepOf(colors, base), stepOf(colors, `${base}-hover`), stepOf(colors, `${base}-pressed`), `${stepOf(colors, base)} + ring`, 'grey.200 / grey.400'];
 const buttonStates = [
-  { title: 'Primary button', variant: 'primary', label: 'Search', notes: ['emerald.600', 'emerald.700', 'emerald.800', 'emerald.600 + ring', 'grey.200 / grey.400'] },
-  { title: 'Secondary button', variant: 'secondary', label: 'Explore', notes: ['yellow.500', 'yellow.600', 'yellow.700', 'yellow.500 + ring', 'grey.200 / grey.400'] },
+  { title: 'Primary button', variant: 'primary', label: 'Search', notes: states('action.primary') },
+  { title: 'Secondary button', variant: 'secondary', label: 'Explore', notes: states('button.secondary') },
   { title: 'Ghost button', variant: 'ghost', label: 'Add network', notes: ['transparent', 'action.ghost-hover', 'action.ghost-pressed', 'transparent + ring', 'grey.400 text'] },
 ] as const;
 const forcedStates = [undefined, 'hover', 'pressed', 'focus'] as const;
-const linkNotes = ['emerald.600', 'emerald.700', 'emerald.800', 'emerald.600 + ring', 'grey.400, no underline'];
+const linkNotes = [stepOf(colors, 'text.link'), stepOf(colors, 'action.primary-hover'), stepOf(colors, 'action.primary-pressed'), `${stepOf(colors, 'text.link')} + ring`, 'grey.400, no underline'];
 
 const pairings = [
   { title: 'Ink on white', fg: ink, bg: white },
   { title: 'Grey 500 on white', fg: 'color.grey.500', bg: white },
-  { title: 'Emerald 600 on white', fg: 'color.emerald.600', bg: white },
-  { title: 'White on emerald 600', fg: white, bg: 'color.emerald.600' },
-  { title: 'Mint 300 on emerald 600', fg: 'color.mint.300', bg: 'color.emerald.600' },
-  { title: 'Ink on yellow 500', fg: ink, bg: 'color.yellow.500' },
-  { title: 'Ink on mint 300', fg: ink, bg: 'color.mint.300' },
-  { title: 'Yellow 500 on emerald 600', fg: 'color.yellow.500', bg: 'color.emerald.600' },
+  { title: 'Primary 700 on white (links)', fg: 'color.primary.700', bg: white },
+  { title: 'White on primary 600', fg: white, bg: 'color.primary.600' },
+  { title: 'Accent 300 on primary 600', fg: 'color.accent.300', bg: 'color.primary.600' },
+  { title: 'Ink on secondary 500', fg: ink, bg: 'color.secondary.500' },
+  { title: 'Ink on accent 300', fg: ink, bg: 'color.accent.300' },
+  { title: 'Secondary 500 on primary 600', fg: 'color.secondary.500', bg: 'color.primary.600' },
   { title: 'Grey 400 on white', fg: 'color.grey.400', bg: white },
-  { title: 'Yellow 500 on white', fg: 'color.yellow.500', bg: white },
-  { title: 'White on yellow 500', fg: white, bg: 'color.yellow.500' },
+  { title: 'Secondary 500 on white', fg: 'color.secondary.500', bg: white },
+  { title: 'White on secondary 500', fg: white, bg: 'color.secondary.500' },
 ].map((pair) => {
   const value = colors.contrast(pair.fg, pair.bg);
   return { ...pair, value, rating: contrastRating(value) };
@@ -92,10 +115,13 @@ const ratingClass = { Pass: 'rating-pass', 'Large text only': 'rating-large', 'D
 const roles = [
   ['action.primary', 'Primary buttons, links'],
   ['action.primary-hover', 'Hover on primary actions'],
-  ['action.secondary', 'Secondary buttons, highlights'],
+  ['action.secondary', 'The current page in the top bar'],
   ['text.default', 'Headings and body text'],
   ['text.muted', 'Captions, metadata'],
-  ['text.on-brand', 'Text on emerald'],
+  ['surface.brand', 'The top bar'],
+  ['text.on-brand', 'Text on the brand color'],
+  ['text.link', 'Links'],
+  ['button.secondary', 'Secondary buttons'],
   ['surface.page', 'Page background'],
   ['surface.subtle', 'Side menu, panels'],
   ['border.subtle', 'Dividers, card borders'],
@@ -107,13 +133,13 @@ const roles = [
 
 <DocsLayout title="Color palette" description="The Humanbase palette: brand colors, scales, status colors, interaction states and measured contrast.">
   <Intro
-    lead="The Humanbase palette starts from two colors: the emerald of the brand header and Simons Yellow, the Simons Foundation’s yellow, for the one highlight that matters most. Each color has a token name, a full scale from 50 to 900 and a measured contrast ratio, so teams can choose accessible pairs without guessing."
-    status="Updated October 16, 2026 · Contrast ratios follow WCAG 2.2 and are calculated from the hex values shown"
+    lead="The Humanbase palette starts from the blue of the brand header, with gold and a light blue for small marks and data highlights. Each color has a token name, a full scale from 50 to 900 and a measured contrast ratio, so teams can choose accessible pairs without guessing. This is Theme 2, the default; Theme 1 swaps in emerald and Simons Yellow."
+    status="Updated October 28, 2026 · Contrast ratios follow WCAG 2.2 and are calculated from the hex values shown"
   >
     <KeyRules
       rules={[
-        { title: 'Emerald leads', text: 'Primary actions, links and selected states use emerald. It carries the brand on every page.' },
-        { title: 'Simons Yellow highlights', text: 'Simons Yellow marks what matters most, such as the query gene or a strong result. Never use it for text on white.' },
+        { title: 'Primary leads', text: 'The brand header, primary actions, links and selected states use the primary scale. It carries the brand on every page.' },
+        { title: 'Secondary and accent mark, never speak', text: 'Gold and light blue mark the current page or a highlighted result. Never use them for text on white.' },
         { title: 'Color is never the only cue', text: 'Pair every color meaning with a label, icon or pattern so it works for everyone, including people with color blindness.' },
       ]}
     />
@@ -140,6 +166,55 @@ const roles = [
         ))
       }
     </ul>
+  </DocSection>
+
+  <DocSection
+    title="Themes"
+    lead="Two themes share every token name and component. Theme 2 is the default; people can switch to Theme 1 in Display settings, and the choice is kept in their browser. A theme overrides primitives under data-theme on the page, so the semantic tokens follow. Data visualization colors are the same in both."
+    spacing="loose"
+  >
+    <div class="themes">
+      {
+        themes.map((theme) => (
+          <section class="theme" aria-labelledby={`theme-${theme.name.replace(' ', '-')}`}>
+            <h3 id={`theme-${theme.name.replace(' ', '-')}`}>{theme.name}</h3>
+            <p>{theme.note}</p>
+            <ul class="theme-swatches">
+              {themeSwatches.map((swatch) => (
+                <li>
+                  <span class="theme-swatch" style={`background: ${theme.catalog.hex(swatch.path)}`} />
+                  <strong>{swatch.label}</strong>
+                  <code>{theme.catalog.hex(swatch.path)}</code>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+    <DocTable caption="Where the themes differ beyond the scales" columns={['Role', 'Token', ...themes.map((theme) => theme.name)]} widths={['260px', '240px']}>
+      {
+        themeRoles.map((role) => (
+          <tr>
+            <th scope="row">{role.label}</th>
+            <td>
+              <code>{role.path}</code>
+            </td>
+            {themes.map((theme) => (
+              <td>
+                <span class="role-token">
+                  <span class="role-swatch" style={`background: ${theme.catalog.hex(role.path)}`} />
+                  <code>
+                    {stepOf(theme.catalog, role.path)} {theme.catalog.hex(role.path)}
+                  </code>
+                </span>
+              </td>
+            ))}
+          </tr>
+        ))
+      }
+    </DocTable>
+    <p class="doc-note">The scales are named by role, primary, secondary and accent, so each name holds in both themes. Theme 2's values come from packages/tokens/src/theme-2.tokens.json; Theme 1 is the base in primitives.tokens.json.</p>
   </DocSection>
 
   <DocSection
@@ -180,7 +255,7 @@ const roles = [
 
   <DocSection
     title="Ghost and overlays"
-    lead="Ghost colors are transparent tints, not solid colors. They sit on top of whatever is behind them, so a hover or selection looks right on any surface. Use emerald tints on light surfaces and white tints on emerald."
+    lead="Ghost colors are transparent tints, not solid colors. They sit on top of whatever is behind them, so a hover or selection looks right on any surface. Use primary tints on light surfaces and white tints on the brand color."
     spacing="loose"
   >
     <div class="tint-groups">
@@ -254,7 +329,7 @@ const roles = [
 
   <DocSection
     title="Interaction states"
-    lead="How each color changes as people interact. Hover darkens by one step, pressed by two. Focus adds an ink ring with a 2px white gap, which stays visible on white, emerald and yellow. Disabled uses greyscale and no hover."
+    lead="How each color changes as people interact. Hover darkens by one step, pressed by two. Focus adds an ink ring with a 2px white gap, which stays visible on white, primary and secondary. Disabled uses greyscale and no hover."
     spacing="loose"
   >
     <DocTable caption="Interaction states for buttons and links" columns={['', ...stateColumns]} widths={['216px']}>
@@ -324,14 +399,14 @@ const roles = [
   <DocSection title="Do and don’t" spacing="loose">
     <DoDont
       dos={[
-        'Use emerald 600 for primary actions and links, white text on emerald for buttons.',
-        'Use yellow for the single most important highlight on a screen, such as the query gene.',
+        'Use primary 600 for primary actions, primary 700 for links, and white text on primary buttons.',
+        'Use the data highlight for the single most important item on a screen, such as the query gene.',
         'Use grey 900 for headings and body text, grey 500 for secondary text.',
         'Show status with a word or icon as well as a color.',
         'Use ghost tints for hover and selection so they work on any background.',
       ]}
       donts={[
-        'Don’t set Simons Yellow text on white. It measures 1.4:1 and is unreadable.',
+        `Don’t set secondary 500 text on white. It measures ${ratio(colors.contrast('color.secondary.500', white), 1)}:1 and is unreadable.`,
         'Don’t use red and green together as the only way to compare values; pair them with labels or patterns.',
         'Don’t use status colors for decoration or branding.',
         'Don’t invent new shades. Pick the nearest step from a scale.',
@@ -439,6 +514,57 @@ const roles = [
   /* Samples use generated text so contrast checkers skip the failing pairs they demonstrate. */
   [data-sample]::before {
     content: attr(data-sample);
+  }
+
+  .themes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin-block-end: var(--space-8);
+  }
+
+  .theme {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-6);
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .theme h3 {
+    font: var(--type-h4);
+  }
+
+  .theme p {
+    font: var(--docs-small);
+    color: var(--text-secondary);
+  }
+
+  .theme-swatches {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .theme-swatches li {
+    display: grid;
+    gap: var(--space-1);
+    font: var(--type-label-sm);
+  }
+
+  .theme-swatches code {
+    font: var(--type-code-sm);
+    color: var(--text-muted);
+  }
+
+  .theme-swatch {
+    display: block;
+    block-size: 64px;
+    border: var(--border-width-1) solid var(--border-subtle);
+    border-radius: var(--radius-sm);
   }
 
   .scale + .scale {
@@ -553,7 +679,7 @@ const roles = [
   }
 
   .tint-group-brand code {
-    color: var(--color-mint-100);
+    color: var(--text-on-brand);
   }
 
   .statuses > li {
@@ -749,6 +875,7 @@ const roles = [
     .pairings,
     .statuses,
     .tint-groups,
+    .themes,
     .field-errors {
       grid-template-columns: minmax(0, 1fr);
     }

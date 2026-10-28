@@ -18,7 +18,7 @@ const radii = flattenTokens(primitives.radius, ['radius']).map(({ path, cssVar, 
 
 const scaleLabel = (name: string, px: string) => (name === 'radius.full' ? 'Fully round' : px);
 
-const heatmap = ['yellow', 'grey', 'grey', 'mint', 'yellow', 'grey', 'grey', 'mint', 'yellow', 'grey', 'grey', 'mint', 'yellow', 'grey', 'mint'];
+const heatmap = ['secondary', 'grey', 'grey', 'highlight', 'secondary', 'grey', 'grey', 'highlight', 'secondary', 'grey', 'grey', 'highlight', 'secondary', 'grey', 'highlight'];
 
 const usage = `.card {
   border-radius: var(--radius-md);
@@ -235,7 +235,7 @@ const usage = `.card {
   }
 
   .radius-default .radius-sample {
-    background: var(--color-emerald-50);
+    background: var(--color-primary-50);
     border-color: var(--border-selected);
   }
 
@@ -329,7 +329,7 @@ const usage = `.card {
 
   .mock-tag-brand {
     color: var(--text-link);
-    background: var(--color-emerald-50);
+    background: var(--color-primary-50);
   }
 
   .mock-tag-neutral {
@@ -337,8 +337,8 @@ const usage = `.card {
   }
 
   .mock-tag-beta {
-    color: var(--color-yellow-800);
-    background: var(--color-yellow-50);
+    color: var(--color-secondary-800);
+    background: var(--color-secondary-50);
   }
 
   .mock-tooltip {
@@ -380,7 +380,7 @@ const usage = `.card {
     padding: 6px 14px;
     font: var(--type-label-sm);
     color: var(--text-link);
-    background: var(--color-emerald-50);
+    background: var(--color-primary-50);
     border-radius: var(--radius-full);
   }
 
@@ -447,7 +447,7 @@ const usage = `.card {
     block-size: 12px;
   }
 
-  .mock-cell-yellow {
+  .mock-cell-secondary {
     background: var(--action-secondary);
   }
 
@@ -455,7 +455,7 @@ const usage = `.card {
     background: var(--border-subtle);
   }
 
-  .mock-cell-mint {
+  .mock-cell-highlight {
     background: var(--data-highlight);
   }
 

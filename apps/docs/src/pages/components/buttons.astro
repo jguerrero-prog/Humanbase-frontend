@@ -11,12 +11,12 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import SizeCard from '../../components/docs/SizeCard.astro';
 import SpecimenCard from '../../components/docs/SpecimenCard.astro';
-import { hex } from '../../data/colors';
+import { hex, ratio } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const styles: { variant: ButtonVariant; title: string; label: string; text: string; example: string }[] = [
   { variant: 'primary', title: 'Primary', label: 'Run analysis', text: 'The main action on a screen or in a panel. Only one per view.', example: 'In Humanbase: Run analysis, Search, Submit job' },
-  { variant: 'secondary', title: 'Secondary', label: 'Explore', text: 'A highlighted action on emerald or dark backgrounds, where Primary would disappear.', example: 'In Humanbase: Explore on the homepage hero, Try an example' },
+  { variant: 'secondary', title: 'Secondary', label: 'Download', text: 'A supporting action next to the results it acts on, such as a download, a copy or a resubmit.', example: 'In Humanbase: Download results, Copy citation, Edit and resubmit' },
   { variant: 'ghost', title: 'Ghost', label: 'Add network', text: 'Lower-priority actions next to a Primary, and actions inside toolbars and panels.', example: 'In Humanbase: Add network, Clear, Download' },
   { variant: 'destructive', title: 'Destructive', label: 'Delete job', text: 'Actions that delete, cancel or lose work. Always confirm first.', example: 'In Humanbase: Delete job, Clear job history, Cancel run' },
 ];
@@ -39,9 +39,9 @@ const specs = [
   ['Gap to spinner or icon', '8px', '6px'],
   ['Spinner', '16px', '14px'],
   ['Focus ring', '2px white gap, 3px grey 900 ring', 'Same'],
-  ['Primary colors', 'emerald 600, hover 700, pressed 800', 'Same'],
-  ['Secondary colors', 'yellow 500, hover 600, pressed 700', 'Same'],
-  ['Ghost colors', 'emerald 600 text, ghost tints 8% and 16%', 'Same'],
+  ['Primary colors', `primary 600 ${hex('action.primary')}, hover 700 ${hex('action.primary-hover')}, pressed 800 ${hex('action.primary-pressed')}`, 'Same'],
+  ['Secondary colors', `button.secondary ${hex('button.secondary')}, hover ${hex('button.secondary-hover')}, pressed ${hex('button.secondary-pressed')}; label button.on-secondary`, 'Same'],
+  ['Ghost colors', `text.link ${hex('text.link')} text, primary tints 8% and 16%`, 'Same'],
   ['Destructive colors', `error 700 ${hex('action.destructive')}, hover 800 ${hex('action.destructive-hover')}, pressed 900 ${hex('action.destructive-pressed')}`, 'Same'],
   ['Disabled', 'grey 200 background, grey 400 text', 'Same'],
 ];
@@ -138,11 +138,11 @@ const usage = `import { Button } from '@humanbase/ui';
       </figure>
       <KeyList
         items={[
-          ['Container', '44px tall, 12px corners, emerald 600'],
+          ['Container', '44px tall, 12px corners, primary 600'],
           ['Padding', '12px top and bottom, 24px left and right'],
           ['Spinner or icon', '16px, only when loading or when an icon is added'],
           ['Gap', '8px between the spinner or icon and the label'],
-          ['Label', 'Lato Bold 16px, 20px line height, white on emerald (6.1:1)'],
+          ['Label', `Lato Bold 16px, 20px line height, white on primary 600 (${ratio('text.on-brand', 'action.primary', 1)})`],
           ['Shown at 2x', 'The diagram is scaled up to make the bands readable'],
         ]}
       />
@@ -193,7 +193,7 @@ const usage = `import { Button } from '@humanbase/ui';
       rules={[
         { title: 'Real buttons', text: 'Use a <button> for actions and a link for navigation. Both must work with Enter, and buttons with Space.' },
         { title: 'Visible focus', text: 'The focus ring appears for keyboard users on every style and never gets removed in CSS.' },
-        { title: 'Contrast', text: 'Label contrast: white on emerald 6.1:1, ink on Simons Yellow 12.3:1, white on error 6.6:1. All pass AA.' },
+        { title: 'Contrast', text: `Label contrast: white on primary ${ratio('text.on-brand', 'action.primary', 1)}, button.on-secondary on button.secondary ${ratio('button.on-secondary', 'button.secondary', 1)}, white on error ${ratio('text.on-brand', 'action.destructive', 1)}. All pass AA.` },
         { title: 'Loading and disabled', text: 'Loading sets aria-busy and keeps focus on the button. Disabled buttons explain nearby why they are unavailable.' },
       ]}
     />
@@ -209,7 +209,7 @@ const usage = `import { Button } from '@humanbase/ui';
       ]}
       donts={[
         'Don’t put two Primary buttons side by side.',
-        'Don’t use Secondary yellow buttons on white; they are for emerald and dark backgrounds.',
+        'Don’t use Secondary for the main action of a form; that is Primary.',
         'Don’t use buttons for navigation between pages; use links.',
         'Don’t change a button’s width when its state changes.',
       ]}
