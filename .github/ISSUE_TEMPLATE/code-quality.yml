@@ -1,0 +1,23 @@
+name: Code quality
+description: Cleanup, tests or tooling, with no change people see.
+labels: [code quality]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: What and why
+      description: The code involved, and what is wrong with it today.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What is in, and what is out.
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: How we know it is finished.
+    validations:
+      required: true

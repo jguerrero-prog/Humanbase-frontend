@@ -1,11 +1,12 @@
-name: Feature, enhancement or code quality
-description: New capability, an improvement, or cleanup work.
+name: Feature
+description: A new capability or screen.
+labels: [feature]
 body:
   - type: textarea
     id: goal
     attributes:
       label: What and why
-      description: What should change, and who it helps.
+      description: What should be added, and who it helps.
     validations:
       required: true
   - type: textarea
