@@ -1,4 +1,5 @@
 import type { DataClient, Query } from '../DataClient';
+import { GenomeLocation } from '../genome/GenomeLocation';
 import { TissueVariants, type TissueDatabase, type TissueVariantsRecord } from './TissueVariants';
 
 export type VariantQuery = { kind: 'gene'; symbol: string } | { kind: 'rsid'; rsid: string } | { kind: 'position'; chromosome: string; position: number };
@@ -39,8 +40,8 @@ export class ExpectoService {
     const typed = text.trim().replace(/,/g, '');
     if (!typed) return undefined;
     if (/^rs\d+$/i.test(typed)) return { kind: 'rsid', rsid: typed.toLowerCase() };
-    const place = /^(?:chr)?([0-9]{1,2}|X|Y|M):(\d+)$/i.exec(typed);
-    if (place?.[1] && place[2]) return { kind: 'position', chromosome: `chr${place[1].toUpperCase()}`, position: Number(place[2]) };
+    const place = GenomeLocation.place(typed);
+    if (place && place.end === undefined) return { kind: 'position', chromosome: place.chrom, position: place.start };
     if (/^[A-Za-z0-9][\w.-]*$/.test(typed)) return { kind: 'gene', symbol: typed.toUpperCase() };
     return undefined;
   }
