@@ -1,4 +1,4 @@
-import { ApiError, featureEffects, GenomeLocation, useHumanbase, usePrecomputedPredictions, variantIdOf, type FeatureEffect, type FeaturePredictionRecord, type FeaturesRecord, type VariantModel } from '@humanbase/data';
+import { type FeatureEffect, featureEffects, type FeaturePredictionRecord, type FeaturesRecord, GenomeLocation, SampleMissingError, useHumanbase, usePrecomputedPredictions, variantIdOf, type VariantModel } from '@humanbase/data';
 import { defaultGenomeEngine, type Assembly, type GenomeBrowserEngineFactory, type GenomeDataTrack } from '@humanbase/genome';
 import { Alert, defaultEffectsView, ResultHeader, ResultLayout, Skeleton, Tabs, variantLabel, type TabItem, type ContextLabelProps, type Crumb, type BinnedEffectScale, type EffectsView } from '@humanbase/ui';
 import { useMemo, useState, type ReactNode } from 'react';
@@ -108,8 +108,8 @@ function locationOf(text: string | undefined, assembly: Assembly, fallback: Geno
 
 /** Browses a model's precomputed variants: the genome browser with the set's score track, and the effects of the variant nearest its center on every feature. */
 export function PrecomputedVariantBrowser({ set, state, onStateChange, views, list, engine = defaultGenomeEngine }: PrecomputedVariantBrowserProps) {
-  const { showsSamples } = useHumanbase();
-  const location = useMemo(() => locationOf(state.location, set.assembly, showsSamples ? set.sampleStart : set.start), [state.location, set, showsSamples]);
+  const { examplesOnly } = useHumanbase();
+  const location = useMemo(() => locationOf(state.location, set.assembly, examplesOnly ? set.sampleStart : set.start), [state.location, set, examplesOnly]);
   const [view, setView] = useState<EffectsView>(defaultEffectsView);
   // As in the ASD Browser, a variant picked with Previous, Next or a heatmap column starts its effects afresh; moving the browser keeps them.
   const [picked, setPicked] = useState(state.variant);
@@ -141,7 +141,7 @@ export function PrecomputedVariantBrowser({ set, state, onStateChange, views, li
   let effects;
   if (error) {
     effects =
-      showsSamples && error instanceof ApiError && error.isNotFound ? (
+      error instanceof SampleMissingError ? (
         <Alert tone="info" title="The sample data doesn’t include this range">{sampleHelp}</Alert>
       ) : (
         <Alert tone="error" title="These variants couldn’t load" action={{ label: 'Try again', onSelect: refetch }}>

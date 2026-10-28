@@ -1,12 +1,11 @@
 import type { GenomeTracks } from '@humanbase/data';
-import { chromHmm as chromHmmFile } from './biodalliance/humanbaseConfig';
+import { chromHmmTrack as chromHmm } from './humanbaseFiles';
 import { userDataTrack } from './genomeTrackList';
 import { scoreTrack } from './scoreTrack';
 import { bedGraphLines, bedLines, TrackDownload } from './trackDownload';
 
 const span = { chrom: 'chr1', start: 2_230_000, end: 2_440_000 };
 const conservation = scoreTrack({ name: 'Conservation', source: 'phastCons 46-way', bigWigUrl: 'https://humanbase.s3.amazonaws.com/tracks/phastCons46way.bw', range: [0, 1] });
-const chromHmm = { name: chromHmmFile.name, bigBedUrl: chromHmmFile.bigBedUrl };
 const impact = scoreTrack({ name: 'DNA disease impact score', source: 'Model score', bigWigUrl: 'https://humanbase.s3.amazonaws.com/tracks/asd/dna.bw', range: [-0.5, 3] });
 
 describe('bedGraphLines', () => {
