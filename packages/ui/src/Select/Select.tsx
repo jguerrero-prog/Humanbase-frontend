@@ -67,7 +67,9 @@ function groupOptions(options: readonly SelectOption[]): Group[] {
 function placeNextTo(panel: HTMLElement, box: DOMRect, above: boolean) {
   panel.style.minInlineSize = `${box.width}px`;
   panel.style.insetInlineStart = `${box.left}px`;
-  panel.style.insetBlockStart = above ? `${box.top - panel.offsetHeight - 8}px` : `${box.bottom}px`;
+  // Above, the list is pinned by its bottom edge, so a height cap applied later keeps it against the field.
+  panel.style.insetBlockStart = above ? 'auto' : `${box.bottom}px`;
+  panel.style.insetBlockEnd = above ? `${window.innerHeight - box.top}px` : 'auto';
 }
 
 export function Select({
@@ -86,6 +88,7 @@ export function Select({
   const [highlight, setHighlight] = useState(defaultHighlight);
   const [above, setAbove] = useState(false);
   const [shift, setShift] = useState(0);
+  const [listLimit, setListLimit] = useState<number>();
   const current = value ?? ownValue;
   const [shown, setShown] = useControlled(openProp, false);
   const open = preview || shown;
@@ -121,9 +124,15 @@ export function Select({
     if (!open || !node || !wrapper.current) return;
     if (!preview) node.showPopover();
     const box = wrapper.current.getBoundingClientRect();
+    const list = node.querySelector<HTMLElement>('[role="listbox"]');
+    const extra = list ? list.scrollHeight - list.clientHeight : 0;
+    const full = node.offsetHeight + extra;
     const room = window.innerHeight - box.bottom;
-    const flip = room < node.offsetHeight + 4 && box.top > room;
+    const flip = room < full + 4 && box.top > room;
     setAbove(flip);
+    // Too tall for either side: the list scrolls inside, ending 16px from the window's edge.
+    const space = (flip ? box.top : room) - 16;
+    setListLimit(!preview && list && full > space ? Math.max(120, list.scrollHeight - (full - space)) : undefined);
     // A wide menu moves left so it ends 16px inside the window, never past the window's left edge.
     const overflow = box.left + node.offsetWidth - (document.documentElement.clientWidth - 16);
     const nudge = overflow > 0 ? -Math.min(overflow, Math.max(0, box.left - 16)) : 0;
@@ -238,7 +247,7 @@ export function Select({
                   />
                 </div>
               )}
-              <div id={listboxId} role="listbox" aria-label={label} className="menu-list select-listbox" style={columns ? ({ '--select-columns': columns.length } as CSSProperties) : undefined}>
+              <div id={listboxId} role="listbox" aria-label={label} className="menu-list select-listbox" style={{ ...(columns && { '--select-columns': columns.length }), maxBlockSize: listLimit } as CSSProperties}>
                 {visible.layout.map((column, columnIndex) => (
                   <div key={columnIndex} className="select-column">
                     {column.map((group, groupIndex) => {

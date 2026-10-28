@@ -457,3 +457,17 @@ test('the network Download menu saves the graph and the visible or entire networ
   expect([visible.length, entire.length]).toEqual([91, 1328]);
   expect(apiRequests).toEqual([]);
 });
+
+test('on a phone, the analysis list stays inside the window and scrolls, with the API off', async ({ page }) => {
+  await apiOff(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${web}/`);
+  await page.getByRole('combobox', { name: /analysis/i }).click();
+  const list = page.getByRole('listbox');
+  await expect(list).toBeVisible();
+  const box = await list.locator('..').boundingBox();
+  expect(box?.y).toBeGreaterThanOrEqual(0);
+  expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(844);
+  await list.getByRole('option', { name: /Expression effects/ }).scrollIntoViewIfNeeded();
+  await expect(list.getByRole('option', { name: /Expression effects/ })).toBeInViewport();
+});
