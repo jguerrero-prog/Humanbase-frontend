@@ -63,7 +63,7 @@ const aroundRenderer: [string, string, { text: string; href: string }?][] = [
 ];
 
 const requests = [
-  ['Edges on the sequential blue ramp, by darkness, width and opacity', 'humanbase.io’s green to red scale is the pairing this page measures as failing for red-green color blindness, and green reads as “selected” in this system.'],
+  ['Edges on the sequential blue ramp, by darkness, width and opacity', 'humanbase.io’s green to red scale is the pairing this page measures as failing for red-green color blindness.'],
   ['The layout settles before it is drawn, and never moves after', 'humanbase.io’s layout moves for several seconds after loading. Running the simulation before the first draw removes the motion the Motion page warns about.'],
   ['Everything fits the panel, labels included', 'On humanbase.io, labels at the edge are cut off and Expand view crops genes.'],
   ['Labels never overlap', 'A label moves below, right or left of its gene when the spot above is taken, and shows only on hover when there is no free spot.'],
@@ -109,7 +109,7 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
   >
     <KeyRules
       rules={[
-        { title: 'Green is not data', text: 'Emerald belongs to the interface: brand and selection. Charts never use it, so a green mark never looks “selected”.' },
+        { title: 'Interface colors are not data', text: 'The primary color belongs to the interface: brand and links. Charts use only the viz scales, and selection is an ink ring, so a mark never looks “selected”.' },
         { title: 'One scale per kind of data', text: 'Amounts get one blue ramp, directions get blue to orange, groups get six named colors. Never a rainbow. Two sets copy humanbase.io instead: Sei sequence classes and chromosomes.' },
         { title: 'Color is never alone', text: 'Every encoding is also in a label, a position, a line width or a table view, and every chart has a legend.' },
       ]}
@@ -152,14 +152,14 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
         }
       </ul>
       <ul class="points">
-        <li>The closest pair stays clearly apart in every simulation (smallest difference 17 to 21, against 26 for typical vision). Indigo replaced Okabe–Ito’s bluish green, which sat close to emerald and tested worse.</li>
+        <li>The closest pair stays clearly apart in every simulation (smallest difference 17 to 21, against 26 for typical vision). Indigo replaced Okabe–Ito’s bluish green, which sat close to Theme 1’s primary color and tested worse.</li>
         <li>Orange, sky blue and the grey are under 3:1 on white, so filled marks always get a 1px grey 600 outline. The outline meets the 3:1 rule for graphics; the fill tells groups apart.</li>
         <li>Use them in this order, so the first groups get the most distinct colors.</li>
       </ul>
     </article>
     <article class="scale-card">
       <header><h3>Categorical: modules</h3><code>viz.module.1 to viz.module.8</code></header>
-      <p>For the clusters of the module graph, which often has more than six. None is green, which means selected in this system. Each color is 3:1 or more on white, so a gene reads without an outline, and each module keeps its color when filters hide others.</p>
+      <p>For the clusters of the module graph, which often has more than six. None is green. Each color is 3:1 or more on white, so a gene reads without an outline, and each module keeps its color when filters hide others.</p>
       <ul class="swatches">
         {
           moduleScale.map(({ name, cssVar, hex, ratio: onWhite }) => (
@@ -250,7 +250,7 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
       <div class="selection-notes">
         <h3>Selection and labels</h3>
         <ul class="points">
-          <li>Selection is a 2px ink ring around the node, never a green fill. Unrelated nodes and edges fade to 30%; nothing moves. Hover works the same way with a dashed ring, fading to 20%.</li>
+          <li>Selection is a 2px ink ring around the node, never a colored fill. Unrelated nodes and edges fade to 30%; nothing moves. Hover works the same way with a dashed ring, fading to 20%.</li>
           <li>The selected gene’s details open in the drawer beside the graph, as on the Modals and drawers page.</li>
           <li>Starring a process or tissue rings its genes in that set’s categorical color, with a light hull behind them. A gene in several starred sets gets one ring per set, stacked outward in the order they were starred. A 1px ink edge outside the rings keeps light colors visible on white.</li>
           <li>Labels are Lato Bold 12 ink on a white pill above the gene, drawn over every connection, so lines never cross the text. The query gene is 14px.</li>
@@ -389,11 +389,11 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
       <li class="pair pair-dont">
         <div class="pair-stage">
           <svg class="mini-node" viewBox="0 0 120 40" aria-hidden="true">
-            <circle class="green" cx="20" cy="20" r="7" /><text x="40" y="24">IL1R1</text>
+            <circle class="brand" cx="20" cy="20" r="7" /><text x="40" y="24">IL1R1</text>
           </svg>
         </div>
-        <h3>Don’t. Green fill for selection</h3>
-        <p>A green node reads as a data value, or as “good”.</p>
+        <h3>Don’t. Brand-color fill for selection</h3>
+        <p>A filled node reads as a data value.</p>
       </li>
     </ul>
   </DocSection>
@@ -564,7 +564,7 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
     stroke-width: 1.5px;
   }
 
-  .mini-node .green {
+  .mini-node .brand {
     fill: var(--action-primary);
   }
 

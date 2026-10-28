@@ -53,7 +53,7 @@ const networkHubs: readonly [number, number][] = [[139, 109], [319, 99], [129, 2
 export function NetworkIllustration() {
   return (
     <Frame label="tissue network">
-      <path d={networkEdges} transform="translate(74.77 54.2)" fill="none" stroke={token('color/emerald/300')} strokeWidth={1} />
+      <path d={networkEdges} transform="translate(74.77 54.2)" fill="none" stroke={token('color/primary/300')} strokeWidth={1} />
       <path d={networkHubLinks} transform="translate(140 110)" fill="none" stroke={token('action/primary')} strokeWidth={2} />
       {networkLeaves.map(([x, y]) => (
         <circle key={`${x}-${y}`} cx={x + 5} cy={y + 5} r={5} fill={token('surface/page')} stroke={token('border/strong')} strokeWidth={1.5} />

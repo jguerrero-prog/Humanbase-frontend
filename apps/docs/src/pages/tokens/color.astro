@@ -1,8 +1,8 @@
 ---
 import { flattenTokens, type TokenEntry } from '@humanbase/tokens/catalog';
-import { ColorCatalog } from '@humanbase/tokens/color';
 import primitives from '@humanbase/tokens/src/primitives.tokens.json';
 import semantic from '@humanbase/tokens/src/semantic.tokens.json';
+import { colors } from '../../data/colors';
 import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
@@ -10,7 +10,6 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import { displayValue } from '../../tokenDisplay';
 
-const colors = new ColorCatalog(primitives, semantic);
 const slash = (path: string[]) => path.join('/');
 
 const uses: Record<string, string> = {
@@ -39,14 +38,14 @@ const uses: Record<string, string> = {
   'text/error': 'Error messages',
   'text/link': 'Links and ghost buttons',
   'text/muted': 'Captions, meta, placeholders',
-  'text/on-brand': 'Text on emerald or ink',
+  'text/on-brand': 'Text on the brand color or ink',
   'text/secondary': 'Supporting text, descriptions',
   'action/ghost-hover': 'Hover tint on light surfaces',
   'action/ghost-pressed': 'Pressed tint on light surfaces',
   'action/ghost-selected': 'Selected tint on light surfaces',
-  'overlay/on-brand-hover': 'Hover tint on emerald',
-  'overlay/on-brand-open': 'Open menu tint on emerald',
-  'overlay/on-brand-selected': 'Selected tint on emerald',
+  'overlay/on-brand-hover': 'Hover tint on the brand color',
+  'overlay/on-brand-open': 'Open menu tint on the brand color',
+  'overlay/on-brand-selected': 'Selected tint on the brand color',
   'syntax/command': 'Commands and methods in code',
   'syntax/comment': 'Comments in code, italic',
   'syntax/flag': 'Flags in code',
@@ -65,9 +64,9 @@ const statusUse = (path: string[]) => {
 };
 
 const ramps = [
-  { title: 'Emerald', group: 'emerald' },
-  { title: 'Simons Yellow', group: 'yellow' },
-  { title: 'Mint', group: 'mint' },
+  { title: 'Primary', group: 'primary' },
+  { title: 'Secondary', group: 'secondary' },
+  { title: 'Accent', group: 'accent' },
   { title: 'Grey', group: 'grey' },
 ].map(({ title, group }) => ({ title, steps: flattenTokens(primitives.color[group as keyof typeof primitives.color] as never, ['color', group]) }));
 
@@ -106,13 +105,13 @@ const swatchLabel = (entry: TokenEntry) => `${slash(entry.path.slice(1))} ${colo
 
 <DocsLayout title="Color tokens" description="Primitive ramps, the semantic tokens components use, and the data visualization scales.">
   <Intro
-    lead="Colors live in two Figma variable collections. Primitives hold every value once: four ramps, status colors and the data scales. Semantic tokens point at primitives by role, such as text/default or border/selected. Components use semantic tokens; data views use viz tokens."
-    status="Updated October 22, 2026 · Tokens · Every swatch on this page is bound to its variable"
+    lead="Colors live in two Figma variable collections. Primitives hold every value once: four ramps, status colors and the data scales. Semantic tokens point at primitives by role, such as text/default or border/selected. Components use semantic tokens; data views use viz tokens. Each collection has a Theme 2 mode, the default, and a Theme 1 mode; this page shows Theme 2."
+    status="Updated October 28, 2026 · Tokens · Every swatch on this page is bound to its variable"
   >
     <KeyRules
       rules={[
         { title: 'Use the role, not the value', text: 'Pick text/muted, not grey 500. When a role changes, every component follows.' },
-        { title: 'Green is for actions', text: 'Emerald is the brand and the primary action; it never encodes data (Data visualization).' },
+        { title: 'Primary is for actions', text: 'The primary scale is the brand and the primary action; it never encodes data (Data visualization).' },
         { title: 'Status means status', text: 'Error, warning, success and info appear only with an icon and words, never as decoration.' },
       ]}
     />

@@ -3,7 +3,7 @@ import { Icon, type IconName } from '../Icon/Icon';
 import './Badge.css';
 
 export type BadgeSize = 'small' | 'medium';
-export type BadgeTone = 'neutral' | 'count' | 'on-emerald';
+export type BadgeTone = 'neutral' | 'count' | 'on-primary';
 export type JobStatus = 'queued' | 'running' | 'finished' | 'failed';
 
 export interface BadgeProps {

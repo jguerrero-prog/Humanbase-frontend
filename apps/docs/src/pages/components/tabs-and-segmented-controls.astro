@@ -45,7 +45,7 @@ const tissues = ['Adipose tissue', 'Blood vessel', 'Brain', 'Heart', 'Liver'].ma
 const tabStates = [
   { title: 'Default', text: 'Grey 600 label (8.9:1)', value: 'none', tab: {} },
   { title: 'Hover', text: 'Ink label, 2px grey 300 bar', value: 'none', tab: { 'data-state': 'hover' as const } },
-  { title: 'Selected', text: 'Ink label, 3px emerald bar', value: 'functions', tab: {} },
+  { title: 'Selected', text: 'Ink label, 3px primary bar', value: 'functions', tab: {} },
   { title: 'Focus', text: 'Focus ring, 8px radius', value: 'none', tab: { 'data-state': 'focus' as const } },
   { title: 'Disabled', text: 'Grey 400 label, skipped by arrow keys', value: 'none', tab: { disabled: true } },
 ];
@@ -59,7 +59,7 @@ const segmentStates = [
 const radioStates = [
   { title: 'Default', text: '1.5px grey 500 ring (5.3:1)', value: '', option: {} },
   { title: 'Hover', text: '2px ink ring', value: '', option: { 'data-state': 'hover' as const } },
-  { title: 'Selected', text: '2px emerald ring, 10px emerald center', value: 'global', option: {} },
+  { title: 'Selected', text: '2px primary ring, 10px primary center', value: 'global', option: {} },
   { title: 'Focus', text: 'Focus ring around the control', value: '', option: { 'data-state': 'focus' as const } },
   { title: 'Disabled selected', text: 'Grey 300 ring, grey center', value: 'global', option: { disabled: true } },
   { title: 'Error', text: '2px error ring with a message for the group', value: '', option: { 'data-state': 'error' as const } },
@@ -88,16 +88,16 @@ const tables = {
   specs: [
     ['tab.height / padding / gap', '48px / 0 16px / 4px between tabs'],
     ['tab.label', `Lato Bold 16/24; grey 600 ${hex('color.grey.600')}, ink ${hex('color.grey.900')} when hovered or selected`],
-    ['tab.indicator', `3px emerald 600 ${hex('color.emerald.600')}, 2px top radius; hover 2px grey 300 ${hex('color.grey.300')}`],
+    ['tab.indicator', `3px primary 600 ${hex('color.primary.600')}, 2px top radius; hover 2px grey 300 ${hex('color.grey.300')}`],
     ['tab.list.border', `1px border.subtle ${hex('border.subtle')}`],
-    ['tab.count', 'Lato Bold 12/18, 6px side padding, radius.xs 4px, grey 100; emerald 50 with emerald 700 text when selected'],
+    ['tab.count', 'Lato Bold 12/18, 6px side padding, radius.xs 4px, grey 100; primary 50 with primary 700 text when selected'],
     ['segmented.track', `grey 100 ${hex('color.grey.100')}, 4px padding, 4px gap, radius 12px (Medium) / 8px (Small)`],
     ['segment.height.md / .sm', '36px / 28px, so the control is 44px / 36px'],
     ['segment.radius.md / .sm', 'radius.sm 8px / radius.xs 4px'],
     ['segment.selected', `white, 1px border.default ${hex('border.default')}, Lato Bold`],
     ['segment.hover', `grey 200 ${hex('color.grey.200')}`],
     ['radio.size', '20px ring in a 24px box, 12px gap to the label'],
-    ['radio.ring', `1.5px grey 500 ${hex('color.grey.500')}; hover 2px ink; selected 2px emerald with 10px center; error 2px ${hex('border.error')}`],
+    ['radio.ring', `1.5px grey 500 ${hex('color.grey.500')}; hover 2px ink; selected 2px primary with 10px center; error 2px ${hex('border.error')}`],
     ['focus.ring', `0 0 0 2px ${hex('color.white')}, 0 0 0 5px ${hex('focus.ring')}`],
   ],
 };
@@ -119,7 +119,7 @@ const usage = `import { RadioGroup, SegmentedControl, Tabs } from '@humanbase/ui
     <KeyRules
       rules={[
         { title: 'One row of tabs', text: 'Never stack tabs inside tabs. The audit found gene pages nested five levels deep; a second level becomes a segmented control or a select.' },
-        { title: 'Selected is a shape', text: 'The selected tab gets a 3px emerald bar, the selected segment a white raised fill, the selected radio a filled center. Color is never the only signal.' },
+        { title: 'Selected is a shape', text: 'The selected tab gets a 3px primary bar, the selected segment a white raised fill, the selected radio a filled center. Color is never the only signal.' },
         { title: 'Keep the view in the URL', text: 'Each tab and view has its own address, so people can share a link to the Interactions tab or the table view.' },
       ]}
     />
@@ -131,14 +131,14 @@ const usage = `import { RadioGroup, SegmentedControl, Tabs } from '@humanbase/ui
     </DocTable>
   </DocSection>
 
-  <DocSection title="Tabs" lead="A row of tabs on a 1px grey 200 line. The selected tab is marked with a 3px emerald bar that sits on the line.">
+  <DocSection title="Tabs" lead="A row of tabs on a 1px grey 200 line. The selected tab is marked with a 3px primary bar that sits on the line.">
     <figure class="anatomy">
       <div class="anatomy-page">
         <Tabs label="IL1B sections" tabs={geneTabs} defaultValue="overview" />
         <p>IL1B is a cytokine that drives inflammation and is linked to …</p>
       </div>
       <ol class="callouts">
-        <li style="--x: 315px; --line: 64px"><span>Selected tab: ink, 3px emerald bar</span></li>
+        <li style="--x: 315px; --line: 64px"><span>Selected tab: ink, 3px primary bar</span></li>
         <li class="callout-end" style="--x: 499px; --line: 64px"><span>Count, optional</span></li>
         <li class="callout-end" style="--x: 1000px; --line: 101px"><span>1px grey 200 line under the whole row</span></li>
       </ol>

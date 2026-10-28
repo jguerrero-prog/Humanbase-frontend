@@ -53,7 +53,7 @@ const borderColors = [
   ['subtle', 'Grey 200. Dividers, table rows, card outlines. Decorative, so it never carries meaning alone.'],
   ['default', 'Grey 300. Card outline on hover, panel edges next to grey 50 surfaces.'],
   ['strong', 'Grey 500. Text inputs, checkboxes, selects. Meets the 3:1 rule for controls you need to find.'],
-  ['selected', 'Emerald 600. Focused fields, selected cards and rows, at 2px.'],
+  ['selected', 'Primary 600. Focused fields, selected cards and rows, at 2px.'],
   ['error', 'Error 700. Fields with an error, at 2px, always with a message.'],
 ].map(([name = '', use]) => {
   const ratio = colors.contrast(`border.${name}`, 'color.white');
@@ -270,7 +270,7 @@ const sceneSuggestions = ['IL1A interleukin 1 alpha', 'IL1B interleukin 1 beta',
       <li class="pair pair-dont">
         <div class="pair-stage pair-stage-single pair-stage-glow" aria-hidden="true"><span /></div>
         <h3>Don’t. Use colored glows</h3>
-        <p>Green or yellow glows look like a state or an error, and fade on the green header.</p>
+        <p>Colored glows look like a state or an error, and fade on the brand header.</p>
       </li>
     </ul>
   </DocSection>
@@ -745,7 +745,7 @@ const sceneSuggestions = ['IL1A interleukin 1 alpha', 'IL1B interleukin 1 beta',
 
   .pair-stage-glow span {
     border-color: transparent;
-    box-shadow: 0 0 28px color-mix(in srgb, var(--color-mint-500) 55%, transparent);
+    box-shadow: 0 0 28px color-mix(in srgb, var(--color-accent-500) 55%, transparent);
   }
 
   @media (width < 64rem) {

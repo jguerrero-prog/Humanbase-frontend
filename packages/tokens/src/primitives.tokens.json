@@ -8,7 +8,7 @@
     }
   },
   "color": {
-    "emerald": {
+    "primary": {
       "50": {
         "$type": "color",
         "$value": {
@@ -130,7 +130,7 @@
         }
       }
     },
-    "yellow": {
+    "secondary": {
       "50": {
         "$type": "color",
         "$value": {
@@ -253,7 +253,7 @@
         }
       }
     },
-    "mint": {
+    "accent": {
       "50": {
         "$type": "color",
         "$value": {

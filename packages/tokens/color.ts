@@ -45,7 +45,7 @@ export class ColorCatalog {
     return entry;
   }
 
-  /** The token an alias points at, such as "color.emerald.600", or undefined for a raw value. */
+  /** The token an alias points at, such as "color.primary.600", or undefined for a raw value. */
   target(path: string): string | undefined {
     const value = this.entry(path).token.$value;
     return typeof value === 'string' ? aliasPath(value).join('.') : undefined;

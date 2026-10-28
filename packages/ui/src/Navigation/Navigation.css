@@ -3,7 +3,7 @@
   z-index: var(--z-sticky);
   inset-block-start: 0;
   container-type: inline-size;
-  background: var(--action-primary);
+  background: var(--surface-brand);
   transition: box-shadow 150ms linear;
 }
 
@@ -105,7 +105,7 @@ a.nav-item,
 
 .top-bar :focus-visible,
 .nav-item[data-state="focus"] {
-  box-shadow: 0 0 0 2px var(--action-primary), 0 0 0 4px var(--text-on-brand);
+  box-shadow: 0 0 0 2px var(--surface-brand), 0 0 0 4px var(--text-on-brand);
 }
 
 .nav-menu {
@@ -245,7 +245,7 @@ a.nav-item,
 
 .top-bar-search .search-field:focus-within {
   outline: 2px solid transparent;
-  box-shadow: 0 0 0 2px var(--action-primary), 0 0 0 4px var(--text-on-brand);
+  box-shadow: 0 0 0 2px var(--surface-brand), 0 0 0 4px var(--text-on-brand);
 }
 
 .top-bar-search .search-field-input:focus-visible {
