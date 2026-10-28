@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Pagination, ShowMore, pageSizeMemory } from './Pagination';
+import { Pagination, ShowMore } from './Pagination';
 
 describe('Pagination', () => {
   it('is a labelled landmark that marks the current page', () => {
@@ -29,11 +29,14 @@ describe('Pagination', () => {
     expect(screen.getByRole('link', { name: 'Page 50' })).toHaveAttribute('href', '?page=50');
   });
 
-  it('remembers rows per page only when storage works', () => {
-    pageSizeMemory.write('rows', 50);
-    expect(pageSizeMemory.read('rows', 25)).toBe(50);
-    localStorage.setItem('rows', '7');
-    expect(pageSizeMemory.read('rows', 25)).toBe(25);
+  it('leaves remembering rows per page to the app', async () => {
+    const onPageSizeChange = vi.fn();
+    render(<Pagination total={7463} noun="datasets" pageSize={50} onPageSizeChange={onPageSizeChange} />);
+    expect(screen.getByRole('combobox', { name: /Rows per page/ })).toHaveTextContent('50');
+    await userEvent.click(screen.getByRole('combobox', { name: /Rows per page/ }));
+    await userEvent.click(screen.getByRole('option', { name: '100' }));
+    expect(onPageSizeChange).toHaveBeenCalledWith(100);
+    expect(localStorage.length).toBe(0);
   });
 });
 

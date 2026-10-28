@@ -1,9 +1,9 @@
-import type { Assembly } from '../GenomeBrowserEngine';
+import { scoreTrackHeight } from '@humanbase/ui';
+import { isSegmentTrack, type Assembly, type GenomeDataTrack } from '../GenomeBrowserEngine';
+import { humanbaseTracks } from '../humanbaseFiles';
 
 // The live Humanbase site's Biodalliance setup (hb.flatironinstitute.org, October 2026).
 // A fork that configures Biodalliance differently replaces this file or passes its own config to BiodallianceEngine.
-
-export const humanbaseTracks = 'https://humanbase.s3.amazonaws.com/tracks';
 
 const grch37 = { speciesName: 'Human', taxon: 9606, auth: 'GRCh', version: '37', ucscName: 'hg19' };
 const grch38 = { speciesName: 'Human', taxon: 9606, auth: 'GRCh', version: '38', ucscName: 'hg38' };
@@ -28,23 +28,25 @@ const gencode19 = {
   name: 'GENCODE 19',
   title: 'Genes',
   desc: 'GENCODE 19',
-  bwgURI: `${humanbaseTracks}/gencode.bb`,
+  bwgURI: `${humanbaseTracks}gencode.bb`,
   style: humanbaseGeneStyle,
   collapseSuperGroups: true,
-  trixURI: `${humanbaseTracks}/geneIndex.ix`,
+  trixURI: `${humanbaseTracks}geneIndex.ix`,
 };
 
-/** The live site's GM12878 ChromHMM track: BGITEM fills each segment with the file's own itemRgb. */
-export const chromHmm = {
-  name: 'GM12878 ChromHMM',
-  desc: 'GM12878 ChromHMM Genome Segmentation',
-  bigBedUrl: `${humanbaseTracks}/gm12878.ChromHMM.bb`,
-  style: [
-    { type: 'bigbed', style: { glyph: 'BOX', FGCOLOR: 'black', BGCOLOR: 'blue', HEIGHT: 8, BUMP: false, LABEL: false, ZINDEX: 20, BGITEM: true, id: 'style1' } },
-    { type: 'bb-translation', style: { glyph: 'BOX', FGCOLOR: 'black', BGITEM: true, BGCOLOR: 'red', HEIGHT: 10, BUMP: true, ZINDEX: 20, id: 'style2' } },
-    { type: 'bb-transcript', style: { glyph: 'BOX', FGCOLOR: 'black', BGCOLOR: 'white', HEIGHT: 10, ZINDEX: 10, BUMP: true, LABEL: true, id: 'style3' } },
-  ],
-};
+/** The live site's GM12878 ChromHMM style: BGITEM fills each segment with the file's own itemRgb. */
+export const chromHmmStyle = [
+  { type: 'bigbed', style: { glyph: 'BOX', FGCOLOR: 'black', BGCOLOR: 'blue', HEIGHT: 8, BUMP: false, LABEL: false, ZINDEX: 20, BGITEM: true, id: 'style1' } },
+  { type: 'bb-translation', style: { glyph: 'BOX', FGCOLOR: 'black', BGITEM: true, BGCOLOR: 'red', HEIGHT: 10, BUMP: true, ZINDEX: 20, id: 'style2' } },
+  { type: 'bb-transcript', style: { glyph: 'BOX', FGCOLOR: 'black', BGCOLOR: 'white', HEIGHT: 10, ZINDEX: 10, BUMP: true, LABEL: true, id: 'style3' } },
+];
+
+/** A page's track in Biodalliance's style: scores as viz-seq-6 bars over their range, segments as ChromHMM, a fallback color as BGCOLOR. */
+export function trackStyle(track: GenomeDataTrack): Record<string, unknown>[] {
+  if (isSegmentTrack(track)) return track.fallbackColor ? chromHmmStyle.map((rule) => ({ ...rule, style: { ...rule.style, BGCOLOR: track.fallbackColor } })) : chromHmmStyle;
+  const range = track.range && { MIN: track.range[0], MAX: track.range[1] };
+  return [{ type: 'default', style: { glyph: 'HISTOGRAM', BGCOLOR: 'var(--viz-seq-6)', HEIGHT: scoreTrackHeight, ...range } }];
+}
 
 export interface BiodallianceAssembly {
   coordSystem: Record<string, unknown>;
@@ -55,7 +57,7 @@ export const humanbaseAssemblies: Record<Assembly, BiodallianceAssembly> = {
   hg19: {
     coordSystem: grch37,
     sources: [
-      { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}/hg19.2bit`, tier_type: 'sequence', pinned: true },
+      { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}hg19.2bit`, tier_type: 'sequence', pinned: true },
       gencode19,
       // Conservation and GM12878 ChromHMM are page tracks (suggestedTracks), so the Tracks drawer can show and hide them.
     ],
@@ -63,15 +65,15 @@ export const humanbaseAssemblies: Record<Assembly, BiodallianceAssembly> = {
   hg38: {
     coordSystem: grch38,
     sources: [
-      { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}/GRCh38/hg38.2bit`, tier_type: 'sequence', pinned: true },
+      { name: 'Genome', title: 'Position', twoBitURI: `${humanbaseTracks}GRCh38/hg38.2bit`, tier_type: 'sequence', pinned: true },
       {
         name: 'GENCODE 21',
         title: 'Genes',
         desc: 'GENCODE 21',
-        bwgURI: `${humanbaseTracks}/GRCh38/gencode.v21.annotation.bb`,
+        bwgURI: `${humanbaseTracks}GRCh38/gencode.v21.annotation.bb`,
         style: humanbaseGeneStyle,
         collapseSuperGroups: true,
-        trixURI: `${humanbaseTracks}/GRCh38/gencode.v21.annotation.ix`,
+        trixURI: `${humanbaseTracks}GRCh38/gencode.v21.annotation.ix`,
       },
       { ...gencode19, mapping: 'hg19ToHg38', disabled: true },
     ],
@@ -88,7 +90,7 @@ export const humanbaseBrowserOptions: Record<string, unknown> = {
   maxHeight: 1000,
   noPersist: true,
   disablePoweredBy: true,
-  chains: { hg19ToHg38: { uri: `${humanbaseTracks}/GRCh38/hg19ToHg38.bb`, type: 'bigbed', coords: grch37 } },
+  chains: { hg19ToHg38: { uri: `${humanbaseTracks}GRCh38/hg19ToHg38.bb`, type: 'bigbed', coords: grch37 } },
   // The page draws location, zoom and variant controls, so Biodalliance's own toolbar is hidden.
   noLocationField: true,
   noZoomSlider: true,

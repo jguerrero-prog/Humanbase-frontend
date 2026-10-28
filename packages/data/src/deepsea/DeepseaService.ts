@@ -89,13 +89,13 @@ export class DeepseaService {
   }
 
   /** Each variant's score on every feature, for every variant of the job in a range, as the live job page reads them. */
-  featurePredictions(id: string, scoreType: string, range: GenomeLocation): Promise<FeaturePredictionRecord[]> {
-    return this.client.get<FeaturePredictionRecord[]>(`deepsea/jobs/${id}/feature_predictions/`, { score_type: scoreType, chr_and_variant_range: range.variantRange });
+  featurePredictions(id: string, scoreType: string, range: GenomeLocation, signal?: AbortSignal): Promise<FeaturePredictionRecord[]> {
+    return this.client.get<FeaturePredictionRecord[]>(`deepsea/jobs/${id}/feature_predictions/`, { score_type: scoreType, chr_and_variant_range: range.variantRange }, signal);
   }
 
   /** Precomputed predictions for every variant in a range, such as Seqweaver's gnomAD variants, read without a job as humanbase.io's variant browsers do. */
-  precomputedPredictions({ model, dataset, scoreType }: PrecomputedSource, range: GenomeLocation): Promise<FeaturePredictionRecord[]> {
-    return this.client.get<FeaturePredictionRecord[]>(`deepsea/${dataset ?? deepseaModels[model].apiName}/feature_predictions/`, { ...(scoreType && { score_type: scoreType }), chr_and_variant_range: range.variantRange });
+  precomputedPredictions({ model, dataset, scoreType }: PrecomputedSource, range: GenomeLocation, signal?: AbortSignal): Promise<FeaturePredictionRecord[]> {
+    return this.client.get<FeaturePredictionRecord[]>(`deepsea/${dataset ?? deepseaModels[model].apiName}/feature_predictions/`, { ...(scoreType && { score_type: scoreType }), chr_and_variant_range: range.variantRange }, signal);
   }
 
   /** The features a set of precomputed variants is scored on; a dataset's own sequence classes are named with their groups, as Sei job results name them. */

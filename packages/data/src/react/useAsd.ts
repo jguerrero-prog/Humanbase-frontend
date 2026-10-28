@@ -10,13 +10,13 @@ const rangeKey = (range: GenomeLocation | undefined) => range && `${range.chrom}
 export function useAsdPage(page: number, size: number, where?: AsdWhere) {
   const api = useHumanbase();
   const key = typeof where === 'string' ? where : rangeKey(where);
-  return useQuery({ queryKey: ['asd-page', page, size, key], queryFn: () => api.asd.page(page, size, where), staleTime: Infinity });
+  return useQuery({ queryKey: ['asd-page', page, size, key], queryFn: ({ signal }) => api.asd.page(page, size, where, signal), staleTime: Infinity });
 }
 
 /** The variants the genome browser shows, in genome order. */
 export function useAsdRange(range: GenomeLocation | undefined) {
   const api = useHumanbase();
-  return useQuery(rangeQuery(['asd-range', rangeKey(range)], () => api.asd.inRange(range as GenomeLocation), Boolean(range)));
+  return useQuery(rangeQuery(['asd-range', rangeKey(range)], (signal) => api.asd.inRange(range as GenomeLocation, signal), Boolean(range)));
 }
 
 export function useAsdColumns() {
@@ -29,6 +29,6 @@ export function useAsdEffects(range: GenomeLocation | undefined, set: AsdFeature
   const api = useHumanbase();
   const features = useQuery({ queryKey: ['asd-features', set], queryFn: () => api.asd.features(set), staleTime: Infinity });
   const read = useReadRange(range, set);
-  const predictions = useQuery(rangeQuery(['asd-predictions', set, read?.variantRange], () => api.asd.predictions(read as GenomeLocation, set), Boolean(read)));
+  const predictions = useQuery(rangeQuery(['asd-predictions', set, read?.variantRange], (signal) => api.asd.predictions(read as GenomeLocation, set, signal), Boolean(read)));
   return { features, predictions };
 }
