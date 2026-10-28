@@ -52,6 +52,11 @@
       "$type": "color",
       "$value": "{color.grey.900}"
     },
+    "brand": {
+      "$type": "color",
+      "$value": "{color.primary.600}",
+      "$description": "The top bar"
+    },
     "brand-deep": {
       "$type": "color",
       "$value": "{color.primary.900}",

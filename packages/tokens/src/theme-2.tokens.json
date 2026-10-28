@@ -630,6 +630,13 @@
       }
     }
   },
+  "surface": {
+    "brand": {
+      "$type": "color",
+      "$value": "{color.primary.700}",
+      "$description": "The top bar is one step darker than primary 600 here, so white text and its hover and open tints pass AA, and the gold current-page bar passes 3:1."
+    }
+  },
   "text": {
     "link": {
       "$type": "color",
@@ -637,11 +644,6 @@
     }
   },
   "action": {
-    "secondary": {
-      "$type": "color",
-      "$value": "{color.secondary.200}",
-      "$description": "The current page mark in the top bar. Gold 500 measures 2.4:1 on primary 600 here; 200 passes the 3:1 that state indicators need."
-    },
     "ghost-hover": {
       "$type": "color",
       "$value": {

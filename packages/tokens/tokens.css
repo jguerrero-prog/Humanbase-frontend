@@ -178,6 +178,7 @@
   --surface-cream: var(--color-cream);
   --surface-sunken: var(--color-grey-100);
   --surface-inverse: var(--color-grey-900);
+  --surface-brand: var(--color-primary-600);
   --surface-brand-deep: var(--color-primary-900);
   --border-subtle: var(--color-grey-200);
   --border-default: var(--color-grey-300);
@@ -344,8 +345,8 @@
   --color-info-50: #E8F2FA;
   --color-info-200: #9FCDF1;
   --color-info-700: #03669C;
+  --surface-brand: var(--color-primary-700);
   --text-link: var(--color-primary-700);
-  --action-secondary: var(--color-secondary-200);
   --action-ghost-hover: #007CBC14;
   --action-ghost-pressed: #007CBC29;
   --action-ghost-selected: #007CBC3D;

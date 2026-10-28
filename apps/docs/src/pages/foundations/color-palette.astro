@@ -16,8 +16,8 @@ const ratio = (value: number, decimals = 1) => value.toFixed(decimals);
 const onWhite = (path: string) => colors.contrast(white, path) >= 4.5;
 
 const brands = [
-  { name: 'Blue', role: 'Primary', path: 'color.primary.600', use: 'Brand header, primary buttons and selected states. Links use primary 700.' },
-  { name: 'Gold', role: 'Secondary', path: 'color.secondary.500', use: 'Small marks, such as the article drop cap. The current-page bar on the blue header uses secondary 200 so it reaches 3:1.' },
+  { name: 'Blue', role: 'Primary', path: 'color.primary.600', use: 'Primary buttons and selected states. The top bar and links use primary 700 in this theme.' },
+  { name: 'Gold', role: 'Secondary', path: 'color.secondary.500', use: 'The current page in the top bar, the article drop cap and other small marks on the brand color' },
   { name: 'Light blue', role: 'Accent', path: 'color.accent.300', use: 'Data highlights, such as the query gene, and accents on the brand color' },
   { name: 'Ink', role: 'Text', path: ink, use: 'Headings and body text, secondary buttons and focus rings' },
 ];
@@ -40,7 +40,7 @@ const themeSwatches = [
 ];
 const themeRoles = [
   { label: 'Links', path: 'text.link' },
-  { label: 'Current page bar', path: 'action.secondary' },
+  { label: 'Top bar', path: 'surface.brand' },
   { label: 'Secondary button', path: 'button.secondary' },
   { label: 'Text on the secondary button', path: 'button.on-secondary' },
   { label: 'Data highlight', path: 'data.highlight' },
@@ -118,6 +118,7 @@ const roles = [
   ['action.secondary', 'The current page in the top bar'],
   ['text.default', 'Headings and body text'],
   ['text.muted', 'Captions, metadata'],
+  ['surface.brand', 'The top bar'],
   ['text.on-brand', 'Text on the brand color'],
   ['text.link', 'Links'],
   ['button.secondary', 'Secondary buttons'],
@@ -678,7 +679,7 @@ const roles = [
   }
 
   .tint-group-brand code {
-    color: var(--color-accent-100);
+    color: var(--text-on-brand);
   }
 
   .statuses > li {

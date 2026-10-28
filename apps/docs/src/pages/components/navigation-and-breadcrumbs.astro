@@ -54,7 +54,7 @@ const toolSections = sections.filter((section) => section.columns?.flat().some((
 const toolNames = toolSections.flatMap((section) => section.columns?.flat().flatMap((group) => group.links.map((link) => link.label)) ?? []);
 const topBarParts = [
   ['Logo', 'Links home. The only way to reach the homepage, so breadcrumbs never start with Home.'],
-  ['Current section', `Bold white with a 3px secondary bar (${ratio('action.secondary', 'action.primary', 1)} on primary 600). aria-current="true".`],
+  ['Current section', `Bold white with a 3px secondary bar (${ratio('action.secondary', 'surface.brand', 1)} on surface.brand). aria-current="true".`],
   ['Open menu', 'White at 14% behind the item; the chevron flips. Opens on click, not hover.'],
   ['Tool icons', `Each tool in the ${toolSections.map((section) => section.label).join(' and ')} menus (${toolNames.join(', ')}) shows its analysis icon at 20px, the same icon as in the homepage’s Analysis menu.`],
   ['Search', 'Search genes. Each suggested gene lists the pages it opens in, and nothing opens until one is chosen (Gene search and matching, Suggestions in the top bar).'],
@@ -159,7 +159,7 @@ const questions = [
 
 const specs = [
   ['topbar.height', '64px desktop and tablet, 56px phone'],
-  ['topbar.surface', `primary 600 ${hex('color.primary.600')}; elevation 3 once the page scrolls; z.sticky 100`],
+  ['topbar.surface', `surface.brand ${hex('surface.brand')}; elevation 3 once the page scrolls; z.sticky 100`],
   ['topbar.padding', '0 24px 0 32px desktop; 0 16px 0 24px tablet; 0 8px 0 16px phone'],
   ['nav.item', '40px tall, 12px side padding, radius.sm 8px, Lato Bold 15 white'],
   ['nav.item.hover / open', 'white at 12% / 14%'],
@@ -295,7 +295,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     </div>
   </DocSection>
 
-  <DocSection title="Top bar" lead="64px, primary 600, on every page. It stays at the top when the page scrolls, with elevation 3 once content passes under it.">
+  <DocSection title="Top bar" lead="64px, surface.brand, on every page. It stays at the top when the page scrolls, with elevation 3 once content passes under it.">
     <figure class="topbar-specimen">
       <figcaption class="variant-label">1280px and up, with the Variants & sequences menu open. Scroll sideways for search and Jobs.</figcaption>
       <div class="topbar-frame">
@@ -316,7 +316,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     </figure>
   </DocSection>
 
-  <DocSection title="Nav item states" lead={`White Lato Bold 15 on primary 600 (${ratio('text.on-brand', 'action.primary', 1)}) in every state. States change the background or add a bar, never the text color.`}>
+  <DocSection title="Nav item states" lead={`White Lato Bold 15 on surface.brand (${ratio('text.on-brand', 'surface.brand', 1)}) in every state. States change the background or add a bar, never the text color.`}>
     <ul class="item-states">
       {
         itemStates.map((state) => (
@@ -328,7 +328,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
         ))
       }
     </ul>
-    <p class="doc-note">Focus on the brand color uses a white ring instead of the usual ink one, because ink on primary 600 is only {ratio('focus.ring', 'action.primary', 1)}. White on primary 600 is {ratio('text.on-brand', 'action.primary', 1)}.</p>
+    <p class="doc-note">Focus on the brand color uses a white ring instead of the usual ink one, because ink on surface.brand is only {ratio('focus.ring', 'surface.brand', 1)}. White on surface.brand is {ratio('text.on-brand', 'surface.brand', 1)}.</p>
   </DocSection>
 
   <DocSection title="Section menus" lead="Each section opens a panel listing its tools by name, with one line about what each does. Names stay exactly as in the docs and papers.">
@@ -781,7 +781,7 @@ const usage = `import { Breadcrumbs, Footer, SkipLink, TopBar, type NavSection }
     padding: var(--space-8);
     color: var(--text-on-brand);
     list-style: none;
-    background: var(--action-primary);
+    background: var(--surface-brand);
     border-radius: var(--radius-md);
   }
 
