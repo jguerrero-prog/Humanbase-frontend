@@ -100,13 +100,10 @@
   fill-opacity: 0.85;
 }
 
-.force-graph-label text {
+.force-graph-label text,
+.force-graph-group text {
   font: 700 var(--label-size, 12px) var(--font-family-body);
   fill: var(--text-default);
-}
-
-.force-graph-label.is-query {
-  --label-size: 14px;
 }
 
 /* A label with no free spot shows only for its hovered or selected gene. */
@@ -178,11 +175,6 @@
   fill: var(--surface-page);
   stroke: var(--group-color);
   stroke-width: 1.5px;
-}
-
-.force-graph-group text {
-  font: var(--type-label-sm);
-  fill: var(--text-default);
 }
 
 .force-graph-group.is-hovered rect,

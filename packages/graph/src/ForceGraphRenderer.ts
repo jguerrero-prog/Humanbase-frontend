@@ -19,6 +19,7 @@ const maxBend = 36;
 const label = { size: 12, querySize: 14, charWidth: 0.62, padX: 10, padY: 6, gap: 3 };
 const group = { hullPad: 10, gap: 40, labelSize: 14, labelHeight: 22, hullSamples: 12 };
 const denseLinks = 80;
+const gridCell = 48;
 
 interface PlacedNode extends SimulationNodeDatum, GraphNode {
   x: number;
@@ -52,6 +53,29 @@ function svgElement<K extends keyof SVGElementTagNameMap>(name: K, attributes: R
 
 const overlaps = (a: Box, b: Box) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
 const round = (value: number) => Math.round(value * 100) / 100;
+
+/** Boxes filed by grid cell, so checking a spot looks only at the boxes near it. */
+class BoxGrid {
+  private cells = new Map<string, Box[]>();
+
+  private *cellsOf(box: Box): Generator<string> {
+    for (let x = Math.floor(box.x / gridCell); x <= Math.floor((box.x + box.width) / gridCell); x++)
+      for (let y = Math.floor(box.y / gridCell); y <= Math.floor((box.y + box.height) / gridCell); y++) yield `${x},${y}`;
+  }
+
+  add(box: Box): void {
+    for (const cell of this.cellsOf(box)) {
+      const boxes = this.cells.get(cell);
+      if (boxes) boxes.push(box);
+      else this.cells.set(cell, [box]);
+    }
+  }
+
+  overlapsAny(box: Box, except?: Box): boolean {
+    for (const cell of this.cellsOf(box)) if (this.cells.get(cell)?.some((other) => other !== except && overlaps(box, other))) return true;
+    return false;
+  }
+}
 
 /** A gentle arc between two genes that always bends the same way, so links that would overlap as straight lines separate. */
 export function edgeCurve(from: { x: number; y: number }, to: { x: number; y: number }): string {
@@ -130,6 +154,8 @@ export class ForceGraphRenderer implements GraphRenderer {
     const fresh = key !== this.layoutKey;
     const placed = fresh ? this.placeAnew(data, svg) : this.placeAsBefore(data);
     this.layoutKey = key;
+    const focusedNode = ForceGraphRenderer.idOf(this.nodes, document.activeElement);
+    const focusedGroup = ForceGraphRenderer.idOf(this.groupLabels, document.activeElement);
     canvas.replaceChildren();
     this.nodes.clear();
     this.labels.clear();
@@ -168,6 +194,12 @@ export class ForceGraphRenderer implements GraphRenderer {
     this.applyHover();
     this.updateLabelScale();
     if (fresh) this.fit();
+    (this.nodes.get(focusedNode ?? '') ?? this.groupLabels.get(focusedGroup ?? ''))?.focus({ preventScroll: true });
+  }
+
+  private static idOf(elements: ReadonlyMap<string, Element>, element: Element | null): string | undefined {
+    for (const [id, drawn] of elements) if (drawn === element) return id;
+    return undefined;
   }
 
   setLabel(text: string): void {
@@ -277,7 +309,8 @@ export class ForceGraphRenderer implements GraphRenderer {
     const degree = (node: PlacedNode) => this.neighbors.get(node.id)?.size ?? 0;
     const order = [...nodes].sort((a, b) => Number(b.query) - Number(a.query) || degree(b) - degree(a) || a.label.localeCompare(b.label));
     const dots = new Map(nodes.map((node, index) => [node.id, bounds[index] as Box]));
-    const taken: Box[] = [];
+    const taken = new BoxGrid();
+    for (const dot of dots.values()) taken.add(dot);
     for (const node of order) {
       const size = node.query ? label.querySize : label.size;
       const width = node.label.length * size * label.charWidth + label.padX;
@@ -290,19 +323,17 @@ export class ForceGraphRenderer implements GraphRenderer {
         [-(r + label.gap + width / 2), 0],
       ] as const;
       const boxAt = ([dx, dy]: readonly [number, number]): Box => ({ x: node.x + dx - width / 2, y: node.y + dy - height / 2, width, height });
-      const free = spots.find((spot) => {
-        const box = boxAt(spot);
-        return !taken.some((other) => overlaps(box, other)) && ![...dots].some(([id, dot]) => id !== node.id && overlaps(box, dot));
-      });
+      const free = spots.find((spot) => !taken.overlapsAny(boxAt(spot), dots.get(node.id)));
       const [dx, dy] = free ?? spots[0];
       const element = svgElement('g', { class: ['force-graph-label', node.query && 'is-query', !free && 'is-collapsed'].filter(Boolean).join(' '), transform: `translate(${round(node.x + dx)} ${round(node.y + dy)})` });
+      element.style.setProperty('--label-size', `${size}px`);
       const text = svgElement('text', { 'text-anchor': 'middle', dy: '0.35em' });
       text.textContent = node.label;
       element.append(svgElement('rect', { x: round(-width / 2), y: round(-height / 2), width: round(width), height, rx: 4 }), text);
       layer.append(element);
       this.labels.set(node.id, element);
       if (free) {
-        taken.push(boxAt(free));
+        taken.add(boxAt(free));
         bounds.push(boxAt(free));
       }
     }
@@ -433,6 +464,7 @@ export class ForceGraphRenderer implements GraphRenderer {
       const element = svgElement('g', { class: 'force-graph-group', tabindex: 0, role: 'button', 'aria-label': `${cluster.label}, ${count} ${count === 1 ? 'gene' : 'genes'}`, transform: `translate(${round(anchor.x)} ${round(anchor.y - 2)})` });
       element.style.setProperty('--group-color', `var(${cluster.color})`);
       const scaled = svgElement('g', { class: 'force-graph-group-scale' });
+      scaled.style.setProperty('--label-size', `${group.labelSize}px`);
       const width = cluster.label.length * group.labelSize * label.charWidth + label.padX + 12;
       const text = svgElement('text', { 'text-anchor': 'middle', y: -group.labelHeight / 2, dy: '0.35em' });
       text.textContent = cluster.label;
@@ -497,7 +529,7 @@ export class ForceGraphRenderer implements GraphRenderer {
     const linked = new Set<string>();
     if (selection?.kind === 'node') {
       linked.add(selection.id);
-      for (const neighbor of this.neighbors.get(selection.id) ?? []) if (this.isDrawn(selection.id, neighbor)) linked.add(neighbor);
+      if (this.links.length) for (const neighbor of this.neighbors.get(selection.id) ?? []) linked.add(neighbor);
       for (const link of selection.links ?? []) linked.add(link.source).add(link.target);
     }
     if (selection?.kind === 'link') linked.add(selection.source).add(selection.target);
@@ -523,10 +555,6 @@ export class ForceGraphRenderer implements GraphRenderer {
       element.classList.toggle('is-selected', isSelected);
       element.classList.toggle('is-faded', selection !== null && !isSelected && !touches);
     }
-  }
-
-  private isDrawn(a: string, b: string): boolean {
-    return this.links.some((link) => (link.source === a && link.target === b) || (link.source === b && link.target === a));
   }
 
   hover(focus: GraphFocus | null): void {
