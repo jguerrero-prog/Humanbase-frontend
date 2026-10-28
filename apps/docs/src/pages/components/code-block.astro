@@ -6,6 +6,7 @@ import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import { hex, ratio } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import { highlighter } from '../../syntax';
 
@@ -57,20 +58,20 @@ const legend = [
 ];
 
 const syntaxRoles = [
-  { role: 'Text and punctuation', sample: [{ text: '{ } : , [ ]', className: '' }], color: 'Ink #1A1A1A', contrast: '16.25:1' },
-  { role: 'JSON keys', sample: [{ text: '"slug"', className: 'syntax-key' }], color: 'Ink, bold', contrast: '16.25:1' },
-  { role: 'Commands and methods', sample: [{ text: 'curl GET POST', className: 'syntax-command' }], color: 'Info 700 #175CD3, bold', contrast: '5.59:1' },
-  { role: 'Strings and URLs', sample: [{ text: '"https://humanbase.io/api/"', className: 'syntax-string' }], color: 'Emerald 700 #0D5D31', contrast: '7.46:1' },
-  { role: 'Types and values', sample: [{ text: 'string integer null v1', className: 'syntax-type' }], color: 'Warning 700 #B54708', contrast: '5.07:1' },
-  { role: 'Path parameters', sample: [{ text: '{job_id}', className: 'syntax-param' }], color: 'Warning 700, bold', contrast: '5.07:1' },
+  { role: 'Text and punctuation', sample: [{ text: '{ } : , [ ]', className: '' }], color: `Ink ${hex('color.grey.900')}`, contrast: `${ratio('syntax.text', 'surface.subtle')}` },
+  { role: 'JSON keys', sample: [{ text: '"slug"', className: 'syntax-key' }], color: 'Ink, bold', contrast: `${ratio('syntax.text', 'surface.subtle')}` },
+  { role: 'Commands and methods', sample: [{ text: 'curl GET POST', className: 'syntax-command' }], color: `Info 700 ${hex('color.info.700')}, bold`, contrast: `${ratio('syntax.command', 'surface.subtle')}` },
+  { role: 'Strings and URLs', sample: [{ text: '"https://humanbase.io/api/"', className: 'syntax-string' }], color: `Emerald 700 ${hex('color.emerald.700')}`, contrast: `${ratio('syntax.string', 'surface.subtle')}` },
+  { role: 'Types and values', sample: [{ text: 'string integer null v1', className: 'syntax-type' }], color: `Warning 700 ${hex('color.warning.700')}`, contrast: `${ratio('syntax.type', 'surface.subtle')}` },
+  { role: 'Path parameters', sample: [{ text: '{job_id}', className: 'syntax-param' }], color: 'Warning 700, bold', contrast: `${ratio('syntax.param', 'surface.subtle')}` },
   {
     role: 'Flags and comments',
     sample: [
       { text: '-X ', className: 'syntax-flag' },
       { text: '// Returns genes', className: 'syntax-comment' },
     ],
-    color: 'Grey 600 #4A4A4A; comments italic',
-    contrast: '8.27:1',
+    color: `Grey 600 ${hex('color.grey.600')}; comments italic`,
+    contrast: `${ratio('syntax.flag', 'surface.subtle')}`,
   },
 ];
 
@@ -83,17 +84,17 @@ const tables = {
     ['Selection', 'Text can be selected by hand; the selection color is emerald 50 so every syntax color stays readable.'],
   ],
   specs: [
-    ['code.surface', 'grey 50 #F7F7F7, 1px border.subtle #E8E8E8, radius.sm 8px'],
+    ['code.surface', `grey 50 ${hex('color.grey.50')}, 1px border.subtle ${hex('border.subtle')}, radius.sm 8px`],
     ['code.padding', '20px 24px; label to code 8px'],
     ['code.font', 'Atkinson Hyperlegible Mono 15/24'],
     ['code.label', 'Lato Bold 14 grey 600'],
     ['code.copy', 'Lato Bold 13 grey 600 with a 16px copy icon; 12px from the top and right; “Copied” in success 700 for 2s'],
     ['code.max-height', '480px, then scrolls'],
     ['syntax.text / key', 'ink; keys bold'],
-    ['syntax.command', 'info 700 #175CD3, bold'],
-    ['syntax.string', 'emerald 700 #0D5D31'],
-    ['syntax.type / param', 'warning 700 #B54708; params bold'],
-    ['syntax.flag / comment', 'grey 600 #4A4A4A; comments italic'],
+    ['syntax.command', `info 700 ${hex('color.info.700')}, bold`],
+    ['syntax.string', `emerald 700 ${hex('color.emerald.700')}`],
+    ['syntax.type / param', `warning 700 ${hex('color.warning.700')}; params bold`],
+    ['syntax.flag / comment', `grey 600 ${hex('color.grey.600')}; comments italic`],
     ['code.inline', 'Atkinson Hyperlegible Mono 14 on grey 100, radius.xs 4px, 1px 4px padding'],
   ],
 };

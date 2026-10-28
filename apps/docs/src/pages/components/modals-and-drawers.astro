@@ -9,6 +9,7 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import ModuleGeneDrawer from '../../components/docs/ModuleGeneDrawer.astro';
 import NetworkSketch from '../../components/docs/NetworkSketch.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import { hex } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const deleteBody = '“BMI GWAS, adipose tissue” and its results will be removed. This can’t be undone.';
@@ -102,7 +103,7 @@ const specs = [
   ['drawer.width.md / lg', '480px / 640px; bottom sheet up to 90% height on phones'],
   ['drawer.surface', 'white, 1px border.subtle on the left, elevation 3'],
   ['drawer.header / footer', 'fixed, 1px border.subtle lines; body scrolls with 24px padding'],
-  ['backdrop', 'ink #1A1A1A at 40%'],
+  ['backdrop', `ink ${hex('color.grey.900')} at 40%`],
   ['z.drawer / z.modal', '300 / 400'],
   ['motion', 'dialog 200ms enter, 150ms exit; drawer 280ms enter, 200ms exit'],
 ];
