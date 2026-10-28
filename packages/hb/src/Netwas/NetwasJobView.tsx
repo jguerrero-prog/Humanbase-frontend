@@ -6,7 +6,7 @@ import { genomeBrowserLink } from '../content/genomeBrowser';
 import { categoryCrumbs, productTools } from '../content/product';
 import { jobDateTime as dateTime, JobLoadError, JobLoading, jobProgress, JobWaiting, syncJobHistory, useJobActions, useJobTitle } from '../Jobs/JobPage';
 import { NetwasGenes } from '../NetwasGenes/NetwasGenes';
-import type { NetwasDraft } from './NetwasForm';
+import { netwasJobLink, type NetwasDraft } from './NetwasForm';
 import './Netwas.css';
 
 export interface NetwasJobViewProps {
@@ -58,12 +58,11 @@ export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {
   const [tab, setTab] = useState('genes');
   // When the job was last read; elapsed times move on with each poll.
   const now = job.dataUpdatedAt;
+  const tissueName = (data && integrations.data?.find((network) => network.slug === data.tissue)?.name) ?? data?.tissue ?? '';
 
   useEffect(() => {
-    if (!data) return;
-    const tissueName = integrations.data?.find((network) => network.slug === data.tissue)?.name ?? data.tissue;
-    syncJobHistory(data, `/netwas/${data.id}/`, `${data.tool}, ${tissueName}`);
-  }, [data, integrations.data]);
+    if (data) syncJobHistory(data, netwasJobLink(data.id), `${data.tool}, ${tissueName}`);
+  }, [data, tissueName]);
 
   if (job.isError) {
     return (
@@ -77,7 +76,6 @@ export function NetwasJobView({ id, onEditAndResubmit }: NetwasJobViewProps) {
 
   if (!data) return <JobLoading />;
 
-  const tissueName = integrations.data?.find((network) => network.slug === data.tissue)?.name ?? data.tissue;
   const network = `${tissueName}, ${data.version === 'v3' ? 'MAGE' : 'GIANT'}`;
   const gwasFile = [data.gwasFileName, data.gwasFormat].filter(Boolean).join(', ');
   const crumbs = [categoryCrumbs.genes, productTools.netwas, { label: title }];

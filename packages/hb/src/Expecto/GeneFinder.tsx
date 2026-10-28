@@ -24,7 +24,7 @@ export function GeneFinder({ label, placeholder, examples, onPick }: GeneFinderP
 
   const openExample = async (symbol: string) => {
     setMissing(undefined);
-    const [gene] = await api.search.exact(symbol).catch(() => []);
+    const gene = await api.search.symbol(symbol).catch(() => null);
     if (gene) onPick(gene.entrez);
     else setMissing(symbol);
   };

@@ -25,6 +25,14 @@ describe('ApiClient', () => {
     expect((error as ApiError).isNotFound).toBe(true);
   });
 
+  it('throws an ApiError, not a SyntaxError, for a successful response that isn’t JSON', async () => {
+    for (const response of [new Response('<!doctype html><title>Humanbase</title>', { status: 200 }), new Response(null, { status: 204 })]) {
+      const error = await new ApiClient('/api', vi.fn().mockResolvedValue(response)).get('genes/3553/').catch((e: unknown) => e);
+      expect(error).toBeInstanceOf(ApiError);
+      expect((error as ApiError).status).toBe(response.status);
+    }
+  });
+
   it('passes the abort signal to every request', async () => {
     const fetcher = vi.fn().mockImplementation(() => Promise.resolve(jsonResponse({})));
     const client = new ApiClient('/api', fetcher);
