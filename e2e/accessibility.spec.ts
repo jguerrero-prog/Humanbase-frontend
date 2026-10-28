@@ -9,6 +9,9 @@ for (const url of pages) {
   test(`${url} has no WCAG 2.2 AA violations`, async ({ page }) => {
     await page.goto(url);
     await expect(page.locator('h1')).toBeVisible();
+    // Islands that hydrate on load set some attributes, such as a scrolling code block's tabindex, only once they hydrate.
+    await expect(page.locator('astro-island[ssr][client="load"]')).toHaveCount(0);
+    await page.evaluate(() => document.fonts.ready);
     // Reduced motion keeps fades, so let finite animations settle before measuring contrast.
     await settleAnimations(page);
     // Illustrations draw text faded on purpose (WCAG 1.4.3 exempts incidental text), so they are skipped.
