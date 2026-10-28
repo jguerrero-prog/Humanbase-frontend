@@ -9,7 +9,9 @@ import GenomeTracksSketch from '../../components/docs/GenomeTracksSketch.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import { hex } from '../../data/colors';
 import { scoreLegends } from '../../data/score-legends';
+import { required } from '../../data/required';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const view = new GenomeLocation('chr1', 109_767_590, 109_867_590);
@@ -72,12 +74,12 @@ const heatmapNotes = [
   'View: Full keeps every variant in view. Compact keeps one variant per 15px of the heatmap’s width, as humanbase.io does: the center variant, or else the one with the higher variant score.',
 ];
 const heatmapColumns = [2_232_996, 2_234_187, 2_235_106, 2_235_168, 2_235_624, 2_247_509, 2_250_950, 2_254_905, 2_255_213, 2_259_317];
-const zLegend = scoreLegends[0]!.spec;
+const zLegend = required(scoreLegends[0], 'z-score legend').spec;
 // Illustrative values in the same repeating pattern as the earlier diagram, one per diverging step.
 const stepValues = [-4, -2.5, 0, 2.5, 4, 6];
 const heatmapRows = Array.from({ length: 12 }, (_, row) => ({
   label: `Feature ${row + 1}`,
-  values: heatmapColumns.map((_, column) => stepValues[(row * 7 + column * 3) % stepValues.length]!),
+  values: heatmapColumns.map((_, column) => required(stepValues[(row * 7 + column * 3) % stepValues.length], 'step value')),
 }));
 
 const keyboard = [
@@ -90,7 +92,7 @@ const keyboard = [
 const integration = [
   ['Hide the built-in toolbar and panels', 'The system toolbar, Tracks drawer and dialogs replace them; Biodalliance already drives location, zoom, tracks and export through its API.'],
   ['Track header column', 'Names, sources and scales move out of the data area into a fixed column, so labels never sit on top of bars.'],
-  ['Track colors from the system', 'Score tracks use viz.seq step 6 (#1F5FAE); the selected variant is ink. Gene exons stay grey 600.'],
+  ['Track colors from the system', `Score tracks use viz.seq step 6 (${hex('viz.seq.6')}); the selected variant is ink. Gene exons stay grey 600.`],
   ['Location in words', 'Show chr1:109,767,590-109,867,590 with commas and the assembly beside it; accept today’s 1:109,767,590..109,867,590 format too.'],
   ['Linked heatmap', 'Column positions and the center variant come from the browser’s view, as today; the connectors read the same positions.'],
   ['Remember choices', 'Tracks, their order and settings are kept in this browser, like other preferences (no accounts). Reset to default tracks puts all three back.'],
@@ -166,13 +168,13 @@ const specs = [
 ];
 
 // The ChromHMM drawing reads the recorded sample of gm12878.ChromHMM.bb, the same segments the browser draws.
-const chromHmm = suggestedTracks.hg19.find(isSegmentTrack)!;
+const chromHmm = required(suggestedTracks.hg19.find(isSegmentTrack), 'ChromHMM track');
 const sampleFiles = new SampleGenomeTracks(SampleClient.bundled());
 const chromSpan = { chrom: view.chrom, start: view.start, end: view.end };
 const chromSegments = await sampleFiles.segments(chromHmm.bigBedUrl, chromSpan);
 const chromGenes = await sampleFiles.genes('hg19', chromSpan);
 const chromTrack = { name: chromHmm.name, meta: chromHmm.meta ?? '', state: 'ready' as const, data: chromSegments };
-const hovered = chromSegments.find((segment) => segment.start <= variant.position && segment.end >= variant.position)!;
+const hovered = required(chromSegments.find((segment) => segment.start <= variant.position && segment.end >= variant.position), 'segment under the variant');
 const count = new Intl.NumberFormat('en-US');
 const chromRules = [
   ['Same as humanbase.io', 'Each segment is an 8px box filled with the file’s color for that segment and a 1px black outline, with no labels and no stacking, as humanbase.io’s browser config draws it.'],
@@ -185,7 +187,7 @@ const chromRules = [
 ];
 
 // The item details popover lists what humanbase.io's genome browser lists for each track, checked in Playwright on October 22, 2026.
-const detailGene = chromGenes.find((gene) => gene.name === 'CELSR2')!;
+const detailGene = required(chromGenes.find((gene) => gene.name === 'CELSR2'), 'CELSR2 gene');
 // The ASD Browser's DNA disease impact score at PEX10, as the live file and humanbase.io give it; the bundled sample is rounded.
 const detailScore = { start: 2_346_202, end: 2_346_202, value: 3.6189358234405518 };
 const itemDetailRules = [
@@ -284,7 +286,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
       <figure>
         <figcaption>Track menu, then Track settings</figcaption>
         <div class="menu-specimen">
-          <ActionMenu label="Disease impact score track options" items={trackMenu} open size="small" />
+          <ActionMenu label="Disease impact score track options" items={trackMenu} preview size="small" />
         </div>
         <TrackSettingsDialog inline settings={trackSettings} />
       </figure>
@@ -364,7 +366,7 @@ element.addEventListener('keydown', (event) => run(genomeCommand(event)));`;
         width={1000}
         segments={[chromTrack]}
         genes={{ name: 'Genes', meta: 'GENCODE 19', state: 'ready', data: chromGenes.map((gene) => ({ ...gene, muted: gene.type.includes('pseudogene') })) }}
-        selected={{ position: variant.position, label: variant.label.split(' ')[0]! }}
+        selected={{ position: variant.position, label: required(variant.label.split(' ')[0], 'variant label') }}
       />
       <figcaption>The track as the browser draws it, from the recorded sample of the file, with the selected variant. Hovering a segment shows the Data tooltip:</figcaption>
       <DataTooltip className="chromhmm-tooltip" title={hovered.name} subtitle={chromHmm.name} rows={[['Start', count.format(hovered.start)], ['Length', `${count.format(hovered.end - hovered.start + 1)} bp`]]} />

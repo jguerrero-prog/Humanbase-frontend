@@ -1,6 +1,6 @@
 import { isSegmentTrack, trackFile, withChr, type GenomeBrowserEngine, type GenomeExportOptions, type GenomeMountOptions, type GenomeRegion, type GenomeTrackArrangement, type GenomeTrackLayout } from '../GenomeBrowserEngine';
 import { genesTrack, genomeTrackList, inOrder, noArrangement, sequenceTrack } from '../genomeTrackList';
-import { humanbaseAssemblies, humanbaseBrowserOptions, type BiodallianceAssembly } from './humanbaseConfig';
+import { humanbaseAssemblies, humanbaseBrowserOptions, trackStyle, type BiodallianceAssembly } from './humanbaseConfig';
 
 /** The parts of Biodalliance's Browser this engine calls. */
 interface DallianceBrowser {
@@ -207,7 +207,7 @@ export class BiodallianceEngine implements GenomeBrowserEngine {
       bwgURI: trackFile(track),
       pinned: true,
       ...(!isSegmentTrack(track) && { zeroLine: 'var(--border-subtle)' }),
-      ...(track.style && { style: Array.isArray(track.style) ? track.style : [track.style] }),
+      style: trackStyle(track),
     }));
     const idOf = (source: Record<string, unknown>) =>
       source.twoBitURI ? sequenceTrack : source.title === 'Genes' && !source.disabled ? genesTrack : tracks.some((track) => track.name === source.name) ? String(source.name) : undefined;

@@ -1,4 +1,4 @@
-import { deepseaModels, GenomeLocation, SeiHgmdService } from '@humanbase/data';
+import { deepseaModels, GenomeLocation, SeiHgmdService, tracksBase } from '@humanbase/data';
 import { scoreTrack } from '@humanbase/genome';
 import { sequenceClassEffects } from '@humanbase/ui';
 import { categoryCrumbs, productTools } from '../content/product';
@@ -28,7 +28,7 @@ export const seiHgmd: PrecomputedVariantSet = {
     { name: 'Genome', value: 'GRCh37/hg19' },
   ],
   assembly: 'hg19',
-  tracks: [scoreTrack({ name: sequenceClassEffects.legend.title, source: 'Model score', bigWigUrl: 'https://humanbase.s3-us-west-2.amazonaws.com/tracks/sei.hgmd.nodup.abs_max.bw', range: [0, 3] })],
+  tracks: [scoreTrack({ name: sequenceClassEffects.legend.title, source: 'Model score', bigWigUrl: `${tracksBase}sei.hgmd.nodup.abs_max.bw`, range: [0, 3] })],
   start: firstVariant,
   sampleStart: firstVariant,
   scoreDocs: { label: 'Score type documentation', href: `${sei.docsHref}#output` },

@@ -42,7 +42,7 @@ describe('GeneSearchService', () => {
     const client = { get: vi.fn(), post: vi.fn().mockResolvedValue([]), text: vi.fn() };
     await new GeneSearchService(client).list(Array.from({ length: 400 }, (_, i) => `GENE${i}`));
     expect(client.get).not.toHaveBeenCalled();
-    expect(client.post).toHaveBeenCalledWith('genes/search/multi/', { q: expect.stringMatching(/^GENE0\+GENE1\+/) }, { organism: 'homo-sapiens' });
+    expect(client.post).toHaveBeenCalledWith('genes/search/multi/', { q: expect.stringMatching(/^GENE0\+GENE1\+/) }, { organism: 'homo-sapiens' }, undefined);
   });
 });
 

@@ -345,6 +345,9 @@
   --color-info-200: #9FCDF1;
   --color-info-700: #03669C;
   --text-link: var(--color-emerald-700);
+  --action-ghost-hover: #007CBC14;
+  --action-ghost-pressed: #007CBC29;
+  --action-ghost-selected: #007CBC3D;
   --button-secondary: var(--color-grey-900);
   --button-secondary-hover: var(--color-grey-800);
   --button-secondary-pressed: var(--color-grey-700);

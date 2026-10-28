@@ -84,7 +84,7 @@ When the front end can't sit on the API's domain, Cloudflare Pages can serve it 
 
 With `"api": false` the front end never calls an API. Every screen shows sample data bundled in `packages/data/samples`, so you get the whole interface and design system with nothing behind it. Set it back to `true` to use the API at `apiBase`. The file is read when the page loads, so no rebuild is needed.
 
-The sample data is real Humanbase API responses, plus files the API links to, such as the NetWAS example GWAS files. Where a response can only come from submitting a job, the sample is hand-built in the same shape and says so in its `note`. `packages/data/endpoints.json` lists, for each endpoint, the requests the screens make, including not-found cases. `pnpm samples:record` fetches them from the public API, or from the origin you pass, and saves one file per request. It only sends read requests; it never submits a job. Gene lookups and genome browser tracks read static files on S3 instead of the API; the genes listed under `geneLookups` and the windows listed under `genomeTracks` are recorded the same way, so those stay off too. Add `--only=/api/terms` to record only the samples whose path starts with that prefix. An endpoint can list `omit`, field names dropped from its samples wherever they appear, such as long term descriptions the screens never show.
+The sample data is real Humanbase API responses, plus files the API links to, such as the NetWAS example GWAS files. Where a response can only come from submitting a job, the sample is hand-built in the same shape and says so in its `note`. `packages/data/endpoints.json` lists, for each endpoint, the requests the screens make, including not-found cases. `pnpm samples:record` fetches them from the public API, or from the origin you pass, and saves one file per request. It only sends read requests; it never submits a job. It sends four requests at a time and saves a response only when it answers the sample's expected status, 200 unless the sample names another such as 404, so a server error never replaces a good sample. Samples listed under `handBuiltSamples` or `recordedByHandSamples` are never recorded over. A unit test checks that every sample file is listed in `endpoints.json`. Gene lookups and genome browser tracks read static files on S3 instead of the API; the genes listed under `geneLookups` and the windows listed under `genomeTracks` are recorded the same way, so those stay off too. Add `--only=/api/terms` to record only the samples whose path starts with that prefix. An endpoint can list `omit`, field names dropped from its samples wherever they appear, such as long term descriptions the screens never show.
 
 The genome browsers' chromosome lengths, which stop panning and zooming at each chromosome's end, come from the [UCSC Genome Browser](https://genome.ucsc.edu/) REST API (`/list/chromosomes`, Kent WJ et al., Genome Research 2002). They are recorded once into `packages/data/src/genome/chromosomeSizes.json` by `node scripts/record-chrom-sizes.mjs`, so the browsers never call UCSC. UCSC allows programs one request every 15 seconds and 5,000 a day, so rerun it only if an assembly changes.
 
@@ -111,6 +111,18 @@ The design system site (`pnpm dev:docs`) documents every token and component.
 Every change starts as a GitHub issue, labeled feature, bug, enhancement, accessibility, code quality, documentation or api. Work happens on a branch named after the issue, such as `feature/12-gene-search`, and merges into `development` through a pull request once CI passes. `development` merges into `master` for releases. Both branches are protected.
 
 The code standards are in [AGENTS.md](AGENTS.md). They apply to people and coding agents alike. The product and design decisions, such as matching humanbase.io on science and keeping legends stepped, are in [DECISIONS.md](DECISIONS.md) with the reason for each.
+
+## Taking over the repo
+
+A new owner, or a fork, works through this once:
+
+1. **Owner details:** edit `apps/docs/src/data/site.ts` (maintainer, contact email, repository, demo and Figma links) and `.github/CODEOWNERS`.
+2. **GitHub Pages:** turn it on with GitHub Actions as the source, so `master` publishes the design system and the API-off demo.
+3. **Branch protection:** protect `master` and `development`, require the CI checks ("Typecheck, lint, test and build" and "Accessibility scan"), and require one approving review once there is more than one maintainer.
+4. **Security:** turn on private vulnerability reporting (Settings, Code security), which SECURITY.md points to.
+5. **Dependencies:** Dependabot opens grouped updates monthly against `development` (`.github/dependabot.yml`); review them like any pull request.
+6. **Releases:** tag the handoff as v1.0.0 and follow the release steps in CHANGELOG.md.
+7. **Decisions:** read DECISIONS.md; change a decision through an issue, as it describes.
 
 ## License
 

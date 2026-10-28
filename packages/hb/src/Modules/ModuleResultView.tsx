@@ -1,12 +1,13 @@
 import { dataVersionNames, useModuleGenes, type GeneHit, type Integration, type ModuleResult, type ModuleView } from '@humanbase/data';
 import { NetworkGraph, type GraphData, type GraphFocus, type GraphLink, type GraphRendererFactory, type GraphSelection, type NetworkGraphHandle } from '@humanbase/graph';
-import { ActionMenu, Button, Checkbox, DataTooltip, GraphToolbar, HeaderCell, KeyLegend, ResultHeader, ResultLayout, SearchField, Select, Table, TableSkeleton, TextInput, type GraphAction } from '@humanbase/ui';
+import { ActionMenu, Button, Checkbox, DataTooltip, GraphToolbar, HeaderCell, KeyLegend, ResultHeader, ResultLayout, SearchField, Select, Table, TableSkeleton, TextInput } from '@humanbase/ui';
 import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { ModuleDrawer } from './ModuleDrawer';
 import { colorOf, moduleColors } from './moduleColors';
 import { useModuleDownloads } from './moduleExport';
 import { ModuleGeneRow, moduleGenes, ModuleGenesTable } from './ModuleGenesTable';
 import { ModulesTable } from './ModulesTable';
+import { useGraphToolbar } from '../Networks/useGraphToolbar';
 import { tooltipAt } from '../Networks/graphTooltip';
 import '../Networks/Networks.css';
 import './Modules.css';
@@ -27,7 +28,6 @@ export interface ModuleResultViewProps {
   renderer?: GraphRendererFactory | undefined;
 }
 
-const zoomStep = 1.3;
 const linksOf = (result: ModuleResult, entrez: number): GraphLink[] => result.neighbors(entrez).map((neighbor) => ({ source: String(entrez), target: String(neighbor.entrez), weight: neighbor.weight }));
 const genesWord = (count: number) => (count === 1 ? '1 gene' : `${count} genes`);
 
@@ -88,17 +88,7 @@ export function ModuleResultView({ result, title, view, tissues, starting, notic
 
   const asTable = view.display === 'table';
   const downloads = useModuleDownloads({ result, modules: shown, database, tissues, graph: asTable ? undefined : graph });
-  const expand: GraphAction = { label: 'Expand', icon: 'maximize', pressed: view.expanded, onSelect: () => onViewChange(view.with({ expanded: !view.expanded })) };
-  const toolbar: GraphAction[][] = asTable
-    ? [[expand]]
-    : [
-        [
-          { label: 'Zoom in', icon: 'zoom-in', onSelect: () => graph.current?.zoomBy(zoomStep) },
-          { label: 'Zoom out', icon: 'zoom-out', onSelect: () => graph.current?.zoomBy(1 / zoomStep) },
-          { label: 'Fit to screen', icon: 'fit', onSelect: () => graph.current?.fit() },
-          expand,
-        ],
-      ];
+  const toolbar = useGraphToolbar(graph, { asTable, expand: { expanded: view.expanded, onToggle: () => onViewChange(view.with({ expanded: !view.expanded })) } });
 
   const enriched = result.enrichedCount(database);
   const colored = shown.filter((module) => colors.get(module.id));

@@ -11,6 +11,7 @@ const app = (name: string, port: number) => ({
 
 export default defineConfig({
   testDir: 'e2e',
+  forbidOnly: !!process.env.CI,
   reporter: process.env.CI ? 'github' : 'list',
   use: { trace: 'retain-on-failure', reducedMotion: 'reduce' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
