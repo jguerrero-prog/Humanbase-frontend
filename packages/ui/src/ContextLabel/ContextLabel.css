@@ -25,7 +25,7 @@
 }
 
 .context-label-value {
-  font: 700 13px/18px Lato, sans-serif;
+  font: 700 13px/18px var(--font-family-body);
   color: var(--text-default);
 }
 

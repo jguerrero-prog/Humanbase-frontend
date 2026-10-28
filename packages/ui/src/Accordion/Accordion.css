@@ -2,7 +2,7 @@
   --accordion-pad-start: var(--space-4);
   --accordion-pad-end: var(--space-3);
   --accordion-pad-block: 14px;
-  --accordion-title: 700 16px/24px "Lato", sans-serif;
+  --accordion-title: 700 16px/24px var(--font-family-body);
   --accordion-summary: var(--type-body-sm);
   --accordion-body: var(--type-body);
   --accordion-pad-bottom: var(--space-5);
@@ -14,7 +14,7 @@
   --accordion-pad-start: var(--space-3);
   --accordion-pad-end: var(--space-2);
   --accordion-pad-block: 10px;
-  --accordion-title: 700 14px/20px "Lato", sans-serif;
+  --accordion-title: 700 14px/20px var(--font-family-body);
   --accordion-summary: var(--type-caption);
   --accordion-body: var(--type-body-sm);
   --accordion-pad-bottom: var(--space-4);

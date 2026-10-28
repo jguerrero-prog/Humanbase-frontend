@@ -25,6 +25,16 @@ describe('ApiClient', () => {
     expect((error as ApiError).isNotFound).toBe(true);
   });
 
+  it('passes the abort signal to every request', async () => {
+    const fetcher = vi.fn().mockImplementation(() => Promise.resolve(jsonResponse({})));
+    const client = new ApiClient('/api', fetcher);
+    const { signal } = new AbortController();
+    await client.get('genes/3553/', {}, signal);
+    await client.post('genes/search/multi/', { q: 'IL1B' }, {}, signal);
+    await client.text('/files/result.txt', signal);
+    expect(fetcher.mock.calls.map((call) => (call[1] as RequestInit).signal)).toEqual([signal, signal, signal]);
+  });
+
   it('sends a JSON body with POST', async () => {
     const fetcher = vi.fn().mockResolvedValue(jsonResponse([]));
     await new ApiClient('/api', fetcher).post('integrations/relevant/', { entrez: [3553] });
