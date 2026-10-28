@@ -25,18 +25,18 @@ const step = (key: string) => {
 const sequential = ['seq.1', 'seq.2', 'seq.3', 'seq.4', 'seq.5', 'seq.6', 'seq.7'].map(step);
 const diverging = ['div.n3', 'div.n2', 'div.n1', 'div.0', 'div.p1', 'div.p2', 'div.p3'].map(step);
 const categorical = [
-  ['cat.1', 'Blue'],
-  ['cat.2', 'Orange'],
+  ['cat.1', 'Vermilion'],
+  ['cat.2', 'Blue'],
   ['cat.3', 'Indigo'],
   ['cat.4', 'Reddish purple'],
   ['cat.5', 'Sky blue'],
-  ['cat.6', 'Vermilion'],
+  ['cat.6', 'Orange'],
   ['cat.other', 'Other'],
 ].map(([key = '', name], index, all) => {
   const hex = colors.hex(`viz.${key}`);
   return { name: index < all.length - 1 ? `${index + 1}. ${name}` : name, cssVar: `--viz-${key.replace('.', '-')}`, hex, ratio: ratio(hex) };
 });
-const moduleScale = ['Blue', 'Vermilion', 'Teal', 'Violet', 'Brown', 'Purple', 'Gold', 'Wine'].map((name, index) => {
+const moduleScale = ['Vermilion', 'Blue', 'Teal', 'Violet', 'Brown', 'Purple', 'Gold', 'Wine'].map((name, index) => {
   const hex = colors.hex(`viz.module.${index + 1}`);
   return { name: `${index + 1}. ${name}`, cssVar: `--viz-module-${index + 1}`, hex, ratio: ratio(hex) };
 });
@@ -154,7 +154,7 @@ const redGreen = ['#1A9850', '#66BD63', '#A6D96A', 'transparent', '#FDAE61', '#F
       <ul class="points">
         <li>The closest pair stays clearly apart in every simulation (smallest difference 17 to 21, against 26 for typical vision). Indigo replaced Okabe–Ito’s bluish green, which sat close to Theme 1’s primary color and tested worse.</li>
         <li>Orange, sky blue and the grey are under 3:1 on white, so filled marks always get a 1px grey 600 outline. The outline meets the 3:1 rule for graphics; the fill tells groups apart.</li>
-        <li>Use them in this order, so the first groups get the most distinct colors.</li>
+        <li>Use them in this order, so the first groups get the most distinct colors. Neither palette starts with blue, so the first group or module never looks like Theme 2’s brand blue, and the first starred set’s ring passes 3:1 on white.</li>
       </ul>
     </article>
     <article class="scale-card">
