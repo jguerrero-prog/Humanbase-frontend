@@ -1,8 +1,8 @@
 import { GeneSearchService, useGeneListMatches, type DataVersion } from '@humanbase/data';
-import { Button, Dialog, GeneList, GeneMatchList, GeneMatchTable, Icon, useDebounced } from '@humanbase/ui';
+import { Button, Dialog, GeneList, genesWord, GeneMatchList, GeneMatchTable, Icon, useDebounced } from '@humanbase/ui';
 import { useId, useMemo, useState } from 'react';
 import { hitsOf, matchOf, splitByVersion } from '../HomeSearch/geneMatches';
-import { genesWord, OutsideVersionAlert } from '../HomeSearch/OutsideVersionAlert';
+import { OutsideVersionAlert } from '../HomeSearch/OutsideVersionAlert';
 
 export interface EditGenesDialogProps {
   open: boolean;

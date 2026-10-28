@@ -1,5 +1,6 @@
-import type { TokenEntry } from '@humanbase/tokens/catalog';
+import { aliasPath, type TokenEntry } from '@humanbase/tokens/catalog';
 import type { ColorValue } from '@humanbase/tokens/color';
+import { colors } from './data/colors';
 
 interface Length {
   value: number;
@@ -7,7 +8,7 @@ interface Length {
 }
 
 interface ShadowLayer {
-  color: ColorValue;
+  color: ColorValue | string;
   offsetX: Length;
   offsetY: Length;
   blur: Length;
@@ -15,7 +16,7 @@ interface ShadowLayer {
 }
 
 interface GradientStop {
-  color: ColorValue;
+  color: ColorValue | string;
   position: number;
 }
 
@@ -23,12 +24,16 @@ const length = ({ value, unit }: Length) => (value === 0 ? '0' : `${value}${unit
 
 const channels = (hex: string) => [1, 3, 5].map((start) => parseInt(hex.slice(start, start + 2), 16)).join(',');
 
-/** A color written the way the Figma tables write it: hex, or "rgba(26,26,26,.06)" when it has an alpha. */
-export const displayColor = ({ hex, alpha }: ColorValue) => (alpha === undefined ? hex : `rgba(${channels(hex)},${alpha.toFixed(2).replace(/^0/, '')})`);
+const rgba = ({ hex, alpha }: ColorValue) => (alpha === undefined ? hex : `rgba(${channels(hex)},${alpha.toFixed(2).replace(/^0/, '')})`);
+
+/** A color written the way the Figma tables write it: hex, or "rgba(26,26,26,.06)" when it has an alpha. An alias shows its Theme 1 hex. */
+export const displayColor = (color: ColorValue | string) => (typeof color === 'string' ? colors.hex(aliasPath(color).join('.')) : rgba(color));
+
+const alphaOf = (color: ColorValue | string) => (typeof color === 'string' ? 1 : (color.alpha ?? 1));
 
 /** A shadow in Figma's short form, such as "y 1, blur 2, 6% + y 2, blur 6, 6%". */
 export function shadowSummary({ token: { $value } }: TokenEntry): string {
-  return ($value as ShadowLayer[]).map((l) => `y ${l.offsetY.value}, blur ${l.blur.value}, ${Math.round((l.color.alpha ?? 1) * 100)}%`).join(' + ');
+  return ($value as ShadowLayer[]).map((l) => `y ${l.offsetY.value}, blur ${l.blur.value}, ${Math.round(alphaOf(l.color) * 100)}%`).join(' + ');
 }
 
 /** A raw token value written the way designers read it, such as "0 1px 2px rgba(26,26,26,.06)". */

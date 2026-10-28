@@ -5,7 +5,7 @@ import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import { colors } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
-import { navigation } from '../../navigation';
+import { hrefFor } from '../../navigation';
 
 const cssVar = (path: string) => `var(--${path.replaceAll('.', '-')})`;
 const needs = { text: { label: '4.5:1 text', min: 4.5 }, edge: { label: '3:1 control edge', min: 3 }, focus: { label: '3:1 focus', min: 3 }, none: { label: 'None', min: 0 }, exempt: { label: 'Exempt', min: 0 } };
@@ -41,8 +41,7 @@ const dataColors = ['1', '2', '3', '4', '5', '6', 'other'].map((step) => {
   return { path, ratio: `${ratio.toFixed(2)}:1`, use: ratio >= 3 ? 'Fills, lines and points' : lowContrastUse };
 });
 
-const pages = new Map(navigation.flatMap((section) => section.items).map((item) => [item.label, item.href]));
-const source = (label: string, page = label) => ({ label, href: pages.get(page) });
+const source = (label: string, page = label) => ({ label, href: hrefFor(page) });
 const keyboard = [
   ['Controls', 'Tab and Shift+Tab move between controls. Buttons, tags, tabs and table headers show focus/ring (2px). Fields show a 2px border/selected border.', source('Tokens: States', 'States: hover, focus, disabled, error')],
   ['Menus and selects', 'Arrow keys move through options, Enter chooses, Escape closes and returns focus to the trigger.', source('Dropdowns and selects')],

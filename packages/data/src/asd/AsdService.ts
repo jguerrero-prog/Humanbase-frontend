@@ -84,11 +84,9 @@ export class AsdService {
 
   /** Reads a search as a range, a position (shown at 2 kb) or a gene; undefined when nothing matches. */
   async find(text: string): Promise<{ location: GenomeLocation; gene?: string } | undefined> {
-    const position = /^(?:chr)?([0-9]{1,2}|X|Y):([\d,]+)$/i.exec(text.trim().replace(/\s+/g, ''));
-    if (position) {
-      const [, chrom = '', at = ''] = position;
-      const center = Number(at.replaceAll(',', ''));
-      return { location: new GenomeLocation(`chr${chrom.toUpperCase()}`, Math.max(0, center - 1_000), center + 1_000) };
+    const position = GenomeLocation.place(text);
+    if (position && position.end === undefined) {
+      return { location: new GenomeLocation(position.chrom, Math.max(0, position.start - 1_000), position.start + 1_000) };
     }
     const parsed = GenomeLocation.parse(text);
     if (!parsed) return undefined;

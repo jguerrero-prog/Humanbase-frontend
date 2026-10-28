@@ -17,7 +17,10 @@ const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 const bendShare = 0.15;
 const maxBend = 36;
 const label = { size: 12, querySize: 14, charWidth: 0.62, padX: 10, padY: 6, gap: 3 };
-const group = { hullPad: 10, gap: 40, labelSize: 14, labelHeight: 22, hullSamples: 12 };
+const group = { hullPad: 10, gap: 40, labelSize: 14, labelHeight: 22, hullSamples: 12, labelPadX: 12 };
+const force = { linkLength: 90, weakLinkStretch: 160, linkStrength: 0.6, charge: -420, queryPull: 0.3, pull: 0.02, queryCollide: 44, collide: 36 };
+const clusterForce = { linkGap: 12, linkStrength: 0.2, charge: -14, pull: 0.12, collideGap: 2 };
+const zoomRange: [number, number] = [0.25, 6];
 const denseLinks = 80;
 const gridCell = 48;
 
@@ -53,6 +56,8 @@ function svgElement<K extends keyof SVGElementTagNameMap>(name: K, attributes: R
 
 const overlaps = (a: Box, b: Box) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
 const round = (value: number) => Math.round(value * 100) / 100;
+const hullPath = (outline: readonly (readonly [number, number])[]) => `M${outline.map(([x, y]) => `${round(x)} ${round(y)}`).join('L')}Z`;
+const labelWidth = (text: string, size: number) => text.length * size * label.charWidth + label.padX;
 
 /** Boxes filed by grid cell, so checking a spot looks only at the boxes near it. */
 class BoxGrid {
@@ -127,7 +132,7 @@ export class ForceGraphRenderer implements GraphRenderer {
     container.append(this.svg);
     this.svgSelection = select(this.svg);
     this.zoomBehavior = zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.25, 6])
+      .scaleExtent(zoomRange)
       .on('zoom', (event: { transform: { k: number; toString(): string } }) => {
         this.canvas?.setAttribute('transform', event.transform.toString());
         this.scale = event.transform.k;
@@ -313,7 +318,7 @@ export class ForceGraphRenderer implements GraphRenderer {
     for (const dot of dots.values()) taken.add(dot);
     for (const node of order) {
       const size = node.query ? label.querySize : label.size;
-      const width = node.label.length * size * label.charWidth + label.padX;
+      const width = labelWidth(node.label, size);
       const height = size + label.padY;
       const r = this.placed.get(node.id)?.r ?? radius.node;
       const spots = [
@@ -349,14 +354,14 @@ export class ForceGraphRenderer implements GraphRenderer {
   private layout(data: GraphData): { nodes: PlacedNode[]; links: PlacedLink[] } {
     const nodes: PlacedNode[] = data.nodes.map((node, index) => ({ ...node, x: Math.cos(index) * 100, y: Math.sin(index) * 100 }));
     const links = ForceGraphRenderer.linksBetween(nodes, data.links);
-    const pull = (node: PlacedNode) => (node.query ? 0.3 : 0.02);
+    const pull = (node: PlacedNode) => (node.query ? force.queryPull : force.pull);
     forceSimulation(nodes)
-      .force('link', forceLink<PlacedNode, PlacedLink>(links).distance((link) => 90 + (1 - link.weight) * 160).strength((link) => link.weight * 0.6))
-      .force('charge', forceManyBody().strength(-420))
+      .force('link', forceLink<PlacedNode, PlacedLink>(links).distance((link) => force.linkLength + (1 - link.weight) * force.weakLinkStretch).strength((link) => link.weight * force.linkStrength))
+      .force('charge', forceManyBody().strength(force.charge))
       .force('center', forceCenter(0, 0))
       .force('x', forceX<PlacedNode>(0).strength(pull))
       .force('y', forceY<PlacedNode>(0).strength(pull))
-      .force('collide', forceCollide<PlacedNode>().radius((node) => (node.query ? 44 : 36)))
+      .force('collide', forceCollide<PlacedNode>().radius((node) => (node.query ? force.queryCollide : force.collide)))
       .stop()
       .tick(layoutTicks);
     return { nodes, links };
@@ -379,11 +384,11 @@ export class ForceGraphRenderer implements GraphRenderer {
       if (!members.length) return [];
       const inside = links.filter((link) => link.source.group === cluster.id && link.target.group === cluster.id).map((link) => ({ ...link }));
       forceSimulation(members)
-        .force('link', forceLink<PlacedNode, PlacedLink>(inside).distance((link) => this.radiusOf(link.source, true) + this.radiusOf(link.target, true) + 12).strength(0.2))
-        .force('charge', forceManyBody().strength(-14))
-        .force('x', forceX<PlacedNode>(0).strength(0.12))
-        .force('y', forceY<PlacedNode>(0).strength(0.12))
-        .force('collide', forceCollide<PlacedNode>().radius((node) => this.radiusOf(node, true) + 2))
+        .force('link', forceLink<PlacedNode, PlacedLink>(inside).distance((link) => this.radiusOf(link.source, true) + this.radiusOf(link.target, true) + clusterForce.linkGap).strength(clusterForce.linkStrength))
+        .force('charge', forceManyBody().strength(clusterForce.charge))
+        .force('x', forceX<PlacedNode>(0).strength(clusterForce.pull))
+        .force('y', forceY<PlacedNode>(0).strength(clusterForce.pull))
+        .force('collide', forceCollide<PlacedNode>().radius((node) => this.radiusOf(node, true) + clusterForce.collideGap))
         .stop()
         .tick(clusterTicks);
       const cx = members.reduce((sum, node) => sum + node.x, 0) / members.length;
@@ -441,7 +446,7 @@ export class ForceGraphRenderer implements GraphRenderer {
       if (!outline) continue;
       const xs = outline.map(([x]) => x);
       const ys = outline.map(([, y]) => y);
-      const hull = svgElement('path', { class: ['force-graph-group-hull', cluster.ring && 'is-ring'].filter(Boolean).join(' '), d: `M${outline.map(([x, y]) => `${round(x)} ${round(y)}`).join('L')}Z` });
+      const hull = svgElement('path', { class: ['force-graph-group-hull', cluster.ring && 'is-ring'].filter(Boolean).join(' '), d: hullPath(outline) });
       hull.style.setProperty('--group-color', `var(${cluster.color})`);
       hull.addEventListener('click', () => this.options?.onSelectGroup?.(cluster.id));
       hull.addEventListener('pointerenter', () => this.options?.onHoverGroup?.(cluster.id));
@@ -465,7 +470,7 @@ export class ForceGraphRenderer implements GraphRenderer {
       element.style.setProperty('--group-color', `var(${cluster.color})`);
       const scaled = svgElement('g', { class: 'force-graph-group-scale' });
       scaled.style.setProperty('--label-size', `${group.labelSize}px`);
-      const width = cluster.label.length * group.labelSize * label.charWidth + label.padX + 12;
+      const width = labelWidth(cluster.label, group.labelSize) + group.labelPadX;
       const text = svgElement('text', { 'text-anchor': 'middle', y: -group.labelHeight / 2, dy: '0.35em' });
       text.textContent = cluster.label;
       scaled.append(svgElement('rect', { x: round(-width / 2), y: -group.labelHeight, width: round(width), height: group.labelHeight, rx: group.labelHeight / 2 }), text);
@@ -607,7 +612,7 @@ export class ForceGraphRenderer implements GraphRenderer {
       });
       if (!points.length || !this.hullLayer) return;
       const outline = (points.length > 2 ? polygonHull(points) : null) ?? points;
-      const hull = svgElement('path', { class: 'force-graph-hull', d: `M${outline.map(([x, y]) => `${x} ${y}`).join('L')}Z` });
+      const hull = svgElement('path', { class: 'force-graph-hull', d: hullPath(outline) });
       hull.style.setProperty('--set-color', `var(${set.color})`);
       this.hullLayer.append(hull);
     });
