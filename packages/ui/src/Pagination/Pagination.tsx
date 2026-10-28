@@ -11,24 +11,6 @@ const format = new ValueFormat();
 
 export const rowsPerPage = [25, 50, 100] as const;
 
-export const pageSizeMemory = {
-  read(key: string, fallback: number): number {
-    try {
-      const stored = Number(localStorage.getItem(key));
-      return rowsPerPage.some((size) => size === stored) ? stored : fallback;
-    } catch {
-      return fallback;
-    }
-  },
-  write(key: string, size: number) {
-    try {
-      localStorage.setItem(key, String(size));
-    } catch {
-      // Storage can be blocked; the choice then lasts only for this page.
-    }
-  },
-};
-
 export interface PaginationProps {
   total: number;
   noun: string;
@@ -39,7 +21,6 @@ export interface PaginationProps {
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (size: number) => void;
   href?: (page: number) => string;
-  storageKey?: string;
   layout?: 'auto' | 'compact';
   disabled?: boolean;
   label?: string;
@@ -83,10 +64,10 @@ export function PageLink({ page, label, className, children, href, disabled = fa
 
 export function Pagination({
   total, noun, page, defaultPage = 1, pageSize, defaultPageSize = rowsPerPage[0], onPageChange, onPageSizeChange,
-  href, storageKey, layout = 'auto', disabled = false, label = 'Pagination',
+  href, layout = 'auto', disabled = false, label = 'Pagination',
 }: PaginationProps) {
   const [currentPage, setPage] = useControlled(page, defaultPage);
-  const [size, setSize] = useControlled(pageSize, storageKey ? pageSizeMemory.read(storageKey, defaultPageSize) : defaultPageSize);
+  const [size, setSize] = useControlled(pageSize, defaultPageSize);
   const pages = new PageWindow(total, size, currentPage);
 
   const goTo = (next: number) => {
@@ -96,7 +77,6 @@ export function Pagination({
   const resize = (value: string) => {
     const next = Number(value);
     setSize(next);
-    if (storageKey) pageSizeMemory.write(storageKey, next);
     onPageSizeChange?.(next);
     goTo(1);
   };
