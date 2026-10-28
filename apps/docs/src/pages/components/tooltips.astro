@@ -142,7 +142,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
         <div class="graph-controls">
           {
             controls.map((control, index) => (
-              <Tooltip text={control.label} placement="left" open={index === 0 ? true : undefined}>
+              <Tooltip text={control.label} placement="left" preview={index === 0}>
                 <button type="button" class:list={['graph-control', { 'graph-control-hover': index === 0 }]} aria-label={control.label}>
                   <Icon name={control.icon} size={20} />
                 </button>
@@ -157,7 +157,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
             <li>
               <strong>{item.title}</strong>
               <span class:list={['placement-specimen', `placement-${item.placement}`]}>
-                <Tooltip text={item.text} placement={item.placement} open>
+                <Tooltip text={item.text} placement={item.placement} preview>
                   <span class="placement-anchor" />
                 </Tooltip>
               </span>
@@ -239,7 +239,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
           <thead>
             <tr>
               <HeaderCell>Term</HeaderCell>
-              <HeaderCell align="end">q-value <Toggletip {...qValue} size="header" open /></HeaderCell>
+              <HeaderCell align="end">q-value <Toggletip {...qValue} size="header" preview /></HeaderCell>
             </tr>
           </thead>
           <tbody>
@@ -279,7 +279,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
     <PairList>
       <Pair kind="do" title="Do. Label icon-only buttons" text="The icon alone can be read more than one way.">
         <span class="pair-specimen">
-          <Tooltip text="Fit to screen" open>
+          <Tooltip text="Fit to screen" preview>
             <button type="button" class="graph-control" aria-label="Fit to screen"><Icon name="maximize" size={20} /></button>
           </Tooltip>
         </span>
@@ -311,6 +311,7 @@ const usage = `import { DataTooltip, Toggletip, Tooltip, placeNearPoint } from '
       <li>All tooltips share one <code>TooltipController</code>, which keeps one open at a time and skips the delay while moving between triggers.</li>
       <li><code>DataTooltip</code> only draws the values. The graph or heatmap passes a position from <code>placeNearPoint</code>, which keeps it inside the view.</li>
       <li><code>Toggletip</code> opens in the top layer as a popover, anchored under its button, so a scrolling table can’t clip it. It flips sideways or above when there isn’t room.</li>
+      <li><code>Toggletip</code> takes <code>open</code> with <code>onOpenChange</code> to be controlled. On both components, <code>preview</code> draws the open state in place for these pages.</li>
     </ul>
     <Code code={usage} lang="tsx" theme="css-variables" />
   </NoteCard>
