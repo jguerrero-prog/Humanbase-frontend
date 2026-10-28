@@ -6,6 +6,7 @@ import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
+import { hex } from '../../data/colors';
 import { expressionGeneLegend, irgmPositions, irgmRows, irgmSummary, positionSpecimenActive, positionSpecimenColumns, positionSpecimenRows, mutagenesisScale, scoreLegends, substitutionColumns, substitutionOverview, tissueConfidenceLegend } from '../../data/score-legends';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
@@ -85,9 +86,9 @@ const behavior = [
 
 const specs = [
   ['legend.stepped', 'Legend / Stepped component; steps 34 by 12px, 1px apart; title Lato Bold 12; edge labels Lato 10 grey 600 on 4px ticks; in a card narrower than the legend, the steps narrow to fit, so the end words are never cut off'],
-  ['viz.div steps', '#0B3D7A #3F7FC8 #9CBFE6 #F2F2F2 #EDB98F #C8681F #6E2E00'],
-  ['viz.seq steps', '#C9DCF2 #9CBFE6 #3F7FC8 #1F5FAE #0B3D7A'],
-  ['viz.sig steps', '#F2F2F2 #9CBFE6 #3F7FC8 #0B3D7A, for e-values'],
+  ['viz.div steps', `${['viz.div.n3', 'viz.div.n2', 'viz.div.n1', 'viz.div.0', 'viz.div.p1', 'viz.div.p2', 'viz.div.p3'].map(hex).join(' ')}`],
+  ['viz.seq steps', `${['viz.seq.2', 'viz.seq.3', 'viz.seq.5', 'viz.seq.6', 'viz.seq.7'].map(hex).join(' ')}`],
+  ['viz.sig steps', `${['viz.sig.1', 'viz.sig.2', 'viz.sig.3', 'viz.sig.4'].map(hex).join(' ')}, for e-values`],
   ['viz.heatmap.cell', '34 by 26px, taller when its row label wraps; 1px white gap; missing: white, grey outline, diagonal'],
   ['heatmap.focus', '2px ink outline, 2px outside the cell'],
   ['heatmap.positionAxis', 'Ruler 1px grey 600; tick labels Atkinson Hyperlegible Mono 11 grey 600; variant ticks 6px; connectors 0.75px grey, 1.5px ink for the hovered or selected column; full label on an ink pill'],

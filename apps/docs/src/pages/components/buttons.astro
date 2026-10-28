@@ -11,6 +11,7 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import SizeCard from '../../components/docs/SizeCard.astro';
 import SpecimenCard from '../../components/docs/SpecimenCard.astro';
+import { hex } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const styles: { variant: ButtonVariant; title: string; label: string; text: string; example: string }[] = [
@@ -41,7 +42,7 @@ const specs = [
   ['Primary colors', 'emerald 600, hover 700, pressed 800', 'Same'],
   ['Secondary colors', 'yellow 500, hover 600, pressed 700', 'Same'],
   ['Ghost colors', 'emerald 600 text, ghost tints 8% and 16%', 'Same'],
-  ['Destructive colors', 'error 600 #B42318, hover #912018, pressed #7A271A', 'Same'],
+  ['Destructive colors', `error 700 ${hex('action.destructive')}, hover 800 ${hex('action.destructive-hover')}, pressed 900 ${hex('action.destructive-pressed')}`, 'Same'],
   ['Disabled', 'grey 200 background, grey 400 text', 'Same'],
 ];
 

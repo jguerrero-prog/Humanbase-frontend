@@ -61,6 +61,14 @@ describe('UserTracks', () => {
     expect(await tracks.list('asd:hg19')).toEqual([]);
   });
 
+  it('forgets a removed track’s file for the rest of the visit too', async () => {
+    const tracks = new UserTracks(base, undefined, new UserTrackStore());
+    const { track } = await tracks.add('asd:hg19', fileOf('H3K27ac.bw', signal()), 'hg19', []);
+    await tracks.remove('asd:hg19', track.key);
+    expect(await tracks.covers('hg19', { chrom: 'chr1', start: 1, end: 5_000 }, track.key)).toBe(false);
+    await expect(tracks.scores(track.key, { chrom: 'chr1', start: 1, end: 5_000 })).rejects.toThrow('base');
+  });
+
   it('reads files that name chromosomes without chr, and bigBed segments in their own colors', async () => {
     const tracks = new UserTracks(base, undefined, new UserTrackStore());
     const { track } = await tracks.add('asd:hg19', fileOf('bare.bw', signal(true)), 'hg19', []);

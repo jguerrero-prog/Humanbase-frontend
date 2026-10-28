@@ -1,3 +1,4 @@
+import motionTokens from '@humanbase/tokens/src/motion.tokens.json';
 import type { MessageAction, MessageTone } from './Message';
 import { PausableTimer } from './PausableTimer';
 
@@ -24,7 +25,7 @@ export interface ToastQueueState {
 export function toastDuration({ tone, message, action }: ToastContent): number | undefined {
   if (action || tone === 'error' || tone === 'loading') return undefined;
   const words = message.trim().split(/\s+/).length;
-  return 6000 + Math.floor(words / 20) * 1000;
+  return motionTokens.motion.hold.toast.$value.value + Math.floor(words / 20) * 1000;
 }
 
 function entryFor(id: string, content: ToastContent): ToastEntry {

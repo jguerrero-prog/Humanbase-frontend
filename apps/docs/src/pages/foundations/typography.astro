@@ -3,6 +3,7 @@ import DocSection from '../../components/docs/DocSection.astro';
 import DocTable from '../../components/docs/DocTable.astro';
 import Intro from '../../components/docs/Intro.astro';
 import KeyRules from '../../components/docs/KeyRules.astro';
+import { hex, ratio } from '../../data/colors';
 import { typeScale } from '../../data/typeScale';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
@@ -70,10 +71,10 @@ const lookAlikes = [
 ];
 
 const textColors = [
-  { title: 'Primary text', color: 'var(--text-default)', token: '#1A1A1A · color.text.default', use: '17.4:1 on white · Headings, body text' },
-  { title: 'Secondary text', color: 'var(--text-secondary)', token: '#4A4A4A · color.text.secondary', use: '8.9:1 on white · Descriptions, long help text' },
-  { title: 'Muted text', color: 'var(--text-muted)', token: '#6B6B6B · color.text.muted', use: '5.3:1 on white · Captions, metadata, timestamps' },
-  { title: 'Link', color: 'var(--text-link)', token: '#11713C · color.action.primary', use: '6.1:1 on white · Text links, always underlined', link: true },
+  { title: 'Primary text', color: 'var(--text-default)', token: `${hex('text.default')} · color.text.default`, use: `${ratio('text.default', 'surface.page', 1)} on white · Headings, body text` },
+  { title: 'Secondary text', color: 'var(--text-secondary)', token: `${hex('text.secondary')} · color.text.secondary`, use: `${ratio('text.secondary', 'surface.page', 1)} on white · Descriptions, long help text` },
+  { title: 'Muted text', color: 'var(--text-muted)', token: `${hex('text.muted')} · color.text.muted`, use: `${ratio('text.muted', 'surface.page', 1)} on white · Captions, metadata, timestamps` },
+  { title: 'Link', color: 'var(--text-link)', token: `${hex('action.primary')} · color.action.primary`, use: `${ratio('text.link', 'surface.page', 1)} on white · Text links, always underlined`, link: true },
 ];
 
 const relatedGenes = [

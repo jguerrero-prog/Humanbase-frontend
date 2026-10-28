@@ -8,5 +8,18 @@ export default {
     'selector-class-pattern': ['^[a-z][a-z0-9]*(-[a-z0-9]+)*$', { message: 'Use kebab-case class names.' }],
     'selector-id-pattern': null,
   },
-  overrides: [{ files: ['packages/ui/src/root.css'], rules: { 'declaration-no-important': null } }],
+  overrides: [
+    { files: ['packages/ui/src/root.css'], rules: { 'declaration-no-important': null } },
+    {
+      files: ['**/*.astro'],
+      customSyntax: 'postcss-html',
+      rules: {
+        // :global() reaches out of Astro's scoped styles, and inline style attributes have no lines to separate.
+        'selector-pseudo-class-no-unknown': [true, { ignorePseudoClasses: ['global'] }],
+        'custom-property-empty-line-before': null,
+        // Each page styles its own separate examples, so selectors that share an element name rarely meet.
+        'no-descending-specificity': null,
+      },
+    },
+  ],
 };

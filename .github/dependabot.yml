@@ -1,0 +1,22 @@
+# Monthly, grouped updates, so dependency pull requests stay few. Security fixes still open as soon as they are found.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: development
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    labels: [code quality]
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: development
+    schedule:
+      interval: monthly
+    labels: [code quality]
+    groups:
+      actions:
+        patterns: ['*']

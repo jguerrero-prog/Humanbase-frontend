@@ -67,7 +67,7 @@ describe('DeepseaForm', () => {
 
   it('runs a region scan on the example sequences, with FASTA as its only input', async () => {
     const { onStarted } = renderForm('insilico');
-    expect(screen.queryByRole('radiogroup', { name: 'What are you submitting?' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('group', { name: 'What are you submitting?' })).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'About region scan' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Read the in silico mutagenesis documentation' })).toHaveAttribute('href', '/docs/in-silico-mutagenesis/');
     expect(screen.getByText('Region scan mutates every base of each sequence. It runs on Beluga.')).toBeInTheDocument();

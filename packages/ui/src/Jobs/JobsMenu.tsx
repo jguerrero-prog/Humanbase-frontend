@@ -1,7 +1,5 @@
-import { useCallback, useId, useRef, type KeyboardEvent } from 'react';
 import { StatusBadge, type JobStatus } from '../Badge/Badge';
-import { useControlled } from '../hooks/useControlled';
-import { useDismiss } from '../List/useDismiss';
+import { useDisclosureMenu } from '../hooks/useDisclosureMenu';
 import '../Button/Button.css';
 import '../Navigation/Navigation.css';
 import './Jobs.css';
@@ -29,42 +27,25 @@ export const activeJobCount = (jobs: readonly JobsMenuJob[]) => jobs.filter((job
 
 export function JobsMenu({ jobs, total, allHref, open, onOpenChange, shown = 5 }: JobsMenuProps) {
   const linkHref = useLinkHref();
-  const id = useId();
-  const root = useRef<HTMLDivElement>(null);
-  const button = useRef<HTMLButtonElement>(null);
-  const [isOpen, setOwnOpen] = useControlled(open, false);
-  const setOpen = useCallback(
-    (next: boolean) => {
-      setOwnOpen(next);
-      onOpenChange?.(next);
-    },
-    [setOwnOpen, onOpenChange],
-  );
-  const close = useCallback(() => setOpen(false), [setOpen]);
-  useDismiss(root, isOpen && open === undefined, close);
+  const { root, button, panel, buttonProps, panelProps } = useDisclosureMenu({ open, onOpenChange });
+  const headingId = `${panelProps.id}-heading`;
   const active = activeJobCount(jobs);
-
-  const closeOnEscape = (event: KeyboardEvent) => {
-    if (event.key !== 'Escape') return;
-    close();
-    button.current?.focus();
-  };
 
   return (
     <div ref={root} className="jobs-menu">
-      <button ref={button} type="button" className="top-bar-jobs" onKeyDown={closeOnEscape} aria-expanded={isOpen} aria-controls={`${id}-panel`} onClick={() => setOpen(!isOpen)}>
+      <button ref={button} {...buttonProps} type="button" className="top-bar-jobs">
         Jobs{' '}
         {active > 0 && <span className="top-bar-jobs-count">{active} running</span>}
       </button>
-      <div id={`${id}-panel`} className="nav-menu-panel jobs-menu-panel" hidden={!isOpen}>
-        <p id={`${id}-heading`} className="jobs-menu-heading">
+      <div ref={panel} {...panelProps} className="nav-menu-panel jobs-menu-panel">
+        <p id={headingId} className="jobs-menu-heading">
           Jobs in this browser
         </p>
         {jobs.length === 0 && <p className="jobs-menu-empty">Jobs you start in this browser appear here.</p>}
-        <ul className="jobs-menu-list" aria-labelledby={`${id}-heading`} hidden={jobs.length === 0}>
+        <ul className="jobs-menu-list" aria-labelledby={headingId} hidden={jobs.length === 0}>
           {jobs.slice(0, shown).map((job) => (
             <li key={job.href}>
-              <a className="jobs-menu-job" href={linkHref(job.href)} onKeyDown={closeOnEscape}>
+              <a className="jobs-menu-job" href={linkHref(job.href)}>
                 <span className="jobs-menu-text">
                   <span className="jobs-menu-title">{job.title}</span>
                   <span className="jobs-menu-detail">{job.detail}</span>
@@ -75,7 +56,7 @@ export function JobsMenu({ jobs, total, allHref, open, onOpenChange, shown = 5 }
           ))}
         </ul>
         <p className="jobs-menu-footer" hidden={total === 0}>
-          <a className="button button-ghost button-small" href={linkHref(allHref)} onKeyDown={closeOnEscape}>
+          <a className="button button-ghost button-small" href={linkHref(allHref)}>
             See all {total} jobs
           </a>
         </p>

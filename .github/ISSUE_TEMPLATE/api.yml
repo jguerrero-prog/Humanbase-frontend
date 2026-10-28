@@ -1,0 +1,23 @@
+name: API
+description: Something that needs the Humanbase API team.
+labels: [api]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: What and why
+      description: What the front end needs from the API, and which screen it is for.
+    validations:
+      required: true
+  - type: input
+    id: endpoint
+    attributes:
+      label: Endpoint, if known
+      placeholder: /api/integrations/edges/
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: How we know it is finished.
+    validations:
+      required: true
