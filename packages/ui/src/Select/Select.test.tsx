@@ -62,4 +62,31 @@ describe('Select', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Elsewhere' }));
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
+
+  it('opens the list in the top layer, so a scrolling dialog never clips it', async () => {
+    renderSelect();
+    await userEvent.click(screen.getByRole('combobox'));
+    const panel = screen.getByRole('listbox').parentElement;
+    expect(panel).toHaveAttribute('popover', 'manual');
+    expect(panel).toHaveStyle({ display: 'block' });
+  });
+
+  it('draws a docs preview in place', () => {
+    renderSelect({ preview: true });
+    expect(screen.getByRole('listbox').parentElement).not.toHaveAttribute('popover');
+  });
+
+  it('is controlled with open and onOpenChange, and still closes on a click outside', async () => {
+    const onOpenChange = vi.fn();
+    render(
+      <>
+        <Select label="Tissue network" options={tissues} open onOpenChange={onOpenChange} />
+        <button type="button">Elsewhere</button>
+      </>,
+    );
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Elsewhere' }));
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+  });
 });

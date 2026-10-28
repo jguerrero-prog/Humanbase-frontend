@@ -75,6 +75,20 @@ describe('ExPecto variant search', () => {
     expect(found[0]).toMatchObject({ change: 'G>C', gene: { symbol: 'TP53' } });
   });
 
+  it('stops reading pages once the search is cancelled', async () => {
+    const controller = new AbortController();
+    const second = vi.fn();
+    const client = new SampleClient({
+      'variants@page=1&rsid=rs1&version=v1': () => {
+        controller.abort();
+        return Promise.resolve({ status: 200, body: { count: 40, next: 'page 2', results: [] } });
+      },
+      'variants@page=2&rsid=rs1&version=v1': second,
+    });
+    await expect(new ExpectoService(client).searchVariants({ kind: 'rsid', rsid: 'rs1' }, controller.signal)).rejects.toMatchObject({ name: 'AbortError' });
+    expect(second).not.toHaveBeenCalled();
+  });
+
   it('answers the recorded searches with the API off', async () => {
     const { expecto } = offline();
     expect(await expecto.searchVariants({ kind: 'gene', symbol: 'IRGM' })).toHaveLength(17);

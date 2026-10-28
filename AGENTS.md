@@ -18,7 +18,7 @@ Read this before changing anything. It applies to people and coding agents alike
 - **Pure components** go in `packages/ui`: props in, markup out, every state (loading, empty, error) controlled by props.
 - **Connected components** go in `packages/hb`: a hook from `packages/data` plus a pure component from `packages/ui`.
 - **Design system pages** go in `apps/docs/src/pages` and are added to `apps/docs/src/navigation.ts`.
-- **Owner details** (maintainer, contact email, repository and Figma links) live only in `apps/docs/src/data/site.ts`. A new owner or fork edits that file.
+- **Owner details** (maintainer, contact email, repository and Figma links) live only in `apps/docs/src/data/site.ts`, plus `.github/CODEOWNERS`, which GitHub reads for reviews. A new owner or fork edits those two files.
 
 ## Generated files: do not edit by hand
 

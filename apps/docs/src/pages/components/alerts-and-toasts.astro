@@ -8,6 +8,7 @@ import KeyRules from '../../components/docs/KeyRules.astro';
 import NoteCard from '../../components/docs/NoteCard.astro';
 import Pair from '../../components/docs/Pair.astro';
 import PairList from '../../components/docs/PairList.astro';
+import { hex, ratio } from '../../data/colors';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
 const act = (label: string) => ({ label, onSelect: () => {} });
@@ -77,11 +78,16 @@ const accessibility = [
   ['Dismiss button', 'An icon button labeled “Dismiss”, 32px, reachable by keyboard. Escape dismisses the newest toast when focus is inside it.'],
 ];
 
+const contrastLines = (tone: string) => [
+  `Icon ${hex(`status.${tone}.fg`)}: ${ratio(`status.${tone}.fg`, `status.${tone}.bg`)}`,
+  `Body ${hex('text.secondary')}: ${ratio('text.secondary', `status.${tone}.bg`)}`,
+  `Icon on white toast: ${ratio(`status.${tone}.fg`, 'surface.page')}`,
+];
 const contrast = [
-  { tone: 'info', title: 'Info', lines: ['Icon #175CD3: 5.57:1', 'Body #4A4A4A: 8.25:1', 'Icon on white toast: 5.99:1'] },
-  { tone: 'success', title: 'Success', lines: ['Icon #067647: 5.40:1', 'Body #4A4A4A: 8.40:1', 'Icon on white toast: 5.69:1'] },
-  { tone: 'warning', title: 'Warning', lines: ['Icon #B54708: 5.20:1', 'Body #4A4A4A: 8.49:1', 'Icon on white toast: 5.43:1'] },
-  { tone: 'error', title: 'Error', lines: ['Icon #B42318: 6.05:1', 'Body #4A4A4A: 8.15:1', 'Icon on white toast: 6.57:1'] },
+  { tone: 'info', title: 'Info', lines: contrastLines('info') },
+  { tone: 'success', title: 'Success', lines: contrastLines('success') },
+  { tone: 'warning', title: 'Warning', lines: contrastLines('warning') },
+  { tone: 'error', title: 'Error', lines: contrastLines('error') },
 ];
 
 const writing = [
@@ -95,7 +101,7 @@ const writing = [
 
 const specs = [
   ['alert.padding / gap / radius', '16px (12px right) / 12px / radius.md 12px'],
-  ['alert.border', '1px status border, such as #FECDCA for error'],
+  ['alert.border', `1px status border, such as ${hex('status.error.border')} for error`],
   ['alert.title / body', 'Lato Bold 15/20 ink / Lato 15/22 grey 600'],
   ['alert.action', 'Lato Bold 15 ink, underlined'],
   ['toast.width', '400px desktop; full width minus 16px margins on phones'],
@@ -106,10 +112,10 @@ const specs = [
   ['toast.action', 'Lato Bold 15 emerald 600, underlined'],
   ['banner.height', '52px minimum, full width, under the top bar'],
   ['banner.border', '1px status border on the bottom edge only'],
-  ['status.info', '#EFF8FF fill, #B2DDFF border, #175CD3 icon'],
-  ['status.success', '#ECFDF3 fill, #ABEFC6 border, #067647 icon'],
-  ['status.warning', '#FFFAEB fill, #FEDF89 border, #B54708 icon'],
-  ['status.error', '#FEF3F2 fill, #FECDCA border, #B42318 icon'],
+  ['status.info', `${hex('status.info.bg')} fill, ${hex('status.info.border')} border, ${hex('status.info.fg')} icon`],
+  ['status.success', `${hex('status.success.bg')} fill, ${hex('status.success.border')} border, ${hex('status.success.fg')} icon`],
+  ['status.warning', `${hex('status.warning.bg')} fill, ${hex('status.warning.border')} border, ${hex('status.warning.fg')} icon`],
+  ['status.error', `${hex('status.error.bg')} fill, ${hex('status.error.border')} border, ${hex('status.error.fg')} icon`],
   ['icon', '20px, 1.75px stroke: info, check-circle, alert-triangle, alert-circle'],
 ];
 

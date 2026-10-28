@@ -80,6 +80,21 @@
   inset-block: auto calc(100% + var(--space-1));
 }
 
+.select-panel[popover] {
+  position: fixed;
+  inset: auto;
+  inset-block-start: anchor(bottom);
+  inset-inline-start: anchor(left);
+  min-inline-size: anchor-size(width);
+  margin: var(--space-1) 0;
+  overflow: visible;
+  color: inherit;
+}
+
+.select-panel-above[popover] {
+  inset-block: auto anchor(top);
+}
+
 .select-column,
 .select-column > div {
   display: grid;

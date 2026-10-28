@@ -6,12 +6,14 @@ import { NetworkExplorer, type NetworkDetailContext, type NetworkExplorerProps }
 function renderExplorer(query: NetworkQuery, props: Partial<NetworkExplorerProps> = {}) {
   const onQueryChange = vi.fn<(query: NetworkQuery) => void>();
   const onViewChange = vi.fn<(view: NetworkView) => void>();
-  render(
-    <HumanbaseProvider api={new Humanbase(SampleClient.bundled())}>
-      <NetworkExplorer query={query} view={new NetworkView()} onQueryChange={onQueryChange} onViewChange={onViewChange} {...props} />
-    </HumanbaseProvider>,
+  const api = new Humanbase(SampleClient.bundled());
+  const explorer = (next: NetworkQuery) => (
+    <HumanbaseProvider api={api}>
+      <NetworkExplorer query={next} view={new NetworkView()} onQueryChange={onQueryChange} onViewChange={onViewChange} {...props} />
+    </HumanbaseProvider>
   );
-  return { onQueryChange, onViewChange };
+  const { rerender } = render(explorer(query));
+  return { onQueryChange, onViewChange, showQuery: (next: NetworkQuery) => rerender(explorer(next)) };
 }
 
 describe('NetworkExplorer', () => {
@@ -24,6 +26,19 @@ describe('NetworkExplorer', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('IL1B interleukin 1 beta TNF tumor necrosis factor');
     expect(screen.getByText(/Showing 15 of 52 genes: 2 query genes and 13 related genes, \d+ connections above 0\.48\.$/)).toBeInTheDocument();
     expect(within(table).getByRole('columnheader', { name: 'Score' })).toHaveAttribute('aria-sort', 'descending');
+  });
+
+  it('announces newly missing genes after an edit, even once the notice was dismissed', async () => {
+    const withAuts12 = new NetworkQuery([3553, 7124, 100188314], undefined, 'v1');
+    const { showQuery } = renderExplorer(withAuts12);
+    const notice = /^AUTS12 was left out/;
+    await screen.findByText(notice);
+    await userEvent.click(screen.getByRole('button', { name: /Dismiss/ }));
+    expect(screen.queryByText(notice)).not.toBeInTheDocument();
+    showQuery(new NetworkQuery([3553, 7124], undefined, 'v1'));
+    await screen.findByRole('table', { name: /Genes functionally related to IL1B and TNF/ });
+    showQuery(withAuts12);
+    expect(await screen.findByText(notice)).toBeInTheDocument();
   });
 
   it('with uniqueness, splits the count and claims no Score sort', async () => {
