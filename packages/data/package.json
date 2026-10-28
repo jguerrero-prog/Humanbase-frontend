@@ -14,8 +14,8 @@
   "dependencies": {
     "@gmod/bbi": "11.3.2",
     "@gmod/trix": "3.1.0",
-    "@gmod/twobit": "6.0.12",
-    "@tanstack/react-query": "5.104.1",
+    "@gmod/twobit": "6.0.14",
+    "@tanstack/react-query": "5.104.5",
     "generic-filehandle2": "2.5.1"
   },
   "peerDependencies": {
@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@types/react": "19.3.0",
-    "react": "19.3.0",
-    "vite": "8.3.3"
+    "react": "19.3.1",
+    "vite": "8.3.5"
   }
 }
