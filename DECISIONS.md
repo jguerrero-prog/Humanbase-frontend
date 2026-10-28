@@ -28,6 +28,7 @@ The product and design decisions behind this front end, and why they were made. 
 - **No decorative accents.** Selection is shown by a control, a check or bold text, not by colored accent bars or tinted fills, and icons carry no ornamental dots. *(October 16, 2026)*
 - **The product name is "Humanbase"**, with a lowercase b, in copy, code and design files. Package scopes stay `@humanbase/...`. *(October 19, 2026)*
 - **Copy is direct mid-task and instructive on arrival.** Mid-task, lead with the action and its reason. On first use, empty states and repeated errors, explain why and how with an example. The voice principles end with "Considerate". *(October 16, 2026)*
+- **Two themes, blue by default.** Both palettes stay. Theme 2 (blue and gold) is the default; Theme 1 (emerald and Simons Yellow) can be chosen in Display settings and is kept in the browser (#564). Both pass WCAG 2.2 AA, and the accessibility scan checks both. Data visualization colors are the same in each. *(October 28, 2026)*
 - **Illustrations stay in the design system.** They are hidden in the app behind `showIllustrations = false` in `packages/hb/src/content/illustrations.ts` (#564), pending the Humanbase team's scientific review. *(October 26, 2026)*
 - **Docs pages keep the Figma frames' sizes.** The design system site is built for 1920px; a narrow-screen layout stacks the menu and never scrolls sideways. *(October 18, 2026)*
 
@@ -44,6 +45,5 @@ The product and design decisions behind this front end, and why they were made. 
 
 ## Open
 
-- **Palette.** The final palette is undecided. Theme 1 (emerald and Simons Yellow) and Theme 2 (blue) can both be chosen in Display settings so reviewers can compare (#564). Full color themes (#323) wait until the palette is chosen and every page is built.
 - **On hold until the Humanbase team is ready.** SEEK, Seal, and the Scores guide and Network versions pages (#403).
 - **Questions for the Humanbase team.** These are the build questions in #175 (Homepage and Networks), #191 (NetWAS) and #207 (ExPecto and ExPecto SC). In the meantime, the shipped pages work around them.
