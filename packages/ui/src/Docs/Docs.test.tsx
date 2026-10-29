@@ -1,5 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { CopyPageLink } from './CopyPageLink';
 import { DocsLayout } from './DocsLayout';
 import { DocsMarkdown } from './DocsMarkdown';
 import { DocsNav } from './DocsNav';
@@ -144,6 +145,19 @@ Score ($p_{alt} -p_{ref}$) for p$_{ij}$ and \`code\`.
 
 <script>alert(1)</script>
 `;
+
+describe('CopyPageLink', () => {
+  it('copies the page address without a section anchor and confirms it', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    render(<CopyPageLink title="Sei" />);
+    const badge = screen.getByRole('button', { name: 'Copy link to Sei' });
+    await userEvent.click(badge);
+    expect(writeText).toHaveBeenCalledWith(window.location.origin + window.location.pathname);
+    expect(badge).toHaveTextContent('Copied');
+    expect(screen.getByText('Link to Sei copied')).toHaveAttribute('role', 'status');
+  });
+});
 
 describe('DocsMarkdown', () => {
   it('maps Markdown to the design system components', () => {
