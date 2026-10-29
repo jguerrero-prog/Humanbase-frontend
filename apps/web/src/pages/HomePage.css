@@ -106,10 +106,6 @@
 
 .home-feature-image {
   flex: none;
-  padding: var(--space-6);
-  background: var(--surface-page);
-  border: var(--border-width-1) solid var(--border-subtle);
-  border-radius: var(--radius-md);
 }
 
 .home-illustration {
@@ -185,9 +181,5 @@
 @media (width < 40rem) {
   .home-inner {
     padding: var(--space-8) var(--layout-margin-mobile);
-  }
-
-  .home-feature-image {
-    padding: var(--space-3);
   }
 }
