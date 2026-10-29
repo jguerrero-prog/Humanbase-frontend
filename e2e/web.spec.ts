@@ -290,10 +290,12 @@ test('the app shows only finished illustrations while the library is revised', a
   await page.goto(web);
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.locator('.home-hero-art, [data-illustration]')).toHaveCount(0);
-  await expect(page.locator('.home-feature-image')).toHaveCount(1);
-  const art = page.locator('.home-feature', { has: page.getByRole('heading', { name: 'Tissue-specific' }) }).locator('img');
-  await art.scrollIntoViewIfNeeded();
-  await expect.poll(() => art.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
+  await expect(page.locator('.home-feature-image')).toHaveCount(2);
+  for (const name of ['Data-driven', 'Tissue-specific']) {
+    const art = page.locator('.home-feature', { has: page.getByRole('heading', { name }) }).locator('img');
+    await art.scrollIntoViewIfNeeded();
+    await expect.poll(() => art.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
+  }
   for (const path of ['/about/', '/cite/', '/data-sources/']) {
     await page.goto(`${web}${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
