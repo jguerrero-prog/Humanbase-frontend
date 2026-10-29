@@ -462,7 +462,10 @@ a.nav-item,
 
 .footer {
   container-type: inline-size;
-  background: var(--surface-subtle);
+  padding-block-end: 64px;
+
+  /* The hero's DNA, unrolled into a helix along the bottom edge; it tiles to any width. */
+  background: url("./footer-helix.svg") repeat-x center bottom / auto 64px, var(--surface-subtle);
   border-block-start: var(--border-width-1) solid var(--border-subtle);
 }
 
