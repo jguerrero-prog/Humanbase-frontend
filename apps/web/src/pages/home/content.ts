@@ -1,5 +1,6 @@
 // Static homepage copy, kept apart from the page so it can be edited or translated in one place.
 import dataArt from './data-driven.svg?url';
+import networkArt from './network-guided.svg?url';
 import tissueArt from './tissue-specific.svg?url';
 
 export interface Feature {
@@ -37,6 +38,7 @@ export const features: readonly Feature[] = [
     text: 'Tissue-specific networks can guide genome-wide association (GWAS) analysis by reprioritizing the associations from a GWAS study. With NetWAS, network-guided GWAS analysis, researchers can find additional disease-associated genes.',
     link: links.netwas,
     illustration: 'gwas',
+    art: networkArt,
   },
 ];
 
