@@ -1,5 +1,5 @@
 import { JobWatcher, Notifications, TopBarSearch, productFooter, productSectionFor, productSections, useJobsMenuSummary } from '@humanbase/hb';
-import { Banner, Footer, IconButton, SkipLink, TopBar } from '@humanbase/ui';
+import { Banner, Footer, IconButton, SkipLink, TopBar, WelcomeIntro } from '@humanbase/ui';
 import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { BrowserSetting } from './BrowserSetting';
@@ -7,10 +7,17 @@ import { DisplaySettings } from './DisplaySettings';
 import './AppLayout.css';
 
 const whatsNew = new BrowserSetting<'shown' | 'dismissed'>('humanbase:whats-new', 'shown', ['shown', 'dismissed']);
+const intro = new BrowserSetting<'pending' | 'seen'>('humanbase:intro', 'pending', ['pending', 'seen']);
+
+// The welcome intro plays once per browser, and never for automated browsers such as tests and crawlers.
+// Decided once per page load, outside React, so a second render can't undo it.
+const firstVisit = !navigator.webdriver && intro.get() === 'pending';
+if (firstVisit) intro.set('seen');
 
 export function AppLayout() {
   const [bannerShown, setBannerShown] = useState(() => whatsNew.get() === 'shown');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [introShown, setIntroShown] = useState(firstVisit);
   const jobs = useJobsMenuSummary();
   const { pathname, search } = useLocation();
   const onHomepage = pathname === '/';
@@ -38,6 +45,7 @@ export function AppLayout() {
       <DisplaySettings open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <JobWatcher />
       <Notifications />
+      {introShown && <WelcomeIntro onDone={() => setIntroShown(false)} />}
     </div>
   );
 }

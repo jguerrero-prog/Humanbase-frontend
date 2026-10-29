@@ -1,0 +1,104 @@
+/* Five bars draw the mark over about 1.2s, then the cover drifts up as it fades, rather than opening like a window. */
+.welcome-intro {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-tooltip) + 1);
+  display: grid;
+  place-items: center;
+  background: var(--surface-brand-deep);
+  animation: welcome-intro-leave 800ms cubic-bezier(0.45, 0, 0.25, 1) 1400ms forwards;
+}
+
+.welcome-intro-bar {
+  fill: var(--text-on-brand);
+  transform-box: fill-box;
+  scale: 0 1;
+  animation: welcome-intro-draw 420ms var(--motion-easing-enter) forwards;
+}
+
+.welcome-intro-bar:nth-child(2) {
+  animation-delay: 180ms;
+}
+
+.welcome-intro-bar:nth-child(3) {
+  animation-delay: 360ms;
+}
+
+.welcome-intro-bar:nth-child(4) {
+  animation-delay: 540ms;
+}
+
+.welcome-intro-bar:nth-child(5) {
+  animation-delay: 720ms;
+}
+
+.welcome-intro-from-top {
+  transform-origin: top;
+  scale: 1 0;
+}
+
+.welcome-intro-from-left {
+  transform-origin: left;
+}
+
+.welcome-intro-from-right {
+  transform-origin: right;
+}
+
+@keyframes welcome-intro-draw {
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes welcome-intro-leave {
+  to {
+    opacity: 0;
+    translate: 0 -12%;
+  }
+}
+
+/* The mark rises and fades ahead of its cover, so it never floats over the page. */
+.welcome-intro-mark {
+  animation: welcome-intro-rise 800ms cubic-bezier(0.45, 0, 0.25, 1) 1400ms forwards;
+}
+
+@keyframes welcome-intro-rise {
+  60% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+    translate: 0 -40px;
+  }
+}
+
+@keyframes welcome-intro-fade {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Reduced motion shows the whole mark at once and fades the cover instead of sliding it. */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="full"]) .welcome-intro {
+    animation: welcome-intro-fade 400ms var(--motion-easing-linear) 400ms forwards;
+  }
+
+  :root:not([data-motion="full"]) .welcome-intro-bar,
+  :root:not([data-motion="full"]) .welcome-intro-mark {
+    scale: 1;
+    animation: none;
+  }
+}
+
+:root[data-motion="reduce"] .welcome-intro {
+  animation: welcome-intro-fade 400ms var(--motion-easing-linear) 400ms forwards;
+}
+
+:root[data-motion="reduce"] .welcome-intro-bar,
+:root[data-motion="reduce"] .welcome-intro-mark {
+  scale: 1;
+  animation: none;
+}
