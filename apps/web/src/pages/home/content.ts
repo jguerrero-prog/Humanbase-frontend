@@ -1,5 +1,7 @@
 // Static homepage copy, kept apart from the page so it can be edited or translated in one place.
 import dataArt from './data-driven.svg?url';
+import modulesArt from './functional-modules.svg?url';
+import predictionArt from './gene-function-prediction.svg?url';
 import networkArt from './network-guided.svg?url';
 import tissueArt from './tissue-specific.svg?url';
 
@@ -49,17 +51,20 @@ export const moduleFeatures: readonly Feature[] = [
     text: 'Humanbase applies community detection to find cohesive gene clusters from a provided gene list and a selected relevant tissue. Genes within a cluster share local network neighborhoods and together form a cohesive, specific functional module.',
     link: links.data,
     illustration: 'network',
+    art: modulesArt,
   },
   {
     title: 'Gene function prediction',
     text: 'Module detection enables systematic association of genes, even functionally uncharacterized genes, to specific processes and phenotypes represented in the detected modules.',
     link: links.tissue,
     illustration: 'heatmap',
+    art: predictionArt,
   },
   {
     title: 'Tissue-specific',
     text: 'Functional modules are identified with tissue-specific networks, which predict gene interactions from massive data collections. Thus the discovered modules potentially capture higher-order tissue-specific function.',
     link: links.netwas,
     illustration: 'gwas',
+    art: tissueArt,
   },
 ];

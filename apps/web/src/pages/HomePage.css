@@ -19,12 +19,36 @@
   pointer-events: none;
 }
 
-/* Tissue cells against the window's right edge at every width, as in the Figma hero. */
+/* A DNA ring centered near the window's right edge, so it runs off the top, bottom and right, turning slowly. */
 .home-hero-art {
   position: absolute;
-  inset-block-start: 0;
-  inset-inline-end: 0;
+  inset-block-start: calc(50% - 360px);
+  inset-inline-end: -160px;
   max-inline-size: none;
+  animation: home-hero-turn 180s linear infinite;
+}
+
+@keyframes home-hero-turn {
+  to {
+    rotate: 1turn;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="full"]) .home-hero-art {
+    animation: none;
+  }
+}
+
+:root[data-motion="reduce"] .home-hero-art {
+  animation: none;
+}
+
+/* Narrower desktops push the ring further right, clear of the search. */
+@media (width < 80rem) {
+  .home-hero-art {
+    inset-inline-end: -250px;
+  }
 }
 
 @media (width < 64rem) {

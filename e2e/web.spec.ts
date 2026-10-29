@@ -257,6 +257,7 @@ test('Display settings saves reduced motion in this browser', async ({ page }) =
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduce');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduce');
+  await expect(page.locator('.home-hero-art')).toHaveCSS('animation-name', 'none');
 });
 
 test('Theme 2 is the default; Display settings switches to Theme 1, keeps it in this browser, and passes WCAG 2.2 AA in it', async ({ page }) => {
@@ -289,9 +290,19 @@ test('the app shows only finished illustrations while the library is revised', a
   await apiOff(page);
   await page.goto(web);
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(page.locator('.home-hero-art, [data-illustration]')).toHaveCount(0);
+  await expect(page.locator('[data-illustration]')).toHaveCount(0);
+  const ring = page.locator('.home-hero-art');
+  await expect.poll(() => ring.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
   await expect(page.locator('.home-feature-image')).toHaveCount(3);
   for (const name of ['Data-driven', 'Tissue-specific', 'Network-guided']) {
+    const art = page.locator('.home-feature', { has: page.getByRole('heading', { name }) }).locator('img');
+    await art.scrollIntoViewIfNeeded();
+    await expect.poll(() => art.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
+  }
+  await page.goto(`${web}/?analysis=modules`);
+  await expect(page.getByRole('heading', { name: 'How module detection works' })).toBeVisible();
+  await expect(page.locator('.home-feature-image')).toHaveCount(3);
+  for (const name of ['Functional modules', 'Gene function prediction', 'Tissue-specific']) {
     const art = page.locator('.home-feature', { has: page.getByRole('heading', { name }) }).locator('img');
     await art.scrollIntoViewIfNeeded();
     await expect.poll(() => art.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
