@@ -26,6 +26,7 @@ export { genomeBrowserKeyHelp, genomeCommand, type GenomeCommand } from './Genom
 export { ContextLabel, type ContextLabelProps } from './ContextLabel/ContextLabel';
 export { Divider, type DividerOrientation, type DividerProps } from './Divider/Divider';
 export { Dialog, type DialogKind, type DialogProps, type DialogSize } from './Dialog/Dialog';
+export { CopyPageLink } from './Docs/CopyPageLink';
 export { DocsLayout, type DocsLayoutProps } from './Docs/DocsLayout';
 export { DocsMarkdown, type DocsMarkdownProps, type ImageSizes } from './Docs/DocsMarkdown';
 export { docsSections, type DocsSection, type DocsSectionText } from './Docs/markdownSections';

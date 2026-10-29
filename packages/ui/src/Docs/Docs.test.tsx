@@ -1,5 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { CopyPageLink } from './CopyPageLink';
 import { DocsLayout } from './DocsLayout';
 import { DocsMarkdown } from './DocsMarkdown';
 import { DocsNav } from './DocsNav';
@@ -145,19 +146,20 @@ Score ($p_{alt} -p_{ref}$) for p$_{ij}$ and \`code\`.
 <script>alert(1)</script>
 `;
 
-describe('DocsMarkdown', () => {
-  it('gives each section a badge that copies a link to it', async () => {
+describe('CopyPageLink', () => {
+  it('copies the page address without a section anchor and confirms it', async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
-    render(<DocsMarkdown markdown={markdown} />);
-    const badge = screen.getByRole('button', { name: 'Copy link to Sequence classes' });
+    render(<CopyPageLink title="Sei" />);
+    const badge = screen.getByRole('button', { name: 'Copy link to Sei' });
     await userEvent.click(badge);
-    expect(writeText).toHaveBeenCalledWith(new URL('#sequence-classes', window.location.href).href);
+    expect(writeText).toHaveBeenCalledWith(window.location.origin + window.location.pathname);
     expect(badge).toHaveTextContent('Copied');
-    expect(screen.getByText('Link to Sequence classes copied')).toHaveAttribute('role', 'status');
-    expect(screen.getByRole('button', { name: 'Copy link to Output' })).toBeInTheDocument();
+    expect(screen.getByText('Link to Sei copied')).toHaveAttribute('role', 'status');
   });
+});
 
+describe('DocsMarkdown', () => {
   it('maps Markdown to the design system components', () => {
     const { container } = render(<DocsMarkdown markdown={markdown} images={{ 'sei-1.png': [2000, 700] }} />);
     expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
@@ -167,7 +169,7 @@ describe('DocsMarkdown', () => {
     expect(screen.getByRole('table', { name: 'Sequence classes' })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: '0' })).toHaveClass('table-cell-number');
     expect(screen.getByRole('figure', { name: 'Sequence classes' })).toHaveTextContent('KRT6B');
-    expect(screen.getByRole('button', { name: /^Copy\b(?! link)/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Copy/ })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Sei use case, screenshot 1' })).toHaveAttribute('width', '2000');
     expect(screen.getByText('Keep sequences at 4096bp.').closest('.alert')).toBeInTheDocument();
     expect(container.querySelector('script')).toBeNull();
