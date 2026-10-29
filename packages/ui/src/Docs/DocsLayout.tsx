@@ -22,13 +22,15 @@ export interface DocsLayoutProps {
   narrow?: boolean;
   /** 2 when the layout is shown inside another page, such as a design system example. */
   titleLevel?: 1 | 2;
+  /** Shown at the right end of the title line, such as a Copy link badge. */
+  titleAction?: ReactNode;
   /** What the sidebar holds, naming its menu on narrow screens: "Docs menu". */
   menuTitle?: string;
   children: ReactNode;
 }
 
 /** A docs page: sidebar, the 748px reading column and On this page, which move into a menu and under the title below 1200px. */
-export function DocsLayout({ nav, breadcrumbs, title, titleId, sections, location = title, narrow: forceNarrow = false, titleLevel = 1, menuTitle = 'Docs', children }: DocsLayoutProps) {
+export function DocsLayout({ nav, breadcrumbs, title, titleId, sections, location = title, narrow: forceNarrow = false, titleLevel = 1, titleAction, menuTitle = 'Docs', children }: DocsLayoutProps) {
   const narrowScreen = useMediaQuery(DOCS_NARROW_QUERY);
   const narrow = forceNarrow || narrowScreen;
   const [menuOpenAt, setMenuOpenAt] = useState<string | null>(null);
@@ -52,9 +54,12 @@ export function DocsLayout({ nav, breadcrumbs, title, titleId, sections, locatio
         )}
         <header className="docs-layout-header">
           {breadcrumbs}
-          <Title id={headingId} className="docs-layout-title">
-            {title}
-          </Title>
+          <div className="docs-layout-title-row">
+            <Title id={headingId} className="docs-layout-title">
+              {title}
+            </Title>
+            {titleAction}
+          </div>
           {narrow && <OnThisPage sections={sections} />}
         </header>
         {children}

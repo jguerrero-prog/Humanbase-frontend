@@ -1,5 +1,5 @@
 import { DocsSearch, docsLibrary } from '@humanbase/hb';
-import { Breadcrumbs, DocsLayout, DocsMarkdown, DocsNav } from '@humanbase/ui';
+import { Breadcrumbs, CopyPageLink, DocsLayout, DocsMarkdown, DocsNav } from '@humanbase/ui';
 import { useEffect, useRef } from 'react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router';
 import { useRouterLinks } from '../layout/useRouterLinks';
@@ -36,6 +36,7 @@ export function DocsPage() {
         nav={<DocsNav groups={docsLibrary.navGroups(page)} search={<DocsSearch onOpen={(href) => void navigate(href)} />} />}
         breadcrumbs={<Breadcrumbs items={docsLibrary.breadcrumbs(page)} />}
         title={page.title}
+        titleAction={<CopyPageLink title={page.title} />}
         {...(page.sections[0] && { titleId: page.sections[0].id })}
         sections={page.sections}
         location={pathname + hash}

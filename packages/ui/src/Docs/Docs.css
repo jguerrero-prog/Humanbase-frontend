@@ -30,6 +30,33 @@
   justify-items: start;
 }
 
+/* The title, with its Copy link badge at the right end of the line, wrapping under it when space runs out. */
+.docs-layout-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+  inline-size: 100%;
+}
+
+.docs-copy-link {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label-sm);
+  color: var(--text-link);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.docs-copy-link:hover {
+  background: var(--surface-subtle);
+}
+
 .docs-layout-title {
   font: var(--type-h1);
   letter-spacing: var(--type-h1-tracking);
