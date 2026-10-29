@@ -296,6 +296,14 @@ test('the app shows only finished illustrations while the library is revised', a
     await art.scrollIntoViewIfNeeded();
     await expect.poll(() => art.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
   }
+  await page.goto(`${web}/?analysis=modules`);
+  await expect(page.getByRole('heading', { name: 'How module detection works' })).toBeVisible();
+  await expect(page.locator('.home-feature-image')).toHaveCount(3);
+  for (const name of ['Functional modules', 'Gene function prediction', 'Tissue-specific']) {
+    const art = page.locator('.home-feature', { has: page.getByRole('heading', { name }) }).locator('img');
+    await art.scrollIntoViewIfNeeded();
+    await expect.poll(() => art.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
+  }
   for (const path of ['/about/', '/cite/', '/data-sources/']) {
     await page.goto(`${web}${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
