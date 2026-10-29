@@ -1,4 +1,5 @@
 // Static homepage copy, kept apart from the page so it can be edited or translated in one place.
+import dataArt from './data-driven.svg?url';
 import tissueArt from './tissue-specific.svg?url';
 
 export interface Feature {
@@ -22,6 +23,7 @@ export const features: readonly Feature[] = [
     text: 'Humanbase applies machine learning to learn biological associations from massive genomic data collections. These integrative analyses reach beyond existing biological knowledge in the literature to find new, data-driven associations.',
     link: links.data,
     illustration: 'heatmap',
+    art: dataArt,
   },
   {
     title: 'Tissue-specific',
