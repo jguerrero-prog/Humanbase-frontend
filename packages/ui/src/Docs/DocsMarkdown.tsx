@@ -6,6 +6,8 @@ import { CodeBlock, InlineCode } from '../CodeBlock/CodeBlock';
 import { useLinkHref } from '../hooks/useLinkHref';
 import { Alert } from '../Message/Alert';
 import type { MessageTone } from '../Message/Message';
+import { Icon } from '../Icon/Icon';
+import { useCopy } from '../hooks/useCopy';
 import { Cell, HeaderCell, Table } from '../Table/Table';
 import { docsRemarkPlugins } from './markdownSections';
 import { TexMath } from './TexMath';
@@ -74,6 +76,30 @@ function DocsTable({ node, children }: Rendered) {
   );
 }
 
+/** A section heading with a badge that copies a link to it, so readers can send someone straight to this section. */
+function SectionHeading({ level, id, node, children }: Rendered & { level: 2 | 3; id?: string | undefined }) {
+  const Heading = `h${level}` as const;
+  const name = node ? textOf(node) : '';
+  // Pages rendered ahead of time have no window; the badge only copies in the browser.
+  const here = typeof window === 'undefined' ? '' : window.location.href;
+  const { copied, copy, status } = useCopy(here && new URL(`#${id ?? ''}`, here).href, `Link to ${name} copied`);
+  return (
+    <div className={`docs-heading docs-heading-${level}`}>
+      <Heading id={id} className={`docs-h${level}`}>
+        {children}
+      </Heading>
+      {id && (
+        <button type="button" className="docs-section-link" data-copied={copied || undefined} onClick={() => void copy()}>
+          <Icon name={copied ? 'check' : 'link'} size={14} />
+          {copied ? 'Copied' : 'Copy link'}{' '}
+          <span className="visually-hidden">to {name}</span>
+        </button>
+      )}
+      {status}
+    </div>
+  );
+}
+
 const noImages: ImageSizes = {};
 
 const alignOf = (node: Element | undefined) => (node?.properties.align === 'right' ? 'end' : 'start');
@@ -81,8 +107,8 @@ const alignOf = (node: Element | undefined) => (node?.properties.align === 'righ
 function baseComponents(images: ImageSizes): Components {
   return {
     h1: () => null,
-    h2: ({ id, children }) => <h2 id={id} className="docs-h2">{children}</h2>,
-    h3: ({ id, children }) => <h3 id={id} className="docs-h3">{children}</h3>,
+    h2: ({ id, node, children }) => <SectionHeading id={id} node={node} level={2}>{children}</SectionHeading>,
+    h3: ({ id, node, children }) => <SectionHeading id={id} node={node} level={3}>{children}</SectionHeading>,
     h4: ({ id, children }) => <h4 id={id} className="docs-h4">{children}</h4>,
     p: (props) => <Paragraph {...props} images={images} />,
     a: DocsLink,

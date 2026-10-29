@@ -146,6 +146,18 @@ Score ($p_{alt} -p_{ref}$) for p$_{ij}$ and \`code\`.
 `;
 
 describe('DocsMarkdown', () => {
+  it('gives each section a badge that copies a link to it', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    render(<DocsMarkdown markdown={markdown} />);
+    const badge = screen.getByRole('button', { name: 'Copy link to Sequence classes' });
+    await userEvent.click(badge);
+    expect(writeText).toHaveBeenCalledWith(new URL('#sequence-classes', window.location.href).href);
+    expect(badge).toHaveTextContent('Copied');
+    expect(screen.getByText('Link to Sequence classes copied')).toHaveAttribute('role', 'status');
+    expect(screen.getByRole('button', { name: 'Copy link to Output' })).toBeInTheDocument();
+  });
+
   it('maps Markdown to the design system components', () => {
     const { container } = render(<DocsMarkdown markdown={markdown} images={{ 'sei-1.png': [2000, 700] }} />);
     expect(screen.queryByRole('heading', { level: 1 })).not.toBeInTheDocument();
@@ -155,7 +167,7 @@ describe('DocsMarkdown', () => {
     expect(screen.getByRole('table', { name: 'Sequence classes' })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: '0' })).toHaveClass('table-cell-number');
     expect(screen.getByRole('figure', { name: 'Sequence classes' })).toHaveTextContent('KRT6B');
-    expect(screen.getByRole('button', { name: /Copy/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Copy\b(?! link)/ })).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Sei use case, screenshot 1' })).toHaveAttribute('width', '2000');
     expect(screen.getByText('Keep sequences at 4096bp.').closest('.alert')).toBeInTheDocument();
     expect(container.querySelector('script')).toBeNull();

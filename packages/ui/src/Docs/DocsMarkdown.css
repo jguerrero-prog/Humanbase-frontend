@@ -14,14 +14,45 @@
   scroll-margin-block-start: calc(var(--layout-topbar-height) + var(--space-6));
 }
 
-.docs-markdown .docs-h2 {
+/* A section heading with its Copy link badge beside it, wrapping under it when the line is full. */
+.docs-markdown .docs-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  align-items: center;
+}
+
+.docs-markdown .docs-heading-2 {
   margin-block-start: var(--space-8);
+}
+
+.docs-markdown .docs-heading-3 {
+  margin-block-start: var(--space-4);
+}
+
+.docs-markdown .docs-section-link {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label-sm);
+  color: var(--text-link);
+  background: var(--surface-page);
+  border: var(--border-width-1) solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.docs-markdown .docs-section-link:hover {
+  background: var(--surface-subtle);
+}
+
+.docs-markdown .docs-h2 {
   font: var(--type-h3);
   letter-spacing: var(--type-h3-tracking);
 }
 
 .docs-markdown .docs-h3 {
-  margin-block-start: var(--space-4);
   font: var(--type-h4);
   letter-spacing: var(--type-h4-tracking);
 }
