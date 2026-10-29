@@ -257,7 +257,6 @@ test('Display settings saves reduced motion in this browser', async ({ page }) =
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduce');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduce');
-  await expect(page.locator('.home-hero-art')).toHaveCSS('animation-name', 'none');
 });
 
 test('Theme 2 is the default; Display settings switches to Theme 1, keeps it in this browser, and passes WCAG 2.2 AA in it', async ({ page }) => {
@@ -487,4 +486,19 @@ test('on a phone, the analysis list stays inside the window and scrolls, with th
   expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(844);
   await list.getByRole('option', { name: /Expression effects/ }).scrollIntoViewIfNeeded();
   await expect(list.getByRole('option', { name: /Expression effects/ })).toBeInViewport();
+});
+
+test('a first visit plays the welcome intro once, and never again in this browser', async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(navigator, 'webdriver', { get: () => false }));
+  await apiOff(page);
+  await page.goto(web);
+  const intro = page.locator('.welcome-intro');
+  await expect(intro).toBeVisible();
+  await expect(intro).toHaveAttribute('aria-hidden', 'true');
+  await expect(intro).toHaveCount(0, { timeout: 5000 });
+  await page.reload();
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(intro).toHaveCount(0);
+  await page.goto(`${web}/networks/`);
+  await expect(intro).toHaveCount(0);
 });
