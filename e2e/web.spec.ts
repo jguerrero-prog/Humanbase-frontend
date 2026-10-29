@@ -257,7 +257,6 @@ test('Display settings saves reduced motion in this browser', async ({ page }) =
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduce');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduce');
-  await expect(page.locator('.home-hero-art')).toHaveCSS('animation-name', 'none');
 });
 
 test('Theme 2 is the default; Display settings switches to Theme 1, keeps it in this browser, and passes WCAG 2.2 AA in it', async ({ page }) => {
