@@ -48,6 +48,7 @@ export { Illustration, type IllustrationProps } from './Illustration/Illustratio
 export { illustrationNames, illustrations, type IllustrationEntry, type IllustrationFormat, type IllustrationName } from './Illustration/illustrations';
 export { type NavigableOption } from './List/ListNavigator';
 export { Logo, logoUrl } from './Logo/Logo';
+export { WelcomeIntro } from './WelcomeIntro/WelcomeIntro';
 export { MenuItem, MenuPanel, type MenuItemProps } from './Menu/Menu';
 export { RadioGroup, type RadioGroupProps, type RadioOption } from './RadioGroup/RadioGroup';
 export { SegmentedControl, type Segment, type SegmentedControlProps } from './SegmentedControl/SegmentedControl';

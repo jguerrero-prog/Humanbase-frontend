@@ -487,3 +487,18 @@ test('on a phone, the analysis list stays inside the window and scrolls, with th
   await list.getByRole('option', { name: /Expression effects/ }).scrollIntoViewIfNeeded();
   await expect(list.getByRole('option', { name: /Expression effects/ })).toBeInViewport();
 });
+
+test('a first visit plays the welcome intro once, and never again in this browser', async ({ page }) => {
+  await page.addInitScript(() => Object.defineProperty(navigator, 'webdriver', { get: () => false }));
+  await apiOff(page);
+  await page.goto(web);
+  const intro = page.locator('.welcome-intro');
+  await expect(intro).toBeVisible();
+  await expect(intro).toHaveAttribute('aria-hidden', 'true');
+  await expect(intro).toHaveCount(0, { timeout: 5000 });
+  await page.reload();
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(intro).toHaveCount(0);
+  await page.goto(`${web}/networks/`);
+  await expect(intro).toHaveCount(0);
+});
