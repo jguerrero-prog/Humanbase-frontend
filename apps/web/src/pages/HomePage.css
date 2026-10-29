@@ -19,11 +19,11 @@
   pointer-events: none;
 }
 
-/* A DNA ring centered near the window's right edge, so it runs off the top, bottom and right, turning slowly. */
+/* A DNA ring centered just past the window's right edge, so only its left arc shows, turning slowly. */
 .home-hero-art {
   position: absolute;
   inset-block-start: calc(50% - 360px);
-  inset-inline-end: -160px;
+  inset-inline-end: -400px;
   max-inline-size: none;
   animation: home-hero-turn 180s linear infinite;
 }
@@ -42,13 +42,6 @@
 
 :root[data-motion="reduce"] .home-hero-art {
   animation: none;
-}
-
-/* Narrower desktops push the ring further right, clear of the search. */
-@media (width < 80rem) {
-  .home-hero-art {
-    inset-inline-end: -250px;
-  }
 }
 
 @media (width < 64rem) {
