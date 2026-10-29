@@ -1,9 +1,13 @@
 // Static homepage copy, kept apart from the page so it can be edited or translated in one place.
+import tissueArt from './tissue-specific.svg?url';
+
 export interface Feature {
   title: string;
   text: string;
   link: { label: string; href: string };
   illustration: 'heatmap' | 'network' | 'gwas';
+  /** Finished artwork, shown even while the other illustrations are off. */
+  art?: string;
 }
 
 const links = {
@@ -24,6 +28,7 @@ export const features: readonly Feature[] = [
     text: 'Humanbase models tissue-specific gene interactions using experimentally verified tissue expression and gene function, learning from a compendium of diverse tissues and cell types. The resulting networks capture tissue-specific gene function.',
     link: links.tissue,
     illustration: 'network',
+    art: tissueArt,
   },
   {
     title: 'Network-guided',

@@ -67,10 +67,16 @@ export function HomePage() {
                     <Icon name="arrow-right" size={24} />
                   </a>
                 </div>
-                {showIllustrations && (
+                {feature.art ? (
                   <div className="home-feature-image">
-                    <Illustration />
+                    <img className="home-illustration" src={feature.art} alt="" width={480} height={360} />
                   </div>
+                ) : (
+                  showIllustrations && (
+                    <div className="home-feature-image">
+                      <Illustration />
+                    </div>
+                  )
                 )}
               </article>
             );
