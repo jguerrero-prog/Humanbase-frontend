@@ -285,11 +285,15 @@ test('Theme 2 is the default; Display settings switches to Theme 1, keeps it in 
   }
 });
 
-test('the app shows no illustrations while the library is revised', async ({ page }) => {
+test('the app shows only finished illustrations while the library is revised', async ({ page }) => {
   await apiOff(page);
   await page.goto(web);
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.locator('.home-hero-art, [data-illustration]')).toHaveCount(0);
+  await expect(page.locator('.home-feature-image')).toHaveCount(1);
+  const art = page.locator('.home-feature', { has: page.getByRole('heading', { name: 'Tissue-specific' }) }).locator('img');
+  await art.scrollIntoViewIfNeeded();
+  await expect.poll(() => art.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
   for (const path of ['/about/', '/cite/', '/data-sources/']) {
     await page.goto(`${web}${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
