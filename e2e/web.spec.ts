@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { themes } from '../packages/tokens/themes.ts';
 import { apiOff } from './apiOff';
 import { downloadFrom } from './downloads';
 import { settleAnimations, violationsOf } from './violations';
@@ -259,7 +260,7 @@ test('Display settings saves reduced motion in this browser', async ({ page }) =
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduce');
 });
 
-test('Theme 2 is the default; Display settings switches to Theme 1, keeps it in this browser, and passes WCAG 2.2 AA in it', async ({ page }) => {
+test('Theme 2 is the default; Display settings switches to Theme 1 and keeps it in this browser', async ({ page }) => {
   await apiOff(page);
   await page.goto(web);
   await expect(page.locator('html')).toHaveAttribute('data-theme', '2');
@@ -277,13 +278,18 @@ test('Theme 2 is the default; Display settings switches to Theme 1, keeps it in 
   expect(await secondary()).toBe('rgb(255, 213, 61)');
   await page.reload();
   await expect(page.locator('html')).not.toHaveAttribute('data-theme');
-  for (const path of ['/', '/networks/?entrez=3553&entrez=7124&version=v1']) {
-    await page.goto(`${web}${path}`);
-    await settleAnimations(page);
-    const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
-    expect(violations.map((v) => `${path} ${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([]);
-  }
 });
+
+for (const theme of themes) {
+  test(`${theme.label} passes WCAG 2.2 AA on the homepage and a network`, async ({ page }) => {
+    await apiOff(page);
+    await page.addInitScript((value) => localStorage.setItem('humanbase:theme', value), theme.value);
+    for (const path of ['/', '/networks/?entrez=3553&entrez=7124&version=v1']) {
+      await page.goto(`${web}${path}`);
+      expect((await violationsOf(page)).map((violation) => `${path} ${violation}`)).toEqual([]);
+    }
+  });
+}
 
 test('the app shows only finished illustrations while the library is revised', async ({ page }) => {
   await apiOff(page);

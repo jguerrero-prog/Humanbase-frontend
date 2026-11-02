@@ -116,7 +116,7 @@ To try a new theme:
 2. Add it to the list in `packages/tokens/themes.ts`, for example `{ value: '3', label: 'Theme 3', description: 'Teal and coral', file: 'theme-3.tokens.json' }`. To make it the default, set `defaultTheme` to its value.
 3. Run `pnpm tokens`, then `pnpm dev:web`. The theme appears in Display settings, the gear button at the bottom left.
 
-Check text and controls with `pnpm test:e2e`, which runs the accessibility scan; text needs 4.5:1 contrast. Illustrations are fixed art and keep their colors in every theme, and the design system site always shows Theme 2.
+Then run `pnpm test:e2e`: it scans every theme in the list for WCAG 2.2 AA on the homepage and a network page, so text needs 4.5:1 contrast and controls 3:1. Illustrations are fixed art and keep their colors in every theme, and the design system site always shows Theme 2.
 
 ## How we work
 
