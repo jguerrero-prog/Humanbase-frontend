@@ -54,7 +54,8 @@ test('the Modules search matches the renal disease panel', async ({ page }) => {
   const problems = watch(page);
   await page.goto(`${web}/modules/`);
   await page.getByRole('button', { name: 'renal disease panel' }).click();
-  await expect(page.getByText(/^\d+ matched$/)).toBeVisible();
+  // Checking the panel's 504 genes takes the API about 15 seconds, and over 30 when it is busy.
+  await expect(page.getByText(/^\d+ matched$/)).toBeVisible({ timeout: 90_000 });
   await checkScreen(page, problems);
 });
 
@@ -188,11 +189,14 @@ test('the real Seqweaver result shows its own score tracks, shows and hides geno
   await expect(table.getByRole('row')).toHaveCount(40);
   await expect(table.getByRole('row').filter({ hasText: '109,816,601' })).toHaveText(/^ReprW\s*109,816,601\s*109,818,400\s*1,800 bp$/);
   await checkScreen(page, problems);
-  // The item details list what humanbase.io lists for each track, read from the real files.
+  // A gene opens the gene drawer; a segment's details list what humanbase.io lists, read from the real files.
   await page.locator('.genome-engine').getByText('CELSR2 →').click();
-  const gene = page.getByRole('dialog', { name: 'Genes' });
-  await expect(gene).toHaveText(/^GenesMethodprotein_codingLocationchr1:109,792,641-109,818,372Score1000$/);
+  const gene = page.getByRole('dialog', { name: 'CELSR2' });
+  await expect(gene.getByRole('region', { name: 'Location' })).toContainText('chr1:109,792,641-109,818,372');
+  await expect(gene.getByRole('region', { name: 'Gene type' })).toContainText('protein_coding');
   expect(await violationsOf(page)).toEqual([]);
+  await gene.getByRole('button', { name: 'Close' }).click();
+  await expect(gene).toBeHidden();
   await page.getByRole('button', { name: 'ReprW, 109,816,601 to 109,818,400' }).focus();
   await page.keyboard.press('Enter');
   const segment = page.getByRole('dialog', { name: 'GM12878 ChromHMM' });
