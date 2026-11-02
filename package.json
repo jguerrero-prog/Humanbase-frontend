@@ -19,6 +19,7 @@
     "test:live:jobs": "playwright test -c playwright.live.config.ts --project=jobs",
     "check": "pnpm typecheck && pnpm lint && pnpm test",
     "tokens": "pnpm --filter @humanbase/tokens build",
+    "theme:new": "node packages/tokens/new-theme.mjs",
     "api:generate": "node scripts/generate-api-types.mjs",
     "api:verify": "node scripts/verify-api.mjs",
     "samples:record": "node scripts/record-samples.mjs",

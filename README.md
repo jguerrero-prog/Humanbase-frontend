@@ -110,13 +110,26 @@ The design system site (`pnpm dev:docs`) documents every token and component.
 
 People choose a color theme in Display settings, and the choice is kept in their browser. Theme 1, emerald and yellow, is the base in `packages/tokens/src/primitives.tokens.json`. Theme 2, blue and gold, is the default; it overrides only the primitives it changes. Semantic tokens and components follow whichever theme is on the page.
 
-To try a new theme:
+A new theme starts from four brand colors:
 
-1. Copy `packages/tokens/src/theme-2.tokens.json` to a new file, such as `theme-3.tokens.json`, and change its colors. Keep the token names; leave out any primitive the theme doesn't change.
-2. Add it to the list in `packages/tokens/themes.ts`, for example `{ value: '3', label: 'Theme 3', description: 'Teal and coral', file: 'theme-3.tokens.json' }`. To make it the default, set `defaultTheme` to its value.
-3. Run `pnpm tokens`, then `pnpm dev:web`. The theme appears in Display settings, the gear button at the bottom left.
+| Brand color | Sits at | Colors |
+| --- | --- | --- |
+| Primary | `primary/600` | Primary buttons and selected states; the top bar and links use `primary/700` |
+| Secondary | `secondary/500` | The current page in the top bar and small marks on the brand color |
+| Accent | `accent/300` | Data highlights, such as the query gene |
+| Ink | `grey/900` | Headings, body text, secondary buttons and focus rings |
 
-Then run `pnpm test:e2e`: it scans every theme in the list for WCAG 2.2 AA on the homepage and a network page, so text needs 4.5:1 contrast and controls 3:1. Illustrations are fixed art and keep their colors in every theme, and the design system site always shows Theme 2.
+Run:
+
+```sh
+pnpm theme:new --description "Teal and coral" --primary "#0F766E" --secondary "#F97362" --accent "#A7D8DE" --ink "#18181B"
+```
+
+It places each color at its step and draws the rest of its scale around it, shaped like Theme 2's, with grey 300 to 800 leading into the ink. It writes `packages/tokens/src/theme-N.tokens.json`, adds the theme to `packages/tokens/themes.ts`, rebuilds the tokens and reports contrast for the main pairs. Then run `pnpm dev:web`: the theme appears in Display settings, the gear button at the bottom left. To make it the default, set `defaultTheme` in `themes.ts`.
+
+If a pair fails, try a darker or lighter brand color and run the command again, or adjust single steps in the theme file and run `pnpm tokens`. Delete a theme by removing its file and its line in `themes.ts`.
+
+Then run `pnpm test:e2e`: it scans every theme in the list for WCAG 2.2 AA on the homepage and a network page. Illustrations and data visualization colors are fixed and stay the same in every theme, and the design system site always shows Theme 2.
 
 ## How we work
 
