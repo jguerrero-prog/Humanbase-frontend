@@ -16,6 +16,7 @@
     "@humanbase/data": "workspace:*",
     "@humanbase/genome": "workspace:*",
     "@humanbase/graph": "workspace:*",
+    "@humanbase/tokens": "workspace:*",
     "@humanbase/ui": "workspace:*",
     "jspdf": "4.2.1"
   },
