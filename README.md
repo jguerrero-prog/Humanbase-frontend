@@ -106,6 +106,18 @@ Components come in two kinds. **Pure** components take props and render markup. 
 
 The design system site (`pnpm dev:docs`) documents every token and component.
 
+## Adding a theme
+
+People choose a color theme in Display settings, and the choice is kept in their browser. Theme 1, emerald and yellow, is the base in `packages/tokens/src/primitives.tokens.json`. Theme 2, blue and gold, is the default; it overrides only the primitives it changes. Semantic tokens and components follow whichever theme is on the page.
+
+To try a new theme:
+
+1. Copy `packages/tokens/src/theme-2.tokens.json` to a new file, such as `theme-3.tokens.json`, and change its colors. Keep the token names; leave out any primitive the theme doesn't change.
+2. Add it to the list in `packages/tokens/themes.ts`, for example `{ value: '3', label: 'Theme 3', description: 'Teal and coral', file: 'theme-3.tokens.json' }`. To make it the default, set `defaultTheme` to its value.
+3. Run `pnpm tokens`, then `pnpm dev:web`. The theme appears in Display settings, the gear button at the bottom left.
+
+Check text and controls with `pnpm test:e2e`, which runs the accessibility scan; text needs 4.5:1 contrast. Illustrations are fixed art and keep their colors in every theme, and the design system site always shows Theme 2.
+
 ## How we work
 
 Every change starts as a GitHub issue, labeled feature, bug, enhancement, accessibility, code quality, documentation or api. Work happens on a branch named after the issue, such as `feature/12-gene-search`, and merges into `development` through a pull request once CI passes. `development` merges into `master` for releases. Both branches are protected.

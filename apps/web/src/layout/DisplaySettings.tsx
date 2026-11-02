@@ -1,10 +1,9 @@
-import { displaySettingsNote, motionOptions, themeOptions } from '@humanbase/hb';
+import { defaultTheme, displaySettingsNote, motionOptions, themeOptions } from '@humanbase/hb';
 import { Button, Dialog, RadioGroup } from '@humanbase/ui';
 import { useState } from 'react';
 import { BrowserSetting } from './BrowserSetting';
 
 export type MotionChoice = 'device' | 'reduce' | 'full';
-export type ThemeChoice = '1' | '2';
 
 export const motionSetting = new BrowserSetting<MotionChoice>('humanbase:motion', 'device', ['device', 'reduce', 'full']);
 
@@ -13,10 +12,10 @@ export function applyMotion(choice: MotionChoice): void {
   else document.documentElement.dataset.motion = choice;
 }
 
-// Theme 2, blue and gold, is the default. Theme 1, emerald and yellow, is the tokens' base; another theme overrides primitives under data-theme.
-export const themeSetting = new BrowserSetting<ThemeChoice>('humanbase:theme', '2', ['1', '2']);
+// Theme 1 is the tokens' base; another theme overrides primitives under data-theme. The list lives in @humanbase/tokens/themes.
+export const themeSetting = new BrowserSetting<string>('humanbase:theme', defaultTheme, themeOptions.map((option) => option.value));
 
-export function applyTheme(choice: ThemeChoice): void {
+export function applyTheme(choice: string): void {
   if (choice === '1') delete document.documentElement.dataset.theme;
   else document.documentElement.dataset.theme = choice;
 }
@@ -55,7 +54,7 @@ export function DisplaySettings({ open, onClose }: DisplaySettingsProps) {
       }
     >
       <p>{displaySettingsNote}</p>
-      <RadioGroup legend="Theme" options={themeOptions} value={theme} onChange={(value) => setTheme(value as ThemeChoice)} />
+      <RadioGroup legend="Theme" options={themeOptions} value={theme} onChange={setTheme} />
       <RadioGroup legend="Motion" options={motionOptions(deviceMotion())} value={motion} onChange={(value) => setMotion(value as MotionChoice)} />
     </Dialog>
   );
