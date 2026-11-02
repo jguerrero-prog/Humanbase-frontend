@@ -47,7 +47,7 @@ export default tseslint.config(
     languageOptions: { globals: globals.vitest },
   },
   {
-    files: ['scripts/**', '**/build.mjs'],
+    files: ['scripts/**', '**/build.mjs', '**/new-theme.mjs'],
     rules: { 'no-console': 'off' },
   },
 );
