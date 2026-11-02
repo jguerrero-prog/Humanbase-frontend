@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { aliasPath, flattenTokens, toCssVar } from './catalog.ts';
+import { themes } from './themes.ts';
 
 const sources = [
   ['primitives.tokens.json', []],
@@ -39,9 +40,8 @@ const declarations = sources.flatMap(([file, prefix]) =>
 );
 
 // Each theme overrides some primitives on the root when Display settings choose it; Theme 1 is the base above.
-const themes = [['2', 'theme-2.tokens.json']];
-const themeBlocks = themes.flatMap(([theme, file]) => [
-  `:root[data-theme="${theme}"] {`,
+const themeBlocks = themes.filter((theme) => theme.file).flatMap(({ value, file }) => [
+  `:root[data-theme="${value}"] {`,
   ...flattenTokens(JSON.parse(readFileSync(new URL(`./src/${file}`, import.meta.url), 'utf8'))).flatMap(toDeclarations).map(([name, value]) => `  ${name}: ${value};`),
   '}',
   '',

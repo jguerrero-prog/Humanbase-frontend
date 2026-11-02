@@ -423,6 +423,9 @@ importers:
       '@humanbase/graph':
         specifier: workspace:*
         version: link:../graph
+      '@humanbase/tokens':
+        specifier: workspace:*
+        version: link:../tokens
       '@humanbase/ui':
         specifier: workspace:*
         version: link:../ui
