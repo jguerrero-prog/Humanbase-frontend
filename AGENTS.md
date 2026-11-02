@@ -41,9 +41,9 @@ Read this before changing anything. It applies to people and coding agents alike
 
 ## Authorship
 
-Commits, pull requests, issues and comments are written as the repository owner. Coding agents, Claude and others, never list themselves as authors or contributors, even when their tool adds attribution by default:
+Commits, pull requests, issues and comments are written as the person doing the work. Coding agents, Claude and others, never list themselves as authors or contributors, even when their tool adds attribution by default:
 
-- **Commits:** no `Co-Authored-By:` trailers. Commit as the repository owner's GitHub noreply address, currently `jguerrero-prog <234269224+jguerrero-prog@users.noreply.github.com>`, set in the repo's local git config or per commit with `git -c user.name=… -c user.email=…`. Never commit with a personal or work email.
+- **Commits:** no `Co-Authored-By:` trailers. Commit under your own GitHub name and noreply address, never someone else's, and never a personal or work email. The repository owner's is `jguerrero-prog <234269224+jguerrero-prog@users.noreply.github.com>`; set yours in the repo's local git config or per commit with `git -c user.name=… -c user.email=…`.
 - **Pull requests:** no agent named as an author or co-author, in the description, the title or the squash-merge message. No "Generated with" lines or AI badges.
 - **Issues and comments:** no agent signatures, "Generated with" lines or AI badges.
 
