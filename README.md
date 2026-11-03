@@ -2,6 +2,8 @@
 
 The redesigned front end for [Humanbase](https://hb.flatironinstitute.org) and the design system it is built from. It talks to the Humanbase API without changing it, so any Humanbase deployment can fork this repository and point it at its own API.
 
+![The Humanbase front end with live data: the IL1B tissue network with a gene's details on hover, functional modules for a renal disease gene panel, predicted variant effects on IL1B expression across tissue systems, and Sei scores for HGMD noncoding variants.](.github/showcase.webp)
+
 ## What is in the repository
 
 | Folder | What it holds | Runs at |
