@@ -10,15 +10,15 @@
     "typecheck": "astro check"
   },
   "dependencies": {
-    "@astrojs/mdx": "8.1.1",
-    "@astrojs/react": "7.1.1",
+    "@astrojs/mdx": "8.1.2",
+    "@astrojs/react": "7.1.2",
     "@humanbase/data": "workspace:*",
     "@humanbase/genome": "workspace:*",
     "@humanbase/graph": "workspace:*",
     "@humanbase/hb": "workspace:*",
     "@humanbase/tokens": "workspace:*",
     "@humanbase/ui": "workspace:*",
-    "astro": "7.4.2",
+    "astro": "7.4.4",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
