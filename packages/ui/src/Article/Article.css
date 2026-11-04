@@ -61,6 +61,12 @@
   object-position: center bottom;
 }
 
+/* Drawn bands keep their full height: they grow with the width, and below 150px tall they trim the sides instead. */
+svg.article-band {
+  block-size: auto;
+  min-block-size: 150px;
+}
+
 .article-body {
   display: grid;
   gap: var(--space-6);
