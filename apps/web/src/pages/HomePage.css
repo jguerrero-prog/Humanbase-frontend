@@ -92,6 +92,7 @@
 }
 
 .home-feature-text p {
+  max-inline-size: 72ch;
   font: var(--type-body-lg);
   color: var(--text-secondary);
 }
