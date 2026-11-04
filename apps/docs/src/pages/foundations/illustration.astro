@@ -31,7 +31,7 @@ const palette = [
 ];
 
 const galleries: { format: IllustrationFormat; title: string; lead: string; columns: number }[] = [
-  { format: 'band', title: 'Bands', lead: '14 full-width pieces for section edges, dividers and the footer. Shown at 0.44x.', columns: 2 },
+  { format: 'band', title: 'Bands', lead: '15 full-width pieces for section edges, dividers and the footer. Shown at 0.44x.', columns: 2 },
   { format: 'corner', title: 'Corners and spots', lead: '14 pieces that sit in a corner of a section or beside text. Shown at up to 0.65x.', columns: 3 },
   { format: 'spot', title: 'Feature spots', lead: 'Six 480 × 360 pieces for the How it works cards, three for the homepage and three for its Modules view. Each set reads left to right as one story. Hidden from the homepage since November 4, 2026, while the Humanbase team reconsiders that content (#786). Shown at 0.83x.', columns: 3 },
   { format: 'rail', title: 'Vertical rail', lead: 'One piece for the side of long reading pages. Shown at 0.4x.', columns: 5 },
@@ -96,6 +96,8 @@ const review: Partial<Record<IllustrationName, string>> = {
 // What changed on the site after the review; shown under her note.
 const sinceReview: Partial<Record<IllustrationName, string>> = {
   reads: 'Runs under the Data sources hero, drawn in theme colors so it follows Theme 1 and Theme 2 (#784).',
+  'tissue-barcode': 'Replaced on Downloads by Brain layers, a brain layer as she suggested (#796). Kept in the library.',
+  'brain-layers': 'New November 4, 2026, from her suggestion for Tissue barcode; runs under the Downloads hero in theme colors (#796).',
   'chromatin-seasons': 'Redrawn November 4, 2026, through the structures she named, and runs under the What’s new hero in theme colors (#788).',
 };
 
@@ -121,7 +123,7 @@ const usage = `import { Illustration } from '@humanbase/ui';
 <DocsLayout title="Illustration" description="Humanbase illustrations: where they go, formats, palette, the full library and accessibility.">
   <Intro
     lead="Humanbase illustrations are calm, scientific drawings for the pages around the tools: the homepage, About, Resources, Docs and the blog. They show real biology in the system’s emerald and Simons Yellow, and many are shaped by Humanbase’s own data, so they inform as well as decorate."
-    status="Updated November 4, 2026 · 42 illustrations: 14 bands, 14 corners and spots, 6 feature spots, 1 vertical rail, 7 hero pieces · Original to Humanbase"
+    status="Updated November 4, 2026 · 43 illustrations: 15 bands, 14 corners and spots, 6 feature spots, 1 vertical rail, 7 hero pieces · Original to Humanbase"
   >
     <KeyRules
       rules={[
@@ -179,7 +181,7 @@ const usage = `import { Illustration } from '@humanbase/ui';
     </ul>
   </DocSection>
 
-  <DocSection title="Scientific review" lead="Natalie’s notes on the library, shared October 26, 2026, sit under each illustration below, in her words. They guide revisions. Since then, Reads runs on Data sources, Chromatin seasons has been redrawn for What’s new, and the feature spots are hidden from the homepage; each change is noted under its illustration. Her notes on which pages carry bands:">
+  <DocSection title="Scientific review" lead="Natalie’s notes on the library, shared October 26, 2026, sit under each illustration below, in her words. They guide revisions. Since then, Reads runs on Data sources, Chromatin seasons has been redrawn for What’s new, Brain layers replaces Tissue barcode on Downloads, and the feature spots are hidden from the homepage; each change is noted under its illustration. Her notes on which pages carry bands:">
     <DocTable caption="Band illustrations by page" columns={['Page', 'Feedback']} widths={['22%', '78%']}>
       {
         reviewPages.map(([page, note]) => (
@@ -268,7 +270,7 @@ const usage = `import { Illustration } from '@humanbase/ui';
 
   <NoteCard title="Using illustrations in Figma">
     <ul>
-      <li>All 42 illustrations are components named “Illustration / name” in the “Components: Illustrations” section, below this page.</li>
+      <li>All illustrations except Brain layers, drawn later in Illustrator, are components named “Illustration / name” in the “Components: Illustrations” section, below this page.</li>
       <li>Each component’s description gives its suggested use and, where it applies, the data it is drawn from.</li>
       <li>The Illustration library page keeps the review frames with captions. Source files (.ai, .svg, .png) live in the shared Humanbase illustrations folder.</li>
       <li>For the web, export SVG at 1x and mark it decorative. Scale proportionally, never stretch.</li>

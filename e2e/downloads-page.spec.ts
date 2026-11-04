@@ -12,7 +12,7 @@ test('MAGE tissue networks open by default with no WCAG 2.2 AA violations', asyn
   await page.goto(downloads);
   await expect(page).toHaveTitle('Downloads · Humanbase');
   await expect(page.getByRole('heading', { level: 1, name: 'Downloads' })).toBeVisible();
-  await expect(page.locator('.article-band')).toHaveCount(0);
+  await expect(page.locator('svg.article-band.themed-art')).toBeVisible();
   await expect(page.getByRole('radio', { name: 'MAGE' })).toBeChecked();
   await expect(page.getByRole('link', { name: 'acinar_cell_of_salivary_gland.dat.gz' })).toHaveAttribute('href', 'https://s3-us-west-2.amazonaws.com/humanbase/networks/v3/acinar_cell_of_salivary_gland.dat.gz');
   await expect(page.getByText('1 to 25 of 290 tissues and cell types')).toBeVisible();
