@@ -298,25 +298,19 @@ test('the app shows only finished illustrations while the library is revised', a
   await expect(page.locator('[data-illustration]')).toHaveCount(0);
   const ring = page.locator('.home-hero-art');
   await expect.poll(() => ring.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
-  await expect(page.locator('.home-feature-image')).toHaveCount(3);
-  for (const name of ['Data-driven', 'Tissue-specific', 'Network-guided']) {
-    const art = page.locator('.home-feature', { has: page.getByRole('heading', { name }) }).locator('img');
-    await art.scrollIntoViewIfNeeded();
-    await expect.poll(() => art.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
-  }
+  for (const name of ['Data-driven', 'Tissue-specific', 'Network-guided']) await expect(page.getByRole('heading', { level: 3, name })).toBeVisible();
+  await expect(page.locator('.home-feature-image')).toHaveCount(0);
   await page.goto(`${web}/?analysis=modules`);
   await expect(page.getByRole('heading', { name: 'How module detection works' })).toBeVisible();
-  await expect(page.locator('.home-feature-image')).toHaveCount(3);
-  for (const name of ['Functional modules', 'Gene function prediction', 'Tissue-specific']) {
-    const art = page.locator('.home-feature', { has: page.getByRole('heading', { name }) }).locator('img');
-    await art.scrollIntoViewIfNeeded();
-    await expect.poll(() => art.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
-  }
-  for (const path of ['/about/', '/cite/', '/data-sources/']) {
+  for (const name of ['Functional modules', 'Gene function prediction', 'Tissue-specific']) await expect(page.getByRole('heading', { level: 3, name })).toBeVisible();
+  await expect(page.locator('.home-feature-image')).toHaveCount(0);
+  for (const path of ['/about/', '/cite/']) {
     await page.goto(`${web}${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(page.locator('.article-band')).toHaveCount(0);
   }
+  await page.goto(`${web}/data-sources/`);
+  await expect(page.locator('svg.article-band')).toBeVisible();
   await page.goto(`${web}/about/`);
   await expect(page.locator('.article-drop-cap-plain')).toHaveCount(1);
 });
