@@ -502,3 +502,15 @@ test('a first visit plays the welcome intro once, and never again in this browse
   await page.goto(`${web}/networks/`);
   await expect(intro).toHaveCount(0);
 });
+
+test('drawn hero bands show their full height on a wide screen (#799)', async ({ page }) => {
+  await apiOff(page);
+  await page.setViewportSize({ width: 1920, height: 1000 });
+  for (const path of ['/data-sources/', '/whats-new/', '/downloads/']) {
+    await page.goto(`${web}${path}`);
+    const band = page.locator('svg.article-band');
+    await expect(band).toBeVisible();
+    const overflow = await band.evaluate((svg) => svg.getBoundingClientRect().top - Math.min(...[...svg.querySelectorAll('path')].map((shape) => shape.getBoundingClientRect().top)));
+    expect(overflow, `${path} art above the band's top edge`).toBeLessThanOrEqual(0.5);
+  }
+});
