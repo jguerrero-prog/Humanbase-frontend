@@ -1,0 +1,450 @@
+/* Paint classes for ThemedArt: f or s (fill or stroke), a primary step or y5/y7 (secondary 500/700), then how many
+   tenths it fades toward the cream page. s300-3 is a primary 300 stroke, 30% of the way to the page. */
+
+.themed-art .f50-0 {
+  fill: var(--color-primary-50);
+}
+
+.themed-art .f50-1 {
+  fill: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 10%);
+}
+
+.themed-art .f50-2 {
+  fill: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 20%);
+}
+
+.themed-art .f50-3 {
+  fill: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 30%);
+}
+
+.themed-art .f50-4 {
+  fill: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 40%);
+}
+
+.themed-art .f50-5 {
+  fill: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 50%);
+}
+
+.themed-art .f50-6 {
+  fill: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 60%);
+}
+
+.themed-art .f100-0 {
+  fill: var(--color-primary-100);
+}
+
+.themed-art .f100-1 {
+  fill: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 10%);
+}
+
+.themed-art .f100-2 {
+  fill: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 20%);
+}
+
+.themed-art .f100-3 {
+  fill: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 30%);
+}
+
+.themed-art .f100-4 {
+  fill: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 40%);
+}
+
+.themed-art .f100-5 {
+  fill: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 50%);
+}
+
+.themed-art .f100-6 {
+  fill: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 60%);
+}
+
+.themed-art .f200-0 {
+  fill: var(--color-primary-200);
+}
+
+.themed-art .f200-1 {
+  fill: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 10%);
+}
+
+.themed-art .f200-2 {
+  fill: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 20%);
+}
+
+.themed-art .f200-3 {
+  fill: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 30%);
+}
+
+.themed-art .f200-4 {
+  fill: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 40%);
+}
+
+.themed-art .f200-5 {
+  fill: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 50%);
+}
+
+.themed-art .f200-6 {
+  fill: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 60%);
+}
+
+.themed-art .f300-0 {
+  fill: var(--color-primary-300);
+}
+
+.themed-art .f300-1 {
+  fill: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 10%);
+}
+
+.themed-art .f300-2 {
+  fill: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 20%);
+}
+
+.themed-art .f300-3 {
+  fill: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 30%);
+}
+
+.themed-art .f300-4 {
+  fill: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 40%);
+}
+
+.themed-art .f300-5 {
+  fill: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 50%);
+}
+
+.themed-art .f300-6 {
+  fill: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 60%);
+}
+
+.themed-art .f400-0 {
+  fill: var(--color-primary-400);
+}
+
+.themed-art .f400-1 {
+  fill: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 10%);
+}
+
+.themed-art .f400-2 {
+  fill: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 20%);
+}
+
+.themed-art .f400-3 {
+  fill: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 30%);
+}
+
+.themed-art .f400-4 {
+  fill: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 40%);
+}
+
+.themed-art .f400-5 {
+  fill: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 50%);
+}
+
+.themed-art .f400-6 {
+  fill: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 60%);
+}
+
+.themed-art .f500-0 {
+  fill: var(--color-primary-500);
+}
+
+.themed-art .f500-1 {
+  fill: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 10%);
+}
+
+.themed-art .f500-2 {
+  fill: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 20%);
+}
+
+.themed-art .f500-3 {
+  fill: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 30%);
+}
+
+.themed-art .f500-4 {
+  fill: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 40%);
+}
+
+.themed-art .f500-5 {
+  fill: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 50%);
+}
+
+.themed-art .f500-6 {
+  fill: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 60%);
+}
+
+.themed-art .fy5-0 {
+  fill: var(--color-secondary-500);
+}
+
+.themed-art .fy5-1 {
+  fill: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 10%);
+}
+
+.themed-art .fy5-2 {
+  fill: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 20%);
+}
+
+.themed-art .fy5-3 {
+  fill: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 30%);
+}
+
+.themed-art .fy5-4 {
+  fill: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 40%);
+}
+
+.themed-art .fy5-5 {
+  fill: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 50%);
+}
+
+.themed-art .fy5-6 {
+  fill: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 60%);
+}
+
+.themed-art .fy7-0 {
+  fill: var(--color-secondary-700);
+}
+
+.themed-art .fy7-1 {
+  fill: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 10%);
+}
+
+.themed-art .fy7-2 {
+  fill: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 20%);
+}
+
+.themed-art .fy7-3 {
+  fill: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 30%);
+}
+
+.themed-art .fy7-4 {
+  fill: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 40%);
+}
+
+.themed-art .fy7-5 {
+  fill: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 50%);
+}
+
+.themed-art .fy7-6 {
+  fill: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 60%);
+}
+
+.themed-art .s50-0 {
+  stroke: var(--color-primary-50);
+}
+
+.themed-art .s50-1 {
+  stroke: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 10%);
+}
+
+.themed-art .s50-2 {
+  stroke: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 20%);
+}
+
+.themed-art .s50-3 {
+  stroke: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 30%);
+}
+
+.themed-art .s50-4 {
+  stroke: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 40%);
+}
+
+.themed-art .s50-5 {
+  stroke: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 50%);
+}
+
+.themed-art .s50-6 {
+  stroke: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 60%);
+}
+
+.themed-art .s100-0 {
+  stroke: var(--color-primary-100);
+}
+
+.themed-art .s100-1 {
+  stroke: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 10%);
+}
+
+.themed-art .s100-2 {
+  stroke: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 20%);
+}
+
+.themed-art .s100-3 {
+  stroke: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 30%);
+}
+
+.themed-art .s100-4 {
+  stroke: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 40%);
+}
+
+.themed-art .s100-5 {
+  stroke: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 50%);
+}
+
+.themed-art .s100-6 {
+  stroke: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 60%);
+}
+
+.themed-art .s200-0 {
+  stroke: var(--color-primary-200);
+}
+
+.themed-art .s200-1 {
+  stroke: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 10%);
+}
+
+.themed-art .s200-2 {
+  stroke: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 20%);
+}
+
+.themed-art .s200-3 {
+  stroke: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 30%);
+}
+
+.themed-art .s200-4 {
+  stroke: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 40%);
+}
+
+.themed-art .s200-5 {
+  stroke: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 50%);
+}
+
+.themed-art .s200-6 {
+  stroke: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 60%);
+}
+
+.themed-art .s300-0 {
+  stroke: var(--color-primary-300);
+}
+
+.themed-art .s300-1 {
+  stroke: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 10%);
+}
+
+.themed-art .s300-2 {
+  stroke: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 20%);
+}
+
+.themed-art .s300-3 {
+  stroke: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 30%);
+}
+
+.themed-art .s300-4 {
+  stroke: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 40%);
+}
+
+.themed-art .s300-5 {
+  stroke: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 50%);
+}
+
+.themed-art .s300-6 {
+  stroke: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 60%);
+}
+
+.themed-art .s400-0 {
+  stroke: var(--color-primary-400);
+}
+
+.themed-art .s400-1 {
+  stroke: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 10%);
+}
+
+.themed-art .s400-2 {
+  stroke: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 20%);
+}
+
+.themed-art .s400-3 {
+  stroke: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 30%);
+}
+
+.themed-art .s400-4 {
+  stroke: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 40%);
+}
+
+.themed-art .s400-5 {
+  stroke: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 50%);
+}
+
+.themed-art .s400-6 {
+  stroke: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 60%);
+}
+
+.themed-art .s500-0 {
+  stroke: var(--color-primary-500);
+}
+
+.themed-art .s500-1 {
+  stroke: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 10%);
+}
+
+.themed-art .s500-2 {
+  stroke: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 20%);
+}
+
+.themed-art .s500-3 {
+  stroke: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 30%);
+}
+
+.themed-art .s500-4 {
+  stroke: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 40%);
+}
+
+.themed-art .s500-5 {
+  stroke: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 50%);
+}
+
+.themed-art .s500-6 {
+  stroke: color-mix(in srgb, var(--color-primary-500), var(--surface-cream) 60%);
+}
+
+.themed-art .sy5-0 {
+  stroke: var(--color-secondary-500);
+}
+
+.themed-art .sy5-1 {
+  stroke: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 10%);
+}
+
+.themed-art .sy5-2 {
+  stroke: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 20%);
+}
+
+.themed-art .sy5-3 {
+  stroke: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 30%);
+}
+
+.themed-art .sy5-4 {
+  stroke: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 40%);
+}
+
+.themed-art .sy5-5 {
+  stroke: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 50%);
+}
+
+.themed-art .sy5-6 {
+  stroke: color-mix(in srgb, var(--color-secondary-500), var(--surface-cream) 60%);
+}
+
+.themed-art .sy7-0 {
+  stroke: var(--color-secondary-700);
+}
+
+.themed-art .sy7-1 {
+  stroke: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 10%);
+}
+
+.themed-art .sy7-2 {
+  stroke: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 20%);
+}
+
+.themed-art .sy7-3 {
+  stroke: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 30%);
+}
+
+.themed-art .sy7-4 {
+  stroke: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 40%);
+}
+
+.themed-art .sy7-5 {
+  stroke: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 50%);
+}
+
+.themed-art .sy7-6 {
+  stroke: color-mix(in srgb, var(--color-secondary-700), var(--surface-cream) 60%);
+}
