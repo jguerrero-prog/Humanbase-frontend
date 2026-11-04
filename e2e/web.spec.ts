@@ -304,13 +304,13 @@ test('the app shows only finished illustrations while the library is revised', a
   await expect(page.getByRole('heading', { name: 'How module detection works' })).toBeVisible();
   for (const name of ['Functional modules', 'Gene function prediction', 'Tissue-specific']) await expect(page.getByRole('heading', { level: 3, name })).toBeVisible();
   await expect(page.locator('.home-feature-image')).toHaveCount(0);
-  for (const path of ['/about/', '/cite/']) {
+  await page.goto(`${web}/cite/`);
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(page.locator('.article-band')).toHaveCount(0);
+  for (const path of ['/data-sources/', '/about/']) {
     await page.goto(`${web}${path}`);
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(page.locator('.article-band')).toHaveCount(0);
+    await expect(page.locator('svg.article-band')).toBeVisible();
   }
-  await page.goto(`${web}/data-sources/`);
-  await expect(page.locator('svg.article-band')).toBeVisible();
   await page.goto(`${web}/about/`);
   await expect(page.locator('.article-drop-cap-plain')).toHaveCount(1);
 });
@@ -506,7 +506,7 @@ test('a first visit plays the welcome intro once, and never again in this browse
 test('drawn hero bands show their full height on a wide screen (#799)', async ({ page }) => {
   await apiOff(page);
   await page.setViewportSize({ width: 1920, height: 1000 });
-  for (const path of ['/data-sources/', '/whats-new/', '/downloads/']) {
+  for (const path of ['/data-sources/', '/whats-new/', '/downloads/', '/about/']) {
     await page.goto(`${web}${path}`);
     const band = page.locator('svg.article-band');
     await expect(band).toBeVisible();
