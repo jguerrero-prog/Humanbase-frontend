@@ -1,7 +1,8 @@
 import type { DataVersion } from '@humanbase/data';
 import { downloadsPage, giantNetworks, mageNetworks, type TissueNetworks, versionOptions } from '@humanbase/hb';
-import { ArticleHero, SegmentedControl, Tabs } from '@humanbase/ui';
+import { ArticleHero, SegmentedControl, Tabs, ThemedArt } from '@humanbase/ui';
 import { useSearchParams } from 'react-router';
+import { brainLayersPaths } from './brainLayers';
 import { TissueNetworkFiles } from './TissueNetworkFiles';
 import { VariantEffectFiles } from './VariantEffectFiles';
 import './DownloadsPage.css';
@@ -25,7 +26,11 @@ export function DownloadsPage() {
   return (
     <>
       <title>Downloads · Humanbase</title>
-      <ArticleHero title={downloadsPage.title} lead={downloadsPage.lead} band={null} />
+      <ArticleHero
+        title={downloadsPage.title}
+        lead={downloadsPage.lead}
+        band={<ThemedArt className="article-band" paths={brainLayersPaths} width={1440} height={150} preserveAspectRatio="xMidYMax slice" />}
+      />
       <div className="downloads">
         <Tabs label="Downloads" tabs={tabs} value={tab} onChange={chooseTab}>
           {tab === 'tissue-networks' ? (

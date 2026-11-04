@@ -9,7 +9,7 @@ export interface IllustrationEntry {
   source: string;
 }
 
-// Titles, sizes, uses and sources follow the Figma "Components: Illustrations" descriptions.
+// Titles, sizes, uses and sources follow the Figma "Components: Illustrations" descriptions; Brain layers was drawn later, in Illustrator only.
 export const illustrations = {
   'sequence-tape': {
     title: 'Sequence tape',
@@ -26,6 +26,14 @@ export const illustrations = {
     height: 64,
     use: 'Thin band under a page title; ExPecto and data pages',
     source: 'IRGM, ExPecto: strongest predicted expression effect in each of 204 tissues; the top tissue in yellow.',
+  },
+  'brain-layers': {
+    title: 'Brain layers',
+    format: 'band',
+    width: 1440,
+    height: 150,
+    use: 'Band at the foot of the Downloads hero; tissue and data pages',
+    source: 'Neocortex in cross-section as a Nissl stain shows it, folding into a sulcus: layers I to VI by cell size and density, pyramidal cells reaching for the surface; one layer V pyramidal cell in yellow. Illustrative.',
   },
   'genome-ruler': {
     title: 'Genome ruler',
