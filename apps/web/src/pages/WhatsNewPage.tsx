@@ -1,12 +1,13 @@
 import { whatsNew } from '@humanbase/hb';
 import { ArticleLayout, ArticleSection } from '@humanbase/ui';
+import { ChromatinBand } from './whats-new/ChromatinBand';
 import './WhatsNewPage.css';
 
 export function WhatsNewPage() {
   return (
     <>
       <title>What’s new in Humanbase</title>
-      <ArticleLayout title="What’s new in Humanbase" lead="Updates to Humanbase’s tools, data and documentation, newest first." band={null}>
+      <ArticleLayout title="What’s new in Humanbase" lead="Updates to Humanbase’s tools, data and documentation, newest first." band={<ChromatinBand />}>
         {whatsNew.map(({ month, entries }) => (
           <ArticleSection key={month} title={month}>
             {entries.map(({ title, body }) => (
