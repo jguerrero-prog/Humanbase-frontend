@@ -49,6 +49,13 @@ describe('ArticleLayout', () => {
     expect(container.querySelector('svg.article-band')).toBeInTheDocument();
   });
 
+  it('places art at the top right of the hero, behind the text', () => {
+    const { container } = render(<ArticleHero title="How to cite Humanbase" lead="Your citations help." band={null} art={<svg aria-hidden="true" />} />);
+    const art = container.querySelector('.article-hero-art');
+    expect(art?.querySelector('svg')).toBeInTheDocument();
+    expect(art?.nextElementSibling).toHaveClass('article-hero-content');
+  });
+
   it('leaves the band out when band is null', () => {
     const { container } = render(<ArticleHero title="Downloads" lead="Files to download." band={null} />);
     expect(container.querySelector('.article-band')).toBeNull();

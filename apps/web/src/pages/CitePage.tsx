@@ -1,5 +1,6 @@
 import { doiLink, humanbaseCitation, humanbaseCitationText, methodCitations, showIllustrations } from '@humanbase/hb';
-import { ArticleLayout, ArticleSection, Button, Divider, useCopy } from '@humanbase/ui';
+import { ArticleLayout, ArticleSection, Button, Divider, ThemedArt, useCopy } from '@humanbase/ui';
+import { chromosomeSpreadPaths } from './cite/chromosomeSpread';
 import './CitePage.css';
 
 function CopyCitation() {
@@ -27,7 +28,9 @@ export function CitePage() {
   return (
     <>
       <title>How to cite Humanbase</title>
-      <ArticleLayout title="How to cite Humanbase" lead="Your citations help us demonstrate impact and sustain the platform for the research community." band={showIllustrations ? 'threads' : null}>
+      <ArticleLayout title="How to cite Humanbase" lead="Your citations help us demonstrate impact and sustain the platform for the research community." band={showIllustrations ? 'threads' : null}
+        art={<ThemedArt paths={chromosomeSpreadPaths} width={600} height={460} outline={2} />}
+      >
         <ArticleSection title="Citing Humanbase">
           <p>If Humanbase has contributed to your research, please cite:</p>
           <HumanbaseCitation />
