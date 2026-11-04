@@ -12,16 +12,19 @@ export interface ArticleHeroProps {
   player?: ReactNode;
   /** The illustration along the hero's bottom edge, by library name or as drawn art; null leaves it out. */
   band?: IllustrationName | ReactElement | null;
+  /** Decorative art at the hero's top right, behind the text; hidden on narrow screens. */
+  art?: ReactElement;
   /** 2 when the hero is shown inside another page, such as a design system example. */
   titleLevel?: 1 | 2;
   titleId?: string;
 }
 
 /** The cream opening of an article or content page: title, lead, optional source and player, then an illustrated band unless band is null. */
-export function ArticleHero({ title, lead, source, doi, player, band = 'capillary', titleLevel = 1, titleId }: ArticleHeroProps) {
+export function ArticleHero({ title, lead, source, doi, player, band = 'capillary', art, titleLevel = 1, titleId }: ArticleHeroProps) {
   const Title = titleLevel === 1 ? 'h1' : 'h2';
   return (
     <header className="article-hero">
+      {art && <div className="article-hero-art">{art}</div>}
       <div className="article-hero-content">
         <Title id={titleId} className="article-title">
           {title}

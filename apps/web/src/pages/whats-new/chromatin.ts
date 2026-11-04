@@ -1,6 +1,7 @@
 // Generated from the Illustrator art's source (chromatin.mjs, Humanbase illustrations); regenerate rather than edit.
-// A row with an inner class is a fiber: a wider stroke in the first class, then the inner stroke on top.
-export const chromatinPaths: readonly (readonly [className: string, d: string, strokeWidth?: number, innerClassName?: string])[] = [
+import type { ThemedPath } from '@humanbase/ui';
+
+export const chromatinPaths: readonly ThemedPath[] = [
   ["f200-3", "M1212 94C1212 62 1236 46 1270 46L1450 46L1450 142L1270 142C1236 142 1212 126 1212 94Z "],
   ["s300-3", "M1488.5 48.3L1488.9 49.3L1489.4 50.9L1489.8 53.2L1490.2 56L1490.6 59.4L1491 63.2L1491.5 67.5L1491.9 72.2L1492.3 77.2L1492.7 82.5L1493.1 87.9L1493.6 93.4L1494 98.9L1494.4 104.4", 20, "s100-3"],
   ["s300-3", "M1246.5 48.4L1246.9 49.3L1247.3 50.9L1247.8 53.1L1248.2 55.9L1248.6 59.2L1249 63.1L1249.5 67.4L1249.9 72L1250.3 77L1250.7 82.3L1251.1 87.7L1251.6 93.2L1252 98.7L1252.4 104.1", 20, "s100-3"],

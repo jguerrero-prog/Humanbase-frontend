@@ -1,9 +1,26 @@
 .article-hero {
+  position: relative;
   display: grid;
+  overflow: hidden;
   background: var(--surface-cream);
 }
 
+.article-hero-art {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  inline-size: min(600px, 100% - 680px);
+  pointer-events: none;
+}
+
+.article-hero-art > svg {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+}
+
 .article-hero-content {
+  position: relative;
   display: grid;
   gap: var(--space-5);
   padding: var(--space-24) clamp(var(--layout-margin-mobile), 8.4vw, 120px) var(--space-12);
@@ -151,6 +168,12 @@
 
 .article-body a {
   overflow-wrap: anywhere;
+}
+
+@media (width < 64rem) {
+  .article-hero-art {
+    display: none;
+  }
 }
 
 @media (width < 40rem) {

@@ -17,6 +17,7 @@ test('the How to cite page renders both sections with no WCAG 2.2 AA violations'
   await expect(page).toHaveTitle('How to cite Humanbase');
   const article = page.getByRole('article', { name: 'How to cite Humanbase' });
   await expect(article.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(page.locator('.article-hero-art svg.themed-art')).toBeVisible();
   for (const heading of ['Citing Humanbase', 'Additional references']) {
     await expect(article.getByRole('heading', { level: 2, name: heading })).toBeVisible();
   }
