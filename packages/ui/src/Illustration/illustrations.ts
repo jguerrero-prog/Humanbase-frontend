@@ -64,7 +64,7 @@ export const illustrations = {
     format: 'band',
     width: 1440,
     height: 150,
-    use: 'Band at the foot of a section; blog headers and the Data sources page',
+    use: 'Band at the foot of a section; the Data sources hero and blog headers',
     source: 'Sequencing reads as soft strands, piling up where the predicted H3K27ac signal of an ASD region on chromosome 1 is strongest; one read in yellow.',
   },
   'chromatin-seasons': {
@@ -72,8 +72,8 @@ export const illustrations = {
     format: 'band',
     width: 1440,
     height: 170,
-    use: 'Full-width band; Sequence analysis, Sei and Resources',
-    source: 'One DNA fibre, open with sparse nucleosomes at the left and tangling into dense chromatin at the right; a factor in yellow at an open promoter. Illustrative.',
+    use: 'Full-width band; the What’s new hero, Sequence analysis, Sei and Resources',
+    source: 'One DNA strand folding through the known levels of packing: double helix, nucleosomes, 30 nm fiber, chromonema fiber and chromatid; a factor in yellow at an open promoter. Illustrative scale.',
   },
   'messenger-rna': {
     title: 'Messenger RNA',
