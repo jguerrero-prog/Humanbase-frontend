@@ -1,5 +1,6 @@
 import { aboutArticle, showIllustrations } from '@humanbase/hb';
-import { ArticleFigure, ArticleLayout, ArticleSection, AudioPlayer, DropCapParagraph } from '@humanbase/ui';
+import { ArticleFigure, ArticleLayout, ArticleSection, AudioPlayer, DropCapParagraph, ThemedArt } from '@humanbase/ui';
+import { dnaSequencePaths } from './about/dnaSequence';
 
 export function AboutPage() {
   const { title, lead, source, doi, narration, opening, sections, paragraphs, backMatter } = aboutArticle;
@@ -11,7 +12,7 @@ export function AboutPage() {
         lead={lead}
         source={source}
         doi={doi}
-        band={showIllustrations ? 'capillary' : null}
+        band={<ThemedArt className="article-band" paths={dnaSequencePaths} width={1440} height={150} preserveAspectRatio="xMidYMax slice" />}
         player={<AudioPlayer src={narration.src} duration={narration.duration} />}
         backMatter={backMatter.map((section) => (
           <ArticleSection key={section.title} kind="back" title={section.title}>

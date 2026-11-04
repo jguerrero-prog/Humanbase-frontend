@@ -32,6 +32,7 @@ test('the About page renders the article with no WCAG 2.2 AA violations', async 
   await expect(page).toHaveTitle('About · Humanbase');
   const article = page.getByRole('article', { name: 'An Interactive AI Platform for Human Biology' });
   await expect(article.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(page.locator('svg.article-band.themed-art')).toBeVisible();
   await expect(article.getByRole('link', { name: 'https://doi.org/10.1038/s41592-025-02994-8' }).first()).toBeVisible();
   for (const heading of ['The pipeline', 'Analysis', 'Data availability', 'Authors', 'References', 'Additional information']) {
     await expect(article.getByRole('heading', { level: 2, name: heading })).toBeVisible();
