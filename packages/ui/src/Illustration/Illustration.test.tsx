@@ -12,10 +12,10 @@ describe('Illustration', () => {
     expect(image).toHaveAttribute('loading', 'lazy');
   });
 
-  it('has a file for each of the 43 library illustrations', () => {
+  it('has a file for each of the 44 library illustrations', () => {
     const { container } = render(illustrationNames.map((name) => <Illustration key={name} name={name} />));
     const sources = [...container.querySelectorAll('img')].map((image) => image.getAttribute('src'));
-    expect(sources).toHaveLength(43);
+    expect(sources).toHaveLength(44);
     expect(sources.every((src) => src?.includes('svg'))).toBe(true);
   });
 });

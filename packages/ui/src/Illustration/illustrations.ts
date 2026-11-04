@@ -9,7 +9,8 @@ export interface IllustrationEntry {
   source: string;
 }
 
-// Titles, sizes, uses and sources follow the Figma "Components: Illustrations" descriptions; Brain layers was drawn later, in Illustrator only.
+// Titles, sizes, uses and sources follow the Figma "Components: Illustrations" descriptions; Brain layers and DNA ribbon and sequence
+// were drawn later, in Illustrator only.
 export const illustrations = {
   'sequence-tape': {
     title: 'Sequence tape',
@@ -18,6 +19,14 @@ export const illustrations = {
     height: 56,
     use: 'Thin divider between sections; resources and blog headers',
     source: 'In silico mutagenesis example, chr1:109,816,591 to 109,818,590; position 999 (T to A, -4.63) in yellow.',
+  },
+  'dna-sequence': {
+    title: 'DNA ribbon and sequence',
+    format: 'band',
+    width: 1440,
+    height: 150,
+    use: 'Band at the foot of the About hero; pages about Humanbase as a whole',
+    source: 'B-DNA comes in from the distance, unzips, and each base pair becomes a pair of letters, with hydrogen bonds (two for A-T, three for G-C), phosphate beads and 5′ and 3′ ends. Bases from the CEBP example, chr1:109,815,543; one variant pair in yellow.',
   },
   'tissue-barcode': {
     title: 'Tissue barcode',
