@@ -1,0 +1,140 @@
+/* Generated with chromatinPaths: each class is a theme tone faded toward the cream page in 10% steps. */
+.chromatin-band .f100-0 {
+  fill: var(--color-primary-100);
+}
+
+.chromatin-band .f100-1 {
+  fill: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 10%);
+}
+
+.chromatin-band .f100-2 {
+  fill: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 20%);
+}
+
+.chromatin-band .f100-3 {
+  fill: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 30%);
+}
+
+.chromatin-band .f100-4 {
+  fill: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 40%);
+}
+
+.chromatin-band .f200-0 {
+  fill: var(--color-primary-200);
+}
+
+.chromatin-band .f200-1 {
+  fill: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 10%);
+}
+
+.chromatin-band .f200-3 {
+  fill: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 30%);
+}
+
+.chromatin-band .f50-0 {
+  fill: var(--color-primary-50);
+}
+
+.chromatin-band .f50-1 {
+  fill: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 10%);
+}
+
+.chromatin-band .f50-2 {
+  fill: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 20%);
+}
+
+.chromatin-band .f50-3 {
+  fill: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 30%);
+}
+
+.chromatin-band .f50-4 {
+  fill: color-mix(in srgb, var(--color-primary-50), var(--surface-cream) 40%);
+}
+
+.chromatin-band .fy5-0 {
+  fill: var(--color-secondary-500);
+}
+
+.chromatin-band .s100-0 {
+  stroke: var(--color-primary-100);
+}
+
+.chromatin-band .s100-1 {
+  stroke: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 10%);
+}
+
+.chromatin-band .s100-2 {
+  stroke: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 20%);
+}
+
+.chromatin-band .s100-3 {
+  stroke: color-mix(in srgb, var(--color-primary-100), var(--surface-cream) 30%);
+}
+
+.chromatin-band .s200-0 {
+  stroke: var(--color-primary-200);
+}
+
+.chromatin-band .s200-1 {
+  stroke: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 10%);
+}
+
+.chromatin-band .s200-2 {
+  stroke: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 20%);
+}
+
+.chromatin-band .s200-3 {
+  stroke: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 30%);
+}
+
+.chromatin-band .s200-4 {
+  stroke: color-mix(in srgb, var(--color-primary-200), var(--surface-cream) 40%);
+}
+
+.chromatin-band .s300-0 {
+  stroke: var(--color-primary-300);
+}
+
+.chromatin-band .s300-1 {
+  stroke: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 10%);
+}
+
+.chromatin-band .s300-2 {
+  stroke: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 20%);
+}
+
+.chromatin-band .s300-3 {
+  stroke: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 30%);
+}
+
+.chromatin-band .s300-4 {
+  stroke: color-mix(in srgb, var(--color-primary-300), var(--surface-cream) 40%);
+}
+
+.chromatin-band .s400-0 {
+  stroke: var(--color-primary-400);
+}
+
+.chromatin-band .s400-1 {
+  stroke: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 10%);
+}
+
+.chromatin-band .s400-2 {
+  stroke: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 20%);
+}
+
+.chromatin-band .s400-3 {
+  stroke: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 30%);
+}
+
+.chromatin-band .s400-4 {
+  stroke: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 40%);
+}
+
+.chromatin-band .s400-5 {
+  stroke: color-mix(in srgb, var(--color-primary-400), var(--surface-cream) 50%);
+}
+
+.chromatin-band .sy7-0 {
+  stroke: var(--color-secondary-700);
+}

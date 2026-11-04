@@ -16,6 +16,7 @@ test('the What’s new page lists humanbase.io’s updates by month with no WCAG
   await expect(article.getByRole('heading', { level: 3 })).toHaveCount(11);
   await expect(article.getByRole('link', { name: 'Reproducing legacy results' })).toHaveAttribute('href', '/docs/reproducibility/');
   await expect(article.getByRole('link', { name: 'https://doi.org/10.1038/s41592-025-02994-8' })).toBeVisible();
+  await expect(article.locator('svg.chromatin-band')).toBeVisible();
   expect(await violationsOf(page)).toEqual([]);
 });
 
