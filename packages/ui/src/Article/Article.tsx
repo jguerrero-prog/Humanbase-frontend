@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from 'react';
+import { useId, type ReactElement, type ReactNode } from 'react';
 import { Illustration } from '../Illustration/Illustration';
 import type { IllustrationName } from '../Illustration/illustrations';
 import './Article.css';
@@ -10,8 +10,8 @@ export interface ArticleHeroProps {
   source?: ReactNode;
   doi?: string;
   player?: ReactNode;
-  /** The illustration along the hero's bottom edge; null leaves it out, for pages outside the illustrated set. */
-  band?: IllustrationName | null;
+  /** The illustration along the hero's bottom edge, by library name or as drawn art; null leaves it out. */
+  band?: IllustrationName | ReactElement | null;
   /** 2 when the hero is shown inside another page, such as a design system example. */
   titleLevel?: 1 | 2;
   titleId?: string;
@@ -37,7 +37,7 @@ export function ArticleHero({ title, lead, source, doi, player, band = 'capillar
           {player}
         </div>
       </div>
-      {band && <Illustration name={band} className="article-band" loading="eager" />}
+      {typeof band === 'string' ? <Illustration name={band} className="article-band" loading="eager" /> : band}
     </header>
   );
 }

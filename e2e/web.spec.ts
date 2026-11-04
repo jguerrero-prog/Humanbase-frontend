@@ -312,11 +312,13 @@ test('the app shows only finished illustrations while the library is revised', a
     await art.scrollIntoViewIfNeeded();
     await expect.poll(() => art.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth)).toBeGreaterThan(0);
   }
-  for (const path of ['/about/', '/cite/', '/data-sources/']) {
+  for (const path of ['/about/', '/cite/']) {
     await page.goto(`${web}${path}`);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(page.locator('.article-band')).toHaveCount(0);
   }
+  await page.goto(`${web}/data-sources/`);
+  await expect(page.locator('svg.article-band')).toBeVisible();
   await page.goto(`${web}/about/`);
   await expect(page.locator('.article-drop-cap-plain')).toHaveCount(1);
 });

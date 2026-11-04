@@ -1,7 +1,8 @@
-import { dataEraFrom, dataEras, dataSourcesFor, dataSourcesPage, showIllustrations, type DataSection } from '@humanbase/hb';
+import { dataEraFrom, dataEras, dataSourcesFor, dataSourcesPage, type DataSection } from '@humanbase/hb';
 import { Alert, ArticleHero, Cell, HeaderCell, Table, Tabs } from '@humanbase/ui';
 import { useId } from 'react';
 import { useSearchParams } from 'react-router';
+import { ReadsBand } from './data-sources/ReadsBand';
 import './DataSourcesPage.css';
 
 function SourceSection({ title, description, columns, rows, note }: DataSection) {
@@ -51,7 +52,7 @@ export function DataSourcesPage() {
   return (
     <>
       <title>Data sources · Humanbase</title>
-      <ArticleHero title={dataSourcesPage.title} lead={dataSourcesPage.lead} band={showIllustrations ? 'reads' : null} />
+      <ArticleHero title={dataSourcesPage.title} lead={dataSourcesPage.lead} band={<ReadsBand />} />
       <div className="data-sources">
         <Tabs label="Data era" tabs={dataEras} value={era} onChange={chooseEra}>
           <div className="data-sources-eras">

@@ -44,6 +44,11 @@ describe('ArticleLayout', () => {
     expect(container.querySelector('[data-illustration="reads"]')).toHaveAttribute('alt', '');
   });
 
+  it('shows drawn art as the band', () => {
+    const { container } = render(<ArticleHero title="Data sources" lead="Refreshed periodically." band={<svg className="article-band" aria-hidden="true" />} />);
+    expect(container.querySelector('svg.article-band')).toBeInTheDocument();
+  });
+
   it('leaves the band out when band is null', () => {
     const { container } = render(<ArticleHero title="Downloads" lead="Files to download." band={null} />);
     expect(container.querySelector('.article-band')).toBeNull();
