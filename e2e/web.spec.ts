@@ -247,6 +247,9 @@ test('Display settings open from a gear floating at the bottom left, not the foo
   await expect(gear).toBeInViewport();
   await gear.click();
   await expect(page.getByRole('dialog', { name: 'Display settings' })).toBeVisible();
+  // Each theme shows its own colors whichever theme is active (#805).
+  const swatches = await page.locator('.radio-swatch').evaluateAll((spans) => spans.map((span) => getComputedStyle(span).backgroundImage));
+  expect(swatches).toEqual([expect.stringContaining('rgb(27, 128, 73)'), expect.stringContaining('rgb(15, 136, 204)')]);
 });
 
 test('Display settings saves reduced motion in this browser', async ({ page }) => {

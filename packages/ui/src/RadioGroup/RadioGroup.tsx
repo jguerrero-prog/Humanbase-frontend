@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { type CSSProperties, useId } from 'react';
 import { FieldError } from '../Field/Field';
 import { useControlled } from '../hooks/useControlled';
 import './RadioGroup.css';
@@ -8,6 +8,8 @@ export interface RadioOption {
   label: string;
   description?: string;
   disabled?: boolean;
+  /** Two color tokens, such as a theme's primary and secondary, shown as a circle split diagonally before the label. */
+  swatch?: readonly [string, string];
   'data-state'?: 'hover' | 'focus' | 'error';
 }
 
@@ -59,6 +61,7 @@ export function RadioGroup({ legend, options, hint, error, value, defaultValue, 
                 onChange?.(option.value);
               }}
             />
+            {option.swatch && <span className="radio-swatch" aria-hidden="true" style={{ '--swatch-start': `var(${option.swatch[0]})`, '--swatch-end': `var(${option.swatch[1]})` } as CSSProperties} />}
             <span className="radio-text">
               <span className="radio-label">{option.label}</span>
               {option.description && <span className="radio-description">{option.description}</span>}

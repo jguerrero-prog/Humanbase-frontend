@@ -1,4 +1,5 @@
 ---
+import { themeOptions } from '@humanbase/hb';
 import { RadioGroup, SegmentedControl, Select, Tabs, type Segment, type TabItem } from '@humanbase/ui';
 import { Code } from 'astro:components';
 import DocSection from '../../components/docs/DocSection.astro';
@@ -98,6 +99,7 @@ const tables = {
     ['segment.hover', `grey 200 ${hex('color.grey.200')}`],
     ['radio.size', '20px ring in a 24px box, 12px gap to the label'],
     ['radio.ring', `1.5px grey 500 ${hex('color.grey.500')}; hover 2px ink; selected 2px primary with 10px center; error 2px ${hex('border.error')}`],
+    ['radio.swatch', `optional 24px circle before the label, split diagonally between two color tokens (first top left), 1px border.default ${hex('border.default')}; decorative, so the label names the colors`],
     ['focus.ring', `0 0 0 2px ${hex('color.white')}, 0 0 0 5px ${hex('focus.ring')}`],
   ],
 };
@@ -114,7 +116,7 @@ const usage = `import { RadioGroup, SegmentedControl, Tabs } from '@humanbase/ui
 <DocsLayout title="Tabs and segmented controls" description="Tabs, segmented controls and radio buttons: which to use, anatomy, states, keyboard support and writing.">
   <Intro
     lead="Tabs, segmented controls and radio buttons all let people pick one of a few options. They look different because they do different jobs: tabs move between sections of a page, a segmented control changes how the same results are shown, and radio buttons answer a question in a form."
-    status="Updated October 16, 2026 · Components: Tab, Tabs, Segment, Segmented control, Radio"
+    status="Updated November 4, 2026 · Components: Tab, Tabs, Segment, Segmented control, Radio"
   >
     <KeyRules
       rules={[
@@ -257,6 +259,10 @@ const usage = `import { RadioGroup, SegmentedControl, Tabs } from '@humanbase/ui
       <div class="group-card">
         <h3 class="eyebrow">Error</h3>
         <RadioGroup legend="Network" options={networks.map(({ description: _description, ...option }) => option)} error="Choose a network so NetWAS knows which genes to compare." />
+      </div>
+      <div class="group-card">
+        <h3 class="eyebrow">With swatches</h3>
+        <RadioGroup legend="Theme" options={themeOptions} defaultValue="2" />
       </div>
     </div>
   </DocSection>
