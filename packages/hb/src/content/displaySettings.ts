@@ -3,7 +3,7 @@ import { themes } from '@humanbase/tokens/themes';
 export { defaultTheme } from '@humanbase/tokens/themes';
 
 // Display settings' choices, shared by the app's dialog and the design system pages that show it.
-export const themeOptions = themes.map(({ value, label, description }) => ({ value, label, description }));
+export const themeOptions = themes.map(({ value, label, description }) => ({ value, label, description, swatch: [`--theme-${value}-primary`, `--theme-${value}-secondary`] as const }));
 
 /** The motion choices; the first describes what the device currently asks for. */
 export const motionOptions = (deviceMotion: string) => [

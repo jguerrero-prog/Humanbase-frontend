@@ -39,6 +39,14 @@ const declarations = sources.flatMap(([file, prefix]) =>
   flattenTokens(JSON.parse(readFileSync(new URL(`./src/${file}`, import.meta.url), 'utf8')), prefix).flatMap(toDeclarations),
 );
 
+// Each theme's primary and secondary 500, fixed on the root so a swatch shows its theme whichever theme is active.
+const read = (file) => Object.fromEntries(flattenTokens(JSON.parse(readFileSync(new URL(`./src/${file}`, import.meta.url), 'utf8'))).flatMap(toDeclarations));
+const base = read('primitives.tokens.json');
+const swatches = themes.flatMap(({ value, file }) => {
+  const colors = { ...base, ...(file ? read(file) : {}) };
+  return ['primary', 'secondary'].map((role) => [`--theme-${value}-${role}`, colors[`--color-${role}-500`]]);
+});
+
 // Each theme overrides some primitives on the root when Display settings choose it; Theme 1 is the base above.
 const themeBlocks = themes.filter((theme) => theme.file).flatMap(({ value, file }) => [
   `:root[data-theme="${value}"] {`,
@@ -50,11 +58,11 @@ const themeBlocks = themes.filter((theme) => theme.file).flatMap(({ value, file 
 const css = [
   '/* Generated from src/*.tokens.json by build.mjs. Edit the token files, then run pnpm tokens. */',
   ':root {',
-  ...declarations.map(([name, value]) => `  ${name}: ${value};`),
+  ...[...declarations, ...swatches].map(([name, value]) => `  ${name}: ${value};`),
   '}',
   '',
   ...themeBlocks,
 ].join('\n');
 
 writeFileSync(new URL('./tokens.css', import.meta.url), css);
-console.log(`Wrote ${declarations.length} custom properties to tokens.css`);
+console.log(`Wrote ${declarations.length + swatches.length} custom properties to tokens.css`);

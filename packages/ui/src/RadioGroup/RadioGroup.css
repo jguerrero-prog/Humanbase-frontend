@@ -92,6 +92,19 @@
   box-shadow: var(--shadow-focus-ring);
 }
 
+.radio-swatch {
+  flex: none;
+  inline-size: 24px;
+  block-size: 24px;
+  background: linear-gradient(135deg, var(--swatch-start) calc(50% - 0.5px), var(--swatch-end) calc(50% + 0.5px));
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+}
+
+.radio:has(input:disabled) .radio-swatch {
+  opacity: 0.4;
+}
+
 .radio-text {
   display: grid;
   gap: var(--space-0-5);

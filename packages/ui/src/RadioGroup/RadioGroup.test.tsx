@@ -27,4 +27,13 @@ describe('RadioGroup', () => {
     render(<RadioGroup legend="Network" options={networks} error="Choose a network so NetWAS knows which genes to compare." />);
     expect(screen.getByRole('group')).toHaveAccessibleDescription('Error: Choose a network so NetWAS knows which genes to compare.');
   });
+
+  it('draws an option swatch from its two tokens, hidden from assistive technology', () => {
+    const { container } = render(<RadioGroup legend="Theme" options={[{ value: '2', label: 'Theme 2', description: 'Blue and gold', swatch: ['--theme-2-primary', '--theme-2-secondary'] }]} defaultValue="2" />);
+    const swatch = container.querySelector<HTMLElement>('.radio-swatch');
+    expect(swatch).toHaveAttribute('aria-hidden', 'true');
+    expect(swatch?.style.getPropertyValue('--swatch-start')).toBe('var(--theme-2-primary)');
+    expect(swatch?.style.getPropertyValue('--swatch-end')).toBe('var(--theme-2-secondary)');
+    expect(screen.getByRole('radio', { name: /Theme 2/ })).toBeChecked();
+  });
 });
