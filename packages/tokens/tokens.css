@@ -291,6 +291,10 @@
   --motion-delay-tooltip: 400ms;
   --motion-hold-loading: 500ms;
   --motion-hold-toast: 6000ms;
+  --theme-1-primary: #1B8049;
+  --theme-1-secondary: #FFD53D;
+  --theme-2-primary: #0F88CC;
+  --theme-2-secondary: #E8B604;
 }
 
 :root[data-theme="2"] {
