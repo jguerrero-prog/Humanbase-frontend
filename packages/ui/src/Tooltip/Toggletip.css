@@ -49,6 +49,7 @@
 .toggletip-panel[popover] {
   position: fixed;
   inset: auto;
+  block-size: fit-content;
   inset-block-start: anchor(bottom);
   inset-inline-end: anchor(right);
   margin: var(--space-2) 0;

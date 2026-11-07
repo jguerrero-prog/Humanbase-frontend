@@ -80,9 +80,11 @@
   inset-block: auto calc(100% + var(--space-1));
 }
 
+/* Safari 26 stretches an anchored popover with one open edge to the window edge, so popovers set block-size: fit-content. */
 .select-panel[popover] {
   position: fixed;
   inset: auto;
+  block-size: fit-content;
   inset-block-start: anchor(bottom);
   inset-inline-start: anchor(left);
   min-inline-size: anchor-size(width);
@@ -165,6 +167,7 @@
 .multi-select-panel[popover] {
   position: fixed;
   inset: auto;
+  block-size: fit-content;
   inset-block-start: anchor(bottom);
   inset-inline-start: anchor(left);
   min-inline-size: 260px;
