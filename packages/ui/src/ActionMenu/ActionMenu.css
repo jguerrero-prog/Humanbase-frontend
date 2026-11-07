@@ -38,7 +38,7 @@
 .action-menu-panel[popover] {
   position: fixed;
   inset: auto;
-  block-size: fit-content;
+  block-size: auto;
   inset-block-start: anchor(bottom);
   inset-inline-end: anchor(right);
   margin: var(--space-1) 0;
