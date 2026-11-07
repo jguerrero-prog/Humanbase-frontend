@@ -1,4 +1,4 @@
-import { JobWatcher, Notifications, TopBarSearch, productFooter, productSectionFor, productSections, useJobsMenuSummary } from '@humanbase/hb';
+import { DocsDrawerProvider, JobWatcher, Notifications, TopBarSearch, productFooter, productSectionFor, productSections, useJobsMenuSummary } from '@humanbase/hb';
 import { Banner, Footer, IconButton, SkipLink, TopBar, WelcomeIntro } from '@humanbase/ui';
 import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router';
@@ -38,7 +38,9 @@ export function AppLayout() {
       )}
       <TopBar sections={productSections} jobs={jobs} search={!pageHasSearch} searchField={<TopBarSearch />} {...(current ? { current } : {})} />
       <main id="main" tabIndex={-1}>
-        <Outlet />
+        <DocsDrawerProvider closeOn={pathname}>
+          <Outlet />
+        </DocsDrawerProvider>
       </main>
       <Footer {...productFooter} />
       <IconButton floating className="display-settings-button" label="Display settings" icon="settings" placement="right" onClick={() => setSettingsOpen(true)} />

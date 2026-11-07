@@ -18,6 +18,7 @@ const containers = [
   ['Dialog', 'People must decide before going on, and the task fits in a few lines.', 'Delete a job. Share a result. Rename a job.'],
   ['Drawer beside content', 'People want details or settings for something on the page while still seeing it.', 'Click a gene in the network to see its scores and functions. Edge evidence.'],
   ['Drawer over content', 'The same, on narrow screens, or for settings that affect the whole view.', 'Network filters on a laptop or phone.'],
+  ['Documentation drawer', 'People open a tool’s documentation from a book-icon button and should keep their place in their work.', 'Read the Sei documentation, Score type documentation, Evidence documentation: that docs page in a large drawer over the page, opened at its section.'],
   ['Page', 'A long task with several steps, or something people will want to link to.', 'Submit a NetWAS job. Gene page. Job results.'],
   ['Toast', 'Nothing to decide; just confirming.', '“Link copied.” See Alerts and toasts.'],
 ];
@@ -131,7 +132,7 @@ const usage = `import { Button, Dialog, Drawer, DrawerSection } from '@humanbase
 <DocsLayout title="Modals and drawers" description="Dialogs for decisions and drawers for detail: anatomy, sizes, behavior, focus and phones.">
   <Intro
     lead="Dialogs stop the page to ask one question. Drawers open beside the page to show more about something without leaving it. Humanbase uses dialogs rarely, for choices that can’t be undone, and drawers often, so people can read about a gene while its network stays in view."
-    status="Updated October 16, 2026 · Components: Dialog, Drawer · Elevation 4 and 3, motion from the Motion page"
+    status="Updated November 6, 2026 · Components: Dialog, Drawer · Elevation 4 and 3, motion from the Motion page"
   >
     <KeyRules
       rules={[
@@ -383,6 +384,7 @@ const usage = `import { Button, Dialog, Drawer, DrawerSection } from '@humanbase
       <li>Both are controlled: pass <code>open</code> and <code>onClose</code>. Escape, the Close button and, for <code>kind="confirm"</code>, a backdrop click all call <code>onClose</code>. Focus returns to whatever had it when the layer opened.</li>
       <li>Below 768px a drawer becomes a bottom sheet with a handle and a backdrop. Set <code>--drawer-top</code> to the top bar’s height so an over-content drawer starts below it.</li>
       <li><code>inline</code> renders either one open in the page flow, as on this page.</li>
+      <li>Documentation links (<code>DocsLink</code>) open their docs page in a large drawer inside <code>DocsDrawerProvider</code>, which the app wraps around every page: the page opens at the link’s section, links to other docs pages replace the content, links within the page scroll the drawer, and the footer has Open in a new tab. A modified click still opens a new tab. Inside another drawer, the docs replace that drawer’s content with a Back button instead of opening a second drawer, as the connection drawer does with <code>useDocsDrawer</code>. Added November 6, 2026, at Natalie’s request.</li>
       <li>Pass a drawer <code>back</code> with a <code>label</code> and <code>onSelect</code> to show the Back button above the title when it shows one item inside another, such as a gene in a module.</li>
     </ul>
     <Code code={usage} lang="tsx" theme="css-variables" />

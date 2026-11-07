@@ -1,3 +1,4 @@
+import { isPlainClick } from '@humanbase/ui';
 import { useEffect, type RefObject } from 'react';
 import { useNavigate } from 'react-router';
 import { appBase } from '../routes';
@@ -9,7 +10,7 @@ export function useRouterLinks(container: RefObject<HTMLElement | null>, under: 
     const element = container.current;
     if (!element) return;
     const onClick = (event: MouseEvent) => {
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (event.defaultPrevented || !isPlainClick(event)) return;
       const link = event.target instanceof Element ? event.target.closest('a') : null;
       if (!link || link.target || link.hasAttribute('download')) return;
       const url = new URL(link.href, window.location.href);
