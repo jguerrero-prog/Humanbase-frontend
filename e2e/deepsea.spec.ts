@@ -18,6 +18,22 @@ for (const [path, tool] of [['/variant-effects/', 'Sei'], ['/variant-effects/?mo
   });
 }
 
+test('Read the Sei documentation opens the docs in a drawer and keeps the form as it was (#811), with the API off', async ({ page }) => {
+  await apiOff(page);
+  await page.goto(`${web}/variant-effects/`);
+  await page.getByRole('radio', { name: 'Use the example' }).click();
+  await page.getByRole('link', { name: 'Read the Sei documentation' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Sei' });
+  await expect(drawer.getByText('Documentation', { exact: true })).toBeVisible();
+  await expect(drawer.getByRole('heading', { level: 2, name: 'Output' })).toBeAttached();
+  await expect(page).toHaveURL(`${web}/variant-effects/`);
+  await expect(drawer.getByRole('link', { name: /Open in a new tab/ })).toHaveAttribute('href', '/docs/sei/');
+  expect(await violationsOf(page)).toEqual([]);
+  await drawer.getByRole('button', { name: 'Close' }).click();
+  await expect(drawer).toBeHidden();
+  await expect(page.getByRole('radio', { name: 'Use the example' })).toBeChecked();
+});
+
 test('Variant effects opens on Sei with a variant list, and the model and tab live in the URL', async ({ page }) => {
   await apiOff(page);
   await page.goto(`${web}/variant-effects/`);

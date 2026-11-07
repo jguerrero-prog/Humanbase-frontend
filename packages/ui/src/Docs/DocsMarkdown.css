@@ -83,3 +83,8 @@
 .tex-math-display math {
   overflow: visible;
 }
+
+/* Read in a drawer, a section opens just under the drawer's own header, with no top bar to clear. */
+.docs-reader .docs-markdown :is(h2, h3, h4) {
+  scroll-margin-block-start: var(--space-4);
+}

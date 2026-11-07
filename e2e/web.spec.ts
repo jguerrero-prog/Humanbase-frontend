@@ -197,6 +197,12 @@ test('a connection’s All networks downloads every network’s weight for the p
   await page.goto(`${web}/networks/?entrez=3553&entrez=7124&version=v1&connection=7185-6348`);
   const drawer = page.getByRole('dialog', { name: 'TRAF1 and CCL3' });
   await expect(drawer.getByRole('link', { name: 'Evidence documentation' })).toHaveAttribute('href', '/docs/functional-networks/#evidence');
+  // The evidence docs replace the connection in the same drawer, with Back to connection (#811).
+  await drawer.getByRole('link', { name: 'Evidence documentation' }).click();
+  const docs = page.getByRole('dialog', { name: 'Tissue-specific Networks' });
+  await expect(docs.getByRole('heading', { name: 'Evidence', exact: true })).toBeInViewport();
+  await expect(page.getByRole('dialog')).toHaveCount(1);
+  await docs.getByRole('button', { name: 'Back to connection' }).click();
   await drawer.getByRole('radio', { name: 'All networks' }).click();
   const [download] = await Promise.all([page.waitForEvent('download'), drawer.getByRole('button', { name: 'Download networks' }).click()]);
   expect(download.suggestedFilename()).toBe('TRAF1-CCL3-networks.csv');
