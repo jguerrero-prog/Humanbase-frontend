@@ -49,6 +49,13 @@ export class DocsLibrary {
     return this.bySlug.get(slug.replace(/^\/+|\/+$/g, ''));
   }
 
+  /** The page and section a docs address points to, such as /docs/sei/#output, including old .html addresses. */
+  resolve(href: string): { page: DocsPage; section: string | undefined } | undefined {
+    const [path = '', hash = ''] = href.replace(/^\/docs\/?/, '').split('#');
+    const page = this.page(this.legacyRoute(path)?.replace(/^\/docs\//, '') ?? path);
+    return page && { page, section: hash ? decodeURIComponent(hash) : undefined };
+  }
+
   /** The clean route for a readthedocs address under /docs/, such as sei.html or use-cases/sei-use-case.html. */
   legacyRoute(path: string): string | undefined {
     const match = /^\/?(.*?)\.html$/.exec(path);

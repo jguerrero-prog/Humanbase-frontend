@@ -30,6 +30,8 @@ export { CopyPageLink } from './Docs/CopyPageLink';
 export { DocsLayout, type DocsLayoutProps } from './Docs/DocsLayout';
 export { DocsMarkdown, type DocsMarkdownProps, type ImageSizes } from './Docs/DocsMarkdown';
 export { docsSections, type DocsSection, type DocsSectionText } from './Docs/markdownSections';
+export { DocsReader, type DocsReaderProps } from './Docs/DocsReader';
+export { DocsViewerProvider, docsAddress, isPlainClick, useDocsViewer } from './Docs/DocsViewer';
 export { DocsNav, type DocsNavGroup, type DocsNavItem, type DocsNavProps, type DocsNavSubItem } from './Docs/DocsNav';
 export { OnThisPage, type OnThisPageProps } from './Docs/OnThisPage';
 export { type TexMathProps } from './Docs/TexMath';

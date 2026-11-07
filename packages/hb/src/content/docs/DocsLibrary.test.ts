@@ -49,6 +49,13 @@ describe('docsLibrary', () => {
     expect(docsLibrary.legacyRoute('sei')).toBeUndefined();
   });
 
+  it('finds the page and section a docs address points to, old addresses included', () => {
+    expect(docsLibrary.resolve('/docs/sei/#output')).toEqual({ page: docsLibrary.page('sei'), section: 'output' });
+    expect(docsLibrary.resolve('/docs/use-cases/sei-use-case/')?.section).toBeUndefined();
+    expect(docsLibrary.resolve('/docs/sei.html#input')?.page.slug).toBe('sei');
+    expect(docsLibrary.resolve('/docs/nothing/')).toBeUndefined();
+  });
+
   it('keeps every live heading id in the front matter', () => {
     expect(docsLibrary.page('sei')?.sections.map((section) => section.id)).toEqual(['sei', 'introduction', 'input', 'large-submissions', 'output', 'sequence-classes', 'regulatory-feature-scores']);
   });

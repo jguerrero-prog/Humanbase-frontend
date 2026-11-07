@@ -1,6 +1,7 @@
 import { docsPage, sentenceCase, useConnectionEvidence, useConnectionInAllNetworks, type ConnectionInNetwork, type DataVersion, type NetworkGene } from '@humanbase/data';
-import { Alert, Button, DocsLink, Drawer, DrawerSection, EvidenceTable, IconButton, NetworkWeightTable, saveFile, ScoreMeter, SearchField, SegmentedControl, Skeleton, Spinner, WeightHistogram } from '@humanbase/ui';
+import { Alert, Button, DocsLink, DocsViewerProvider, Drawer, DrawerSection, EvidenceTable, IconButton, NetworkWeightTable, saveFile, ScoreMeter, SearchField, SegmentedControl, Skeleton, Spinner, WeightHistogram } from '@humanbase/ui';
 import { useMemo, useState } from 'react';
+import { useDocsDrawer } from '../Docs/DocsDrawer';
 
 export interface ConnectionDrawerProps {
   source: NetworkGene;
@@ -27,6 +28,9 @@ export function ConnectionDrawer({ source, target, weight, slug, version, networ
   const [view, setView] = useState<'this' | 'all'>('this');
   const [allDatasets, setAllDatasets] = useState(false);
   const [filter, setFilter] = useState('');
+  // One drawer at a time: the evidence docs replace the connection here, with Back to connection.
+  const [docsHref, setDocsHref] = useState<string>();
+  const docs = useDocsDrawer(docsHref, setDocsHref);
   const pair = `${source.symbol} and ${target.symbol}`;
   // The API keeps dataset evidence for GIANT only, so a MAGE connection says so, as humanbase.io does, instead of asking.
   const hasEvidence = version !== 'v3';
@@ -48,91 +52,97 @@ export function ConnectionDrawer({ source, target, weight, slug, version, networ
   const datasets = evidence.data?.datasets ?? [];
 
   return (
-    <Drawer open title={pair} subtitle={view === 'this' ? `Connection in the ${networkTitle} network` : 'Connection across all networks'} onClose={onClose}>
-      <SegmentedControl
-        label="Connection view"
-        hideLabel
-        size="small"
-        segments={[
-          { value: 'this', label: networkName },
-          { value: 'all', label: 'All networks' },
-        ]}
-        value={view}
-        onChange={(value) => setView(value === 'all' ? 'all' : 'this')}
-      />
-      {view === 'this' ? (
-        <>
-          <ScoreMeter label="Connection weight" value={weight} text={`How likely ${pair} are to work together in the ${networkTitle} network, from all the evidence combined.`} />
-          {hasEvidence && (
-            <p className="connection-docs">
-              <DocsLink href={evidenceDocs}>Evidence documentation</DocsLink>
-            </p>
-          )}
-          {!hasEvidence ? (
-            <Alert tone="info">Dataset evidence is not available for MAGE networks.</Alert>
-          ) : evidence.isError ? (
-            <Alert tone="error" title="The evidence couldn’t load" action={{ label: 'Try again', onSelect: () => void evidence.refetch() }}>
-              The connection weight above is still correct.
-            </Alert>
-          ) : !evidence.data ? (
+    <DocsViewerProvider value={setDocsHref}>
+      {docs ? (
+        <Drawer open onClose={onClose} back={{ label: 'Back to connection', onSelect: () => setDocsHref(undefined) }} {...docs} />
+      ) : (
+        <Drawer open title={pair} subtitle={view === 'this' ? `Connection in the ${networkTitle} network` : 'Connection across all networks'} onClose={onClose}>
+          <SegmentedControl
+            label="Connection view"
+            hideLabel
+            size="small"
+            segments={[
+              { value: 'this', label: networkName },
+              { value: 'all', label: 'All networks' },
+            ]}
+            value={view}
+            onChange={(value) => setView(value === 'all' ? 'all' : 'this')}
+          />
+          {view === 'this' ? (
             <>
-              <DrawerSection label="Data types">
-                <p className="result-detail-text" aria-busy="true">
-                  <Skeleton width="56%" />
+              <ScoreMeter label="Connection weight" value={weight} text={`How likely ${pair} are to work together in the ${networkTitle} network, from all the evidence combined.`} />
+              {hasEvidence && (
+                <p className="connection-docs">
+                  <DocsLink href={evidenceDocs}>Evidence documentation</DocsLink>
                 </p>
+              )}
+              {!hasEvidence ? (
+                <Alert tone="info">Dataset evidence is not available for MAGE networks.</Alert>
+              ) : evidence.isError ? (
+                <Alert tone="error" title="The evidence couldn’t load" action={{ label: 'Try again', onSelect: () => void evidence.refetch() }}>
+                  The connection weight above is still correct.
+                </Alert>
+              ) : !evidence.data ? (
+                <>
+                  <DrawerSection label="Data types">
+                    <p className="result-detail-text" aria-busy="true">
+                      <Skeleton width="56%" />
+                    </p>
+                  </DrawerSection>
+                  <EvidenceTable loading rows={[]} note="Contribution is how much one dataset raises the chance of this connection on its own, so contributions don’t add up to the weight." />
+                </>
+              ) : (
+                <>
+                  <DrawerSection label="Data types">
+                    <p className="result-detail-text">{evidence.data.dataTypes.join(', ')}</p>
+                  </DrawerSection>
+                  <EvidenceTable
+                    rows={(allDatasets ? datasets : datasets.slice(0, firstDatasets)).map(({ title, dataType, contribution }) => ({ dataset: title, dataType, contribution }))}
+                    note="Contribution is how much one dataset raises the chance of this connection on its own, so contributions don’t add up to the weight."
+                  />
+                  {datasets.length > firstDatasets && (
+                    <Button variant="ghost" size="small" onClick={() => setAllDatasets(!allDatasets)}>
+                      {allDatasets ? `Show the first ${firstDatasets} datasets` : `Show all ${datasets.length} datasets`}
+                    </Button>
+                  )}
+                </>
+              )}
+            </>
+          ) : elsewhere.isError ? (
+            <Alert tone="error" title="The other networks couldn’t load" action={{ label: 'Try again', onSelect: () => void elsewhere.refetch() }}>
+              Check your connection, then try again.
+            </Alert>
+          ) : !elsewhere.data ? (
+            <>
+              <div role="status" className="connection-waiting">
+                <p className="graph-loading-inline">
+                  <Spinner size={16} /> Checking every network for {pair}…
+                </p>
+                <p className="result-detail-text">This can take up to 20 seconds the first time a connection is opened.</p>
+              </div>
+              <DrawerSection label="Connection weight in each network">
+                <WeightHistogram loading counts={[]} current={weight} caption={`Number of networks at each weight, with ${networkName} marked.`} />
               </DrawerSection>
-              <EvidenceTable loading rows={[]} note="Contribution is how much one dataset raises the chance of this connection on its own, so contributions don’t add up to the weight." />
+              <DrawerSection label="Networks, strongest first">
+                <NetworkWeightTable loading rows={[]} />
+              </DrawerSection>
             </>
           ) : (
             <>
-              <DrawerSection label="Data types">
-                <p className="result-detail-text">{evidence.data.dataTypes.join(', ')}</p>
+              <DrawerSection label="Connection weight in each network">
+                <WeightHistogram counts={histogram} current={weight} caption={`Number of networks at each weight. The dark bar holds the network you are viewing: ${networkName}, ${weight.toFixed(2)}.`} />
               </DrawerSection>
-              <EvidenceTable
-                rows={(allDatasets ? datasets : datasets.slice(0, firstDatasets)).map(({ title, dataType, contribution }) => ({ dataset: title, dataType, contribution }))}
-                note="Contribution is how much one dataset raises the chance of this connection on its own, so contributions don’t add up to the weight."
-              />
-              {datasets.length > firstDatasets && (
-                <Button variant="ghost" size="small" onClick={() => setAllDatasets(!allDatasets)}>
-                  {allDatasets ? `Show the first ${firstDatasets} datasets` : `Show all ${datasets.length} datasets`}
-                </Button>
-              )}
+              <DrawerSection label="Networks, strongest first">
+                <div className="companion-search">
+                  <SearchField label="Filter networks" placeholder="Filter networks" size="medium" value={filter} onChange={(event) => setFilter(event.target.value)} onClear={() => setFilter('')} />
+                  <IconButton label="Download networks" icon="download" onClick={() => saveFile(networksCsv(networks), `${source.symbol}-${target.symbol}-networks.csv`, 'text/csv')} />
+                </div>
+                <NetworkWeightTable rows={rows} />
+              </DrawerSection>
             </>
           )}
-        </>
-      ) : elsewhere.isError ? (
-        <Alert tone="error" title="The other networks couldn’t load" action={{ label: 'Try again', onSelect: () => void elsewhere.refetch() }}>
-          Check your connection, then try again.
-        </Alert>
-      ) : !elsewhere.data ? (
-        <>
-          <div role="status" className="connection-waiting">
-            <p className="graph-loading-inline">
-              <Spinner size={16} /> Checking every network for {pair}…
-            </p>
-            <p className="result-detail-text">This can take up to 20 seconds the first time a connection is opened.</p>
-          </div>
-          <DrawerSection label="Connection weight in each network">
-            <WeightHistogram loading counts={[]} current={weight} caption={`Number of networks at each weight, with ${networkName} marked.`} />
-          </DrawerSection>
-          <DrawerSection label="Networks, strongest first">
-            <NetworkWeightTable loading rows={[]} />
-          </DrawerSection>
-        </>
-      ) : (
-        <>
-          <DrawerSection label="Connection weight in each network">
-            <WeightHistogram counts={histogram} current={weight} caption={`Number of networks at each weight. The dark bar holds the network you are viewing: ${networkName}, ${weight.toFixed(2)}.`} />
-          </DrawerSection>
-          <DrawerSection label="Networks, strongest first">
-            <div className="companion-search">
-              <SearchField label="Filter networks" placeholder="Filter networks" size="medium" value={filter} onChange={(event) => setFilter(event.target.value)} onClear={() => setFilter('')} />
-              <IconButton label="Download networks" icon="download" onClick={() => saveFile(networksCsv(networks), `${source.symbol}-${target.symbol}-networks.csv`, 'text/csv')} />
-            </div>
-            <NetworkWeightTable rows={rows} />
-          </DrawerSection>
-        </>
+        </Drawer>
       )}
-    </Drawer>
+    </DocsViewerProvider>
   );
 }

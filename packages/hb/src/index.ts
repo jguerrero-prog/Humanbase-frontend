@@ -8,6 +8,7 @@ export { versionOptions } from './content/dataVersions';
 export { defaultTheme, displaySettingsNote, motionOptions, themeOptions } from './content/displaySettings';
 export { doiLink, humanbaseCitation, humanbaseCitationText, methodCitations, netwasCitation, type MethodCitation, type PlatformCitation } from './content/cite';
 export { DocsLibrary, docsLibrary, docsRoute, parsePage, type DocsGroup, type DocsPage } from './content/docs/DocsLibrary';
+export { DocsDrawerProvider, useDocsDrawer, type DocsDrawerProviderProps } from './Docs/DocsDrawer';
 export { DocsSearch, type DocsSearchProps } from './content/docs/DocsSearch';
 export { DocsSearchIndex, snippet, type DocsHit } from './content/docs/DocsSearchIndex';
 export { analysisColumns, analysisIcons, analysisOptions, categoryCrumbs, productCategories, productFooter, productSectionFor, productSections, productTools } from './content/product';
